@@ -1,0 +1,11 @@
+
+-D debug
+
+-cp src
+
+-swf9 build/NodeClient.swf
+-swf-version 10
+-swf-header 1400:600:30:FFFFFF
+-D network-sandbox
+
+-main NodeClient

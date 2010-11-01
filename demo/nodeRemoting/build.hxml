@@ -1,0 +1,12 @@
+
+#Server
+-D debug
+-D nodejs
+
+-cp ../../src
+-cp src
+
+-main NodeServer
+
+-js build/server.js
+

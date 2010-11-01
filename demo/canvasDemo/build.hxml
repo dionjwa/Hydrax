@@ -1,0 +1,18 @@
+-D debug
+
+#--remap flash:jeash
+
+-lib feffects
+-lib ArrayTools
+-lib IterTools
+-lib ListTools
+
+-cp ../../lib/hsl-pico
+-cp ../../lib/hsl
+-cp ../../src
+
+-js CanvasDemo.js
+-main CanvasDemo
+
+
+

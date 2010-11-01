@@ -1,0 +1,7 @@
+This file outlines, in no particular order, notable differences between Hydrax and PBE.
+
+-Hydrax IPBObjects don't have internal lists of game object sets.  That functionality is managed entirely by the SetManager.
+-A lightweight custom injection system is used instead of robolegs.  I'll endevour to incorporate a more robust injection system in the near future.
+-In the current version of PBE there is no  IPBObject interface.  This is required in haXe due to the circular dependency between PBObject and PBGroup.
+-Where possible, Signals are used instead of flash specific event dispatchers.  
+
