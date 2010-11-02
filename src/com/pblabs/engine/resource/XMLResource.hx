@@ -45,7 +45,7 @@ class XMLResource extends ResourceBase<XML>
     
     override public function get (?name :String) :XML
     {
-        return _xml;
+        return _xml.firstElement();
     }
     
     override public function unload () :Void

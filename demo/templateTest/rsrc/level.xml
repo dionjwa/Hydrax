@@ -1,0 +1,13 @@
+<!-- Root tag - indicates version in case there are breaking changes  in the format. The root tag contains one or more entities, templates or groups.-->
+<things version="1">
+        <entity name="dude">
+                <component type="com.pblabs.components.base.LocationComponent" name="LocationComponent">
+                        <x>99</x>
+                        <y>80</y>
+                </component>
+                <component type="com.pblabs.components.base.AngleComponent" name="AngleComponent">
+                        <angle>1.0</angle>
+                </component>
+        </entity>
+</things>   
+

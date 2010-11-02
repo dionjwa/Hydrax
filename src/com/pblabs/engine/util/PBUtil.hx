@@ -110,6 +110,17 @@ class PBUtil
         }
     }
     
+    public static function entityToString (e :IEntity) :String
+    {
+        var s = new StringBuf();
+        s.add("[" + e.name + ":");
+        for (c in e) {
+            s.add("\n  " + c);
+        }
+        return s.toString();
+    }
+    
+    
     static function fieldToken (fieldName :String) :String
     {
         return if (fieldName != null) "." + fieldName else "";

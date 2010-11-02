@@ -58,16 +58,17 @@ import hsl.haxe.Signaler;
  * @see com.pblabs.engine.serialization.Serializer.
  */
 class TemplateManager 
-    implements haxe.rtti.Infos //For injections 
+    // implements haxe.rtti.Infos //For injections 
 {
     public var signalLoaded :Signaler<XMLResource>;
     public var signalFailed :Signaler<XMLResource>;
     public var signalGroupLoaded :Signaler<String>;
     
     // public var entityType(null, setEntityType) :Class<Dynamic>;
+    @inject("com.pblabs.engine.serialization.Serializer")
     public var serializer :Serializer;
     
-    @inject
+    @inject("com.pblabs.engine.resource.IResourceManager")
     public var resourceManager :IResourceManager;
     
     /**
@@ -262,7 +263,7 @@ class TemplateManager
     {
         Profiler.enter("instantiateEntityFromXML");
         var entity;
-        var name;
+        var name = null;
         try {
             // Get at the name...
             name = xml.get("name");
@@ -609,7 +610,7 @@ class TemplateManager
         
         Log.info("Loaded " + thingCount + " from " + resource.name);
         
-        signalLoaded.dispatch(resource);
+        // signalLoaded.dispatch(resource);
     }
     
     function onFailed(resource :XMLResource) :Void

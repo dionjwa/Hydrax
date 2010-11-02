@@ -46,4 +46,21 @@ class XMLUtil
         return !hasComplexContent(xml);
     }
     
+    public static function child (xml :Xml, childName :String) :Xml
+    {
+        for (x in xml.elementsNamed(childName)) {
+            return x;
+        }
+        return null;
+    }
+    
+    public static function createElementWithValue (name :String, value :String) :Xml
+    {
+        var xml = Xml.createElement(name);
+        xml.nodeValue = value;
+        return xml;
+    }
+    
+    
+    
 }

@@ -16,11 +16,11 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.PBObject;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.engine.core.SetManager;
 import com.pblabs.engine.core.SignalBondManager;
 import com.pblabs.engine.debug.Log;
 import com.pblabs.engine.injection.ComponentInjector;
 import com.pblabs.engine.serialization.ISerializable;
+import com.pblabs.engine.serialization.Serializer;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.time.ITickedObject;
 import com.pblabs.engine.util.PBUtil;
@@ -29,7 +29,14 @@ import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
+import flash.xml.XML;
+
 import hsl.haxe.Bond;
+
+using Lambda;
+
+using com.pblabs.engine.core.SetManager;
+using com.pblabs.util.StringUtil;
 
 /**
  * Default implementation of IEntity.
@@ -143,112 +150,99 @@ class Entity extends PBObject,
      */
     public function serialize(xml :XML):Void
     {
-        throw "Not implemented";
-        // var entityXML:XML = Xml.parse("<entity name={name} />");
-        // if(alias!=null)
-        //     entityXML = Xml.parse("<entity name={name} alias={alias} />");   
+        var entityXML = Xml.createElement("entity");
+        entityXML.set("name", name);
         
-        // for (component in _components)
-        // {            
-        //     throw "Not implemented";
-        //     // var componentXML:XML = <component type={getQualifiedClassName(component).replace(~/::/,".")} name={component.name} />;
-        //     // context.getManager(Serializer).serialize(component, componentXML);
-        //     // entityXML.appendChild(componentXML);
-        // }
+        var serializer = context.getManager(Serializer); 
+        for (component in _components) {
+            var componentXML = Xml.createElement("component");
+            componentXML.set("name", component.name);
+            componentXML.set("type", ReflectUtil.getClassName(component));            
+            serializer.serialize(component, componentXML);
+            entityXML.addChild(componentXML);
+        }
 
-        // xml.appendChild(entityXML);            
+        xml.addChild(entityXML);            
     }
     
     public function deserialize(xml :XML, ?registerComponents:Bool = true):Void
     {
-        throw "Not implemented";
-        // // Note what entity we're deserializing to the Serializer.
-        // context.getManager(Serializer).setCurrentEntity(this);
+        // Note what entity we're deserializing to the Serializer.
+        context.getManager(Serializer).setCurrentEntity(this);
 
-        // // Push the deferred state.
-        // var oldDefer:Bool = deferring;
-        // deferring = true;
+        // Push the deferred state.
+        var oldDefer = deferring;
+        deferring = true;
         
-        // // Process each component tag in the xml.
-        // for each (var componentXML:XML in xml.*)
-        // {
-        //     // Error if it's an unexpected tag.
-        //     if(componentXML.name().toString().toLowerCase() != "component")
-        //     {
-        //         Log.error(this, "deserialize", "Found unexpected tag '" + componentXML.name().toString() + "', only <component/> is valid, ignoring tag. Error in entity '" + name + "'.");
-        //         continue;
-        //     }
+        var serializer = context.getManager(Serializer);
+        #if debug
+        com.pblabs.util.Assert.isNotNull(serializer);
+        #end
+        
+        // Process each component tag in the xml.
+        for (componentXML in xml.elements())
+        {
+            // Error if it's an unexpected tag.
+            if(componentXML.nodeName.toLowerCase() != "component") {
+                Log.error("Found unexpected tag '" + componentXML.nodeName.toString() + "', only <component/> is valid, ignoring tag. Error in entity '" + name + "'.");
+                continue;
+            }
             
-        //     var componentName:String = componentXML.attribute("name");
-        //     var componentClassName:String = componentXML.attribute("type");
-        //     var component:IEntityComponent = null;
+            var componentName = componentXML.get("name");
+            var componentClassName = componentXML.get("type");
+            var component :IEntityComponent = null;
             
-        //     if (componentClassName.length > 0)
-        //     {
-        //         // If it specifies a type, instantiate a component and add it.
-        //         var type:Class<Dynamic> = TypeUtility.getClassFromName(componentClassName);
-        //         if(!type)
-        //         {
-        //             Log.error(this, "deserialize", "Unable to find type '" + componentClassName + "' for component '" + componentName +"' on entity '" + name + "'.");
-        //             continue;
-        //         }
+            if (componentClassName.length > 0) {
+                // If it specifies a type, instantiate a component and add it.
+                var type :Class<Dynamic> = Type.resolveClass(componentClassName);
+                if (null == type) {
+                    Log.error("Unable to find type '" + componentClassName + "' for component '" + componentName +"' on entity '" + name + "'.");
+                    continue;
+                }
                 
-        //         component = cast( context.allocate(type), IEntityComponent);
-        //         if (!component)
-        //         {
-        //             Log.error(this, "deserialize", "Unable to instantiate component " + componentName + " of type " + componentClassName + " on entity '" + name + "'.");
-        //             continue;
-        //         }
+                component = cast(context.allocate(type), IEntityComponent);
+                if (null == component) {
+                    Log.error("Unable to instantiate component " + componentName + " of type " + componentClassName + " on entity '" + name + "'.");
+                    continue;
+                }
                 
-        //         if (!addComponent(component, componentName))
-        //             continue;
-        //     }
-        //     else
-        //     {
-        //         // Otherwise just get the existing one of that name.
-        //         component = lookupComponentByName(componentName);
-        //         if (!component)
-        //         {
-        //             Log.error(this, "deserialize", "No type specified for the component " + componentName + " and the component doesn't exist on a parent template for entity '" + name + "'.");
-        //             continue;
-        //         }
-        //     }
+                if (!addComponent(component, componentName)) {
+                    continue;
+                }
+            } else {
+                // Otherwise just get the existing one of that name.
+                component = lookupComponentByName(componentName);
+                if (null == component) {
+                    Log.error("No type specified for the component " + componentName + " and the component doesn't exist on a parent template for entity '" + name + "'.");
+                    continue;
+                }
+            }
             
-        //     // Deserialize the XML into the component.
-        //     (cast( context.getManager(Serializer), Serializer)).deserialize(context, component, componentXML);
-        // }
+            // Deserialize the XML into the component.
+            serializer.deserialize(context, component, componentXML);
+        }
         
-        // // Deal with set membership.
-        // var setsAttr:String = xml.attribute("sets");
-        // if (setsAttr)
-        // {
-        //     // The entity wants to be in some sets.
-        //     var setNames:Array<Dynamic> = setsAttr.split(",");
-        //     if (setNames)
-        //     {
-        //         // There's a valid-ish set string, let's loop through the entries
-        //         var thisName:String;
-        //         while (thisName = setNames.pop())
-        //         {
-        //             var pbset:PBSet = cast( context.lookup(thisName), PBSet);
-        //             if (!pbset) 
-        //             {
-        //                 // Set doesn't exist, create a new one.
-        //                 pbset = context.allocate(PBSet);
-        //                 pbset.initialize(thisName);
-                        
-        //                 Log.warn(this, "deserialize", "Auto-creating set '" + thisName + "'.");
-        //             }
-        //             pbset.add(cast( this, PBObject));
-        //         }
-        //     }
-        // }            
+        // Deal with set membership.
+        var setsAttr = xml.get("sets");
+        if (!setsAttr.isBlank()) {
+            // The entity wants to be in some sets.
+            var setNames = setsAttr.split(",").map(StringTools.trim);
+            if (setNames != null) {
+                // There's a valid-ish set string, let's loop through the entries
+                var sets = context.getManager(SetManager);
+                for (set in setNames) {
+                    if (!set.isBlank()) {
+                        this.addToSet(set);
+                    }
+                }
+            }
+        }            
         
-        // // Restore deferred state.
-        // deferring = oldDefer;
+        // Restore deferred state.
+        deferring = oldDefer;
     }
     
-    public function addComponent(component:IEntityComponent, ?componentName:String):Bool
+    public function addComponent (component:IEntityComponent, ?componentName :String) :Bool
     {
         Preconditions.checkNotNull(component, "Cannot add a null component");
         

@@ -10,14 +10,17 @@ package com.pblabs.components.base;
 
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntity;
+import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.PropertyReference;
+import com.pblabs.engine.serialization.ISerializable;
+import com.pblabs.geom.Vector2;
+import com.pblabs.util.XMLUtil;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
-import com.pblabs.geom.Vector2;
-
-class LocationComponent extends EntityComponent 
+class LocationComponent extends EntityComponent,
+    implements ISerializable
 {
     public var point(getPoint, setPoint) : Vector2;
     public var x (get_x, set_x) : Float;
@@ -92,6 +95,22 @@ class LocationComponent extends EntityComponent
     public function toString () :String
     {
         return "[Location " + x + ", " + y + "]";
+    }
+    
+    public function serialize (xml :XML) :Void
+    {
+        xml.addChild(XMLUtil.createElementWithValue("x", _vec.x + ""));
+        xml.addChild(XMLUtil.createElementWithValue("y", _vec.y + ""));
+    }
+    
+    public function deserialize (xml :XML, context :IPBContext) :Dynamic
+    {
+        if (XMLUtil.child(xml, "x") != null) {
+            _vec.x = Std.parseFloat(XMLUtil.child(xml, "x").nodeValue);
+        }
+        if (XMLUtil.child(xml, "y") != null) {
+            _vec.y = Std.parseFloat(XMLUtil.child(xml, "y").nodeValue);
+        }
     }
     
     override function onRemove () :Void

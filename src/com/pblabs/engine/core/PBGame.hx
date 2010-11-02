@@ -12,16 +12,18 @@
  ******************************************************************************/
 package com.pblabs.engine.core;
 
+import com.pblabs.components.input.InputManager;
+import com.pblabs.components.scene.SceneView;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.core.SetManager;
 import com.pblabs.engine.core.SignalBondManager;
-import com.pblabs.components.input.InputManager;
 import com.pblabs.engine.resource.IResourceManager;
+import com.pblabs.engine.resource.ResourceManager;
+import com.pblabs.engine.serialization.Serializer;
+import com.pblabs.engine.serialization.TemplateManager;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ProcessManager;
-
-import com.pblabs.components.scene.SceneView;
 
 /**
   * Standard game.  Starts up the most commonly used
@@ -55,10 +57,10 @@ class PBGame extends PBGameBase
         
         //Not yet converted to haXe
         // registerManager(InputManager, new InputManager());
-        // registerManager(Serializer, new com.pblabs.engine.serialization.Serializer());
+        registerManager(IResourceManager, new ResourceManager());
+        registerManager(Serializer, new Serializer());
+        registerManager(TemplateManager, new TemplateManager());
         // registerManager(ObjectTypeManager, new ObjectTypeManager());
-        // registerManager(ResourceManager, new ResourceManager());
-        // registerManager(TemplateManager, new TemplateManager());
         // var sm:SoundManager = new SoundManager();
         // registerManager(ISoundManager, sm);
         // pm.addTickedObject(sm, 100);

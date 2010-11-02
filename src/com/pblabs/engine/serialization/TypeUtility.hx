@@ -167,9 +167,9 @@ class TypeUtility
     //     return typeXml.@isDynamic == "true";
     // }
     
-    // /**
-    //  * Determine the type, specified by metadata, for a container class like an Array.
-    //  */
+    /**
+     * Determine the type, specified by metadata, for a container class like an Array.
+     */
     // public static function getTypeHint(object:Dynamic, field:String):String
     // {
     //     var description:XML = getTypeDescription(object);

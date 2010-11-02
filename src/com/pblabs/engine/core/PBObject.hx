@@ -24,11 +24,11 @@ import com.pblabs.util.Preconditions;
  * @see IPBObject
  */
 class PBObject 
-    implements IPBObject, implements haxe.rtti.Infos 
+    implements IPBObject//, implements haxe.rtti.Infos 
 {
     public function new() { }
     
-    @inject
+    @inject("com.pblabs.engine.core.IPBContext")
     public var context(get_context, set_context) :IPBContext;
     public var name(get_name, set_name) : String;
     public var owningGroup (get_owningGroup, set_owningGroup) : IPBGroup;
