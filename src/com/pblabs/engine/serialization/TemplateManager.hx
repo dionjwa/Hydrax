@@ -261,8 +261,11 @@ class TemplateManager
      */
     public function instantiateEntityFromXML (xml :XML, context :IPBContext) :IEntity
     {
+        Preconditions.checkNotNull(xml);
+        Preconditions.checkNotNull(context);
         Profiler.enter("instantiateEntityFromXML");
-        var entity;
+        
+        var entity :IEntity;
         var name = null;
         try {
             // Get at the name...
@@ -273,27 +276,35 @@ class TemplateManager
             
             // Make the IEntity instance.
             entity = context.allocate(IEntity);
-            
+            trace("entity made " + entity);    
             // To aid with reference handling, initialize FIRST but defer the
             // reset...
             entity.initialize(name);
             entity.deferring = true;
+            trace("initialized");
             
             if (!doInstantiateTemplate(entity, xml.get("template"), new DynamicMap<Bool>())) {
+                trace("false on doInstantiateTemplate"); 
                 entity.destroy();
                 Profiler.exit("instantiateEntityFromXML");
                 return null;
             }
             
+            var serializer = context.getManager(Serializer);
+            #if debug
+            com.pblabs.util.Assert.isNotNull(serializer);
+            #end
+            
+            trace("serializer=" + serializer);
             serializer.deserialize(context, entity, xml);
-            serializer.clearCurrentEntity();
+            // serializer.clearCurrentEntity();
             
-            // Don't forget to disable deferring.
-            entity.deferring = false;
+            // // Don't forget to disable deferring.
+            // entity.deferring = false;
             
-            if (!_inGroup) {
-                serializer.reportMissingReferences();
-            }
+            // if (!_inGroup) {
+            //     serializer.reportMissingReferences();
+            // }
             
             Profiler.exit("instantiateEntityFromXML");
         }
@@ -543,7 +554,7 @@ class TemplateManager
         Preconditions.checkNotNull(xml, "Could not find group '" + name + "'"); 
         
         //Create the group :
-        var actualGroup = context.allocate(IPBGroup);
+        var actualGroup :IPBGroup = context.allocate(IPBGroup);
         if(name != context.rootGroup.name) {
             actualGroup.initialize(name);
             actualGroup.owningGroup = context.currentGroup;

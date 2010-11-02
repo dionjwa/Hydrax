@@ -62,6 +62,10 @@ class PBGameBase extends PBContext
       */
     override public function allocate <T>(type :Class<T>) :T
     {
+        if (type == IPBContext) {
+            untyped type = PBContext;
+        }
+        
         var i = super.allocate(type);
         if (Std.is(i, IPBContext) || Std.is(i, PBContext)) {
             var ctx = cast(i, PBContext);

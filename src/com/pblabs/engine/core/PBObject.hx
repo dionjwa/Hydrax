@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Hydrax: haXe port of the PushButton Engine
+ * Hydrax :haXe port of the PushButton Engine
  * Copyright (C) 2010 Dion Amago
- * For more information see http://github.com/dionjwa/Hydrax
+ * For more information see http ://github.com/dionjwa/Hydrax
  *
  * This file was derived from the equivalent actionscript PushButton Engine 
- * source file:
- * http://code.google.com/p/pushbuttonengine/
+ * source file :
+ * http ://code.google.com/p/pushbuttonengine/
  *
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
@@ -17,6 +17,7 @@ import com.pblabs.engine.core.IPBGroup;
 import com.pblabs.engine.core.IPBObject;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.util.Preconditions;
+import com.pblabs.util.StringUtil;
 
 /**
  * Base implementation of a named object that can exist in PBSets or PBGroups.
@@ -30,8 +31,8 @@ class PBObject
     
     @inject("com.pblabs.engine.core.IPBContext")
     public var context(get_context, set_context) :IPBContext;
-    public var name(get_name, set_name) : String;
-    public var owningGroup (get_owningGroup, set_owningGroup) : IPBGroup;
+    public var name(get_name, set_name) :String;
+    public var owningGroup (get_owningGroup, set_owningGroup) :IPBGroup;
     public var isLiveObject (get_isLiveObject, never) :Bool;
     var _name :String;
     var _owningGroup :IPBGroup;
@@ -43,19 +44,19 @@ class PBObject
         return _context;
     }
     
-    function set_context (c:IPBContext):IPBContext
+    function set_context (c :IPBContext) :IPBContext
     {
         Preconditions.checkArgument(_context == null, "Trying to set context on a PBObject that already has one!");
         _context = cast(c);
         return c;
     }
     
-    inline function get_owningGroup():IPBGroup
+    inline function get_owningGroup() :IPBGroup
     {
         return _owningGroup;
     }
     
-    function set_owningGroup (value:IPBGroup):IPBGroup
+    function set_owningGroup (value :IPBGroup) :IPBGroup
     {
         Preconditions.checkNotNull(value, "Must always be in a group - cannot set owningGroup to null!");
         Preconditions.checkArgument(_owningGroup == null || value.rootGroup == _owningGroup, "Attempting to set an illegal group");
@@ -72,27 +73,27 @@ class PBObject
         return value;
     }
     
-    inline function get_name():String
+    inline function get_name() :String
     {
         return _name;
     }
     
-    inline function set_name(name :String):String
+    inline function set_name(name :String) :String
     {
         Preconditions.checkArgument(_name == null, this + " already has a name");
         _name = name;
         return name;
     }
     
-    public function initialize(?name:String = null):Void
+    public function initialize(?name :String = null) :Void
     {           
         // Note the names.
         _name = name;
-        Preconditions.checkNotNull(_context, "Context null on init: " + this);
+        Preconditions.checkNotNull(_context, "Context null on init :" + this);
         _context.register(this);
     }
     
-    public function destroy():Void
+    public function destroy() :Void
     {
         _context.unregister(this);
         
@@ -108,7 +109,7 @@ class PBObject
     
     public function toString () :String
     {
-        return _name;
+        return StringUtil.objectToString(this, ["name"]);
     }
     
     function get_isLiveObject () :Bool

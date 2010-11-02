@@ -112,6 +112,9 @@ class PBUtil
     
     public static function entityToString (e :IEntity) :String
     {
+        if (e == null) {
+            return "null";
+        }
         var s = new StringBuf();
         s.add("[" + e.name + ":");
         for (c in e) {

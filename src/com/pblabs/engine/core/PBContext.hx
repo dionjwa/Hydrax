@@ -29,14 +29,13 @@ import com.pblabs.engine.injection.Injector;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ProcessManager;
 import com.pblabs.engine.util.PBUtil;
+import com.pblabs.util.Assert;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 import com.pblabs.util.ds.MultiMap;
 import com.pblabs.util.ds.multimaps.ArrayMultiMap;
-
-import com.pblabs.util.Assert;
 
 import hsl.haxe.Bond;
 
@@ -185,10 +184,10 @@ class PBContext
         Preconditions.checkNotNull(type, "Type class is null");
         
         if (type == IEntity) {
-            untyped type = Entity;
+            untyped type = Type.resolveClass("com.pblabs.engine.core.Entity");
         }
         var i = Type.createInstance(type, EMPTY_ARRAY);
-        
+        Assert.isNotNull(i, "allocated'd instance is null, type=" + type);
         //Components get injected by the entity
         if (!Std.is(i, IEntityComponent)) {
             injector.injectInto(i);

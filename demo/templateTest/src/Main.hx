@@ -1,6 +1,7 @@
 package;
 
 import com.pblabs.components.base.LocationComponent;
+import com.pblabs.engine.core.Entity;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
@@ -13,6 +14,8 @@ import com.pblabs.util.Assert;
 import com.pblabs.util.XMLUtil;
 using com.pblabs.components.scene.SceneComponentUtil;
 
+using Lambda;
+
 class Main #if flash extends flash.display.Sprite #end 
 {
     public function new() 
@@ -22,6 +25,23 @@ class Main #if flash extends flash.display.Sprite #end
         #end
         // testInsertion();
         testSerialization();
+        
+        
+        // var e = new Entity();
+        // trace(Reflect.hasField(e, "name"));
+        
+        // trace(Type.getInstanceFields(Type.getClass(e)).has("name"));
+        
+        // trace("Is dynamic=" + Std.is(e, Dynamic));
+        
+        // var anonymous :Dynamic = {};//Type.createInstance(Dynamic, []); 
+        // anonymous.test = "foo";
+        // trace(anonymous.test);
+        // trace("Is dynamic=" + Std.is(anonymous, Dynamic));
+        
+        
+        
+        
         // var rsrc = new ResourceManager();
         // rsrc.addResource(new XMLResource("from web url", Source.url("http://localhost/crossdomain.xml")));
         // rsrc.addResource(new XMLResource("from local file", Source.url("../rsrc/sample.xml")));
@@ -76,7 +96,7 @@ class Main #if flash extends flash.display.Sprite #end
     public function testSerialization () :Void
     {
         var game = new PBGame();//#if flash this #end );
-        var context = game.allocate(PBContext);
+        var context :PBContext = game.allocate(PBContext);
         game.pushContext(context);
         game.run();
         

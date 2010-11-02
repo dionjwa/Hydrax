@@ -4,4 +4,5 @@ This file outlines, in no particular order, notable differences between Hydrax a
 -A lightweight custom injection system is used instead of robolegs.  I'll endevour to incorporate a more robust injection system in the near future.
 -In the current version of PBE there is no  IPBObject interface.  This is required in haXe due to the circular dependency between PBObject and PBGroup.
 -Where possible, Signals are used instead of flash specific event dispatchers.  
+-Haxe cannot property deserialize dynamic objects.  Currently, Haxe cannot check if an object implements Dynamic (where you can add arbitrary fields) so cannot decide if assigning such a field is a valid operation.
 

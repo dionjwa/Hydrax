@@ -29,8 +29,6 @@ import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
-import flash.xml.XML;
-
 import hsl.haxe.Bond;
 
 using Lambda;
@@ -51,7 +49,7 @@ class Entity extends PBObject,
     public function new() 
     {
         super();
-        _deferring = true;
+        _deferring = false;
         _components = Maps.newHashMap(String);
         _deferredComponents = new Array();
     }
