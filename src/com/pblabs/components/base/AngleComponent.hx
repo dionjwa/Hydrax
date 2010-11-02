@@ -8,11 +8,10 @@
  ******************************************************************************/
 package com.pblabs.components.base;
 
+import com.pblabs.components.base.NotifyingValueComponent;
 import com.pblabs.engine.core.PropertyReference;
 
-import com.pblabs.components.base.NotifyingValueComponent;
-
-class AngleComponent extends NotifyingValueComponent 
+class AngleComponent extends NotifyingValueComponent
 {
     public static var P_ANGLE :PropertyReference<Float> = new PropertyReference("@AngleComponent.angle");
     

@@ -3,7 +3,7 @@
  * Copyright (C) 2010 Dion Amago
  * For more information see http://github.com/dionjwa/Hydrax
  *
- * Derived from Haxe std code.  The original license and copyright:
+ * Portions derived from Haxe std code.  Haxe std library license and copyright:
  *
  * Copyright (c) 2005, The haXe Project Contributors
  * All rights reserved.
@@ -27,7 +27,7 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
- */
+ ******************************************************************************/
 
 package com.pblabs.util.ds.maps;
 

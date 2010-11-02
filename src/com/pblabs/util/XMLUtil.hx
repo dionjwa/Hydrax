@@ -7,6 +7,9 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.util;
+
+import com.pblabs.engine.core.PropertyReference;
+
 class XMLUtil
 {
     /**
@@ -54,13 +57,35 @@ class XMLUtil
         return null;
     }
     
-    public static function createElementWithValue (name :String, value :String) :Xml
+    public static function createElementWithValue (name :String, value :Dynamic) :Xml
     {
         var xml = Xml.createElement(name);
-        xml.nodeValue = value;
+        xml.nodeValue = Std.string(value);
         return xml;
     }
     
+    public static function createChild (xml :Xml, name :String, value :Dynamic) :Xml
+    {
+        var child = createElementWithValue(name, value);
+        xml.addChild(child);
+        return child;
+    }
     
+    public static function parseFloat (xml :Xml, childName :String) :Float
+    {
+        if (XMLUtil.child(xml, childName) != null) {
+            return Std.parseFloat(XMLUtil.child(xml, childName).nodeValue);
+        }
+        return 0;
+    }
+    
+    public static function parsePropertyReference <T>(xml :Xml, childName :String) :PropertyReference<T>
+    {
+        if (XMLUtil.child(xml, childName) != null) {
+            return new PropertyReference(XMLUtil.child(xml, childName).nodeValue);
+        }
+        return null;
+    }
     
 }
+

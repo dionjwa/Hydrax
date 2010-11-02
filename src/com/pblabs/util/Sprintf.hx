@@ -36,7 +36,7 @@ using com.pblabs.util.StringUtil;
 using com.pblabs.util.NumberUtil;
 
 class Sprintf
- {
+{
 
 /*  sprintf(3) implementation in ActionScript 3.0.
  *
@@ -79,7 +79,7 @@ public function new() { }
  *
  *  Report bugs to manish.jethani@gmail.com
  */
-public function sprintf(format:String, args:Array<Dynamic>):String
+public static function format (format:String, args:Array<Dynamic>):String
 {
 	var result:String = "";
 

@@ -12,16 +12,11 @@
  ******************************************************************************/
 package com.pblabs.engine.debug;
 
-//TODO: this class is not yet converted from AS3, the sprintf function in particular.
-//If the -D profiler argument is not set, this class contains
-//only empty methods.  Mostly because Flash throws an error
-//with one of the polygonal classes.  No time to figure out which one.
 #if (profiler && flash)
 import com.pblabs.engine.debug.Log;
-
-import com.pblabs.util.MathUtil;
 import com.pblabs.util.Assert;
-
+import com.pblabs.util.MathUtil;
+import com.pblabs.util.Sprintf;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 using com.pblabs.util.NumberUtil;

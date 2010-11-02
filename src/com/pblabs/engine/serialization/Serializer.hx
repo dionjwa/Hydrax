@@ -95,7 +95,8 @@ class Serializer
             _currentEntity.serialize(xml);
         }
         else {
-            throw "Currently all serializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object);
+            // throw "Currently all serializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object);
+            Log.warn("Currently all serializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object));
             // // Normal case - determine type and call the right Serializer.
             // var typeName = ReflectUtil.getClassName(object);
             // if (!_serializers.exists(typeName)) {
@@ -136,8 +137,9 @@ class Serializer
             resolveReferences();
             return cast(object, IEntity);
         }
-        
-        throw "Currently all deserializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object);
+        Log.warn("Currently all deserializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object));
+        return object;
+        // throw "Currently all deserializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object);
         // // Normal case - determine type and call the right Serializer.
         // var typeName = ReflectUtil.getClassName(object);
         // if (!_deserializers.exists(typeName)) {

@@ -14,7 +14,7 @@ import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.geom.Vector2;
-import com.pblabs.util.XMLUtil;
+using com.pblabs.util.XMLUtil;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
@@ -99,18 +99,14 @@ class LocationComponent extends EntityComponent,
     
     public function serialize (xml :XML) :Void
     {
-        xml.addChild(XMLUtil.createElementWithValue("x", _vec.x + ""));
-        xml.addChild(XMLUtil.createElementWithValue("y", _vec.y + ""));
+        xml.createChild("x", _vec.x);
+        xml.createChild("y", _vec.y);
     }
     
     public function deserialize (xml :XML, context :IPBContext) :Dynamic
     {
-        if (XMLUtil.child(xml, "x") != null) {
-            _vec.x = Std.parseFloat(XMLUtil.child(xml, "x").nodeValue);
-        }
-        if (XMLUtil.child(xml, "y") != null) {
-            _vec.y = Std.parseFloat(XMLUtil.child(xml, "y").nodeValue);
-        }
+        _vec.x = xml.parseFloat("x");
+        _vec.y = xml.parseFloat("y");
     }
     
     override function onRemove () :Void

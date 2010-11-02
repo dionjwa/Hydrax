@@ -9,15 +9,19 @@
 package com.pblabs.components.base;
 
 import com.pblabs.engine.core.EntityComponent;
+import com.pblabs.engine.core.IPBContext;
+import com.pblabs.engine.serialization.ISerializable;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
-class NotifyingValueComponent extends EntityComponent 
+using com.pblabs.util.XMLUtil;
+
+class NotifyingValueComponent extends EntityComponent,
+    implements ISerializable
 {
     
     public var value (get_value, set_value) : Float;
-    
     public var signaller (default, null) :Signaler<Float>;
     
     public function new () 
@@ -25,6 +29,16 @@ class NotifyingValueComponent extends EntityComponent
         super();
         _value = 0;
         signaller = new DirectSignaler(this);
+    }
+    
+    public function serialize (xml :XML) :Void
+    {
+        xml.createChild("value", _value);
+    }
+    
+    public function deserialize (xml :XML, context :IPBContext) :Dynamic
+    {
+        _value = xml.parseFloat("value");
     }
     
     function get_value () :Float
@@ -55,4 +69,5 @@ class NotifyingValueComponent extends EntityComponent
 
     var _value :Float;
 }
+
 

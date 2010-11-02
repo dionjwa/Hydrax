@@ -11,13 +11,17 @@ package com.pblabs.components.manager;
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
+import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.debug.Log;
-import com.pblabs.util.Preconditions;
+import com.pblabs.engine.serialization.ISerializable;
+import com.pblabs.engine.util.PBUtil;
 import com.pblabs.util.Assert;
-
+import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.StringUtil;
+
+using com.pblabs.util.XMLUtil;
 
 using Lambda;
 
@@ -35,8 +39,11 @@ using com.pblabs.util.ArrayUtil;
     will destory the child entities as well.
     
     The parent then overrides childAdded to perform specific handling.
+    
+    Although this component is typed, P and C must be EntityComponents.
 */
-class NodeComponent<P, C> extends EntityComponent
+class NodeComponent<P, C> extends EntityComponent,
+    implements ISerializable
 {
     public var parentProperty :PropertyReference<P>;
     public var children (default, null) :Array<C>;
@@ -99,6 +106,16 @@ class NodeComponent<P, C> extends EntityComponent
     {
         super();
         parent = null;
+    }
+    
+    public function serialize (xml :XML) :Void
+    {
+        xml.createChild("parent", parent != null ? PBUtil.entityProp(cast(parent)) :parentProperty);
+    }
+    
+    public function deserialize (xml :XML, context :IPBContext) :Dynamic
+    {
+        parentProperty = cast(xml.parsePropertyReference("parent"));
     }
     
     public function addChild (c :C) :Void

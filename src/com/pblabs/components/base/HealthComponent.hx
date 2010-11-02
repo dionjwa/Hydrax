@@ -10,14 +10,17 @@ package com.pblabs.components.base;
 
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntity;
+import com.pblabs.engine.core.IPBContext;
+import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.time.IProcessManager;
-
 import com.pblabs.util.MathUtil;
+import com.pblabs.util.XMLUtil;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
-class HealthComponent extends EntityComponent 
+class HealthComponent extends EntityComponent,
+    implements ISerializable
 {
     public var amountOfDamage(get_amountOfDamage, null) : Float;
     
@@ -48,6 +51,22 @@ class HealthComponent extends EntityComponent
         destroyOnDeath = false;
         _health = healthMax = 100;
         _cachedHealthEvent = new HealthEvent(0, 0, null);
+    }
+    
+    public function serialize (xml :XML) :Void
+    {
+        xml.addChild(XMLUtil.createElementWithValue("health", _health + ""));
+        xml.addChild(XMLUtil.createElementWithValue("healthMax", healthMax + ""));
+    }
+    
+    public function deserialize (xml :XML, context :IPBContext) :Dynamic
+    {
+        if (XMLUtil.child(xml, "health") != null) {
+            _health = Std.parseFloat(XMLUtil.child(xml, "health").nodeValue);
+        }
+        if (XMLUtil.child(xml, "healthMax") != null) {
+            healthMax = Std.parseFloat(XMLUtil.child(xml, "healthMax").nodeValue);
+        }
     }
     
     public function toString () :String
