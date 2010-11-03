@@ -97,17 +97,10 @@ class ComponentInjector extends Injector
             // return cast(signalProp, Signaler<Dynamic>).bind(Reflect.field(obj, listenerMethodName));
         }
         
-        #if flash
-        return signaller.bind(Reflect.field(obj, listenerMethodName));
-        #elseif js
-        var listener = Reflect.field(obj, listenerMethodName);
-        var f = function (arg :Dynamic) :Void {
-            listener(arg);
-        }
-        return signaller.bind(f);
+        #if js
+        return signaller.bind(Reflect.field(obj, listenerMethodName), obj);
         #else
-        Log.error("Platform untested with injection bound signals");
-        return null;
+        return signaller.bind(Reflect.field(obj, listenerMethodName));
         #end
     }
     

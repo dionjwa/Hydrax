@@ -69,9 +69,15 @@ class DirectSignaler<Datatype> implements Signaler<Datatype> {
 		}
 		bubblingTargets.add(value);
 	}
+	#if js
+	public function bind(listener:Datatype -> Dynamic, ?context :Dynamic):Bond {
+		return sentinel.add(new RegularBond(listener, context));
+	}
+	#else
 	public function bind(listener:Datatype -> Dynamic):Bond {
 		return sentinel.add(new RegularBond(listener));
 	}
+	#end
 	public function bindAdvanced(listener:Signal<Datatype> -> Dynamic):Bond {
 		return sentinel.add(new AdvancedBond<Datatype>(listener));
 	}
@@ -290,16 +296,34 @@ private class SentinelBond<Datatype> extends LinkedBond<Datatype> {
  */
 private class RegularBond<Datatype> extends LinkedBond<Datatype> {
 	private var listener:Datatype -> Void;
+	#if js
+	private var context :Dynamic;
+	
+	public function new(listener:Datatype -> Void, ?context :Dynamic):Void {
+		super();
+		this.context = context;
+		this.listener = listener;
+	}
+	#else
 	public function new(listener:Datatype -> Void):Void {
 		super();
 		this.listener = listener;
 	}
+	#end
 	public override function callListener(data:Datatype, currentTarget:Subject, origin:Subject, propagationStatus:Int):Int {
 		if (false == halted) {
 		    // #if js
 		    // Reflect.callMethod(origin, 
 		    // #else
+		    #if js
+		    if (context != null) {
+		        untyped listener.call(context, data);
+		    } else {
+		        listener(data);
+		    }
+		    #else
             listener(data);
+		    #end
 		    // #end
 		}
 		return propagationStatus;
@@ -314,6 +338,13 @@ private class RegularBond<Datatype> extends LinkedBond<Datatype> {
 		return Std.is(value, RegularBond) && Reflect.compareMethods((untyped value).listener, listener);
 		#end
 	}
+	
+	#if js
+	public override function destroy():Void {
+	    super.destroy();
+	    context = null;
+	}
+	#end
 }
 /**
  * A niladic bond is a bond that is created in result of a call to the bindVoid method.
@@ -379,7 +410,8 @@ private class AdvancedBond<Datatype> extends LinkedBond<Datatype> {
 		#end
 	}
 }
-class PropagationStatus {
+class PropagationStatus 
+{
 	public static inline var IMMEDIATELY_STOPPED:Int = 1;
 	public static inline var STOPPED:Int = 2;
 	public static inline var UNDISTURBED:Int = 3;

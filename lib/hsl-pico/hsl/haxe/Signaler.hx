@@ -93,7 +93,12 @@ interface Signaler<Datatype> {
 	 * system, though the bindAdvanced method of this library has more similarities to addEventListener.
 	 * </li></ul>
 	 */
+	 
+	#if js
+	public function bind(listener:Datatype -> Dynamic, ?context :Dynamic):Bond;
+	#else
 	public function bind(listener:Datatype -> Dynamic):Bond;
+	#end
 	/**
 	 * Binds this signaler to a listener function that accepts a signal, and returns nothing. Returns the bond between the
 	 * signaler. The bond can be removed by calling either the unbindAdvanced method of the signaler, or the destroy method of
