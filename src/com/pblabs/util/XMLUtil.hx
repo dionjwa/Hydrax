@@ -9,6 +9,9 @@
 package com.pblabs.util;
 
 import com.pblabs.engine.core.PropertyReference;
+import com.pblabs.util.Enumerable;
+
+using StringTools;
 
 class XMLUtil
 {
@@ -64,9 +67,12 @@ class XMLUtil
         return xml;
     }
     
-    public static function createChild (xml :Xml, name :String, value :Dynamic) :Xml
+    public static function createChild (xml :Xml, name :String, ?value :Dynamic) :Xml
     {
-        var child = createElementWithValue(name, value);
+        var child = Xml.createElement(name);
+        if (value != null) {
+            child.nodeValue = Std.string(value);
+        }
         xml.addChild(child);
         return child;
     }
@@ -87,5 +93,19 @@ class XMLUtil
         return null;
     }
     
+    public static function parseArray <T>(xml :Xml, childName :String, parseElement :String->T) :Array<T>
+    {
+        var arr :Array<T> = [];
+        if (XMLUtil.child(xml, childName) != null) {
+            var s = XMLUtil.child(xml, childName).nodeValue;
+            for (sval in s.split(",")) {
+                var token = sval.trim();
+                arr.push(parseElement(token));
+            }
+        }
+        return arr;
+    }
+    
 }
+
 

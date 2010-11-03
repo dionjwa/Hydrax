@@ -30,6 +30,19 @@ import com.pblabs.util.ReflectUtil;
 class EntityComponent 
     implements IEntityComponent, implements haxe.rtti.Infos 
 {
+   @inject
+   @editorData({ignore :"true"})
+   public var context (get_context, set_context) :IPBContext;
+   
+   @editorData({ignore :"true"})
+   public var owner (get_owner, set_owner) :IEntity;
+   
+   @editorData({ignore :"true"})
+   public var isRegistered (get_isRegistered, never) :Bool;
+   
+   @editorData({ignore :"true"})
+   public var name (get_name, set_name) :String;
+   
    public function new() 
    { 
        _context =null;
@@ -39,15 +52,9 @@ class EntityComponent
        _name = null;
    }
    
-   @inject
-   public var context (get_context, set_context) :IPBContext;
-   public var owner (get_owner, set_owner) :IEntity;
-   public var isRegistered (get_isRegistered, never) :Bool;
-   public var name (get_name, set_name) :String;
-   
    function get_context():IPBContext
    {
-       Preconditions.checkNotNull(_context, ReflectUtil.getClassName(this) + " does not have context set! Did you use context.allocate() to create it?");
+       // Preconditions.checkNotNull(_context, ReflectUtil.getClassName(this) + " does not have context set! Did you use context.allocate() to create it?");
        return _context;
    }
    
@@ -56,29 +63,21 @@ class EntityComponent
        Preconditions.checkArgument(_context == null || _context == value, ReflectUtil.getClassName(this) + " already registered in another context.");
        _context = value;
        return value;
-      }
+   }
 
-   /**
-   * @inheritDoc
-   */
-  // [EditorData(ignore="true")]
-  function get_owner():IEntity
-  {
-     return _owner;
-  }
+   function get_owner():IEntity
+   {
+      return _owner;
+   }
   
-  function set_owner(value:IEntity):IEntity
-  {
+   function set_owner(value:IEntity):IEntity
+   {
       Preconditions.checkNotNull(value, "Cannot set an Entity owner to null.  This can only happen on unRegister");
       Preconditions.checkArgument(_owner == null, "Cannot change the owner");
       _owner = value;
       return value;
    }
   
-  /**
-   * @inheritDoc
-   */
-  // [EditorData(ignore="true")]
   function get_name():String
   {
      return _name;
@@ -91,18 +90,11 @@ class EntityComponent
       return name;
   }
   
-  /**
-   * @inheritDoc
-   */
-  // [EditorData(ignore="true")]
   function get_isRegistered():Bool
   {
      return _isRegistered;
   }
   
-  /**
-   * @inheritDoc
-   */
   public function register(owner :IEntity, ?name:String):Void
   {
       Preconditions.checkArgument(!isRegistered, "Trying to register an already-registered component!");
@@ -115,9 +107,6 @@ class EntityComponent
      Preconditions.checkArgument(_sanityCheck, "Forgot to call super.onAdd(); in " + this + "!");
   }
   
-  /**
-   * @inheritDoc
-   */
   public function unregister():Void
   {
       Preconditions.checkArgument(isRegistered, "Trying to unregister an unregistered component!");
@@ -130,9 +119,6 @@ class EntityComponent
      _context = null;
   }
   
-  /**
-   * @inheritDoc
-   */
   public function reset():Void
   {
       _sanityCheck = false;
@@ -174,10 +160,19 @@ class EntityComponent
       _sanityCheck = true;
   }
   
+  @editorData({ignore :"true"})
   var _isRegistered :Bool;
+  
+  @editorData({ignore :"true"})
   var _owner :IEntity;
+  
+  @editorData({ignore :"true"})
   var _name :String;
+  
+  @editorData({ignore :"true"})
   var _context :IPBContext;
+  
+  @editorData({ignore :"true"})
    var _sanityCheck:Bool;
 }
 

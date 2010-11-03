@@ -14,7 +14,8 @@ import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.util.MathUtil;
-import com.pblabs.util.XMLUtil;
+
+using com.pblabs.util.XMLUtil;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
@@ -55,18 +56,14 @@ class HealthComponent extends EntityComponent,
     
     public function serialize (xml :XML) :Void
     {
-        xml.addChild(XMLUtil.createElementWithValue("health", _health + ""));
-        xml.addChild(XMLUtil.createElementWithValue("healthMax", healthMax + ""));
+        xml.createChild("health", _health);
+        xml.createChild("healthMax", healthMax);
     }
     
     public function deserialize (xml :XML, context :IPBContext) :Dynamic
     {
-        if (XMLUtil.child(xml, "health") != null) {
-            _health = Std.parseFloat(XMLUtil.child(xml, "health").nodeValue);
-        }
-        if (XMLUtil.child(xml, "healthMax") != null) {
-            healthMax = Std.parseFloat(XMLUtil.child(xml, "healthMax").nodeValue);
-        }
+        _health = xml.parseFloat("health");
+        healthMax = xml.parseFloat("healthMax");
     }
     
     public function toString () :String

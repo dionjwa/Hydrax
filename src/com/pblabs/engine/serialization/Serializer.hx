@@ -19,6 +19,8 @@ import com.pblabs.engine.debug.Log;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.serialization.TemplateManager;
 import com.pblabs.engine.serialization.TypeUtility;
+import com.pblabs.util.Enumerable;
+import com.pblabs.util.MetaUtil;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.StringUtil;
@@ -39,8 +41,8 @@ using com.pblabs.util.XMLUtil;
  * @see ISerializable
  */
 class Serializer
- {
-    
+{
+        
     public function new()
     {
         _deserializers = Maps.newHashMap(String);
@@ -50,19 +52,22 @@ class Serializer
         
         // initialize our default Serializers. Note "special" cases get a double
         // colon so there can be no overlap w/ any real type.
-        _deserializers.set("::DefaultSimple", deserializeSimple);
+        // _deserializers.set("::DefaultSimple", deserializeSimple);
         _deserializers.set("::DefaultComplex", deserializeComplex);
         _deserializers.set("Bool", deserializeBool);
         _deserializers.set("Array", deserializeDictionary);
         // _deserializers.set("flash.utils ::Dictionary", deserializeDictionary);
         _deserializers.set("Class", deserializeClass);
+        _deserializers.set("com.pblabs.util.Enumerable", deserializeEnumerable);
         
         _serializers.set("::DefaultSimple", serializeSimple);
         _serializers.set("::DefaultComplex", serializeComplex);
         _serializers.set("Bool", serializeBool);
-        _serializers.set("Array", serializeDictionary);
-        _serializers.set("flash.utils ::Dictionary", serializeDictionary);
-        
+        _serializers.set("Int", serializeInt);
+        _serializers.set("Float", serializeFloat);
+        // _serializers.set("Array", serializeDictionary);
+        // _serializers.set("flash.utils ::Dictionary", serializeDictionary);
+        _serializers.set("com.pblabs.util.Enumerable", serializeEnumerable);
         
         // // Do a quick sanity check to make sure we are getting metadata.
         // var tmd = new TestForMetadata();
@@ -96,12 +101,15 @@ class Serializer
         }
         else {
             // throw "Currently all serializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object);
-            Log.warn("Currently all serializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object));
+            // Log.warn("Currently all serializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object));
             // // Normal case - determine type and call the right Serializer.
-            // var typeName = ReflectUtil.getClassName(object);
-            // if (!_serializers.exists(typeName)) {
-            //     typeName = isSimpleType(object) ? "::DefaultSimple" :"::DefaultComplex";
-            // }
+            var typeName = ReflectUtil.getClassName(object);
+            if (_serializers.exists(typeName)) {
+                typeName = isSimpleType(object) ? "::DefaultSimple" :"::DefaultComplex";
+            } else {
+                Log.error("No serializer for " + typeName);
+            }
+            // serializeComplex(name :String, object :Dynamic, xml :XML) :Void
             
             // _serializers.get(typeName)(object, xml);
         }
@@ -209,21 +217,22 @@ class Serializer
         return false;
     }
     
-    function deserializeSimple(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
-    {
-        // If the tag is empty and we're not a string where """ is a valid value,
-        // just return that value.
-        if (xml.toString() == "" && !(Std.is(object, String)))
-            return object;
+    // function deserializeSimple(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
+    // {
+    //     // If the tag is empty and we're not a string where """ is a valid value,
+    //     // just return that value.
+    //     if (xml.toString() == "" && !(Std.is(object, String)))
+    //         return object;
         
-        return xml.toString();
-    }
+    //     return xml.toString();
+    // }
     
-    function serializeSimple(object :Dynamic, xml :XML) :Void
+    function serializeSimple(value :Dynamic, xml :XML) :Void
     {
-        throw "Not implemented";
-        //I don't know how this is meant to workd
-        // xml.addChild(Std.string(object));
+        // var xml = Xml.createElement(name);
+        xml.nodeValue = Std.string(value);
+        // xml.set("type", typeHint);
+        // return xml;
     }
     
     function deserializeComplex(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
@@ -308,6 +317,18 @@ class Serializer
         return object;
     }
     
+    function deserializeEnumerable (context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
+    {
+        return Enumerable.serializedValueOf(xml.get("type"), xml.get("value"));
+    }
+    
+    function serializeEnumerable (object :Dynamic, xml :XML) :Void
+    {
+        var e :Enumerable<Dynamic> = object;
+        // xml.set("type", ReflectUtil.getClassName(e));
+        xml.set("value", e.name);
+    }
+    
     /**
      * Given an XML element, walk up its parent references and show the path
      * in the document, including any name attributes.
@@ -345,125 +366,124 @@ class Serializer
         return path;
     }
     
-    function serializeComplex(object :Dynamic, xml :XML) :Void
+    public function serializeComplex(object :Dynamic, xml :XML) :Void
     {
         if (object == null) { 
             return;
         }
         
-        for (fieldName in Type.getClassFields(ReflectUtil.getClass(object))) {
-            //Ignore internal fields and property getter/setters
-            if (fieldName.startsWith("_") || fieldName.startsWith("get_") || fieldName.startsWith("set_")) {
-                continue;
-            }
-            if (Reflect.isFunction(Reflect.field(object, fieldName))) {
-                continue;
-            }
-            // switch (
+        if (Std.is(object, Enumerable)) {
+            serializeEnumerable(object, xml);
+            return;
         }
         
-        // var classDescription :XML = TypeUtility.getTypeDescription(object);
-        // for (property in classDescription.child("accessor")) {
-        //     if(property.get("access") == "readwrite") {
-        //         // Get property info
-        //         var propertyName :String = property.get("name");
+        var cls = ReflectUtil.getClass(object);
+        trace(cls);
+        
+        for (f in Type.getInstanceFields(Type.getClass(object))) {
+            if (f.startsWith("_") || isIgnored(cls, f)) {
+                continue;
+            }
+            var typeHint :String = null;
+            // trace("f=" + f);
+            // trace("   Type.typeof(Reflect.field(object, f))=" + Type.typeof(Reflect.field(object, f)));
+            var valueKey :String = switch (Type.typeof(Reflect.field(object, f))) {
+                case TUnknown: null;
+                //TODO: Assume it's a class or interface
+                case TObject: null;
+                case TNull: "unknown";
+                case TInt: "Int";
+                case TFunction: null;
+                case TFloat: "Float";
+                case TEnum(e): null;
+                case TClass(c): typeHint = Type.getClassName(c); typeHint == "String" ? "::DefaultSimple" : "::DefaultComplex";
+                case TBool: "Bool";
+            }
+            
+            if (valueKey == "unknown") {
+                var val = ReflectUtil.field(object, f);
+                typeHint = ReflectUtil.getClassName(val);
+                if (val == null) {
+                    valueKey = null;
+                } else { 
+                    valueKey = typeHint == "String" ? "::DefaultSimple" : "::DefaultComplex";
+                }
                 
-        //         // Only serialize properties, that aren't null
-        //         if(object[propertyName] != null) {
-        //             var propertyXML :XML = serializeProperty(object, propertyName);
-        //             if(propertyXML != null)
-        //             {
-        //                 xml.addChild(propertyXML);
-        //             }
-        //         }
-        //     }
-        // }
-        
-        // for (field in classDescription.child("variable"))
-        // {
-        //     var fieldName :String = field.get("name"); 
-            
-        //     // Only serialize variables, that aren't null
-        //     if(object[fieldName] != null)
-        //     {
-        //         var fieldXML :XML = serializeProperty(object, fieldName);
-        //         if(fieldXML != null)
-        //         {
-        //             xml.addChild(fieldXML);
-        //         }                
-        //     }
-        // }
+                // trace(" TNull, checking field=" + val);
+            }
+            // trace("   valueKey=" + valueKey);
+            // trace("   ReflectUtil.field(object, f)=" + ReflectUtil.field(object, f));
+            if (valueKey != null && ReflectUtil.field(object, f) != null) {
+                #if debug
+                com.pblabs.util.Assert.isNotNull(_serializers.get(valueKey), "No serializer for the key " + valueKey);
+                #end
+                var childXml = Xml.createElement(f);
+                //If we can't work out the type, we default to a String
+                if (typeHint != null && typeHint != "String") {
+                    childXml.set("type", typeHint);
+                }
+                 _serializers.get(valueKey)(ReflectUtil.field(object, f), childXml);
+                xml.addChild(childXml);
+            }
+        }
     }
     
-    function serializeProperty (object :Dynamic, propertyName :String) :XML
+    public static function isIgnored (cls :Class<Dynamic>, fieldName :String) :Bool
     {
-        // var propertyXML :XML = Xml.parse("<{propertyName}/>");
-        var propertyXML = Xml.parse("<" + propertyName + "/>");
-        // var data :XML = TypeUtility.getEditorData(object, propertyName);
+        var meta = haxe.rtti.Meta.getFields(cls);
+        if (meta != null && Reflect.hasField(meta, fieldName)) {
+            var editorData = Reflect.field(Reflect.field(meta, fieldName), "editorData");
+            if (editorData != null) {
+                for (val in cast(editorData, Array<Dynamic>)) {
+                    if (Reflect.hasField(val, "ignore") && Reflect.field(val, "ignore")) {
+                        return true;
+                    }
+                }
+            }
+        }
         
-        // //TODO :this is all flash specific
-        // // Deal with "dynamic" typehints.
-        // var typeHint :String = TypeUtility.getTypeHint(object, propertyName);
-        // if(typeHint && typeHint == "dynamic")
-        // {
-        //     if (!isNaN(object[propertyName]))
-        //     {
-        //         // Is a number...
-        //         propertyXML.get("type") = getQualifiedClassName(1.0); 
-        //     }
-        //     else
-        //     {
-        //         propertyXML.get("type") = getQualifiedClassName(object[propertyName]); 
-        //     }
-        // }
-        
-        
-        // //Note (giggsy) :I don't know why, but this code suddenly didn't compile anymore with FlashDevelop,
-        // //so I did the rewrite below :/
-        // //var ignore :XMLList = data ? data.arg.(@key == "ignore") :null;
-        // //if (ignore && ignore.get("value").toString() == "true") 
-        // //   return null;
-        
-        // // If this field is set to ignore, then ignore it
-        // if(data != null) {
-        //     //TODO :translate this
-        //     throw "Not implemented";
-        //     // var ignore :XMLList = data.arg.(@key == "ignore");
-        //     // if(ignore && ignore.get("value").toString() == "true") 
-        //     //     return null;
-        // }
-        
-        
-        // // Either make a reference or try to serialize
-        // if (!setChildReference(object, ReflectUtil.field(object, propertyName), propertyXML))
-        // {
-        //     // OK, we do need to serialize
-        //     serialize(ReflectUtil.field(object, propertyName), propertyXML);
-            
-        //     // If the value is the same as the defaultValue, ignore it
-        //     // TODO :Handle simple arrays or structures like Points
-        //     var defaultValue :XMLList = data ? data.arg.(@key == "defaultValue") :null;
-        //     if (defaultValue && object[propertyName].toString() == defaultValue.get("value").toString()) 
-        //         return null;
-        // }
-        
-        return propertyXML;
+        var supercls = Type.getSuperClass(cls);
+        if (supercls != null) {
+            return isIgnored(supercls, fieldName);
+        } else {
+            return false;
+        }
     }
     
-    function deserializeBool(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
+    public static function serializeProperty (object :Dynamic, xml :XML) :Void
+    {
+        xml.nodeValue = Std.string(object);
+    }
+    
+    public static function deserializeBool(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
     {
         return (xml.toString() == "true");
     }
     
-    function serializeBool(object :Dynamic, xml :XML) :Void
+    public static function serializeBool(val :Dynamic, xml :XML) :Void
     {
-        if (object)
-            xml.addChild(Xml.createPCData("true"));
-        else
-            xml.addChild(Xml.createPCData("false"));
+        xml.nodeValue = val ? "true" : "false";
     }
     
-    function deserializeDictionary(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
+    public static function deserializeInt(context :IPBContext, object :Dynamic, xml :XML) :Dynamic
+    {
+    }
+    
+    public static function serializeInt(val :Dynamic, xml :XML) :Void
+    {
+        xml.nodeValue = Std.string(val);
+    }
+    
+    public static function deserializeFloat(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
+    {
+    }
+    
+    public static function serializeFloat(val :Dynamic, xml :XML) :Void
+    {
+        xml.nodeValue = Std.string(val);
+    }
+    
+    public static function deserializeDictionary(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
     {
         throw "Not implemented";
         // for each (var childXML :XML in xml.*)
@@ -774,7 +794,7 @@ private class ReferenceNote
     public function resolve() :Bool
     {
         // Look up by name.
-        if (!StringUtil.isBlank(nameReference)) {
+        if (!nameReference.isBlank()) {
             var namedObject :IEntity = context.lookupEntity(nameReference);
             if (namedObject == null)
                 return false;
@@ -785,13 +805,13 @@ private class ReferenceNote
         }
         
         // Look up a component on a named object by name (first) or type (second).
-        if (!StringUtil.isBlank(componentReference)) {
+        if (!componentReference.isBlank()) {
             var componentObject :IEntity = context.lookupEntity(componentReference);
             if (null == componentObject)
                 return false;
             
             var component :IEntityComponent = null;
-            if (!StringUtil.isBlank(componentName)) {
+            if (!componentName.isBlank()) {
                 component = componentObject.lookupComponentByName(componentName);
                 if (null == component)
                     return false;
@@ -809,7 +829,7 @@ private class ReferenceNote
         }
         
         // Component reference on the entity being deserialized when the reference was created.
-        if (!StringUtil.isBlank(componentName))
+        if (!componentName.isBlank())
         {
             var localComponent :IEntityComponent = currentEntity.lookupComponentByName(componentName);
             if (null == localComponent)
@@ -821,7 +841,7 @@ private class ReferenceNote
         }
         
         // Or instantiate a new entity.
-        if (!StringUtil.isBlank(objectReference)) {
+        if (!objectReference.isBlank()) {
             ReflectUtil.setField(owner, fieldName, context.getManager(TemplateManager).instantiateEntity(objectReference, context));
             
             // owner[fieldName] = context.getManager(TemplateManager).instantiateEntity(objectReference);

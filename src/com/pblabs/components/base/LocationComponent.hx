@@ -23,8 +23,10 @@ class LocationComponent extends EntityComponent,
     implements ISerializable
 {
     public var point(getPoint, setPoint) : Vector2;
+    
     public var x (get_x, set_x) : Float;
     public var y (get_y, set_y) : Float;
+    
     public var signaller (default, null) :Signaler<Vector2>;
     
     public static var P_X :PropertyReference<Float> = new PropertyReference("@LocationComponent.x");
@@ -130,7 +132,10 @@ class LocationComponent extends EntityComponent,
         signaller.dispatch(_vecForSignalling);
     }
 
+    @editorData({ignore :"true"})
     var _vec :Vector2;
+    
+    @editorData({ignore :"true"})
     var _vecForSignalling :Vector2;
 }
 

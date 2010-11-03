@@ -19,7 +19,7 @@
 
 -swf9 build/demo.swf
 -swf-version 10
--swf-header 1400:600:30:FFFFFF
+-swf-header 1400:1200:30:FFFFFF
 -D network-sandbox
 
 

@@ -150,9 +150,9 @@ class ReflectUtil
     
     public static function field (obj :Dynamic, field :String) :Dynamic
     {
-        // if (Lambda.has(Type.getInstanceFields(Type.getClass(obj)), "get_" + field)) {
+        if (Lambda.has(Type.getInstanceFields(Type.getClass(obj)), "get_" + field)) {
         //Probably faster
-        if (Reflect.field(obj, "get_" + field) != null) {
+        // if (Reflect.field(obj, "get_" + field) != null) {
             return Reflect.callMethod(obj, Reflect.field(obj, "get_" + field), EMPTY_ARRAY);
         } else {
             return Reflect.field(obj, field);
