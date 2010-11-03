@@ -86,7 +86,6 @@ public static function format (format:String, args:Array<Dynamic>):String
 	var length:Int = format.length;
 	var i :Int = 0;
 	while (i < length) {
-	// for (i in 0...length)
 		var c:String = format.charAt(i);
 
 		if (c == "%")
@@ -155,10 +154,7 @@ public static function format (format:String, args:Array<Dynamic>):String
 				c = format.charAt(++i);
 			}
 
-			switch (c)
-			{
-			case "d":
-			case "i":
+			if (c == "d" || c == "i") {
 				next = args.shift();
 				str = "" + Math.abs(Std.parseInt(next));
 
@@ -181,7 +177,6 @@ public static function format (format:String, args:Array<Dynamic>):String
 				}
 
 				result += str;
-				break;
 
 			// case "o":
 			// 	next = args.shift();
@@ -205,8 +200,7 @@ public static function format (format:String, args:Array<Dynamic>):String
 
 			// 	result += str;
 			// 	break;
-
-			case "u":
+			} else if (c == "u") {
 				next = args.shift();
 				str = next;//uint(next).toString(10);
 
@@ -224,9 +218,7 @@ public static function format (format:String, args:Array<Dynamic>):String
 				}
 
 				result += str;
-				break;
-
-			case "X":
+           } else if (c == "X") {
 				var capitalise:Bool = true;
 			// case "x":
 			// 	next = args.shift();
@@ -258,12 +250,10 @@ public static function format (format:String, args:Array<Dynamic>):String
 
 			// 	result += str;
 			// 	break;
-
-			case "f":
-			case "F":
+			} else if (c == "f" || c == "F") {
 				next = args.shift();
-				str = "" + next;//Math.abs(cast(next, Float)).toFixed(Std.int(precision) != "" ?  Std.int(precision) : 6);
-
+				str = "" + Math.abs(cast(next, Float)).toFixed(precision != "" ?  Std.parseInt(precision) : 6);
+				
 				if (Std.parseInt(next) < 0)
 					str = "-" + str;
 				else if (flagSign && Std.int(next) >= 0)
@@ -283,9 +273,7 @@ public static function format (format:String, args:Array<Dynamic>):String
 				}
 
 				result += str;
-				break;
-
-			case "c":
+			} else if (c == "c") {
 				next = args.shift();
 				str = String.fromCharCode(Std.parseInt(next));
 
@@ -298,9 +286,7 @@ public static function format (format:String, args:Array<Dynamic>):String
 				}
 
 				result += str;
-				break;
-
-			case "s":
+            } else if (c == "s") {
 				next = args.shift();
 				str = Std.string(next);
 
@@ -316,9 +302,7 @@ public static function format (format:String, args:Array<Dynamic>):String
 				}
 
 				result += str;
-				break;
-
-			case "%":
+			} else if (c == "%") {
 				result += "%";
 			}
 		}

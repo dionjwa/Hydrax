@@ -13,7 +13,6 @@
 package com.pblabs.engine.time; 
 
 import com.pblabs.engine.debug.Log;
-import com.pblabs.engine.debug.Profiler;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.IQueuedObject;
@@ -33,7 +32,6 @@ import com.pblabs.util.MathUtil;
 
 import com.pblabs.util.ds.MultiMap;
 using com.pblabs.util.NumberUtil;
-// using com.pblabs.util.ReflectUtil;
 
 /** It provides mechanisms for performing actions every frame, every tick, or
  * at a specific time in the future.
@@ -560,7 +558,9 @@ class ProcessManager implements IProcessManager
             // processScheduledObjects();
             
             // Do the onTick callbacks, noting time in profiler appropriately.
-            Profiler.enter("Tick");
+            #if profiler
+            com.pblabs.engine.debug.Profiler.enter("Tick");
+            #end
             
             _duringAdvance = true;
             for(j in 0...tickedObjects.length)
@@ -569,13 +569,19 @@ class ProcessManager implements IProcessManager
                 if(object == null)
                     continue;
                 
-                Profiler.enter(object.profilerKey);
+                #if profiler
+                com.pblabs.engine.debug.Profiler.enter(object.profilerKey);
+                #end
                 (cast( object.listener, ITickedObject)).onTick(TICK_RATE);
-                Profiler.exit(object.profilerKey);
+                #if profiler
+                com.pblabs.engine.debug.Profiler.exit(object.profilerKey);
+                #end
             }
             _duringAdvance = false;
             
-            Profiler.exit("Tick");
+            #if profiler
+            com.pblabs.engine.debug.Profiler.exit("Tick");
+            #end
             
             // Update virtual time by subtracting from accumulator.
             _virtualTime += TICK_RATE_MS;
@@ -604,7 +610,9 @@ class ProcessManager implements IProcessManager
         // processScheduledObjects();
         
         // Update objects wanting OnFrame callbacks.
-        Profiler.enter("frame");
+        #if profiler
+        com.pblabs.engine.debug.Profiler.enter("frame");
+        #end
         _duringAdvance = true;
         _interpolationFactor = elapsed / TICK_RATE_MS;
         for(i in 0...animatedObjects.length)
@@ -613,24 +621,32 @@ class ProcessManager implements IProcessManager
             if(animatedObject == null)
                 continue;
             
-            Profiler.enter(animatedObject.profilerKey);
+            #if profiler
+            com.pblabs.engine.debug.Profiler.enter(animatedObject.profilerKey);
+            #end
             (cast( animatedObject.listener, IAnimatedObject)).onFrame(deltaTime / 1000);
-            Profiler.exit(animatedObject.profilerKey);
+            #if profiler
+            com.pblabs.engine.debug.Profiler.exit(animatedObject.profilerKey);
+            #end
         }
         _duringAdvance = false;
-        Profiler.exit("frame");
+        #if profiler
+        com.pblabs.engine.debug.Profiler.exit("frame");
+        #end
         
         // Pump the call later queue.
-        Profiler.enter("callLater_postFrame");
+        // Profiler.enter("callLater_postFrame");
         // PBUtil.processCallLaters();
-        Profiler.exit("callLater_postFrame");
+        // Profiler.exit("callLater_postFrame");
         
         // Purge the lists if needed.
         if(needPurgeEmpty)
         {
             needPurgeEmpty = false;
             
-            Profiler.enter("purgeEmpty");
+            #if profiler
+            com.pblabs.engine.debug.Profiler.enter("purgeEmpty");
+            #end
             
             var j :Int = 0;
             while (j < animatedObjects.length) {
@@ -664,10 +680,14 @@ class ProcessManager implements IProcessManager
             //     k--;
             // }
             
-            Profiler.exit("purgeEmpty");
+            #if profiler
+            com.pblabs.engine.debug.Profiler.exit("purgeEmpty");
+            #end
         }
         
-        Profiler.ensureAtRoot();
+        #if profiler
+        com.pblabs.engine.debug.Profiler.ensureAtRoot();
+        #end
     }
     
     // function processScheduledObjects():Void

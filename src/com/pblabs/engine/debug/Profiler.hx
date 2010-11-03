@@ -12,7 +12,7 @@
  ******************************************************************************/
 package com.pblabs.engine.debug;
 
-#if (profiler && flash)
+#if profiler
 import com.pblabs.engine.debug.Log;
 import com.pblabs.util.Assert;
 import com.pblabs.util.MathUtil;
@@ -44,9 +44,9 @@ using com.pblabs.util.NumberUtil;
 
 class Profiler
 {
-    public static var enabled :Bool = false;
+    public static var enabled :Bool = true;
     public static var indentAmount :Int = 3;
-    public static var nameFieldWidth :Int = 70;
+    public static var nameFieldWidth :Int = 80;
 
     /**
      * Call this outside of all Enter/Exit calls to make sure that things
@@ -120,7 +120,7 @@ class Profiler
         _currentNode = newNode;
 
         // Start timing the child node. Too bad you can't QPC from Flash. ;)
-        _currentNode.startTime = flash.Lib.getTimer();
+        _currentNode.startTime = Std.int(com.pblabs.engine.time.Timer.stamp() * 1000);//flash.Lib.getTimer();
     }
 
     /**
@@ -139,7 +139,7 @@ class Profiler
         }
 
         // Update stats for this node.
-        var elapsedTime :Int = flash.Lib.getTimer() - _currentNode.startTime;
+        var elapsedTime :Int = Std.int(com.pblabs.engine.time.Timer.stamp() * 1000) - _currentNode.startTime;
         _currentNode.activations++;
         _currentNode.totalTime += elapsedTime;
         if (elapsedTime > _currentNode.maxTime) {
@@ -189,6 +189,7 @@ class Profiler
         //     "Calls", "Total%", "NonSub%", "AvgMs", "MinMs", "MaxMs");
         var header = "\n" + Sprintf.format("%-" + nameFieldWidth + "s%-8s%-8s%-8s%-8s%-8s%-8s", ["name",
         "Calls", "Total%", "NonSub%", "AvgMs", "MinMs", "MaxMs"]);
+        
         var report = header + report_R(_rootNode, 0);
         // log.debug(header + report_R(_rootNode, 0));
         trace(report);
