@@ -46,7 +46,7 @@ class FunctionTask
     public function update (dt :Float, obj :IEntity) :Bool
     {
         var val = Reflect.callMethod(null, _fn, _args);
-        return val == true ? true : false;
+        return val == null || val == true ? true : false;
     }
     
     public function clone () :IEntityTask

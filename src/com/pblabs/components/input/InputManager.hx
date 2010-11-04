@@ -122,7 +122,7 @@ class InputManager
         _mouseUp.bind(onMouseUp);
         _mouseClick.bind(onMouseClick);
         #else
-        Log.warn("Platform mouse listeners are not yet implemented.  Currently flash only, but could easily add more.");
+        Log.info("Platform mouse listeners are not yet implemented.  Currently flash only, but could easily add more.");
         #end
     }
     
