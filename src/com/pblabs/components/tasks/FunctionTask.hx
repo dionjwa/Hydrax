@@ -45,7 +45,7 @@ class FunctionTask
     
     public function update (dt :Float, obj :IEntity) :Bool
     {
-        var val = Reflect.callMethod(null, _fn, _args);
+        var val :Null<Bool> = Reflect.callMethod(null, _fn, _args);
         return val == null || val == true;
     }
     
