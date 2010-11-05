@@ -23,8 +23,6 @@ import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ProcessManager;
 import com.pblabs.util.Preconditions;
 
-import com.pblabs.util.Assert;
-
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
@@ -80,7 +78,9 @@ class PBGameBase extends PBContext
             ctx.startup();
             #end
             
-            Assert.isTrue(ctx.injector.getMapping(IPBContext) == ctx);
+            #if debug
+            com.pblabs.util.Assert.isTrue(ctx.injector.getMapping(IPBContext) == ctx);
+            #end
             if (ctx.getManager(IProcessManager) != null && Std.is(ctx.getManager(IProcessManager), ProcessManager)) {
                 //The IPBContext starts paused, we control the unpausing.
                 cast(ctx.getManager(IProcessManager), ProcessManager).paused = true;
@@ -156,8 +156,10 @@ class PBGameBase extends PBContext
     function startTopContext () :Void
     {
         if (currentContext != null) {
-            Assert.isNotNull(currentContext, "How is the top context null?");
-            Assert.isNotNull(currentContext.getManager(IProcessManager), "Where is the IProcessManager?");
+            #if debug
+            com.pblabs.util.Assert.isNotNull(currentContext, "How is the top context null?");
+            com.pblabs.util.Assert.isNotNull(currentContext.getManager(IProcessManager), "Where is the IProcessManager?");
+            #end
             cast(currentContext.getManager(IProcessManager), ProcessManager).paused = _isRunning;
             newActiveContextSignaler.dispatch(currentContext);
         }

@@ -98,6 +98,24 @@ class JSSignaler<DataType> extends TranslatingSignalerBase<DataType> {
 			case MOUSEDOWN:
 				disableContextMenu();
 				return { html4:"onmousedown", dom2:"mousedown" };
+           case TOUCHSTART:
+				disableContextMenu();
+				return { html4:"touchstart", dom2:"touchstart" };
+           case TOUCHMOVE:
+				disableContextMenu();
+				return { html4:"touchmove", dom2:"touchmove" };
+           case TOUCHEND:
+				disableContextMenu();
+				return { html4:"touchend", dom2:"touchend" };
+           case GESTURESTART:
+				disableContextMenu();
+				return { html4:"gesturestart", dom2:"gesturestart" };
+           case GESTURECHANGE:
+				disableContextMenu();
+				return { html4:"gesturechange", dom2:"gesturechange" };
+           case GESTUREEND:
+				disableContextMenu();
+				return { html4:"gestureend", dom2:"gestureend" };
 			case ERROR:
 				return
 					if (Std.is(nativeDispatcher, XMLHttpRequest)) {
@@ -186,6 +204,12 @@ enum JSEventType {
 	KEYUP;
 	KEYDOWN;
 	KEYPRESS;
+	TOUCHSTART;
+	TOUCHMOVE;
+	TOUCHEND;
+	GESTURESTART;
+	GESTURECHANGE;
+	GESTUREEND;
 }
 /**
  * Internal reference for mapping HSL event types to native browser event type strings.

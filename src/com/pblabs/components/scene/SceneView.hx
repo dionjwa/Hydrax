@@ -12,14 +12,25 @@ import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.PBObject;
 import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Assert;
+import com.pblabs.util.Preconditions;
+
+#if js
+import js.Dom;
+#end
 
 /**
- * This class can be set as the SceneView on the BaseDisplayComponent class and is used
- * as the canvas to draw the objects that make up the scene. It defaults to the size
- * of the stage.
+ * This class represents a root rendering and input surface.
+ * Most games will only ever have one SceneView, but it's 
+ * possible to have more than one.
+ * 
+ * In Flash, you can currently only have one root 
+ * rendering and input view (the stage).  Everything else descends
+ * from that.
  *
- * <p>Currently this is just a stub, and exists for clarity and potential expandability in
- * the future.</p>
+ * In javascript, you
+ * could have multiple HTML elements be different rendering
+ * and input surfaces.
  */
 class SceneView 
     implements IPBManager, implements haxe.rtti.Infos
@@ -31,7 +42,10 @@ class SceneView
     public var layer (get_layer, null) :flash.display.Sprite;
     var _layer :flash.display.Sprite;
     #elseif js
-    public var elementRoot (get_elementRoot, set_elementRoot) :String;
+    public var layer (get_layer, set_layer) :HtmlDom;
+    var _layer :HtmlDom;
+    public var layerId (get_layerId, set_layerId) :String;
+    var _layerId :String;
     #end
     
     @inject
@@ -41,7 +55,7 @@ class SceneView
     var _width:Float;
     
     #if js
-    public function new (?elementRootName :String, ?width :Int = 0, ?height :Int = 0)
+    public function new (?layerId :String, ?width :Int = 0, ?height :Int = 0)
     #else
     public function new (?width :Int = 0, ?height :Int = 0)
     #end
@@ -50,7 +64,7 @@ class SceneView
         _height = height;
        
         #if js
-        _elementRoot = elementRootName;
+        _layerId = layerId;
         #elseif (flash || cpp)
         _layer = new flash.display.Sprite();
         _layer.name = "SceneView";
@@ -139,18 +153,33 @@ class SceneView
     #end
     
     #if js
-    function get_elementRoot () :String
+    function get_layer () :js.HtmlDom
     {
-        return _elementRoot;
+        Preconditions.checkArgument(_layer != null || _layerId != null, "Attempting to access the root layer, but no layerId was provided");
+        if (_layer == null) {
+            Preconditions.checkNotNull(_layerId, "no layer, and layerId is null");
+            _layer = cast js.Lib.document.getElementById(_layerId);
+        }
+        Assert.isNotNull(_layer, "Could not find HTML element with id=" + _layerId);
+        return _layer;
     }
     
-    function set_elementRoot (val :String) :String
+    function set_layer (val :js.HtmlDom) :js.HtmlDom
     {
-        _elementRoot = val;
+        _layer = val;
         return val;
     }
     
-    var _elementRoot :String;
+    function get_layerId () :String
+    {
+        return _layerId;
+    }
+    
+    function set_layerId (val :String) :String
+    {
+        _layerId = val;
+        return val;
+    }
     #end
 }
 

@@ -41,7 +41,14 @@ class MathUtil
 	inline public static var  INT32_MIN = 0x80000000;
 	/** Max value, signed integer.   */
 	inline public static var  INT32_MAX = 0x7fffffff;
-	
+	/** Math.PI constant. */
+	inline public static var PI = 3.141592653589793;
+	/** 2 * Math.PI constant. */
+	inline public static var PI2 = 6.283185307179586;
+	/** Multiply value by this to convert from radians to degrees. */
+	inline public static var RAD_DEG = 180 / PI;
+	/** Multiply value by this to convert from degrees to radians. */
+	inline public static var DEG_RAD = PI / 180;
 	/** Default square root of 2. */
 	inline public static var SQROOT2 = 1.4142135623730951;
 	
@@ -73,6 +80,18 @@ class MathUtil
 		}
 		else
 			return 0;
+	}
+	
+	/** Converts <i>deg</i> to radians. */
+	inline public static function toRad(deg:Float):Float
+	{
+		return deg * MathUtil.DEG_RAD;
+	}
+	
+	/** Converts <i>rad</i> to degrees. */
+	inline public static function toDeg(rad:Float):Float
+	{
+		return rad * MathUtil.RAD_DEG;
 	}
     
 }

@@ -36,6 +36,12 @@ import com.pblabs.geom.Vector2;
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.input.MouseInputComponent;
 
+#if js
+import js.Dom;
+import js.IOs;
+using js.IOs;
+#end
+
 using IterTools;
 
 using Lambda;
@@ -121,6 +127,64 @@ class InputManager
         _mouseMove.bind(onMouseMove);
         _mouseUp.bind(onMouseUp);
         _mouseClick.bind(onMouseClick);
+        #elseif js
+        
+        js.Lib.document.onclick =  function(event) {
+            untyped event.preventDefault();
+            // trace(event.target.nodeName + ", clientX=" + event.clientX + ", clientY=" + event.clientY);
+            trace(event.target.nodeName + ", clientX=" + event.clientX + ", clientY=" + event.clientY  +", screenX=" + event.screenX + ", screenY=" + event.screenY);
+        }
+        
+        var touchstart = function (touchEvent :js.IOs.TouchEvent) :Void {
+            for(touch in touchEvent.touches) {
+                trace(touch.screenX + ", " + touch.screenY);
+            }
+        }
+        
+        untyped {
+            js.Lib.document.addEventListener('touchstart', function(event :js.Event) {
+                event.preventDefault();
+                // trace(event.target.nodeName + ", clientX=" + event.clientX + ", clientY=" + event.clientY  +", screenX=" + event.screenX + ", screenY=" + event.screenY);
+                trace(event.touches);
+                for(index in 0...event.touches.length) {
+                    var touch = event.touches.item(index);
+                    trace(touch.screenX + ", " + touch.screenY);
+                }
+                // for(touch in touches) {
+                //     // var touch = event.touches.item(index);
+                //     trace(touch.screenX + ", " + touch.screenY);
+                // }
+                // trace(event.target.nodeName);
+                // trace("touchstart");
+            }, false);
+            
+            js.Lib.document.addEventListener('touchmove', function(event :js.Event) {
+                event.preventDefault();
+                // trace("touchmove");
+            }, false);
+            
+            js.Lib.document.addEventListener('touchend', function(event :js.Event) {
+                event.preventDefault();
+                // trace("touchend");
+            }, false);
+            
+            js.Lib.document.addEventListener('gesturestart', function(event :js.Event) {
+                event.preventDefault();
+                // trace("gesturestart");
+            }, false);
+            
+            js.Lib.document.addEventListener('gesturechange', function(event :js.Event) {
+                event.preventDefault();
+                // trace("gesturechange");
+                // trace("Scale: " + event.scale + ", Rotation: " + event.rotation);
+            }, false);
+            
+            js.Lib.document.addEventListener('gestureend', function(event :js.Event) {
+                trace("gestureend");
+            }, false);
+            
+        }
+        
         #else
         Log.info("Platform mouse listeners are not yet implemented.  Currently flash only, but could easily add more.");
         #end
