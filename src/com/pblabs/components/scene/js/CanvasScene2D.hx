@@ -104,7 +104,7 @@ class CanvasScene2D extends NodeComponent<Void, Canvas2DComponent>,
             if (view == null) {
                 Log.warn("No SceneView");
             } else {
-                canvasContainerId = view.elementRoot;
+                canvasContainerId = view.layerId;
                 if (canvasContainerId == null) {
                     Log.error("SceneView.elementRoot null");
                 }

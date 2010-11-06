@@ -1,7 +1,5 @@
 -D debug
 
-#--remap flash:jeash
-
 -lib feffects
 -lib ArrayTools
 -lib IterTools

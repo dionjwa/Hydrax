@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<project name="polygonal" default="gen_as3" basedir="../">
+
+	<property file="./build/as3.properties"/>
+	
+	<target name="gen_as3">
+		<exec executable="haxe" dir=".">
+			<arg line="-main ClassCollector"/>
+			<arg line="-neko ./build/ClassCollector.n"/>
+			<arg line="-cp src/tools"/>
+		</exec>
+		<exec executable="${neko.exe}" dir=".">
+			<arg line="build/ClassCollector.n"/>
+			<arg line="src/lib"/>
+			<arg line="build/tmp/classes.properties"/>
+			<arg line="include"/>
+			<arg line="-include de.polygonal.ds"/>
+			<arg line="-exclude de.polygonal.ds.mem"/>
+		</exec>
+		<property file="build/tmp/classes.properties"/>
+		<exec executable="${haxe.exe}" dir=".">
+			<arg line="-as3 build/as3_debug ${include}"/>
+			<arg line="-swf-version 9"/>
+			<arg line="-cp src/lib"/>
+			<arg line="-debug"/>
+			<arg line="-v"/>
+		</exec>
+		<exec executable="${haxe.exe}" dir=".">
+			<arg line="-as3 build/as3_release ${include}"/>
+			<arg line="-swf-version 9"/>
+			<arg line="-cp src/lib"/>
+			<arg line="-v"/>
+		</exec>
+		<replaceregexp flags="-g">
+			<fileset dir="build/as3_debug" />
+			<regexp pattern="protected" />
+			<substitution expression="public" />
+		</replaceregexp>
+		<replaceregexp flags="-g">
+			<fileset dir="build/as3_release" />
+			<regexp pattern="protected" />
+			<substitution expression="public" />
+		</replaceregexp>
+		<delete dir="build/tmp"/>
+	</target>
+</project>

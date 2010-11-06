@@ -26,7 +26,7 @@ class CanvasDemo
     {
         app = new PBGame();
         Assert.isNotNull(app.getManager(SceneView));
-        app.getManager(SceneView).elementRoot = "screen";
+        app.getManager(SceneView).layerId = "screen";
         var rsrc = new ResourceManager();
         app.registerManager(IResourceManager, rsrc);
         images = new ImageResources("jsimages", "./", [ "man.png" ]);

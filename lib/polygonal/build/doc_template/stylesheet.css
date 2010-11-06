@@ -1,0 +1,359 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, font, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td
+{
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-weight: inherit;
+	font-style: inherit;
+	font-size: 100%;
+	font-family: inherit;
+	vertical-align: baseline;
+}
+
+:focus0
+{
+	outline: 0;
+}
+body
+{
+	line-height: 1;
+	color: #000;
+	background: white;
+}
+ol, ul
+{
+	list-style: circle;
+	margin-left: 10px;
+}
+
+.doc ul
+{
+	padding-left: 20px;
+}
+
+table
+{
+	border-collapse: separate;
+	border-spacing: 0;
+}
+caption, th, td
+{
+	text-align: left;
+	font-weight: normal;
+}
+blockquote:before, blockquote:after, q:before, q:after
+{
+	content: "";
+}
+blockquote, q
+{
+	quotes: "" "";
+}
+
+body
+{
+	font-family:Segoe UI,Verdana,Arial,Helvetica,sans-serif;
+	font-size: 12px;
+}
+
+a, a:active, a:visited
+{
+	color: #005ba3;
+}
+
+#class-frame
+{
+	min-height: 600px;
+}
+
+.type-frame
+{
+	margin: 0px;
+	padding: 10px;
+	border-left: 1px solid #ddd;
+}
+
+#types-frame, #packages-frame
+{
+	margin: 0px;
+}
+
+ul.types, ul.packages, #packages-header ul
+{
+	margin: 5px 5px 10px 5px;
+}
+
+#types-frame h1, #packages-frame h1
+{	
+	font-weight: bold;
+	padding: 2px;
+	color: black;
+	background-color:  #ddd;
+	text-align: center;
+}
+
+#packages-frame h2
+{
+	padding: 2px;
+	text-align: center;
+	margin-bottom: 0.75em;
+}
+.comment
+{
+	line-height: 1.2;
+	font-size: 13px;
+}
+.comment li
+{
+	margin-left: 20px;
+}
+
+.type-frame h1
+{	
+  font-weight: bold;
+  background-repeat: no-repeat;
+}
+ul.types li
+{
+	background-repeat: no-repeat;
+	min-height: 16px;
+	padding-left: 18px;
+}
+.class
+{
+	background-image: url(images/class.png);
+}
+.type-frame h1
+{
+	font-size: 18px;
+	padding: 0 0 10px 20px;
+}
+.interface
+{
+	background-image: url(images/interface.png);
+}
+.typedef
+{
+	background-image: url(images/typedef.png);
+}
+.alias
+{
+	background-image: url(images/alias.png);
+}
+.enum
+{
+	background-image: url(images/enum.png);
+}
+.overview
+{
+	background-image: url(images/overview.png);
+}
+.todo
+{
+	background-image: url(images/todo.png);
+}
+.alltypes
+{
+	background-image: url(images/alltypes.png);
+}
+dl
+{
+	padding-bottom: 8px;
+}
+.doc
+{
+	line-height: 1.2;
+	padding: 0 0 12px 0;
+	margin: 12px 0;
+	font-size: 16px;
+}
+dt
+{
+	display: block;
+	float: left;
+	width: 80px;
+	min-height: 1.2em;
+	vertical-align: bottom;
+	font-size: 12px;
+	padding: 2px 2px 2px 0px;
+}
+dd
+{
+	display: block;
+	margin-left: 86px;
+	padding: 4px;
+	border-bottom: 1px solid #fff;
+	font-size: 12px;
+	background-color: #eee;
+}
+
+dd code
+{
+	font-weight: bold;
+}
+
+dd a code
+{
+	font-weight: normal;
+}
+
+pre
+{
+	border-left: 4px solid #999;
+	background-color: #eee;
+	font-size: 11px;
+	font-family: "Consolas", "Courier New", Courier, mono;
+	font-style: normal;
+	font-weight: normal;
+	padding: 0.75em 0 0 0;
+	margin: 0.75em 0;
+}
+.members-panel
+{
+	border-top: 8px solid #00aeef;
+	margin-top: 8px;
+}
+.members-panel h2
+{
+	font-weight: bold;
+	font-size: 15px;
+	padding: 4px;
+}
+.member .header
+{
+	padding: 4px 4px 4px;
+	color: #666666;
+	border-top: 1px dashed #333;
+}
+.member .header .name
+{
+	color: black;
+	font-size: 13px;
+	font-weight: bold;
+}
+
+.complexity
+{
+	border-collapse: collapse;
+	margin: 8px;
+}
+
+.complexity td
+{
+	padding: 4px;
+	border: 1px solid #ccc;
+	font-size: 12px;
+	width: 100px;
+}
+
+.member .body
+{
+	padding-left: 4px;
+	margin-bottom: 10px;
+	font-size: 12px;
+}
+.member .platforms
+{
+	padding: 4px 16px;
+}
+.member .platforms-list
+{
+	padding: 4px 16px;
+	font-weight: bold;
+}
+#packages-frame li, #types-frame li
+{
+	background-repeat: no-repeat;
+	min-height: 16px;
+	padding-left: 18px;
+}
+#packages-frame ul.packages li
+{
+	background-image: url(images/package.png);
+}
+#packages-header li
+{
+	font-weight: bold;
+}
+div.inherited, div.overrides
+{
+	margin: 2px 0;
+}
+.deprecated
+{
+	color: #CC0000;
+}
+.keyword
+{
+	color: #50C2FF;
+}
+.hideInheritedVar
+{
+	display: none;
+}
+.showInheritedVar
+{
+	display: inline;
+}
+.hideInheritedMethod
+{
+	display: none;
+}
+.showInheritedMethod
+{
+	display: inline;
+}
+#todo h1, #overview h1
+{
+	font-weight: bold;
+	padding: 2px;
+	color: black;
+	background-color: #ddd;
+	text-align: center;
+}
+
+#overview
+{
+	border-left: 1px solid #ddd;
+	min-height: 600px;
+}
+
+#todo h2, #overview h2
+{
+	padding: 2px;
+	text-align: center;
+	margin-bottom: 0.75em;
+}
+#main
+{
+	padding: 8px;
+}
+p
+{
+	margin-bottom: 0.5em;
+}
+ul.todolist
+{
+	margin: 0.5em 0;
+}
+ul.todolist li
+{
+	background-repeat: no-repeat;
+	min-height: 16px;
+	padding-left: 18px;
+	background-image: url(images/todobullet.png);
+}
+a.showHideLink
+{
+	margin: 8px;
+	font-size: 12px;
+	color: black;
+}
