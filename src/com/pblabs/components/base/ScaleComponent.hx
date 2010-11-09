@@ -11,28 +11,29 @@ package com.pblabs.components.base;
 import com.pblabs.components.base.NotifyingValueComponent;
 import com.pblabs.engine.core.PropertyReference;
 
-class AngleComponent extends NotifyingValueComponent
+class ScaleComponent extends NotifyingValueComponent
 {
-    public static var P_ANGLE :PropertyReference<Float> = new PropertyReference("@AngleComponent.angle");
+    public static var P_SCALE :PropertyReference<Float> = new PropertyReference("@ScaleComponent.scale");
     
-    public var angle (get_angle, set_angle) : Float;
+    public var scale (get_scale, set_scale) : Float;
 
     public function new ()
     {
         super();
+        _value = 1;//Scale default
     }
     
     public function toString () :String
     {
-        return "Angle=" + angle; 
+        return "Scale=" + scale; 
     }
     
-    function get_angle () :Float
+    function get_scale () :Float
     {
         return super.get_value();
     }
     
-    function set_angle (val :Float) :Float
+    function set_scale (val :Float) :Float
     {
         return super.set_value(val);
     }

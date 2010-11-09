@@ -3,7 +3,9 @@ package com.pblabs.components.scene;
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene.SceneAlignment;
 import com.pblabs.components.scene.SceneView;
+import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.debug.Log;
+import com.pblabs.engine.util.PBUtil;
 import com.pblabs.geom.Rectangle;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.MathUtil;
@@ -14,7 +16,7 @@ using com.pblabs.util.IterUtil;
   * Layers are arranged: smaller index is behind.
   */
 class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends NodeComponent<Dynamic, Layer>,
-    implements haxe.rtti.Infos
+    implements haxe.rtti.Infos, implements IScene2D
 {
     @inject
     public var sceneView(get_sceneView, set_sceneView) :SceneView;
@@ -57,6 +59,18 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
         _zoom = 1.0;
         _position = new Vector2();
         _transformDirty = false;
+    }
+    
+    public function addLayer <T>(cls :Class<T>, layerName :String) :T
+    {
+        var layer = context.allocate(cls);
+        #if debug
+        com.pblabs.util.Assert.isTrue(Std.is(layer, BaseScene2DLayer), "Layer class " + cls + " is not a BaseScene2DLayer");
+        #end
+        
+        cast(layer, BaseScene2DLayer<Dynamic, Dynamic>).parentProperty = PBUtil.componentProp(this);
+        owner.addComponent(cast(layer, IEntityComponent), layerName);
+        return layer;
     }
 
     function isLayer (name :String) :Bool

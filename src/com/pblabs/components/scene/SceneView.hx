@@ -30,7 +30,7 @@ using StringTools;
  * rendering and input view (the stage).  Everything else descends
  * from that.
  *
- * In javascript, you
+ * In javascript, you theoretically
  * could have multiple HTML elements be different rendering
  * and input surfaces.
  */
@@ -159,7 +159,7 @@ class SceneView
     #if js
     function get_layer () :js.HtmlDom
     {
-        Preconditions.checkArgument(_layer != null || _layerId != null, "Attempting to access the root layer, but no layerId was provided");
+        Preconditions.checkArgument(_layer != null || _layerId != null, "Attempting to access the root layer, but no layerId was provided. _layerId=" + _layerId);
         if (_layer == null) {
             Preconditions.checkNotNull(_layerId, "no layer, and layerId is null");
             _layer = cast js.Lib.document.getElementById(_layerId);

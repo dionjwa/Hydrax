@@ -70,6 +70,8 @@ class InputManager
     
     var _isRotating :Bool;
     var _startingAngle :Float;//Radians
+    var _startingScale :Float;
+    var _startingLocation :Vector2;
     var _isZooming :Bool;
     
     @inject
@@ -92,6 +94,10 @@ class InputManager
         _mouseLoc = new Vector2();
         _isDeviceDown = false;
         _isGesturing = false;
+        
+        _startingLocation = new Vector2();
+        
+        drag.bind(onDrag);
     }
     
     public function onFrame (dt :Float) :Void
@@ -120,6 +126,12 @@ class InputManager
     function bindSignals () :Void
     {
         var mouse = context.getManager(MouseInputManager);
+        
+        #if debug
+        com.pblabs.util.Assert.isNotNull(mouse, "MouseInputManager is null, did you register one?");
+        #end
+        
+        
         mouse.mouseDown.bind(onMouseDown);
         mouse.mouseMove.bind(onMouseMove);
         mouse.mouseUp.bind(onMouseUp);
@@ -190,15 +202,22 @@ class InputManager
 
     function adjustMouseLocation (m :MouseLocation) :Point
     {
+        #if js
         var view = context.getManager(SceneView);
         if (m == null || m.scope == view.layer) {
             return m;
         }
         return new Point(m.globalLocation.x - view.mouseOffsetX, m.globalLocation.y - view.mouseOffsetY);
+        #else
+        return m;
+        #end
     }
     
     function onMouseDown (m :MouseLocation) :Void
     {
+        //Reset markers
+        _isGesturing = _isRotating = _isZooming = false;
+        
         var adjustedM = adjustMouseLocation(m);
         var cUnderMouse = lookupComponentsUnderMouse(adjustedM)[0];
         _deviceDownComponent = cUnderMouse;
@@ -207,9 +226,14 @@ class InputManager
         _deviceDownComponentLoc = _tupleCache.v2;
         _tupleCache.set(cUnderMouse, _deviceDownComponentLoc);
         
+        _startingLocation.x = adjustedM.x;
+        _startingLocation.y = adjustedM.y;
+        
         if (_tupleCache.v1 != null) {
             //Cache the initial angle, in case we start rotating
             _startingAngle = _tupleCache.v1.angle;
+            // _startingScale = _tupleCache.v1.scale;
+            
             Log.info("mouse down  " + _tupleCache);
             deviceDown.dispatch(_tupleCache);
         }
@@ -251,8 +275,17 @@ class InputManager
             // _tupleCache.set(_deviceDownComponent, 
             //     new Vector2(_deviceDownComponentLoc.x + diff.x, _deviceDownComponentLoc.y + diff.y));
             drag.dispatch(_tupleCache);
+            
         }
         deviceMove.dispatch(_tupleCache);
+    }
+    
+    function onDrag (t :Tuple<MouseInputComponent, Vector2>) :Void
+    {
+        if (t.v1.isTranslatable) {
+            t.v1.x = t.v2.x;
+            t.v1.y = t.v2.y;
+        }
     }
     
     function onMouseClick (m :MouseLocation) :Void

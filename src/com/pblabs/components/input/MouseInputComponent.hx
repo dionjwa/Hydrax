@@ -46,16 +46,19 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
     public var xProperty :PropertyReference<Float>;
     public var yProperty :PropertyReference<Float>;
     public var angleProperty :PropertyReference<Float>;
+    public var scaleProperty :PropertyReference<Float>;
     
     public var boundsProperty :PropertyReference<BoundsPolygon>;
     
     public var y (get_y, set_y) :Float;
     public var x (get_x, set_x) :Float;
     public var angle (get_angle, set_angle) :Float;
+    public var scale (get_scale, set_scale) :Float;
     public var bounds (get_bounds, set_bounds) :BoundsPolygon;
     
     public var isScalable :Bool;
     public var isRotatable :Bool;
+    public var isTranslatable :Bool;//Moveable in the x/y?
     
     public static function compare (a :MouseInputComponent, b :MouseInputComponent) :Int
     {
@@ -77,9 +80,12 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
         super();
         xProperty = new PropertyReference("@LocationComponent.x");
         yProperty = new PropertyReference("@LocationComponent.y");
-        angleProperty = new PropertyReference("@AngleComponent.y");
-        isScalable = true;
-        isRotatable = true;
+        angleProperty = new PropertyReference("@AngleComponent.angle");
+        scaleProperty = new PropertyReference("@ScaleComponent.scale");
+        
+        //The default is movable, rotatable, and scalable.
+        isScalable = isRotatable = isTranslatable = true;
+        
         _boundsStale = true;
     }
     
@@ -188,6 +194,17 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
     function set_angle (val :Float) :Float
     {
         owner.setProperty(angleProperty, val);
+        return val;
+    }
+    
+    function get_scale () :Float
+    {
+        return owner.getProperty(scaleProperty);
+    }
+    
+    function set_scale (val :Float) :Float
+    {
+        owner.setProperty(scaleProperty, val);
         return val;
     }
     

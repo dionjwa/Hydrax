@@ -115,7 +115,7 @@ class Injector
             //Don't inject into fields with existing values
             //TODO: check if the field is a function
             if (Reflect.field(obj, field) != null) {
-                Log.warn("Not injecting into " + Type.getClassName(Type.getClass(obj)) + "." + field + ", field is not null");
+                Log.warn("Not injecting into " + Type.getClassName(Type.getClass(obj)) + "." + field + ", field is not null, " + field + "=" + Reflect.field(obj, field));
                 continue;
             }
             

@@ -8,14 +8,22 @@
  ******************************************************************************/
 package com.pblabs.components.scene.flash;
 
+import com.pblabs.components.base.LocationComponent;
+import com.pblabs.components.scene.IScene2D;
+import com.pblabs.components.scene.SceneAlignment;
+import com.pblabs.components.scene.SceneView;
+import com.pblabs.components.scene.flash.Scene2DComponent;
+import com.pblabs.components.scene.flash.SceneLayer;
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.debug.Log;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.time.ITickedObject;
-
-import com.pblabs.util.MathUtil;
 import com.pblabs.util.Assert;
+import com.pblabs.util.MathUtil;
+import com.pblabs.util.ReflectUtil;
+import com.pblabs.util.ds.Map;
+import com.pblabs.util.ds.Maps;
 
 import flash.display.Graphics;
 import flash.display.Sprite;
@@ -26,16 +34,6 @@ import flash.geom.Matrix;
 import flash.geom.Point;
 import flash.geom.Rectangle;
 
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
-import com.pblabs.util.ReflectUtil;
-
-import com.pblabs.components.base.LocationComponent;
-import com.pblabs.components.scene.flash.Scene2DComponent;
-import com.pblabs.components.scene.SceneAlignment;
-import com.pblabs.components.scene.flash.SceneLayer;
-import com.pblabs.components.scene.SceneView;
-
 using com.pblabs.util.ArrayUtil;
 
 /**
@@ -44,7 +42,7 @@ using com.pblabs.util.ArrayUtil;
  * for more complex rendering scenarios. Enforces sorting order, too.
  */
 class Scene2DManager extends EntityComponent, 
-    implements IAnimatedObject, implements haxe.rtti.Infos
+    implements IAnimatedObject, implements haxe.rtti.Infos, implements IScene2D
 {
     
     public var componentReference(getComponentReference, null) : PropertyReference<Scene2DManager>;

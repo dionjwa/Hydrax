@@ -58,12 +58,6 @@ class PBGame extends PBGameBase
         registerManager(IResourceManager, new ResourceManager());
         registerManager(Serializer, new Serializer());
         registerManager(TemplateManager, new TemplateManager());
-        // registerManager(ObjectTypeManager, new ObjectTypeManager());
-        // var sm:SoundManager = new SoundManager();
-        // registerManager(ISoundManager, sm);
-        // pm.addTickedObject(sm, 100);
-        // registerManager(ScreenManager, new ScreenManager());
-        // registerManager(EventDispatcher, new EventDispatcher());
     }
     
     #if flash

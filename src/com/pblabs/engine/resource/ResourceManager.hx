@@ -19,6 +19,8 @@ import com.pblabs.util.Assert;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
+using com.pblabs.util.IterUtil;
+
 /**
   * Basic resource manager.  This class should suffice for most
   * purposes: most of the platform/resource specific logic 
@@ -31,6 +33,7 @@ class ResourceManager
     {
         _loadedResources = Maps.newHashMap(String);
         _pendingResources = Maps.newHashMap(String);
+        _loadingResources = Maps.newHashMap(String);
         
         _onLoadCallbacks = new Array();
         _onErrorCallbacks = new Array();
@@ -44,14 +47,17 @@ class ResourceManager
         _onLoadCallbacks.push(onLoad);
         _onErrorCallbacks.push(onError);
         
-        if (_pendingResources.size() == 0) {
+        if (_pendingResources.size() == 0 && _loadingResources.size() == 0) {
             Log.info("No resources to load, calling onLoad");
             allResourcesLoaded();
             return;
         }
         
         var self = this;
-        for (rsrc in _pendingResources) {
+        for (key in _pendingResources.keys().toArray()) {//Keys copied to avoid since the map is modified in the loop
+            var rsrc = _pendingResources.get(key);
+            _pendingResources.remove(key);
+            _loadingResources.set(key, rsrc);
             var loaded = function () :Void {
                 self.resourceLoaded(rsrc);
             }
@@ -61,7 +67,7 @@ class ResourceManager
     
     public function unload (resourceName :String) :Void
     {
-        Preconditions.checkArgument(_pendingResources.get(resourceName) == null, "Unhandled: unloaded IResource that is still pending: " + resourceName);
+        Preconditions.checkArgument(_pendingResources.get(resourceName) == null && _loadingResources.get(resourceName) == null, "Unhandled: unloaded IResource that is still pending: " + resourceName);
         var rsrc = _loadedResources.get(resourceName);
         if (rsrc != null) {
             _loadedResources.remove(resourceName);
@@ -71,7 +77,7 @@ class ResourceManager
     
     public function isResource (resourceName :String) :Bool
     {
-        return _pendingResources.exists(resourceName) || _loadedResources.exists(resourceName);
+        return _pendingResources.exists(resourceName) || _loadedResources.exists(resourceName) || _loadingResources.exists(resourceName);
     }
     
     public function getResource <T> (resourceName :String) :IResource<T>
@@ -83,6 +89,7 @@ class ResourceManager
     {
         Preconditions.checkNotNull(rsrc, "Resource is null");
         Preconditions.checkNotNull(rsrc.name, "Resource must have a name");
+        Preconditions.checkArgument(!isResource(rsrc.name), "Resource with name=" + rsrc.name  + " alrady exists");
         
         if (rsrc.isLoaded()) {
             _loadedResources.set(rsrc.name, rsrc);
@@ -120,6 +127,10 @@ class ResourceManager
         for (r in _pendingResources) {
             s += ", " + r;
         }
+        s += "], [loading:";
+        for (r in _loadingResources) {
+            s += ", " + r;
+        }
         s += "], [loaded:";
         for (r in _loadedResources) {
             s += ", " + r;
@@ -129,9 +140,9 @@ class ResourceManager
     
     function resourceLoaded (rsrc :IResource<Dynamic>) :Void
     {
-        _pendingResources.remove(rsrc.name);
+        _loadingResources.remove(rsrc.name);
         _loadedResources.set(rsrc.name, rsrc);
-        if (_pendingResources.size() == 0) {
+        if (_loadingResources.size() == 0) {
             allResourcesLoaded();
         }
     }
@@ -152,8 +163,9 @@ class ResourceManager
         }
     }
     
-    var _loadedResources :Map<String, IResource<Dynamic>>;
     var _pendingResources :Map<String, IResource<Dynamic>>;
+    var _loadingResources :Map<String, IResource<Dynamic>>;
+    var _loadedResources :Map<String, IResource<Dynamic>>;
     var _onLoadCallbacks :Array<Void->Void>;
     var _onErrorCallbacks :Array<Dynamic->Void>;
 }
