@@ -17,7 +17,7 @@ import com.pblabs.util.StringUtil;
  
 class BlobDisplayComponent
 #if (flash || cpp)
-extends com.pblabs.components.scene.Scene2DComponent
+extends com.pblabs.components.scene.flash.Scene2DComponent
 #elseif js
 extends com.pblabs.components.scene.js.Canvas2DComponent
 #end
@@ -32,7 +32,7 @@ extends com.pblabs.components.scene.js.Canvas2DComponent
         _radius = radius;
 		_color = color;
 		#if flash
-        sceneLayerName = com.pblabs.components.scene.Scene2DManager.DEBUG_LAYER_NAME;
+        sceneLayerName = com.pblabs.components.scene.flash.Scene2DManager.DEBUG_LAYER_NAME;
         _displayObject = new flash.display.Sprite();
         #elseif js
         // _circle = new com.pblabs.components.scene.js.CircleSprite(radius);

@@ -16,8 +16,8 @@ import flash.display.Sprite;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
-import com.pblabs.components.scene.Scene2DComponent;
-import com.pblabs.components.scene.Scene2DManager;
+import com.pblabs.components.scene.flash.Scene2DComponent;
+import com.pblabs.components.scene.flash.Scene2DManager;
 /**
  * Can be used independently or in conjunction with a Scene + SceneView.
  *

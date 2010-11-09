@@ -31,9 +31,9 @@ import com.pblabs.util.ds.Maps;
 import com.pblabs.util.ReflectUtil;
 
 import com.pblabs.components.base.LocationComponent;
-import com.pblabs.components.scene.Scene2DComponent;
+import com.pblabs.components.scene.flash.Scene2DComponent;
 import com.pblabs.components.scene.SceneAlignment;
-import com.pblabs.components.scene.SceneLayer;
+import com.pblabs.components.scene.flash.SceneLayer;
 import com.pblabs.components.scene.SceneView;
 
 using com.pblabs.util.ArrayUtil;

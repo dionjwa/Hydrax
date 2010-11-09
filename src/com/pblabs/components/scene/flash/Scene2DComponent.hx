@@ -27,8 +27,8 @@ import com.pblabs.util.ReflectUtil;
 
 import com.pblabs.components.base.AngleComponent;
 import com.pblabs.components.base.LocationComponent;
-import com.pblabs.components.scene.Scene2DComponent;
-import com.pblabs.components.scene.Scene2DManager;
+import com.pblabs.components.scene.flash.Scene2DComponent;
+import com.pblabs.components.scene.flash.Scene2DManager;
 
 using com.pblabs.geom.Geometry;
 

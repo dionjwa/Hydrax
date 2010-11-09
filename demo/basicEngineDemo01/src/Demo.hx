@@ -3,7 +3,7 @@ package;
 import com.pblabs.components.base.AngleComponent;
 import com.pblabs.components.base.LocationComponent;
 import com.pblabs.components.debug.BlobDisplayComponent;
-import com.pblabs.components.scene.Scene2DManager;
+import com.pblabs.components.scene.flash.Scene2DManager;
 import com.pblabs.components.tasks.LocationTask;
 import com.pblabs.components.tasks.TaskComponent;
 import com.pblabs.engine.core.IEntity;
