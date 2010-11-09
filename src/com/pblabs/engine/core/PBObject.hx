@@ -107,10 +107,12 @@ class PBObject
         _name = null;
     }
     
-    public function toString () :String
+    #if debug
+    dynamic public function toString () :String
     {
         return StringUtil.objectToString(this, ["name"]);
     }
+    #end
     
     function get_isLiveObject () :Bool
     {

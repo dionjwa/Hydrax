@@ -19,6 +19,8 @@ import com.pblabs.util.Preconditions;
 import js.Dom;
 #end
 
+using StringTools;
+
 /**
  * This class represents a root rendering and input surface.
  * Most games will only ever have one SceneView, but it's 
@@ -46,6 +48,8 @@ class SceneView
     var _layer :HtmlDom;
     public var layerId (get_layerId, set_layerId) :String;
     var _layerId :String;
+    public var mouseOffsetX (get_mouseOffsetX, never) :Float;
+    public var mouseOffsetY (get_mouseOffsetY, never) :Float;
     #end
     
     @inject
@@ -159,6 +163,8 @@ class SceneView
         if (_layer == null) {
             Preconditions.checkNotNull(_layerId, "no layer, and layerId is null");
             _layer = cast js.Lib.document.getElementById(_layerId);
+            _width = Std.parseFloat(_layer.style.width.replace("px",""));
+            _height = Std.parseFloat(_layer.style.height.replace("px",""));
         }
         Assert.isNotNull(_layer, "Could not find HTML element with id=" + _layerId);
         return _layer;
@@ -179,6 +185,16 @@ class SceneView
     {
         _layerId = val;
         return val;
+    }
+    
+    function get_mouseOffsetX () :Float
+    {
+        return _layer.offsetLeft + Std.parseFloat(_layer.style.borderWidth) * 2;
+    }
+    
+    function get_mouseOffsetY () :Float
+    {
+        return _layer.offsetTop + Std.parseFloat(_layer.style.borderWidth) * 2;
     }
     #end
 }

@@ -21,11 +21,10 @@ import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.StringUtil;
 
-using com.pblabs.util.XMLUtil;
-
 using Lambda;
 
 using com.pblabs.util.ArrayUtil;
+using com.pblabs.util.XMLUtil;
 
 /**
     Useful for managing components and setting up tree structures.
@@ -42,7 +41,7 @@ using com.pblabs.util.ArrayUtil;
     
     Although this component is typed, P and C must be EntityComponents.
 */
-class NodeComponent<P, C> extends EntityComponent,
+class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic, Dynamic>> extends EntityComponent,
     implements ISerializable
 {
     public var parentProperty :PropertyReference<P>;
@@ -62,7 +61,7 @@ class NodeComponent<P, C> extends EntityComponent,
         }
         list.add(e);
         for (c in e.lookupComponentsByType(nodeTypeClass)) {
-            var n :NodeComponent<IEntityComponent, Dynamic> = cast(c);
+            var n :NodeComponent<Dynamic, Dynamic> = cast(c);
             if (n.parent != null) {
                 getEntityAndAllParents(cast(n.parent, IEntityComponent).owner, nodeTypeClass, list);
             }
@@ -83,7 +82,7 @@ class NodeComponent<P, C> extends EntityComponent,
         }
         list.add(e);
         for (c in e.lookupComponentsByType(nodeTypeClass)) {
-            var n :NodeComponent<IEntityComponent, Dynamic> = cast(c);
+            var n :NodeComponent<Dynamic, Dynamic> = cast(c);
             if (!n.children.isEmpty()) {
                 for (child in n.children) {
                     getEntityAndAllChildren(cast(child, IEntityComponent).owner, nodeTypeClass, list);
@@ -193,10 +192,9 @@ class NodeComponent<P, C> extends EntityComponent,
         Preconditions.checkArgument(cast(newParent, IEntityComponent).isRegistered, "Parent not registered: " + newParent);
         
         if (hasParent()) {
-            Log.warn("but hasParent");
+            Log.warn(" but " + name + ".hasParent " + parent + " " + ReflectUtil.getClassName(parent) + " " + Log.getStackTrace());
             return;
         }
-        
         cast(newParent, NodeComponent<Dynamic, Dynamic>).addChild(this);
     }
     
@@ -206,9 +204,10 @@ class NodeComponent<P, C> extends EntityComponent,
             return;
         }
         cast(parent, NodeComponent<Dynamic, Dynamic>).removeChild(this);
+        parent = null;
     }
     
-    inline public function hasParent () :Bool
+    public function hasParent () :Bool
     {
         return parent != null;
     }

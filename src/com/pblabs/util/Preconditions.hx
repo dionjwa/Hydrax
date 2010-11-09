@@ -36,7 +36,7 @@ class Preconditions
     }
 
     /**
-     * Check that the index is between 0 and (s - 1) inclusive.
+     * Check that the index is between 0 and (size - 1) inclusive.
      * @return the validated index.
      */
     public static function checkPositionIndex (index :Int, size :Int, ?message :String = null) :Int

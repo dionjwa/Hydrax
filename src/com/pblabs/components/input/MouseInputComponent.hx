@@ -8,18 +8,19 @@
  ******************************************************************************/
 package com.pblabs.components.input;
 
+import com.pblabs.components.manager.NodeComponent;
+import com.pblabs.components.scene.BaseScene2DComponent;
+import com.pblabs.components.scene.BaseScene2DManager;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.debug.Log;
-import com.pblabs.util.Preconditions;
-
 import com.pblabs.geom.Polygon;
 import com.pblabs.geom.PolygonTools;
 import com.pblabs.geom.Vector2;
 import com.pblabs.geom.bounds.BoundsPolygon;
 import com.pblabs.geom.bounds.IBounds;
-
-import com.pblabs.components.manager.NodeComponent;
-
+import com.pblabs.util.Comparable;
+import com.pblabs.util.Comparators;
+import com.pblabs.util.Preconditions;
 using com.pblabs.geom.PolygonTools;
 
 /**
@@ -32,31 +33,41 @@ using com.pblabs.geom.PolygonTools;
  * 
  */
 @sets("mouseInput")
-class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputComponent>
+class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputComponent>,
+    implements Comparable<MouseInputComponent>
 {
     public static var INPUT_GROUP :String = "mouseInput";
     
-    #if flash
+    #if (flash || cpp)
     public var interactiveObjectProperty :PropertyReference<flash.display.DisplayObject>;
     public var displayObject (default, null) :flash.display.DisplayObject;
     #end
     
     public var xProperty :PropertyReference<Float>;
-    
     public var yProperty :PropertyReference<Float>;
+    public var angleProperty :PropertyReference<Float>;
     
-    public var boundsProperty :PropertyReference<IBounds<Dynamic>>;
+    public var boundsProperty :PropertyReference<BoundsPolygon>;
     
     public var y (get_y, set_y) :Float;
     public var x (get_x, set_x) :Float;
-    public var bounds (get_bounds, null) :IBounds<Dynamic>;
+    public var angle (get_angle, set_angle) :Float;
+    public var bounds (get_bounds, set_bounds) :BoundsPolygon;
+    
+    public var isScalable :Bool;
+    public var isRotatable :Bool;
     
     public static function compare (a :MouseInputComponent, b :MouseInputComponent) :Int
     {
         #if flash
         return if (com.pblabs.util.DisplayUtils.isAbove(a.displayObject, b.displayObject)) -1 else 1;
+        #elseif js
+        var scenea = a.owner.lookupComponent(BaseScene2DComponent);
+        var sceneb = b.owner.lookupComponent(BaseScene2DComponent);
+        var scene :BaseScene2DManager<Dynamic> = scenea.parent.parent;
+        return Comparators.compareInts(scene.getLayerIndex(sceneb.parent), scene.getLayerIndex(scenea.parent));
         #else
-        Log.warn("Not implemented");
+        Log.error("Not implemented");
         return 0;
         #end
     }
@@ -66,12 +77,29 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
         super();
         xProperty = new PropertyReference("@LocationComponent.x");
         yProperty = new PropertyReference("@LocationComponent.y");
+        angleProperty = new PropertyReference("@AngleComponent.y");
+        isScalable = true;
+        isRotatable = true;
+        _boundsStale = true;
+    }
+    
+    public function compareTo (a :MouseInputComponent) :Int
+    {
+        return compare(this, a);
     }
     
     public function getPoint () :Vector2
     {
         return new Vector2(x, y);
     }
+    
+    #if debug
+    public function toString () :String
+    {
+        return cast(owner, com.pblabs.engine.core.Entity).toString();
+    }
+    #end
+    
     
     override function onReset () :Void
     {
@@ -102,14 +130,20 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
         yProperty = null;
     }
     
-    function get_bounds () :IBounds<Dynamic>
+    function get_bounds () :BoundsPolygon
     {
         if (boundsProperty != null) {
             return owner.getProperty(boundsProperty);
         } else if (_boundsStale) {
-            _bounds.center = new Vector2(x, y);
+            _bounds.topLeft = new Vector2(x, y);
         }
         return _bounds;
+    }
+    
+    function set_bounds (bounds :BoundsPolygon) :BoundsPolygon
+    {
+        _bounds = bounds;
+        return bounds;
     }
     
     @inject("@LocationComponent.signaller")
@@ -143,6 +177,17 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
     function set_y (val :Float) :Float
     {
         owner.setProperty(yProperty, val);
+        return val;
+    }
+    
+    function get_angle () :Float
+    {
+        return owner.getProperty(angleProperty);
+    }
+    
+    function set_angle (val :Float) :Float
+    {
+        owner.setProperty(angleProperty, val);
         return val;
     }
     

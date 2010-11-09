@@ -4,3 +4,4 @@ build/*
 .hg
 *.swf
 *.js
+lib/polygonal/build/

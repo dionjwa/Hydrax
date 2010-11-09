@@ -12,7 +12,6 @@
  ******************************************************************************/
 package com.pblabs.engine.core;
 
-import com.pblabs.components.input.InputManager;
 import com.pblabs.components.scene.SceneView;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBGameBase;
@@ -53,7 +52,6 @@ class PBGame extends PBGameBase
         registerManager(SetManager, new SetManager());
         registerManager(SignalBondManager, new SignalBondManager());
         registerManager(SceneView, new SceneView());
-        registerManager(InputManager, new InputManager());
         
         //Not yet converted to haXe
         // registerManager(InputManager, new InputManager());

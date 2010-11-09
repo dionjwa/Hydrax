@@ -8,6 +8,10 @@
  ******************************************************************************/
 package com.pblabs.components.input;
 
+import com.pblabs.components.input.MouseInputComponent;
+import com.pblabs.components.input.MouseInputManager;
+import com.pblabs.components.manager.NodeComponent;
+import com.pblabs.components.scene.SceneView;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBManager;
@@ -15,73 +19,87 @@ import com.pblabs.engine.core.SetManager;
 import com.pblabs.engine.debug.Log;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.time.IProcessManager;
-import com.pblabs.util.Preconditions;
-
+import com.pblabs.geom.Vector2;
 import com.pblabs.util.Assert;
+import com.pblabs.util.Comparators;
+import com.pblabs.util.Preconditions;
+import com.pblabs.util.ds.Set;
+import com.pblabs.util.ds.Sets;
+import com.pblabs.util.ds.Tuple;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
+import hsl.haxe.data.mathematics.Point;
 
 #if flash
 import hsl.avm2.data.mouse.MouseLocation;
 #elseif js
 import hsl.js.data.mouse.MouseLocation;
-#end
-
-import com.pblabs.util.ds.Set;
-import com.pblabs.util.ds.Sets;
-import com.pblabs.util.ds.Tuple;
-import com.pblabs.geom.Vector2;
-
-import com.pblabs.components.manager.NodeComponent;
-import com.pblabs.components.input.MouseInputComponent;
-
-#if js
 import js.Dom;
+using js.IOs.TouchListIterator;
 #end
 
 using IterTools;
 
 using Lambda;
 
+using com.pblabs.util.MathUtil;
+
 /**
- * Controls and manages input in a more platform independant and
- * game friendly manner.
+ * Integrates different input listeners into signals such as drag,
+ * and provides the components that react to input.
  */
 class InputManager
     implements IAnimatedObject, implements IPBManager, implements haxe.rtti.Infos
 {
-    public var mouseDown(default, null) :Signaler<Tuple<MouseInputComponent, Vector2>>;
-    public var mouseUp(default, null) :Signaler<Tuple<MouseInputComponent, Vector2>>;
-    public var mouseMove(default, null) :Signaler<Tuple<MouseInputComponent, Vector2>>;
-    public var mouseClick(default, null) :Signaler<Tuple<MouseInputComponent, Vector2>>;
+    public var deviceDown(default, null) :Signaler<Tuple<MouseInputComponent, Vector2>>;
+    public var deviceUp(default, null) :Signaler<Tuple<MouseInputComponent, Vector2>>;
+    public var deviceMove(default, null) :Signaler<Tuple<MouseInputComponent, Vector2>>;
+    public var deviceClick(default, null) :Signaler<Tuple<MouseInputComponent, Vector2>>;
     public var drag(default, null) :Signaler<Tuple<MouseInputComponent, Vector2>>;
+    public var doubleClick(default, null) :Signaler<Tuple<MouseInputComponent, Vector2>>;
+    
+    public var rotate (default, null) :Signaler<Tuple<MouseInputComponent, Float>>;
+    public var scale (default, null) :Signaler<Tuple<MouseInputComponent, Float>>;
     
     public var underMouse :Array<MouseInputComponent>;
+    
+    /** Is the mouse button down, or the device touched */
+    var _isDeviceDown :Bool;
+    
+    
+    var _isRotating :Bool;
+    var _startingAngle :Float;//Radians
+    var _isZooming :Bool;
     
     @inject
     var context :IPBContext;
     
     public function new ()
     {
-        _tupleCache = new Tuple(null, null);
-        
-        mouseDown = new DirectSignaler(this);
-        mouseMove = new DirectSignaler(this);
-        mouseUp = new DirectSignaler(this);
-        mouseClick = new DirectSignaler(this);
+        deviceDown = new DirectSignaler(this);
+        deviceMove = new DirectSignaler(this);
+        deviceUp = new DirectSignaler(this);
+        deviceClick = new DirectSignaler(this);
         drag = new DirectSignaler(this);
+        doubleClick = new DirectSignaler(this);
+        rotate = new DirectSignaler(this);
+        scale = new DirectSignaler(this);
+        
+        _tupleCache = new Tuple(null, null);
         underMouse = new Array();
-        
         _checked = Sets.newSetOf(String);
-        
         _mouseLoc = new Vector2();
+        _isDeviceDown = false;
+        _isGesturing = false;
     }
     
     public function onFrame (dt :Float) :Void
     {
-        underMouse = lookupComponentsUnderMouse();
-        underMouse.sort(MouseInputComponent.compare);
+        // if (_isDeviceDown && drag.isListenedTo) {
+        //     underMouse = lookupComponentsUnderMouse();
+        //     underMouse.sort(MouseInputComponent.compare);
+        // }
     }
     
     public function startup () :Void
@@ -90,46 +108,52 @@ class InputManager
         _sets = Preconditions.checkNotNull(context.getManager(SetManager));
         
         bindSignals();
-        // #if flash
-        // //On flash, we need to only listen to the top mode Sprite.
-        // context.mainLoop.modeAddedSignaller.bind(modeAdded);
-        // context.mainLoop.modeRemovedSignaller.bind(modeRemoved);
-        // #end
-        
-        // #if js
-        // if (context.rootElementId != null) {
-        //     trace(context.rootElementId);
-        // }
-        // #end
-        
-        context.getManager(IProcessManager).addAnimatedObject(this);
+        // context.getManager(IProcessManager).addAnimatedObject(this);
     }
     
     public function shutdown () :Void
     {
         freeSignals();
+        context.getManager(IProcessManager).removeAnimatedObject(this);
     }
     
     function bindSignals () :Void
     {
-        #if flash
-        //Create the signals
-        var displayContainer = context.displayContainer;
-        _mouseDown = new hsl.avm2.translating.AVM2Signaler(this, displayContainer, flash.events.MouseEvent.MOUSE_DOWN, new hsl.avm2.translation.mouse.MouseLocationTranslator());
-        _mouseMove = new hsl.avm2.translating.AVM2Signaler(this, displayContainer, flash.events.MouseEvent.MOUSE_MOVE, new hsl.avm2.translation.mouse.MouseLocationTranslator());
-        _mouseUp = new hsl.avm2.translating.AVM2Signaler(this, displayContainer, flash.events.MouseEvent.MOUSE_UP, new hsl.avm2.translation.mouse.MouseLocationTranslator());
-        _mouseClick = new hsl.avm2.translating.AVM2Signaler(this, displayContainer, flash.events.MouseEvent.CLICK, new hsl.avm2.translation.mouse.MouseLocationTranslator());
-        
-        //Add the listeners
-        _mouseDown.bind(onMouseDown);
-        _mouseMove.bind(onMouseMove);
-        _mouseUp.bind(onMouseUp);
-        _mouseClick.bind(onMouseClick);
-        #elseif js
-        
-        #else
-        Log.info("Platform mouse listeners are not yet implemented.  Currently flash only, but could easily add more.");
+        var mouse = context.getManager(MouseInputManager);
+        mouse.mouseDown.bind(onMouseDown);
+        mouse.mouseMove.bind(onMouseMove);
+        mouse.mouseUp.bind(onMouseUp);
+        // mouse.mouseClick.bind(onMouseClick);
+     
+        #if js
+        if (context.getManager(GestureInputManager) != null) {
+            var gestures = context.getManager(GestureInputManager);
+            var self = this;
+            gestures.gestureChange.bind(function (e :js.IOs.GestureEvent) :Void {
+                // trace("gesture changed");
+                // var c = self._deviceDownComponent;
+                // trace("c=" + c);
+                    
+                // if (c != null) {
+                //     if (c.isRotatable) {
+                //         self.rotate.dispatch(new Tuple<MouseInputComponent, Float>(c, e.rotation.toRad() + self._startingAngle));
+                //     }
+                    
+                //     if (c.isScalable) {
+                //         self.scale.dispatch(new Tuple<MouseInputComponent, Float>(c, e.scale));
+                //     }
+                // }
+            });
+            gestures.gestureStart.bind(function (e :js.IOs.GestureEvent) :Void {
+                self._isGesturing = true;
+            });
+            gestures.gestureEnd.bind(function (e :js.IOs.GestureEvent) :Void {
+                self._isGesturing = false;
+            });
+            
+        }
         #end
+        
     }
     
     function modeRemoved (m :IPBContext) :Void
@@ -139,82 +163,101 @@ class InputManager
     
     function freeSignals () :Void
     {
-        Log.debug("");
-        mouseDown.unbindAll();
-        mouseMove.unbindAll();
-        mouseUp.unbindAll();
-        mouseClick.unbindAll();
-        drag.unbindAll();
+        // Log.debug("");
+        // deviceDown.unbindAll();
+        // deviceMove.unbindAll();
+        // deviceUp.unbindAll();
+        // deviceClick.unbindAll();
+        // drag.unbindAll();
         
-        if (_mouseDown != null) {
-            _mouseDown.unbindAll();
-            _mouseDown = null;
-        }
-        if (_mouseMove != null) {
-            _mouseMove.unbindAll();
-            _mouseMove = null;
-        }
-        if (_mouseUp != null) {
-            _mouseUp.unbindAll();
-            _mouseUp = null;
-        }
-        if (_mouseClick != null) {
-            _mouseClick.unbindAll();
-            _mouseClick = null;
-        }
+        // if (_deviceDown != null) {
+        //     _deviceDown.unbindAll();
+        //     _deviceDown = null;
+        // }
+        // if (_deviceMove != null) {
+        //     _deviceMove.unbindAll();
+        //     _deviceMove = null;
+        // }
+        // if (_deviceUp != null) {
+        //     _deviceUp.unbindAll();
+        //     _deviceUp = null;
+        // }
+        // if (_deviceClick != null) {
+        //     _deviceClick.unbindAll();
+        //     _deviceClick = null;
+        // }
     }
 
+    function adjustMouseLocation (m :MouseLocation) :Point
+    {
+        var view = context.getManager(SceneView);
+        if (m == null || m.scope == view.layer) {
+            return m;
+        }
+        return new Point(m.globalLocation.x - view.mouseOffsetX, m.globalLocation.y - view.mouseOffsetY);
+    }
+    
     function onMouseDown (m :MouseLocation) :Void
     {
-        #if flash
-        var cUnderMouse = underMouse[0];//lookupComponentUnderMouse(m);
-        _mouseDownComponent = cUnderMouse;
+        var adjustedM = adjustMouseLocation(m);
+        var cUnderMouse = lookupComponentsUnderMouse(adjustedM)[0];
+        _deviceDownComponent = cUnderMouse;
         
-        // _tupleCache.set(cUnderMouse, if (cUnderMouse != null) cUnderMouse else null);
-        _mouseDownStageLoc = new Vector2(flash.Lib.current.stage.mouseX, flash.Lib.current.stage.mouseY);
-        _mouseDownComponentLoc = _tupleCache.v2;
-        _tupleCache.set(cUnderMouse, _mouseDownComponentLoc);
+        _deviceDownStageLoc = new Vector2(adjustedM.x, adjustedM.y);
+        _deviceDownComponentLoc = _tupleCache.v2;
+        _tupleCache.set(cUnderMouse, _deviceDownComponentLoc);
         
         if (_tupleCache.v1 != null) {
+            //Cache the initial angle, in case we start rotating
+            _startingAngle = _tupleCache.v1.angle;
             Log.info("mouse down  " + _tupleCache);
-            mouseDown.dispatch(_tupleCache);
+            deviceDown.dispatch(_tupleCache);
         }
-        #else
-        Log.warn("Not implemented");
-        #end
     } 
     
     function onMouseUp (m :MouseLocation) :Void
     {
-        _tupleCache.set(underMouse[0], getMouseLoc());
+        var adjustedM = adjustMouseLocation(m);
+        var cUnderMouse = lookupComponentsUnderMouse(adjustedM)[0];
+        _tupleCache.set(cUnderMouse, new Vector2(adjustedM.x, adjustedM.y));
         
-        if (_tupleCache.v1 != null) {
-            Log.info("mouse up  " + _tupleCache);
-            mouseUp.dispatch(_tupleCache);
-        }
+        // if (_tupleCache.v1 != null) {
+        //     Log.info("mouse up  " + _tupleCache);
+        // }
         
-        _mouseDownComponent = null;
-        _mouseDownComponentLoc = null;
-        _mouseDownStageLoc = null;
+        _deviceDownComponent = null;
+        _deviceDownComponentLoc = null;
+        _deviceDownStageLoc = null;
+        deviceUp.dispatch(_tupleCache);
     }
     
     function onMouseMove (m :MouseLocation) :Void
     {
-        if (_mouseDownComponent != null && _mouseDownComponentLoc != null) {
-            var stageMouse = getMouseLoc();
-            Assert.isNotNull(stageMouse);
-            Assert.isNotNull(_mouseDownStageLoc);
-            var diff = new Vector2(stageMouse.x - _mouseDownStageLoc.x, 
-                stageMouse.y - _mouseDownStageLoc.y);
-            Assert.isNotNull(_tupleCache);
-            _tupleCache.set(_mouseDownComponent, 
-                new Vector2(_mouseDownComponentLoc.x + diff.x, _mouseDownComponentLoc.y + diff.y));
+        //While gesturing, ignore mouse/touch moves
+        if (_isGesturing) {
+            return;
+        }
+        
+        var adjustedM = adjustMouseLocation(m);
+        
+        _tupleCache.set(_deviceDownComponent, new Vector2(adjustedM.x, adjustedM.y));
+        if (_deviceDownComponent != null) {
+            // var stageMouse = getMouseLoc();
+            // Assert.isNotNull(stageMouse);
+            // Assert.isNotNull(_deviceDownStageLoc);
+            // var diff = new Vector2(stageMouse.x - _deviceDownStageLoc.x, 
+                // stageMouse.y - _deviceDownStageLoc.y);
+            // Assert.isNotNull(_tupleCache);
+            // _tupleCache.set(_deviceDownComponent, 
+            //     new Vector2(_deviceDownComponentLoc.x + diff.x, _deviceDownComponentLoc.y + diff.y));
             drag.dispatch(_tupleCache);
         }
+        deviceMove.dispatch(_tupleCache);
     }
     
     function onMouseClick (m :MouseLocation) :Void
     {
+        return;
         Log.info("Mouse clicked " + m.x + ", " + m.y);
         // var clicked = new Array<MouseInputComponent>();
         // _tupleCache.set(lookupComponentUnderMouse(m), new Vector2(flash.Lib.current.stage.mouseX, flash.Lib.current.stage.mouseY));
@@ -222,7 +265,7 @@ class InputManager
         
         if (_tupleCache.v1 != null) {
             Log.info("click  " + _tupleCache);
-            mouseClick.dispatch(_tupleCache);
+            deviceClick.dispatch(_tupleCache);
         }
         // var inputComps :Iterable<MouseInputComponent>;
         // for (c in _context.getObjectsInGroup(MouseInputComponent.INPUT_GROUP)) {
@@ -240,7 +283,7 @@ class InputManager
         //         if (inc.displayObject.hitTestVector2(flash.Lib.current.stage.mouseX, flash.Lib.current.stage.mouseY)) {
         //             _tupleCache.set(cast(inc), new Vector2(flash.Lib.current.stage.mouseX, flash.Lib.current.stage.mouseY));
         //             Log.info("click  " + _tupleCache);
-        //             mouseClick.dispatch(_tupleCache);
+        //             deviceClick.dispatch(_tupleCache);
         //         }
         //     }
         // }
@@ -270,13 +313,17 @@ class InputManager
     //     return null;
     // }
     
-    function lookupComponentsUnderMouse (?m :MouseLocation) :Array<MouseInputComponent>
+    function lookupComponentsUnderMouse (?m :Point) :Array<MouseInputComponent>
     {
+        // trace("lookupComponentsUnderMouse");
         _checked.clear();
         
+        // trace("objects in mouse set: " + _sets.getObjectsInSet(MouseInputComponent.INPUT_GROUP).count());
         underMouse = new Array<MouseInputComponent>();
         var inputComp :MouseInputComponent;
-        var mouseLoc = getMouseLoc();
+        var mouseLoc = m != null ? new Vector2(m.x, m.y) : getMouseLoc();
+        
+        
         for (c in _sets.getObjectsInSet(MouseInputComponent.INPUT_GROUP)) {
             if (!Std.is(c, IEntity)) {
                 // Log.debug("weird, c is not an entity");
@@ -289,7 +336,6 @@ class InputManager
             
             inputComp = cast(c, IEntity).lookupComponentByName("MouseInputComponent");
             if (inputComp.bounds ==null) {
-                // trace("inputComp.bounds=" + inputComp.bounds);
                 continue;
             }
             // if (inputComp.displayObject == null) {
@@ -330,6 +376,9 @@ class InputManager
             //     // return inc;
             // }
         }
+        if (underMouse.length > 1) {
+            underMouse.sort(Comparators.compareComparables);
+        }
         return underMouse;
     }
     
@@ -348,21 +397,13 @@ class InputManager
     }
     
     var _sets :SetManager;
-    var _mouseDownComponent :MouseInputComponent;
-    var _mouseDownComponentLoc :Vector2;
-    var _mouseDownStageLoc :Vector2;
-    var _mouseDown(default, null) :DirectSignaler<MouseLocation>;
-    var _mouseUp(default, null) :DirectSignaler<MouseLocation>;
-    var _mouseMove(default, null) :DirectSignaler<MouseLocation>;
-    var _mouseClick(default, null) :DirectSignaler<MouseLocation>;
-    var _rollOver(default, null) :DirectSignaler<MouseLocation>;
-    var _rollOut(default, null) :DirectSignaler<MouseLocation>;
-    
+    var _deviceDownComponent :MouseInputComponent;
+    var _deviceDownComponentLoc :Vector2;
+    var _deviceDownStageLoc :Vector2;
     var _checked :Set<String>;
-    
     var _tupleCache :Tuple<MouseInputComponent, Vector2>;
-    
     var _mouseLoc :Vector2;
+    var _isGesturing :Bool;
     
 }
 

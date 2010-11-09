@@ -40,7 +40,7 @@ class PBUtil
         }
         
         var component = context.allocate(compClass);
-        Preconditions.checkArgument(Std.is(component, IEntityComponent), "Singleton is not an IEntityComponent");
+        Preconditions.checkArgument(Std.is(component, IEntityComponent), "Singleton " + compClass + " is not an IEntityComponent");
         var e = context.allocate(IEntity);
         Assert.isNotNull(e.context, "How can the entity context be null?");
         e.initialize(compName);
@@ -92,7 +92,7 @@ class PBUtil
 
     public static function entityProp <T> (c :IEntityComponent, ?fieldName :String) :PropertyReference<T>
     {
-        return new PropertyReference("#" + c.owner.name + "." + ReflectUtil.tinyClassName(c) + fieldToken(fieldName));
+        return new PropertyReference("#" + c.owner.name + "." + componentName(c) + fieldToken(fieldName));
     }
 
     public static function singletonProp <T> (component :Dynamic, ?fieldName :String =

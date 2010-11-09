@@ -2,11 +2,12 @@ package;
 
 import com.pblabs.components.scene.SceneComponentUtil;
 import com.pblabs.components.scene.SceneView;
-import com.pblabs.components.scene.js.Canvas2DComponent;
-import com.pblabs.components.scene.js.CanvasScene2D;
-import com.pblabs.components.scene.js.CircleSprite;
-import com.pblabs.components.scene.js.FilledSprite;
-import com.pblabs.components.scene.js.ImageSprite;
+import com.pblabs.components.scene.js.canvas.Canvas2DComponent;
+import com.pblabs.components.scene.js.canvas.CanvasLayer;
+import com.pblabs.components.scene.js.canvas.CanvasScene2D;
+import com.pblabs.components.scene.js.canvas.CircleSprite;
+import com.pblabs.components.scene.js.canvas.FilledSprite;
+import com.pblabs.components.scene.js.canvas.ImageSprite;
 import com.pblabs.components.tasks.AngleTask;
 import com.pblabs.components.tasks.LocationTask;
 import com.pblabs.engine.core.PBContext;
@@ -44,16 +45,24 @@ class CanvasDemo
         Assert.isNotNull(ctx.injector.parent, "Parent injector null");
         app.pushContext(ctx);
         app.run();
-        var jsCanvas = ctx.addSingletonComponent(CanvasScene2D);
-        var topLayer = "manlayer";
-        jsCanvas.addLayer(topLayer);
+        var canvas = ctx.addSingletonComponent(CanvasScene2D);
+        
+        var backLayer = ctx.allocate(CanvasLayer);
+        backLayer.parentProperty = canvas.componentProp();
+        canvas.owner.addComponent(backLayer, "backlayer");
+        
+        // backLayer = ctx.allocate(CanvasLayer);
+        // backLayer.parentProperty = canvas.componentProp();
+        // canvas.owner.addComponent(backLayer, "backlayer2");
+        
+        var manLayer = ctx.allocate(CanvasLayer);
+        manLayer.parentProperty = canvas.componentProp();
+        canvas.owner.addComponent(manLayer, "manlayer"); 
         
         
         var black = SceneComponentUtil.createBaseSceneEntity(ctx, "background object"); 
-        // ctx.allocate(AbstractSceneObject);
-        // black.initialize("background object");
         var blackDisplay = ctx.allocate(Canvas2DComponent);
-        blackDisplay.parentProperty = PBUtil.entityProp(jsCanvas);
+        blackDisplay.parentProperty = backLayer.entityProp();
         blackDisplay.sprite = new FilledSprite("#000000");
         black.addComponent(blackDisplay);
         black.deferring = false;
@@ -65,7 +74,7 @@ class CanvasDemo
         manSprite.centerY = manSprite.height/2;
         var c = ctx.allocate(Canvas2DComponent);
         c.sprite = manSprite;
-        c.layerName = topLayer;
+        c.parentProperty = manLayer.entityProp();
         man.addComponent(c);
         man.deferring = false;
         man.setLocation(50, 50);
@@ -79,11 +88,11 @@ class CanvasDemo
         
         circle.fillStyle = "#0000ff";
         var circleComp = ctx.allocate(Canvas2DComponent);
+        circleComp.parentProperty = backLayer.entityProp();
         circleComp.sprite = circle;
         circleObj.addComponent(circleComp);
         circleObj.deferring = false;
         circleObj.setLocation(100, 50);
-        return;
     }
     
     public static function main ()

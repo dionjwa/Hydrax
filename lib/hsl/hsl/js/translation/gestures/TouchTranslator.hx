@@ -20,6 +20,7 @@ class TouchTranslator extends JSTranslatorBase, implements Translator<TouchEvent
 	}
 	public function translate(nativeEvent:NativeEvent):Translation<TouchEvent> {
 		var event :TouchEvent = cast nativeEvent;
+		untyped event.preventDefault();
 		return new Translation<TouchEvent>(event, targetFromDOMEvent(nativeEvent));
 	}
 	#if debug

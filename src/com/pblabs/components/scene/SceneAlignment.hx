@@ -11,7 +11,6 @@
 
 package com.pblabs.components.scene;
 
-import flash.geom.Point;
 /**
  * SceneAlignment enum.
  */
@@ -21,6 +20,18 @@ enum SceneAlignment{
     CENTER;
     TOP_LEFT;
     TOP_RIGHT;
+}
+
+// package replace;
+
+// class SceneUtil
+// {
+//     public function new ()
+//     {
+        
+//     }
+
+// }
     
     // public static var DEFAULT_ALIGNMENT:SceneAlignment = CENTER;
 
@@ -80,4 +91,4 @@ enum SceneAlignment{
     // {
     //     super(name);
     // }
-}
+// }

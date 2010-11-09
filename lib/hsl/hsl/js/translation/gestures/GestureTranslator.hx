@@ -20,6 +20,7 @@ class GestureTranslator extends JSTranslatorBase, implements Translator<GestureE
 	}
 	public function translate(nativeEvent:NativeEvent):Translation<GestureEvent> {
 		var event :GestureEvent = cast nativeEvent;
+		untyped event.preventDefault();
 		return new Translation<GestureEvent>(event, targetFromDOMEvent(nativeEvent));
 	}
 	#if debug

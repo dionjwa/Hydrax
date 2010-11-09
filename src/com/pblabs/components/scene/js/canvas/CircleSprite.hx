@@ -6,7 +6,7 @@
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
-package com.pblabs.components.scene.js;
+package com.pblabs.components.scene.js.canvas;
 
 import easel.display.Context2d;
 

@@ -18,6 +18,7 @@ interface IBounds<T>
     implements Cloneable<T>
 {
     public var center(get_center, set_center) : Vector2;
+    public var topLeft(get_topLeft, set_topLeft) : Vector2;
     public var boundingRect (get_boundingRect, null) :Rectangle;
     public var boundingCircle (get_boundingCircle, null) :Circle;
 

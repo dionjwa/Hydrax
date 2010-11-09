@@ -17,7 +17,8 @@ using com.pblabs.geom.CircleUtil;
 class AbstractBounds<T>
     implements IBounds<T> 
 {
-    public var center(get_center, set_center) : Vector2;
+    public var topLeft(get_topLeft, set_topLeft) :Vector2;
+    public var center(get_center, set_center) :Vector2;
     public var boundingRect (get_boundingRect, null) :Rectangle;
     public var boundingCircle (get_boundingCircle, null) :Circle;
 
@@ -35,6 +36,17 @@ class AbstractBounds<T>
     {
         throw "Abstract";
         return null;
+    }
+    
+    function get_topLeft () :Vector2
+    {
+        return center.subtract(new Vector2(boundingRect.width / 2, boundingRect.height / 2));
+    }
+    
+    function set_topLeft (val :Vector2) :Vector2
+    {
+        center = val.add(new Vector2(boundingRect.width / 2, boundingRect.height / 2));
+        return val;
     }
     
     function get_boundingRect () :Rectangle

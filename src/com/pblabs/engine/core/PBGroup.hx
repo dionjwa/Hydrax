@@ -37,11 +37,13 @@ class PBGroup extends PBObject,
         super();
         items = [];
     }
-    
-    override public function toString () :String
+  
+    #if debug
+    dynamic override public function toString () :String
     {
         return StringUtil.objectToString(this, ["name", "length", "owningGroup"]);
     }
+    #end
     
     public function iterator () :Iterator<IPBObject>
     {

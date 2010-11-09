@@ -158,7 +158,6 @@ class BoundsPolygon extends AbstractBounds<BoundsPolygon>
     }
 
     var _polygon :Polygon;
-    // static var TEMP_VECTOR :Vector2 = new Vector2(); 
 }
 
 

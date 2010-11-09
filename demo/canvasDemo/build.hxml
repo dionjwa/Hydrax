@@ -8,8 +8,9 @@
 -cp ../../lib/hsl-pico
 -cp ../../lib/hsl
 -cp ../../src
+-cp src
 
--js CanvasDemo.js
+-js build/demo.js
 -main CanvasDemo
 
 

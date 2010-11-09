@@ -65,6 +65,7 @@ class JSTranslatorBase {
 	 */
 	private function localMouseLocationFromDOMEvent(event:js.Event, target:HtmlDom):MouseLocation {
 		var ieEvent:Event = cast event;
+		untyped event.preventDefault();
 		var globalX:Float = 0;
 		var globalY:Float = 0;
 		if (null != ieEvent.pageX) {
