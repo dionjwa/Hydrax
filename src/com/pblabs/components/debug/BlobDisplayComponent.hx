@@ -37,7 +37,7 @@ extends com.pblabs.components.scene.js.Canvas2DComponent
         _radius = radius;
 		_fillColor = fillColor;
 		#if flash
-        sceneLayerName = com.pblabs.components.scene.flash.Scene2DManager.DEBUG_LAYER_NAME;
+        // sceneLayerName = com.pblabs.components.scene.flash.Scene2DManager.DEBUG_LAYER_NAME;
         _displayObject = new flash.display.Sprite();
         #elseif js
         // _circle = new com.pblabs.components.scene.js.CircleSprite(radius);

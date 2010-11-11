@@ -25,6 +25,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
         _isDirty = true;
     }
     
+    @inject("@LocationComponent.signaller")
     public function setLocation (loc :Vector2) :Void
     {
         set_x(loc.x);
@@ -90,6 +91,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
         return _angle;
     }
     
+    @inject("@AngleComponent.signaller")
     function set_angle (val :Float) :Float
     {
         _angle = val;

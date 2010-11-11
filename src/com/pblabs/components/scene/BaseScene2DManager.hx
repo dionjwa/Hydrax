@@ -103,7 +103,7 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
         _transformDirty = true;
     }
     
-    override function childRemoved (c :C) :Void
+    override function childRemoved (c :Layer) :Void
     {
         super.childRemoved(c);
         Log.debug("removing scene layer " + c);

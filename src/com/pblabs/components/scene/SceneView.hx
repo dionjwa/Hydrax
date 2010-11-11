@@ -64,6 +64,7 @@ class SceneView
     public function new (?width :Int = 0, ?height :Int = 0)
     #end
     {
+        // trace("new sceneview " + Log.getStackTrace());
         _width = width;
         _height = height;
        

@@ -1,67 +1,61 @@
 /*******************************************************************************
- * Hydrax: haXe port of the PushButton Engine
+ * Hydrax :haXe port of the PushButton Engine
  * Copyright (C) 2010 Dion Amago
- * For more information see http://github.com/dionjwa/Hydrax
+ * For more information see http ://github.com/dionjwa/Hydrax
  *
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.scene.flash;
 
-import com.pblabs.engine.core.EntityComponent;
+import com.pblabs.components.scene.BaseScene2DComponent;
+import com.pblabs.components.scene.flash.Scene2DManager;
+import com.pblabs.components.scene.flash.SceneLayer;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.debug.Log;
 import com.pblabs.engine.time.ITickedObject;
-import com.pblabs.engine.util.PBUtil;
+import com.pblabs.geom.Rectangle;
+import com.pblabs.geom.Vector2;
 import com.pblabs.util.Preconditions;
+import com.pblabs.util.ReflectUtil;
 
 import flash.display.DisplayObject;
 
-import flash.geom.Matrix;
 import flash.geom.Point;
-import flash.geom.Rectangle;
 
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.ReflectUtil;
+using com.pblabs.util.MathUtil;
 
-import com.pblabs.components.base.AngleComponent;
-import com.pblabs.components.base.LocationComponent;
-import com.pblabs.components.scene.flash.Scene2DComponent;
-import com.pblabs.components.scene.flash.Scene2DManager;
-
-using com.pblabs.geom.Geometry;
-
-class Scene2DComponent extends BaseScene2DComponent<SceneLayer>, 
-    implements ITickedObject 
+class Scene2DComponent extends BaseScene2DComponent<SceneLayer>
+    // implements ITickedObject 
 {
-    // public var alpha(getAlpha, setAlpha) : Float;
-    public var displayObject(get_displayObject, set_displayObject) : DisplayObject;
-    public var isDirty(getIsDirty, null) : Bool;
-    public var position(null, setPosition) : Point;
-    public var scaleX(getScaleX, setScaleX) : Float;
-    public var scaleY(getScaleY, setScaleY) : Float;
-    public var scene(getScene, null) : Scene2DManager;
-    public var sceneBounds(getSceneBounds, null) : Rectangle;
-    public var x(get_x, set_x) : Float;
-    public var y(get_y, set_y) : Float;
-    public var angle(get_angle, set_angle) : Float;
-    public var zIndex(getZIndex, setZIndex) : Int;
-    public static var NAME:String = ReflectUtil.tinyClassName(Scene2DComponent);
+    // public var alpha(getAlpha, setAlpha) :Float;
+    public var displayObject(get_displayObject, set_displayObject) :DisplayObject;
+    // public var isDirty(getIsDirty, null) :Bool;
+    // public var position(null, setPosition) :Point;
+    // public var scaleX(getScaleX, setScaleX) :Float;
+    // public var scaleY(getScaleY, setScaleY) :Float;
+    // public var scene(getScene, null) :Scene2DManager;
+    // public var sceneBounds(getSceneBounds, null) :Rectangle;
+    // public var x(get_x, set_x) :Float;
+    // public var y(get_y, set_y) :Float;
+    // public var angle(get_angle, set_angle) :Float;
+    // public var zIndex(getZIndex, setZIndex) :Int;
+    // public static var NAME :String = ReflectUtil.tinyClassName(Scene2DComponent);
 
-    public static function getFrom (e :IEntity) :Scene2DComponent
-    {
-        return cast( e.lookupComponentByName(NAME), Scene2DComponent);
-    }
+    // public static function getFrom (e :IEntity) :Scene2DComponent
+    // {
+    //     return cast(e.lookupComponentByName(NAME), Scene2DComponent);
+    // }
 
     /**
      * If set, alpha is gotten from this property every frame.
      */
-    public var alphaProperty:PropertyReference<Float>;
+    // public var alphaProperty :PropertyReference<Float>;
 
-    public var autoAttach :Bool;
+    // public var autoAttach :Bool;
 
-    public var displayObjectRef :PropertyReference<DisplayObject>;
+    // public var displayObjectRef :PropertyReference<DisplayObject>;
 
     /**
      * If set, the layer index is gotten from this property every frame.
@@ -71,26 +65,26 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
     /**
      * If set, position is gotten from this property every frame.
      */
-     public var positionProperty:PropertyReference<{x:Float, y:Float}>;
+     // public var positionProperty :PropertyReference<{x :Float, y :Float}>;
 
     /**
      * If set, rotation is gotten from this property every frame.
      */
     // @inject("@AngleComponent.angle")    
-    public var rotationProperty:PropertyReference<Float>;
-    public var scaleXRef:PropertyReference<Float>;
-    public var scaleYRef:PropertyReference<Float>;
+    // public var rotationProperty :PropertyReference<Float>;
+    // public var scaleXRef :PropertyReference<Float>;
+    // public var scaleYRef :PropertyReference<Float>;
 
-    public var sceneLayerName:String;
+    // public var sceneLayerName :String;
     
-    public var sceneRef :PropertyReference<Scene2DManager>;
+    // public var sceneRef :PropertyReference<Scene2DManager>;
 
-    public var updateOnEvents:Array<Dynamic>;
+    // public var updateOnEvents :Array<Dynamic>;
 
     // @inject("@LocationComponent.x")
-    public var xProperty :PropertyReference<Float>;
+    // public var xProperty :PropertyReference<Float>;
     // @inject("@LocationComponent.y")
-    public var yProperty :PropertyReference<Float>;
+    // public var yProperty :PropertyReference<Float>;
 
     /**
      * If set, scale is gotten from this property every frame.
@@ -100,44 +94,50 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
     /**
      * If set, our z-index is gotten from this property every frame.
      */
-    public var zIndexProperty:PropertyReference<Int>;
+    public var zIndexProperty :PropertyReference<Int>;
 
-    public function new (?displayObject :DisplayObject = null)
+    public function new ()
     {
         super();
-        clearVars();
+        // clearVars();
         //Default
-        sceneRef = new PropertyReference("#Scene2DManager.Scene2DManager");
-        autoAttach = true;
-        updateOnEvents = [];
-        _displayObject = displayObject;
-        sceneLayerName = Scene2DManager.DEFAULT_LAYER_NAME;
-        _transformDirty = true;
-        _isDirty = true;
+        // sceneRef = new PropertyReference("#Scene2DManager.Scene2DManager");
+        // autoAttach = true;
+        // updateOnEvents = [];
+        // _displayObject = displayObject;
+        // sceneLayerName = Scene2DManager.DEFAULT_LAYER_NAME;
+        // _transformDirty = true;
+        // _isDirty = true;
+    }
+    
+    override function onAdd () :Void
+    {
+        super.onAdd();
+        _displayObject.name = name;
     }
 
-    public function getAlpha ():Float{
-//        return displayObject.alpha
-        return _alpha;
-    }
+//     public function getAlpha () :Float{
+// //        return displayObject.alpha
+//         return _alpha;
+//     }
 
     /**
      * Transparency, 0 being completely transparent and 1 being opaque.
      */
-    public function setAlpha (value :Float) :Void//Float
-    {
-//        displayObject.alpha = value;
-        if (value == _alpha) {
-            return;//value;
-        }
+//     public function setAlpha (value :Float) :Void//Float
+//     {
+// //        displayObject.alpha = value;
+//         if (value == _alpha) {
+//             return;//value;
+//         }
 
-        _alpha = value;
-        _transformDirty = true;
-        // return value;
-//        displayObject.alpha = value;
-    }
+//         _alpha = value;
+//         _transformDirty = true;
+//         // return value;
+// //        displayObject.alpha = value;
+//     }
 
-    function get_displayObject ():DisplayObject
+    function get_displayObject () :DisplayObject
     {
         return _displayObject;
     }
@@ -149,79 +149,79 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
         return d;
     }
 
-    public function getIsDirty ():Bool
-    {
-        return _isDirty;
-    }
+    // public function getIsDirty () :Bool
+    // {
+    //     return _isDirty;
+    // }
 
     /**
      * Position of the renderer in scene space.
      *
      * @see worldPosition
      */
-    public function setPosition (value :Point) :Point
-    {
-        if (_x != value.x || _y != value.y) {
-            _x = value.x;
-            _y = value.y;
-            _transformDirty = true;
-        }
+    // public function setPosition (value :Point) :Point
+    // {
+    //     if (_x != value.x || _y != value.y) {
+    //         _x = value.x;
+    //         _y = value.y;
+    //         _transformDirty = true;
+    //     }
         
-        // set_x(value.x);
-        // x = value.x;
-        // y = value.y;
+    //     // set_x(value.x);
+    //     // x = value.x;
+    //     // y = value.y;
 
-        //        var posX :Number;
-        //        var posY :Number;
-        //
-        //        if (snapToNearestPixels) {
-        //            posX = int(value.x);
-        //            posY = int(value.y);
-        //        } else {
-        //            posX = value.x;
-        //            posY = value.y;
-        //        }
-        //
-        //        if (posX == _position.x && posY == _position.y)
-        //            return;
-        //
-        //        _position.x = posX;
-        //        _position.y = posY;
-        //        _transformDirty = true;
-        return value;
-    }
+    //     //        var posX :Number;
+    //     //        var posY :Number;
+    //     //
+    //     //        if (snapToNearestPixels) {
+    //     //            posX = int(value.x);
+    //     //            posY = int(value.y);
+    //     //        } else {
+    //     //            posX = value.x;
+    //     //            posY = value.y;
+    //     //        }
+    //     //
+    //     //        if (posX == _position.x && posY == _position.y)
+    //     //            return;
+    //     //
+    //     //        _position.x = posX;
+    //     //        _position.y = posY;
+    //     //        _transformDirty = true;
+    //     return value;
+    // }
 
-    public function getScaleX():Float{
-        return _scaleX;
-    }
-
-    /**
-     * You can scale things on the X and Y axes.
-     */
-    public function setScaleX (value:Float):Float{
-        if (value == _scaleX)
-            return value;
-
-        _scaleX = value;
-        _transformDirty = true;
-        return value;
-       }
-
-    public function getScaleY():Float{
-        return _scaleY;
-    }
+    // public function getScaleX() :Float{
+    //     return _scaleX;
+    // }
 
     /**
      * You can scale things on the X and Y axes.
      */
-    public function setScaleY (value:Float):Float{
-        if (value == _scaleY)
-            return value;
+    // public function setScaleX (value :Float) :Float{
+    //     if (value == _scaleX)
+    //         return value;
 
-        _scaleY = value;
-        _transformDirty = true;
-        return value;
-       }
+    //     _scaleX = value;
+    //     _transformDirty = true;
+    //     return value;
+    //    }
+
+    // public function getScaleY() :Float{
+    //     return _scaleY;
+    // }
+
+    /**
+     * You can scale things on the X and Y axes.
+     */
+    // public function setScaleY (value :Float) :Float{
+    //     if (value == _scaleY)
+    //         return value;
+
+    //     _scaleY = value;
+    //     _transformDirty = true;
+    //     return value;
+    //    }
 
     //
     //    public function get registrationPoint () :Point
@@ -312,10 +312,10 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
     //        _transformDirty = true;
     //    }
 
-    public function getScene ():Scene2DManager
-    {
-        return _scene;
-    }
+    // public function getScene () :Scene2DManager
+    // {
+    //     return _scene;
+    // }
 
     //    /**
     //     * The scene which is responsible for drawing this renderer. Note that
@@ -342,87 +342,91 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
     /**
      * Our bounds in scene coordinates.
      */
-    public function getSceneBounds ():Rectangle
-    {
-        // NOP if no DO.
-        if (displayObject == null) {
-            return null;
-        }
+    // public function getSceneBounds () :Rectangle
+    // {
+    //     // NOP if no DO.
+    //     if (displayObject == null) {
+    //         return null;
+    //     }
 
-        var bounds:Rectangle = displayObject.getBounds(displayObject);
+    //     var bounds :Rectangle = displayObject.getBounds(displayObject);
 
-        // Just translation for now.
-        bounds.x += displayObject.x;
-        bounds.y += displayObject.y;
+    //     // Just translation for now.
+    //     bounds.x += displayObject.x;
+    //     bounds.y += displayObject.y;
 
-        // And hand it back.
-        return bounds;
-    }
+    //     // And hand it back.
+    //     return bounds;
+    // }
 
-    function get_x ():Float{
-        return _x;
-    }
+    // function get_x () :Float{
+    //     return _x;
+    // }
 
-    function set_x (value :Float):Float
-    {
-        // trace("setting scene2d x" + value);
-        if (value == _x) {
-            return value;
-        }
-        _x = value;
-        _transformDirty = true;
-        return value;
-       }
+    // function set_x (value :Float) :Float
+    // {
+    //     // trace("setting scene2d x" + value);
+    //     if (value == _x) {
+    //         return value;
+    //     }
+    //     _x = value;
+    //     _transformDirty = true;
+    //     return value;
+    //    }
 
-    function get_y ():Float{
-        return _y;
-    }
+    // function get_y () :Float{
+    //     return _y;
+    // }
     
-    function get_angle ():Float{
-        return _rotation;
-    }
+    // function get_angle () :Float{
+    //     return _rotation;
+    // }
 
-    @inject("@LocationComponent.signaller")
+    // @inject("@LocationComponent.signaller")
     // public function setLocation (x :Float, y :Float) :Void
-    public function setLocation (loc :Vector2) :Void
+
+    override public function setLocation (loc :Vector2) :Void
     {
-        if (_x != loc.x || _y != loc.y) {
-            _x = loc.x;
-            _y = loc.y;
-            _transformDirty = true;
-        }
+        super.setLocation(loc);
+        // if (_x != loc.x || _y != loc.y) {
+        //     _x = loc.x;
+        //     _y = loc.y;
+        //     _transformDirty = true;
+        // }
         _displayObject.x = _x;
         _displayObject.y = _y;
+    }
         // trace("_transformDirty=" + _transformDirty);
         
-        // x = loc.x;
-        // y = loc.y;
-        // // set_x(loc.x);
-        // set_y(loc.y);
-        // this.y = y;
-        // _transformDirty = true;
-    }
+    //     // x = loc.x;
+    //     // y = loc.y;
+    //     // // set_x(loc.x);
+    //     // set_y(loc.y);
+    //     // this.y = y;
+    //     // _transformDirty = true;
+    // }
        
-    function set_y (value :Float):Float
-    {
-        if (value == _y) {
-            return value;
-        }
+   //  function set_y (value :Float) :Float
+   //  {
+   //      if (value == _y) {
+   //          return value;
+   //      }
 
-        _y = value;
-        _transformDirty = true;
-        return value;
-   }
+   //      _y = value;
+   //      _transformDirty = true;
+   //      return value;
+   // }
 
    @inject("@AngleComponent.signaller")
-   function set_angle (value :Float) :Float
+   override function set_angle (value :Float) :Float
    {
-       if (value != _rotation) {
-           _rotation = value;
-           _transformDirty = true;
-           _displayObject.rotation = _rotation.toDegrees();
-       }
-       return value;
+       super.set_angle(value);
+       _displayObject.rotation = _angle.toDeg();
+       // if (value != _rotation) {
+       //     _rotation = value;
+       //     _transformDirty = true;
+       // }
+       return _angle;
    }
 
     //    public function get worldPosition () :Point
@@ -493,83 +497,83 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
     //        _transformDirty = true;
     //    }
 
-    public function getZIndex ():Int{
-        return _zIndex;
-    }
+    // public function getZIndex () :Int{
+    //     return _zIndex;
+    // }
 
     /**
      * By default, layers are sorted based on the z-index, from small
      * to large.
      * @param value Z-index to set.
      */
-    public function setZIndex (value :Int):Int{
-        if (_zIndex == value)
-            return value;
+    // public function setZIndex (value :Int) :Int{
+    //     if (_zIndex == value)
+    //         return value;
 
-        _zIndex = value;
-        _zIndexDirty = true;
-        return value;
-       }
+    //     _zIndex = value;
+    //     _zIndexDirty = true;
+    //     return value;
+    //    }
 
-    public function attach () :Void
-    {
-        if (_displayObject == null && displayObjectRef != null) {
-            _displayObject = owner.getProperty(displayObjectRef);
-        }
+    // public function attach () :Void
+    // {
+    //     if (_displayObject == null && displayObjectRef != null) {
+    //         _displayObject = owner.getProperty(displayObjectRef);
+    //     }
 
-        updateFromEvent();
-        var scene2D :Scene2DManager = owner.getProperty(sceneRef);
-        if (_scene == scene2D) {
-            Log.info(["attach, already attached", "_scene", _scene, "scene2D", scene2D]);
-            return;
-        }
-        //Add ourselves to the scene
-        if (scene2D != null) {
-            scene2D.addSceneComponent(this);
-            _scene = scene2D;
-        } else {
-            Log.warn(["attach", "scene2D", scene2D]);
-        }
-    }
+    //     updateFromEvent();
+    //     var scene2D :Scene2DManager = owner.getProperty(sceneRef);
+    //     if (_scene == scene2D) {
+    //         Log.info(["attach, already attached", "_scene", _scene, "scene2D", scene2D]);
+    //         return;
+    //     }
+    //     //Add ourselves to the scene
+    //     if (scene2D != null) {
+    //         scene2D.addSceneComponent(this);
+    //         _scene = scene2D;
+    //     } else {
+    //         Log.warn(["attach", "scene2D", scene2D]);
+    //     }
+    // }
 
-    public function detach () :Void
-    {
-        if (_scene != null) {
-            //This nulls _scene
-            _scene.removeSceneComponent(this);
-        }
-    }
+    // public function detach () :Void
+    // {
+    //     if (_scene != null) {
+    //         //This nulls _scene
+    //         _scene.removeSceneComponent(this);
+    //     }
+    // }
 
-    public function onTick (dt :Float) :Void
-    {
-        return;
-        // trace("_isDirty=" + _isDirty);
-        // trace("update _transformDirty=" + _transformDirty);
-        // trace("update _isDirty=" + _isDirty);
-        // Lookup and apply properties. This only makes adjustments to the
-        // underlying DisplayObject if necessary.
-        if (displayObject == null || displayObject.parent == null) {
-            // trace("no disp or parent");
-            return;
-        }
+//     public function onTick (dt :Float) :Void
+//     {
+//         return;
+//         // trace("_isDirty=" + _isDirty);
+//         // trace("update _transformDirty=" + _transformDirty);
+//         // trace("update _isDirty=" + _isDirty);
+//         // Lookup and apply properties. This only makes adjustments to the
+//         // underlying DisplayObject if necessary.
+//         if (displayObject == null || displayObject.parent == null) {
+//             // trace("no disp or parent");
+//             return;
+//         }
 
-//        displayObject.scaleX = owner.getProperty(scaleXRefy, 1) as Number;
-//        displayObject.scaleY = owner.getProperty(scaleYRef, 1) as Number;
-//        displayObject.alpha = owner.getProperty(alphaProperty, 1) as Number;
-//        displayObject.visible = (displayObject.alpha > 0);
-//        displayObject.x = owner.getProperty(xProperty, 0) as Number;
-//        displayObject.y = owner.getProperty(yProperty, 0) as Number;
-//        trace("updating", x, y);
+// //        displayObject.scaleX = owner.getProperty(scaleXRefy, 1) as Number;
+// //        displayObject.scaleY = owner.getProperty(scaleYRef, 1) as Number;
+// //        displayObject.alpha = owner.getProperty(alphaProperty, 1) as Number;
+// //        displayObject.visible = (displayObject.alpha > 0);
+// //        displayObject.x = owner.getProperty(xProperty, 0) as Number;
+// //        displayObject.y = owner.getProperty(yProperty, 0) as Number;
+// //        trace("updating", x, y);
 
-        // if (_isDirty) {
-        //     updateProperties();
-        // }
+//         // if (_isDirty) {
+//         //     updateProperties();
+//         // }
 
-        // Now that we've read all our properties, apply them to our transform.
-        if (_transformDirty) {
-            updateTransform();
-        }
-    }
+//         // Now that we've read all our properties, apply them to our transform.
+//         if (_transformDirty) {
+//             updateTransform();
+//         }
+//     }
 
     //    /**
     //     * Is the rendered object opaque at the request position in screen space?
@@ -618,238 +622,238 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
      * to update immediately.
      * @param updateProps Read fresh values from any mapped properties.
      */
-    public function updateTransform (?updateProps :Bool = false) :Void
-    {
-        trace("updateTransform");
-        if (displayObject == null) {
-            return;
-        }
+//     public function updateTransform (?updateProps :Bool = false) :Void
+//     {
+//         trace("updateTransform");
+//         if (displayObject == null) {
+//             return;
+//         }
 
-        // if (updateProps) {
-        //     updateProperties();
-        // }
+//         // if (updateProps) {
+//         //     updateProperties();
+//         // }
 
-        if (_scene == null) {
-            return;
-        }
-        //        _transformMatrix.identity();
-        //        _transformMatrix.scale(_scale.x, _scale.y);
-        //        _transformMatrix.translate(-_registrationPoint.x * _scale.x,
-        //            -_registrationPoint.y * _scale.y);
-        //        _transformMatrix.rotate(Geometry.toRadians(_rotation) + _rotationOffset);
-        //        _transformMatrix.translate(_position.x, _position.y);
+//         if (_scene == null) {
+//             return;
+//         }
+//         //        _transformMatrix.identity();
+//         //        _transformMatrix.scale(_scale.x, _scale.y);
+//         //        _transformMatrix.translate(-_registrationPoint.x * _scale.x,
+//         //            -_registrationPoint.y * _scale.y);
+//         //        _transformMatrix.rotate(Geometry.toRadians(_rotation) + _rotationOffset);
+//         //        _transformMatrix.translate(_position.x, _position.y);
 
-        //        displayObject.transform.matrix = _transformMatrix;
-        displayObject.scaleX = _scaleX;
-        displayObject.scaleY = _scaleY;
-        // displayObject.alpha = _alpha;
-        // displayObject.visible = (_alpha > 0);
-        trace("setting displayobject xy=" + _x + ", "+ _y);
-        displayObject.x = _x;
-        displayObject.y = _y;
-        displayObject.rotation = _rotation.toDegrees();
+//         //        displayObject.transform.matrix = _transformMatrix;
+//         displayObject.scaleX = _scaleX;
+//         displayObject.scaleY = _scaleY;
+//         // displayObject.alpha = _alpha;
+//         // displayObject.visible = (_alpha > 0);
+//         trace("setting displayobject xy=" + _x + ", "+ _y);
+//         displayObject.x = _x;
+//         displayObject.y = _y;
+//         displayObject.rotation = _rotation.toDegrees();
 
-//        if (SceneItemComponent(owner.getComponentByType(SceneItemComponent)).desc.type == DisplayComponentType.STOREY) {
-//            trace(x, y);
-//        }
+// //        if (SceneItemComponent(owner.lookupComponentByType(SceneItemComponent)).desc.type == DisplayComponentType.STOREY) {
+// //            trace(x, y);
+// //        }
 
-        // trace("setting _transformDirty false");
-        _transformDirty = true;
-    }
+//         // trace("setting _transformDirty false");
+//         _transformDirty = true;
+//     }
 
-    override function onAdd () :Void
-    {
-        super.onAdd();
-        _removed = false;
-        // for (eventName in updateOnEvents) {
-        //     // owner.registerListener(owner.eventDispatcher, eventName, F.callback_(updateFromEvent, eventName));
-        // }
+    // override function onAdd () :Void
+    // {
+    //     super.onAdd();
+    //     _removed = false;
+    //     // for (eventName in updateOnEvents) {
+    //     //     // owner.registerListener(owner.eventDispatcher, eventName, F.callback_(updateFromEvent, eventName));
+    //     // }
 
-        // _alpha = 1;
-        // _hitTestDirty = true;
+    //     // _alpha = 1;
+    //     // _hitTestDirty = true;
 
-        // _isDirty = true;
-        // _lastLayerIndex = -1;
+    //     // _isDirty = true;
+    //     // _lastLayerIndex = -1;
 
-        // _layerIndex = 0;
-        // _layerIndexDirty = true;
-        // _scaleX = 1;
-        // _scaleY = 1;
-        // _transformDirty = true;
+    //     // _layerIndex = 0;
+    //     // _layerIndexDirty = true;
+    //     // _scaleX = 1;
+    //     // _scaleY = 1;
+    //     // _transformDirty = true;
 
-        // _x = 0;
-        // _y = 0;
+    //     // _x = 0;
+    //     // _y = 0;
 
-        // _zIndex = 0;
-        // _zIndexDirty = true;
+    //     // _zIndex = 0;
+    //     // _zIndexDirty = true;
 
-        // _scene = null;
-    }
+    //     // _scene = null;
+    // }
 
-    override function onRemove () :Void
-    {
-        if (_removed) {
-            throw "Already removed";
-        }
-        super.onRemove();
-        // Remove ourselves from the scene when we are removed
-        detach();
-        _displayObject = null;
-        clearVars();
-        _removed = true;
-    }
+    // override function onRemove () :Void
+    // {
+    //     if (_removed) {
+    //         throw "Already removed";
+    //     }
+    //     super.onRemove();
+    //     // Remove ourselves from the scene when we are removed
+    //     detach();
+    //     _displayObject = null;
+    //     clearVars();
+    //     _removed = true;
+    // }
     
-    function clearVars () :Void
-    {
-        _alpha = 1;
-        _hitTestDirty = true;
+    // function clearVars () :Void
+    // {
+    //     _alpha = 1;
+    //     _hitTestDirty = true;
 
-        _isDirty = true;
-        _lastLayerIndex = -1;
+    //     _isDirty = true;
+    //     _lastLayerIndex = -1;
 
-        _layerIndex = 0;
-        _layerIndexDirty = true;
-        _scaleX = 1;
-        _scaleY = 1;
-        _transformDirty = true;
+    //     _layerIndex = 0;
+    //     _layerIndexDirty = true;
+    //     _scaleX = 1;
+    //     _scaleY = 1;
+    //     _transformDirty = true;
 
-        _x = 0;
-        _y = 0;
+    //     _x = 0;
+    //     _y = 0;
 
-        _zIndex = 0;
-        _zIndexDirty = true;
+    //     _zIndex = 0;
+    //     _zIndexDirty = true;
 
-        _scene = null;
-    }
+    //     _scene = null;
+    // }
 
-    override function onReset() : Void
-    {
-        super.onReset();
+    // override function onReset() :Void
+    // {
+    //     super.onReset();
 
-        detach();
+    //     detach();
 
-        if (autoAttach) {
-            attach();
-        }
-    }
+    //     if (autoAttach) {
+    //         attach();
+    //     }
+    // }
 
-    function updateFromEvent (?_:Array<Dynamic>) :Void
-    {
-        _isDirty = true;
-    }
+    // function updateFromEvent (?_ :Array<Dynamic>) :Void
+    // {
+    //     _isDirty = true;
+    // }
 
-    function updateProperties () :Void
-    {
-        return;
-        trace("updateProperties");
+//     function updateProperties () :Void
+//     {
+//         return;
+//         trace("updateProperties");
 
-        _transformDirty = true;
-        _isDirty = false;
-        // Sync our zIndex.
-//        if (zIndexProperty) {
-//            zIndex = owner.getProperty(zIndexProperty, zIndex);
+//         _transformDirty = true;
+//         _isDirty = false;
+//         // Sync our zIndex.
+// //        if (zIndexProperty) {
+// //            zIndex = owner.getProperty(zIndexProperty, zIndex);
+// //        }
+
+//         // Sync our layerIndex.
+//         //        if (layerNameProperty)
+//         //            layerIndex = owner.getProperty(layerNameProperty, layerIndex);
+
+//         // Maybe we were in the right layer, but have the wrong zIndex.
+//         //        if (_zIndexDirty && _scene) {
+//         //            _scene.getLayer(_layerIndex).markDirty();
+//         //            _zIndexDirty = false;
+//         //        }
+
+//         // Position.
+//         if (null != xProperty) {
+//             trace("setting x=" + owner.getProperty(xProperty));
+//             _x = owner.getProperty(xProperty);
+//         }
+
+//         if (null != yProperty) {
+//             _y = owner.getProperty(yProperty);
+//         }
+
+// //        var pos :Point = owner.getProperty(positionProperty) as Point;
+// //        if (pos) {
+// //            if (scene) {
+// //                position = scene.transformWorldToScene(pos);
+// //            } else {
+// //                position = pos;
+// //            }
+// //        }
+
+//         //        // Scale.
+//         //        var scale :Point = owner.getProperty(scaleProperty) as Point;
+//         //        if (scale) {
+//         //            this.scale = scale;
+//         //        }
+
+//        // Rotation.
+//        if (null != rotationProperty) {
+//            angle = owner.getProperty(rotationProperty);
 //        }
 
-        // Sync our layerIndex.
-        //        if (layerNameProperty)
-        //            layerIndex = owner.getProperty(layerNameProperty, layerIndex);
+//         // Alpha.
+//         if (null != alphaProperty) {
+//             _alpha = owner.getProperty(alphaProperty);
+//         }
 
-        // Maybe we were in the right layer, but have the wrong zIndex.
-        //        if (_zIndexDirty && _scene) {
-        //            _scene.getLayer(_layerIndex).markDirty();
-        //            _zIndexDirty = false;
-        //        }
+//         //        // Registration Point.
+//         //        var reg :Point = owner.getProperty(registrationPointProperty) as Point;
+//         //        if (reg) {
+//         //            registrationPoint = reg;
+//         //        }
 
-        // Position.
-        if (null != xProperty) {
-            trace("setting x=" + owner.getProperty(xProperty));
-            _x = owner.getProperty(xProperty);
-        }
+//         // Make sure we're in the right layer and at the right zIndex in the scene.
+//         // Do this last to be more caching-layer-friendly. If we change position and
+//         // layer we can just do this at end and it works.
+// //        if (_layerIndexDirty && _scene) {
+// //            var tmp :int = _layerIndex;
+// //            _layerIndex = _lastLayerIndex;
+// //
+// //            if (_lastLayerIndex != -1) {
+// //                _scene.removeDisplayComponent(this);
+// //            }
+// //
+// //            _layerIndex = tmp;
+// //
+// //            _scene.addDisplayComponent(this);
+// //
+// //            _lastLayerIndex = _layerIndex;
+// //            _layerIndexDirty = false;
+// //        }
+//     }
 
-        if (null != yProperty) {
-            _y = owner.getProperty(yProperty);
-        }
+    // var _alpha :Float;
 
-//        var pos :Point = owner.getProperty(positionProperty) as Point;
-//        if (pos) {
-//            if (scene) {
-//                position = scene.transformWorldToScene(pos);
-//            } else {
-//                position = pos;
-//            }
-//        }
+    var _displayObject :DisplayObject;
+    // var _hitTestDirty :Bool;
 
-        //        // Scale.
-        //        var scale :Point = owner.getProperty(scaleProperty) as Point;
-        //        if (scale) {
-        //            this.scale = scale;
-        //        }
+    // var _isDirty :Bool;
+    // var _lastLayerIndex :Int;
 
-       // Rotation.
-       if (null != rotationProperty) {
-           angle = owner.getProperty(rotationProperty);
-       }
-
-        // Alpha.
-        if (null != alphaProperty) {
-            _alpha = owner.getProperty(alphaProperty);
-        }
-
-        //        // Registration Point.
-        //        var reg :Point = owner.getProperty(registrationPointProperty) as Point;
-        //        if (reg) {
-        //            registrationPoint = reg;
-        //        }
-
-        // Make sure we're in the right layer and at the right zIndex in the scene.
-        // Do this last to be more caching-layer-friendly. If we change position and
-        // layer we can just do this at end and it works.
-//        if (_layerIndexDirty && _scene) {
-//            var tmp :int = _layerIndex;
-//            _layerIndex = _lastLayerIndex;
-//
-//            if (_lastLayerIndex != -1) {
-//                _scene.removeDisplayComponent(this);
-//            }
-//
-//            _layerIndex = tmp;
-//
-//            _scene.addDisplayComponent(this);
-//
-//            _lastLayerIndex = _layerIndex;
-//            _layerIndexDirty = false;
-//        }
-    }
-
-    var _alpha:Float;
-
-    var _displayObject:DisplayObject;
-    var _hitTestDirty:Bool;
-
-    var _isDirty:Bool;
-    var _lastLayerIndex:Int;
-
-    var _layerIndex:Int;
-    var _layerIndexDirty:Bool;
+    // var _layerIndex :Int;
+    // var _layerIndexDirty :Bool;
     //    protected var _position :Point = new Point();
     //    protected var _registrationPoint :Point = new Point();
-    var _rotation :Float;
+    // var _rotation :Float;
 
     //    protected var _rotationOffset :Number = 0;
-    var _scaleX:Float;
-    var _scaleY:Float;
+    // var _scaleX :Float;
+    // var _scaleY :Float;
 
-    var _transformDirty:Bool;
+    // var _transformDirty :Bool;
 
-    var _x:Float;
-    var _y:Float;
+    // var _x :Float;
+    // var _y :Float;
 
-    var _zIndex:Int;
-    var _zIndexDirty:Bool;
+    // var _zIndex :Int;
+    // var _zIndexDirty :Bool;
     
-    var _removed :Bool;
+    // var _removed :Bool;
 
-    public var _scene:Scene2DManager;
+    // public var _scene :Scene2DManager;
 
 }
 

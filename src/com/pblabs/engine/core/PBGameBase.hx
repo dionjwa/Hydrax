@@ -48,6 +48,7 @@ class PBGameBase extends PBContext
         _contextsDirty = false;
         newActiveContextSignaler = new DirectSignaler(this);
         _isRunning = false;
+        _hasStarted = false;
         startup();
     }
     
@@ -102,6 +103,8 @@ class PBGameBase extends PBContext
     
     override public function startup(#if (flash || cpp) ?parentContainer :flash.display.DisplayObjectContainer #end) :Void
     {
+        Preconditions.checkArgument(!_hasStarted, "Game has already started, do not call this again");
+        _hasStarted = true;
         Log.debug(["Initializing " + this + " '" + name + "'."]);
         #if flash
         if (parentContainer != null) {
@@ -179,6 +182,7 @@ class PBGameBase extends PBContext
     var _contexts :Array<IPBContext>;
     var _contextsDirty :Bool;
     var _isRunning :Bool;
+    var _hasStarted :Bool;
 }
 
 

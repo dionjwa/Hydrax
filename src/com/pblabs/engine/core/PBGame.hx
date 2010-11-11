@@ -17,6 +17,7 @@ import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.core.SetManager;
 import com.pblabs.engine.core.SignalBondManager;
+import com.pblabs.engine.debug.Log;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceManager;
 import com.pblabs.engine.serialization.Serializer;
@@ -44,7 +45,7 @@ class PBGame extends PBGameBase
         super.initializeManagers();
 
         // Register ourselves.
-        registerManager(PBGame, this);
+        registerManager(PBGameBase, this);
         
         // Bring in the standard managers.
         registerManager(NameManager, new NameManager());

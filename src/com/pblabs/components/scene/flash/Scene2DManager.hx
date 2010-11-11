@@ -26,6 +26,7 @@ import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
+import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
 import flash.display.Sprite;
 
@@ -53,7 +54,7 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
     // public var position(get_position, set_position) :Point;
     // public var positionX(null, set_positionX) :Float;
     // public var positionY(null, set_positionY) :Float;
-    public var rootSprite(get_rootSprite, null) :Sprite;
+    public var displayContainer (get_displayContainer, null) :DisplayObjectContainer;
     // public var sceneBounds(get_sceneBounds, set_sceneBounds) :Rectangle;
     // @inject
     // public var sceneView(get_sceneView, set_sceneView) :SceneView;
@@ -110,6 +111,20 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
         // #end
         
     }
+    
+    override function onAdd () :Void
+    {
+        super.onAdd();
+        _rootSprite.name = name;
+        context.getManager(SceneView).addDisplayObject(displayContainer);
+    }
+    
+    override function onRemove () :Void
+    {
+        super.onRemove();
+        context.getManager(SceneView).removeDisplayObject(displayContainer);
+    }
+    
 
     // public function lookupComponentReference () :PropertyReference<Scene2DManager>
     // {
@@ -136,50 +151,50 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
     //     return _layers.length;
     // }
 
-    public function get_position () :Point{
-        return _root_position.clone();
-    }
+    // public function get_position () :Point{
+    //     return _root_position.clone();
+    // }
 
-    public function set_positionX (newX :Float) :Float{
-        if (_root_position.x == newX) {
-            return newX;
-        }
-        _root_position.x = newX;
-        _transformDirty = true;
-        return newX;
-       }
+   //  public function set_positionX (newX :Float) :Float{
+   //      if (_root_position.x == newX) {
+   //          return newX;
+   //      }
+   //      _root_position.x = newX;
+   //      _transformDirty = true;
+   //      return newX;
+   //     }
 
-    public function set_positionY (newY :Float) :Float{
-        if (_root_position.y == newY) {
-            return newY;
-        }
-        _root_position.y = newY;
-        _transformDirty = true;
-        return newY;
-       }
+   //  public function set_positionY (newY :Float) :Float{
+   //      if (_root_position.y == newY) {
+   //          return newY;
+   //      }
+   //      _root_position.y = newY;
+   //      _transformDirty = true;
+   //      return newY;
+   //     }
 
-    public function set_position (value :Point) :Point{
-        if (value == null) {
-            return _root_position;
-        }
+   //  public function set_position (value :Point) :Point{
+   //      if (value == null) {
+   //          return _root_position;
+   //      }
 
-        var newX :Float = value.x;
-        var newY :Float = value.y;
+   //      var newX :Float = value.x;
+   //      var newY :Float = value.y;
 
-        if (_root_position.x == newX && _root_position.y == newY) {
-            return _root_position;
-        }
-        //        trace("Setting _root_position.x=" + newX);
-        _root_position.x = newX;
-        _root_position.y = newY;
-        _transformDirty = true;
-        return _root_position;
-   }
+   //      if (_root_position.x == newX && _root_position.y == newY) {
+   //          return _root_position;
+   //      }
+   //      //        trace("Setting _root_position.x=" + newX);
+   //      _root_position.x = newX;
+   //      _root_position.y = newY;
+   //      _transformDirty = true;
+   //      return _root_position;
+   // }
    
-    public function get_rootSprite () :Sprite
-    {
-        return _rootSprite;
-    }
+   //  public function get_rootSprite () :Sprite
+   //  {
+   //      return _rootSprite;
+   //  }
 
     //    public function get sceneViewBounds () :Rectangle
     //    {
@@ -226,150 +241,135 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
     /**
      * @inheritDoc
      */
-    function get_sceneBounds () :Rectangle{
-        //        if (_sceneBounds != null) {
-        return _sceneBounds;
-        //        }
-        //        if (sceneBoundsRef != null && sceneBoundsRef.value != null) {
-        //            return sceneBoundsRef.value;
-        //        }
-        //        return null;
-    }
+    // function get_sceneBounds () :Rectangle{
+    //     //        if (_sceneBounds != null) {
+    //     return _sceneBounds;
+    //     //        }
+    //     //        if (sceneBoundsRef != null && sceneBoundsRef.value != null) {
+    //     //            return sceneBoundsRef.value;
+    //     //        }
+    //     //        return null;
+    // }
 
-    function set_sceneBounds (value :Rectangle) :Rectangle{
-        _sceneBounds = value;
-        return value;
-       }
+    // function set_sceneBounds (value :Rectangle) :Rectangle{
+    //     _sceneBounds = value;
+    //     return value;
+    //    }
 
-    function get_sceneView () :SceneView
-    {
-        return _sceneView;
-    }
+    // function get_sceneView () :SceneView
+    // {
+    //     return _sceneView;
+    // }
 
-    public function set_sceneView (value :SceneView) :SceneView
-    {
-        if (_sceneView != null) {
-            _sceneView.removeDisplayObject(_rootSprite);
-        }
-        _sceneView = value;
+    // public function set_sceneView (value :SceneView) :SceneView
+    // {
+    //     if (_sceneView != null) {
+    //         _sceneView.removeDisplayObject(_rootSprite);
+    //     }
+    //     _sceneView = value;
 
-        if (_sceneView != null) {
-            _sceneView.addDisplayObject(_rootSprite);
-            _currentViewRect.width = _sceneView.width;
-            _currentViewRect.height = _sceneView.height;
-        }
+    //     if (_sceneView != null) {
+    //         _sceneView.addDisplayObject(_rootSprite);
+    //         _currentViewRect.width = _sceneView.width;
+    //         _currentViewRect.height = _sceneView.height;
+    //     }
         
-        return value;
-       }
+    //     return value;
+    //    }
 
-    public function get_zoom () :Float{
-        return _zoom;
-    }
+    // public function get_zoom () :Float{
+    //     return _zoom;
+    // }
 
-    public function set_zoom (value :Float) :Float{
-        // Make sure our zoom level stays within the desired bounds
-        value = MathUtil.fclamp(value, min_zoom, max_zoom);
+    // public function set_zoom (value :Float) :Float{
+    //     // Make sure our zoom level stays within the desired bounds
+    //     value = MathUtil.fclamp(value, min_zoom, max_zoom);
 
-        if (_zoom == value) {
-            return _zoom;
-        }
+    //     if (_zoom == value) {
+    //         return _zoom;
+    //     }
 
-        _zoom = value;
-        _transformDirty = true;
-        return value;
-        // Make sure our zoom level stays within the desired bounds
-       }
+    //     _zoom = value;
+    //     _transformDirty = true;
+    //     return value;
+    //     // Make sure our zoom level stays within the desired bounds
+    //    }
 
-    public function addLayer (layer :SceneLayer, ?name :String = null, ?idx :Int = -1) :Void
-    {
-        Assert.isNotNull(layer, "null layer");
-        Assert.isNull(layer._parentScene, "layer already attached to a scene");
+    // public function addLayer (layer :SceneLayer, ?name :String = null, ?idx :Int = -1) :Void
+    // {
+    //     Assert.isNotNull(layer, "null layer");
+    //     Assert.isNull(layer._parentScene, "layer already attached to a scene");
 
-        if (idx == -1) {
-            idx = _layers.length;
-        }
+    //     if (idx == -1) {
+    //         idx = _layers.length;
+    //     }
 
-        _layers.insert(idx, layer);
-        _rootSprite.addChildAt(layer, idx);
-        if (null != name) {
-            layer.name = name;
-        }
-        layer.attachedInternal();
-    }
+    //     _layers.insert(idx, layer);
+    //     _rootSprite.addChildAt(layer, idx);
+    //     if (null != name) {
+    //         layer.name = name;
+    //     }
+    //     layer.attachedInternal();
+    // }
 
-    public function addSceneComponent (obj :Scene2DComponent) :Void
-    {
-        Log.debug("adding scene component");
-        if (_sceneComponents.exists(obj)) {
-            throw "Already contains obj " + obj;
-        }
+    // public function addSceneComponent (obj :Scene2DComponent) :Void
+    // {
+    //     Log.debug("adding scene component");
+    //     if (_sceneComponents.exists(obj)) {
+    //         throw "Already contains obj " + obj;
+    //     }
 
-        if (null == obj) {
-            throw "obj is null";
-        }
+    //     if (null == obj) {
+    //         throw "obj is null";
+    //     }
 
-        if (null == obj.displayObject) {
-            throw "obj.displayObject is null";
-        }
+    //     if (null == obj.displayObject) {
+    //         throw "obj.displayObject is null";
+    //     }
 
-        var layerName = obj.sceneLayerName;
-        if (null == layerName) {
-            Log.warn("obj.sceneLayerName is null, using the default layer");
-            layerName = DEFAULT_LAYER_NAME;
-        }
+    //     var layerName = obj.sceneLayerName;
+    //     if (null == layerName) {
+    //         Log.warn("obj.sceneLayerName is null, using the default layer");
+    //         layerName = DEFAULT_LAYER_NAME;
+    //     }
 
-        var layer = getLayer(layerName);
+    //     var layer = getLayer(layerName);
         
-        if (layer == null && layerName == DEFAULT_LAYER_NAME) {
-            layer = getDefaultLayer();
-        }
+    //     if (layer == null && layerName == DEFAULT_LAYER_NAME) {
+    //         layer = getDefaultLayer();
+    //     }
 
-        if (null == layer) {
-            // throw "No layer named " + layerName;
-            Log.warn("No layer named " + layerName + ", creating");
-            layer = new SceneLayer();
-            addLayer(layer, layerName);
-        }
+    //     if (null == layer) {
+    //         // throw "No layer named " + layerName;
+    //         Log.warn("No layer named " + layerName + ", creating");
+    //         layer = new SceneLayer();
+    //         addLayer(layer, layerName);
+    //     }
 
-        _sceneComponents.set(obj, layer);
+    //     _sceneComponents.set(obj, layer);
         
-        if (!_sceneComponents.exists(obj)) {
-            throw "After adding, still not in the map";
-        }
-        layer.addObjectInternal(obj);
-        obj._scene = this;
-        dirty = true;
+    //     if (!_sceneComponents.exists(obj)) {
+    //         throw "After adding, still not in the map";
+    //     }
+    //     layer.addObjectInternal(obj);
+    //     obj._scene = this;
+    //     dirty = true;
         
-        // DebugUtil.traceDisplayChildren(_rootSprite);
-    }
+    //     // DebugUtil.traceDisplayChildren(_rootSprite);
+    // }
 
-    public function getDefaultLayer () :SceneLayer
-    {
-        if (null == _layers[0]) {
-            var layer = new SceneLayer();
-            addLayer(layer, DEFAULT_LAYER_NAME, 0);
-            return layer;
-        }
-        return _layers[0];
-    }
+    // public function getDefaultLayer () :SceneLayer
+    // {
+    //     if (null == _layers[0]) {
+    //         var layer = new SceneLayer();
+    //         addLayer(layer, DEFAULT_LAYER_NAME, 0);
+    //         return layer;
+    //     }
+    //     return _layers[0];
+    // }
 
-    public function getLayer (layerName :String) :SceneLayer
-    {
-        for (layer in _layers) {
-            if (null != layer && layer.name == layerName) {
-                return layer;
-            }
-        }
-        return null;
-    }
-
-    public function getLayerAt (idx :Int) :SceneLayer
-    {
-        return _layers[idx];
-    }
-
-    //    public function add (dor :DisplayObjectRenderer) :void
     //    {
+    //    public function add (dor :DisplayObjectRenderer) :void
     //        // Add to the appropriate layer.
     //        var layer :SceneLayer = getLayer(dor.layerIndex, true);
     //        layer.add(dor);
@@ -472,78 +472,78 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
     //            delete _renderers[dor.displayObject];
     //    }
 
-    public function panView (deltaX :Float, deltaY :Float) :Void
-    {
-        if (deltaX == 0 && deltaY == 0) {
-            return;
-        }
+    // public function panView (deltaX :Float, deltaY :Float) :Void
+    // {
+    //     if (deltaX == 0 && deltaY == 0) {
+    //         return;
+    //     }
 
-        // TODO :Take into account rotation so it's correct even when
-        //       rotating.
-        var before :Float = _root_position.x;
-        _root_position.x -= deltaX / _zoom;
-        //        trace("deltaX=", before, _root_position.x);
-        //        trace("Before/after=", before, _root_position.x);
-        _root_position.y -= deltaY / _zoom;
+    //     // TODO :Take into account rotation so it's correct even when
+    //     //       rotating.
+    //     var before :Float = _root_position.x;
+    //     _root_position.x -= deltaX / _zoom;
+    //     //        trace("deltaX=", before, _root_position.x);
+    //     //        trace("Before/after=", before, _root_position.x);
+    //     _root_position.y -= deltaY / _zoom;
 
-        _transformDirty = true;
-    }
+    //     _transformDirty = true;
+    // }
 
-    public function removeSceneComponent (obj :Scene2DComponent) :Void
-    {
-        if (!_sceneComponents.exists(obj)) {
-            Log.warn("Doesn't contain " + obj + " " + Log.getStackTrace() + "\nmap :" + ReflectUtil.getClass(_sceneComponents) + "\n" + _sceneComponents);
-            return;
-        }
-        var layer :SceneLayer = cast(_sceneComponents.get(obj), SceneLayer);
+    // public function removeSceneComponent (obj :Scene2DComponent) :Void
+    // {
+    //     if (!_sceneComponents.exists(obj)) {
+    //         Log.warn("Doesn't contain " + obj + " " + Log.getStackTrace() + "\nmap :" + ReflectUtil.getClass(_sceneComponents) + "\n" + _sceneComponents);
+    //         return;
+    //     }
+    //     var layer :SceneLayer = cast(_sceneComponents.get(obj), SceneLayer);
 
-        if (null == layer) {
-            throw "No associated layer for " + obj;
-        }
+    //     if (null == layer) {
+    //         throw "No associated layer for " + obj;
+    //     }
 
-        layer.removeObjectInternal(obj);
-        _sceneComponents.remove(obj);
-        obj._scene = null;
-    }
+    //     layer.removeObjectInternal(obj);
+    //     _sceneComponents.remove(obj);
+    //     obj._scene = null;
+    // }
 
-    public function setWorldCenter (pos :Point) :Void
-    {
-        if (sceneView == null) {
-            throw "sceneView not yet set. can't center the world.";
-        }
+    // public function setWorldCenter (pos :Point) :Void
+    // {
+    //     if (sceneView == null) {
+    //         throw "sceneView not yet set. can't center the world.";
+    //     }
 
-        position = transformWorldToScreen(pos);
-    }
+    //     position = transformWorldToScreen(pos);
+    // }
 
-    public function transformSceneToScreen (inPos :Point) :Point
-    {
-        return _rootSprite.localToGlobal(inPos);
-    }
+    // public function transformSceneToScreen (inPos :Point) :Point
+    // {
+    //     return _rootSprite.localToGlobal(inPos);
+    // }
 
-    public function transformSceneToWorld (inPos :Point) :Point
-    {
-        return inPos;
-    }
+    // public function transformSceneToWorld (inPos :Point) :Point
+    // {
+    //     return inPos;
+    // }
 
-    public function transformScreenToScene (inPos :Point) :Point
-    {
-        return _rootSprite.globalToLocal(inPos);
-    }
+    // public function transformScreenToScene (inPos :Point) :Point
+    // {
+    //     return _rootSprite.globalToLocal(inPos);
+    // }
 
-    public function transformScreenToWorld (inPos :Point) :Point
-    {
-        return _rootSprite.globalToLocal(inPos);
-    }
+    // public function transformScreenToWorld (inPos :Point) :Point
+    // {
+    //     return _rootSprite.globalToLocal(inPos);
+    // }
 
-    public function transformWorldToScene (inPos :Point) :Point
-    {
-        return inPos;
-    }
+    // public function transformWorldToScene (inPos :Point) :Point
+    // {
+    //     return inPos;
+    // }
 
-    public function transformWorldToScreen (inPos :Point) :Point
-    {
-        return _rootSprite.localToGlobal(inPos);
-    }
+    // public function transformWorldToScreen (inPos :Point) :Point
+    // {
+    //     return _rootSprite.localToGlobal(inPos);
+    // }
 
     public function onFrame (dt :Float) :Void
     {
@@ -552,9 +552,9 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
             Log.warn(this + " sceneView is null, so we aren't rendering.");
             return;
         }
-        if (trackObject != null) {
-            position = new Point(-(trackObject.x), -(trackObject.y));
-        }
+        // if (trackObject != null) {
+        //     position = new Point(-(trackObject.x), -(trackObject.y));
+        // }
         //        if (sceneBounds != null) {
         //            var centeredLimitBounds :Rectangle =
         //                new Rectangle(sceneBounds.x + sceneView.width * 0.5,
@@ -568,14 +568,14 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
         //        }
 
         // trace("updateTransform");
-        updateTransform();
+        // updateTransform();
 
         //Check layers
 
         // Give layers a chance to sort and update.
-        for (l in _layers) {
-            l.renderInternal();
-        }
+        // for (l in _layers) {
+        //     l.renderInternal();
+        // }
     }
 
     //    protected function get sceneBounds () :Rectangle
@@ -591,36 +591,36 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
         }
         _transformDirty = false;
 
-        if (_sceneBounds != null) {
-            //            trace("panning");
-            //TODO :doesn't take into account zooming yet
-            //Check that we're inside the scene bounds
-            //Check x, starting with the right.
-            var minViewX :Int = cast(-(_sceneBounds.right - _sceneView.width * _zoom), Int);
-            //            trace("minViewX=" + minViewX);
-            //            trace("_sceneBounds.right=" + _sceneBounds.right);
-            var maxViewX :Int = cast(-_sceneBounds.left, Int);
-            //            trace("minmaxX=", minViewX, maxViewX);
-            var minViewY :Int = cast(-(_sceneBounds.bottom - _sceneView.height * _zoom), Int);
-            var maxViewY :Int = cast(-_sceneBounds.top, Int);
-            //            trace("clampedX=" + MathUtil.fclamp(_root_position.x, minViewX, maxViewX));
-            _root_position.x = MathUtil.fclamp(_root_position.x, minViewX, maxViewX);
+        // if (_sceneBounds != null) {
+        //     //            trace("panning");
+        //     //TODO :doesn't take into account zooming yet
+        //     //Check that we're inside the scene bounds
+        //     //Check x, starting with the right.
+        //     var minViewX :Int = cast(-(_sceneBounds.right - _sceneView.width * _zoom), Int);
+        //     //            trace("minViewX=" + minViewX);
+        //     //            trace("_sceneBounds.right=" + _sceneBounds.right);
+        //     var maxViewX :Int = cast(-_sceneBounds.left, Int);
+        //     //            trace("minmaxX=", minViewX, maxViewX);
+        //     var minViewY :Int = cast(-(_sceneBounds.bottom - _sceneView.height * _zoom), Int);
+        //     var maxViewY :Int = cast(-_sceneBounds.top, Int);
+        //     //            trace("clampedX=" + MathUtil.fclamp(_root_position.x, minViewX, maxViewX));
+        //     _root_position.x = MathUtil.fclamp(_root_position.x, minViewX, maxViewX);
 
-            //            trace("After clamping=" + _root_position.x);
-            _root_position.y = MathUtil.fclamp(_root_position.y, minViewY, maxViewY);
+        //     //            trace("After clamping=" + _root_position.x);
+        //     _root_position.y = MathUtil.fclamp(_root_position.y, minViewY, maxViewY);
 
-            //            _rootSprite.x = _root_position.x;
-            //            _rootSprite.y = _root_position.y;
-        }
+        //     //            _rootSprite.x = _root_position.x;
+        //     //            _rootSprite.y = _root_position.y;
+        // }
 
-        //        return;
-        //        trace("updating scene transform");
-        //        _transformDirty = false;
+        // //        return;
+        // //        trace("updating scene transform");
+        // //        _transformDirty = false;
 
-        // Update our transform, if required
-        _rootTransform.identity();
-        _rootTransform.translate(_root_position.x, _root_position.y);
-        _rootTransform.scale(zoom, zoom);
+        // // Update our transform, if required
+        // _rootTransform.identity();
+        // _rootTransform.translate(_root_position.x, _root_position.y);
+        // _rootTransform.scale(zoom, zoom);
         //        trace("Scene zoom=" + zoom);
 
         // Center it appropriately.
@@ -720,10 +720,21 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
     //     _rootSprite.removeChild(layer);
     // }
     
-    override function childRemoved (c :C) :Void
+    override function childAdded (layer :SceneLayer) :Void
     {
-        super.childRemoved(c);
+        super.childAdded(layer);
+        _rootSprite.addChild(layer.displayContainer);
+    }
+    
+    override function childRemoved (layer :SceneLayer) :Void
+    {
+        super.childRemoved(layer);
         _rootSprite.removeChild(layer.displayContainer);
+    }
+    
+    inline function get_displayContainer () :DisplayObjectContainer
+    {
+        return _rootSprite;
     }
 
     var _currentWorldCenter :Point;
@@ -733,7 +744,7 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
     var _root_position :Point;
     var _rootSprite :Sprite;
     var _rootTransform :Matrix;
-    var _transformDirty :Bool;
+    // var _transformDirty :Bool;
     var _tempPoint :Point;
     //    protected var _rootRotation :Number = 0;
 

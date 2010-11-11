@@ -12,8 +12,6 @@
 
 -cp ../../lib/hsl-pico
 -cp ../../lib/hsl
-# -cp ../../lib/polygonal/src/lib
--cp ../../lib/easel/src
 -cp ../../src
 -cp src
 
@@ -23,6 +21,4 @@
 -swf-header 1400:600:30:FFFFFF
 
 -main Demo
-
--cmd open build/out.swf
 
