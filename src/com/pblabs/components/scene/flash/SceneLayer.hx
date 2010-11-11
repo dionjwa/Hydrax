@@ -23,7 +23,7 @@ import com.pblabs.components.scene.flash.Scene2DManager;
  *
  * If used without a Scene, render should be called on Event.ENTER_FRAME.
  */
-class SceneLayer extends Sprite 
+class SceneLayer extends BaseScene2DLayer<Scene2DManager, Scene2DComponent> 
 {
     
     public var scene (get_scene, null) : Scene2DManager;

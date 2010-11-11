@@ -190,5 +190,10 @@ class Rectangle
       if (r.bottom>bottom)
          bottom = r.bottom;
    }
+   
+   public function toString () :String
+   {
+       return "[x=" + x + ", y=" + y + ", w=" + width + ", h=" + height + "]";
+   }
 }
 

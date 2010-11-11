@@ -215,10 +215,12 @@ class InputManager
     
     function onMouseDown (m :MouseLocation) :Void
     {
+        // trace("onMouseDown m=" + m);
         //Reset markers
         _isGesturing = _isRotating = _isZooming = false;
         
         var adjustedM = adjustMouseLocation(m);
+        // trace("adjustedM=" + adjustedM);
         var cUnderMouse = lookupComponentsUnderMouse(adjustedM)[0];
         _deviceDownComponent = cUnderMouse;
         
@@ -283,8 +285,14 @@ class InputManager
     function onDrag (t :Tuple<MouseInputComponent, Vector2>) :Void
     {
         if (t.v1.isTranslatable) {
-            t.v1.x = t.v2.x;
-            t.v1.y = t.v2.y;
+            var offset = t.v1.offset;
+            if (offset != null) {
+                t.v1.x = t.v2.x + offset.x;
+                t.v1.y = t.v2.y + offset.y;
+            } else {
+                t.v1.x = t.v2.x;
+                t.v1.y = t.v2.y;
+            }
         }
     }
     
@@ -396,7 +404,7 @@ class InputManager
                 continue;
             }
             
-            // trace("is " + inputComp.owner.name + " under mouse, bounds=" + inputComp.bounds + ", =" + inputComp.bounds.containsPoint(mouseLoc)); 
+            // trace("is " + inputComp.owner.name + " under mouse, bounds=" + inputComp.bounds.boundingRect + ", =" + inputComp.bounds.containsPoint(mouseLoc)); 
             if (inputComp.bounds.containsPoint(mouseLoc)) {
                 // Log.info("under mouse  " + _tupleCache);
                 underMouse.push(inputComp);

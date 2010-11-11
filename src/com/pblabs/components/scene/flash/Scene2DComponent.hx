@@ -32,7 +32,7 @@ import com.pblabs.components.scene.flash.Scene2DManager;
 
 using com.pblabs.geom.Geometry;
 
-class Scene2DComponent extends EntityComponent, 
+class Scene2DComponent extends BaseScene2DComponent<SceneLayer>, 
     implements ITickedObject 
 {
     // public var alpha(getAlpha, setAlpha) : Float;
@@ -137,7 +137,7 @@ class Scene2DComponent extends EntityComponent,
 //        displayObject.alpha = value;
     }
 
-    inline function get_displayObject ():DisplayObject
+    function get_displayObject ():DisplayObject
     {
         return _displayObject;
     }
@@ -363,7 +363,7 @@ class Scene2DComponent extends EntityComponent,
         return _x;
     }
 
-    inline function set_x (value :Float):Float
+    function set_x (value :Float):Float
     {
         // trace("setting scene2d x" + value);
         if (value == _x) {
@@ -403,7 +403,7 @@ class Scene2DComponent extends EntityComponent,
         // _transformDirty = true;
     }
        
-    inline function set_y (value :Float):Float
+    function set_y (value :Float):Float
     {
         if (value == _y) {
             return value;

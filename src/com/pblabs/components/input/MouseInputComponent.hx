@@ -11,6 +11,7 @@ package com.pblabs.components.input;
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene.BaseScene2DComponent;
 import com.pblabs.components.scene.BaseScene2DManager;
+import com.pblabs.components.scene.ISpatialObject2D;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.debug.Log;
 import com.pblabs.geom.Polygon;
@@ -47,14 +48,16 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
     public var yProperty :PropertyReference<Float>;
     public var angleProperty :PropertyReference<Float>;
     public var scaleProperty :PropertyReference<Float>;
+    public var offsetProperty :PropertyReference<Vector2>;
     
-    public var boundsProperty :PropertyReference<BoundsPolygon>;
+    public var boundsProperty :PropertyReference<ISpatialObject2D>;
     
     public var y (get_y, set_y) :Float;
     public var x (get_x, set_x) :Float;
     public var angle (get_angle, set_angle) :Float;
     public var scale (get_scale, set_scale) :Float;
-    public var bounds (get_bounds, set_bounds) :BoundsPolygon;
+    public var bounds (get_bounds, set_bounds) :ISpatialObject2D;
+    public var offset (get_offset, set_offset) :Vector2;
     
     public var isScalable :Bool;
     public var isRotatable :Bool;
@@ -86,7 +89,7 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
         //The default is movable, rotatable, and scalable.
         isScalable = isRotatable = isTranslatable = true;
         
-        _boundsStale = true;
+        // _boundsStale = true;
     }
     
     public function compareTo (a :MouseInputComponent) :Int
@@ -121,7 +124,7 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
         }
         #end
         
-        _boundsStale = true;
+        // _boundsStale = true;
     }
     
     override function onRemove () :Void
@@ -136,33 +139,33 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
         yProperty = null;
     }
     
-    function get_bounds () :BoundsPolygon
+    function get_bounds () :ISpatialObject2D
     {
         if (boundsProperty != null) {
             return owner.getProperty(boundsProperty);
-        } else if (_boundsStale) {
-            _bounds.topLeft = new Vector2(x, y);
+        } else{// if (_boundsStale) {
+            // _bounds.topLeft = new Vector2(x, y);
+            return _bounds;
         }
-        return _bounds;
     }
     
-    function set_bounds (bounds :BoundsPolygon) :BoundsPolygon
+    function set_bounds (bounds :ISpatialObject2D) :ISpatialObject2D
     {
         _bounds = bounds;
         return bounds;
     }
     
-    @inject("@LocationComponent.signaller")
-    function locationChanged (loc :Vector2) :Void
-    {
-        _boundsStale = true;
-    }
+    // @inject("@LocationComponent.signaller")
+    // function locationChanged (loc :Vector2) :Void
+    // {
+    //     _boundsStale = true;
+    // }
     
-    @inject("@AngleComponent.signaller")
-    function angleChanged (angle :Float) :Void
-    {
-        _boundsStale = true;
-    }
+    // @inject("@AngleComponent.signaller")
+    // function angleChanged (angle :Float) :Void
+    // {
+    //     _boundsStale = true;
+    // }
     
     function get_x () :Float
     {
@@ -208,8 +211,23 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
         return val;
     }
     
-    var _bounds :BoundsPolygon;
-    var _boundsStale :Bool;
+    function get_offset () :Vector2
+    {
+        if (offsetProperty != null) {
+            return owner.getProperty(offsetProperty);
+        } else {
+            return null;
+        }
+    }
+    
+    function set_offset (val :Vector2) :Vector2
+    {
+        owner.setProperty(offsetProperty, val);
+        return val;
+    }
+    
+    var _bounds :ISpatialObject2D;
+    // var _boundsStale :Bool;
 }
 
 

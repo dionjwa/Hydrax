@@ -32,7 +32,7 @@ class PBUtil
         return StringUtil.getStringKey(cls) + if (name == null) "" else "|" + name;
     }
     
-    public static function addSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null) :T
+    public static function addSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null, ?isManager :Bool = false) :T
     {
         Preconditions.checkNotNull(context, "Null context");
         if (compName == null) {
@@ -48,7 +48,9 @@ class PBUtil
         e.deferring = false;
         Assert.isTrue(cast(component, IEntityComponent).isRegistered, "addsingle, not registered");
         //Register under the component name
-        context.registerManager(compClass, component, compName, true);
+        if (isManager) {
+            context.registerManager(compClass, component, compName, true);
+        }
         
         return component;
     }

@@ -96,10 +96,17 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
         children.insert(index, layer);
     }
 
-    override function childAdded (obj :Layer) :Void
+    override function childAdded (c :Layer) :Void
     {
-        Log.debug("adding scene layer");
-        super.childAdded(obj);
+        Log.debug("adding scene layer " + c);
+        super.childAdded(c);
+        _transformDirty = true;
+    }
+    
+    override function childRemoved (c :C) :Void
+    {
+        super.childRemoved(c);
+        Log.debug("removing scene layer " + c);
         _transformDirty = true;
     }
 

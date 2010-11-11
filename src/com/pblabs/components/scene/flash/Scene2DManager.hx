@@ -1,7 +1,7 @@
 /*******************************************************************************
- * Hydrax: haXe port of the PushButton Engine
+ * Hydrax :haXe port of the PushButton Engine
  * Copyright (C) 2010 Dion Amago
- * For more information see http://github.com/dionjwa/Hydrax
+ * For more information see http ://github.com/dionjwa/Hydrax
  *
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
@@ -9,6 +9,7 @@
 package com.pblabs.components.scene.flash;
 
 import com.pblabs.components.base.LocationComponent;
+import com.pblabs.components.scene.BaseScene2DManager;
 import com.pblabs.components.scene.IScene2D;
 import com.pblabs.components.scene.SceneAlignment;
 import com.pblabs.components.scene.SceneView;
@@ -41,37 +42,37 @@ using com.pblabs.util.ArrayUtil;
  * DisplayObjectRenderers, and makes sure that they are drawn. Extensible
  * for more complex rendering scenarios. Enforces sorting order, too.
  */
-class Scene2DManager extends EntityComponent, 
-    implements IAnimatedObject, implements haxe.rtti.Infos, implements IScene2D
+class Scene2DManager extends BaseScene2DManager<SceneLayer>, 
+    implements IAnimatedObject
 {
     
-    public var componentReference(getComponentReference, null) : PropertyReference<Scene2DManager>;
-    public var currentViewRect(getCurrentViewRect, null) : Rectangle;
-    public var debug(null, setDebug) : Bool;
-    public var layerCount(get_layerCount, null) : Int;
-    public var position(get_position, set_position) : Point;
-    public var positionX(null, set_positionX) : Float;
-    public var positionY(null, set_positionY) : Float;
-    public var rootSprite(get_rootSprite, null) : Sprite;
-    public var sceneBounds(get_sceneBounds, set_sceneBounds) : Rectangle;
-    @inject
-    public var sceneView(get_sceneView, set_sceneView) : SceneView;
-    public var zoom(get_zoom, set_zoom) : Float;
-    public static var NAME:String = ReflectUtil.tinyClassName(Scene2DManager);
-    public var dirty:Bool;
+    // public var componentReference(lookupComponentReference, null) :PropertyReference<Scene2DManager>;
+    // public var currentViewRect(getCurrentViewRect, null) :Rectangle;
+    // public var debug(null, setDebug) :Bool;
+    // public var layerCount(get_layerCount, null) :Int;
+    // public var position(get_position, set_position) :Point;
+    // public var positionX(null, set_positionX) :Float;
+    // public var positionY(null, set_positionY) :Float;
+    public var rootSprite(get_rootSprite, null) :Sprite;
+    // public var sceneBounds(get_sceneBounds, set_sceneBounds) :Rectangle;
+    // @inject
+    // public var sceneView(get_sceneView, set_sceneView) :SceneView;
+    // public var zoom(get_zoom, set_zoom) :Float;
+    // public static var NAME :String = ReflectUtil.tinyClassName(Scene2DManager);
+    public var dirty :Bool;
 
     /**
      * Maximum allowed zoom level.
      *
      * @see zoom
      */
-    public var max_zoom:Int ;
+    // public var max_zoom :Int;
     /**
      * Minimum allowed zoom level.
      *
      * @see zoom
      */
-    public var min_zoom:Float;
+    // public var min_zoom :Float;
 
     /**
      * How the scene is aligned relative to its position property.
@@ -79,13 +80,13 @@ class Scene2DManager extends EntityComponent,
      * @see SceneAlignment
      * @see position
      */
-    public var sceneAlignment :SceneAlignment ;
+    // public var sceneAlignment :SceneAlignment;
 
     /**
      * If set, every frame, trackObject's position is read and assigned
      * to the scene's position, so that the scene follows the trackObject.
      */
-    public var trackObject :LocationComponent;
+    // public var trackObject :LocationComponent;
 
     //    public var sceneBoundsRef :RectangleReference;
 
@@ -95,51 +96,51 @@ class Scene2DManager extends EntityComponent,
         // Get ticked after all the renderers.
         //        updatePriority = -10;
         
-        max_zoom = 5;
-        min_zoom = 0;
-        sceneAlignment = SceneAlignment.CENTER;
+        // max_zoom = 5;
+        // min_zoom = 0;
+        // sceneAlignment = SceneAlignment.CENTER;
         _rootSprite = new Sprite();
-        _sceneComponents = Maps.newHashMap(Scene2DComponent);
-        _layers = new Array<SceneLayer>();
-        _currentViewRect = new Rectangle();
-        _zoom = 1.0;
+        // _sceneComponents = Maps.newHashMap(Scene2DComponent);
+        // _layers = new Array<SceneLayer>();
+        // _currentViewRect = new Rectangle();
+        // _zoom = 1.0;
         
-        #if debug
-        addLayer(new SceneLayer(), DEBUG_LAYER_NAME);
-        #end
+        // #if debug
+        // addLayer(new SceneLayer(), DEBUG_LAYER_NAME);
+        // #end
         
     }
 
-    public function getComponentReference ():PropertyReference<Scene2DManager>
-    {
-        if (null != _selfReference) {
-            return _selfReference;
-        }
-        _selfReference = new PropertyReference("#" + owner.name + "." + name);
-        return _selfReference;
-    }
+    // public function lookupComponentReference () :PropertyReference<Scene2DManager>
+    // {
+    //     if (null != _selfReference) {
+    //         return _selfReference;
+    //     }
+    //     _selfReference = new PropertyReference("#" + owner.name + "." + name);
+    //     return _selfReference;
+    // }
 
-    public function setDebug (val :Bool):Bool{
-        var g:Graphics = rootSprite.graphics;
-        g.clear();
-        if (val && sceneBounds != null) {
-            g.lineStyle(1, 0xff0000);
-            //            g.drawRect(
-            //            DebugUtil.drawRect(this, _width, _height, 0);
-        }
-        return val;
-       }
+    // public function setDebug (val :Bool) :Bool{
+    //     var g :Graphics = rootSprite.graphics;
+    //     g.clear();
+    //     if (val && sceneBounds != null) {
+    //         g.lineStyle(1, 0xff0000);
+    //         //            g.drawRect(
+    //         //            DebugUtil.drawRect(this, _width, _height, 0);
+    //     }
+    //     return val;
+    //    }
 
-    public function get_layerCount ():Int
-    {
-        return _layers.length;
-    }
+    // public function get_layerCount () :Int
+    // {
+    //     return _layers.length;
+    // }
 
-    public function get_position ():Point{
+    public function get_position () :Point{
         return _root_position.clone();
     }
 
-    public function set_positionX (newX :Float):Float{
+    public function set_positionX (newX :Float) :Float{
         if (_root_position.x == newX) {
             return newX;
         }
@@ -148,7 +149,7 @@ class Scene2DManager extends EntityComponent,
         return newX;
        }
 
-    public function set_positionY (newY :Float):Float{
+    public function set_positionY (newY :Float) :Float{
         if (_root_position.y == newY) {
             return newY;
         }
@@ -157,13 +158,13 @@ class Scene2DManager extends EntityComponent,
         return newY;
        }
 
-    public function set_position (value :Point):Point{
+    public function set_position (value :Point) :Point{
         if (value == null) {
             return _root_position;
         }
 
-        var newX:Float = value.x;
-        var newY:Float = value.y;
+        var newX :Float = value.x;
+        var newY :Float = value.y;
 
         if (_root_position.x == newX && _root_position.y == newY) {
             return _root_position;
@@ -175,7 +176,7 @@ class Scene2DManager extends EntityComponent,
         return _root_position;
    }
    
-    public function get_rootSprite ():Sprite
+    public function get_rootSprite () :Sprite
     {
         return _rootSprite;
     }
@@ -225,7 +226,7 @@ class Scene2DManager extends EntityComponent,
     /**
      * @inheritDoc
      */
-    function get_sceneBounds ():Rectangle{
+    function get_sceneBounds () :Rectangle{
         //        if (_sceneBounds != null) {
         return _sceneBounds;
         //        }
@@ -235,12 +236,12 @@ class Scene2DManager extends EntityComponent,
         //        return null;
     }
 
-    function set_sceneBounds (value :Rectangle):Rectangle{
+    function set_sceneBounds (value :Rectangle) :Rectangle{
         _sceneBounds = value;
         return value;
        }
 
-    function get_sceneView ():SceneView
+    function get_sceneView () :SceneView
     {
         return _sceneView;
     }
@@ -261,11 +262,11 @@ class Scene2DManager extends EntityComponent,
         return value;
        }
 
-    public function get_zoom ():Float{
+    public function get_zoom () :Float{
         return _zoom;
     }
 
-    public function set_zoom (value :Float):Float{
+    public function set_zoom (value :Float) :Float{
         // Make sure our zoom level stays within the desired bounds
         value = MathUtil.fclamp(value, min_zoom, max_zoom);
 
@@ -408,7 +409,7 @@ class Scene2DManager extends EntityComponent,
     //        var unfilteredResults :Array = _rootSprite.getObjectsUnderPoint(screen_position);
     //        var world_position :Point = transformScreenToWorld(screen_position);
     //
-    //        // TODO: rewrite to splice from unfilteredResults to avoid alloc?
+    //        // TODO :rewrite to splice from unfilteredResults to avoid alloc?
     //        var results :Array = new Array();
     //
     //        for each (var o :*in unfilteredResults) {
@@ -477,9 +478,9 @@ class Scene2DManager extends EntityComponent,
             return;
         }
 
-        // TODO: Take into account rotation so it's correct even when
+        // TODO :Take into account rotation so it's correct even when
         //       rotating.
-        var before:Float = _root_position.x;
+        var before :Float = _root_position.x;
         _root_position.x -= deltaX / _zoom;
         //        trace("deltaX=", before, _root_position.x);
         //        trace("Before/after=", before, _root_position.x);
@@ -491,10 +492,10 @@ class Scene2DManager extends EntityComponent,
     public function removeSceneComponent (obj :Scene2DComponent) :Void
     {
         if (!_sceneComponents.exists(obj)) {
-            Log.warn("Doesn't contain " + obj + " " + Log.getStackTrace() + "\nmap:" + ReflectUtil.getClass(_sceneComponents) + "\n" + _sceneComponents);
+            Log.warn("Doesn't contain " + obj + " " + Log.getStackTrace() + "\nmap :" + ReflectUtil.getClass(_sceneComponents) + "\n" + _sceneComponents);
             return;
         }
-        var layer:SceneLayer = cast( _sceneComponents.get(obj), SceneLayer);
+        var layer :SceneLayer = cast(_sceneComponents.get(obj), SceneLayer);
 
         if (null == layer) {
             throw "No associated layer for " + obj;
@@ -592,16 +593,16 @@ class Scene2DManager extends EntityComponent,
 
         if (_sceneBounds != null) {
             //            trace("panning");
-            //TODO: doesn't take into account zooming yet
+            //TODO :doesn't take into account zooming yet
             //Check that we're inside the scene bounds
             //Check x, starting with the right.
-            var minViewX:Int = cast(-(_sceneBounds.right - _sceneView.width * _zoom), Int);
+            var minViewX :Int = cast(-(_sceneBounds.right - _sceneView.width * _zoom), Int);
             //            trace("minViewX=" + minViewX);
             //            trace("_sceneBounds.right=" + _sceneBounds.right);
-            var maxViewX:Int = cast(-_sceneBounds.left, Int);
+            var maxViewX :Int = cast(-_sceneBounds.left, Int);
             //            trace("minmaxX=", minViewX, maxViewX);
-            var minViewY:Int = cast(-(_sceneBounds.bottom - _sceneView.height * _zoom), Int);
-            var maxViewY:Int = cast(-_sceneBounds.top, Int);
+            var minViewY :Int = cast(-(_sceneBounds.bottom - _sceneView.height * _zoom), Int);
+            var maxViewY :Int = cast(-_sceneBounds.top, Int);
             //            trace("clampedX=" + MathUtil.fclamp(_root_position.x, minViewX, maxViewX));
             _root_position.x = MathUtil.fclamp(_root_position.x, minViewX, maxViewX);
 
@@ -634,23 +635,23 @@ class Scene2DManager extends EntityComponent,
         //        trace("updating scene transform, scale=" + _rootSprite.scaleX);
     }
 
-    public function getCurrentViewRect ():Rectangle
-    {
-        if (_sceneView == null) {
-            return null;
-        }
-        return _currentViewRect;
-        //        return new Rectangle(-_root_position.x, -_root_position.y, _sceneView.width, _sceneView.height);
-    }
+    // public function getCurrentViewRect () :Rectangle
+    // {
+    //     if (_sceneView == null) {
+    //         return null;
+    //     }
+    //     return _currentViewRect;
+    //     //        return new Rectangle(-_root_position.x, -_root_position.y, _sceneView.width, _sceneView.height);
+    // }
 
-    override function onRemove () :Void
-    {
-        super.onRemove();
-        // Make sure we don't leave any lingering content.
-        if (_sceneView != null) {
-            //            _sceneView.clearDisplayObjects();
-        }
-    }
+    // override function onRemove () :Void
+    // {
+    //     super.onRemove();
+    //     // Make sure we don't leave any lingering content.
+    //     if (_sceneView != null) {
+    //         //            _sceneView.clearDisplayObjects();
+    //     }
+    // }
     
     //    /**
     //     * Convenience funtion for subclasses to control what class of layer
@@ -660,7 +661,7 @@ class Scene2DManager extends EntityComponent,
     //    {
     //        var l :SceneLayer = new SceneLayer();
     //
-    //        //TODO: set any properties we want for our layer.
+    //        //TODO :set any properties we want for our layer.
     //
     //        return l;
     //    }
@@ -672,7 +673,7 @@ class Scene2DManager extends EntityComponent,
     //    {
     //        var s :Sprite = new Sprite();
     //
-    //        //TODO: set any properties we want for our root host sprite
+    //        //TODO :set any properties we want for our root host sprite
     //
     //        return s;
     //    }
@@ -700,52 +701,58 @@ class Scene2DManager extends EntityComponent,
     //        return null;
     //    }
 
-    function sceneViewResized (event :Event) :Void
+    // function sceneViewResized (event :Event) :Void
+    // {
+    //     _transformDirty = true;
+    // }
+
+    // public function removeLayer (layer :SceneLayer) :Void
+    // {
+    //     // Lambda.
+    //     // if (!Lambda.has(_layers, layer)) {
+    //     //     throw "No layer :" + layer;
+    //     // }
+    //     // Lambda.
+    //     _layers[_layers.indexOf(layer)] = null;
+    //     // _layers[ArrayUtil.indexOf(_layers, layer)] = null;
+    //     layer.detachedInternal();
+    //     layer._parentScene = null;
+    //     _rootSprite.removeChild(layer);
+    // }
+    
+    override function childRemoved (c :C) :Void
     {
-        _transformDirty = true;
+        super.childRemoved(c);
+        _rootSprite.removeChild(layer.displayContainer);
     }
 
-    public function removeLayer (layer :SceneLayer) :Void
-    {
-        // Lambda.
-        // if (!Lambda.has(_layers, layer)) {
-        //     throw "No layer: " + layer;
-        // }
-        // Lambda.
-        _layers[_layers.indexOf(layer)] = null;
-        // _layers[ArrayUtil.indexOf(_layers, layer)] = null;
-        layer.detachedInternal();
-        layer._parentScene = null;
-        _rootSprite.removeChild(layer);
-    }
-
-    var _currentWorldCenter:Point ;
-    var _layers :Array<SceneLayer> ;
+    var _currentWorldCenter :Point;
+    // var _layers :Array<SceneLayer>;
 
     //    protected var _renderers :Dictionary = new Dictionary(true);
-    var _root_position:Point ;
+    var _root_position :Point;
+    var _rootSprite :Sprite;
+    var _rootTransform :Matrix;
+    var _transformDirty :Bool;
+    var _tempPoint :Point;
     //    protected var _rootRotation :Number = 0;
-    var _rootSprite:Sprite;
-    var _rootTransform:Matrix;
 
-    var _sceneBounds:Rectangle ;
+    // var _sceneBounds :Rectangle;
 
     /** Objects mapped to layers*/
-    var _sceneComponents :Map<Scene2DComponent, SceneLayer>;
+    // var _sceneComponents :Map<Scene2DComponent, SceneLayer>;
 
     //    protected var _sceneViewBoundsCache :Rectangle = new Rectangle();
     //    protected var _sceneViewName :String = null;
 
-    var _sceneView :SceneView;
+    // var _sceneView :SceneView;
 
-    var _selfReference:PropertyReference<Scene2DManager>;
-    var _tempPoint:Point ;
-    var _transformDirty:Bool ;
-    var _currentViewRect:Rectangle ;
+    // var _selfReference :PropertyReference<Scene2DManager>;
+    // var _currentViewRect :Rectangle;
 
-    var _zoom:Float;
-    public static var DEFAULT_LAYER_NAME:String = "defaultLayer";
-    public static var DEBUG_LAYER_NAME:String = "debugLayer";
+    // var _zoom :Float;
+    // public static var DEFAULT_LAYER_NAME :String = "defaultLayer";
+    // public static var DEBUG_LAYER_NAME :String = "debugLayer";
 
 }
 
