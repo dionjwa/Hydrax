@@ -214,6 +214,7 @@ class PBContext
     {
         Preconditions.checkNotNull(injector, "WTF is the injector null?");
         _nameManager = getManager(NameManager);
+        
         Preconditions.checkNotNull(_nameManager, "WTF is the nameManager null?");
         
         #if flash

@@ -2,6 +2,7 @@ package com.pblabs.components.scene;
 
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene.SceneAlignment;
+import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.SceneView;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.debug.Log;
@@ -26,6 +27,7 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
     public var layerCount(get_layerCount, never) :Int;
     public var x (get_x, set_x) :Float;
     public var y (get_y, set_y) :Float;
+    public var rotation (get_rotation, set_rotation) :Float;
     
 
     /**
@@ -54,14 +56,15 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
         super();
         zoomMax = 5;
         zoomMin = 0;
-        sceneAlignment = SceneAlignment.TOP_LEFT;
+        sceneAlignment = SceneAlignment.CENTER;
         _currentViewRect = new Rectangle();
         _zoom = 1.0;
+        _rotation = 0;
         _position = new Vector2();
         _transformDirty = false;
     }
     
-    public function addLayer <T>(cls :Class<T>, layerName :String) :T
+    public function addLayer <T>(cls :Class<T>, layerName :String, ?registerAsManager :Bool = true) :T
     {
         var layer = context.allocate(cls);
         #if debug
@@ -70,6 +73,9 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
         
         cast(layer, BaseScene2DLayer<Dynamic, Dynamic>).parentProperty = PBUtil.componentProp(this);
         owner.addComponent(cast(layer, IEntityComponent), layerName);
+        if (registerAsManager) {
+            context.registerManager(cls, layer, layerName, true);
+        }
         return layer;
     }
 
@@ -209,7 +215,6 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
     {
         // Make sure our zoom level stays within the desired bounds
         value = MathUtil.fclamp(value, zoomMin, zoomMax);
-
         if (_zoom == value) {
             return _zoom;
         }
@@ -219,10 +224,24 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
         return value;
     }
     
+    function get_rotation () :Float
+    {
+        return _rotation;
+    }
+    
+    function set_rotation (val :Float) :Float
+    {
+        _rotation = val;
+        _transformDirty = true;
+        return val;
+    }
+    
     var _position :Vector2;
     var _zoom :Float;
+    var _rotation :Float;
     var _transformDirty :Bool;
     
+    /** The view of the scene is always enclosed in the bounds */
     var _sceneBounds :Rectangle;
     var _sceneView :SceneView;
     var _currentViewRect :Rectangle;
@@ -231,5 +250,3 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
     public static var DEFAULT_LAYER_NAME :String = "defaultLayer";
     static var EMPTY_ARRAY :Array<Dynamic> = [];
 }
-
-

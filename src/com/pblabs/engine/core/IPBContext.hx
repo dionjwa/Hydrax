@@ -49,13 +49,13 @@ interface IPBContext
     function getManager <T>(clazz:Class<T>, ?optionalName:String = null):T;
 
     function allocate <T>(type:Class<T>):T;
-    function allocateEntity():IEntity;
-    function injectInto(instance:Dynamic):Void;
+    // function allocateEntity():IEntity;
+    function injectInto (instance:Dynamic):Void;
     
     // Name lookups.
-    function lookup(name:String):Dynamic;
-    function lookupEntity(name:String):IEntity;
-    function lookupComponent(entityName:String, componentName:String):IEntityComponent;
+    function lookup (name:String):Dynamic;
+    function lookupEntity (name:String):IEntity;
+    function lookupComponent (entityName:String, componentName:String):IEntityComponent;
 }
 
 

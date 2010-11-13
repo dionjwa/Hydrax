@@ -35,11 +35,16 @@ class PBUtil
     public static function addSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null, ?isManager :Bool = false) :T
     {
         Preconditions.checkNotNull(context, "Null context");
+        Preconditions.checkNotNull(compClass, "Null compClass");
         if (compName == null) {
             compName = ReflectUtil.tinyClassName(compClass);
         }
         
         var component = context.allocate(compClass);
+        #if debug
+        com.pblabs.util.Assert.isNotNull(component, "allocate returned null for compClass=" + compClass);
+        #end
+        
         Preconditions.checkArgument(Std.is(component, IEntityComponent), "Singleton " + compClass + " is not an IEntityComponent");
         var e = context.allocate(IEntity);
         Assert.isNotNull(e.context, "How can the entity context be null?");

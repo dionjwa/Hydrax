@@ -3,12 +3,13 @@ package com.pblabs.components.scene;
 import com.pblabs.geom.Rectangle;
 import com.pblabs.geom.Vector2;
 
+@sets("sddf")
 interface ISpatialObject2D
 {
     /**
      * Axis aligned object bounds in world space.
      */ 
-    public var boundingRect (get_boundingRect, null) :Rectangle;
+    // public var boundingRect (get_boundingRect, null) :Rectangle;
     
     // /**
     //  * This object's collision flags.

@@ -8,8 +8,8 @@
  ******************************************************************************/
 package com.pblabs.components.input;
 
+import com.pblabs.components.input.IInteractiveComponent;
 import com.pblabs.components.input.MouseInputComponent;
-import com.pblabs.components.input.MouseInputManager;
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene.SceneView;
 import com.pblabs.engine.core.IEntity;
@@ -23,6 +23,7 @@ import com.pblabs.geom.Vector2;
 import com.pblabs.util.Assert;
 import com.pblabs.util.Comparators;
 import com.pblabs.util.Preconditions;
+import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.ds.Set;
 import com.pblabs.util.ds.Sets;
 import com.pblabs.util.ds.Tuple;
@@ -35,8 +36,9 @@ import hsl.haxe.data.mathematics.Point;
 import hsl.avm2.data.mouse.MouseLocation;
 #elseif js
 import hsl.js.data.mouse.MouseLocation;
-import js.Dom;
+
 using js.IOs.TouchListIterator;
+import js.Dom;
 #end
 
 using IterTools;
@@ -45,6 +47,7 @@ using Lambda;
 
 using com.pblabs.util.MathUtil;
 
+
 /**
  * Integrates different input listeners into signals such as drag,
  * and provides the components that react to input.
@@ -52,17 +55,17 @@ using com.pblabs.util.MathUtil;
 class InputManager
     implements IAnimatedObject, implements IPBManager, implements haxe.rtti.Infos
 {
-    public var deviceDown(default, null) :Signaler<Tuple<MouseInputComponent, Vector2>>;
-    public var deviceUp(default, null) :Signaler<Tuple<MouseInputComponent, Vector2>>;
-    public var deviceMove(default, null) :Signaler<Tuple<MouseInputComponent, Vector2>>;
-    public var deviceClick(default, null) :Signaler<Tuple<MouseInputComponent, Vector2>>;
-    public var drag(default, null) :Signaler<Tuple<MouseInputComponent, Vector2>>;
-    public var doubleClick(default, null) :Signaler<Tuple<MouseInputComponent, Vector2>>;
+    public var deviceDown(default, null) :Signaler<Tuple<IInteractiveComponent, Vector2>>;
+    public var deviceUp(default, null) :Signaler<Tuple<IInteractiveComponent, Vector2>>;
+    public var deviceMove(default, null) :Signaler<Tuple<IInteractiveComponent, Vector2>>;
+    public var deviceClick(default, null) :Signaler<Tuple<IInteractiveComponent, Vector2>>;
+    public var drag(default, null) :Signaler<Tuple<IInteractiveComponent, Vector2>>;
+    public var doubleClick(default, null) :Signaler<Tuple<IInteractiveComponent, Vector2>>;
     
-    public var rotate (default, null) :Signaler<Tuple<MouseInputComponent, Float>>;
-    public var scale (default, null) :Signaler<Tuple<MouseInputComponent, Float>>;
+    public var rotate (default, null) :Signaler<Tuple<IInteractiveComponent, Float>>;
+    public var scale (default, null) :Signaler<Tuple<IInteractiveComponent, Float>>;
     
-    public var underMouse :Array<MouseInputComponent>;
+    public var underMouse :Array<IInteractiveComponent>;
     
     /** Is the mouse button down, or the device touched */
     var _isDeviceDown :Bool;
@@ -104,7 +107,7 @@ class InputManager
     {
         // if (_isDeviceDown && drag.isListenedTo) {
         //     underMouse = lookupComponentsUnderMouse();
-        //     underMouse.sort(MouseInputComponent.compare);
+        //     underMouse.sort(IInteractiveComponent.compare);
         // }
     }
     
@@ -135,24 +138,24 @@ class InputManager
         mouse.mouseDown.bind(onMouseDown);
         mouse.mouseMove.bind(onMouseMove);
         mouse.mouseUp.bind(onMouseUp);
-        // mouse.mouseClick.bind(onMouseClick);
+        mouse.mouseClick.bind(onMouseClick);
      
         #if js
         if (context.getManager(GestureInputManager) != null) {
             var gestures = context.getManager(GestureInputManager);
             var self = this;
             gestures.gestureChange.bind(function (e :js.IOs.GestureEvent) :Void {
-                // trace("gesture changed");
-                // var c = self._deviceDownComponent;
-                // trace("c=" + c);
+                trace("gesture changed");
+                var c = self._deviceDownComponent;
+                trace("c=" + c);
                     
                 // if (c != null) {
                 //     if (c.isRotatable) {
-                //         self.rotate.dispatch(new Tuple<MouseInputComponent, Float>(c, e.rotation.toRad() + self._startingAngle));
+                //         self.rotate.dispatch(new Tuple<IInteractiveComponent, Float>(c, e.rotation.toRad() + self._startingAngle));
                 //     }
                     
                 //     if (c.isScalable) {
-                //         self.scale.dispatch(new Tuple<MouseInputComponent, Float>(c, e.scale));
+                //         self.scale.dispatch(new Tuple<IInteractiveComponent, Float>(c, e.scale));
                 //     }
                 // }
             });
@@ -220,7 +223,7 @@ class InputManager
         _isGesturing = _isRotating = _isZooming = false;
         
         var adjustedM = adjustMouseLocation(m);
-        // trace("adjustedM=" + adjustedM);
+        // trace("onMouseDown, adjustedM=" + adjustedM);
         var cUnderMouse = lookupComponentsUnderMouse(adjustedM)[0];
         _deviceDownComponent = cUnderMouse;
         
@@ -231,14 +234,17 @@ class InputManager
         _startingLocation.x = adjustedM.x;
         _startingLocation.y = adjustedM.y;
         
-        if (_tupleCache.v1 != null) {
+        var mouseInput = _deviceDownComponent != null ? _deviceDownComponent.owner.lookupComponentByType(MouseInputComponent) : null;
+        
+        if (mouseInput != null) {
             //Cache the initial angle, in case we start rotating
-            _startingAngle = _tupleCache.v1.angle;
+            _startingAngle = mouseInput.angle;
             // _startingScale = _tupleCache.v1.scale;
-            
-            Log.info("mouse down  " + _tupleCache);
-            deviceDown.dispatch(_tupleCache);
+            mouseInput.onDeviceDown();
         }
+        
+        Log.info("mouse down  " + _tupleCache);
+        deviceDown.dispatch(_tupleCache);
     } 
     
     function onMouseUp (m :MouseLocation) :Void
@@ -282,43 +288,55 @@ class InputManager
         deviceMove.dispatch(_tupleCache);
     }
     
-    function onDrag (t :Tuple<MouseInputComponent, Vector2>) :Void
+    function onDrag (t :Tuple<IInteractiveComponent, Vector2>) :Void
     {
-        if (t.v1.isTranslatable) {
-            var offset = t.v1.offset;
-            if (offset != null) {
-                t.v1.x = t.v2.x + offset.x;
-                t.v1.y = t.v2.y + offset.y;
-            } else {
-                t.v1.x = t.v2.x;
-                t.v1.y = t.v2.y;
+        var mouseInput = t.v1.owner.lookupComponentByType(MouseInputComponent);
+        if (mouseInput != null) {
+            if (mouseInput.isTranslatable) {
+                var offset = mouseInput.offset;
+                if (offset != null) {
+                    mouseInput.x = t.v2.x + offset.x;
+                    mouseInput.y = t.v2.y + offset.y;
+                } else {
+                    mouseInput.x = t.v2.x;
+                    mouseInput.y = t.v2.y;
+                }
             }
         }
+        
     }
     
     function onMouseClick (m :MouseLocation) :Void
     {
-        return;
         Log.info("Mouse clicked " + m.x + ", " + m.y);
-        // var clicked = new Array<MouseInputComponent>();
+        var adjustedM = adjustMouseLocation(m);
+        // trace("onMouseClick " + adjustedM);
+        var cUnderMouse = lookupComponentsUnderMouse(adjustedM)[0];
+        // var clicked = new Array<IInteractiveComponent>();
         // _tupleCache.set(lookupComponentUnderMouse(m), new Vector2(flash.Lib.current.stage.mouseX, flash.Lib.current.stage.mouseY));
-        _tupleCache.set(underMouse[0], getMouseLoc());
+        _tupleCache.set(cUnderMouse, getMouseLoc());
         
         if (_tupleCache.v1 != null) {
             Log.info("click  " + _tupleCache);
             deviceClick.dispatch(_tupleCache);
         }
-        // var inputComps :Iterable<MouseInputComponent>;
-        // for (c in _context.getObjectsInGroup(MouseInputComponent.INPUT_GROUP)) {
+        
+        var mouseInput = _tupleCache.v1 != null ? _tupleCache.v1.owner.lookupComponentByType(MouseInputComponent) : null; 
+        if (mouseInput != null) {
+            mouseInput.onClick();
+        }
+        
+        // var inputComps :Iterable<IInteractiveComponent>;
+        // for (c in _context.getObjectsInGroup(IInteractiveComponent.INPUT_GROUP)) {
         //     if (!Std.is(c, IEntity)) {
         //         Log.debug("weird, c is not an entity");
         //         continue;
         //     }
-        //     inputComps = cast(c, IEntity).lookupComponentsByType(MouseInputComponent);
+        //     inputComps = cast(c, IEntity).lookupComponentsByType(IInteractiveComponent);
         //     Log.debug("Checking " + inputComps.count() + " input components");
         //     for (inc in inputComps) {
         //         if (inc.displayObject == null) {
-        //             Log.error("MouseInputComponent.displayObject == null");
+        //             Log.error("IInteractiveComponent.displayObject == null");
         //             continue;
         //         }
         //         if (inc.displayObject.hitTestVector2(flash.Lib.current.stage.mouseX, flash.Lib.current.stage.mouseY)) {
@@ -330,19 +348,19 @@ class InputManager
         // }
     }
     
-    // function lookupComponentUnderMouse (m :MouseLocation) :MouseInputComponent
+    // function lookupComponentUnderMouse (m :MouseLocation) :IInteractiveComponent
     // {
-    //     var inputComps :Iterable<MouseInputComponent>;
-    //     for (c in _context.getObjectsInGroup(MouseInputComponent.INPUT_GROUP)) {
+    //     var inputComps :Iterable<IInteractiveComponent>;
+    //     for (c in _context.getObjectsInGroup(IInteractiveComponent.INPUT_GROUP)) {
     //         if (!Std.is(c, IEntity)) {
     //             Log.debug("weird, c is not an entity");
     //             continue;
     //         }
-    //         inputComps = cast(c, IEntity).lookupComponentsByType(MouseInputComponent);
+    //         inputComps = cast(c, IEntity).lookupComponentsByType(IInteractiveComponent);
     //         Log.debug("Checking " + inputComps.count() + " input components");
     //         for (inc in inputComps) {
     //             if (inc.displayObject == null) {
-    //                 Log.error("MouseInputComponent.displayObject == null");
+    //                 Log.error("IInteractiveComponent.displayObject == null");
     //                 continue;
     //             }
     //             if (inc.displayObject.hitTestPoint(flash.Lib.current.stage.mouseX, flash.Lib.current.stage.mouseY)) {
@@ -354,18 +372,22 @@ class InputManager
     //     return null;
     // }
     
-    function lookupComponentsUnderMouse (?m :Point) :Array<MouseInputComponent>
+    // function onGestureZoom (zoom :Float) :
+    // {
+    //     ;
+    // }
+    
+    function lookupComponentsUnderMouse (?m :Point) :Array<IInteractiveComponent>
     {
         // trace("lookupComponentsUnderMouse");
         _checked.clear();
         
-        // trace("objects in mouse set: " + _sets.getObjectsInSet(MouseInputComponent.INPUT_GROUP).count());
-        underMouse = new Array<MouseInputComponent>();
-        var inputComp :MouseInputComponent;
+        // trace("objects in mouse set: " + _sets.getObjectsInSet(IInteractiveComponent.INPUT_GROUP).count());
+        underMouse = new Array<IInteractiveComponent>();
+        var inputComp :IInteractiveComponent;
         var mouseLoc = m != null ? new Vector2(m.x, m.y) : getMouseLoc();
         
-        
-        for (c in _sets.getObjectsInSet(MouseInputComponent.INPUT_GROUP)) {
+        for (c in _sets.getObjectsInSet(INPUT_SET)) {
             if (!Std.is(c, IEntity)) {
                 // Log.debug("weird, c is not an entity");
                 continue;
@@ -375,40 +397,48 @@ class InputManager
                 continue;
             }
             
-            inputComp = cast(c, IEntity).lookupComponentByName("MouseInputComponent");
-            if (inputComp.bounds ==null) {
+            inputComp = cast(c, IEntity).lookupComponentByType(IInteractiveComponent);
+            if (inputComp == null) {
+                Log.error("Entity registered in the set IInteractiveComponent does not have the IInteractiveComponent interface");
                 continue;
             }
+            // if (inputComp.bounds ==null) {
+            //     continue;
+            // }
             // if (inputComp.displayObject == null) {
-            //     Log.error("MouseInputComponent.displayObject == null");
+            //     Log.error("IInteractiveComponent.displayObject == null");
             //     continue;
             // }
             
             //Check parents for mouse location
-            var parent :MouseInputComponent = inputComp.parent;
-            while (parent != null) {
-                if (parent.bounds == null) {
-                    trace("Null bounds");
-                    break;
-                }
-                if (!parent.bounds.containsPoint(mouseLoc)) {
-                    for (out in NodeComponent.getEntityAndAllChildren(parent.owner, MouseInputComponent)) {
-                        _checked.add(out.name);
-                    }
-                }
-                parent = parent.parent;
-            }
+            // var parent :IInteractiveComponent = inputComp.parent;
+            // while (parent != null) {
+            //     if (parent.bounds == null) {
+            //         trace("Null bounds");
+            //         break;
+            //     }
+            //     if (!parent.bounds.containsPoint(mouseLoc)) {
+            //         for (out in NodeComponent.getEntityAndAllChildren(parent.owner, IInteractiveComponent)) {
+            //             _checked.add(out.name);
+            //         }
+            //     }
+            //     parent = parent.parent;
+            // }
             
             //Check again
-            if (_checked.exists(c.name)) {
-                continue;
-            }
+            // if (_checked.exists(c.name)) {
+            //     continue;
+            // }
             
             // trace("is " + inputComp.owner.name + " under mouse, bounds=" + inputComp.bounds.boundingRect + ", =" + inputComp.bounds.containsPoint(mouseLoc)); 
-            if (inputComp.bounds.containsPoint(mouseLoc)) {
-                // Log.info("under mouse  " + _tupleCache);
+            // if (inputComp.bounds.containsPoint(mouseLoc)) {
+            //     // Log.info("under mouse  " + _tupleCache);
+            //     underMouse.push(inputComp);
+            //     // return inc;
+            // }
+            
+            if (inputComp.containsScreenPoint(mouseLoc)) {
                 underMouse.push(inputComp);
-                // return inc;
             }
             
             // if (inc.displayObject.hitTestPoint(flash.Lib.current.stage.mouseX, flash.Lib.current.stage.mouseY)) {
@@ -417,9 +447,9 @@ class InputManager
             //     // return inc;
             // }
         }
-        if (underMouse.length > 1) {
-            underMouse.sort(Comparators.compareComparables);
-        }
+        // if (underMouse.length > 1) {
+        //     underMouse.sort(Comparators.compareComparables);
+        // }
         return underMouse;
     }
     
@@ -438,13 +468,14 @@ class InputManager
     }
     
     var _sets :SetManager;
-    var _deviceDownComponent :MouseInputComponent;
+    var _deviceDownComponent :IInteractiveComponent;
     var _deviceDownComponentLoc :Vector2;
     var _deviceDownStageLoc :Vector2;
     var _checked :Set<String>;
-    var _tupleCache :Tuple<MouseInputComponent, Vector2>;
+    var _tupleCache :Tuple<IInteractiveComponent, Vector2>;
     var _mouseLoc :Vector2;
     var _isGesturing :Bool;
+    static var INPUT_SET :String = ReflectUtil.tinyClassName(IInteractiveComponent);
     
 }
 

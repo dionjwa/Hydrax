@@ -12,8 +12,7 @@ import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.input.InputKey;
-
-using com.pblabs.components.scene.SceneComponentUtil;
+using com.pblabs.components.scene.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
 
@@ -23,6 +22,9 @@ class Demo extends flash.display.Sprite
     public function new() 
     {
         super();
+        
+        trace(ReflectUtil.tinyClassName(IInteractiveComponent));
+        return;
         this.name = "Demo";
         var game = new PBGame();
         

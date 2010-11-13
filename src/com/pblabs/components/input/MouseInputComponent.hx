@@ -33,16 +33,16 @@ using com.pblabs.geom.PolygonTools;
  * via an editor (dragging), not for getting the location.
  * 
  */
-@sets("mouseInput")
+@sets("IInteractiveComponent")
 class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputComponent>,
     implements Comparable<MouseInputComponent>
 {
-    public static var INPUT_GROUP :String = "mouseInput";
+    // public static var INPUT_GROUP :String = "mouseInput";
     
-    #if (flash || cpp)
-    public var interactiveObjectProperty :PropertyReference<flash.display.DisplayObject>;
-    public var displayObject (default, null) :flash.display.DisplayObject;
-    #end
+    // #if (flash || cpp)
+    // public var interactiveObjectProperty :PropertyReference<flash.display.DisplayObject>;
+    // public var displayObject (default, null) :flash.display.DisplayObject;
+    // #end
     
     public var xProperty :PropertyReference<Float>;
     public var yProperty :PropertyReference<Float>;
@@ -66,7 +66,8 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
     public static function compare (a :MouseInputComponent, b :MouseInputComponent) :Int
     {
         #if flash
-        return if (com.pblabs.util.DisplayUtils.isAbove(a.displayObject, b.displayObject)) -1 else 1;
+        Log.error("Implement me, scene objects not ordered.");
+        return 0;//if (com.pblabs.util.DisplayUtils.isAbove(a.displayObject, b.displayObject)) -1 else 1;
         #elseif js
         var scenea = a.owner.lookupComponent(BaseScene2DComponent);
         var sceneb = b.owner.lookupComponent(BaseScene2DComponent);
@@ -109,20 +110,32 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
     }
     #end
     
+    dynamic public function onClick () :Void
+    {
+        // trace(owner + " clicked");
+    }
+    
+    dynamic public function onDeviceDown () :Void
+    {
+        // trace(owner + " device down");
+    }
     
     override function onReset () :Void
     {
         super.onReset();
-        
-        #if flash
-        displayObject = owner.getProperty(interactiveObjectProperty);
-        
-        Preconditions.checkArgument(!(displayObject == null && boundsProperty == null));
-        
-        if (boundsProperty == null) {
-            _bounds = new BoundsPolygon(displayObject.getBounds(displayObject).convertToPolygon());
+        _bounds = owner.lookupComponentByType(ISpatialObject2D);
+        if (_bounds == null && boundsProperty == null) {
+            Log.info("There's no ISpatialObject2D component and the boundsProperty is null.  How are we supposed to work?"); 
         }
-        #end
+        // #if flash
+        // displayObject = owner.getProperty(interactiveObjectProperty);
+        
+        // Preconditions.checkArgument(!(displayObject == null && boundsProperty == null));
+        
+        // if (boundsProperty == null) {
+        //     _bounds = new BoundsPolygon(displayObject.getBounds(displayObject).convertToPolygon());
+        // }
+        // #end
         
         // _boundsStale = true;
     }
@@ -130,10 +143,10 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
     override function onRemove () :Void
     {
         super.onRemove();
-        #if flash
-        displayObject = null;
-        interactiveObjectProperty = null;
-        #end
+        // #if flash
+        // displayObject = null;
+        // interactiveObjectProperty = null;
+        // #end
         
         xProperty = null;
         yProperty = null;

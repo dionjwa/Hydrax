@@ -94,7 +94,7 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>
     /**
      * If set, our z-index is gotten from this property every frame.
      */
-    public var zIndexProperty :PropertyReference<Int>;
+    // public var zIndexProperty :PropertyReference<Int>;
 
     public function new ()
     {

@@ -37,5 +37,19 @@ class PBMacros
         var varName = varNameRegex.matched(3);
         return { expr :EConst(CString(varName)), pos : pos };
     }
+    
+    /**
+      * Inserts a profiler statement into the code, if the profiler compiler flag is set
+    //   */
+    // @:macro public static function profilerEnter(label :Expr) {
+        
+    //     ExprDef.ECall(ExprDef() ,[CString(label)]);
+    //     #if profiler
+    //     return { expr :EConst(CString(varName)), pos : pos };
+    //     #else
+    //     return { expr :null, pos : pos };
+    //     #end
+        
+    // }
 
 }

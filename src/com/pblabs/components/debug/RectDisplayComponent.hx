@@ -31,7 +31,7 @@ class RectDisplayComponent extends Scene2DComponent
     public function new (?w :Float = 0, ?h :Float = 0, ?color :Int = 0xff0000)
     {
         super();
-        sceneLayerName = Scene2DManager.DEBUG_LAYER_NAME;
+        // sceneLayerName = Scene2DManager.DEBUG_LAYER_NAME;
         _displayObject = new Sprite();
 		_fillColor = color;
 		_borderColor = 0x000000;

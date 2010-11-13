@@ -8,38 +8,26 @@
  ******************************************************************************/
 package com.pblabs.components.scene.flash;
 
-import com.pblabs.components.base.LocationComponent;
 import com.pblabs.components.scene.BaseScene2DManager;
-import com.pblabs.components.scene.IScene2D;
 import com.pblabs.components.scene.SceneAlignment;
+import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.SceneView;
-import com.pblabs.components.scene.flash.Scene2DComponent;
 import com.pblabs.components.scene.flash.SceneLayer;
-import com.pblabs.engine.core.EntityComponent;
-import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.debug.Log;
 import com.pblabs.engine.time.IAnimatedObject;
-import com.pblabs.engine.time.ITickedObject;
-import com.pblabs.util.Assert;
-import com.pblabs.util.MathUtil;
-import com.pblabs.util.ReflectUtil;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
+import com.pblabs.geom.Vector2;
+import com.pblabs.util.Preconditions;
 
 import flash.display.DisplayObjectContainer;
-import flash.display.Graphics;
 import flash.display.Sprite;
-
-import flash.events.Event;
 
 import flash.geom.Matrix;
 import flash.geom.Point;
-import flash.geom.Rectangle;
 
 using com.pblabs.util.ArrayUtil;
 
 /**
- * Basic Rendering2D scene; it is given a _sceneView and some
+ * Basic Rendering2D scene; it is given a SceneView and some
  * DisplayObjectRenderers, and makes sure that they are drawn. Extensible
  * for more complex rendering scenarios. Enforces sorting order, too.
  */
@@ -101,6 +89,8 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
         // min_zoom = 0;
         // sceneAlignment = SceneAlignment.CENTER;
         _rootSprite = new Sprite();
+        _rootTransform = new Matrix();
+        _tempPoint = new Vector2();
         // _sceneComponents = Maps.newHashMap(Scene2DComponent);
         // _layers = new Array<SceneLayer>();
         // _currentViewRect = new Rectangle();
@@ -152,43 +142,43 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
     // }
 
     // public function get_position () :Point{
-    //     return _root_position.clone();
+    //     return _rootPosition.clone();
     // }
 
    //  public function set_positionX (newX :Float) :Float{
-   //      if (_root_position.x == newX) {
+   //      if (_rootPosition.x == newX) {
    //          return newX;
    //      }
-   //      _root_position.x = newX;
+   //      _rootPosition.x = newX;
    //      _transformDirty = true;
    //      return newX;
    //     }
 
    //  public function set_positionY (newY :Float) :Float{
-   //      if (_root_position.y == newY) {
+   //      if (_rootPosition.y == newY) {
    //          return newY;
    //      }
-   //      _root_position.y = newY;
+   //      _rootPosition.y = newY;
    //      _transformDirty = true;
    //      return newY;
    //     }
 
    //  public function set_position (value :Point) :Point{
    //      if (value == null) {
-   //          return _root_position;
+   //          return _rootPosition;
    //      }
 
    //      var newX :Float = value.x;
    //      var newY :Float = value.y;
 
-   //      if (_root_position.x == newX && _root_position.y == newY) {
-   //          return _root_position;
+   //      if (_rootPosition.x == newX && _rootPosition.y == newY) {
+   //          return _rootPosition;
    //      }
-   //      //        trace("Setting _root_position.x=" + newX);
-   //      _root_position.x = newX;
-   //      _root_position.y = newY;
+   //      //        trace("Setting _rootPosition.x=" + newX);
+   //      _rootPosition.x = newX;
+   //      _rootPosition.y = newY;
    //      _transformDirty = true;
-   //      return _root_position;
+   //      return _rootPosition;
    // }
    
    //  public function get_rootSprite () :Sprite
@@ -480,11 +470,11 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
 
     //     // TODO :Take into account rotation so it's correct even when
     //     //       rotating.
-    //     var before :Float = _root_position.x;
-    //     _root_position.x -= deltaX / _zoom;
-    //     //        trace("deltaX=", before, _root_position.x);
-    //     //        trace("Before/after=", before, _root_position.x);
-    //     _root_position.y -= deltaY / _zoom;
+    //     var before :Float = _rootPosition.x;
+    //     _rootPosition.x -= deltaX / _zoom;
+    //     //        trace("deltaX=", before, _rootPosition.x);
+    //     //        trace("Before/after=", before, _rootPosition.x);
+    //     _rootPosition.y -= deltaY / _zoom;
 
     //     _transformDirty = true;
     // }
@@ -561,14 +551,13 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
         //                sceneBounds.y + sceneView.height * 0.5,
         //                sceneBounds.width - sceneView.width,
         //                sceneBounds.height - sceneView.height);
-        //
-        //            position = new Point(MathUtil.fclamp(position.x, -centeredLimitBounds.right,
+        //         //            position = new Point(MathUtil.fclamp(position.x, -centeredLimitBounds.right,
         //                -centeredLimitBounds.left), MathUtil.fclamp(position.y, -centeredLimitBounds.bottom,
         //                -centeredLimitBounds.top));
         //        }
 
-        // trace("updateTransform");
-        // updateTransform();
+        
+        updateTransform();
 
         //Check layers
 
@@ -589,7 +578,33 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
         if (!_transformDirty) {
             return;
         }
+        // trace("updateTransform");
         _transformDirty = false;
+        
+        
+        // Update our transform, if required
+        _rootTransform.identity();
+        // trace(_rootTransform);
+        // trace("x=" + x);
+        // trace("y=" + y);
+        // trace("zoom=" + zoom);
+        // trace("rotation=" + rotation);
+        _rootTransform.translate(x, y);
+        _rootTransform.scale(zoom, zoom);
+        
+        // Apply rotation.
+        _rootTransform.rotate(rotation);
+        // trace(_rootTransform);
+
+        // Center it appropriately.
+        Preconditions.checkNotNull(_tempPoint);
+        Preconditions.checkNotNull(sceneAlignment);
+        Preconditions.checkNotNull(sceneView);
+        SceneUtil.calculateOutPoint(_tempPoint, sceneAlignment, sceneView.width, sceneView.height);
+        _rootTransform.translate(_tempPoint.x, _tempPoint.y);
+
+        // Apply the transform.
+        _rootSprite.transform.matrix = _rootTransform;
 
         // if (_sceneBounds != null) {
         //     //            trace("panning");
@@ -603,14 +618,14 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
         //     //            trace("minmaxX=", minViewX, maxViewX);
         //     var minViewY :Int = cast(-(_sceneBounds.bottom - _sceneView.height * _zoom), Int);
         //     var maxViewY :Int = cast(-_sceneBounds.top, Int);
-        //     //            trace("clampedX=" + MathUtil.fclamp(_root_position.x, minViewX, maxViewX));
-        //     _root_position.x = MathUtil.fclamp(_root_position.x, minViewX, maxViewX);
+        //     //            trace("clampedX=" + MathUtil.fclamp(_rootPosition.x, minViewX, maxViewX));
+        //     _rootPosition.x = MathUtil.fclamp(_rootPosition.x, minViewX, maxViewX);
 
-        //     //            trace("After clamping=" + _root_position.x);
-        //     _root_position.y = MathUtil.fclamp(_root_position.y, minViewY, maxViewY);
+        //     //            trace("After clamping=" + _rootPosition.x);
+        //     _rootPosition.y = MathUtil.fclamp(_rootPosition.y, minViewY, maxViewY);
 
-        //     //            _rootSprite.x = _root_position.x;
-        //     //            _rootSprite.y = _root_position.y;
+        //     //            _rootSprite.x = _rootPosition.x;
+        //     //            _rootSprite.y = _rootPosition.y;
         // }
 
         // //        return;
@@ -619,7 +634,7 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
 
         // // Update our transform, if required
         // _rootTransform.identity();
-        // _rootTransform.translate(_root_position.x, _root_position.y);
+        // _rootTransform.translate(_rootPosition.x, _rootPosition.y);
         // _rootTransform.scale(zoom, zoom);
         //        trace("Scene zoom=" + zoom);
 
@@ -628,10 +643,10 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
         //            sceneView.height);
         //        _rootTransform.translate(_tempPoint.x, _tempPoint.y);
 
-        _rootSprite.transform.matrix = _rootTransform;
+        // _rootSprite.transform.matrix = _rootTransform;
 
-        _currentViewRect.x = -_root_position.x;
-        _currentViewRect.y = -_root_position.y;
+        // _currentViewRect.x = -_rootPosition.x;
+        // _currentViewRect.y = -_rootPosition.y;
         //        trace("updating scene transform, scale=" + _rootSprite.scaleX);
     }
 
@@ -641,7 +656,7 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
     //         return null;
     //     }
     //     return _currentViewRect;
-    //     //        return new Rectangle(-_root_position.x, -_root_position.y, _sceneView.width, _sceneView.height);
+    //     //        return new Rectangle(-_rootPosition.x, -_rootPosition.y, _sceneView.width, _sceneView.height);
     // }
 
     // override function onRemove () :Void
@@ -737,15 +752,15 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
         return _rootSprite;
     }
 
-    var _currentWorldCenter :Point;
+    // var _currentWorldCenter :Vector2;
     // var _layers :Array<SceneLayer>;
 
     //    protected var _renderers :Dictionary = new Dictionary(true);
-    var _root_position :Point;
+    // var _rootPosition :Vector2;
     var _rootSprite :Sprite;
     var _rootTransform :Matrix;
     // var _transformDirty :Bool;
-    var _tempPoint :Point;
+    var _tempPoint :Vector2;
     //    protected var _rootRotation :Number = 0;
 
     // var _sceneBounds :Rectangle;
@@ -766,5 +781,3 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
     // public static var DEBUG_LAYER_NAME :String = "debugLayer";
 
 }
-
-

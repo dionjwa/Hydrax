@@ -66,6 +66,14 @@ class MapSet<T> implements Set<T>
         });
     }
     
+    #if debug
+    public function toString () :String
+    {
+        return com.pblabs.util.ds.MapUtil.toString(_source);
+    }
+    #end
+    
+    
     /** The map used for our source. */
     var _source:Map<T, T>;
 }

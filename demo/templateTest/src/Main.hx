@@ -19,7 +19,7 @@ import com.pblabs.util.XMLUtil;
 
 using Lambda;
 
-using com.pblabs.components.scene.SceneComponentUtil;
+using com.pblabs.components.scene.SceneUtil;
 
 class Main #if flash extends flash.display.Sprite #end 
 {

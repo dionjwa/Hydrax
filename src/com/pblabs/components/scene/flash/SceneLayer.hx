@@ -46,6 +46,15 @@ class SceneLayer extends BaseScene2DLayer<Scene2DManager, Scene2DComponent>
         _displayContainer.removeChild(c.displayObject);
     }
     
+    #if debug
+    override function addedToParent () :Void
+    {
+        super.addedToParent();
+        cast(_displayContainer, Sprite).graphics.clear();
+        com.pblabs.util.GraphicsUtil.drawRect(cast(_displayContainer, Sprite).graphics, parent.sceneView.width - 1, parent.sceneView.height - 1, 0x000000, 1);
+    }
+    #end
+    
     override function onAdd () :Void
     {
         super.onAdd();      

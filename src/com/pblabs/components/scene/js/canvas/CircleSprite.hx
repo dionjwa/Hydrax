@@ -47,7 +47,7 @@ class CircleSprite extends Sprite
 
     override public function draw (ctx :Context2d)
     {
-        //ctx.closePath();
+        // ctx.closePath();
         ctx.beginPath();
         ctx.arc(0, 0, radius, 0, Math.PI*2, true);
         if (fillStyle != null) {
@@ -55,6 +55,7 @@ class CircleSprite extends Sprite
             //ctx.beginPath();
             ctx.fill();
         }
+        // ctx.closePath();
 //        if (strokeStyle != null) {
 //            ctx.strokeStyle = strokeStyle;
 //            ctx.beginPath();

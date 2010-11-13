@@ -1,6 +1,6 @@
 package;
 
-import com.pblabs.components.scene.SceneComponentUtil;
+import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.SceneView;
 import com.pblabs.components.scene.js.canvas.Canvas2DComponent;
 import com.pblabs.components.scene.js.canvas.CanvasLayer;
@@ -17,7 +17,7 @@ import com.pblabs.engine.resource.ResourceManager;
 import com.pblabs.engine.resource.js.ImageResources;
 import com.pblabs.engine.util.PBUtil;
 import com.pblabs.util.Assert;
-using com.pblabs.components.scene.SceneComponentUtil;
+using com.pblabs.components.scene.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
 
@@ -60,7 +60,7 @@ class CanvasDemo
         canvas.owner.addComponent(manLayer, "manlayer"); 
         
         
-        var black = SceneComponentUtil.createBaseSceneEntity(ctx, "background object"); 
+        var black = SceneUtil.createBaseSceneEntity(ctx, "background object"); 
         var blackDisplay = ctx.allocate(Canvas2DComponent);
         blackDisplay.parentProperty = backLayer.entityProp();
         blackDisplay.sprite = new FilledSprite("#000000");
@@ -68,7 +68,7 @@ class CanvasDemo
         black.deferring = false;
         
         
-        var man  = SceneComponentUtil.createBaseSceneEntity(ctx, "man object");
+        var man  = SceneUtil.createBaseSceneEntity(ctx, "man object");
         var manSprite = new ImageSprite(images.get("man.png"));
         manSprite.centerX = manSprite.width/2;
         manSprite.centerY = manSprite.height/2;
@@ -84,7 +84,7 @@ class CanvasDemo
         
         
         var circle = new CircleSprite(30);
-        var circleObj  = SceneComponentUtil.createBaseSceneEntity(ctx, "circle");
+        var circleObj  = SceneUtil.createBaseSceneEntity(ctx, "circle");
         
         circle.fillStyle = "#0000ff";
         var circleComp = ctx.allocate(Canvas2DComponent);

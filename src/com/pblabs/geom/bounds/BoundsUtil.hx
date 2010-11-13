@@ -106,8 +106,9 @@ class BoundsUtil
         } else if (Std.is(b, BoundsHighLowRes)) {
             drawBounds(cast(b, BoundsHighLowRes).getBounds2(), g, color, alpha, lineWidth);
         }else {
-            g.lineStyle(lineWidth, color, alpha);
-            g.drawRect(b.boundingRect.x, b.boundingRect.y, b.boundingRect.width, b.boundingRect.height);
+            throw "Not implemented";
+            // g.lineStyle(lineWidth, color, alpha);
+            // g.drawRect(b.boundingRect.x, b.boundingRect.y, b.boundingRect.width, b.boundingRect.height);
         }
     }
     #end

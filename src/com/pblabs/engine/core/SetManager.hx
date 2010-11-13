@@ -14,7 +14,6 @@ import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.IPBObject;
 import com.pblabs.engine.core.PBObject;
 import com.pblabs.util.Preconditions;
-
 import com.pblabs.util.ds.MultiMap;
 import com.pblabs.util.ds.Set;
 import com.pblabs.util.ds.Sets;
@@ -37,6 +36,7 @@ using com.pblabs.util.ReflectUtil;
 class SetManager 
     implements IPBManager
 {
+    
     //The static functions are for "using" 
     public static function addToSet (obj :IPBObject, set :String) :Void
     {
@@ -130,7 +130,6 @@ class SetManager
     
     public function startup():Void
     {
-        
     }
     
     public function shutdown():Void
