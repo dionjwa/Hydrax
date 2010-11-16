@@ -15,6 +15,8 @@ import com.pblabs.engine.core.IPBManager;
   */
 interface IResourceManager implements IPBManager
 {
+    function create <T>(resourceName :String, itemName :String) :T;
+    
     function addResource (rsrc :IResource<Dynamic>) :Void;
     
     function load (onLoad :Void->Void, onError :Dynamic->Void) :Void;
@@ -26,6 +28,6 @@ interface IResourceManager implements IPBManager
       */
     function isResource (resourceName :String) :Bool;
     
-    function getResource <T>(resourceName :String) :IResource<T>;
+    function getResource <T>(resourceName :String, ?resourceType :Class<T>) :IResource<T>;
 }
 

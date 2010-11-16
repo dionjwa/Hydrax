@@ -23,7 +23,7 @@ class ResourceBase<T>
         _name = name;
     }
     
-    public function get (?name :String) :T
+    public function create (?name :String) :T
     {
         //Subclasses must override this to be useful.
         throw "Override";

@@ -156,7 +156,7 @@ class SceneView
         //Fill the layer to catch all mouse events.
         _layer.graphics.beginFill(0, 0);
         _layer.graphics.drawRect(0, 0, flash.Lib.current.stage.stageWidth, flash.Lib.current.stage.stageHeight);
-        
+        _layer.graphics.endFill();
         #if debug
         _layer.graphics.lineStyle(2, 0x0000ff, 1);
         _layer.graphics.drawRect(0, 0, flash.Lib.current.stage.stageWidth-2, flash.Lib.current.stage.stageHeight-2);
@@ -179,7 +179,6 @@ class SceneView
             _width = Std.parseFloat(_layer.style.width.replace("px",""));
             _height = Std.parseFloat(_layer.style.height.replace("px",""));
             #if debug
-            trace("Added border to SceneView");
             _layer.style.borderColor = "#0000ff";
             _layer.style.borderWidth = "1px";
             #end

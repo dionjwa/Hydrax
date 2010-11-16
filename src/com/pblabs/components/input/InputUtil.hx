@@ -22,4 +22,11 @@ class InputUtil
         Preconditions.checkNotNull(mouseInput, "Requires a MouseInputComponent for binding mouse listeners");
         mouseInput.onDeviceDown = f;
     }
+    
+    public static function setDeviceHeldDown (e :IEntity, f :Void->Void) :Void
+    {
+        var mouseInput = e.lookupComponentByType(MouseInputComponent);
+        Preconditions.checkNotNull(mouseInput, "Requires a MouseInputComponent for binding mouse listeners");
+        mouseInput.onDeviceHeldDown = f;
+    }
 }

@@ -20,7 +20,7 @@ class Preconditions
     public static function checkNotNull <T> (ref :T, ?message :String = null) :T
     {
         if (ref == null) {
-            throw if (message != null) message else "Argument is null";
+            fail(if (message != null) message else "Argument is null");
         }
         return ref;
     }
@@ -31,7 +31,7 @@ class Preconditions
     public static function checkArgument (expression :Bool, ?message :String = null) :Void
     {
         if (!expression) {
-            throw if (message != null) message else "Argument is false";
+            fail(if (message != null) message else "Argument is false");
         }
     }
 
@@ -42,8 +42,17 @@ class Preconditions
     public static function checkPositionIndex (index :Int, size :Int, ?message :String = null) :Int
     {
         if (index < 0 || index >= size) {
-            throw "Index out of bounds " + index + ", [0, " + (size - 1) + "].";
+            fail("Index out of bounds " + index + ", [0, " + (size - 1) + "].");
         }
         return index;
     }
+    
+    inline static function fail (message :String) :Void
+	{
+        //Some javascript targets don't show exceptions, so at least log the error
+        #if (js && debug)
+        com.pblabs.engine.debug.Log.error(message);
+        #end
+	    throw message;
+	}
 }

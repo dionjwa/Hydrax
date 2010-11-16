@@ -93,7 +93,7 @@ class JSSceneManager<Layer :JSLayer<Dynamic, Dynamic>> extends BaseScene2DManage
         #end
 
         
-        _rootContainer = cast js.Lib.document.createElement("DIV");
+        _rootContainer = cast js.Lib.document.createElement("div");
         sceneView.layer.appendChild(_rootContainer);
         // trace("added border to JSSceneManager");
         // _rootContainer.style.borderColor = "#ff0000";
@@ -101,6 +101,9 @@ class JSSceneManager<Layer :JSLayer<Dynamic, Dynamic>> extends BaseScene2DManage
         // _rootContainer.setAttribute("disabled", "true");
         // div.style.cssText = "position:fixed";
         _rootContainer.style.cssText = "position:absolute";
+        
+        
+        
         
         
         

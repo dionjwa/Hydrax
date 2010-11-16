@@ -9,6 +9,7 @@
 package com.pblabs.util;
 
 import com.pblabs.util.EqualableUtil;
+import com.pblabs.util.Random;
 
 /**
  * Contains methods operating on Arrays that understand the 
@@ -52,6 +53,30 @@ class ArrayUtil
     {
         return removeIfImpl(arr, element, false);
     }
+    
+    /**
+     * Randomly shuffle the elements in the specified array.
+     *
+     * @param rando a random number generator to use, or null if you don't care.
+     */
+    public static function shuffle (arr :Array<Dynamic>, rando :Random = null) :Void
+    {
+        var randFunc = rando != null ? rando.nextInt :
+            function (n :Int) :Int {
+                return Std.int(Math.random() * n);
+            };
+        // starting from the end of the list, repeatedly swap the element in
+        // question with a random element previous to it up to and including
+        // itself
+        var ii = arr.length - 1;
+        while (ii > 0) {
+            var idx = randFunc(ii + 1);
+            var tmp = arr[idx];
+            arr[idx] = arr[ii];
+            arr[ii] = tmp;
+            ii--;
+        }
+    }
 
     /**
      * Implementation of removeIf methods.
@@ -73,5 +98,3 @@ class ArrayUtil
         return removed;
     }
 }
-
-

@@ -20,7 +20,7 @@ using com.pblabs.geom.CircleUtil;
 /**
  * Display coloured, labelled circle with the angle marked.
  */
- @sets("IInteractiveComponent")
+@sets("IInteractiveComponent")
 class BlobDisplayComponent
 #if (js && jscss)
 extends com.pblabs.components.scene.js.css.Base2DComponent,
@@ -49,7 +49,21 @@ extends com.pblabs.components.scene.js.canvas.Canvas2DComponent,
         // sceneLayerName = com.pblabs.components.scene.flash.Scene2DManager.DEBUG_LAYER_NAME;
         _displayObject = new flash.display.Sprite();
         #elseif (js && jscss)
-        _circleDom = cast js.Lib.document.createElement("DIV");
+        // _circleDom = cast js.Lib.document.createElement("DIV");
+        
+        _svg = untyped js.Lib.document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        _svg.setAttribute('width', '300');
+        _svg.setAttribute('height', '100');
+        _svg.setAttribute('version', '1.1');
+
+        var shape :js.Dom.HtmlDom = untyped js.Lib.document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        shape.setAttribute("cx", "25px");
+        shape.setAttribute("cy", "25px");
+        shape.setAttribute( "r",  "20px");
+        shape.setAttribute("fill", "green");
+        _circleDom = shape;
+        _svg.appendChild(_circleDom);
+
         #elseif js
         // _circleSprite = new com.pblabs.components.scene.js.canvas.CircleSprite(radius);
         // _circleSprite.fillStyle = StringUtil.toColorString(fillColor, "#");
@@ -103,7 +117,8 @@ extends com.pblabs.components.scene.js.canvas.Canvas2DComponent,
         //Put the element in the base div element
         //Why put it in a div?
         //http://dev.opera.com/articles/view/css3-transitions-and-2d-transforms/#transforms
-        div.appendChild(_circleDom);
+        // div.appendChild(_circleDom);
+        div.appendChild(_svg);
         #end
         redraw();
         
@@ -137,7 +152,7 @@ extends com.pblabs.components.scene.js.canvas.Canvas2DComponent,
     function redraw () :Void
     {
         #if (js && jscss)
-       _circleDom.style.cssText = "width:" + (radius * 2) + "px; height:" + (radius * 2) + "px; background-color:" + StringUtil.toColorString(fillColor, "#") + "; border-color:" + StringUtil.toColorString(borderColor, "#") + "; border-style:solid; border-width:" + borderWidth + "px;" + "-webkit-border-radius: " + radius + "px; -moz-border-radius: " + radius + "px;";
+       // _circleDom.style.cssText = "width:" + (radius * 2) + "px; height:" + (radius * 2) + "px; background-color:" + StringUtil.toColorString(fillColor, "#") + "; border-color:" + StringUtil.toColorString(borderColor, "#") + "; border-style:solid; border-width:" + borderWidth + "px;" + "-webkit-border-radius: " + radius + "px; -moz-border-radius: " + radius + "px;";
        // _circleDom.style.cssText = "width:" + (radius * 2) + "px; height:" + (radius * 2) + "px; background-color:" + StringUtil.toColorString(fillColor, "#") + "; border-color:" + StringUtil.toColorString(borderColor, "#") + "; border-style:solid; border-width:" + borderWidth + "px;" + "-webkit-border-radius: " + radius + "px; -moz-border-radius: " + radius + "px;";
        isDirty = true;
         #elseif flash
@@ -221,6 +236,7 @@ extends com.pblabs.components.scene.js.canvas.Canvas2DComponent,
     
     #if (js && jscss)
     var _circleDom :js.Dom.HtmlDom;
+    var _svg :js.Dom.HtmlDom;
     #elseif js
     var _circleSprite :com.pblabs.components.scene.js.canvas.CircleSprite;
     #elseif (flash || cpp)

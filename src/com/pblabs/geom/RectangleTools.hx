@@ -17,6 +17,11 @@ class RectangleTools
     {
         return new Vector2(rect.left + rect.width / 2, rect.top + rect.height / 2);
     }
+    
+   public static function contains (x :Float, y :Float, w :Float, h :Float, query :Vector2) : Bool
+   {
+       return query.x >= x && query.x <= (x + w) && query.y >= y && query.y <= (y + h);
+   }
 }
 
 

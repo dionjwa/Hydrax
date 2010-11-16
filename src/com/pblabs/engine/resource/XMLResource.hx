@@ -7,6 +7,8 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.engine.resource;
+
+import com.pblabs.engine.debug.Log;
 import com.pblabs.engine.resource.IResource.Source;
 import com.pblabs.engine.resource.ResourceBase;
 import com.pblabs.engine.serialization.ISerializable;
@@ -37,13 +39,15 @@ class XMLResource extends ResourceBase<XML>
             case url (u): loadFromUrl(u);
             case bytes (b): loadFromBytes(b);
             case text (t): loadFromText(t);
+            default:
+                Log.error("Resouce source type not handled: " + _source);
         }
         
         //Unlink the source ref, we don't need it now
         _source = null;
     }
     
-    override public function get (?name :String) :XML
+    override public function create (?name :String) :XML
     {
         return _xml.firstElement();
     }
@@ -56,10 +60,12 @@ class XMLResource extends ResourceBase<XML>
         _data = null;
     }
     
+    #if debug
     override public function toString () :String
     {
         return StringUtil.objectToString(this, ["_name", "_xml"]);
     }
+    #end
     
     function loadFromUrl (url :String) :Void
     {
@@ -120,5 +126,3 @@ class XMLResource extends ResourceBase<XML>
     var _data :Dynamic;
     var _source :Source;
 }
-
-

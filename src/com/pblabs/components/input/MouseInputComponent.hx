@@ -120,6 +120,11 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
         // trace(owner + " device down");
     }
     
+    dynamic public function onDeviceHeldDown () :Void
+    {
+        // trace(owner + " device down");
+    }
+    
     override function onReset () :Void
     {
         super.onReset();

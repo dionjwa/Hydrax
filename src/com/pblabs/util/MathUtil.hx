@@ -41,6 +41,8 @@ class MathUtil
 	inline public static var  INT32_MIN = 0x80000000;
 	/** Max value, signed integer.   */
 	inline public static var  INT32_MAX = 0x7fffffff;
+	/** Max value, unsigned integer. */
+	inline public static var UINT32_MAX = 0xffffffff;
 	/** Math.PI constant. */
 	inline public static var PI = 3.141592653589793;
 	/** 2 * Math.PI constant. */

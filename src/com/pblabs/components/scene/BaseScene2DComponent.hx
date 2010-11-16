@@ -11,6 +11,8 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
     public var layer (get_layer, null) :Layer;
     public var x (get_x, set_x) :Float;
     public var y (get_y, set_y) :Float;
+    public var width (get_width, set_width) :Float;
+    public var height (get_height, set_height) :Float;
     public var angle (get_angle, set_angle) :Float;
     public var scale (get_scale, set_scale) :Float;
     public var isDirty (get_isDirty, set_isDirty) :Bool;
@@ -121,8 +123,34 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
         return val;
     }
     
+    inline function get_width () :Float
+    {
+        return _width;
+    }
+    
+    function set_width (val :Float) :Float
+    {
+        _width = val;
+        _isDirty = true;
+        return val;
+    }
+    
+    inline function get_height () :Float
+    {
+        return _height;
+    }
+    
+    function set_height (val :Float) :Float
+    {
+        _height = val;
+        _isDirty = true;
+        return val;
+    }
+    
     var _x :Float;
     var _y :Float;
+    var _width :Float;
+    var _height :Float;
     var _angle :Float;
     var _scale :Float;
     var _isDirty :Bool;

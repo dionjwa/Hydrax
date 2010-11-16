@@ -612,11 +612,12 @@ class TemplateManager
     
     function onLoaded(resource :XMLResource) :Void
     {
-        var version = Std.parseInt(resource.get().get("version"));
+        var xml = resource.create();
+        var version = Std.parseInt(xml.get("version"));
         var thingCount :Int=0;
-        for (xml in resource.get().elements()) {
+        for (childxml in xml.elements()) {
             thingCount++;
-            addXML(xml, resource.name, version);
+            addXML(childxml, resource.name, version);
         }
         
         Log.info("Loaded " + thingCount + " from " + resource.name);

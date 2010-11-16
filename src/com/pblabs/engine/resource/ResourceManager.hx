@@ -38,6 +38,13 @@ class ResourceManager
         _onLoadCallbacks = new Array();
         _onErrorCallbacks = new Array();
     }
+    
+    public function create <T>(resourceName :String, itemName :String) :T
+    {
+        Preconditions.checkArgument(isResource(resourceName), "No IResource with id=" + resourceName); 
+        var rs :IResource<T> = getResource(resourceName);
+        return rs.create(itemName);
+    }
 
     public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
     {
@@ -80,9 +87,18 @@ class ResourceManager
         return _pendingResources.exists(resourceName) || _loadedResources.exists(resourceName) || _loadingResources.exists(resourceName);
     }
     
-    public function getResource <T> (resourceName :String) :IResource<T>
+    public function getResource <T>(resourceName :String, ?resourceType :Class<Dynamic>) :IResource<T>
     {
-        return cast(_loadedResources.get(resourceName));
+        Preconditions.checkArgument(resourceName != null || resourceType != null, "You must give either a resource name or type");
+        
+        if (resourceType != null) {
+            for (rsrc in _loadedResources) {
+                if (Std.is(rsrc, resourceType)) {
+                    return cast rsrc;
+                }
+            }
+        }
+        return cast _loadedResources.get(resourceName);
     }
     
     public function addResource (rsrc :IResource<Dynamic>) :Void
@@ -121,6 +137,7 @@ class ResourceManager
         _onErrorCallbacks = null;
     }
     
+    #if debug
     public function toString () :String
     {
         var s = "[Resources: [pending:";
@@ -137,6 +154,7 @@ class ResourceManager
         }
         return s + "]]]";
     }
+    #end
     
     function resourceLoaded (rsrc :IResource<Dynamic>) :Void
     {

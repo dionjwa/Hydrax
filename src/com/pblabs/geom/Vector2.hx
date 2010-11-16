@@ -19,8 +19,8 @@ class Vector2
     implements Cloneable<Vector2>, implements Equalable<Vector2> 
  {
     
-    public var angle(getAngle, null) : Float;
-    public var length(getLength, setLength) : Float;
+    public var angle(get_angle, null) : Float;
+    public var length(get_length, set_length) : Float;
     public var lengthSquared(getLengthSquared, null) : Float;
     public var x:Float;
     public var y:Float;
@@ -75,7 +75,7 @@ class Vector2
     /**
      * Returns the angle represented by this Vector2, in radians.
      */
-    public function getAngle ():Float
+    inline function get_angle ():Float
     {
         var angle:Float = Math.atan2(y, x);
         return (angle >= 0 ? angle : angle + (2 * Math.PI));
@@ -84,14 +84,16 @@ class Vector2
     /**
      * Returns this vector's length.
      */
-    public function getLength ():Float{
+    inline function get_length ():Float
+    {
         return Math.sqrt(x * x + y * y);
     }
 
     /**
      * Sets this vector's length.
      */
-    public function setLength (newLen :Float):Float{
+    inline function set_length (newLen :Float):Float
+    {
         var scale:Float = newLen / this.length;
 
         x *= scale;
@@ -305,11 +307,13 @@ class Vector2
         return Math.acos(dot / (len1 * len2));
     }
 
+    #if debug
     /** Returns a string representation of the Vector2. */
     public function toString () :String
     {
-        return "[" + x + ", " + y + "]";
+        return "[" + com.pblabs.util.NumberUtil.toFixed(x, 3) + ", " + com.pblabs.util.NumberUtil.toFixed(y, 3) + "]";
     }
+    #end
 }
 
 

@@ -14,6 +14,7 @@ enum Source {
     url (u :String);
     bytes (b :BytesData);
     text (t :String);
+    //base64 (data :String); //??Maybe
     #if flash
     //FIgure out how to manage with with haxe embedded assets.
     // embedded
@@ -28,9 +29,9 @@ interface IResource<T>
     var name (get_name, never) :String;
     
     /**
-      * Gets the resource mapped to the name.
+      * Create/get the resource mapped to the name.
       */
-    function get (?resourceName :String) :T;
+    function create (?resourceName :String) :T;
     
     /**
       * Loads resources managed by this instance.

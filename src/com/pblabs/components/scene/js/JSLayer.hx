@@ -55,7 +55,7 @@ class JSLayer <Scene :JSSceneManager<Dynamic>, Component :BaseScene2DComponent<D
     override function onAdd () :Void
     {
         super.onAdd();
-        div = cast js.Lib.document.createElement("DIV");
+        div = cast js.Lib.document.createElement("div");
         div.style.cssText = "position:relative;left:0px;top:0px;";
     }
 }

@@ -16,6 +16,7 @@ using com.pblabs.util.IterUtil;
 /**
   * Layers are arranged: smaller index is behind.
   */
+@sets("Scene2DManager")
 class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends NodeComponent<Dynamic, Layer>,
     implements haxe.rtti.Infos, implements IScene2D
 {
