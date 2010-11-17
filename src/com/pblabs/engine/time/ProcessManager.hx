@@ -491,11 +491,13 @@ class ProcessManager implements IProcessManager
     {
         // This is called from a system event, so it had better be at the 
         // root of the profiler stack!
+        #if profiler
         com.pblabs.engine.debug.Profiler.ensureAtRoot();
+        #end
         
         // Safety for when we've stop()'ed.
         if(!started || paused) {
-            // Log.debug("!started");
+            lastTime = haxe.Timer.stamp();
             return;
         }
         
