@@ -17,8 +17,6 @@ import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.SetManager;
 import com.pblabs.engine.debug.Log;
-import com.pblabs.engine.time.IAnimatedObject;
-import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Assert;
 import com.pblabs.util.Comparators;
@@ -49,11 +47,11 @@ using com.pblabs.util.MathUtil;
 
 
 /**
- * Integrates different input listeners into signals such as drag,
+ * Integrates different lower level input listeners into higher level signals such as drag,
  * and provides the components that react to input.
  */
 class InputManager
-    implements IAnimatedObject, implements IPBManager, implements haxe.rtti.Infos
+    implements IPBManager, implements haxe.rtti.Infos
 {
     public var deviceDown(default, null) :Signaler<Tuple<IInteractiveComponent, Vector2>>;
     public var deviceUp(default, null) :Signaler<Tuple<IInteractiveComponent, Vector2>>;
@@ -108,7 +106,7 @@ class InputManager
         drag.bind(onDrag);
     }
     
-    public function onFrame (dt :Float) :Void
+    public function onFrame () :Void
     {
         //Dispatch a deviceHeldDown signal, but only if there's something under the device.
         //NB: this doesn't recheck what's under the device, it's the same from the deviceDown.
@@ -133,13 +131,15 @@ class InputManager
         _sets = Preconditions.checkNotNull(context.getManager(SetManager));
         
         bindSignals();
-        context.getManager(IProcessManager).addAnimatedObject(this);
+        _timer = new haxe.Timer(Std.int(1000.0 / 30));
+        _timer.run = onFrame;
     }
     
     public function shutdown () :Void
     {
         freeSignals();
-        context.getManager(IProcessManager).removeAnimatedObject(this);
+        _timer.stop();
+        _timer =  null;
     }
     
     function bindSignals () :Void
@@ -508,6 +508,7 @@ class InputManager
     var _mouseLoc :Vector2;
     var _isGesturing :Bool;
     var _tempVec :Vector2;
+    var _timer :haxe.Timer;
     static var INPUT_SET :String = ReflectUtil.tinyClassName(IInteractiveComponent);
     
 }

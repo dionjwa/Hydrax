@@ -16,7 +16,7 @@ class InputUtil
         mouseInput.onClick = f;
     }
     
-    public static function setMouseDown (e :IEntity, f :Void->Void) :Void
+    public static function setDeviceDown (e :IEntity, f :Void->Void) :Void
     {
         var mouseInput = e.lookupComponentByType(MouseInputComponent);
         Preconditions.checkNotNull(mouseInput, "Requires a MouseInputComponent for binding mouse listeners");
