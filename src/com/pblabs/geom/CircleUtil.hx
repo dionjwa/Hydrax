@@ -54,31 +54,35 @@ class CircleUtil
         return Geometry.distance(c1.x,  c1.y, v.x , v.y) - c1.radius <= d;
     }
     
-    public static function distance (c1 :Circle, c2 :Circle) :Float
+    inline public static function distance (c1 :Circle, c2 :Circle) :Float
     {
         return Geometry.distance(c1.x,  c1.y, c2.x , c2.y) - (c1.radius + c2.radius);
     }
     
-    public static function distancePoint (c1 :Circle, v :Vector2) :Float
+    inline public static function distancePoint (c1 :Circle, v :Vector2) :Float
     {
         return Geometry.distance(c1.x,  c1.y, v.x , v.y) - c1.radius;
     }
     
-    public static function distanceSqPoint (c1 :Circle, v :Vector2) :Float
+    inline public static function distanceSqPoint (c1 :Circle, v :Vector2) :Float
     {
         return Geometry.distanceSq(c1.x,  c1.y, v.x , v.y) - c1.radius * c1.radius;
     }
     
-    public static function distanceSq (c1 :Circle, c2 :Circle) :Float
+    inline public static function distanceSq (c1 :Circle, c2 :Circle) :Float
     {
         return  Geometry.distanceSq(c1.x,  c1.y, c2.x , c2.y) - (c1.radius * c1.radius + c2.radius * c2.radius);
     }
     
-    public static function containsPoint (c1 :Circle, v :Vector2) :Bool
+    inline public static function containsPoint (c1 :Circle, v :Vector2) :Bool
     {
         return distancePoint(c1, v) <= 0;
     }
     
+    public static function isWithinCircle (v :Vector2, x :Float, y :Float, r :Float) :Bool
+    {
+        return Geometry.distance(x,  y, v.x , v.y) - r <= 0;
+    }
 }
 
 

@@ -9,7 +9,7 @@
 package com.pblabs.util;
 
 import com.pblabs.util.EqualableUtil;
-import com.pblabs.util.Random;
+import mathx.RandomGenerator;
 
 /**
  * Contains methods operating on Arrays that understand the 
@@ -59,7 +59,7 @@ class ArrayUtil
      *
      * @param rando a random number generator to use, or null if you don't care.
      */
-    public static function shuffle (arr :Array<Dynamic>, rando :Random = null) :Void
+    public static function shuffle (arr :Array<Dynamic>, rando :RandomGenerator = null) :Void
     {
         var randFunc = rando != null ? rando.nextInt :
             function (n :Int) :Int {

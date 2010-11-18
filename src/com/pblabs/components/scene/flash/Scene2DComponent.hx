@@ -16,6 +16,7 @@ import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.debug.Log;
 import com.pblabs.engine.time.ITickedObject;
 import com.pblabs.geom.Rectangle;
+import com.pblabs.geom.RectangleTools;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
@@ -25,6 +26,7 @@ import flash.display.DisplayObject;
 import flash.geom.Point;
 
 using com.pblabs.util.MathUtil;
+
 
 class Scene2DComponent extends BaseScene2DComponent<SceneLayer>
     // implements ITickedObject 
@@ -115,7 +117,7 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>
         super.onAdd();
         _displayObject.name = name;
     }
-
+    
 //     public function getAlpha () :Float{
 // //        return displayObject.alpha
 //         return _alpha;
@@ -856,5 +858,3 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>
     // public var _scene :Scene2DManager;
 
 }
-
-

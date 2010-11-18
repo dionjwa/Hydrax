@@ -47,7 +47,7 @@ using com.pblabs.util.NumberUtil;
  */
 class ProcessManager implements IProcessManager 
 {
-    public var paused :Bool;
+    public var paused (get_paused, set_paused) :Bool;
     public var started (get_started, set_started) :Bool;
     public var TimeScale(get_timeScale, set_timeScale) : Float;
     public var frameCounter(get_frameCounter, null) : Int;
@@ -747,6 +747,19 @@ class ProcessManager implements IProcessManager
         return value;
     }
     
+    function get_paused () :Bool
+    {
+        return _paused;
+    }
+    
+    function set_paused (val :Bool) :Bool
+    {
+        trace("Paused=" + val + "      " + Log.getStackTrace());
+        _paused = val;
+        return val;
+    }
+    
+    var _paused :Bool;
     var _timer :Timer;
     var _virtualTime :Float;
     var _timeScale :Float;

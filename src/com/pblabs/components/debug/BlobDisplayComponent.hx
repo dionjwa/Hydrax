@@ -8,7 +8,6 @@
  ******************************************************************************/
 package com.pblabs.components.debug;
 
-import com.pblabs.components.input.IInteractiveComponent;
 import com.pblabs.engine.debug.Log;
 import com.pblabs.geom.Circle;
 import com.pblabs.geom.Rectangle;
@@ -20,17 +19,16 @@ using com.pblabs.geom.CircleUtil;
 /**
  * Display coloured, labelled circle with the angle marked.
  */
-@sets("IInteractiveComponent")
 class BlobDisplayComponent
 #if (js && jscss)
-extends com.pblabs.components.scene.js.css.Base2DComponent,
+extends com.pblabs.components.scene.js.css.Base2DComponent
 // { public function new () { super (); }}
 #elseif (flash || cpp)
-extends com.pblabs.components.scene.flash.Scene2DComponent,
+extends com.pblabs.components.scene.flash.Scene2DComponent
 #elseif js
-extends com.pblabs.components.scene.js.canvas.Canvas2DComponent,
+extends com.pblabs.components.scene.js.canvas.Canvas2DComponent
 #end
-    implements IInteractiveComponent
+    // implements IInteractiveComponent
 {
     public var boundingRect (get_boundingRect, null) :Rectangle;
     public var fillColor (get_fillColor, set_fillColor) :Int;
@@ -93,7 +91,7 @@ extends com.pblabs.components.scene.js.canvas.Canvas2DComponent,
     }
     #end
     
-    public function containsScreenPoint (pos :Vector2) :Bool
+    override public function containsScreenPoint (pos :Vector2) :Bool
     {
         #if (flash || cpp)
         //The flash pos argument is already transformed to the 

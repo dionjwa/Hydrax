@@ -22,8 +22,8 @@ import flash.display.Sprite;
 class RectDisplayComponent extends Scene2DComponent
 {
     // public var centered (get_centered, set_centered) :Bool;
-    public var width (get_width, set_width) :Float;
-    public var height (get_height, set_height) :Float;
+    // public var width (get_width, set_width) :Float;
+    // public var height (get_height, set_height) :Float;
     public var fillColor (get_fillColor, set_fillColor) :Int;
     public var borderColor (get_borderColor, set_borderColor) :Int;
     public var borderWidth (get_borderWidth, set_borderWidth) :Float;
@@ -59,29 +59,29 @@ class RectDisplayComponent extends Scene2DComponent
         g.drawRect(-_width / 2, -_height / 2, _width, _height);
     }
     
-    function get_width () :Float
-    {
-        return _width;
-    }
+    // function get_width () :Float
+    // {
+    //     return _width;
+    // }
     
-    function set_width (val :Float) :Float
-    {
-        _width = val;
-        redraw();
-        return val;
-    }
+    // function set_width (val :Float) :Float
+    // {
+    //     _width = val;
+    //     redraw();
+    //     return val;
+    // }
     
-    function get_height () :Float
-    {
-        return _height;
-    }
+    // function get_height () :Float
+    // {
+    //     return _height;
+    // }
     
-    function set_height (val :Float) :Float
-    {
-        _height = val;
-        redraw();
-        return val;
-    }
+    // function set_height (val :Float) :Float
+    // {
+    //     _height = val;
+    //     redraw();
+    //     return val;
+    // }
     
     function get_fillColor () :Int
     {
@@ -122,8 +122,8 @@ class RectDisplayComponent extends Scene2DComponent
     var _fillColor :Int;
     var _borderColor :Int;
     var _borderWidth :Float;
-    var _width :Float;
-    var _height :Float;
+    // var _width :Float;
+    // var _height :Float;
 }
 
 

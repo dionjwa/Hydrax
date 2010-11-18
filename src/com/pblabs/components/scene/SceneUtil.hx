@@ -76,6 +76,11 @@ class SceneUtil
         e.lookupComponent(LocationComponent).setLocation(x, y);
     }
     
+    public static function setAngle (e :IEntity, angle :Float) :Void
+    {
+        e.lookupComponent(AngleComponent).angle = angle;
+    }
+    
     /**
      * Given an alignment constant from this class, calculate
      * @param outPoint

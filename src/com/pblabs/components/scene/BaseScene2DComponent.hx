@@ -2,11 +2,16 @@ package com.pblabs.components.scene;
 
 import com.pblabs.components.base.AngleComponent;
 import com.pblabs.components.base.LocationComponent;
+import com.pblabs.components.input.IInteractiveComponent;
 import com.pblabs.components.manager.NodeComponent;
+import com.pblabs.geom.RectangleTools;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Preconditions;
+using com.pblabs.components.scene.SceneUtil;
+using com.pblabs.util.StringUtil;
 
-class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends NodeComponent<Layer, Dynamic>
+class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends NodeComponent<Layer, Dynamic>,
+        implements IInteractiveComponent
 {
     public var layer (get_layer, null) :Layer;
     public var x (get_x, set_x) :Float;
@@ -25,6 +30,26 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
         _angle = 0;
         _scale = 1;
         _isDirty = true;
+        _width = 0;
+        _height = 0;
+    }
+    
+    public function containsScreenPoint (pos :Vector2) :Bool
+    {
+        var scene :BaseScene2DManager<Dynamic> = cast parent.scene;
+        #if (flash || cpp)
+        //The flash pos argument is already transformed to the 
+        //SceneManager coords.
+        // trace("is " + pos + " is in " + this.stringify(["x", "y", "width", "height"])); 
+        return RectangleTools.contains(x - width / 2, y - height / 2, width, height, scene.translateScreenToWorld(pos), angle);
+        #elseif js
+        // trace(pos + "==>" + parent.scene.translateScreenToWorld(pos));
+        // trace(this + ".....hit? " + RectangleTools.contains(x - _width / 2, y - _height / 2, _width, _height, parent.scene.translateScreenToWorld(pos)));
+        return RectangleTools.contains(x - _width / 2, y - _height / 2, _width, _height, scene.translateScreenToWorld(pos), angle);
+        //Translate coords
+        #else
+        return false;
+        #end
     }
     
     @inject("@LocationComponent.signaller")
@@ -123,7 +148,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
         return val;
     }
     
-    inline function get_width () :Float
+    function get_width () :Float
     {
         return _width;
     }
@@ -135,7 +160,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
         return val;
     }
     
-    inline function get_height () :Float
+    function get_height () :Float
     {
         return _height;
     }
@@ -155,5 +180,3 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
     var _scale :Float;
     var _isDirty :Bool;
 }
-
-

@@ -28,6 +28,15 @@ using com.pblabs.geom.VectorTools;
 class PolygonTools
 {
     
+    public static function deepCopy (arr :Array<Vector2>) :Array<Vector2>
+    {
+        var a = new Array<Vector2>();
+        for (v in arr) {
+            a.push(v.clone());
+        }
+        return a;
+    }
+    
     public static function toPolygon (rect :Rectangle) :Polygon
     {
         return new Polygon([new Vector2(rect.left, rect.top), new Vector2(rect.right, rect.top),

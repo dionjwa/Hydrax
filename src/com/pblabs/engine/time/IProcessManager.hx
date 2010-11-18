@@ -78,7 +78,7 @@ import com.pblabs.engine.time.ITickedObject;
          */
         function stop():Void;
         
-        var paused :Bool;
+        var paused (get_paused, set_paused) :Bool;
         
         /**
           * For manually controlling the time steps.  Normally you 

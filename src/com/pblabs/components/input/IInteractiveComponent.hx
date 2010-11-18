@@ -4,9 +4,7 @@ import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.geom.Vector2;
 
 /**
-  * Implementing classes must add
-  * @sets("IInteractiveComponent")
-  * to their class declaration
+  * Minimal functionality needed to begin mouse/input device interactions.
   */
 interface IInteractiveComponent implements IEntityComponent
 {

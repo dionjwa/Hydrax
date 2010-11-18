@@ -18,8 +18,17 @@ class RectangleTools
         return new Vector2(rect.left + rect.width / 2, rect.top + rect.height / 2);
     }
     
-   public static function contains (x :Float, y :Float, w :Float, h :Float, query :Vector2) : Bool
+   public static function contains (x :Float, y :Float, w :Float, h :Float, query :Vector2, ?rotation :Float = 0) : Bool
    {
+       if (rotation != 0) {
+           var relativeToRectCenter = query.clone();
+           relativeToRectCenter.x -= x + w / 2;
+           relativeToRectCenter.y -= y + h / 2;
+           relativeToRectCenter.rotateLocal(-rotation);
+           relativeToRectCenter.x += x + w / 2;
+           relativeToRectCenter.y += y + h / 2;
+           query = relativeToRectCenter; 
+       }
        return query.x >= x && query.x <= (x + w) && query.y >= y && query.y <= (y + h);
    }
 }

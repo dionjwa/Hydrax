@@ -246,6 +246,8 @@ class Entity extends PBObject,
         
         componentName = componentName == null ? ReflectUtil.tinyClassName(component) : componentName; 
         // Check the context.
+        // Preconditions.checkArgument(component.context != null, "Component has a null context!");
+        // Preconditions.checkArgument(context != null, "Entity has a null context!");
         Preconditions.checkArgument(component.context == context, "Component and entity are not from same context!");
         
         // Add it to the dictionary.

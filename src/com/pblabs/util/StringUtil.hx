@@ -74,6 +74,16 @@ class StringUtil
         return s.toString();
     }
     
+    public static function stringify (obj :Dynamic, fields :Array<String>) :String
+    {
+        var s :StringBuf = new StringBuf();
+        for (f in fields) {
+            s.add(f + "=" + ReflectUtil.field(obj, f) + ", ");
+        }
+        var str = s.toString();
+        return str.substr(0, str.length - 2);
+    }
+    
      
      /**
       * By default, Std.string(someClass) produces something like:

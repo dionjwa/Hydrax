@@ -39,24 +39,31 @@ class ImageResources extends ResourceBase<Image>
         for (href in _imageRefs) {
             var image :Image = untyped __js__ ("new Image()");
             image.onload = function (_) {
-                self._images.set(href, image);
+                //Format the href to something friendly
+                var key = href.split("/")[href.split("/").length - 1];
+                key = key.split(".")[0];
+                self._images.set(key, image);
                 complete += 1;
                 if (complete == total) {
                     onLoad();
                 }
             }
-
             image.onerror = function (_) {
+                trace("Error loading image");
                 onError("Error loading " + self._baseLocation + href);
             }
             image.src = _baseLocation+href;
         }
     }
     
-    override public function get (?imageName :String) :Image
+    override public function create (?imageName :String) :Image
     {
         Preconditions.checkNotNull(imageName, "image name cannot be null");
-        return _images.get(imageName);
+        var srcImage = _images.get(imageName);
+        Preconditions.checkNotNull(srcImage, "No image with key=" + imageName);
+        var newImage :Image = untyped __js__ ("new Image()");
+        newImage.src = srcImage.src;
+        return newImage;
     }
     
     override public function toString () :String

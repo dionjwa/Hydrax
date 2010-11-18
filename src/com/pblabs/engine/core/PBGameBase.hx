@@ -165,6 +165,8 @@ class PBGameBase extends PBContext
             #end
             cast(currentContext.getManager(IProcessManager), ProcessManager).paused = _isRunning;
             newActiveContextSignaler.dispatch(currentContext);
+        } else {
+            Log.error("startTopContext, but currentContext==" + currentContext);
         }
     }
     

@@ -1,11 +1,13 @@
 package com.pblabs.components.scene;
 
 import com.pblabs.components.manager.NodeComponent;
+import com.pblabs.components.scene.BaseScene2DLayer;
 import com.pblabs.components.scene.SceneAlignment;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.SceneView;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.debug.Log;
+import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.util.PBUtil;
 import com.pblabs.geom.Rectangle;
 import com.pblabs.geom.Vector2;
@@ -75,9 +77,31 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
         cast(layer, BaseScene2DLayer<Dynamic, Dynamic>).parentProperty = PBUtil.componentProp(this);
         owner.addComponent(cast(layer, IEntityComponent), layerName);
         if (registerAsManager) {
-            context.registerManager(cls, layer, layerName, true);
+            context.registerManager(cast(BaseScene2DLayer), layer, layerName, true);
         }
         return layer;
+    }
+    
+    /** Calls onFrame on this and all children to make sure they're in the right place on the first frame */
+    public function update () :Void
+    {
+        if (Std.is(this, IAnimatedObject)) {
+            cast(this, IAnimatedObject).onFrame(0);
+        }
+        if (children != null) {
+            for (layer in children) {
+                if (Std.is(layer, IAnimatedObject)) {
+                    cast(layer, IAnimatedObject).onFrame(0);
+                }
+                if (layer.children != null) {
+                    for (c in layer.children) {
+                        if (Std.is(c, IAnimatedObject)) {
+                            cast(c, IAnimatedObject).onFrame(0);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     function isLayer (name :String) :Bool

@@ -53,7 +53,7 @@ class RessyResource extends ResourceBase<Dynamic>
         #end
     }
     
-    override public function get (?name :String) :Dynamic
+    override public function create (?name :String) :Dynamic
     {
         Preconditions.checkNotNull(name, "Name must be given");
         return Ressy.instance.getStr(name);

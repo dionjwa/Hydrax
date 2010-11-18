@@ -8,60 +8,48 @@
  ******************************************************************************/
 package com.pblabs.components.input;
 
+import com.pblabs.components.input.IInteractiveComponent;
+import com.pblabs.components.input.InputManager;
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene.BaseScene2DComponent;
 import com.pblabs.components.scene.BaseScene2DManager;
-import com.pblabs.components.scene.ISpatialObject2D;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.debug.Log;
-import com.pblabs.geom.Polygon;
-import com.pblabs.geom.PolygonTools;
 import com.pblabs.geom.Vector2;
-import com.pblabs.geom.bounds.BoundsPolygon;
-import com.pblabs.geom.bounds.IBounds;
 import com.pblabs.util.Comparable;
 import com.pblabs.util.Comparators;
-import com.pblabs.util.Preconditions;
 using com.pblabs.geom.PolygonTools;
 
 /**
- * Contains the DisplayObject and location properties
- * necessary for interacting with a global mouse input 
- * manager.
- *
- * The x/yProperty fields are for setting the location, e.g. 
- * via an editor (dragging), not for getting the location.
- * 
+ * The base component for interacting with a mouse or other input device.  At the minimum simply provides the 
+ * IInteractiveComponent, but can also do additional behaviour such as rotating or movement easily, 
+ * and has it's own dynamic input callback methods.
  */
-@sets("IInteractiveComponent")
 class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputComponent>,
     implements Comparable<MouseInputComponent>
 {
-    // public static var INPUT_GROUP :String = "mouseInput";
-    
-    // #if (flash || cpp)
-    // public var interactiveObjectProperty :PropertyReference<flash.display.DisplayObject>;
-    // public var displayObject (default, null) :flash.display.DisplayObject;
-    // #end
-    
+    /**
+      * If there is an IInteractiveComponent in the Entity, you don't have to explicity set the properties.
+      */
+    public var boundsProperty :PropertyReference<IInteractiveComponent>;
     public var xProperty :PropertyReference<Float>;
     public var yProperty :PropertyReference<Float>;
     public var angleProperty :PropertyReference<Float>;
     public var scaleProperty :PropertyReference<Float>;
     public var offsetProperty :PropertyReference<Vector2>;
     
-    public var boundsProperty :PropertyReference<ISpatialObject2D>;
     
     public var y (get_y, set_y) :Float;
     public var x (get_x, set_x) :Float;
     public var angle (get_angle, set_angle) :Float;
     public var scale (get_scale, set_scale) :Float;
-    public var bounds (get_bounds, set_bounds) :ISpatialObject2D;
+    public var bounds (get_bounds, set_bounds) :IInteractiveComponent;
     public var offset (get_offset, set_offset) :Vector2;
     
     public var isScalable :Bool;
     public var isRotatable :Bool;
-    public var isTranslatable :Bool;//Moveable in the x/y?
+    /** Moveable in the x/y? */
+    public var isTranslatable :Bool;
     
     public static function compare (a :MouseInputComponent, b :MouseInputComponent) :Int
     {
@@ -87,10 +75,8 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
         angleProperty = new PropertyReference("@AngleComponent.angle");
         scaleProperty = new PropertyReference("@ScaleComponent.scale");
         
-        //The default is movable, rotatable, and scalable.
-        isScalable = isRotatable = isTranslatable = true;
-        
-        // _boundsStale = true;
+        //The default is not movable, rotatable, or scalable.
+        isScalable = isRotatable = isTranslatable = false;
     }
     
     public function compareTo (a :MouseInputComponent) :Int
@@ -128,62 +114,49 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
     override function onReset () :Void
     {
         super.onReset();
-        _bounds = owner.lookupComponentByType(ISpatialObject2D);
-        if (_bounds == null && boundsProperty == null) {
-            Log.info("There's no ISpatialObject2D component and the boundsProperty is null.  How are we supposed to work?"); 
+        
+        if (boundsProperty != null) {
+            _bounds = owner.getProperty(boundsProperty);
         }
-        // #if flash
-        // displayObject = owner.getProperty(interactiveObjectProperty);
         
-        // Preconditions.checkArgument(!(displayObject == null && boundsProperty == null));
+        _bounds = _bounds == null ? owner.lookupComponentByType(IInteractiveComponent) : _bounds;
         
-        // if (boundsProperty == null) {
-        //     _bounds = new BoundsPolygon(displayObject.getBounds(displayObject).convertToPolygon());
-        // }
-        // #end
+        #if debug
+        com.pblabs.util.Assert.isNotNull(!(_bounds == null && boundsProperty == null), "There's no ISpatialObject2D component and the boundsProperty is null.  How are we supposed to work?");
+        #end
         
-        // _boundsStale = true;
+        var input = context.getManager(InputManager);
+        #if debug
+        com.pblabs.util.Assert.isNotNull(input);
+        #end
+        
+        input.unregisterComponent(this);
+        input.registerComponent(this);
     }
     
     override function onRemove () :Void
     {
         super.onRemove();
-        // #if flash
-        // displayObject = null;
-        // interactiveObjectProperty = null;
-        // #end
-        
+        context.getManager(InputManager).unregisterComponent(this);
         xProperty = null;
         yProperty = null;
+        angleProperty = null;
+        scaleProperty = null;
+        boundsProperty = null;
+        _bounds = null;
+        isScalable = isRotatable = isTranslatable = false;
     }
     
-    function get_bounds () :ISpatialObject2D
+    function get_bounds () :IInteractiveComponent
     {
-        if (boundsProperty != null) {
-            return owner.getProperty(boundsProperty);
-        } else{// if (_boundsStale) {
-            // _bounds.topLeft = new Vector2(x, y);
-            return _bounds;
-        }
+        return _bounds;
     }
     
-    function set_bounds (bounds :ISpatialObject2D) :ISpatialObject2D
+    function set_bounds (bounds :IInteractiveComponent) :IInteractiveComponent
     {
         _bounds = bounds;
         return bounds;
     }
-    
-    // @inject("@LocationComponent.signaller")
-    // function locationChanged (loc :Vector2) :Void
-    // {
-    //     _boundsStale = true;
-    // }
-    
-    // @inject("@AngleComponent.signaller")
-    // function angleChanged (angle :Float) :Void
-    // {
-    //     _boundsStale = true;
-    // }
     
     function get_x () :Float
     {
@@ -244,8 +217,5 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
         return val;
     }
     
-    var _bounds :ISpatialObject2D;
-    // var _boundsStale :Bool;
+    var _bounds :IInteractiveComponent;
 }
-
-

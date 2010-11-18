@@ -8,14 +8,13 @@
  ******************************************************************************/
 package com.pblabs.geom.bounds;
 
-import com.pblabs.components.scene.ISpatialObject2D;
 import com.pblabs.geom.Circle;
 import com.pblabs.geom.Rectangle;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Cloneable;
 
 interface IBounds<T> 
-    implements Cloneable<T>, implements ISpatialObject2D
+    implements Cloneable<T>//, implements ISpatialObject2D
 {
     public var center(get_center, set_center) : Vector2;
     public var topLeft(get_topLeft, set_topLeft) : Vector2;
