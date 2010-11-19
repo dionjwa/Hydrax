@@ -23,13 +23,12 @@ class Demo extends flash.display.Sprite
     {
         super();
         
-        trace(ReflectUtil.tinyClassName(IInteractiveComponent));
-        return;
         this.name = "Demo";
         var game = new PBGame();
         
         var context = game.allocate(PBContext);
         game.pushContext(context);
+        trace("context.rootGroup=" + context.rootGroup);
         var scene2D = context.addSingletonComponent(Scene2DManager);
         var layer = scene2D.addLayer(SceneLayer, "defaultLayer");
         
@@ -39,6 +38,8 @@ class Demo extends flash.display.Sprite
         so.addComponent(blob);
         so.deferring = false;
         
+        //Prevents the first frame have the bits at (0,0)
+        scene2D.update();
         so.addTask(LocationTask.CreateEaseOut(100, 100, 3));
     }
 

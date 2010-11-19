@@ -89,6 +89,7 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
         // min_zoom = 0;
         // sceneAlignment = SceneAlignment.CENTER;
         _rootSprite = new Sprite();
+        _rootSprite.mouseEnabled = _rootSprite.mouseChildren = false;
         _rootTransform = new Matrix();
         _tempPoint = new Vector2();
         // _sceneComponents = Maps.newHashMap(Scene2DComponent);
@@ -107,11 +108,15 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
         super.onAdd();
         _rootSprite.name = name;
         context.getManager(SceneView).addDisplayObject(displayContainer);
+        // context.displayContainer.addChild(displayContainer);
     }
     
     override function onRemove () :Void
     {
         super.onRemove();
+        // if (displayContainer.parent != null) {
+        //     displayContainer.parent.removeChild(displayContainer);
+        // }
         context.getManager(SceneView).removeDisplayObject(displayContainer);
     }
     
@@ -574,11 +579,10 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
 
     public function updateTransform () :Void
     {
-        //        trace("scene updateTransform _transformDirty=", _transformDirty);
         if (!_transformDirty) {
             return;
         }
-        // trace("updateTransform");
+       // trace("scene updateTransform _transformDirty=" +  _transformDirty);
         _transformDirty = false;
         
         
@@ -601,6 +605,9 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
         Preconditions.checkNotNull(sceneAlignment);
         Preconditions.checkNotNull(sceneView);
         SceneUtil.calculateOutPoint(_tempPoint, sceneAlignment, sceneView.width, sceneView.height);
+        // trace("_tempPoint=" + _tempPoint);
+        // trace("sceneView=" + sceneView);
+        // trace("sceneAlignment=" + sceneAlignment);
         _rootTransform.translate(_tempPoint.x, _tempPoint.y);
 
         // Apply the transform.

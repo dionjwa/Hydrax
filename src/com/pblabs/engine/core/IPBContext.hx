@@ -38,11 +38,11 @@ interface IPBContext
     var currentGroup (get_currentGroup, set_currentGroup) :IPBGroup;
     var started (default, null):Bool;
     
-    #if flash
-    var displayContainer (get_displayContainer, null) :flash.display.Sprite;
-    #end
+    // #if flash
+    // var displayContainer (get_displayContainer, null) :flash.display.Sprite;
+    // #end
     
-    function startup(#if flash ?parentContainer :flash.display.DisplayObjectContainer #end):Void;
+    function startup() :Void;//#if flash ?parentContainer :flash.display.DisplayObjectContainer #end):Void;
     function shutdown():Void;
     
     function registerManager <T>(clazz:Class<T>, ?instance:T = null, ?optionalName:String = null, ?suppressInject:Bool = false):T;
@@ -55,7 +55,7 @@ interface IPBContext
     // Name lookups.
     function lookup (name:String):Dynamic;
     function lookupEntity (name:String):IEntity;
-    function lookupComponent (entityName:String, componentName:String):IEntityComponent;
+    // function lookupComponent (entityName:String, componentName:String):IEntityComponent;
 }
 
 

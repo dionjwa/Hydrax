@@ -55,10 +55,10 @@ class PBContext
      */
     // public var objectBonds (default, null) :MultiMap<String, Bond>;
     
-    #if flash
-    public var displayContainer (get_displayContainer, null) :flash.display.Sprite;
-    var _displayContainer :flash.display.Sprite;
-    #end
+    // #if flash
+    // public var displayContainer (get_displayContainer, null) :flash.display.Sprite;
+    // var _displayContainer :flash.display.Sprite;
+    // #end
     
     public var injector :Injector;
     var _managers :Map<String, Dynamic>;
@@ -88,11 +88,11 @@ class PBContext
         // rootGroup.name = name + " Root Group";
         // currentGroup = rootGroup;
         
-        #if flash
-        _displayContainer = new flash.display.Sprite();
-        _displayContainer.name = this.name;
-        _displayContainer.mouseEnabled = _displayContainer.mouseChildren = false; 
-        #end
+        // #if flash
+        // _displayContainer = new flash.display.Sprite();
+        // _displayContainer.name = this.name;
+        // _displayContainer.mouseEnabled = _displayContainer.mouseChildren = false; 
+        // #end
         
         
         // objectBonds = ArrayMultiMap.create(String);
@@ -125,7 +125,7 @@ class PBContext
             throw "Object group is not null, but the root group is not this context's root group";
         }
         
-        Preconditions.checkArgument(object.owningGroup.rootGroup != rootGroup, "Object root group is not the context");
+        Preconditions.checkArgument(object.owningGroup.rootGroup == rootGroup, "Object root group is not the context");
         
         // var gameObj = cast(obj, GameObject);
         
@@ -210,28 +210,28 @@ class PBContext
         return _nameManager.get(name);
     }
     
-    public function startup (#if flash ?parentContainer :flash.display.DisplayObjectContainer #end) :Void
+    public function startup () :Void//#if flash ?parentContainer :flash.display.DisplayObjectContainer #end) :Void
     {
         Preconditions.checkNotNull(injector, "WTF is the injector null?");
         _nameManager = getManager(NameManager);
         
         Preconditions.checkNotNull(_nameManager, "WTF is the nameManager null?");
         
-        #if flash
-        if (parentContainer != null) {
-            Preconditions.checkNotNull(displayContainer, "displayContainer is null");
-            parentContainer.addChild(displayContainer);
-        } else {
-            // _displayContainer =
-            //If no parent passed in, assume we want to attach to the stage
-            flash.Lib.current.addChild(displayContainer);
-        }
-        #end
+        // #if flash
+        // if (parentContainer != null) {
+        //     Preconditions.checkNotNull(displayContainer, "displayContainer is null");
+        //     parentContainer.addChild(displayContainer);
+        // } else {
+        //     // _displayContainer =
+        //     //If no parent passed in, assume we want to attach to the stage
+        //     flash.Lib.current.addChild(displayContainer);
+        // }
+        // #end
         
         injector.mapValue(IPBContext, this);
         Preconditions.checkArgument(injector.getMapping(IPBContext) == this, "Injector borked");
 
-        Preconditions.checkNotNull(injector.getMapping(IPBGroup), "No IPBGroup in injector");
+        // Preconditions.checkNotNull(injector.getMapping(IPBGroup), "No IPBGroup in injector");
         
         // Set up root and current group.
         //The root group cannot easily be injected due to 
@@ -239,7 +239,7 @@ class PBContext
         //Better to just setup this important group manually.
         var rg = new PBGroup();
         rg.context = this;
-        rg.owningGroup = injector.getMapping(IPBGroup);
+        // rg.owningGroup = rg;
         rg.name = _nameManager.validateName(name + " RootGroup");
         _nameManager.add(rg);
         rootGroup = rg;
@@ -631,12 +631,12 @@ class PBContext
         _tempPropertyInfo.clear();
     }
     
-    #if (flash || cpp)
-    inline function get_displayContainer () :flash.display.Sprite
-    {
-        return _displayContainer;
-    }
-    #end
+    // #if (flash || cpp)
+    // inline function get_displayContainer () :flash.display.Sprite
+    // {
+    //     return _displayContainer;
+    // }
+    // #end
     
     inline function get_processManager () :ProcessManager
     {

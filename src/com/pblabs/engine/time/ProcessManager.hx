@@ -495,6 +495,7 @@ class ProcessManager implements IProcessManager
         com.pblabs.engine.debug.Profiler.ensureAtRoot();
         #end
         
+        // trace("started=" + started + ",  paused=" + paused);
         // Safety for when we've stop()'ed.
         if(!started || paused) {
             lastTime = haxe.Timer.stamp();
@@ -754,7 +755,7 @@ class ProcessManager implements IProcessManager
     
     function set_paused (val :Bool) :Bool
     {
-        trace("Paused=" + val + "      " + Log.getStackTrace());
+        // trace("Paused=" + val + "      " + Log.getStackTrace());
         _paused = val;
         return val;
     }

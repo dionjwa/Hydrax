@@ -47,8 +47,8 @@ typedef MouseLocation = #if flash hsl.avm2.data.mouse.MouseLocation; #else hsl.j
  * Integrates different lower level input listeners into higher level signals such as drag,
  * and provides the components that react to input.
  */
-class InputManager
-    implements IPBManager, implements haxe.rtti.Infos
+class InputManager extends BaseInputManager
+    // implements IPBManager, implements haxe.rtti.Infos
 {
     public var deviceDown(default, null) :Signaler<InputData>;
     public var deviceUp(default, null) :Signaler<InputData>;
@@ -75,11 +75,25 @@ class InputManager
     // var _startingLocation :Vector2;
     var _isZooming :Bool;
     
+    // @inject
+    // var context :IPBContext;
+    
     @inject
-    var context :IPBContext;
+    var _mouse :MouseInputManager;
+    
+    @inject
+    var _sets :SetManager;
+    
+    
+    #if js
+    @inject
+    var gestures :GestureInputManager;
+    #end
+    
     
     public function new ()
     {
+        super();
         deviceDown = new DirectSignaler(this);
         deviceMove = new DirectSignaler(this);
         deviceUp = new DirectSignaler(this);
@@ -144,18 +158,20 @@ class InputManager
         _components.remove(c);
     }
     
-    public function startup () :Void
+    override public function startup () :Void
     {
-        Preconditions.checkNotNull(context, "Context is null");
-        _sets = Preconditions.checkNotNull(context.getManager(SetManager));
+        super.startup();
+        // Preconditions.checkNotNull(context, "Context is null");
+        _sets = Preconditions.checkNotNull(_sets);//context.getManager(SetManager));
         
         bindSignals();
         _timer = new haxe.Timer(Std.int(1000.0 / 30));
         _timer.run = onFrame;
     }
     
-    public function shutdown () :Void
+    override public function shutdown () :Void
     {
+        super.shutdown();
         freeSignals();
         _timer.stop();
         _timer =  null;
@@ -163,7 +179,7 @@ class InputManager
     
     function bindSignals () :Void
     {
-        _mouse = context.getManager(MouseInputManager);
+        // _mouse = context.getManager(MouseInputManager);
         
         #if debug
         com.pblabs.util.Assert.isNotNull(_mouse, "MouseInputManager is null, did you register one?");
@@ -176,8 +192,7 @@ class InputManager
         _mouse.mouseClick.bind(onMouseClick);
      
         #if js
-        if (context.getManager(GestureInputManager) != null) {
-            var gestures = context.getManager(GestureInputManager);
+        if (gestures != null) {
             var self = this;
             gestures.gestureChange.bind(function (e :js.IOs.GestureEvent) :Void {
                 // trace("gesture changed");
@@ -276,16 +291,16 @@ class InputManager
 
     function adjustMouseLocation (m :MouseLocation) :Vector2
     {
-        var view = context.getManager(SceneView);
+        // var view = context.getManager(SceneView);
         #if flash
-        m = m.translateToScope(view.layer);
+        m = m.translateToScope(sceneView.layer);//.layer);
         #end
         
         #if js
-        if (m == null || m.scope == view.layer) {
+        if (m == null || m.scope == sceneView.layer) {
             return new Vector2(m.x, m.y);
         }
-        return new Vector2(m.globalLocation.x - view.mouseOffsetX, m.globalLocation.y - view.mouseOffsetY);
+        return new Vector2(m.globalLocation.x - sceneView.mouseOffsetX, m.globalLocation.y - sceneView.mouseOffsetY);
         #else
         return new Vector2(m.x, m.y);
         #end
@@ -586,8 +601,8 @@ class InputManager
     }
     
     var _components :Array<MouseInputComponent>;
-    var _mouse :MouseInputManager;
-    var _sets :SetManager;
+    // var _mouse :MouseInputManager;
+    // var _sets :SetManager;
     var _deviceDownComponent :MouseInputComponent;
     var _deviceDownComponentLoc :Vector2;
     var _deviceDownLoc :Vector2;

@@ -52,8 +52,10 @@ class SceneView
     public var mouseOffsetY (get_mouseOffsetY, never) :Float;
     #end
     
-    @inject
-    public var context :IPBContext;
+    // #if flash
+    // @inject("flash.display.Sprite")
+    // public var displayContainer :flash.display.DisplayObjectContainer;
+    // #end
     
     var _height:Float;
     var _width:Float;
@@ -64,7 +66,6 @@ class SceneView
     public function new (?width :Int = 0, ?height :Int = 0)
     #end
     {
-        // trace("new sceneview " + Log.getStackTrace());
         _width = width;
         _height = height;
        
@@ -89,15 +90,36 @@ class SceneView
     
     public function startup():Void
     {
+        
         #if (flash || cpp)
-        context.displayContainer.addChild(_layer);
+        
+        if (_layer.parent == null) {
+            flash.Lib.current.addChild(_layer);
+        }
+        
+        // if (parentContainer != null) {
+        //     Preconditions.checkNotNull(_displayContainer, "displayContainer is null");
+        //     parentContainer.addChild(_displayContainer);
+        // } else {
+        //     // _displayContainer =
+        //     //If no parent passed in, assume we want to attach to the stage
+        //     flash.Lib.current.addChild(_displayContainer);
+        // }
         #end
+        
+        
+        // #if (flash || cpp)
+        // displayContainer.addChild(_layer);
+        // #end
     }
     
     public function shutdown():Void
     {
         #if (flash || cpp)
-        context.displayContainer.removeChild(_layer);
+        if (_layer.parent != null) {
+            _layer.parent.removeChild(_layer);
+        }
+        // context.displayContainer.removeChild(_layer);
         #end
     }
     

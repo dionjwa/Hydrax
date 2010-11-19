@@ -38,6 +38,7 @@ class PBGame extends PBGameBase
         com.pblabs.util.Log.setupPBGameLog();
         com.pblabs.util.Log.setLevel("", com.pblabs.util.Log.WARNING);
         super();
+        startup();
     }
     
     override function initializeManagers():Void
@@ -52,6 +53,10 @@ class PBGame extends PBGameBase
         registerManager(IProcessManager, new ProcessManager());
         registerManager(SetManager, new SetManager());
         registerManager(SignalBondManager, new SignalBondManager());
+        // var view = new SceneView();
+        // #if flash
+        // displayContainer.addChild(view.layer);
+        // #end
         registerManager(SceneView, new SceneView());
         
         //Not yet converted to haXe
