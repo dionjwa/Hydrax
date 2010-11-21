@@ -5,13 +5,13 @@
  *
  * Portions derived from polygonal code.  Polygonal license and copyright:
  *
- *                            _/                                          _/   
- *       _/_/_/      _/_/    _/  _/    _/    _/_/_/    _/_/    _/_/_/    _/    
- *      _/    _/  _/    _/  _/  _/    _/  _/    _/  _/    _/  _/    _/  _/     
- *     _/    _/  _/    _/  _/  _/    _/  _/    _/  _/    _/  _/    _/  _/      
- *    _/_/_/      _/_/    _/    _/_/_/    _/_/_/    _/_/    _/    _/  _/       
- *   _/                            _/        _/                                
- *  _/                        _/_/      _/_/
+ *							_/										  _/   
+ *	   _/_/_/	  _/_/	_/  _/	_/	_/_/_/	_/_/	_/_/_/	_/	
+ *	  _/	_/  _/	_/  _/  _/	_/  _/	_/  _/	_/  _/	_/  _/	 
+ *	 _/	_/  _/	_/  _/  _/	_/  _/	_/  _/	_/  _/	_/  _/	  
+ *	_/_/_/	  _/_/	_/	_/_/_/	_/_/_/	_/_/	_/	_/  _/	   
+ *   _/							_/		_/								
+ *  _/						_/_/	  _/_/
  *
  * POLYGONAL - A HAXE LIBRARY FOR GAME DEVELOPERS
  * Copyright (c) 2009-2010 Michael Baczynski, http://www.polygonal.de
@@ -37,7 +37,7 @@ package com.pblabs.util;
 
 class MathUtil
 {
-    /** Min value, signed integer.   */
+	/** Min value, signed integer.   */
 	inline public static var  INT32_MIN = 0x80000000;
 	/** Max value, signed integer.   */
 	inline public static var  INT32_MAX = 0x7fffffff;
@@ -54,13 +54,13 @@ class MathUtil
 	/** Default square root of 2. */
 	inline public static var SQROOT2 = 1.4142135623730951;
 	
-    /** Clamps the integer <i>x</i> to the interval &#091;<i>min</i>,<i>max</i>&#093; so <i>min</i> <= <i>x</i> <= <i>max</i>. */
+	/** Clamps the integer <i>x</i> to the interval &#091;<i>min</i>,<i>max</i>&#093; so <i>min</i> <= <i>x</i> <= <i>max</i>. */
 	inline public static function clamp(x:Int, min:Int, max:Int):Int
 	{
 		return (x < min) ? min : (x > max) ? max : x;
 	}
 	
-    /** Clamps a number to the interval &#091;<i>min</i>,<i>max</i>&#093; so <i>min</i> <= <i>x</i> <= <i>max</i>. */
+	/** Clamps a number to the interval &#091;<i>min</i>,<i>max</i>&#093; so <i>min</i> <= <i>x</i> <= <i>max</i>. */
 	inline public static function fclamp(x:Float, min:Float, max:Float):Float
 	{
 		return (x < min) ? min : (x > max) ? max : x;
@@ -95,5 +95,5 @@ class MathUtil
 	{
 		return rad * MathUtil.RAD_DEG;
 	}
-    
+	
 }

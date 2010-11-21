@@ -12,27 +12,27 @@ import com.pblabs.util.ds.maps.ForwardingMap;
 
 class ImmutableMap<K, V> extends ForwardingMap<K, V>
 {
-    public function new (source :Map<K, V>)
-    {
-        super(source);
-    }
-    
-    override public function set (key :K, value :V) :Void
-    {
-       throw "Unsupported operation: Immutable";
-    }
-    
-    override public function remove (key :K) :Bool
-    {
-        throw "Unsupported operation: Immutable";
-        return false;
-    }
-    
-    override public function clear () :Void
-    {
-        throw "Unsupported operation: Immutable";
-    }
-    
+	public function new (source :Map<K, V>)
+	{
+		super(source);
+	}
+	
+	override public function set (key :K, value :V) :Void
+	{
+	   throw "Unsupported operation: Immutable";
+	}
+	
+	override public function remove (key :K) :Bool
+	{
+		throw "Unsupported operation: Immutable";
+		return false;
+	}
+	
+	override public function clear () :Void
+	{
+		throw "Unsupported operation: Immutable";
+	}
+	
 }
 
 

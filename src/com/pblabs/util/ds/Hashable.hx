@@ -10,6 +10,6 @@ package com.pblabs.util.ds;
 
 interface Hashable
 {
-    function hashCode () :Int;
+	function hashCode () :Int;
 }
 

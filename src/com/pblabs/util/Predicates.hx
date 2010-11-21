@@ -35,103 +35,103 @@ import com.pblabs.util.ReflectUtil;
  */
 class Predicates
  {
-    
-    /**
-     * A predicate that tests for null (or undefined) items.
-     */
-    public static function isNull (item :Dynamic) :Bool
-    {
-        return (item == null);
-    }
+	
+	/**
+	 * A predicate that tests for null (or undefined) items.
+	 */
+	public static function isNull (item :Dynamic) :Bool
+	{
+		return (item == null);
+	}
 
-    /**
-     * A predicate that tests for items that are not null (or undefined).
-     */
-    public static function notNull (item :Dynamic) :Bool
-    {
-        return (item != null);
-    }
+	/**
+	 * A predicate that tests for items that are not null (or undefined).
+	 */
+	public static function notNull (item :Dynamic) :Bool
+	{
+		return (item != null);
+	}
 
-    /**
-     * Create a predicate that tests if the item has a property that is Util.equals() to the
-     * specified value.
-     */
-    public static function createPropertyEquals (propName :String, value :Dynamic) :Dynamic ->Bool
-    {
-        return function (item :Dynamic) :Bool {
-            return item != null && EqualableUtil.equals(ReflectUtil.field(item, propName), value); 
-        };
-    }
+	/**
+	 * Create a predicate that tests if the item has a property that is Util.equals() to the
+	 * specified value.
+	 */
+	public static function createPropertyEquals (propName :String, value :Dynamic) :Dynamic ->Bool
+	{
+		return function (item :Dynamic) :Bool {
+			return item != null && EqualableUtil.equals(ReflectUtil.field(item, propName), value); 
+		};
+	}
 
-    /**
-     * Create a predicate that returns true if the item is in the specified Array.
-     */
-    public static function createIn (array :Array<Dynamic>) :Dynamic->Bool
-    {
-        return function (item :Dynamic) :Bool {
-            return Lambda.has(array, item);
-        };
-    }
+	/**
+	 * Create a predicate that returns true if the item is in the specified Array.
+	 */
+	public static function createIn (array :Array<Dynamic>) :Dynamic->Bool
+	{
+		return function (item :Dynamic) :Bool {
+			return Lambda.has(array, item);
+		};
+	}
 
-    /**
-     * Return a predicate that tests for items that are "is" the specified class.
-     */
-    public static function createIs (clazz :Class<Dynamic>) :Dynamic->Bool
-    {
-        return function (item :Dynamic) :Bool {
-            return Std.is(item, clazz);
-        };
-    }
+	/**
+	 * Return a predicate that tests for items that are "is" the specified class.
+	 */
+	public static function createIs (clazz :Class<Dynamic>) :Dynamic->Bool
+	{
+		return function (item :Dynamic) :Bool {
+			return Std.is(item, clazz);
+		};
+	}
 
-    /**
-     * Return a predicate that is the negation of the specified predicate.
-     */
-    public static function createNot (pred :Dynamic->Bool) :Dynamic->Bool
-    {
-        return function (arg :Dynamic) :Bool {
-            return !pred(arg);
-        }
-        // return function (?args:Array<Dynamic>) :Bool {
-        //     args = if (args == null) EMPTY_ARRAY else args;
-        //     return !Reflect.callMethod(null, pred, args);
-        // };
-    }
+	/**
+	 * Return a predicate that is the negation of the specified predicate.
+	 */
+	public static function createNot (pred :Dynamic->Bool) :Dynamic->Bool
+	{
+		return function (arg :Dynamic) :Bool {
+			return !pred(arg);
+		}
+		// return function (?args:Array<Dynamic>) :Bool {
+		//	 args = if (args == null) EMPTY_ARRAY else args;
+		//	 return !Reflect.callMethod(null, pred, args);
+		// };
+	}
 
-    /**
-     * Return a predicate that is true if all the specified predicate Functions are true
-     * for any item.
-     */
-    public static function createAnd (predicates:Array<Dynamic>) :Dynamic
-    {
-        return function (?args:Array<Dynamic>) :Bool {
-            args = if (args == null) EMPTY_ARRAY else args;
-            for (pred in predicates) {
-                if (!Reflect.callMethod(null, pred, args)) {
-                    return false;
-                }
-            }
-            return true;
-        };
-    }
+	/**
+	 * Return a predicate that is true if all the specified predicate Functions are true
+	 * for any item.
+	 */
+	public static function createAnd (predicates:Array<Dynamic>) :Dynamic
+	{
+		return function (?args:Array<Dynamic>) :Bool {
+			args = if (args == null) EMPTY_ARRAY else args;
+			for (pred in predicates) {
+				if (!Reflect.callMethod(null, pred, args)) {
+					return false;
+				}
+			}
+			return true;
+		};
+	}
 
-    /**
-     * Return a predicate that is true if any of the specified predicate Functions are true
-     * for any item.
-     */
-    public static function createOr (predicates:Array<Dynamic>) :Dynamic
-    {
-        return function (args:Array<Dynamic>) :Bool {
-            args = if (args == null) EMPTY_ARRAY else args;
-            for (pred in predicates) {
-                if (Reflect.callMethod(null, pred, args)) {
-                    return true;
-                }
-            }
-            return false;
-        };
-    }
-    
-    static var EMPTY_ARRAY :Array<Dynamic> = []; 
+	/**
+	 * Return a predicate that is true if any of the specified predicate Functions are true
+	 * for any item.
+	 */
+	public static function createOr (predicates:Array<Dynamic>) :Dynamic
+	{
+		return function (args:Array<Dynamic>) :Bool {
+			args = if (args == null) EMPTY_ARRAY else args;
+			for (pred in predicates) {
+				if (Reflect.callMethod(null, pred, args)) {
+					return true;
+				}
+			}
+			return false;
+		};
+	}
+	
+	static var EMPTY_ARRAY :Array<Dynamic> = []; 
 }
 
 

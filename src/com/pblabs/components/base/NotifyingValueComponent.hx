@@ -18,57 +18,57 @@ import hsl.haxe.Signaler;
 using com.pblabs.util.XMLUtil;
 
 class NotifyingValueComponent extends EntityComponent,
-    implements ISerializable
+	implements ISerializable
 {
-    
-    public var value (get_value, set_value) : Float;
-    public var signaller (default, null) :Signaler<Float>;
-    
-    public function new () 
-    { 
-        super();
-        _value = 0;
-        signaller = new DirectSignaler(this);
-    }
-    
-    public function serialize (xml :XML) :Void
-    {
-        xml.createChild("value", _value);
-    }
-    
-    public function deserialize (xml :XML, context :IPBContext) :Dynamic
-    {
-        _value = xml.parseFloat("value");
-    }
-    
-    function get_value () :Float
-    {
-        return _value;
-    }
-    
-    function set_value (val :Float) :Float
-    {
-        if (_value != val) {
-            _value = val;
-            signaller.dispatch(_value);
-        }
-        return val;
-    }
-    
-    override function onRemove():Void
-    {
-        super.onRemove();
-        signaller.unbindAll();
-        _value = 0;
-    }
-    
-    override function onReset () :Void
-    {
-        super.onReset();
-        signaller.dispatch(_value);
-    }
+	
+	public var value (get_value, set_value) : Float;
+	public var signaller (default, null) :Signaler<Float>;
+	
+	public function new () 
+	{ 
+		super();
+		_value = 0;
+		signaller = new DirectSignaler(this);
+	}
+	
+	public function serialize (xml :XML) :Void
+	{
+		xml.createChild("value", _value);
+	}
+	
+	public function deserialize (xml :XML, context :IPBContext) :Dynamic
+	{
+		_value = xml.parseFloat("value");
+	}
+	
+	function get_value () :Float
+	{
+		return _value;
+	}
+	
+	function set_value (val :Float) :Float
+	{
+		if (_value != val) {
+			_value = val;
+			signaller.dispatch(_value);
+		}
+		return val;
+	}
+	
+	override function onRemove():Void
+	{
+		super.onRemove();
+		signaller.unbindAll();
+		_value = 0;
+	}
+	
+	override function onReset () :Void
+	{
+		super.onReset();
+		signaller.dispatch(_value);
+	}
 
-    var _value :Float;
+	var _value :Float;
 }
 
 

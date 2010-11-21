@@ -28,7 +28,7 @@ import com.pblabs.util.ReflectUtil;
 * @see IEntity
 */
 class EntityComponent 
-    implements IEntityComponent, implements haxe.rtti.Infos 
+	implements IEntityComponent, implements haxe.rtti.Infos 
 {
    @inject
    @editorData({ignore :"true"})
@@ -45,85 +45,85 @@ class EntityComponent
    
    public function new() 
    { 
-       _context =null;
-       _sanityCheck = false;
-       _isRegistered = false;
-       _owner = null;
-       _name = null;
+	   _context =null;
+	   _sanityCheck = false;
+	   _isRegistered = false;
+	   _owner = null;
+	   _name = null;
    }
    
    function get_context():IPBContext
    {
-       // Preconditions.checkNotNull(_context, ReflectUtil.getClassName(this) + " does not have context set! Did you use context.allocate() to create it?");
-       return _context;
+	   // Preconditions.checkNotNull(_context, ReflectUtil.getClassName(this) + " does not have context set! Did you use context.allocate() to create it?");
+	   return _context;
    }
    
    function set_context(value:IPBContext):IPBContext
    {
-       Preconditions.checkArgument(_context == null || _context == value, ReflectUtil.getClassName(this) + " already registered in another context.");
-       _context = value;
-       return value;
+	   Preconditions.checkArgument(_context == null || _context == value, ReflectUtil.getClassName(this) + " already registered in another context.");
+	   _context = value;
+	   return value;
    }
 
    function get_owner():IEntity
    {
-      return _owner;
+	  return _owner;
    }
   
    function set_owner(value:IEntity):IEntity
    {
-      Preconditions.checkNotNull(value, "Cannot set an Entity owner to null.  This can only happen on unRegister");
-      Preconditions.checkArgument(_owner == null, "Cannot change the owner");
-      _owner = value;
-      return value;
+	  Preconditions.checkNotNull(value, "Cannot set an Entity owner to null.  This can only happen on unRegister");
+	  Preconditions.checkArgument(_owner == null, "Cannot change the owner");
+	  _owner = value;
+	  return value;
    }
   
   function get_name():String
   {
-     return _name;
+	 return _name;
   }
   
   function set_name (name :String) :String
   {
-      Preconditions.checkArgument(_name == null, ReflectUtil.getClassName(this) + " already has a name");
-      _name = name;
-      return name;
+	  Preconditions.checkArgument(_name == null, ReflectUtil.getClassName(this) + " already has a name");
+	  _name = name;
+	  return name;
   }
   
   function get_isRegistered():Bool
   {
-     return _isRegistered;
+	 return _isRegistered;
   }
   
   public function register(owner :IEntity, ?name:String):Void
   {
-      Preconditions.checkArgument(!isRegistered, "Trying to register an already-registered component!");
-     _context = owner.context;
-     _name = name;
-     _owner = owner;
-     _sanityCheck = false;
-     _isRegistered = true;
-     onAdd();
-     Preconditions.checkArgument(_sanityCheck, "Forgot to call super.onAdd(); in " + this + "!");
+	  Preconditions.checkArgument(!isRegistered, "Trying to register an already-registered component!");
+	 _context = owner.context;
+	 _name = name;
+	 _owner = owner;
+	 _sanityCheck = false;
+	 _isRegistered = true;
+	 onAdd();
+	 Preconditions.checkArgument(_sanityCheck, "Forgot to call super.onAdd(); in " + this + "!");
   }
   
   public function unregister():Void
   {
-      Preconditions.checkArgument(isRegistered, "Trying to unregister an unregistered component!");
-     _isRegistered = false;
-     _sanityCheck = false;
-     onRemove();
-     Preconditions.checkArgument(_sanityCheck, "Forgot to call super.onRemove(); in " + this + "!");
-     _owner = null;
-     _name = null;
-     _context = null;
+	  Preconditions.checkArgument(isRegistered, "Trying to unregister an unregistered component!");
+	 _isRegistered = false;
+	 _sanityCheck = false;
+	 onRemove();
+	 Preconditions.checkArgument(_sanityCheck, "Forgot to call super.onRemove(); in " + this + "!");
+	 _owner = null;
+	 _name = null;
+	 _context = null;
   }
   
   public function reset():Void
   {
-      _sanityCheck = false;
-     onReset();
-     Preconditions.checkArgument(_sanityCheck, "Forgot to call super.onReset(); in " + this + "!");
+	  _sanityCheck = false;
+	 onReset();
+	 Preconditions.checkArgument(_sanityCheck, "Forgot to call super.onReset(); in " + this + "!");
   }
   
   /**
@@ -135,7 +135,7 @@ class EntityComponent
    */
   function onAdd():Void
   {
-      _sanityCheck = true;
+	  _sanityCheck = true;
   }
   
   /**
@@ -145,7 +145,7 @@ class EntityComponent
    */
   function onRemove():Void
   {
-      _sanityCheck = true;
+	  _sanityCheck = true;
   }
   
   /**
@@ -157,7 +157,7 @@ class EntityComponent
    */
   function onReset():Void
   {
-      _sanityCheck = true;
+	  _sanityCheck = true;
   }
   
   @editorData({ignore :"true"})

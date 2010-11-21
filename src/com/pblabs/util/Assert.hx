@@ -50,14 +50,14 @@ class Assert
 	
 	inline static function fail (message :String, info:haxe.PosInfos) :Void
 	{
-	    #if !debug
+		#if !debug
 		return;
-	    #else
-	        //Some javascript targets don't show exceptions, so at least log the error
-	        #if js
-	        Log.error("Assertion '" + message + "' failed in file " + info.fileName + ", line " + info.lineNumber + ", " + info.className + "::" + info.methodName);
-	        #end
-	    throw "Assertion '" + message + "' failed in file " + info.fileName + ", line " + info.lineNumber + ", " + info.className + "::" + info.methodName;
-	    #end
+		#else
+			//Some javascript targets don't show exceptions, so at least log the error
+			#if js
+			Log.error("Assertion '" + message + "' failed in file " + info.fileName + ", line " + info.lineNumber + ", " + info.className + "::" + info.methodName);
+			#end
+		throw "Assertion '" + message + "' failed in file " + info.fileName + ", line " + info.lineNumber + ", " + info.className + "::" + info.methodName;
+		#end
 	}
 }

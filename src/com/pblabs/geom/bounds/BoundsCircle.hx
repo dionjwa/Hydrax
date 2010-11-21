@@ -27,108 +27,108 @@ using com.pblabs.geom.VectorTools;
 
 class BoundsCircle extends AbstractBounds<BoundsCircle>
 {
-    public function new (c :Circle)
-    {
-        super();
-        _boundsCircle = c;
-        _boundsRect = new Rectangle();
-        set_center(new Vector2(c.x, c.y));
-    }
+	public function new (c :Circle)
+	{
+		super();
+		_boundsCircle = c;
+		_boundsRect = new Rectangle();
+		set_center(new Vector2(c.x, c.y));
+	}
 
-    override function get_center ():Vector2
-    {
-        return _boundsCircle.center;
-    }
+	override function get_center ():Vector2
+	{
+		return _boundsCircle.center;
+	}
 
-    override function set_center (v :Vector2) :Vector2
-    {
-        _center = _boundsCircle.center = v;
-        _boundsRect.x = _center.x - _boundsCircle.radius;
-        _boundsRect.y = _center.y - _boundsCircle.radius;
-        _boundsRect.width = _boundsRect.height = _boundsCircle.radius * _boundsCircle.radius;
-        return v;
-    }
+	override function set_center (v :Vector2) :Vector2
+	{
+		_center = _boundsCircle.center = v;
+		_boundsRect.x = _center.x - _boundsCircle.radius;
+		_boundsRect.y = _center.y - _boundsCircle.radius;
+		_boundsRect.width = _boundsRect.height = _boundsCircle.radius * _boundsCircle.radius;
+		return v;
+	}
 
-    override public function clone () :BoundsCircle
-    {
-        return new BoundsCircle(_boundsCircle.clone());
-    }
+	override public function clone () :BoundsCircle
+	{
+		return new BoundsCircle(_boundsCircle.clone());
+	}
 
-    override public function containsPoint (v :Vector2) :Bool
-    {
-        return _boundsCircle.containsPoint(v);
-    }
+	override public function containsPoint (v :Vector2) :Bool
+	{
+		return _boundsCircle.containsPoint(v);
+	}
 
-    override public function distance (b :IBounds<Dynamic>) :Float
-    {
-        if (Std.is(b, BoundsForwarding)) {
-            return distance(cast(b, BoundsForwarding<Dynamic>).getForwarded()); 
-        }
-        
-        if (Std.is(b, BoundsPoint)) {
-            return BoundsUtil.distancePointCircle(cast(b), this);
-        } else if (Std.is(b, BoundsPolygon)) {
-            return BoundsUtil.distanceCirclePolygon(this, cast(b));
-        } else if (Std.is(b, BoundsCircle)) {
-            return BoundsUtil.distanceCircleCircle(this, cast(b));
-        } 
-        // else if (Std.is(b, BoundsLine)) {
-        //     return BoundsUtil.distancePointLine(this, cast(b));
-        // }
-        throw "Not implemented between " + ReflectUtil.tinyClassName(this) +
-            " and " + ReflectUtil.tinyClassName(b);
-        return Math.NaN;
-    }
+	override public function distance (b :IBounds<Dynamic>) :Float
+	{
+		if (Std.is(b, BoundsForwarding)) {
+			return distance(cast(b, BoundsForwarding<Dynamic>).getForwarded()); 
+		}
+		
+		if (Std.is(b, BoundsPoint)) {
+			return BoundsUtil.distancePointCircle(cast(b), this);
+		} else if (Std.is(b, BoundsPolygon)) {
+			return BoundsUtil.distanceCirclePolygon(this, cast(b));
+		} else if (Std.is(b, BoundsCircle)) {
+			return BoundsUtil.distanceCircleCircle(this, cast(b));
+		} 
+		// else if (Std.is(b, BoundsLine)) {
+		//	 return BoundsUtil.distancePointLine(this, cast(b));
+		// }
+		throw "Not implemented between " + ReflectUtil.tinyClassName(this) +
+			" and " + ReflectUtil.tinyClassName(b);
+		return Math.NaN;
+	}
 
-    override public function distanceToPoint (v :Vector2) :Float
-    {
-        return _boundsCircle.distancePoint(v);
-    }
-    
-    override public function isWithinDistance(b :IBounds<Dynamic>, d :Float) :Bool
-    {
-        if (Std.is(b, BoundsForwarding)) {
-            return isWithinDistance(cast(b, BoundsForwarding<Dynamic>).getForwarded(), d); 
-        }
-        
-        if (Std.is(b, BoundsPoint)) {
-            return BoundsUtil.isWithinDistancePointCircle(cast(b), this, d);
-        } else if (Std.is(b, BoundsPolygon)) {
-            return BoundsUtil.isWithinDistanceCirclePolygon(this, cast(b), d);
-        } else if (Std.is(b, BoundsCircle)) {
-            return BoundsUtil.isWithinDistanceCircleCircle(this, cast(b), d);
-        } 
-        // else if (Std.is(b, BoundsLine)) {
-            
-        //     return BoundsUtil.distancePointLine(this, cast(b), d);
-        // }
-        throw "Not implemented between " + ReflectUtil.tinyClassName(this) +
-            " and " + ReflectUtil.tinyClassName(b);
-        return false;
-    }
+	override public function distanceToPoint (v :Vector2) :Float
+	{
+		return _boundsCircle.distancePoint(v);
+	}
+	
+	override public function isWithinDistance(b :IBounds<Dynamic>, d :Float) :Bool
+	{
+		if (Std.is(b, BoundsForwarding)) {
+			return isWithinDistance(cast(b, BoundsForwarding<Dynamic>).getForwarded(), d); 
+		}
+		
+		if (Std.is(b, BoundsPoint)) {
+			return BoundsUtil.isWithinDistancePointCircle(cast(b), this, d);
+		} else if (Std.is(b, BoundsPolygon)) {
+			return BoundsUtil.isWithinDistanceCirclePolygon(this, cast(b), d);
+		} else if (Std.is(b, BoundsCircle)) {
+			return BoundsUtil.isWithinDistanceCircleCircle(this, cast(b), d);
+		} 
+		// else if (Std.is(b, BoundsLine)) {
+			
+		//	 return BoundsUtil.distancePointLine(this, cast(b), d);
+		// }
+		throw "Not implemented between " + ReflectUtil.tinyClassName(this) +
+			" and " + ReflectUtil.tinyClassName(b);
+		return false;
+	}
 
-    // override public function getBoundedPoint (v :Vector2, ?v :Vector2) :Vector2
-    // {
-    //     if (v != null) {
-    //         v.x = _center.x;
-    //         v.y = _center.y;
-    //         return v;
-    //     } else {
-    //         return _center;
-    //     }
-    // }
+	// override public function getBoundedPoint (v :Vector2, ?v :Vector2) :Vector2
+	// {
+	//	 if (v != null) {
+	//		 v.x = _center.x;
+	//		 v.y = _center.y;
+	//		 return v;
+	//	 } else {
+	//		 return _center;
+	//	 }
+	// }
 
-    // override public function getBoundedPointFromMove (originX :Float, originY :Float,
-    //     targetX :Float, targetY :Float, ?v :Vector2) :Vector2
-    // {
-    //     return _center;
-    // }
+	// override public function getBoundedPointFromMove (originX :Float, originY :Float,
+	//	 targetX :Float, targetY :Float, ?v :Vector2) :Vector2
+	// {
+	//	 return _center;
+	// }
 
-    public function toString () :String
-    {
-        return ReflectUtil.tinyClassName(this) + "[" + _boundsCircle + "]";
-    }
-    
+	public function toString () :String
+	{
+		return ReflectUtil.tinyClassName(this) + "[" + _boundsCircle + "]";
+	}
+	
 }
 
 

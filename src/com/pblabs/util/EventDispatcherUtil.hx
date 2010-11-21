@@ -13,19 +13,19 @@ import flash.events.IEventDispatcher;
 
 class EventDispatcherUtil
 {
-    /**
-      * From:
-      * http://haxe.org/doc/snip/_flash_only_once_eventlistener
-      */
-    public static function addOnceListener (dispatcher:IEventDispatcher, type : String, listener : Event->Void) 
-    {
-        var o = { f : null }; // an anonymous object is used to reference the listener scope, if there is a cleaner or better way please let me know
-        o.f = function (e :Event) {
-            cast (e.target, IEventDispatcher).removeEventListener(e.type, o.f);
-            listener(e);
-        }
-        dispatcher.addEventListener(type, o.f);
-    }
+	/**
+	  * From:
+	  * http://haxe.org/doc/snip/_flash_only_once_eventlistener
+	  */
+	public static function addOnceListener (dispatcher:IEventDispatcher, type : String, listener : Event->Void) 
+	{
+		var o = { f : null }; // an anonymous object is used to reference the listener scope, if there is a cleaner or better way please let me know
+		o.f = function (e :Event) {
+			cast (e.target, IEventDispatcher).removeEventListener(e.type, o.f);
+			listener(e);
+		}
+		dispatcher.addEventListener(type, o.f);
+	}
 
 }
 

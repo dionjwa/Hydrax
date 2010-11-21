@@ -14,40 +14,40 @@ package com.pblabs.util.ds;
  */
 interface Set<T>
 {
-    /**
-     * Adds the specified element to the set if it's not already present.
-     * Returns true if the set did not already contain the specified element.
-     */
-    function add (o :T) :Void;
+	/**
+	 * Adds the specified element to the set if it's not already present.
+	 * Returns true if the set did not already contain the specified element.
+	 */
+	function add (o :T) :Void;
 
-    /**
-     * Returns true if this set contains the specified element.
-     */
-    function exists (o :T) :Bool;
+	/**
+	 * Returns true if this set contains the specified element.
+	 */
+	function exists (o :T) :Bool;
 
-    /**
-     * Removes the specified element from this set if it is present.
-     * Returns true if the set contained the specified element.
-     */
-    function remove (o :T) :Bool;
+	/**
+	 * Removes the specified element from this set if it is present.
+	 * Returns true if the set contained the specified element.
+	 */
+	function remove (o :T) :Bool;
 
-    /**
-     * Returns the number of elements in this set.
-     */
-    function size () :Int;
+	/**
+	 * Returns the number of elements in this set.
+	 */
+	function size () :Int;
 
-    /**
-     * Returns true if this set contains no elements.
-     */
-    function isEmpty () :Bool;
+	/**
+	 * Returns true if this set contains no elements.
+	 */
+	function isEmpty () :Bool;
 
-    /**
-     * Remove all elements from this set.
-     */
-    function clear () :Void;
+	/**
+	 * Remove all elements from this set.
+	 */
+	function clear () :Void;
 
-    /**
-      * Iterate over values.
-      */
-    function iterator() : Iterator<T>;
+	/**
+	  * Iterate over values.
+	  */
+	function iterator() : Iterator<T>;
 }

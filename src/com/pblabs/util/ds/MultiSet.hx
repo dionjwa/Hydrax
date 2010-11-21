@@ -12,6 +12,6 @@ import com.pblabs.util.ds.Set;
 
 interface MultiSet<K> implements Set<K>
 {
-    public function count (key :K) :Int;
+	public function count (key :K) :Int;
 }
 

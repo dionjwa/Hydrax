@@ -26,74 +26,74 @@ using com.pblabs.geom.RectangleTools;
 
 class BoundsRectangle extends BoundsForwarding<BoundsRectangle>
 {
-    public function new (r :Rectangle)
-    {
-        _polygonBounds = new BoundsPolygon(r.toPolygon());
-        super(get_polygonBounds);
-        _boundsRect = r;
-        _boundsCircle = new Circle();
-        set_center(new Vector2(r.left + r.width / 2, r.top + r.height / 2));
-    }
+	public function new (r :Rectangle)
+	{
+		_polygonBounds = new BoundsPolygon(r.toPolygon());
+		super(get_polygonBounds);
+		_boundsRect = r;
+		_boundsCircle = new Circle();
+		set_center(new Vector2(r.left + r.width / 2, r.top + r.height / 2));
+	}
 
-    override function get_center ():Vector2
-    {
-        return _center;
-    }
+	override function get_center ():Vector2
+	{
+		return _center;
+	}
 
-    override function set_center (v :Vector2) :Vector2
-    {
-        super.set_center(center);
-        _center = _boundsCircle.center = v;
-        _boundsCircle.radius = Math.max(_boundsRect.width, _boundsRect.height);
-        _boundsRect.x = _center.x - _boundsCircle.radius;
-        _boundsRect.y = _center.y - _boundsCircle.radius;
-        return v;
-    }
+	override function set_center (v :Vector2) :Vector2
+	{
+		super.set_center(center);
+		_center = _boundsCircle.center = v;
+		_boundsCircle.radius = Math.max(_boundsRect.width, _boundsRect.height);
+		_boundsRect.x = _center.x - _boundsCircle.radius;
+		_boundsRect.y = _center.y - _boundsCircle.radius;
+		return v;
+	}
 
-    override public function clone () :BoundsRectangle
-    {
-        return new BoundsRectangle(_boundsRect.clone());
-    }
+	override public function clone () :BoundsRectangle
+	{
+		return new BoundsRectangle(_boundsRect.clone());
+	}
 
-    override public function containsPoint (v :Vector2) :Bool
-    {
-        return _boundsRect.contains(v.x, v.y);
-    }
+	override public function containsPoint (v :Vector2) :Bool
+	{
+		return _boundsRect.contains(v.x, v.y);
+	}
 
-    override public function distanceToPoint (v :Vector2) :Float
-    {
-        if (containsPoint(v)) {
-            return 0;
-        }
-        return super.distanceToPoint(v);
-    }
-    
-    public function toString () :String
-    {
-        return ReflectUtil.tinyClassName(this) + "[" + _boundsRect + "]";
-    }
-    
-    override function get_boundingRect () :Rectangle
-    {
-        return _boundsRect;
-    }
-    
-    override function get_boundingCircle () :Circle
-    {
-        return _boundsCircle;
-    }
-    
-    override function computeBoundingRect () :Rectangle
-    {
-        return _boundsRect;
-    }
-    
-    inline function get_polygonBounds () :BoundsPolygon
-    {
-        return _polygonBounds;
-    }
-    
-    var _polygonBounds :BoundsPolygon;
+	override public function distanceToPoint (v :Vector2) :Float
+	{
+		if (containsPoint(v)) {
+			return 0;
+		}
+		return super.distanceToPoint(v);
+	}
+	
+	public function toString () :String
+	{
+		return ReflectUtil.tinyClassName(this) + "[" + _boundsRect + "]";
+	}
+	
+	override function get_boundingRect () :Rectangle
+	{
+		return _boundsRect;
+	}
+	
+	override function get_boundingCircle () :Circle
+	{
+		return _boundsCircle;
+	}
+	
+	override function computeBoundingRect () :Rectangle
+	{
+		return _boundsRect;
+	}
+	
+	inline function get_polygonBounds () :BoundsPolygon
+	{
+		return _polygonBounds;
+	}
+	
+	var _polygonBounds :BoundsPolygon;
 }
 
 

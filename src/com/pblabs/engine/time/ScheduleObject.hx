@@ -28,28 +28,28 @@ import com.pblabs.engine.util.IPrioritizable;
  */
 class ScheduleObject implements IPrioritizable 
 {
-    public function new() 
-    { 
-        dueTime = 0.0;
-        thisObject = null;
-        callBack = null;
-        arguments = null;
-    }
-    
-    public var priority(get_priority, set_priority) :Int;
-    public var dueTime :Float;
-    public var thisObject :Dynamic;
-    public var callBack :Dynamic;
-    public var arguments :Array<Dynamic>;
-    
-    function get_priority() :Int
-    {
-        return Std.int(-dueTime);
-    }
-    
-    function set_priority(value :Int) :Int
-    {
-        throw "Unimplemented.";
-        return value;
-    }
+	public function new() 
+	{ 
+		dueTime = 0.0;
+		thisObject = null;
+		callBack = null;
+		arguments = null;
+	}
+	
+	public var priority(get_priority, set_priority) :Int;
+	public var dueTime :Float;
+	public var thisObject :Dynamic;
+	public var callBack :Dynamic;
+	public var arguments :Array<Dynamic>;
+	
+	function get_priority() :Int
+	{
+		return Std.int(-dueTime);
+	}
+	
+	function set_priority(value :Int) :Int
+	{
+		throw "Unimplemented.";
+		return value;
+	}
 }

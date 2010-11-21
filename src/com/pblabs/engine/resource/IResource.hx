@@ -11,14 +11,14 @@ package com.pblabs.engine.resource;
 import haxe.io.BytesData;
 
 enum Source {
-    url (u :String);
-    bytes (b :BytesData);
-    text (t :String);
-    //base64 (data :String); //??Maybe
-    #if flash
-    //FIgure out how to manage with with haxe embedded assets.
-    // embedded
-    #end
+	url (u :String);
+	bytes (b :BytesData);
+	text (t :String);
+	//base64 (data :String); //??Maybe
+	#if flash
+	//FIgure out how to manage with with haxe embedded assets.
+	// embedded
+	#end
 }
 
 /**
@@ -26,21 +26,21 @@ enum Source {
   */
 interface IResource<T>
 {
-    var name (get_name, never) :String;
-    
-    /**
-      * Create/get the resource mapped to the name.
-      */
-    function create (?resourceName :String) :T;
-    
-    /**
-      * Loads resources managed by this instance.
-      */
-    function load (onLoad :Void->Void, onError :Dynamic->Void) :Void;
-    
-    function unload () :Void;
-    
-    function isLoaded () :Bool;
-    
+	var name (get_name, never) :String;
+	
+	/**
+	  * Create/get the resource mapped to the name.
+	  */
+	function create (?resourceName :String) :T;
+	
+	/**
+	  * Loads resources managed by this instance.
+	  */
+	function load (onLoad :Void->Void, onError :Dynamic->Void) :Void;
+	
+	function unload () :Void;
+	
+	function isLoaded () :Bool;
+	
 }
 

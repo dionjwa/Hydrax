@@ -13,27 +13,27 @@ import com.pblabs.engine.core.PropertyReference;
 
 class AngleComponent extends NotifyingValueComponent
 {
-    public static var P_ANGLE :PropertyReference<Float> = new PropertyReference("@AngleComponent.angle");
-    
-    public var angle (get_angle, set_angle) : Float;
+	public static var P_ANGLE :PropertyReference<Float> = new PropertyReference("@AngleComponent.angle");
+	
+	public var angle (get_angle, set_angle) : Float;
 
-    public function new ()
-    {
-        super();
-    }
-    
-    public function toString () :String
-    {
-        return "Angle=" + angle; 
-    }
-    
-    function get_angle () :Float
-    {
-        return super.get_value();
-    }
-    
-    function set_angle (val :Float) :Float
-    {
-        return super.set_value(val);
-    }
+	public function new ()
+	{
+		super();
+	}
+	
+	public function toString () :String
+	{
+		return "Angle=" + angle; 
+	}
+	
+	function get_angle () :Float
+	{
+		return super.get_value();
+	}
+	
+	function set_angle (val :Float) :Float
+	{
+		return super.set_value(val);
+	}
 }

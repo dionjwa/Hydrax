@@ -19,38 +19,38 @@ import haxe.Stack;
  */
 class Log
 {
-    public function new () {}
-    
-    public static dynamic function debug (msg :Dynamic, ?infos : PosInfos) :Void
-    {
-        trace("debug: " + msg, infos);
-    }
-    
-    public static dynamic function info (msg :Dynamic, ?infos : PosInfos) :Void
-    {
-        trace("info: " + msg, infos);
-    }
-    
-    public static dynamic function warn (msg :Dynamic, ?infos : PosInfos) :Void
-    {
-        trace("warn: " + msg, infos);
-    }
-    
-    public static dynamic function error (msg :Dynamic, ?infos : PosInfos) :Void
-    {
-        trace("error: " + msg, infos);
-    }
-    
-    public static dynamic function print (msg :Dynamic, ?infos : PosInfos) :Void
-    {
-        haxe.Log.trace(msg, infos);
-    }
-    
-    public static function getStackTrace () :String
-    {
-        return haxe.Stack.toString(haxe.Stack.callStack());
-    }
-    
+	public function new () {}
+	
+	public static dynamic function debug (msg :Dynamic, ?infos : PosInfos) :Void
+	{
+		trace("debug: " + msg, infos);
+	}
+	
+	public static dynamic function info (msg :Dynamic, ?infos : PosInfos) :Void
+	{
+		trace("info: " + msg, infos);
+	}
+	
+	public static dynamic function warn (msg :Dynamic, ?infos : PosInfos) :Void
+	{
+		trace("warn: " + msg, infos);
+	}
+	
+	public static dynamic function error (msg :Dynamic, ?infos : PosInfos) :Void
+	{
+		trace("error: " + msg, infos);
+	}
+	
+	public static dynamic function print (msg :Dynamic, ?infos : PosInfos) :Void
+	{
+		haxe.Log.trace(msg, infos);
+	}
+	
+	public static function getStackTrace () :String
+	{
+		return haxe.Stack.toString(haxe.Stack.callStack());
+	}
+	
 }
 
 

@@ -12,10 +12,10 @@ import com.pblabs.components.scene.js.JSSceneManager;
 
 class CanvasScene2D extends JSSceneManager<CanvasLayer>
 {
-    public function new ()
-    {
-        super();
-    }
+	public function new ()
+	{
+		super();
+	}
 }
 
 

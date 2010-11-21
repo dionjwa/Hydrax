@@ -14,29 +14,29 @@ import com.pblabs.components.base.NotifyingValueComponent;
 
 class AlphaComponent extends NotifyingValueComponent 
 {
-    public static var P_ALPHA :PropertyReference<Float> = new PropertyReference("@AlphaComponent.alpha");
-    
-    public var alpha (get_alpha, set_alpha) : Float;
+	public static var P_ALPHA :PropertyReference<Float> = new PropertyReference("@AlphaComponent.alpha");
+	
+	public var alpha (get_alpha, set_alpha) : Float;
 
-    public function new ()
-    {
-        super();
-        _value = 1;
-    }
+	public function new ()
+	{
+		super();
+		_value = 1;
+	}
  
-    public function toString () :String
-    {
-        return "Alpha=" + alpha; 
-    }
-    
-    function get_alpha () :Float
-    {
-        return super.get_value();
-    }
-    
-    function set_alpha (val :Float) :Float
-    {
-        return super.set_value(val);
-    }
+	public function toString () :String
+	{
+		return "Alpha=" + alpha; 
+	}
+	
+	function get_alpha () :Float
+	{
+		return super.get_value();
+	}
+	
+	function set_alpha (val :Float) :Float
+	{
+		return super.set_value(val);
+	}
 }
 

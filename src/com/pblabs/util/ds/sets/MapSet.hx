@@ -18,63 +18,63 @@ using com.pblabs.util.ds.MapUtil;
  */
 class MapSet<T> implements Set<T> 
 {
-    public function new (source :Map<T, T>)
-    {
-        _source = Preconditions.checkNotNull(source);
-    }
+	public function new (source :Map<T, T>)
+	{
+		_source = Preconditions.checkNotNull(source);
+	}
 
-    public function add (o :T) :Void
-    {
-        _source.set(o, o);
-    }
+	public function add (o :T) :Void
+	{
+		_source.set(o, o);
+	}
 
-    public function exists (o :T) :Bool
-    {
-        return _source.exists(o);
-    }
+	public function exists (o :T) :Bool
+	{
+		return _source.exists(o);
+	}
 
-    public function remove (o :T) :Bool
-    {
-        return _source.remove(o);
-    }
+	public function remove (o :T) :Bool
+	{
+		return _source.remove(o);
+	}
 
-    public function size () :Int
-    {
-        return _source.size();
-    }
+	public function size () :Int
+	{
+		return _source.size();
+	}
 
-    public function isEmpty () :Bool
-    {
-        return _source.isEmpty();
-    }
+	public function isEmpty () :Bool
+	{
+		return _source.isEmpty();
+	}
 
-    public function clear () :Void
-    {
-        return _source.clear();
-    }
-    public function iterator() : Iterator<T>
-    {
-        //Iterate over values, not keys, since keys may be converted
-        //to Ints or Strings by the underlying map
-        return _source.iterator();
-    }
-    
-    public function forEach (fn :Dynamic->Bool) :Void
-    {
-        _source.forEach(function (k :Dynamic, v :Dynamic) :Bool {
-            return fn(v);
-        });
-    }
-    
-    #if debug
-    public function toString () :String
-    {
-        return com.pblabs.util.ds.MapUtil.toString(_source);
-    }
-    #end
-    
-    
-    /** The map used for our source. */
-    var _source:Map<T, T>;
+	public function clear () :Void
+	{
+		return _source.clear();
+	}
+	public function iterator() : Iterator<T>
+	{
+		//Iterate over values, not keys, since keys may be converted
+		//to Ints or Strings by the underlying map
+		return _source.iterator();
+	}
+	
+	public function forEach (fn :Dynamic->Bool) :Void
+	{
+		_source.forEach(function (k :Dynamic, v :Dynamic) :Bool {
+			return fn(v);
+		});
+	}
+	
+	#if debug
+	public function toString () :String
+	{
+		return com.pblabs.util.ds.MapUtil.toString(_source);
+	}
+	#end
+	
+	
+	/** The map used for our source. */
+	var _source:Map<T, T>;
 }
 

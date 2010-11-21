@@ -20,258 +20,258 @@ using com.pblabs.util.IterUtil;
   */
 @sets("Scene2DManager")
 class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends NodeComponent<Dynamic, Layer>,
-    implements haxe.rtti.Infos, implements IScene2D
+	implements haxe.rtti.Infos, implements IScene2D
 {
-    @inject
-    public var sceneView(get_sceneView, set_sceneView) :SceneView;
-    
-    public var zoom(get_zoom, set_zoom) :Float;
-    public var sceneBounds(get_sceneBounds, set_sceneBounds) :Rectangle;
-    public var layerCount(get_layerCount, never) :Int;
-    public var x (get_x, set_x) :Float;
-    public var y (get_y, set_y) :Float;
-    public var rotation (get_rotation, set_rotation) :Float;
-    
+	@inject
+	public var sceneView(get_sceneView, set_sceneView) :SceneView;
+	
+	public var zoom(get_zoom, set_zoom) :Float;
+	public var sceneBounds(get_sceneBounds, set_sceneBounds) :Rectangle;
+	public var layerCount(get_layerCount, never) :Int;
+	public var x (get_x, set_x) :Float;
+	public var y (get_y, set_y) :Float;
+	public var rotation (get_rotation, set_rotation) :Float;
+	
 
-    /**
-     * Maximum allowed zoom level.
-     *
-     * @see zoom
-     */
-    public var zoomMax :Float;
-    /**
-     * Minimum allowed zoom level.
-     *
-     * @see zoom
-     */
-    public var zoomMin :Float;
+	/**
+	 * Maximum allowed zoom level.
+	 *
+	 * @see zoom
+	 */
+	public var zoomMax :Float;
+	/**
+	 * Minimum allowed zoom level.
+	 *
+	 * @see zoom
+	 */
+	public var zoomMin :Float;
 
-    /**
-     * How the scene is aligned relative to its position property.
-     *
-     * @see SceneAlignment
-     * @see position
-     */
-    public var sceneAlignment :SceneAlignment;
+	/**
+	 * How the scene is aligned relative to its position property.
+	 *
+	 * @see SceneAlignment
+	 * @see position
+	 */
+	public var sceneAlignment :SceneAlignment;
 
-    public function new ()
-    {
-        super();
-        zoomMax = 5;
-        zoomMin = 0;
-        sceneAlignment = SceneAlignment.CENTER;
-        _currentViewRect = new Rectangle();
-        _zoom = 1.0;
-        _rotation = 0;
-        _position = new Vector2();
-        _transformDirty = false;
-    }
-    
-    public function addLayer <T>(cls :Class<T>, layerName :String, ?registerAsManager :Bool = true) :T
-    {
-        var layer = context.allocate(cls);
-        #if debug
-        com.pblabs.util.Assert.isTrue(Std.is(layer, BaseScene2DLayer), "Layer class " + cls + " is not a BaseScene2DLayer");
-        #end
-        
-        cast(layer, BaseScene2DLayer<Dynamic, Dynamic>).parentProperty = PBUtil.componentProp(this);
-        owner.addComponent(cast(layer, IEntityComponent), layerName);
-        if (registerAsManager) {
-            context.registerManager(cast(BaseScene2DLayer), layer, layerName, true);
-        }
-        return layer;
-    }
-    
-    /** Calls onFrame on this and all children to make sure they're in the right place on the first frame */
-    public function update () :Void
-    {
-        if (Std.is(this, IAnimatedObject)) {
-            cast(this, IAnimatedObject).onFrame(0);
-        }
-        if (children != null) {
-            for (layer in children) {
-                if (Std.is(layer, IAnimatedObject)) {
-                    cast(layer, IAnimatedObject).onFrame(0);
-                }
-                if (layer.children != null) {
-                    for (c in layer.children) {
-                        if (Std.is(c, IAnimatedObject)) {
-                            cast(c, IAnimatedObject).onFrame(0);
-                        }
-                    }
-                }
-            }
-        }
-    }
+	public function new ()
+	{
+		super();
+		zoomMax = 5;
+		zoomMin = 0;
+		sceneAlignment = SceneAlignment.CENTER;
+		_currentViewRect = new Rectangle();
+		_zoom = 1.0;
+		_rotation = 0;
+		_position = new Vector2();
+		_transformDirty = false;
+	}
+	
+	public function addLayer <T>(cls :Class<T>, layerName :String, ?registerAsManager :Bool = true) :T
+	{
+		var layer = context.allocate(cls);
+		#if debug
+		com.pblabs.util.Assert.isTrue(Std.is(layer, BaseScene2DLayer), "Layer class " + cls + " is not a BaseScene2DLayer");
+		#end
+		
+		cast(layer, BaseScene2DLayer<Dynamic, Dynamic>).parentProperty = PBUtil.componentProp(this);
+		owner.addComponent(cast(layer, IEntityComponent), layerName);
+		if (registerAsManager) {
+			context.registerManager(cast(BaseScene2DLayer), layer, layerName, true);
+		}
+		return layer;
+	}
+	
+	/** Calls onFrame on this and all children to make sure they're in the right place on the first frame */
+	public function update () :Void
+	{
+		if (Std.is(this, IAnimatedObject)) {
+			cast(this, IAnimatedObject).onFrame(0);
+		}
+		if (children != null) {
+			for (layer in children) {
+				if (Std.is(layer, IAnimatedObject)) {
+					cast(layer, IAnimatedObject).onFrame(0);
+				}
+				if (layer.children != null) {
+					for (c in layer.children) {
+						if (Std.is(c, IAnimatedObject)) {
+							cast(c, IAnimatedObject).onFrame(0);
+						}
+					}
+				}
+			}
+		}
+	}
 
-    function isLayer (name :String) :Bool
-    {
-        return getLayer(name) != null;
-    }
+	function isLayer (name :String) :Bool
+	{
+		return getLayer(name) != null;
+	}
 
-    public function getLayerAt (idx :Int) :Layer
-    {
-        return children[idx];
-    }
-    
-    public function getLayerIndex (layer :Layer) :Int
-    {
-        return children.indexOf(layer);
-    }
-    
-    public function setLayerIndex (layer :Layer, index :Int) :Void
-    {
-        Preconditions.checkNotNull(layer, "Null layer");
-        Preconditions.checkPositionIndex(index, children.length, "Layer index out of bounds");
-        children.remove(layer);
-        children.insert(index, layer);
-    }
+	public function getLayerAt (idx :Int) :Layer
+	{
+		return children[idx];
+	}
+	
+	public function getLayerIndex (layer :Layer) :Int
+	{
+		return children.indexOf(layer);
+	}
+	
+	public function setLayerIndex (layer :Layer, index :Int) :Void
+	{
+		Preconditions.checkNotNull(layer, "Null layer");
+		Preconditions.checkPositionIndex(index, children.length, "Layer index out of bounds");
+		children.remove(layer);
+		children.insert(index, layer);
+	}
 
-    override function childAdded (c :Layer) :Void
-    {
-        Log.debug("adding scene layer " + c);
-        super.childAdded(c);
-        _transformDirty = true;
-    }
-    
-    override function childRemoved (c :Layer) :Void
-    {
-        super.childRemoved(c);
-        Log.debug("removing scene layer " + c);
-        _transformDirty = true;
-    }
+	override function childAdded (c :Layer) :Void
+	{
+		Log.debug("adding scene layer " + c);
+		super.childAdded(c);
+		_transformDirty = true;
+	}
+	
+	override function childRemoved (c :Layer) :Void
+	{
+		super.childRemoved(c);
+		Log.debug("removing scene layer " + c);
+		_transformDirty = true;
+	}
 
-    public function getTopLayer () :Layer
-    {
-        if (children.length > 0) {
-            return children[children.length - 1];
-        }
-        return null;
-    }
+	public function getTopLayer () :Layer
+	{
+		if (children.length > 0) {
+			return children[children.length - 1];
+		}
+		return null;
+	}
 
-    public function getLayer (layerName :String) :Layer
-    {
-        for (layer in children) {
-            if (null != layer && layer.name == layerName) {
-                return layer;
-            }
-        }
-        return null;
-    }
+	public function getLayer (layerName :String) :Layer
+	{
+		for (layer in children) {
+			if (null != layer && layer.name == layerName) {
+				return layer;
+			}
+		}
+		return null;
+	}
 
-    override function onAdd () :Void
-    {
-        super.onAdd();      
-        sceneView = context.getManager(SceneView);
-        #if debug
-        com.pblabs.util.Assert.isNotNull(sceneView, "No SceneView"); 
-        #end
-    }
+	override function onAdd () :Void
+	{
+		super.onAdd();	  
+		sceneView = context.getManager(SceneView);
+		#if debug
+		com.pblabs.util.Assert.isNotNull(sceneView, "No SceneView"); 
+		#end
+	}
 
-    override function onRemove () :Void
-    {
-        super.onRemove();
-        _sceneView == null;
-    }
-    
-    inline function get_layerCount () :Int
-    {
-        return children != null ? children.length : 0;
-    }
-    
-    function get_x () :Float
-    {
-        return _position.x;
-    }
-    
-    function set_x (newX :Float) :Float
-    {
-        if (_position.x == newX) {
-            return newX;
-        }
-        _position.x = newX;
-        _transformDirty = true;
-        return newX;
-    }
-    
-    function get_y () :Float
-    {
-        return _position.y;
-    }
+	override function onRemove () :Void
+	{
+		super.onRemove();
+		_sceneView == null;
+	}
+	
+	inline function get_layerCount () :Int
+	{
+		return children != null ? children.length : 0;
+	}
+	
+	function get_x () :Float
+	{
+		return _position.x;
+	}
+	
+	function set_x (newX :Float) :Float
+	{
+		if (_position.x == newX) {
+			return newX;
+		}
+		_position.x = newX;
+		_transformDirty = true;
+		return newX;
+	}
+	
+	function get_y () :Float
+	{
+		return _position.y;
+	}
 
-    function set_y (newY :Float) :Float
-    {
-        if (_position.y == newY) {
-            return newY;
-        }
-        _position.y = newY;
-        _transformDirty = true;
-        return newY;
-    }
+	function set_y (newY :Float) :Float
+	{
+		if (_position.y == newY) {
+			return newY;
+		}
+		_position.y = newY;
+		_transformDirty = true;
+		return newY;
+	}
 
-    function get_sceneBounds () :Rectangle
-    {
-        return _sceneBounds;
-    }
+	function get_sceneBounds () :Rectangle
+	{
+		return _sceneBounds;
+	}
 
-    function set_sceneBounds (value :Rectangle) :Rectangle
-    {
-        _sceneBounds = value;
-        return value;
-    }
+	function set_sceneBounds (value :Rectangle) :Rectangle
+	{
+		_sceneBounds = value;
+		return value;
+	}
 
-    function get_sceneView () :SceneView
-    {
-        return _sceneView;
-    }
+	function get_sceneView () :SceneView
+	{
+		return _sceneView;
+	}
 
-    function set_sceneView (value :SceneView) :SceneView
-    {
-        _sceneView = value;
-        return value;
-    }
+	function set_sceneView (value :SceneView) :SceneView
+	{
+		_sceneView = value;
+		return value;
+	}
 
-    function get_zoom () :Float
-    {
-        return _zoom;
-    }
+	function get_zoom () :Float
+	{
+		return _zoom;
+	}
 
-    function set_zoom (value :Float) :Float
-    {
-        // Make sure our zoom level stays within the desired bounds
-        value = MathUtil.fclamp(value, zoomMin, zoomMax);
-        if (_zoom == value) {
-            return _zoom;
-        }
+	function set_zoom (value :Float) :Float
+	{
+		// Make sure our zoom level stays within the desired bounds
+		value = MathUtil.fclamp(value, zoomMin, zoomMax);
+		if (_zoom == value) {
+			return _zoom;
+		}
 
-        _zoom = value;
-        _transformDirty = true;
-        return value;
-    }
-    
-    function get_rotation () :Float
-    {
-        return _rotation;
-    }
-    
-    function set_rotation (val :Float) :Float
-    {
-        _rotation = val;
-        _transformDirty = true;
-        return val;
-    }
-    
-    var _position :Vector2;
-    var _zoom :Float;
-    var _rotation :Float;
-    var _transformDirty :Bool;
-    
-    /** The view of the scene is always enclosed in the bounds */
-    var _sceneBounds :Rectangle;
-    var _sceneView :SceneView;
-    var _currentViewRect :Rectangle;
+		_zoom = value;
+		_transformDirty = true;
+		return value;
+	}
+	
+	function get_rotation () :Float
+	{
+		return _rotation;
+	}
+	
+	function set_rotation (val :Float) :Float
+	{
+		_rotation = val;
+		_transformDirty = true;
+		return val;
+	}
+	
+	var _position :Vector2;
+	var _zoom :Float;
+	var _rotation :Float;
+	var _transformDirty :Bool;
+	
+	/** The view of the scene is always enclosed in the bounds */
+	var _sceneBounds :Rectangle;
+	var _sceneView :SceneView;
+	var _currentViewRect :Rectangle;
 
-    
-    public static var DEFAULT_LAYER_NAME :String = "defaultLayer";
-    static var EMPTY_ARRAY :Array<Dynamic> = [];
+	
+	public static var DEFAULT_LAYER_NAME :String = "defaultLayer";
+	static var EMPTY_ARRAY :Array<Dynamic> = [];
 }

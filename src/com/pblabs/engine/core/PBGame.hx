@@ -31,47 +31,47 @@ import com.pblabs.engine.time.ProcessManager;
   */
 class PBGame extends PBGameBase 
 {
-    public function new() 
-    {
-        //Set the com.pblabs.engine.debug.Log methods
-        //to be from the Log implementation @ com.pblabs.util
-        com.pblabs.util.Log.setupPBGameLog();
-        com.pblabs.util.Log.setLevel("", com.pblabs.util.Log.WARNING);
-        super();
-        startup();
-    }
-    
-    override function initializeManagers():Void
-    {
-        super.initializeManagers();
+	public function new() 
+	{
+		//Set the com.pblabs.engine.debug.Log methods
+		//to be from the Log implementation @ com.pblabs.util
+		com.pblabs.util.Log.setupPBGameLog();
+		com.pblabs.util.Log.setLevel("", com.pblabs.util.Log.WARNING);
+		super();
+		startup();
+	}
+	
+	override function initializeManagers():Void
+	{
+		super.initializeManagers();
 
-        // Register ourselves.
-        registerManager(PBGameBase, this);
-        
-        // Bring in the standard managers.
-        registerManager(NameManager, new NameManager());
-        registerManager(IProcessManager, new ProcessManager());
-        registerManager(SetManager, new SetManager());
-        registerManager(SignalBondManager, new SignalBondManager());
-        // var view = new SceneView();
-        // #if flash
-        // displayContainer.addChild(view.layer);
-        // #end
-        registerManager(SceneView, new SceneView());
-        
-        //Not yet converted to haXe
-        // registerManager(InputManager, new InputManager());
-        registerManager(IResourceManager, new ResourceManager());
-        registerManager(Serializer, new Serializer());
-        registerManager(TemplateManager, new TemplateManager());
-    }
-    
-    #if flash
-    public function registerType(clazz:Class<Dynamic>):Void
-    {
-        // NOP - passing it is enough for it to be linked into the SWF.
-    }
-    #end
+		// Register ourselves.
+		registerManager(PBGameBase, this);
+		
+		// Bring in the standard managers.
+		registerManager(NameManager, new NameManager());
+		registerManager(IProcessManager, new ProcessManager());
+		registerManager(SetManager, new SetManager());
+		registerManager(SignalBondManager, new SignalBondManager());
+		// var view = new SceneView();
+		// #if flash
+		// displayContainer.addChild(view.layer);
+		// #end
+		registerManager(SceneView, new SceneView());
+		
+		//Not yet converted to haXe
+		// registerManager(InputManager, new InputManager());
+		registerManager(IResourceManager, new ResourceManager());
+		registerManager(Serializer, new Serializer());
+		registerManager(TemplateManager, new TemplateManager());
+	}
+	
+	#if flash
+	public function registerType(clazz:Class<Dynamic>):Void
+	{
+		// NOP - passing it is enough for it to be linked into the SWF.
+	}
+	#end
 }
 
 

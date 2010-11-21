@@ -30,13 +30,13 @@ import com.pblabs.engine.util.IPrioritizable;
  * @see ThinkingComponent
  */
 interface IQueuedObject implements IPrioritizable{
-    /**
-     * Time (in milliseconds) at which to process this object.
-     */
-    function nextThinkTime():Float;
-    
-    /**
-     * Callback to call at the nextThinkTime.
-     */
-    function nextThinkCallback():Dynamic;
+	/**
+	 * Time (in milliseconds) at which to process this object.
+	 */
+	function nextThinkTime():Float;
+	
+	/**
+	 * Callback to call at the nextThinkTime.
+	 */
+	function nextThinkCallback():Dynamic;
 }

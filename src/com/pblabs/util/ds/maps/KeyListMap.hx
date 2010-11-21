@@ -15,39 +15,39 @@ import haxe.FastList;
  */
 class KeyListMap <K, V> extends AbstractMap<K, V>
  {
-    public function new() 
-    { 
-        super();
-        _keys = new FastList<K>();
-    }
-    
-    override public function set (key :K, value :V) :Void
-    {
-        super.set(key, value);
-        // _size++;
-        _keys.add(key);
-    }
-    
-    override public function remove (key :K) :Bool
-    {
-        if (super.remove(key)) {
-            _keys.remove(key);
-            return true;
-        }
-        return false;
-    }
-    
-    public function keys () :Iterator<K>
-    {
-        return _keys.iterator();
-    }
-    
-    override public function clear () :Void
-    {
-        super.clear();
-        _keys = new FastList<K>();
-    }
-    
-    var _keys :FastList<K>;
-    
+	public function new() 
+	{ 
+		super();
+		_keys = new FastList<K>();
+	}
+	
+	override public function set (key :K, value :V) :Void
+	{
+		super.set(key, value);
+		// _size++;
+		_keys.add(key);
+	}
+	
+	override public function remove (key :K) :Bool
+	{
+		if (super.remove(key)) {
+			_keys.remove(key);
+			return true;
+		}
+		return false;
+	}
+	
+	public function keys () :Iterator<K>
+	{
+		return _keys.iterator();
+	}
+	
+	override public function clear () :Void
+	{
+		super.clear();
+		_keys = new FastList<K>();
+	}
+	
+	var _keys :FastList<K>;
+	
 }

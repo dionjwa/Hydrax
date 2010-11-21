@@ -14,12 +14,12 @@
 package com.pblabs.engine.serialization;
 
    /**
-    * Helper class to make sure metadata is being included.
-    */
+	* Helper class to make sure metadata is being included.
+	*/
    class TestForMetadata
-    {
-      public function new() { }
-      
-      [TypeHint(type="Number")]
-      public var someArray:Array<Dynamic>;
+	{
+	  public function new() { }
+	  
+	  [TypeHint(type="Number")]
+	  public var someArray:Array<Dynamic>;
    }

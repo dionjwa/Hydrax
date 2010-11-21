@@ -7,9 +7,9 @@
  * provided that the following conditions are met:
  *
  *   * Redistributions of source code must retain the above copyright notice, this list of conditions and the following
- *     disclaimer.
+ *	 disclaimer.
  *   * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials provided with the distribution.
+ *	 disclaimer in the documentation and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE HSL CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE HSL
@@ -37,7 +37,7 @@ class DatalessTranslator<D> extends JSTranslatorBase, implements Translator<D> {
 	 * Creates a new dataless translator.
 	 */
 	public function new():Void {
-	    super();
+		super();
 	}
 	public function translate(nativeEvent:NativeEvent):Translation<D> {
 		// TODO: Find out whether nativeEvent.target will do here, or the following is needed.

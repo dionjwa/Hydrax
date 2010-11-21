@@ -14,67 +14,67 @@ package com.pblabs.util;
   */
 class IterUtil
 {
-    /**
-     * @return the zero-based index of the matching element, or -1 if none found.
-     */
-    public static function indexOf (it :Iterable<Dynamic>, element :Dynamic) :Int
-    {
-        if (it != null) {
-            var idx = 0;
-            var iter = it.iterator();
-            while (iter.hasNext()) {
-                if (EqualableUtil.equals(iter.next(), element)) {
-                    return idx; 
-                }
-                idx++;
-            }
-        }
-        return -1; // never found
-    }
-    
-    public static function exists (arr :Iterable<Dynamic>, element :Dynamic) :Bool
-    {
-        return indexOf(arr, element) != -1;
-    }
-    
-    public static function join (arr :Iterable<Dynamic>, ?sep :String = ", ") :String
-    {
-        var iter = arr.iterator();
-        var s = if (iter.hasNext()) Std.string(iter.next()) else "";
-        while (iter.hasNext()) {
-            s += sep + iter.next();
-        }
-        return s;
-    }
-    
-    public static function map<A, B> (it :Iterator<A>, f :A->B) :Iterable<B>
-    {
-        var list = new List<B>();
-        while(it.hasNext()) {
-            list.add(f(it.next()));
-        }
-        return list;
-    }
-    
-    public static function toArray <T> (it :Iterator<T>) :Array<T>
-    {
-        var result = new Array<T>();
-        while (it.hasNext()) {
-            result.push(it.next());
-        }
-        return result;
-    }
-    
-    public static function const <T> (val :T) :Dynamic->T
-    {
-        return function (ignore :Dynamic) :T {
-            return val;
-        }
-    }
-    
-    public static function id <T> (val :T) :T
-    {
-        return val;
-    }
-    
+	/**
+	 * @return the zero-based index of the matching element, or -1 if none found.
+	 */
+	public static function indexOf (it :Iterable<Dynamic>, element :Dynamic) :Int
+	{
+		if (it != null) {
+			var idx = 0;
+			var iter = it.iterator();
+			while (iter.hasNext()) {
+				if (EqualableUtil.equals(iter.next(), element)) {
+					return idx; 
+				}
+				idx++;
+			}
+		}
+		return -1; // never found
+	}
+	
+	public static function exists (arr :Iterable<Dynamic>, element :Dynamic) :Bool
+	{
+		return indexOf(arr, element) != -1;
+	}
+	
+	public static function join (arr :Iterable<Dynamic>, ?sep :String = ", ") :String
+	{
+		var iter = arr.iterator();
+		var s = if (iter.hasNext()) Std.string(iter.next()) else "";
+		while (iter.hasNext()) {
+			s += sep + iter.next();
+		}
+		return s;
+	}
+	
+	public static function map<A, B> (it :Iterator<A>, f :A->B) :Iterable<B>
+	{
+		var list = new List<B>();
+		while(it.hasNext()) {
+			list.add(f(it.next()));
+		}
+		return list;
+	}
+	
+	public static function toArray <T> (it :Iterator<T>) :Array<T>
+	{
+		var result = new Array<T>();
+		while (it.hasNext()) {
+			result.push(it.next());
+		}
+		return result;
+	}
+	
+	public static function const <T> (val :T) :Dynamic->T
+	{
+		return function (ignore :Dynamic) :T {
+			return val;
+		}
+	}
+	
+	public static function id <T> (val :T) :T
+	{
+		return val;
+	}
+	
 }

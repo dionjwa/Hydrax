@@ -7,7 +7,7 @@
  * Original copyright notice:
  *
  *  Author:  Manish Jethani (manish.jethani@gmail.com)
- *  Date:    April 3, 2006
+ *  Date:	April 3, 2006
  *  Version: 0.1
  *
  *  Copyright (c) 2006 Manish Jethani
@@ -218,7 +218,7 @@ public static function format (format:String, args:Array<Dynamic>):String
 				}
 
 				result += str;
-           } else if (c == "X") {
+		   } else if (c == "X") {
 				var capitalise:Bool = true;
 			// case "x":
 			// 	next = args.shift();
@@ -286,7 +286,7 @@ public static function format (format:String, args:Array<Dynamic>):String
 				}
 
 				result += str;
-            } else if (c == "s") {
+			} else if (c == "s") {
 				next = args.shift();
 				str = Std.string(next);
 

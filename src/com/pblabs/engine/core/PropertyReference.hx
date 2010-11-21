@@ -37,46 +37,46 @@ package com.pblabs.engine.core;
  */
 class PropertyReference<T>
  {
-    /**
-     * The path to the property that this references.
-     */
-    
-    public var property(getProperty, setProperty) : String;
-    /**
-     * The path to the property that this references.
-     */
-    public function getProperty():String
-    {
-        return _property;
-    }
+	/**
+	 * The path to the property that this references.
+	 */
+	
+	public var property(getProperty, setProperty) : String;
+	/**
+	 * The path to the property that this references.
+	 */
+	public function getProperty():String
+	{
+		return _property;
+	}
 
-    public function setProperty(value:String):String
-    {
-        if (value != _property) {
-            _property = value;
-            cachedLookup = null;
-        }
-        return value;
-       }
+	public function setProperty(value:String):String
+	{
+		if (value != _property) {
+			_property = value;
+			cachedLookup = null;
+		}
+		return value;
+	   }
 
-    public function new (?property:String = null)
-    {
-        _property = property;
-        // isGetterSetter = false;
-        getterSetterChecked = false;
-    }
+	public function new (?property:String = null)
+	{
+		_property = property;
+		// isGetterSetter = false;
+		getterSetterChecked = false;
+	}
 
-    public function toString () :String
-    {
-        return _property;
-    }
+	public function toString () :String
+	{
+		return _property;
+	}
 
-    var _property :String;
-    public var cachedLookup :Array<String>;
-    // public var isGetterSetter :Bool;
-    public var getterName :String;
-    public var setterName :String;
-    public var getterSetterChecked :Bool;
+	var _property :String;
+	public var cachedLookup :Array<String>;
+	// public var isGetterSetter :Bool;
+	public var getterName :String;
+	public var setterName :String;
+	public var getterSetterChecked :Bool;
 }
 
 

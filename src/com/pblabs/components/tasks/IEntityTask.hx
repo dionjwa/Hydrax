@@ -14,9 +14,9 @@ import com.pblabs.engine.core.IEntity;
 interface IEntityTask
 {
 
-    function update (dt :Float, obj :IEntity) :Bool;
+	function update (dt :Float, obj :IEntity) :Bool;
 
-    function clone () :IEntityTask;
+	function clone () :IEntityTask;
 
 }
 

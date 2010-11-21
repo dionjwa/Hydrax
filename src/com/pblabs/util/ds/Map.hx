@@ -15,44 +15,44 @@ package com.pblabs.util.ds;
  */
 interface Map<K, V> 
 {
-    /**
-      * Map the key to the value.
-      */
-    function set (key :K, value :V) :Void;
+	/**
+	  * Map the key to the value.
+	  */
+	function set (key :K, value :V) :Void;
 
-    /**
-      * Get the value associated with the key.
-      */
-    function get (key :K) :V;
+	/**
+	  * Get the value associated with the key.
+	  */
+	function get (key :K) :V;
 
-    /**
-      * Does a key exist that maps to a value
-      */
-    function exists (key :K) :Bool;
+	/**
+	  * Does a key exist that maps to a value
+	  */
+	function exists (key :K) :Bool;
 
-    /**
-      * Removes the key and associated value.
-      */
-    function remove (key :K) :Bool;
+	/**
+	  * Removes the key and associated value.
+	  */
+	function remove (key :K) :Bool;
 
-    /**
-      * The number of [key, value] pairs.
-      */
-    function size () :Int;
+	/**
+	  * The number of [key, value] pairs.
+	  */
+	function size () :Int;
 
-    /**
-      * Remove all keys and values.
-      */
-    function clear () :Void;
+	/**
+	  * Remove all keys and values.
+	  */
+	function clear () :Void;
 
-    /**
-      * Iterator for all keys.
-      */
-    function keys () :Iterator<K>;
+	/**
+	  * Iterator for all keys.
+	  */
+	function keys () :Iterator<K>;
 
-    /**
-      * Iterator over all values.
-      */
-    function iterator() : Iterator<V>;
+	/**
+	  * Iterator over all values.
+	  */
+	function iterator() : Iterator<V>;
 
 }

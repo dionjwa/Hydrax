@@ -16,9 +16,9 @@ using com.pblabs.geom.VectorTools;
 class LineSegmentTools
 {
 
-    public static function getMidpoint (line :LineSegment) :Vector2
-    {
-        return line.a.getMidpoint(line.b);
-    }
+	public static function getMidpoint (line :LineSegment) :Vector2
+	{
+		return line.a.getMidpoint(line.b);
+	}
 }
 

@@ -15,120 +15,120 @@ import com.pblabs.geom.bounds.IBounds;
 using com.pblabs.geom.CircleUtil;
 
 class AbstractBounds<T>
-    implements IBounds<T> 
+	implements IBounds<T> 
 {
-    public var topLeft(get_topLeft, set_topLeft) :Vector2;
-    public var center(get_center, set_center) :Vector2;
-    public var boundingRect (get_boundingRect, null) :Rectangle;
-    public var boundingCircle (get_boundingCircle, null) :Circle;
+	public var topLeft(get_topLeft, set_topLeft) :Vector2;
+	public var center(get_center, set_center) :Vector2;
+	public var boundingRect (get_boundingRect, null) :Rectangle;
+	public var boundingCircle (get_boundingCircle, null) :Circle;
 
-    public function new ()
-    {
-        _center = new Vector2();
-    }
+	public function new ()
+	{
+		_center = new Vector2();
+	}
 
-    function get_center ():Vector2
-    {
-        return _center;
-    }
-    
-    function set_center (v :Vector2) :Vector2
-    {
-        throw "Abstract";
-        return null;
-    }
-    
-    function get_topLeft () :Vector2
-    {
-        return center.subtract(new Vector2(boundingRect.width / 2, boundingRect.height / 2));
-    }
-    
-    function set_topLeft (val :Vector2) :Vector2
-    {
-        center = val.add(new Vector2(boundingRect.width / 2, boundingRect.height / 2));
-        return val;
-    }
-    
-    function get_boundingRect () :Rectangle
-    {
-        if (_boundsRect == null) {
-            _boundsRect = computeBoundingRect();
-        }
-        return _boundsRect;
-    }
-    
-    function get_boundingCircle () :Circle
-    {
-        if (_boundsCircle == null) {
-            _boundsCircle = get_boundingRect().toCircle();
-        }
-        return _boundsCircle;
-    }
-    
-    function computeBoundingRect () :Rectangle
-    {
-        throw "Abstract";
-        return null;
-    }
+	function get_center ():Vector2
+	{
+		return _center;
+	}
+	
+	function set_center (v :Vector2) :Vector2
+	{
+		throw "Abstract";
+		return null;
+	}
+	
+	function get_topLeft () :Vector2
+	{
+		return center.subtract(new Vector2(boundingRect.width / 2, boundingRect.height / 2));
+	}
+	
+	function set_topLeft (val :Vector2) :Vector2
+	{
+		center = val.add(new Vector2(boundingRect.width / 2, boundingRect.height / 2));
+		return val;
+	}
+	
+	function get_boundingRect () :Rectangle
+	{
+		if (_boundsRect == null) {
+			_boundsRect = computeBoundingRect();
+		}
+		return _boundsRect;
+	}
+	
+	function get_boundingCircle () :Circle
+	{
+		if (_boundsCircle == null) {
+			_boundsCircle = get_boundingRect().toCircle();
+		}
+		return _boundsCircle;
+	}
+	
+	function computeBoundingRect () :Rectangle
+	{
+		throw "Abstract";
+		return null;
+	}
 
-    public function clone () :T
-    {
-        throw "Abstract";
-        return null;
-    }
+	public function clone () :T
+	{
+		throw "Abstract";
+		return null;
+	}
 
-    public function containsPoint (v :Vector2) :Bool
-    {
-        throw "Abstract";
-        return false;
-    }
-    
-    public function containsBounds (b :IBounds<Dynamic>) :Bool
-    {
-        throw "Abstract";
-        return false;
-    }
+	public function containsPoint (v :Vector2) :Bool
+	{
+		throw "Abstract";
+		return false;
+	}
+	
+	public function containsBounds (b :IBounds<Dynamic>) :Bool
+	{
+		throw "Abstract";
+		return false;
+	}
 
-    public function distance (b :IBounds<Dynamic>) :Float
-    {
-        throw "Abstract";
-        return 0;
-    }
-    
-    public function isWithinDistance(b :IBounds<Dynamic>, d :Float) :Bool
-    {
-        throw "Abstract";
-        return false;
-    }
+	public function distance (b :IBounds<Dynamic>) :Float
+	{
+		throw "Abstract";
+		return 0;
+	}
+	
+	public function isWithinDistance(b :IBounds<Dynamic>, d :Float) :Bool
+	{
+		throw "Abstract";
+		return false;
+	}
 
-    public function distanceToPoint (p :Vector2) :Float
-    {
-        throw "Abstract";
-        return 0;
-    }
+	public function distanceToPoint (p :Vector2) :Float
+	{
+		throw "Abstract";
+		return 0;
+	}
 
-    public function getBoundedPoint (v :Vector2, ?bounded :Vector2) :Vector2
-    {
-        throw "Abstract";
-        return null;
-    }
+	public function getBoundedPoint (v :Vector2, ?bounded :Vector2) :Vector2
+	{
+		throw "Abstract";
+		return null;
+	}
 
-    public function getBoundedPointFromMove (originX :Float, originY :Float, targetX :Float, targetY :Float, ?bounded :Vector2) :Vector2
-    {
-        throw "Abstract";
-        return null;
-    }
-    
-    function clearCache () :Void
-    {
-        _center = null;
-        _boundsRect = null;
-        _boundsCircle = null;
-    }
-    
-    var _center :Vector2;
-    var _boundsRect :Rectangle;
-    var _boundsCircle :Circle;
+	public function getBoundedPointFromMove (originX :Float, originY :Float, targetX :Float, targetY :Float, ?bounded :Vector2) :Vector2
+	{
+		throw "Abstract";
+		return null;
+	}
+	
+	function clearCache () :Void
+	{
+		_center = null;
+		_boundsRect = null;
+		_boundsCircle = null;
+	}
+	
+	var _center :Vector2;
+	var _boundsRect :Rectangle;
+	var _boundsCircle :Circle;
 
 }
 

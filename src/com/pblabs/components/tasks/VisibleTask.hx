@@ -33,26 +33,26 @@ import com.pblabs.engine.core.IEntity;
 import flash.display.DisplayObject;
 
 class VisibleTask
-    implements IEntityTask {
-    
-    public function new (visible :Bool, disp :DisplayObject)
-    {
-        _visible = visible;
-        _disp = disp;
-    }
+	implements IEntityTask {
+	
+	public function new (visible :Bool, disp :DisplayObject)
+	{
+		_visible = visible;
+		_disp = disp;
+	}
 
-    public function update (dt :Float, obj :IEntity) :Bool
-    {
-        _disp.visible = _visible;
-        return true;
-    }
+	public function update (dt :Float, obj :IEntity) :Bool
+	{
+		_disp.visible = _visible;
+		return true;
+	}
 
-    public function clone () :IEntityTask
-    {
-        return new VisibleTask(_visible, _disp);
-    }
+	public function clone () :IEntityTask
+	{
+		return new VisibleTask(_visible, _disp);
+	}
 
-    var _visible:Bool;
-    var _disp:DisplayObject;
+	var _visible:Bool;
+	var _disp:DisplayObject;
 }
 

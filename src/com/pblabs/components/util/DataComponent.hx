@@ -16,10 +16,10 @@ import com.pblabs.engine.core.EntityComponent;
 */
 
 class DataComponent<T> extends EntityComponent, 
-    implements Dynamic<T> 
+	implements Dynamic<T> 
 {
-    public function new() 
-    {
-        super();
-    }
+	public function new() 
+	{
+		super();
+	}
 }

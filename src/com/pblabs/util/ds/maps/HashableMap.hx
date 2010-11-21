@@ -21,62 +21,62 @@ import haxe.FastList;
  * It's not as fast as a String or Int key based map however.
  */
 class HashableMap<K, V> extends KeyListMap<K, V>,
-    implements Map<K, V>
+	implements Map<K, V>
 {
-    public function new()
-    { 
-        super();
-        _intMap = new IntHash();
-    }
+	public function new()
+	{ 
+		super();
+		_intMap = new IntHash();
+	}
 
-    override public function set (key :K, value :V) :Void
-    {
-        var hash = getHash(key);
-        if (!_intMap.exists(hash)) {
-            super.set(key, value);
-        }
-        _intMap.set(hash, value);
-    }
+	override public function set (key :K, value :V) :Void
+	{
+		var hash = getHash(key);
+		if (!_intMap.exists(hash)) {
+			super.set(key, value);
+		}
+		_intMap.set(hash, value);
+	}
 
-    public function get (key :K) :V
-    {
-        return _intMap.get(getHash(key));
-    }
+	public function get (key :K) :V
+	{
+		return _intMap.get(getHash(key));
+	}
 
-    override public function exists (key :K) :Bool
-    {
-        return _intMap.exists(getHash(key));
-    }
+	override public function exists (key :K) :Bool
+	{
+		return _intMap.exists(getHash(key));
+	}
 
-    override public function remove (key :K) :Bool
-    {
-        var hash = getHash(key);
-        if (!_intMap.exists(hash)) {
-            return false;
-        }
-        super.remove(key);
-        var oldVal:V = _intMap.get(hash);
-        _intMap.remove(hash);
-        return oldVal != null;
-    }
+	override public function remove (key :K) :Bool
+	{
+		var hash = getHash(key);
+		if (!_intMap.exists(hash)) {
+			return false;
+		}
+		super.remove(key);
+		var oldVal:V = _intMap.get(hash);
+		_intMap.remove(hash);
+		return oldVal != null;
+	}
 
-    override public function clear () :Void
-    {
-        super.clear();
-        _intMap = new IntHash<V>();
-    }
-    
-    public function iterator() : Iterator<V>
-    {
-        return _intMap.iterator();
-    }
-    
-    inline function getHash (key :K) :Int
-    {
-        var hashable = cast(key, Hashable);
-        return hashable.hashCode();
-    }
-    
-    var _intMap :IntHash<V>;
+	override public function clear () :Void
+	{
+		super.clear();
+		_intMap = new IntHash<V>();
+	}
+	
+	public function iterator() : Iterator<V>
+	{
+		return _intMap.iterator();
+	}
+	
+	inline function getHash (key :K) :Int
+	{
+		var hashable = cast(key, Hashable);
+		return hashable.hashCode();
+	}
+	
+	var _intMap :IntHash<V>;
 }
 

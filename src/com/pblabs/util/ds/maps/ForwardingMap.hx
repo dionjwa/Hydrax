@@ -16,57 +16,57 @@ import com.pblabs.util.ds.Map;
  */
 class ForwardingMap<K, V> implements Map<K, V> 
 {
-    
-    public function new (source :Map<K, V>)
-    {
-        _source = Preconditions.checkNotNull(source);
-    }
+	
+	public function new (source :Map<K, V>)
+	{
+		_source = Preconditions.checkNotNull(source);
+	}
 
-    public function set (key :K, value :V) :Void
-    {
-        _source.set(key, value);
-    }
+	public function set (key :K, value :V) :Void
+	{
+		_source.set(key, value);
+	}
 
-    public function get (key :K) :V
-    {
-        return _source.get(key);
-    }
+	public function get (key :K) :V
+	{
+		return _source.get(key);
+	}
 
-    public function exists (key :K) :Bool
-    {
-        return _source.exists(key);
-    }
+	public function exists (key :K) :Bool
+	{
+		return _source.exists(key);
+	}
 
-    public function remove (key :K) :Bool
-    {
-        return _source.remove(key);
-    }
+	public function remove (key :K) :Bool
+	{
+		return _source.remove(key);
+	}
 
-    public function size () :Int
-    {
-        return _source.size();
-    }
+	public function size () :Int
+	{
+		return _source.size();
+	}
 
-    public function clear () :Void
-    {
-        _source.clear();
-    }
+	public function clear () :Void
+	{
+		_source.clear();
+	}
 
-    public function keys () :Iterator<K>
-    {
-        return _source.keys();
-    }
+	public function keys () :Iterator<K>
+	{
+		return _source.keys();
+	}
 
-    public function iterator () :Iterator<V>
-    {
-        return _source.iterator();
-    }
-    
-    public function toString () :String
-    {
-        return Std.string(_source);
-    }
+	public function iterator () :Iterator<V>
+	{
+		return _source.iterator();
+	}
+	
+	public function toString () :String
+	{
+		return Std.string(_source);
+	}
 
-    var _source:Map<K, V>;
+	var _source:Map<K, V>;
 }
 

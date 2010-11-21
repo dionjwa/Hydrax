@@ -29,8 +29,8 @@ package com.pblabs.util;
 
 interface Equalable <T>
 {
-    /**
-     * Returns true to indicate that the specified object is equal to this instance.
-     */
-    function equals (other :T) :Bool;
+	/**
+	 * Returns true to indicate that the specified object is equal to this instance.
+	 */
+	function equals (other :T) :Bool;
 }

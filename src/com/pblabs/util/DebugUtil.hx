@@ -18,175 +18,175 @@ import com.pblabs.util.ds.Map;
 class DebugUtil
 {
 
-    public static function applyAllChildren (d :DisplayObjectContainer, f :DisplayObject->Void) :Void
-    {
-        f(d);
-        for (ii in 0...d.numChildren) {
-            var child:DisplayObject = d.getChildAt(ii);
-            f(child);
-            if (Std.is( child, DisplayObjectContainer)) {
-                applyAllChildren(cast(child,DisplayObjectContainer), f);
-            }
-        }
-    }
+	public static function applyAllChildren (d :DisplayObjectContainer, f :DisplayObject->Void) :Void
+	{
+		f(d);
+		for (ii in 0...d.numChildren) {
+			var child:DisplayObject = d.getChildAt(ii);
+			f(child);
+			if (Std.is( child, DisplayObjectContainer)) {
+				applyAllChildren(cast(child,DisplayObjectContainer), f);
+			}
+		}
+	}
 
-    #if flash
-    public static function dictToString (h :Dictionary) :String
-    {
-        var sb:String = "";
+	#if flash
+	public static function dictToString (h :Dictionary) :String
+	{
+		var sb:String = "";
 
-        if (h == null) {
-            return sb;
-        }
-        return sb;
-    }
-    #end
+		if (h == null) {
+			return sb;
+		}
+		return sb;
+	}
+	#end
 
-    public static function createDebugLayer (debugcall :Dynamic, args :Array<Dynamic>) :Sprite
-    {
-        trace("createDebugLayer args=" + args.join(", "));
-        var layer:Sprite = new Sprite();
-        args.unshift(layer);
-        trace("after adding sprite args=" + args.join(", "));
-        debugcall.apply(null, args);
-        return layer;
-    }
-    
-    public static function drawBoundingRect (disp :DisplayObject, drawLayer :Sprite, ?color :Int =
-        0x000000, ?alpha :Float = 1, lineThickness :Float = 1) :Void
-    {
-        var bounds:Rectangle = disp.getBounds(drawLayer);
-        var g:Graphics = drawLayer.graphics;
-        g.lineStyle(lineThickness, color, alpha);
-        g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);
-    }
+	public static function createDebugLayer (debugcall :Dynamic, args :Array<Dynamic>) :Sprite
+	{
+		trace("createDebugLayer args=" + args.join(", "));
+		var layer:Sprite = new Sprite();
+		args.unshift(layer);
+		trace("after adding sprite args=" + args.join(", "));
+		debugcall.apply(null, args);
+		return layer;
+	}
+	
+	public static function drawBoundingRect (disp :DisplayObject, drawLayer :Sprite, ?color :Int =
+		0x000000, ?alpha :Float = 1, lineThickness :Float = 1) :Void
+	{
+		var bounds:Rectangle = disp.getBounds(drawLayer);
+		var g:Graphics = drawLayer.graphics;
+		g.lineStyle(lineThickness, color, alpha);
+		g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);
+	}
 
-    public static function drawDot (s :Sprite, ?color :Int = 0x00ffff, ?r :Float = 10, ?x :Float = 0, ?y :Float = 0) :Void
-    {
-        s.graphics.lineStyle(1, color);
-        s.graphics.drawCircle(x, y, r);
-        s.graphics.lineStyle(0, 0, 0);
-    }
+	public static function drawDot (s :Sprite, ?color :Int = 0x00ffff, ?r :Float = 10, ?x :Float = 0, ?y :Float = 0) :Void
+	{
+		s.graphics.lineStyle(1, color);
+		s.graphics.drawCircle(x, y, r);
+		s.graphics.lineStyle(0, 0, 0);
+	}
 
-    public static function drawLine (s :Sprite, x1 :Float, y1 :Float, x2 :Float, y2 :Float,
-        ?color :Int = 0x000000, ?linethickness :Float = 1, ?alpha :Float = 1) :Void
-    {
-        var g:Graphics = s.graphics;
-        g.lineStyle(linethickness, color, alpha);
-        g.moveTo(x1, y1);
-        g.lineTo(x2, y2);
-        //        g.lineStyle(0, 0, 0);
-    }
+	public static function drawLine (s :Sprite, x1 :Float, y1 :Float, x2 :Float, y2 :Float,
+		?color :Int = 0x000000, ?linethickness :Float = 1, ?alpha :Float = 1) :Void
+	{
+		var g:Graphics = s.graphics;
+		g.lineStyle(linethickness, color, alpha);
+		g.moveTo(x1, y1);
+		g.lineTo(x2, y2);
+		//		g.lineStyle(0, 0, 0);
+	}
 
-    public static function drawRect (layer :Sprite, width :Float, height :Float, ?color :Int = 0x000000,
-        ?alpha :Float = 1) :Void
-    {
-        var g:Graphics = layer.graphics;
-        g.lineStyle(1, color, alpha);
-        g.drawRect(0, 0, width, height);
-    }
+	public static function drawRect (layer :Sprite, width :Float, height :Float, ?color :Int = 0x000000,
+		?alpha :Float = 1) :Void
+	{
+		var g:Graphics = layer.graphics;
+		g.lineStyle(1, color, alpha);
+		g.drawRect(0, 0, width, height);
+	}
 
-    public static function drawRectangle (layer :Sprite, rect :Rectangle, ?color :Int = 0x000000,
-        ?alpha :Float = 1) :Void
-    {
-        var g:Graphics = layer.graphics;
-        g.lineStyle(1, color, alpha);
-        g.drawRect(rect.left, rect.top, rect.width, rect.height);
-    }
+	public static function drawRectangle (layer :Sprite, rect :Rectangle, ?color :Int = 0x000000,
+		?alpha :Float = 1) :Void
+	{
+		var g:Graphics = layer.graphics;
+		g.lineStyle(1, color, alpha);
+		g.drawRect(rect.left, rect.top, rect.width, rect.height);
+	}
 
-    public static function fillBoundingRect (layer :Sprite, rootContainer :DisplayObjectContainer,
-        ?color :Int = 0xffffff, ?alpha :Float = 0) :Void
-    {
-        var bounds:Rectangle = rootContainer.getBounds(rootContainer);
-        var g:Graphics = layer.graphics;
-        g.clear();
-        g.beginFill(color, alpha);
-        g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);
-        g.endFill();
-    }
+	public static function fillBoundingRect (layer :Sprite, rootContainer :DisplayObjectContainer,
+		?color :Int = 0xffffff, ?alpha :Float = 0) :Void
+	{
+		var bounds:Rectangle = rootContainer.getBounds(rootContainer);
+		var g:Graphics = layer.graphics;
+		g.clear();
+		g.beginFill(color, alpha);
+		g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);
+		g.endFill();
+	}
 
-    public static function fillDot (s :Sprite, ?color :Int = 0x00ffff, ?r :Float = 10, ?x :Float = 0,
-        ?y :Float = 0) :Void
-    {
-        s.graphics.beginFill(color);
-        s.graphics.drawCircle(x, y, r);
-        s.graphics.endFill();
-    }
+	public static function fillDot (s :Sprite, ?color :Int = 0x00ffff, ?r :Float = 10, ?x :Float = 0,
+		?y :Float = 0) :Void
+	{
+		s.graphics.beginFill(color);
+		s.graphics.drawCircle(x, y, r);
+		s.graphics.endFill();
+	}
 
-    public static function fillRect (layer :Sprite, width :Float, height :Float, ?color :Int = 0x000000,
-        ?alpha :Float = 1) :Void
-    {
-        var g:Graphics = layer.graphics;
-        g.lineStyle(0, 0, 0);
-        g.beginFill(color, alpha);
-        g.drawRect(0, 0, width, height);
-        g.endFill();
-    }
+	public static function fillRect (layer :Sprite, width :Float, height :Float, ?color :Int = 0x000000,
+		?alpha :Float = 1) :Void
+	{
+		var g:Graphics = layer.graphics;
+		g.lineStyle(0, 0, 0);
+		g.beginFill(color, alpha);
+		g.drawRect(0, 0, width, height);
+		g.endFill();
+	}
 
-    public static function fillRectangle (layer :Sprite, rect :Rectangle, ?color :Int = 0x000000,
-        ?alpha :Float = 1) :Void
-    {
-        var g:Graphics = layer.graphics;
-        g.beginFill(color, alpha);
-        g.drawRect(rect.left, rect.top, rect.width, rect.height);
-        g.endFill();
-    }
+	public static function fillRectangle (layer :Sprite, rect :Rectangle, ?color :Int = 0x000000,
+		?alpha :Float = 1) :Void
+	{
+		var g:Graphics = layer.graphics;
+		g.beginFill(color, alpha);
+		g.drawRect(rect.left, rect.top, rect.width, rect.height);
+		g.endFill();
+	}
 
-    public static function mapToProp (arr :Array<Dynamic>, propName :String) :List<Dynamic>
-    {
-        return Lambda.map(arr, function (obj :Dynamic) :Dynamic {
-                return Reflect.field(obj, propName);
-            });
-    }
+	public static function mapToProp (arr :Array<Dynamic>, propName :String) :List<Dynamic>
+	{
+		return Lambda.map(arr, function (obj :Dynamic) :Dynamic {
+				return Reflect.field(obj, propName);
+			});
+	}
 
-    public static function traceCallback (s :String) :Dynamic
-    {
-        return function () :Void { trace(s); };
-    }
+	public static function traceCallback (s :String) :Dynamic
+	{
+		return function () :Void { trace(s); };
+	}
 
-    public static function traceDisplayChildren (d :DisplayObject, ?space :String = " ") :Void
-    {
-        if (d == null) {
-            return;
-        }
-        trace(space + extendedDisplayObjectName(d));
-        if (Std.is( d, DisplayObjectContainer)) {
-            var parent:DisplayObjectContainer = cast(d, DisplayObjectContainer);
+	public static function traceDisplayChildren (d :DisplayObject, ?space :String = " ") :Void
+	{
+		if (d == null) {
+			return;
+		}
+		trace(space + extendedDisplayObjectName(d));
+		if (Std.is( d, DisplayObjectContainer)) {
+			var parent:DisplayObjectContainer = cast(d, DisplayObjectContainer);
 
-            for (ii in 0...parent.numChildren) {
-                if (Std.is( parent.getChildAt(ii), DisplayObjectContainer)) {
-                    traceDisplayChildren(cast(parent.getChildAt(ii), DisplayObjectContainer), space + "  ");
-                }
-            }
+			for (ii in 0...parent.numChildren) {
+				if (Std.is( parent.getChildAt(ii), DisplayObjectContainer)) {
+					traceDisplayChildren(cast(parent.getChildAt(ii), DisplayObjectContainer), space + "  ");
+				}
+			}
 
-        }
-    }
+		}
+	}
 
-    public static function traceParentage (d :DisplayObject, ?space :String = " ") :String
-    {
-        if (d == null) {
-            return "";
-        }
+	public static function traceParentage (d :DisplayObject, ?space :String = " ") :String
+	{
+		if (d == null) {
+			return "";
+		}
 
-        var lineage:Array<Dynamic> = [ extendedDisplayObjectName(d)];
-        var current:DisplayObject = d.parent;
-        while (current != null) {
-            lineage.unshift(extendedDisplayObjectName(current));
-            current = current.parent;
-        }
+		var lineage:Array<Dynamic> = [ extendedDisplayObjectName(d)];
+		var current:DisplayObject = d.parent;
+		while (current != null) {
+			lineage.unshift(extendedDisplayObjectName(current));
+			current = current.parent;
+		}
 
-        for (ii in 0...lineage.length) {
-            lineage[ii] = space + lineage[ii];
-            space = space + "  ";
-        }
+		for (ii in 0...lineage.length) {
+			lineage[ii] = space + lineage[ii];
+			space = space + "  ";
+		}
 
-        return "Lineage:\n" + lineage.join("\n");
-    }
+		return "Lineage:\n" + lineage.join("\n");
+	}
 
-    static function extendedDisplayObjectName (d :DisplayObject) :String
-    {
-        return d + ".name=" + d.name + "  loc=" + d.x + " " + d.y;
-    }
+	static function extendedDisplayObjectName (d :DisplayObject) :String
+	{
+		return d + ".name=" + d.name + "  loc=" + d.x + " " + d.y;
+	}
 }
 
 

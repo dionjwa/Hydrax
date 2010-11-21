@@ -20,13 +20,13 @@ package com.pblabs.components.scene;
 
 // class SceneUtil
 // {
-//     public function new ()
-//     {
-        
-//     }
+//	 public function new ()
+//	 {
+		
+//	 }
 
 // }
-    
-    // public static var DEFAULT_ALIGNMENT:SceneAlignment = CENTER;
+	
+	// public static var DEFAULT_ALIGNMENT:SceneAlignment = CENTER;
 
-    
+	

@@ -31,26 +31,26 @@ package com.pblabs.components.tasks;
 import com.pblabs.engine.core.IEntity;
 
 class TimedTask
-    implements IEntityTask {
-    
-    public function new (time :Float = 0)
-    {
-        _time = time;
-        _elapsedTime = 0;
-    }
+	implements IEntityTask {
+	
+	public function new (time :Float = 0)
+	{
+		_time = time;
+		_elapsedTime = 0;
+	}
 
-    public function update (dt :Float, obj :IEntity) :Bool
-    {
-        _elapsedTime += dt;
-        return (_elapsedTime >= _time);
-    }
+	public function update (dt :Float, obj :IEntity) :Bool
+	{
+		_elapsedTime += dt;
+		return (_elapsedTime >= _time);
+	}
 
-    public function clone () :IEntityTask
-    {
-        return new TimedTask(_time);
-    }
+	public function clone () :IEntityTask
+	{
+		return new TimedTask(_time);
+	}
 
-    var _time :Float;
-    var _elapsedTime :Float;
+	var _time :Float;
+	var _elapsedTime :Float;
 }
 

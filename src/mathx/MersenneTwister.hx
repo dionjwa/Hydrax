@@ -36,7 +36,7 @@ class MersenneTwister implements RandomGenerator
 	
  	public function new(?seed :Int = 0) 
  	{
- 	    if (seed == 0) seed = Math.floor(Date.now().getTime());
+ 		if (seed == 0) seed = Math.floor(Date.now().getTime());
  		mt = new Array<Int32>();
 		setSeed( seed );
  	}
@@ -61,14 +61,14 @@ class MersenneTwister implements RandomGenerator
 	{
 		if( index == 0 )
 			generateNumbers();
-     
+	 
 		var y = mt[index];
 		//TEMPERING_
 		y = Int32.xor( y, Int32.ushr( y, SHIFT_U ) );
 		y = Int32.xor( y, Int32.and( Int32.shl( y, SHIFT_S ), MASK_B ) );
 		y = Int32.xor( y, Int32.and( Int32.shl( y, SHIFT_T ), MASK_C ) );
 		y = Int32.xor( y, Int32.ushr( y, SHIFT_L ) );
-     
+	 
 		index = (index + 1) % _N;
 		return y;
 	}
@@ -119,24 +119,24 @@ class MersenneTwister implements RandomGenerator
 	
 	public function nextInt(?max :Int = 0) : Int
 	{
-	    if (max < 0)
-            throw "n must be positive";
-            
+		if (max < 0)
+			throw "n must be positive";
+			
 		//use wrap not constrain, since contrain would bias the numbers to max/min
 		var n = extractNumber();
 		n = Int32.and( n, Int32.make( 0x7fff, 0xffff ) );	//strip sign bit
 		
 		if (max == 0) {
-		    return Limits.wrapPosInt32( n );
+			return Limits.wrapPosInt32( n );
 		} else {
-		    return Limits.wrapPosInt32( n ) % max;
+			return Limits.wrapPosInt32( n ) % max;
 		}
 	}
 	
 	public function nextBool () :Bool
 	{
-	    return false;
-	    // nextInt()
+		return false;
+		// nextInt()
 	}
 	
 	public function reseed( seed : Int ) : Void

@@ -14,31 +14,31 @@ import com.pblabs.util.ReflectUtil;
 
 class BoundsNone extends AbstractBounds<BoundsNone> 
 {
-    public function new()
-    {
-        super();
-    }
+	public function new()
+	{
+		super();
+	}
 
-    override function get_center ():Vector2
-    {
-        throw "Abstract method";
-        return null;
-    }
+	override function get_center ():Vector2
+	{
+		throw "Abstract method";
+		return null;
+	}
 
-    public override function clone () :BoundsNone
-    {
-        return new BoundsNone();
-    }
+	public override function clone () :BoundsNone
+	{
+		return new BoundsNone();
+	}
 
-    public override function distance (b :IBounds<Dynamic>) :Float
-    {
-        return 0;
-    }
+	public override function distance (b :IBounds<Dynamic>) :Float
+	{
+		return 0;
+	}
 
-    public override function distanceToPoint (p :Vector2) :Float
-    {
-        return 0;
-    }
+	public override function distanceToPoint (p :Vector2) :Float
+	{
+		return 0;
+	}
 }
 
 

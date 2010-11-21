@@ -30,18 +30,18 @@ package com.pblabs.components.tasks;
 import com.pblabs.engine.core.IEntity;
 
 class SelfDestructTask
-    implements IEntityTask {
-    public function new() { }
-    
-    public function update (dt :Float, obj :IEntity) :Bool
-    {
-        obj.destroy();
-        return true;
-    }
+	implements IEntityTask {
+	public function new() { }
+	
+	public function update (dt :Float, obj :IEntity) :Bool
+	{
+		obj.destroy();
+		return true;
+	}
 
-    public function clone () :IEntityTask
-    {
-        return new SelfDestructTask();
-    }
+	public function clone () :IEntityTask
+	{
+		return new SelfDestructTask();
+	}
 
 }

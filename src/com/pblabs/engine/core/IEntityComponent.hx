@@ -35,9 +35,9 @@ import com.pblabs.engine.core.IPBContext;
 * 
 * <p>There are several reasons why PBE is set up this way:
 * <bl>
-*    <li>Entities have only the data they need and nothing more.</li>
-*    <li>Components can be reused on several different types of entities.</li>
-*    <li>Programmers can focus on specific pieces of functionality when writing code.</li>
+*	<li>Entities have only the data they need and nothing more.</li>
+*	<li>Components can be reused on several different types of entities.</li>
+*	<li>Programmers can focus on specific pieces of functionality when writing code.</li>
 * </bl>
 * </p>
 * 

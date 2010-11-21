@@ -16,16 +16,16 @@ import com.pblabs.engine.core.IPBObject;
   */
 interface IPBGroup implements IPBObject
 {
-    var rootGroup (get_rootGroup, null) :IPBGroup;
-    
-    function addToGroup (item :IPBObject):Bool;
-    function removeFromGroup (item :IPBObject):Bool;
-    function iterator () :Iterator<IPBObject>;
-    
-    /**
-     * Destroy all the objects in this group, but do not delete the group.
-     */
-    function clear() :Void;
-    
+	var rootGroup (get_rootGroup, null) :IPBGroup;
+	
+	function addToGroup (item :IPBObject):Bool;
+	function removeFromGroup (item :IPBObject):Bool;
+	function iterator () :Iterator<IPBObject>;
+	
+	/**
+	 * Destroy all the objects in this group, but do not delete the group.
+	 */
+	function clear() :Void;
+	
 }
 

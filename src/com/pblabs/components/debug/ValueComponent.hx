@@ -14,31 +14,31 @@ import com.pblabs.engine.core.PropertyReference;
  */
 class ValueComponent<T> extends EntityComponent 
 {
-    public var value :T;
+	public var value :T;
 
-    public static function valueProperty<T> (componentName :String) :PropertyReference<T>
-    {
-        return new PropertyReference<T>("@" + componentName + ".value");
-    }
+	public static function valueProperty<T> (componentName :String) :PropertyReference<T>
+	{
+		return new PropertyReference<T>("@" + componentName + ".value");
+	}
 
-    public function new (val :T)
-    {
-        super();
-        value = val;
-    }
-    
-    public function toString () :String
-    {
-        return "[value=" + value + "]";
-    }
+	public function new (val :T)
+	{
+		super();
+		value = val;
+	}
+	
+	public function toString () :String
+	{
+		return "[value=" + value + "]";
+	}
 
-    public function globalValueProperty () :PropertyReference<T>
-    {
-        return new PropertyReference("#" + owner.name + "." + name + ".value");
-    }
+	public function globalValueProperty () :PropertyReference<T>
+	{
+		return new PropertyReference("#" + owner.name + "." + name + ".value");
+	}
 
-    public function localValueProperty () :PropertyReference<T>
-    {
-        return new PropertyReference("@" + name + ".value");
-    }
+	public function localValueProperty () :PropertyReference<T>
+	{
+		return new PropertyReference("@" + name + ".value");
+	}
 }

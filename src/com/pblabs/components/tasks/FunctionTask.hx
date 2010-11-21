@@ -31,32 +31,32 @@ package com.pblabs.components.tasks;
 import com.pblabs.engine.core.IEntity;
 
 class FunctionTask
-    implements IEntityTask {
-    
-    public function new (fn :Dynamic, ?args:Array<Dynamic> = null)
-    {
-        if (null == fn) {
-            throw "fn must be non-null";
-        }
-        
-        _fn = fn;
-        _args = if (args != null) args else EMPTY_ARRAY;
-    }
-    
-    public function update (dt :Float, obj :IEntity) :Bool
-    {
-        var val :Null<Bool> = Reflect.callMethod(null, _fn, _args);
-        return val == null || val == true;
-    }
-    
-    public function clone () :IEntityTask
-    {
-        var task:FunctionTask = new FunctionTask(_fn, _args);
-        return task;
-    }
-    
-    var _fn:Dynamic;
-    var _args:Array<Dynamic>;
-    static var EMPTY_ARRAY :Array<Dynamic> = [];
+	implements IEntityTask {
+	
+	public function new (fn :Dynamic, ?args:Array<Dynamic> = null)
+	{
+		if (null == fn) {
+			throw "fn must be non-null";
+		}
+		
+		_fn = fn;
+		_args = if (args != null) args else EMPTY_ARRAY;
+	}
+	
+	public function update (dt :Float, obj :IEntity) :Bool
+	{
+		var val :Null<Bool> = Reflect.callMethod(null, _fn, _args);
+		return val == null || val == true;
+	}
+	
+	public function clone () :IEntityTask
+	{
+		var task:FunctionTask = new FunctionTask(_fn, _args);
+		return task;
+	}
+	
+	var _fn:Dynamic;
+	var _args:Array<Dynamic>;
+	static var EMPTY_ARRAY :Array<Dynamic> = [];
 }
 

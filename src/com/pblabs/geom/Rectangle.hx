@@ -20,10 +20,10 @@ class Rectangle
    // public function new(?inX : Float = 0, ?inY : Float = 0, ?inWidth : Float = 0, ?inHeight : Float = 0)
    public function new(?inX : Float = 0, ?inY : Float = 0, ?inWidth : Float = 0, ?inHeight : Float = 0)
    {
-      x = inX;
-      y = inY;
-      width = inWidth;
-      height = inHeight;
+	  x = inX;
+	  y = inY;
+	  width = inWidth;
+	  height = inHeight;
    }
 
    public var left(get_left,set_left) : Float;
@@ -54,146 +54,146 @@ class Rectangle
    function get_bottomRight() { return new Vector2(x+width,y+height); }
    function set_bottomRight(p:Vector2)
    {
-      width = p.x-x;
-      height = p.y-y;
-      return p.clone();
+	  width = p.x-x;
+	  height = p.y-y;
+	  return p.clone();
    }
 
    public function clone() : com.pblabs.geom.Rectangle
    {
-      return new Rectangle(x,y,width,height);
+	  return new Rectangle(x,y,width,height);
    }
    public function contains(inX : Float, inY : Float) : Bool
    {
-      return inX>=x && inY>=y && inX<right && inY<bottom;
+	  return inX>=x && inY>=y && inX<right && inY<bottom;
    }
    public function containsPoint(point : Vector2) : Bool
    {
-      return contains(point.x,point.y);
+	  return contains(point.x,point.y);
    }
    public function containsRect(rect : com.pblabs.geom.Rectangle) : Bool
    {
-     return contains(rect.x,rect.y) && containsPoint(rect.bottomRight);
+	 return contains(rect.x,rect.y) && containsPoint(rect.bottomRight);
    }
    public function equals(toCompare : com.pblabs.geom.Rectangle) : Bool
    {
-      return x==toCompare.x && y==toCompare.y &&
-             width==toCompare.width && height==toCompare.height;
+	  return x==toCompare.x && y==toCompare.y &&
+			 width==toCompare.width && height==toCompare.height;
    }
    public function inflate(dx : Float, dy : Float) : Void
    {
-      x-=dx; width+=dx*2;
-      y-=dy; height+=dy*2;
+	  x-=dx; width+=dx*2;
+	  y-=dy; height+=dy*2;
    }
    public function inflatePoint(point : Vector2) : Void
    {
-      inflate(point.x,point.y);
+	  inflate(point.x,point.y);
    }
    public function intersection(toIntersect : com.pblabs.geom.Rectangle) : com.pblabs.geom.Rectangle
    {
-      var x0 = x<toIntersect.x ? toIntersect.x : x;
-      var x1 = right>toIntersect.right ? toIntersect.right : right;
-      if (x1<=x0)
-         return new Rectangle();
+	  var x0 = x<toIntersect.x ? toIntersect.x : x;
+	  var x1 = right>toIntersect.right ? toIntersect.right : right;
+	  if (x1<=x0)
+		 return new Rectangle();
 
-      var y0 = y<toIntersect.y ? toIntersect.x : y;
-      var y1 = bottom>toIntersect.bottom ? toIntersect.bottom : bottom;
-      if (y1<=y0)
-         return new Rectangle();
+	  var y0 = y<toIntersect.y ? toIntersect.x : y;
+	  var y1 = bottom>toIntersect.bottom ? toIntersect.bottom : bottom;
+	  if (y1<=y0)
+		 return new Rectangle();
 
-      return new Rectangle(x0,y0,x1-x0,y1-y0);
+	  return new Rectangle(x0,y0,x1-x0,y1-y0);
    }
 
    public function intersects(toIntersect : com.pblabs.geom.Rectangle) : Bool
    {
-      var x0 = x<toIntersect.x ? toIntersect.x : x;
-      var x1 = right>toIntersect.right ? toIntersect.right : right;
-      if (x1<=x0)
-         return false;
+	  var x0 = x<toIntersect.x ? toIntersect.x : x;
+	  var x1 = right>toIntersect.right ? toIntersect.right : right;
+	  if (x1<=x0)
+		 return false;
 
-      var y0 = y<toIntersect.y ? toIntersect.x : y;
-      var y1 = bottom>toIntersect.bottom ? toIntersect.bottom : bottom;
-      return y1>y0;
+	  var y0 = y<toIntersect.y ? toIntersect.x : y;
+	  var y1 = bottom>toIntersect.bottom ? toIntersect.bottom : bottom;
+	  return y1>y0;
    }
 
    public function union(toUnion : com.pblabs.geom.Rectangle) : com.pblabs.geom.Rectangle
    {
-      var x0 = x>toUnion.x ? toUnion.x : x;
-      var x1 = right<toUnion.right ? toUnion.right : right;
-      var y0 = y>toUnion.y ? toUnion.x : y;
-      var y1 = bottom<toUnion.bottom ? toUnion.bottom : bottom;
-      return new Rectangle(x0,y0,x1-x0,y1-y0);
+	  var x0 = x>toUnion.x ? toUnion.x : x;
+	  var x1 = right<toUnion.right ? toUnion.right : right;
+	  var y0 = y>toUnion.y ? toUnion.x : y;
+	  var y1 = bottom<toUnion.bottom ? toUnion.bottom : bottom;
+	  return new Rectangle(x0,y0,x1-x0,y1-y0);
    }
 
    public function isEmpty() : Bool { return width==0 && height==0; }
    public function offset(dx : Float, dy : Float) : Void
    {
-      x+=dx;
-      y+=dy;
+	  x+=dx;
+	  y+=dy;
    }
 
    public function offsetPoint(point : Vector2) : Void
    {
-      x+=point.x;
-      y+=point.y;
+	  x+=point.x;
+	  y+=point.y;
    }
 
    public function setEmpty() : Void { x = y = width = height = 0; }
 
    // public function transform(m:Matrix)
    // {
-   //    var tx0 = m.a*x + m.c*y;
-   //    var tx1 = tx0;
-   //    var ty0 = m.b*x + m.d*y;
-   //    var ty1 = tx0;
+   //	var tx0 = m.a*x + m.c*y;
+   //	var tx1 = tx0;
+   //	var ty0 = m.b*x + m.d*y;
+   //	var ty1 = tx0;
 
-   //    var tx = m.a*(x+width) + m.c*y;
-   //    var ty = m.b*(x+width) + m.d*y;
-   //    if (tx<tx0) tx0 = tx;
-   //    if (ty<ty0) ty0 = ty;
-   //    if (tx>tx1) tx1 = tx;
-   //    if (ty>ty1) ty1 = ty;
+   //	var tx = m.a*(x+width) + m.c*y;
+   //	var ty = m.b*(x+width) + m.d*y;
+   //	if (tx<tx0) tx0 = tx;
+   //	if (ty<ty0) ty0 = ty;
+   //	if (tx>tx1) tx1 = tx;
+   //	if (ty>ty1) ty1 = ty;
 
-   //    tx = m.a*(x+width) + m.c*(y+height);
-   //    ty = m.b*(x+width) + m.d*(y+height);
-   //    if (tx<tx0) tx0 = tx;
-   //    if (ty<ty0) ty0 = ty;
-   //    if (tx>tx1) tx1 = tx;
-   //    if (ty>ty1) ty1 = ty;
+   //	tx = m.a*(x+width) + m.c*(y+height);
+   //	ty = m.b*(x+width) + m.d*(y+height);
+   //	if (tx<tx0) tx0 = tx;
+   //	if (ty<ty0) ty0 = ty;
+   //	if (tx>tx1) tx1 = tx;
+   //	if (ty>ty1) ty1 = ty;
 
-   //    tx = m.a*x + m.c*(y+height);
-   //    ty = m.b*x + m.d*(y+height);
-   //    if (tx<tx0) tx0 = tx;
-   //    if (ty<ty0) ty0 = ty;
-   //    if (tx>tx1) tx1 = tx;
-   //    if (ty>ty1) ty1 = ty;
+   //	tx = m.a*x + m.c*(y+height);
+   //	ty = m.b*x + m.d*(y+height);
+   //	if (tx<tx0) tx0 = tx;
+   //	if (ty<ty0) ty0 = ty;
+   //	if (tx>tx1) tx1 = tx;
+   //	if (ty>ty1) ty1 = ty;
 
-   //    return new Rectangle(tx0+m.tx,ty0+m.ty, tx1-tx0, ty1-ty0);
+   //	return new Rectangle(tx0+m.tx,ty0+m.ty, tx1-tx0, ty1-ty0);
    // }
 
    public function extendBounds(r:Rectangle)
    {
-      var dx = x-r.x;
-      if (dx>0)
-      {
-         x-=dx;
-         width+=dx;
-      }
-      var dy = y-r.y;
-      if (dy>0)
-      {
-         y-=dy;
-         height+=dy;
-      }
-      if (r.right>right)
-         right = r.right;
-      if (r.bottom>bottom)
-         bottom = r.bottom;
+	  var dx = x-r.x;
+	  if (dx>0)
+	  {
+		 x-=dx;
+		 width+=dx;
+	  }
+	  var dy = y-r.y;
+	  if (dy>0)
+	  {
+		 y-=dy;
+		 height+=dy;
+	  }
+	  if (r.right>right)
+		 right = r.right;
+	  if (r.bottom>bottom)
+		 bottom = r.bottom;
    }
    
    public function toString () :String
    {
-       return "[x=" + x + ", y=" + y + ", w=" + width + ", h=" + height + "]";
+	   return "[x=" + x + ", y=" + y + ", w=" + width + ", h=" + height + "]";
    }
 }
 

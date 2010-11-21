@@ -27,126 +27,126 @@ import com.pblabs.util.Assert;
  */
 class PBUtil
 {
-    public static function getManagerName (cls :Class<Dynamic>, ?name :String) :String
-    {
-        return StringUtil.getStringKey(cls) + if (name == null) "" else "|" + name;
-    }
-    
-    public static function addSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null, ?isManager :Bool = false) :T
-    {
-        Preconditions.checkNotNull(context, "Null context");
-        Preconditions.checkNotNull(compClass, "Null compClass");
-        if (compName == null) {
-            compName = ReflectUtil.tinyClassName(compClass);
-        }
-        
-        var component = context.allocate(compClass);
-        #if debug
-        com.pblabs.util.Assert.isNotNull(component, "allocate returned null for compClass=" + compClass);
-        #end
-        
-        Preconditions.checkArgument(Std.is(component, IEntityComponent), "Singleton " + compClass + " is not an IEntityComponent");
-        var e = context.allocate(IEntity);
-        Assert.isNotNull(e.context, "How can the entity context be null?");
-        e.initialize(compName);
-        e.addComponent(cast(component, IEntityComponent), compName);
-        e.deferring = false;
-        Assert.isTrue(cast(component, IEntityComponent).isRegistered, "addsingle, not registered");
-        //Register under the component name
-        if (isManager) {
-            context.registerManager(compClass, component, compName, true);
-        }
-        
-        return component;
-    }
-    
-    /**
-     * Converts IPBObject and IEntityComponent objects 
-     * to the IGameObject/IEntity name.
-     */
-    public static function objectNameMapping (obj :Dynamic) :String
-    {
-        if (Std.is(obj, IPBObject)) {
-            return cast(obj, IPBObject).name;
-        } else if (Std.is(obj, IEntityComponent)) {
-            return cast(obj, IEntityComponent).owner.name;
-        } else {
-            throw "Unrecogized object";
-            return "Unrecogized object";
-        }
-    }
-    
-    /**
-     * As it says.
-     */
-    public static function componentNameMapping (c :IEntityComponent) :String
-    {
-        return c.name;
-    }
-    
-    /**
-     * Creates a PropertyReference for a field from a component.
-     * Assumes component name is the short class name.
-     * @param c
-     * @param fieldName
-     * @return
-     */
-    public static function componentProp<T> (c :Dynamic, ?fieldName :String) :PropertyReference<T>
-    {
-        var compName = componentName(c);
-        return new PropertyReference("@" + compName + fieldToken(fieldName));
-    }
+	public static function getManagerName (cls :Class<Dynamic>, ?name :String) :String
+	{
+		return StringUtil.getStringKey(cls) + if (name == null) "" else "|" + name;
+	}
+	
+	public static function addSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null, ?isManager :Bool = false) :T
+	{
+		Preconditions.checkNotNull(context, "Null context");
+		Preconditions.checkNotNull(compClass, "Null compClass");
+		if (compName == null) {
+			compName = ReflectUtil.tinyClassName(compClass);
+		}
+		
+		var component = context.allocate(compClass);
+		#if debug
+		com.pblabs.util.Assert.isNotNull(component, "allocate returned null for compClass=" + compClass);
+		#end
+		
+		Preconditions.checkArgument(Std.is(component, IEntityComponent), "Singleton " + compClass + " is not an IEntityComponent");
+		var e = context.allocate(IEntity);
+		Assert.isNotNull(e.context, "How can the entity context be null?");
+		e.initialize(compName);
+		e.addComponent(cast(component, IEntityComponent), compName);
+		e.deferring = false;
+		Assert.isTrue(cast(component, IEntityComponent).isRegistered, "addsingle, not registered");
+		//Register under the component name
+		if (isManager) {
+			context.registerManager(compClass, component, compName, true);
+		}
+		
+		return component;
+	}
+	
+	/**
+	 * Converts IPBObject and IEntityComponent objects 
+	 * to the IGameObject/IEntity name.
+	 */
+	public static function objectNameMapping (obj :Dynamic) :String
+	{
+		if (Std.is(obj, IPBObject)) {
+			return cast(obj, IPBObject).name;
+		} else if (Std.is(obj, IEntityComponent)) {
+			return cast(obj, IEntityComponent).owner.name;
+		} else {
+			throw "Unrecogized object";
+			return "Unrecogized object";
+		}
+	}
+	
+	/**
+	 * As it says.
+	 */
+	public static function componentNameMapping (c :IEntityComponent) :String
+	{
+		return c.name;
+	}
+	
+	/**
+	 * Creates a PropertyReference for a field from a component.
+	 * Assumes component name is the short class name.
+	 * @param c
+	 * @param fieldName
+	 * @return
+	 */
+	public static function componentProp<T> (c :Dynamic, ?fieldName :String) :PropertyReference<T>
+	{
+		var compName = componentName(c);
+		return new PropertyReference("@" + compName + fieldToken(fieldName));
+	}
 
-    public static function entityProp <T> (c :IEntityComponent, ?fieldName :String) :PropertyReference<T>
-    {
-        return new PropertyReference("#" + c.owner.name + "." + componentName(c) + fieldToken(fieldName));
-    }
+	public static function entityProp <T> (c :IEntityComponent, ?fieldName :String) :PropertyReference<T>
+	{
+		return new PropertyReference("#" + c.owner.name + "." + componentName(c) + fieldToken(fieldName));
+	}
 
-    public static function singletonProp <T> (component :Dynamic, ?fieldName :String =
-        null) :PropertyReference<T>
-    {
-        var compName = componentName(component);
-        return new PropertyReference("#" + compName + "." + compName + fieldToken(fieldName));
-    }
-    
-    public static function createPropertyCallback<T> (e :IEntity, p :PropertyReference<T>) :Void->T
-    {
-        return function () :T {
-            if (!e.isLiveObject) return null;
-            return e.getProperty(p);
-        }
-    }
-    
-    public static function entityToString (e :IEntity) :String
-    {
-        if (e == null) {
-            return "null";
-        }
-        var s = new StringBuf();
-        s.add("[" + e.name + ":");
-        for (c in e) {
-            s.add("\n  " + c);
-        }
-        return s.toString();
-    }
-    
-    
-    static function fieldToken (fieldName :String) :String
-    {
-        return if (fieldName != null) "." + fieldName else "";
-    }
-    
-    static function componentName (c :Dynamic) :String
-    {
-        if (Std.is(c, String)) {
-            return cast(c);
-        } else if (Std.is(c, IEntityComponent) && cast(c, IEntityComponent).isRegistered) {
-            return cast(c, IEntityComponent).name;
-        } else {
-            return ReflectUtil.tinyClassName(c);
-        }
-    }
-    
+	public static function singletonProp <T> (component :Dynamic, ?fieldName :String =
+		null) :PropertyReference<T>
+	{
+		var compName = componentName(component);
+		return new PropertyReference("#" + compName + "." + compName + fieldToken(fieldName));
+	}
+	
+	public static function createPropertyCallback<T> (e :IEntity, p :PropertyReference<T>) :Void->T
+	{
+		return function () :T {
+			if (!e.isLiveObject) return null;
+			return e.getProperty(p);
+		}
+	}
+	
+	public static function entityToString (e :IEntity) :String
+	{
+		if (e == null) {
+			return "null";
+		}
+		var s = new StringBuf();
+		s.add("[" + e.name + ":");
+		for (c in e) {
+			s.add("\n  " + c);
+		}
+		return s.toString();
+	}
+	
+	
+	static function fieldToken (fieldName :String) :String
+	{
+		return if (fieldName != null) "." + fieldName else "";
+	}
+	
+	static function componentName (c :Dynamic) :String
+	{
+		if (Std.is(c, String)) {
+			return cast(c);
+		} else if (Std.is(c, IEntityComponent) && cast(c, IEntityComponent).isRegistered) {
+			return cast(c, IEntityComponent).name;
+		} else {
+			return ReflectUtil.tinyClassName(c);
+		}
+	}
+	
 
 }
 

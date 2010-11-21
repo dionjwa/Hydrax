@@ -14,38 +14,38 @@ import com.pblabs.engine.core.EntityComponent;
 
 class BoundedComponent extends EntityComponent 
 {
-    
-    public var bounds(get_bounds, set_bounds) :IBounds<Dynamic>;
-    
-    public static var NAME:String = ReflectUtil.tinyClassName(BoundedComponent);
+	
+	public var bounds(get_bounds, set_bounds) :IBounds<Dynamic>;
+	
+	public static var NAME:String = ReflectUtil.tinyClassName(BoundedComponent);
 
-    public function new (?bounds :IBounds<Dynamic> = null)
-    {
-        super();
-        _bounds = bounds;
-    }
+	public function new (?bounds :IBounds<Dynamic> = null)
+	{
+		super();
+		_bounds = bounds;
+	}
 
-    inline function get_bounds ():IBounds<Dynamic>
-    {
-        return _bounds;
-    }
+	inline function get_bounds ():IBounds<Dynamic>
+	{
+		return _bounds;
+	}
 
-    inline function set_bounds (val :IBounds<Dynamic>):IBounds<Dynamic>
-    {
-        _bounds = val;
-    	return val;
-    }
+	inline function set_bounds (val :IBounds<Dynamic>):IBounds<Dynamic>
+	{
+		_bounds = val;
+		return val;
+	}
 
-    public function clone () :Dynamic
-    {
-        return new BoundedComponent(cast( _bounds.clone(), IBounds<Dynamic>));
-    }
+	public function clone () :Dynamic
+	{
+		return new BoundedComponent(cast( _bounds.clone(), IBounds<Dynamic>));
+	}
 
-    override function onRemove():Void
-    {
-        super.onRemove();
-        _bounds = null;
-    }
+	override function onRemove():Void
+	{
+		super.onRemove();
+		_bounds = null;
+	}
 
-    var _bounds :IBounds<Dynamic>;
+	var _bounds :IBounds<Dynamic>;
 }

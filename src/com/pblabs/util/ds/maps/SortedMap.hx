@@ -21,43 +21,43 @@ using Lambda;
   */
 class SortedMap<K, V> extends ForwardingMap<K, V>
 {
-    public function new (source :Map<K, V>, sortFunction :K->K->Int)
-    {
-        Preconditions.checkNotNull(sortFunction, "Sort function null");
-        super(source);
-        _sortFunction = sortFunction;
-        _sortedKeys = source.keys().toArray();
-        _sortedKeys.sort(_sortFunction);
-    }
-    
-    override public function set (key :K, value :V) :Void
-    {
-        super.set(key, value);
-        if (!_sortedKeys.has(key)) {
-            _sortedKeys.push(key);
-            _sortedKeys.sort(_sortFunction);
-        }
-    }
-    
-    override public function remove (key :K) :Bool
-    {
-        _sortedKeys.remove(key);
-        return super.remove(key);
-    }
-    
-    override public function clear () :Void
-    {
-        super.clear();
-        _sortedKeys = new Array();
-    }
-    
-    override public function keys () :Iterator<K>
-    {
-        return _sortedKeys.iterator();
-    }
-    
-    var _sortedKeys :Array<K>;
-    var _sortFunction :K->K->Int;
+	public function new (source :Map<K, V>, sortFunction :K->K->Int)
+	{
+		Preconditions.checkNotNull(sortFunction, "Sort function null");
+		super(source);
+		_sortFunction = sortFunction;
+		_sortedKeys = source.keys().toArray();
+		_sortedKeys.sort(_sortFunction);
+	}
+	
+	override public function set (key :K, value :V) :Void
+	{
+		super.set(key, value);
+		if (!_sortedKeys.has(key)) {
+			_sortedKeys.push(key);
+			_sortedKeys.sort(_sortFunction);
+		}
+	}
+	
+	override public function remove (key :K) :Bool
+	{
+		_sortedKeys.remove(key);
+		return super.remove(key);
+	}
+	
+	override public function clear () :Void
+	{
+		super.clear();
+		_sortedKeys = new Array();
+	}
+	
+	override public function keys () :Iterator<K>
+	{
+		return _sortedKeys.iterator();
+	}
+	
+	var _sortedKeys :Array<K>;
+	var _sortFunction :K->K->Int;
 
 }
 

@@ -18,41 +18,41 @@ import com.pblabs.components.tasks.IEntityTask;
 
 class AngleTask extends AnimatePropertyTask 
 {
-    
-    public static function CreateLinear (angle :Float, time :Float)
-        :AngleTask
-    {
-        return new AngleTask(angle, time, Linear.easeNone);
-    }
+	
+	public static function CreateLinear (angle :Float, time :Float)
+		:AngleTask
+	{
+		return new AngleTask(angle, time, Linear.easeNone);
+	}
 
-    public static function CreateSmooth (angle :Float, time :Float)
-        :AngleTask
-    {
-        return new AngleTask(angle, time, Cubic.easeInOut);
-    }
+	public static function CreateSmooth (angle :Float, time :Float)
+		:AngleTask
+	{
+		return new AngleTask(angle, time, Cubic.easeInOut);
+	}
 
-    public static function CreateEaseIn (angle :Float, time :Float)
-        :AngleTask
-    {
-        return new AngleTask(angle, time, Cubic.easeIn);
-    }
+	public static function CreateEaseIn (angle :Float, time :Float)
+		:AngleTask
+	{
+		return new AngleTask(angle, time, Cubic.easeIn);
+	}
 
-    public static function CreateEaseOut (angle :Float, time :Float)
-        :AngleTask
-    {
-        return new AngleTask(angle, time, Cubic.easeOut);
-    }
+	public static function CreateEaseOut (angle :Float, time :Float)
+		:AngleTask
+	{
+		return new AngleTask(angle, time, Cubic.easeOut);
+	}
 
-    public function new (angle :Float, ?time :Float = 0,
-                               ?easingFn :Float->Float->Float->Float->Float = null, ?ref :PropertyReference<Float>)
-    {
-        super(ref == null ? AngleComponent.P_ANGLE : ref, angle, time, easingFn);
-    }
+	public function new (angle :Float, ?time :Float = 0,
+							   ?easingFn :Float->Float->Float->Float->Float = null, ?ref :PropertyReference<Float>)
+	{
+		super(ref == null ? AngleComponent.P_ANGLE : ref, angle, time, easingFn);
+	}
 
-    public override function clone () :IEntityTask
-    {
-        return new AngleTask(_to, _totalTime, _easingFn);
-    }
+	public override function clone () :IEntityTask
+	{
+		return new AngleTask(_to, _totalTime, _easingFn);
+	}
 
 }
 

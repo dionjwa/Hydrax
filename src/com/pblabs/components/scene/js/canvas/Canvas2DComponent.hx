@@ -26,60 +26,60 @@ import easel.display.Context2d;
 
 class Canvas2DComponent extends BaseScene2DComponent<CanvasLayer>
 {
-    public var sprite :Sprite;
-    
-    public function new (?s :Sprite) :Void
-    {
-        super();
-        sprite = s;
-    }
-    
-    public function render (context :easel.display.Context2d) :Void
-    {
-        sprite.render(context);
-    }
-    
-    override function onReset () :Void
-    {
-        super.onReset();
-        Assert.isNotNull(sprite);
-    }
-    
-    override function get_x () :Float
-    {
-        return sprite.x;
-    }
-    
-    override function set_x (val :Float) :Float
-    {
-        sprite.x = val;
-        layer.isDirty = true;
-        return val;
-    }
-    
-    override function get_y () :Float
-    {
-        return sprite.y;
-    }
-    
-    override function set_y (val :Float) :Float
-    {
-        sprite.y = val;
-        layer.isDirty = true;
-        return val;
-    }
-    
-    override function get_angle () :Float
-    {
-        return sprite.rotation;
-    }
-    
-    override function set_angle (val :Float) :Float
-    {
-        sprite.rotation = val;
-        layer.isDirty = true;
-        return val;
-    }
+	public var sprite :Sprite;
+	
+	public function new (?s :Sprite) :Void
+	{
+		super();
+		sprite = s;
+	}
+	
+	public function render (context :easel.display.Context2d) :Void
+	{
+		sprite.render(context);
+	}
+	
+	override function onReset () :Void
+	{
+		super.onReset();
+		Assert.isNotNull(sprite);
+	}
+	
+	override function get_x () :Float
+	{
+		return sprite.x;
+	}
+	
+	override function set_x (val :Float) :Float
+	{
+		sprite.x = val;
+		layer.isDirty = true;
+		return val;
+	}
+	
+	override function get_y () :Float
+	{
+		return sprite.y;
+	}
+	
+	override function set_y (val :Float) :Float
+	{
+		sprite.y = val;
+		layer.isDirty = true;
+		return val;
+	}
+	
+	override function get_angle () :Float
+	{
+		return sprite.rotation;
+	}
+	
+	override function set_angle (val :Float) :Float
+	{
+		sprite.rotation = val;
+		layer.isDirty = true;
+		return val;
+	}
 }
 
 

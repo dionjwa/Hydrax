@@ -7,8 +7,8 @@ package mathx;
 
 interface RandomGenerator
 {
-    public function nextBool() :Bool;
-    
+	public function nextBool() :Bool;
+	
 	/**
 	 * Produces the next floating point value in the range [0,1] (both ends inclusive)
 	 */

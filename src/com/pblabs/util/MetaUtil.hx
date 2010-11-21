@@ -10,19 +10,19 @@ package com.pblabs.util;
 
 class MetaUtil
 {
-    public static function isFieldMetaData (cls :Class<Dynamic>, fieldName :String, metaLabel :String) :Bool
-    {
-        #if debug
-        com.pblabs.util.Assert.isNotNull(cls, "cls is null");
-        com.pblabs.util.Assert.isNotNull(fieldName, "fieldName is null");
-        com.pblabs.util.Assert.isNotNull(metaLabel, "metaLabel is null");
-        #end
-        
-        var meta = haxe.rtti.Meta.getFields(cls);
-        if (meta == null) {
-            return false;
-        }
-        return Reflect.hasField(meta, fieldName) && Reflect.hasField(Reflect.field(meta, fieldName), metaLabel);
-    }
+	public static function isFieldMetaData (cls :Class<Dynamic>, fieldName :String, metaLabel :String) :Bool
+	{
+		#if debug
+		com.pblabs.util.Assert.isNotNull(cls, "cls is null");
+		com.pblabs.util.Assert.isNotNull(fieldName, "fieldName is null");
+		com.pblabs.util.Assert.isNotNull(metaLabel, "metaLabel is null");
+		#end
+		
+		var meta = haxe.rtti.Meta.getFields(cls);
+		if (meta == null) {
+			return false;
+		}
+		return Reflect.hasField(meta, fieldName) && Reflect.hasField(Reflect.field(meta, fieldName), metaLabel);
+	}
 
 }

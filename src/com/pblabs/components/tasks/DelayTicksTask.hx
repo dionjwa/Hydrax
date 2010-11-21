@@ -12,26 +12,26 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.util.Preconditions;
 
 class DelayTicksTask
-    implements IEntityTask {
-    
-    public function new (?ticks :Int = 1)
-    {
-        Preconditions.checkArgument(ticks >= 1 && ticks != Math.NaN, "Invalid number of ticks=" + ticks);
-        _ticks = ticks;
-    }
+	implements IEntityTask {
+	
+	public function new (?ticks :Int = 1)
+	{
+		Preconditions.checkArgument(ticks >= 1 && ticks != Math.NaN, "Invalid number of ticks=" + ticks);
+		_ticks = ticks;
+	}
 
-    public function update (dt :Float, obj :IEntity) :Bool
-    {
-        _elapsedTicks++;
+	public function update (dt :Float, obj :IEntity) :Bool
+	{
+		_elapsedTicks++;
 
-        return (_elapsedTicks >= _ticks);
-    }
+		return (_elapsedTicks >= _ticks);
+	}
 
-    public function clone () :IEntityTask
-    {
-        return new DelayTicksTask(_ticks);
-    }
+	public function clone () :IEntityTask
+	{
+		return new DelayTicksTask(_ticks);
+	}
 
-    var _ticks:Int ;
-    var _elapsedTicks:Int ;
+	var _ticks:Int ;
+	var _elapsedTicks:Int ;
 }

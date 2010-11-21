@@ -15,9 +15,9 @@
  ******************************************************************************/
 package easel.display;
 typedef ImageData = {
-    var width :Int;
-    var height :Int;
-    var data :Array<Int>;
+	var width :Int;
+	var height :Int;
+	var data :Array<Int>;
 }
 
 typedef Context2d = {
@@ -57,13 +57,13 @@ typedef Context2d = {
 	var shadowBlur : Float;
 	var shadowColor : String;
 
-        // fonts
-        var font :String;
-        var textAlign :String;
-        var textBaseline :String;
-        function fillText (text :String, x :Float, y :Float, maxWidth :Float) :Void;
-        function strokeText (text :String, x :Float, y :Float, maxWidth :Float) :Void;
-        function measureText (text :String) :{width :Float};
+		// fonts
+		var font :String;
+		var textAlign :String;
+		var textBaseline :String;
+		function fillText (text :String, x :Float, y :Float, maxWidth :Float) :Void;
+		function strokeText (text :String, x :Float, y :Float, maxWidth :Float) :Void;
+		function measureText (text :String) :{width :Float};
 
 	// rects
 	function clearRect( x : Float, y : Float, w : Float, h : Float ) : Void;
@@ -85,7 +85,7 @@ typedef Context2d = {
 	function clip() : Void;
 	function isPointInPath( x : Float, y : Float ) : Bool;
 
-        function drawImage (image :Dynamic, dx :Float, dy :Float, ?a1 :Float, ?a2 :Float, ?a3 :Float, ?a4 :Float, ?a5 :Float, ?a6 :Float) :Void;
+		function drawImage (image :Dynamic, dx :Float, dy :Float, ?a1 :Float, ?a2 :Float, ?a3 :Float, ?a4 :Float, ?a5 :Float, ?a6 :Float) :Void;
 
 	// drawing images
 /*	void drawImage(in HTMLImageElement image, in float dx, in float dy);
@@ -95,8 +95,8 @@ typedef Context2d = {
 	void drawImage(in HTMLCanvasElement image, in float dx, in float dy, in float dw, in float dh);
 	void drawImage(in HTMLCanvasElement image, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh);*/
 
-        function getImageData (sx :Int, sy :Int, sw :Int, sh :Int) :ImageData;
-        function putImageData (imagedata :ImageData, dx :Float, dy :Float, ?dirtyX :Float, ?dirtyY :Float, ?dirtyWidth :Float, ?dirtyHeight :Float) :Void;
+		function getImageData (sx :Int, sy :Int, sw :Int, sh :Int) :ImageData;
+		function putImageData (imagedata :ImageData, dx :Float, dy :Float, ?dirtyX :Float, ?dirtyY :Float, ?dirtyWidth :Float, ?dirtyHeight :Float) :Void;
 	// pixel manipulation
 /*	ImageData createImageData(in float sw, in float sh);
 	ImageData getImageData(in float sx, in float sy, in float sw, in float sh);

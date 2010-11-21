@@ -26,103 +26,103 @@ using com.pblabs.util.EventDispatcherUtil;
   */
 class XMLResource extends ResourceBase<XML>
 {
-    public function new (name :String, source :Source)
-    {
-        super(name);
-        _source = source;
-    }
-    
-    override public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
-    {
-        super.load(onLoad, onError);
-        switch (_source) {
-            case url (u): loadFromUrl(u);
-            case bytes (b): loadFromBytes(b);
-            case text (t): loadFromText(t);
-            default:
-                Log.error("Resouce source type not handled: " + _source);
-        }
-        
-        //Unlink the source ref, we don't need it now
-        _source = null;
-    }
-    
-    override public function create (?name :String) :XML
-    {
-        return _xml.firstElement();
-    }
-    
-    override public function unload () :Void
-    {
-        super.unload();
-        _source = null;
-        _xml = null;
-        _data = null;
-    }
-    
-    #if debug
-    override public function toString () :String
-    {
-        return StringUtil.objectToString(this, ["_name", "_xml"]);
-    }
-    #end
-    
-    function loadFromUrl (url :String) :Void
-    {
-        Preconditions.checkNotNull(url, "url is null");
-        #if flash
-        var self = this;
-        var urlLoader = new flash.net.URLLoader();
-        urlLoader.dataFormat = flash.net.URLLoaderDataFormat.TEXT;
-        var onComplete = function (e :flash.events.Event) :Void {
-            urlLoader.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
-            urlLoader.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
-            self.createXMLFromData(urlLoader.data);
-        }
-        
-        urlLoader.addOnceListener(flash.events.Event.COMPLETE, onComplete);
-        urlLoader.addEventListener(flash.events.IOErrorEvent.IO_ERROR, onLoadError);
-        urlLoader.addEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, onLoadError);
-        urlLoader.load(new flash.net.URLRequest(url));
-        #else
-        throw "Platform cannot load xml from source=" + _source;
-        #end
-        
-    }
-    
-    function loadFromBytes (bytes :BytesData) :Void
-    {
-        Preconditions.checkNotNull(bytes, "bytes is null");
-        //TODO:
-        throw "Not implemented";
-    }
-    
-    function loadFromText (txt :String) :Void
-    {
-        Preconditions.checkNotNull(txt, "txt is null");
-        createXMLFromData(txt);
-    }
-    
-    function createXMLFromData (data :Dynamic) :Void
-    {
-        _data = data;
-        // Catch possible XML parsing errors
-        try {
-            _xml = Xml.parse(data);
-        } catch (e :Dynamic) {
-            _onError(e);
-        }
-        loaded();
-        //Release the ref to the source data;
-        _data = null;
-    }
-    
-    function onLoadError (e :Dynamic) :Void
-    {
-        _onError(e);
-    }
-    
-    var _xml :XML;
-    var _data :Dynamic;
-    var _source :Source;
+	public function new (name :String, source :Source)
+	{
+		super(name);
+		_source = source;
+	}
+	
+	override public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
+	{
+		super.load(onLoad, onError);
+		switch (_source) {
+			case url (u): loadFromUrl(u);
+			case bytes (b): loadFromBytes(b);
+			case text (t): loadFromText(t);
+			default:
+				Log.error("Resouce source type not handled: " + _source);
+		}
+		
+		//Unlink the source ref, we don't need it now
+		_source = null;
+	}
+	
+	override public function create (?name :String) :XML
+	{
+		return _xml.firstElement();
+	}
+	
+	override public function unload () :Void
+	{
+		super.unload();
+		_source = null;
+		_xml = null;
+		_data = null;
+	}
+	
+	#if debug
+	override public function toString () :String
+	{
+		return StringUtil.objectToString(this, ["_name", "_xml"]);
+	}
+	#end
+	
+	function loadFromUrl (url :String) :Void
+	{
+		Preconditions.checkNotNull(url, "url is null");
+		#if flash
+		var self = this;
+		var urlLoader = new flash.net.URLLoader();
+		urlLoader.dataFormat = flash.net.URLLoaderDataFormat.TEXT;
+		var onComplete = function (e :flash.events.Event) :Void {
+			urlLoader.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
+			urlLoader.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
+			self.createXMLFromData(urlLoader.data);
+		}
+		
+		urlLoader.addOnceListener(flash.events.Event.COMPLETE, onComplete);
+		urlLoader.addEventListener(flash.events.IOErrorEvent.IO_ERROR, onLoadError);
+		urlLoader.addEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, onLoadError);
+		urlLoader.load(new flash.net.URLRequest(url));
+		#else
+		throw "Platform cannot load xml from source=" + _source;
+		#end
+		
+	}
+	
+	function loadFromBytes (bytes :BytesData) :Void
+	{
+		Preconditions.checkNotNull(bytes, "bytes is null");
+		//TODO:
+		throw "Not implemented";
+	}
+	
+	function loadFromText (txt :String) :Void
+	{
+		Preconditions.checkNotNull(txt, "txt is null");
+		createXMLFromData(txt);
+	}
+	
+	function createXMLFromData (data :Dynamic) :Void
+	{
+		_data = data;
+		// Catch possible XML parsing errors
+		try {
+			_xml = Xml.parse(data);
+		} catch (e :Dynamic) {
+			_onError(e);
+		}
+		loaded();
+		//Release the ref to the source data;
+		_data = null;
+	}
+	
+	function onLoadError (e :Dynamic) :Void
+	{
+		_onError(e);
+	}
+	
+	var _xml :XML;
+	var _data :Dynamic;
+	var _source :Source;
 }

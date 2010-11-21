@@ -29,8 +29,8 @@ package com.pblabs.util;
 
 interface LogTarget
 {
-    /**
-     * Log the specified message, which is already fully formatted.
-     */
-    function log (msg :String) :Void;
+	/**
+	 * Log the specified message, which is already fully formatted.
+	 */
+	function log (msg :String) :Void;
 }

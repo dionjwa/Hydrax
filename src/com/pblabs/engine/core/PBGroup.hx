@@ -25,94 +25,94 @@ using com.pblabs.util.IterUtil;
  * by setting object.owningGroup.
  */
 class PBGroup extends PBObject, 
-    implements IPBGroup
+	implements IPBGroup
 {
-    public var length(get_length, null) : Int;
-    public var rootGroup (get_rootGroup, null) :IPBGroup;
-    
-    var items:Array<IPBObject>;
-    
-    public function new() 
-    {
-        super();
-        items = [];
-    }
+	public var length(get_length, null) : Int;
+	public var rootGroup (get_rootGroup, null) :IPBGroup;
+	
+	var items:Array<IPBObject>;
+	
+	public function new() 
+	{
+		super();
+		items = [];
+	}
   
-    #if debug
-    dynamic override public function toString () :String
-    {
-        return StringUtil.objectToString(this, ["name", "length", "owningGroup"]);
-    }
-    #end
-    
-    public function iterator () :Iterator<IPBObject>
-    {
-        return items.iterator();
-    }
-    
-    public function addToGroup(item:IPBObject):Bool
-    {
-        Preconditions.checkNotNull(item, "Cannot add null item to group");
-        Preconditions.checkArgument(item.owningGroup == this || item.owningGroup == null , "Adding IPBObject to two groups at the same time!");
-        items.push(item);
-        return true;
-    }
-    
-    public function removeFromGroup(item:IPBObject):Bool
-    {
-        var idx:Int = items.indexOf(item);
-        if(idx == -1)
-            return false;
-        
-        items.splice(idx, 1);
-        return true;
-    }
+	#if debug
+	dynamic override public function toString () :String
+	{
+		return StringUtil.objectToString(this, ["name", "length", "owningGroup"]);
+	}
+	#end
+	
+	public function iterator () :Iterator<IPBObject>
+	{
+		return items.iterator();
+	}
+	
+	public function addToGroup(item:IPBObject):Bool
+	{
+		Preconditions.checkNotNull(item, "Cannot add null item to group");
+		Preconditions.checkArgument(item.owningGroup == this || item.owningGroup == null , "Adding IPBObject to two groups at the same time!");
+		items.push(item);
+		return true;
+	}
+	
+	public function removeFromGroup(item:IPBObject):Bool
+	{
+		var idx:Int = items.indexOf(item);
+		if(idx == -1)
+			return false;
+		
+		items.splice(idx, 1);
+		return true;
+	}
 
-    /**
-     * Return the IPBObject at the specified index.
-     */
-    public function getItem(index:Int):IPBObject
-    {
-        if(index < 0 || index >= items.length)
-            return null;
-        return items[index];
-    }
-    
-    /**
-     * How many PBObjects are in this group?
-     */
-    inline function get_length() :Int
-    {
-        return items.length;
-    }
-    
-    /**
-     * Destroy all the objects in this group, but do not delete the group.
-     */
-    public function clear():Void
-    {
-        // Delete the items we own.
-        while(items.length > 0)
-            items.pop().destroy();
-    }
-    
-    public override function destroy() : Void
-    {
-        // Delete everything.
-        clear();
-        
-        // Pass control up.
-        super.destroy();            
-    }
-    
-    function get_rootGroup () :IPBGroup
-    {
-        var cur :IPBGroup = this;
-        while (cur.owningGroup != null) {
-            cur = cur.owningGroup;
-        }
-        return cur;
-    }
+	/**
+	 * Return the IPBObject at the specified index.
+	 */
+	public function getItem(index:Int):IPBObject
+	{
+		if(index < 0 || index >= items.length)
+			return null;
+		return items[index];
+	}
+	
+	/**
+	 * How many PBObjects are in this group?
+	 */
+	inline function get_length() :Int
+	{
+		return items.length;
+	}
+	
+	/**
+	 * Destroy all the objects in this group, but do not delete the group.
+	 */
+	public function clear():Void
+	{
+		// Delete the items we own.
+		while(items.length > 0)
+			items.pop().destroy();
+	}
+	
+	public override function destroy() : Void
+	{
+		// Delete everything.
+		clear();
+		
+		// Pass control up.
+		super.destroy();			
+	}
+	
+	function get_rootGroup () :IPBGroup
+	{
+		var cur :IPBGroup = this;
+		while (cur.owningGroup != null) {
+			cur = cur.owningGroup;
+		}
+		return cur;
+	}
 }
 
 

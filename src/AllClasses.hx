@@ -183,22 +183,22 @@ import com.pblabs.util.GraphicsUtil;
   */
 class AllClasses #if flash extends flash.display.Sprite #end 
 {
-    public function new ()
-    {
-        #if flash
-        super();
-        #end
-        
-    }
-    
-    public static function main() 
-    {
-        #if flash
-        flash.system.Security.allowDomain('*');
-        flash.Lib.current.addChild(new AllClasses());
-        #elseif js
-        new AllClasses();
-        #end
-    }
+	public function new ()
+	{
+		#if flash
+		super();
+		#end
+		
+	}
+	
+	public static function main() 
+	{
+		#if flash
+		flash.system.Security.allowDomain('*');
+		flash.Lib.current.addChild(new AllClasses());
+		#elseif js
+		new AllClasses();
+		#end
+	}
 
 }

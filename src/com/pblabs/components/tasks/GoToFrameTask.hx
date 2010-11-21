@@ -33,36 +33,36 @@ import com.pblabs.engine.core.IEntity;
 import flash.display.MovieClip;
 
 class GoToFrameTask
-    implements IEntityTask {
-    
-    public function new (movie :MovieClip, frame :Dynamic, ?scene :String = null,
-        ?gotoAndPlay :Bool = true)
-    {
-        _frame = frame;
-        _scene = scene;
-        _gotoAndPlay = gotoAndPlay;
-        _movie = movie;
-    }
+	implements IEntityTask {
+	
+	public function new (movie :MovieClip, frame :Dynamic, ?scene :String = null,
+		?gotoAndPlay :Bool = true)
+	{
+		_frame = frame;
+		_scene = scene;
+		_gotoAndPlay = gotoAndPlay;
+		_movie = movie;
+	}
 
-    public function update (dt :Float, obj :IEntity) :Bool
-    {
-        if (_gotoAndPlay) {
+	public function update (dt :Float, obj :IEntity) :Bool
+	{
+		if (_gotoAndPlay) {
 			_movie.gotoAndPlay(_frame, _scene);
-        } else {
+		} else {
 			_movie.gotoAndStop(_frame, _scene);
-        }
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    public function clone () :IEntityTask
-    {
-        return new GoToFrameTask(_movie, _frame, _scene, _gotoAndPlay);
-    }
+	public function clone () :IEntityTask
+	{
+		return new GoToFrameTask(_movie, _frame, _scene, _gotoAndPlay);
+	}
 
-    var _frame:Dynamic;
-    var _scene:String;
-    var _gotoAndPlay:Bool;
-    var _movie:MovieClip;
+	var _frame:Dynamic;
+	var _scene:String;
+	var _gotoAndPlay:Bool;
+	var _movie:MovieClip;
 }
 

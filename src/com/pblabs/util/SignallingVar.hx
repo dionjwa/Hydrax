@@ -22,42 +22,42 @@ import hsl.haxe.Signaler;
  */
 class SignallingVar<T>
 {
-    public var signaller (default, null) :Signaler<T>;
-    public var value (get_value, set_value) :T;
-    
-    public static function checkForSignallingVar<V> (prop :String, c :IEntityComponent, fieldName :String) :PropertyReference<V>
-    {
-        if (Std.is(Reflect.field(c, fieldName), SignallingVar)) {
-            return new PropertyReference(prop + ".value");
-        } else {
-            return new PropertyReference(prop);
-        }
-    }
-    
-    public function new (initialValue :T)
-    {
-        signaller = new DirectSignaler(this);
-        _value = initialValue;
-    }
-    
-    public function clear () :Void
-    {
-        signaller.unbindAll();
-        _value = null;
-    }
-    
-    inline function get_value () :T
-    {
-        return _value;
-    }
-    
-    inline function set_value (val :T) :T
-    {
-        _value = val;
-        signaller.dispatch(_value);
-        return val;
-    }
-    var _value :T;
+	public var signaller (default, null) :Signaler<T>;
+	public var value (get_value, set_value) :T;
+	
+	public static function checkForSignallingVar<V> (prop :String, c :IEntityComponent, fieldName :String) :PropertyReference<V>
+	{
+		if (Std.is(Reflect.field(c, fieldName), SignallingVar)) {
+			return new PropertyReference(prop + ".value");
+		} else {
+			return new PropertyReference(prop);
+		}
+	}
+	
+	public function new (initialValue :T)
+	{
+		signaller = new DirectSignaler(this);
+		_value = initialValue;
+	}
+	
+	public function clear () :Void
+	{
+		signaller.unbindAll();
+		_value = null;
+	}
+	
+	inline function get_value () :T
+	{
+		return _value;
+	}
+	
+	inline function set_value (val :T) :T
+	{
+		_value = val;
+		signaller.dispatch(_value);
+		return val;
+	}
+	var _value :T;
 }
 
 

@@ -31,16 +31,16 @@ class Timer {
 	private var time_ms :Int;
 	
 	public function new( time_ms : Int, ?startAutomatically :Bool = true){
-	    this.time_ms = time_ms;
-	    if (startAutomatically) {
-	        start();
-	    }
-    }
-    
-    public function start () :Void
-    {
-        if (id != null) 
-            return;
+		this.time_ms = time_ms;
+		if (startAutomatically) {
+			start();
+		}
+	}
+	
+	public function start () :Void
+	{
+		if (id != null) 
+			return;
 		#if flash9
 			var me = this;
 			id = untyped __global__["flash.utils.setInterval"](function() { me.run(); },time_ms);

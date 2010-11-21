@@ -18,13 +18,13 @@ import com.pblabs.util.ds.sets.MapSet;
  */
 class Sets
  {
-    /**
-     * Create a new Set for storing values of the specified class.
-     */
-    public static function newSetOf <T>(valueClazz :Class<Dynamic>) :Set<T>
-    {
-        return new MapSet<T>(Maps.newHashMap(valueClazz));
-    }
+	/**
+	 * Create a new Set for storing values of the specified class.
+	 */
+	public static function newSetOf <T>(valueClazz :Class<Dynamic>) :Set<T>
+	{
+		return new MapSet<T>(Maps.newHashMap(valueClazz));
+	}
 }
 
 

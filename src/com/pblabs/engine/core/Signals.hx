@@ -12,25 +12,25 @@ import hsl.haxe.DirectSignaler;
   */
 class Signals implements IPBManager
 {
-    /** Signals dispatched when objects are created/registered.  Managers can hook into these for independent object management */
-    public var signalObjectAdded (default, null) :Signaler<IPBObject>;
-    public var signalObjectRemoved (default, null) :Signaler<IPBObject>;
-    
-    public function new ()
-    {
-        signalObjectAdded = new DirectSignaler(this);
-        signalObjectRemoved = new DirectSignaler(this);
-    }
-    
-    public function startup():Void
-    {
-    }
-    
-    public function shutdown():Void
-    {
-        signalObjectAdded.unbindAll();
-        signalObjectRemoved.unbindAll();
-    }
+	/** Signals dispatched when objects are created/registered.  Managers can hook into these for independent object management */
+	public var signalObjectAdded (default, null) :Signaler<IPBObject>;
+	public var signalObjectRemoved (default, null) :Signaler<IPBObject>;
+	
+	public function new ()
+	{
+		signalObjectAdded = new DirectSignaler(this);
+		signalObjectRemoved = new DirectSignaler(this);
+	}
+	
+	public function startup():Void
+	{
+	}
+	
+	public function shutdown():Void
+	{
+		signalObjectAdded.unbindAll();
+		signalObjectRemoved.unbindAll();
+	}
 
 }
 

@@ -29,20 +29,20 @@
 package com.pblabs.components.tasks;
 
 class RepeatingTask extends TaskContainer {
-    
-    public function new (?subtask1:IEntityTask, ?subtask2:IEntityTask, ?subtask3:IEntityTask)
-    {
-        var subtasks = new Array<IEntityTask>();
-        if (subtask1 != null) {
-            subtasks.push(subtask1);
-        }
-        if (subtask2 != null) {
-            subtasks.push(subtask2);
-        }
-        if (subtask3 != null) {
-            subtasks.push(subtask3);
-        }
-        super(TaskContainer.TYPE_REPEATING, subtasks);
-    }
+	
+	public function new (?subtask1:IEntityTask, ?subtask2:IEntityTask, ?subtask3:IEntityTask)
+	{
+		var subtasks = new Array<IEntityTask>();
+		if (subtask1 != null) {
+			subtasks.push(subtask1);
+		}
+		if (subtask2 != null) {
+			subtasks.push(subtask2);
+		}
+		if (subtask3 != null) {
+			subtasks.push(subtask3);
+		}
+		super(TaskContainer.TYPE_REPEATING, subtasks);
+	}
 }
 

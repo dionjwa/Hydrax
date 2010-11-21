@@ -38,36 +38,36 @@ import com.pblabs.components.tasks.ParallelTask;
 import com.pblabs.engine.core.PropertyReference;
 
 class LocationTask extends ParallelTask {
-    
-    public static function CreateLinear (x :Float, y :Float, time :Float, ?xRef :PropertyReference<Float> = null, ?yRef :PropertyReference<Float> = null) :LocationTask
-    {
-        return new LocationTask(xRef, yRef, x, y, time, feffects.easing.Linear.easeNone);
-    }
+	
+	public static function CreateLinear (x :Float, y :Float, time :Float, ?xRef :PropertyReference<Float> = null, ?yRef :PropertyReference<Float> = null) :LocationTask
+	{
+		return new LocationTask(xRef, yRef, x, y, time, feffects.easing.Linear.easeNone);
+	}
 
-    public static function CreateSmooth (x :Float, y :Float, time :Float, ?xRef :PropertyReference<Float> = null, ?yRef :PropertyReference<Float> = null) :LocationTask
-    {
-        return new LocationTask(xRef, yRef, x, y, time, feffects.easing.Cubic.easeInOut);
-    }
+	public static function CreateSmooth (x :Float, y :Float, time :Float, ?xRef :PropertyReference<Float> = null, ?yRef :PropertyReference<Float> = null) :LocationTask
+	{
+		return new LocationTask(xRef, yRef, x, y, time, feffects.easing.Cubic.easeInOut);
+	}
 
-    public static function CreateEaseIn (x :Float, y :Float, time :Float, ?xRef :PropertyReference<Float> = null, ?yRef :PropertyReference<Float> = null) :LocationTask
-    {
-        return new LocationTask(xRef, yRef, x, y, time, feffects.easing.Cubic.easeIn);
-    }
+	public static function CreateEaseIn (x :Float, y :Float, time :Float, ?xRef :PropertyReference<Float> = null, ?yRef :PropertyReference<Float> = null) :LocationTask
+	{
+		return new LocationTask(xRef, yRef, x, y, time, feffects.easing.Cubic.easeIn);
+	}
 
-    public static function CreateEaseOut (x :Float, y :Float, time :Float, ?xRef :PropertyReference<Float> = null, ?yRef :PropertyReference<Float> = null) :LocationTask
-    {
-        return new LocationTask(xRef, yRef, x, y, time, feffects.easing.Cubic.easeOut);
-    }
+	public static function CreateEaseOut (x :Float, y :Float, time :Float, ?xRef :PropertyReference<Float> = null, ?yRef :PropertyReference<Float> = null) :LocationTask
+	{
+		return new LocationTask(xRef, yRef, x, y, time, feffects.easing.Cubic.easeOut);
+	}
 
-    public function new (?xRef :PropertyReference<Float> = null, ?yRef :PropertyReference<Float> = null, 
-        x :Float, y :Float, ?time :Float = 0, ?easingFn :Float->Float->Float->Float->Float = null)
-    {
-        super();
-        xRef = if (xRef == null) LocationComponent.P_X else xRef;
-        yRef = if (yRef == null) LocationComponent.P_Y else yRef;
-        addTask(new AnimatePropertyTask(xRef, x, time, easingFn));
-        addTask(new AnimatePropertyTask(yRef, y, time, easingFn));
-    }
+	public function new (?xRef :PropertyReference<Float> = null, ?yRef :PropertyReference<Float> = null, 
+		x :Float, y :Float, ?time :Float = 0, ?easingFn :Float->Float->Float->Float->Float = null)
+	{
+		super();
+		xRef = if (xRef == null) LocationComponent.P_X else xRef;
+		yRef = if (yRef == null) LocationComponent.P_Y else yRef;
+		addTask(new AnimatePropertyTask(xRef, x, time, easingFn));
+		addTask(new AnimatePropertyTask(yRef, y, time, easingFn));
+	}
 
 }
 

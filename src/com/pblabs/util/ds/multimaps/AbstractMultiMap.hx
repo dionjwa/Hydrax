@@ -10,47 +10,47 @@ package com.pblabs.util.ds.multimaps;
 
 class AbstractMultiMap <K, V>
 {
-    public var length (get_length, null) :Int;
-    
-    public function new () :Void
-    {
-        _size = 0;
-    }
-    
-    public function set (key :K, value :V) :Void
-    {
-        _size++;
-    }
-    
-    public function keys () :Iterator<K>
-    {
-        return null;
-    }
-    
-    public function get (key :K) :Iterable<V>
-    {
-        return null;
-    }
+	public var length (get_length, null) :Int;
+	
+	public function new () :Void
+	{
+		_size = 0;
+	}
+	
+	public function set (key :K, value :V) :Void
+	{
+		_size++;
+	}
+	
+	public function keys () :Iterator<K>
+	{
+		return null;
+	}
+	
+	public function get (key :K) :Iterable<V>
+	{
+		return null;
+	}
 
-    public function clear () :Void
-    {
-        _size = 0;
-    }
-    
-    public function toString () :String
-    {
-        var s = "{\n";
-        for (k in keys()) {
-            s += "  " + k + ": " + get(k) + "\n";
-        }
-        s += "}";
-        return s;
-    }
-    
-    inline function get_length () :Int
-    {
-        return _size;
-    }
-    
-    var _size :Int;
+	public function clear () :Void
+	{
+		_size = 0;
+	}
+	
+	public function toString () :String
+	{
+		var s = "{\n";
+		for (k in keys()) {
+			s += "  " + k + ": " + get(k) + "\n";
+		}
+		s += "}";
+		return s;
+	}
+	
+	inline function get_length () :Int
+	{
+		return _size;
+	}
+	
+	var _size :Int;
 }

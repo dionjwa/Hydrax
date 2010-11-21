@@ -13,22 +13,22 @@ package com.pblabs.util;
  */
 class EqualableUtil
  {
-    /**
-     * If the objects are Equalable, then that will be tested. Arrays
-     * and ByteArrays are also compared and are equal if they have
-     * elements that are equals (deeply).
-     */
-    public static function equals (obj1 :Dynamic, obj2 :Dynamic) :Bool
-    {
-        // catch various common cases (both primitive or null)
-        if (obj1 == obj2 || (obj1 == null && obj2 == null)) {
-            return true;
-        } else if (Std.is(obj1, Equalable)) {
-            // if obj1 is Equalable, then that decides it
-            return (cast(obj1, Equalable<Dynamic>)).equals(obj2);
-        } else if ((Std.is(obj1, Array)) || (Std.is( obj2, Array))) {
-            throw "Cannot compare Arrays yet";
-        } 
-        return false;
-    }
+	/**
+	 * If the objects are Equalable, then that will be tested. Arrays
+	 * and ByteArrays are also compared and are equal if they have
+	 * elements that are equals (deeply).
+	 */
+	public static function equals (obj1 :Dynamic, obj2 :Dynamic) :Bool
+	{
+		// catch various common cases (both primitive or null)
+		if (obj1 == obj2 || (obj1 == null && obj2 == null)) {
+			return true;
+		} else if (Std.is(obj1, Equalable)) {
+			// if obj1 is Equalable, then that decides it
+			return (cast(obj1, Equalable<Dynamic>)).equals(obj2);
+		} else if ((Std.is(obj1, Array)) || (Std.is( obj2, Array))) {
+			throw "Cannot compare Arrays yet";
+		} 
+		return false;
+	}
 }

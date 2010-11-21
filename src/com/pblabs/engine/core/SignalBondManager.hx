@@ -25,36 +25,36 @@ import com.pblabs.util.ds.multimaps.ArrayMultiMap;
   * and then call destroyBonds on destruction.
   */
 class SignalBondManager extends ArrayMultiMap<Dynamic, Bond>,
-    implements IPBManager
+	implements IPBManager
 {
-    public function new ()
-    {
-        super();
-    }
+	public function new ()
+	{
+		super();
+	}
 
-    public function destroyBonds (key :Dynamic) :Void
-    {
-        if (exists(key)) {
-            for (b in get(key)) {
-                b.destroy();
-            }
-            remove(key);
-        }
-    }
-    
-    public function startup():Void
-    {
-    }
-    
-    public function shutdown():Void
-    {
-        for (k in keys()) {
-            for (b in get(k)) {
-                b.destroy();
-            }
-        }
-        clear();
-    }
+	public function destroyBonds (key :Dynamic) :Void
+	{
+		if (exists(key)) {
+			for (b in get(key)) {
+				b.destroy();
+			}
+			remove(key);
+		}
+	}
+	
+	public function startup():Void
+	{
+	}
+	
+	public function shutdown():Void
+	{
+		for (k in keys()) {
+			for (b in get(k)) {
+				b.destroy();
+			}
+		}
+		clear();
+	}
 }
 
 

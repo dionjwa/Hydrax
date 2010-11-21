@@ -13,9 +13,9 @@ filesAccountedFor = []
 
 rootdir = root + "/src"
 for root, subFolders, files in os.walk(rootdir):
-    for file in files:
-        if file.endswith(".hx"):
-            fileList.append(os.path.join(root,file))
+	for file in files:
+		if file.endswith(".hx"):
+			fileList.append(os.path.join(root,file))
 
 # print fileList
 
@@ -102,7 +102,7 @@ headers["sprintf"] = hydrax_preamble + """
  * Original copyright notice:
  *
  *  Author:  Manish Jethani (manish.jethani@gmail.com)
- *  Date:    April 3, 2006
+ *  Date:	April 3, 2006
  *  Version: 0.1
  *
  *  Copyright (c) 2006 Manish Jethani
@@ -136,10 +136,10 @@ headers["haxe"] = hydrax_preamble + """
  * modification, are permitted provided that the following conditions are met:
  *
  *   - Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
+ *	 notice, this list of conditions and the following disclaimer.
  *   - Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
+ *	 notice, this list of conditions and the following disclaimer in the
+ *	 documentation and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE HAXE PROJECT CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -158,13 +158,13 @@ headers["polygonal"] = hydrax_preamble + """
  *
  * Portions derived from polygonal code.  Polygonal license and copyright:
  *
- *                            _/                                          _/   
- *       _/_/_/      _/_/    _/  _/    _/    _/_/_/    _/_/    _/_/_/    _/    
- *      _/    _/  _/    _/  _/  _/    _/  _/    _/  _/    _/  _/    _/  _/     
- *     _/    _/  _/    _/  _/  _/    _/  _/    _/  _/    _/  _/    _/  _/      
- *    _/_/_/      _/_/    _/    _/_/_/    _/_/_/    _/_/    _/    _/  _/       
- *   _/                            _/        _/                                
- *  _/                        _/_/      _/_/
+ *							_/										  _/   
+ *	   _/_/_/	  _/_/	_/  _/	_/	_/_/_/	_/_/	_/_/_/	_/	
+ *	  _/	_/  _/	_/  _/  _/	_/  _/	_/  _/	_/  _/	_/  _/	 
+ *	 _/	_/  _/	_/  _/  _/	_/  _/	_/  _/	_/  _/	_/  _/	  
+ *	_/_/_/	  _/_/	_/	_/_/_/	_/_/_/	_/_/	_/	_/  _/	   
+ *   _/							_/		_/								
+ *  _/						_/_/	  _/_/
  *
  * POLYGONAL - A HAXE LIBRARY FOR GAME DEVELOPERS
  * Copyright (c) 2009-2010 Michael Baczynski, http://www.polygonal.de
@@ -189,58 +189,58 @@ headers["polygonal"] = hydrax_preamble + """
  
 #Add/replace the license
 def replaceLicense (f, header):
-    newLines = []
-    file = open(f)
-    found_license = False
-    in_license = False
-    for line in file:
-        if in_license and line.find("*/") > -1:
-            found_license = True
-            in_license = False
-        elif found_license:
-            newLines.append(line + "\n")
-        elif line.find("package") > -1:
-            found_license = True
-            newLines.append(line)
-        elif not found_license and line.find("/**") > -1:
-            in_license = True
-            
-    file.close()
-    file = open(f, 'w')
-    file.write(header + "\n")
-    for line in newLines:
-        file.write(line[0:-1])
-    file.close()
-    
+	newLines = []
+	file = open(f)
+	found_license = False
+	in_license = False
+	for line in file:
+		if in_license and line.find("*/") > -1:
+			found_license = True
+			in_license = False
+		elif found_license:
+			newLines.append(line + "\n")
+		elif line.find("package") > -1:
+			found_license = True
+			newLines.append(line)
+		elif not found_license and line.find("/**") > -1:
+			in_license = True
+			
+	file.close()
+	file = open(f, 'w')
+	file.write(header + "\n")
+	for line in newLines:
+		file.write(line[0:-1])
+	file.close()
+	
 def getFullPackageName(f):
-    return f.split("src/")[-1].replace("/", ".").replace(".hx", "")
+	return f.split("src/")[-1].replace("/", ".").replace(".hx", "")
 
 def addLicensesToClasses (classes, header):
-    for f in fileList:
-        fileEquivalent = getFullPackageName(f)
-        if classes.count(fileEquivalent) > 0:
-            if filesAccountedFor.count(f) > 0:
-                print "Warning, " + str(f)  + " is already accounted for"
-            else:
-                # print "Replacing header for " + str(f)
-                replaceLicense(f, header)
-                filesAccountedFor.append(f)
-        
+	for f in fileList:
+		fileEquivalent = getFullPackageName(f)
+		if classes.count(fileEquivalent) > 0:
+			if filesAccountedFor.count(f) > 0:
+				print "Warning, " + str(f)  + " is already accounted for"
+			else:
+				# print "Replacing header for " + str(f)
+				replaceLicense(f, header)
+				filesAccountedFor.append(f)
+		
 #Add all the licenses
 for item in licensedFiles.iteritems():
-    libkey = item[0]
-    files = item[1]
-    if libkey not in headers:
-        print "No licence for " + libkey
-    else:
-        addLicensesToClasses(files, headers[libkey])
-    # print item
+	libkey = item[0]
+	files = item[1]
+	if libkey not in headers:
+		print "No licence for " + libkey
+	else:
+		addLicensesToClasses(files, headers[libkey])
+	# print item
 
 #Notify classes with no licence asssignment
 print "No license assignment for "
 for f in fileList:
-    if filesAccountedFor.count(f) == 0:
-        print getFullPackageName(f)
+	if filesAccountedFor.count(f) == 0:
+		print getFullPackageName(f)
 
 # for f in filesAccountedFor:
-#     print getFullPackageName(f)
+#	 print getFullPackageName(f)

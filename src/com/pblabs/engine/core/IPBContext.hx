@@ -33,29 +33,29 @@ import com.pblabs.engine.core.IPBGroup;
   */
 interface IPBContext
 {
-    var name (default, null):String;
-    var rootGroup(default, null):IPBGroup;
-    var currentGroup (get_currentGroup, set_currentGroup) :IPBGroup;
-    var started (default, null):Bool;
-    
-    // #if flash
-    // var displayContainer (get_displayContainer, null) :flash.display.Sprite;
-    // #end
-    
-    function startup() :Void;//#if flash ?parentContainer :flash.display.DisplayObjectContainer #end):Void;
-    function shutdown():Void;
-    
-    function registerManager <T>(clazz:Class<T>, ?instance:T = null, ?optionalName:String = null, ?suppressInject:Bool = false):T;
-    function getManager <T>(clazz:Class<T>, ?optionalName:String = null):T;
+	var name (default, null):String;
+	var rootGroup(default, null):IPBGroup;
+	var currentGroup (get_currentGroup, set_currentGroup) :IPBGroup;
+	var started (default, null):Bool;
+	
+	// #if flash
+	// var displayContainer (get_displayContainer, null) :flash.display.Sprite;
+	// #end
+	
+	function startup() :Void;//#if flash ?parentContainer :flash.display.DisplayObjectContainer #end):Void;
+	function shutdown():Void;
+	
+	function registerManager <T>(clazz:Class<T>, ?instance:T = null, ?optionalName:String = null, ?suppressInject:Bool = false):T;
+	function getManager <T>(clazz:Class<T>, ?optionalName:String = null):T;
 
-    function allocate <T>(type:Class<T>):T;
-    // function allocateEntity():IEntity;
-    function injectInto (instance:Dynamic):Void;
-    
-    // Name lookups.
-    function lookup (name:String):Dynamic;
-    function lookupEntity (name:String):IEntity;
-    // function lookupComponent (entityName:String, componentName:String):IEntityComponent;
+	function allocate <T>(type:Class<T>):T;
+	// function allocateEntity():IEntity;
+	function injectInto (instance:Dynamic):Void;
+	
+	// Name lookups.
+	function lookup (name:String):Dynamic;
+	function lookupEntity (name:String):IEntity;
+	// function lookupComponent (entityName:String, componentName:String):IEntityComponent;
 }
 
 

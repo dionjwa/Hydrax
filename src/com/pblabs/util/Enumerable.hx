@@ -34,115 +34,115 @@ using com.pblabs.util.IterUtil;
 * 
 */
 class Enumerable<T>
-    implements Hashable, implements Equalable<T>, implements Comparable<T>  
+	implements Hashable, implements Equalable<T>, implements Comparable<T>  
 {
-    public var name (get_name, never) :String;
-    public var ordinal (get_ordinal, never) :Int;
-    
-    public static function values <T>(cls :Class<T>) :Iterable<T>
-    {
-        return cast(_enums.get(cls));
-    }
-    
-    public static function names (cls :Class<Dynamic>) :Iterator<String>
-    {
-        var enums = _enums.get(cls);
-        if (enums == null) {
-            return null;
-        }
-        return enums.keys();
-    }
-    
-    public static function valueOf <T>(cls :Class<T>, name :String) :T
-    {
-        return cast(_enums.get(cls).get(name));
-    }
-    
-    public static function serializedValueOf <T>(clsName :String, name :String) :T
-    {
-        return valueOf(Type.resolveClass(clsName), name);
-    }
-    
-    public static function valueOfOrdinal <T>(cls :Class<T>, ordinal :Int) :T
-    {
-        Preconditions.checkNotNull(cls);
-        Preconditions.checkNotNull(_enums.get(cls));
-        var arr = _enums.get(cls).array();
-        Preconditions.checkPositionIndex(ordinal, arr.length);
-        return cast(arr[ordinal]);
-    }
-    
-    public static function getOrdinal (e :Enumerable<Dynamic>) :Int
-    {
-        var cls = Type.getClass(e);
-        Preconditions.checkNotNull(cls);
-        var arr = _enums.get(cls).array();
-        return arr.indexOf(e);
-    }
-    
-    //For map functions
-    static function getEnumName (e :Enumerable<Dynamic>) :String
-    {
-        return e.name;
-    }
-    
-    /**
-      * Keep the constructor private
-      */
-    private function new (name :String) 
-    {
-        Preconditions.checkNotNull(name);
-        _name = name;
-        var cls = Type.getClass(this);
-        
-        if (!_enums.exists(cls)) {
-            _enums.set(cls, new StringMap());
-        }
-        
-        var map = _enums.get(cls);
-        
-        Preconditions.checkArgument(!map.exists(name), "Enum already exists! " + this);
-        map.set(name, this);
-        //Be default, the hashCode is the ordinal value.
-        _hashCode = Enumerable.getOrdinal(this);
-    }
-    
-    inline public function equals (other :T) :Bool
-    {
-        return other == cast(this);
-    }
+	public var name (get_name, never) :String;
+	public var ordinal (get_ordinal, never) :Int;
+	
+	public static function values <T>(cls :Class<T>) :Iterable<T>
+	{
+		return cast(_enums.get(cls));
+	}
+	
+	public static function names (cls :Class<Dynamic>) :Iterator<String>
+	{
+		var enums = _enums.get(cls);
+		if (enums == null) {
+			return null;
+		}
+		return enums.keys();
+	}
+	
+	public static function valueOf <T>(cls :Class<T>, name :String) :T
+	{
+		return cast(_enums.get(cls).get(name));
+	}
+	
+	public static function serializedValueOf <T>(clsName :String, name :String) :T
+	{
+		return valueOf(Type.resolveClass(clsName), name);
+	}
+	
+	public static function valueOfOrdinal <T>(cls :Class<T>, ordinal :Int) :T
+	{
+		Preconditions.checkNotNull(cls);
+		Preconditions.checkNotNull(_enums.get(cls));
+		var arr = _enums.get(cls).array();
+		Preconditions.checkPositionIndex(ordinal, arr.length);
+		return cast(arr[ordinal]);
+	}
+	
+	public static function getOrdinal (e :Enumerable<Dynamic>) :Int
+	{
+		var cls = Type.getClass(e);
+		Preconditions.checkNotNull(cls);
+		var arr = _enums.get(cls).array();
+		return arr.indexOf(e);
+	}
+	
+	//For map functions
+	static function getEnumName (e :Enumerable<Dynamic>) :String
+	{
+		return e.name;
+	}
+	
+	/**
+	  * Keep the constructor private
+	  */
+	private function new (name :String) 
+	{
+		Preconditions.checkNotNull(name);
+		_name = name;
+		var cls = Type.getClass(this);
+		
+		if (!_enums.exists(cls)) {
+			_enums.set(cls, new StringMap());
+		}
+		
+		var map = _enums.get(cls);
+		
+		Preconditions.checkArgument(!map.exists(name), "Enum already exists! " + this);
+		map.set(name, this);
+		//Be default, the hashCode is the ordinal value.
+		_hashCode = Enumerable.getOrdinal(this);
+	}
+	
+	inline public function equals (other :T) :Bool
+	{
+		return other == cast(this);
+	}
 
-    inline public function hashCode () :Int
-    {
-        return _hashCode;
-    }
+	inline public function hashCode () :Int
+	{
+		return _hashCode;
+	}
 
-    inline public function toString () :String
-    {
-        return name;
-    }
-    
-    public function compareTo (other :T) :Int
-    {
-        Preconditions.checkArgument(Std.is(other, Type.getClass(this)), "Not same Enumerable type");
-        return Comparators.compareInts(this.ordinal, cast(other, Enumerable<Dynamic>).ordinal);
-    }
-    
-    inline function get_name () :String
-    {
-        return _name;
-    }
-    
-    inline function get_ordinal () :Int
-    {
-        return Enumerable.getOrdinal(this);
-    }
-    
-    var _name :String;
-    var _hashCode :Int;
-    
-    //Hidden static map of all Enumerable instances.
-    static var _enums :Map<Class<Dynamic>, Map<String, Enumerable<Dynamic>>> = new StringMap();//ArrayMultiMap.create(String);
+	inline public function toString () :String
+	{
+		return name;
+	}
+	
+	public function compareTo (other :T) :Int
+	{
+		Preconditions.checkArgument(Std.is(other, Type.getClass(this)), "Not same Enumerable type");
+		return Comparators.compareInts(this.ordinal, cast(other, Enumerable<Dynamic>).ordinal);
+	}
+	
+	inline function get_name () :String
+	{
+		return _name;
+	}
+	
+	inline function get_ordinal () :Int
+	{
+		return Enumerable.getOrdinal(this);
+	}
+	
+	var _name :String;
+	var _hashCode :Int;
+	
+	//Hidden static map of all Enumerable instances.
+	static var _enums :Map<Class<Dynamic>, Map<String, Enumerable<Dynamic>>> = new StringMap();//ArrayMultiMap.create(String);
 }
 
 

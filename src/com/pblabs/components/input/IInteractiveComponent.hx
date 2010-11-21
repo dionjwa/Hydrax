@@ -8,7 +8,7 @@ import com.pblabs.geom.Vector2;
   */
 interface IInteractiveComponent implements IEntityComponent
 {
-    function containsScreenPoint (pos :Vector2) :Bool;
+	function containsScreenPoint (pos :Vector2) :Bool;
 }
 
 

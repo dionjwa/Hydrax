@@ -28,45 +28,45 @@ import ressy.Ressy;
   */
 class RessyResource extends ResourceBase<Dynamic>
 {
-    #if embed
-    public function new (name :String, swfFileName :String, fileListName :String)
-    #else
-    public function new (name :String, baseFileName :String)
-    #end
-    {
-        super(name);
-        #if embed
-        _resourceFileName = swfFileName;
-        _fileListName = fileListName;
-        #else
-        _resourceFileName = baseFileName;
-        #end    
-    }
+	#if embed
+	public function new (name :String, swfFileName :String, fileListName :String)
+	#else
+	public function new (name :String, baseFileName :String)
+	#end
+	{
+		super(name);
+		#if embed
+		_resourceFileName = swfFileName;
+		_fileListName = fileListName;
+		#else
+		_resourceFileName = baseFileName;
+		#end	
+	}
 
-    override public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
-    {
-        super.load(onLoad, onError);
-        #if embed
-        Eddy.instance.load(_resourceFileName, _fileListName, loaded);
-        #else
-        Loddy.instance.load(_resourceFileName, loaded);
-        #end
-    }
-    
-    override public function create (?name :String) :Dynamic
-    {
-        Preconditions.checkNotNull(name, "Name must be given");
-        return Ressy.instance.getStr(name);
-    }
-    
-    override public function unload () :Void
-    {
-        super.unload();
-        Log.warn("Not implemented");
-    }
-    
-    var _resourceFileName :String;
-    var _fileListName :String;
+	override public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
+	{
+		super.load(onLoad, onError);
+		#if embed
+		Eddy.instance.load(_resourceFileName, _fileListName, loaded);
+		#else
+		Loddy.instance.load(_resourceFileName, loaded);
+		#end
+	}
+	
+	override public function create (?name :String) :Dynamic
+	{
+		Preconditions.checkNotNull(name, "Name must be given");
+		return Ressy.instance.getStr(name);
+	}
+	
+	override public function unload () :Void
+	{
+		super.unload();
+		Log.warn("Not implemented");
+	}
+	
+	var _resourceFileName :String;
+	var _fileListName :String;
 }
 
 
