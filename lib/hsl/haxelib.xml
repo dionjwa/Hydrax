@@ -1,9 +1,0 @@
-<project name="hsl-1" url="http://hxhsl.googlecode.com/" license="BSD">
-	<user name="pimmhogeling"/>
-	<tag v="hsl" />
-	<tag v="cross" />
-	<tag v="event" />
-	<description>HSL, pronounced "hustle", stands for haXe Signaling Library. It makes writing event-driven code in haXe hassle-free.</description>
-	<depends name="hsl-pico-1" version="1.4" />
-	<version name="1.4">Simplified packages. Removed the big and huge signalers - not many developers use them. Added trackable values. Simplified the JS API. Added shortcuts.</version>
-</project>
