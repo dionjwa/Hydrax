@@ -1,16 +1,15 @@
-package hsl.js.translation.gestures;
+package hsl.js.translation.touch;
 
 import hsl.haxe.translation.NativeEvent;
 import hsl.haxe.translation.Translation;
 import hsl.haxe.translation.Translator;
 
+import hsl.js.data.Touch;
 import hsl.js.translation.JSTranslatorBase;
 
-import js.IOs;
 
 /**
- * A translator that doesn't actually translate touch events, ha ha.
- * Placeholder class, when one day they will be translated.
+ * Currently a placeholder class.  The signal will return the native TouchEvent, not a generic version.
  */
 class TouchTranslator extends JSTranslatorBase, implements Translator<TouchEvent> {
 	/**

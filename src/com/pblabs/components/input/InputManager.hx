@@ -29,6 +29,7 @@ import com.pblabs.util.ds.Sets;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 import hsl.haxe.data.mathematics.Point;
+import hsl.haxe.data.mouse.MouseLocation;
 
 using IterTools;
 
@@ -40,8 +41,6 @@ using com.pblabs.util.MathUtil;
 #if js
 using js.IOs.TouchListIterator;
 #end
-
-typedef MouseLocation = #if flash hsl.avm2.data.mouse.MouseLocation; #else hsl.js.data.mouse.MouseLocation; #end
 
 /**
  * Integrates different lower level input listeners into higher level signals such as drag,
@@ -297,9 +296,9 @@ class InputManager extends BaseInputManager
         #end
         
         #if js
-        if (m == null || m.scope == sceneView.layer) {
-            return new Vector2(m.x, m.y);
-        }
+        // if (m == null || m.scope == sceneView.layer) {
+        //     return new Vector2(m.x, m.y);
+        // }
         return new Vector2(m.globalLocation.x - sceneView.mouseOffsetX, m.globalLocation.y - sceneView.mouseOffsetY);
         #else
         return new Vector2(m.x, m.y);

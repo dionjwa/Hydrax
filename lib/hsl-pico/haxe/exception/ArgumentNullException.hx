@@ -25,7 +25,6 @@
  * this software.
  */
 package haxe.exception;
-import haxe.PosInfos;
 
 /**
  * An exception that can be thown when an argument is null, while a non-null value is expected.
@@ -34,7 +33,7 @@ class ArgumentNullException extends Exception {
 	/**
 	 * Creates a new argument null exception.
 	 */
-	public function new(?argumentName:String, ?numberOfStackTraceShifts:Int, ?positionInformation:PosInfos) {
-		super("Argument " + argumentName + " must be non-null", null, numberOfStackTraceShifts, positionInformation);
+	public function new(?argumentName:String, ?numberOfStackTraceShifts:Int) {
+		super("Argument " + argumentName + " must be non-null", null, numberOfStackTraceShifts);
 	}
 }

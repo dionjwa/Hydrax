@@ -29,8 +29,7 @@ import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
 /**
- * A trackable value. If a line of code overwrites this value a signal is dispatched before the overwrite, and another signal
- * is dispatched after the overwrite. This allows you to track this value for changes.
+ * A trackable value. If this value is overwritten, a signal is dispatched. This allows you to track this value for changes.
  */
 class Trackable<Datatype> {
 	/**
@@ -38,10 +37,9 @@ class Trackable<Datatype> {
 	 */
 	public var changedSignaler(default, null):Signaler<Datatype>;
 	/**
-	 * A signaler that dispatches signals right before this value is overwritten. The signals contain the old value, the value
-	 * before the overwrite.
+	 * The previous value.
 	 */
-	public var changeRequestedSignaler(default, null):Signaler<Datatype>;
+	public var previousValue(default, null):Datatype;
 	/**
 	 * The actual value.
 	 */
@@ -51,14 +49,16 @@ class Trackable<Datatype> {
 	 */
 	public function new(initialValue:Datatype):Void {
 		changedSignaler = new DirectSignaler(this);
-		changeRequestedSignaler = new DirectSignaler(this);
-		value = initialValue;
+		previousValue = value = initialValue;
 	}
 	/**
 	 * Overwrites the current value.
 	 */
 	public inline function set(newValue:Datatype):Void {
-		changeRequestedSignaler.dispatch(value);
+		previousValue = value;
 		changedSignaler.dispatch(value = newValue);
+	}
+	private function toString():String {
+		return Std.string(value);
 	}
 }

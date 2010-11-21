@@ -42,7 +42,7 @@ class Bond {
 	 * Creates a new bond.
 	 */
 	public function new():Void {
-		// Set halted to false, unless the target is flash9, as in that case the default value is false anyway.
+		// Set halted to false, unless the target is AVM2, as in that case the default value is false anyway.
 		#if !flash9
 		halted = false;
 		#end

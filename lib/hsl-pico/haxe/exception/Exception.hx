@@ -25,7 +25,6 @@
  * this software.
  */
 package haxe.exception;
-import haxe.PosInfos;
 import haxe.Stack;
 
 /**
@@ -43,10 +42,6 @@ class Exception {
 	 */
 	public var innerException(default, null):Exception;
 	/**
-	 * The info about the place this exception was thrown.
-	 */
-	public var positionInformation(default, null):PosInfos;
-	/**
 	 * The message associated with and describing this exception.
 	 */
 	public var message(default, null):String;
@@ -62,7 +57,7 @@ class Exception {
 	/**
 	 * Creates a new exception. Creating an exception automatically generates the corresponding stacktrace.
 	 */
-	public function new(?message:String, ?innerException:Exception, ?numberOfStackTraceShifts:Int, ?positionInformation:PosInfos) {
+	public function new(?message:String, ?innerException:Exception, ?numberOfStackTraceShifts:Int) {
 		// If no message is passed, use "Unknown exception".
 		this.message =
 			if (null == message) {
@@ -71,7 +66,6 @@ class Exception {
 				message;
 			}
 		this.innerException = innerException;
-		this.positionInformation = positionInformation;
 		generateStackTrace(numberOfStackTraceShifts);
 		stackTrace = stackTraceArray;
 	}

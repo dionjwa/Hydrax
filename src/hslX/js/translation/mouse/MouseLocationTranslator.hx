@@ -41,6 +41,7 @@ class MouseLocationTranslator extends JSTranslatorBase, implements Translator<Mo
 	 * Creates a new mouse location translator.
 	 */
 	public function new():Void {
+	    super();
 	}
 	public function translate(nativeEvent:NativeEvent):Translation<MouseLocation> {
 		var event:Dynamic = getEvent(nativeEvent);
