@@ -35,6 +35,9 @@ import hsl.js.data.mouse.MouseLocation;
  * Provides common cross-browser functionality for retrieving properties of a native event.
  */
 class JSTranslatorBase {
+	public function new(?preventDefault :Bool = false):Void {
+		_preventDefault = preventDefault;
+	}
 	/** 
 	 * Returns the event released through the dispatched native event.
 	 */
@@ -49,6 +52,9 @@ class JSTranslatorBase {
 	 */
 	private function targetFromDOMEvent(event:js.Event):HtmlDom {
 		var ieEvent:Event = cast event;
+		if (_preventDefault) {
+			untyped event.preventDefault();
+		}
 		var target:HtmlDom = null;
 		if (null != ieEvent.target) {
 			target = ieEvent.target;
@@ -65,7 +71,9 @@ class JSTranslatorBase {
 	 */
 	private function localMouseLocationFromDOMEvent(event:js.Event, target:HtmlDom):MouseLocation {
 		var ieEvent:Event = cast event;
-		untyped event.preventDefault();
+		if (_preventDefault) {
+			untyped event.preventDefault();
+		}
 		var globalX:Float = 0;
 		var globalY:Float = 0;
 		if (null != ieEvent.pageX) {
@@ -84,5 +92,10 @@ class JSTranslatorBase {
 		}
 		return new MouseLocation(globalX - target.offsetLeft, globalY - target.offsetTop, target, new Point(globalX, globalY));
 	}
+	
+	/**
+	  * If you don't want gesture/touch events to be picked up by the OS or browser, leave this as true.
+	  */
+	var _preventDefault :Bool;
 }
 typedef Event = { > js.Event, srcElement:HtmlDom, pageX:Int, pageY:Int }

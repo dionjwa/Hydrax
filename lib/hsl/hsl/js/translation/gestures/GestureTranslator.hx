@@ -15,12 +15,13 @@ import js.IOs;
 class GestureTranslator extends JSTranslatorBase, implements Translator<GestureEvent> {
 	/**
 	 * Creates a new modifier keys state translator.
+	 * You usually want to prevent the default event handling.
 	 */
-	public function new():Void {
+	public function new(?preventDefault :Bool = true):Void {
+	    super(preventDefault);
 	}
 	public function translate(nativeEvent:NativeEvent):Translation<GestureEvent> {
 		var event :GestureEvent = cast nativeEvent;
-		untyped event.preventDefault();
 		return new Translation<GestureEvent>(event, targetFromDOMEvent(nativeEvent));
 	}
 	#if debug
@@ -28,6 +29,8 @@ class GestureTranslator extends JSTranslatorBase, implements Translator<GestureE
 		return "[GestureTranslator]";
 	}
 	#end
+	
+
 }
 
 

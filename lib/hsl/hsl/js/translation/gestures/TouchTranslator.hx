@@ -15,12 +15,13 @@ import js.IOs;
 class TouchTranslator extends JSTranslatorBase, implements Translator<TouchEvent> {
 	/**
 	 * Creates a new modifier keys state translator.
+	 * You usually want to prevent the default touch event handling.
 	 */
-	public function new():Void {
+	public function new(?preventDefault :Bool = true):Void {
+	    super(preventDefault);
 	}
 	public function translate(nativeEvent:NativeEvent):Translation<TouchEvent> {
 		var event :TouchEvent = cast nativeEvent;
-		untyped event.preventDefault();
 		return new Translation<TouchEvent>(event, targetFromDOMEvent(nativeEvent));
 	}
 	#if debug
@@ -29,5 +30,4 @@ class TouchTranslator extends JSTranslatorBase, implements Translator<TouchEvent
 	}
 	#end
 }
-
 

@@ -1,0 +1,5 @@
+<project name="hydrax" url="https://github.com/dionjwa/Hydrax" license="BSD">
+	<user name="dionjwa"/>
+	<description>A port of the Pushbutton Engine, a game engine.</description>
+	<version name="0.1">Initial release. </version>
+</project>
