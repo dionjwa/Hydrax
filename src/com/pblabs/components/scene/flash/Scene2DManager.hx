@@ -584,7 +584,11 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
 		}
 	   // trace("scene updateTransform _transformDirty=" +  _transformDirty);
 		_transformDirty = false;
-		
+	
+		for (layer in children) {
+		    layer.updateTransform();
+		}
+		return;
 		
 		// Update our transform, if required
 		_rootTransform.identity();

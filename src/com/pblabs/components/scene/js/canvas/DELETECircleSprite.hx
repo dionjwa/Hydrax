@@ -55,7 +55,7 @@ class CircleSprite extends Sprite
 			//ctx.beginPath();
 			ctx.fill();
 		}
-		// ctx.closePath();
+		ctx.closePath();
 //		if (strokeStyle != null) {
 //			ctx.strokeStyle = strokeStyle;
 //			ctx.beginPath();

@@ -438,8 +438,7 @@ private class AdvancedBond<Datatype> extends LinkedBond<Datatype> {
 		#end
 	}
 }
-class PropagationStatus 
-{
+class PropagationStatus {
 	public static inline var IMMEDIATELY_STOPPED:Int = 1;
 	public static inline var STOPPED:Int = 2;
 	public static inline var UNDISTURBED:Int = 3;

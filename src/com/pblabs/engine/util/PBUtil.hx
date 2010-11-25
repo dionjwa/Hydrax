@@ -47,7 +47,7 @@ class PBUtil
 		
 		Preconditions.checkArgument(Std.is(component, IEntityComponent), "Singleton " + compClass + " is not an IEntityComponent");
 		var e = context.allocate(IEntity);
-		Assert.isNotNull(e.context, "How can the entity context be null?");
+		Assert.isNotNull(e.context, "How can the entity context be null? e.name=" +e.name + ", compClass=" + Type.getClassName(compClass));
 		e.initialize(compName);
 		e.addComponent(cast(component, IEntityComponent), compName);
 		e.deferring = false;

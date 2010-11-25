@@ -10,17 +10,6 @@ package com.pblabs.engine.resource;
 
 import haxe.io.BytesData;
 
-enum Source {
-	url (u :String);
-	bytes (b :BytesData);
-	text (t :String);
-	//base64 (data :String); //??Maybe
-	#if flash
-	//FIgure out how to manage with with haxe embedded assets.
-	// embedded
-	#end
-}
-
 /**
   * Minimal resource.
   */

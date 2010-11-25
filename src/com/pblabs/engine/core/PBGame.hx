@@ -36,7 +36,6 @@ class PBGame extends PBGameBase
 		//Set the com.pblabs.engine.debug.Log methods
 		//to be from the Log implementation @ com.pblabs.util
 		com.pblabs.util.Log.setupPBGameLog();
-		com.pblabs.util.Log.setLevel("", com.pblabs.util.Log.WARNING);
 		super();
 		startup();
 	}

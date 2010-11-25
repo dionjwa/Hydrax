@@ -1,6 +1,9 @@
 package;
 
-class JSSignalTester
+import hsl.haxe.DirectSignaler;
+import hsl.haxe.Signaler;
+
+class Demo
 {
 	public function new ()
 	{
@@ -8,14 +11,16 @@ class JSSignalTester
 		var bar = new Bar();
 		
 		foo.signaler.bind(bar.listener);
-		foo.signaler.bind(Reflect.field(bar, "listener"), bar);
 		
-		fire();
+		// foo.signaler.bind(Reflect.field(bar, "listener"), bar);
+		foo.signaler.bind(Reflect.field(bar, "listener"));
+		
+		foo.fire();
 	}
 	
 	public static function main() 
 	{
-		new JSSignalTester();
+		new Demo();
 	}
 
 }

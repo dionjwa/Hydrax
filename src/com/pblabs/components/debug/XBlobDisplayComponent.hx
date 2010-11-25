@@ -20,7 +20,7 @@ using com.pblabs.geom.CircleUtil;
  * Display coloured, labelled circle with the angle marked.
  */
 class BlobDisplayComponent
-#if (js && jscss)
+#if (js && css)
 extends com.pblabs.components.scene.js.css.Base2DComponent
 // { public function new () { super (); }}
 #elseif (flash || cpp)
@@ -46,7 +46,7 @@ extends com.pblabs.components.scene.js.canvas.Canvas2DComponent
 		#if flash
 		// sceneLayerName = com.pblabs.components.scene.flash.Scene2DManager.DEBUG_LAYER_NAME;
 		_displayObject = new flash.display.Sprite();
-		#elseif (js && jscss)
+		#elseif (js && css)
 		// _circleDom = cast js.Lib.document.createElement("DIV");
 		
 		_svg = untyped js.Lib.document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -79,7 +79,7 @@ extends com.pblabs.components.scene.js.canvas.Canvas2DComponent
 		_circle.y = y;
 	}
 	
-	#if jscss
+	#if css
 	override public function onFrame (dt :Float) :Void
 	{
 		if (isDirty) {
@@ -111,7 +111,7 @@ extends com.pblabs.components.scene.js.canvas.Canvas2DComponent
 	override function onAdd () :Void
 	{
 		super.onAdd();
-		#if (js && jscss)
+		#if (js && css)
 		//Put the element in the base div element
 		//Why put it in a div?
 		//http://dev.opera.com/articles/view/css3-transitions-and-2d-transforms/#transforms
@@ -149,7 +149,7 @@ extends com.pblabs.components.scene.js.canvas.Canvas2DComponent
 
 	function redraw () :Void
 	{
-		#if (js && jscss)
+		#if (js && css)
 	   // _circleDom.style.cssText = "width:" + (radius * 2) + "px; height:" + (radius * 2) + "px; background-color:" + StringUtil.toColorString(fillColor, "#") + "; border-color:" + StringUtil.toColorString(borderColor, "#") + "; border-style:solid; border-width:" + borderWidth + "px;" + "-webkit-border-radius: " + radius + "px; -moz-border-radius: " + radius + "px;";
 	   // _circleDom.style.cssText = "width:" + (radius * 2) + "px; height:" + (radius * 2) + "px; background-color:" + StringUtil.toColorString(fillColor, "#") + "; border-color:" + StringUtil.toColorString(borderColor, "#") + "; border-style:solid; border-width:" + borderWidth + "px;" + "-webkit-border-radius: " + radius + "px; -moz-border-radius: " + radius + "px;";
 	   isDirty = true;
@@ -232,7 +232,7 @@ extends com.pblabs.components.scene.js.canvas.Canvas2DComponent
 	var _borderColor :Int;
 	var _borderWidth :Float;
 	
-	#if (js && jscss)
+	#if (js && css)
 	var _circleDom :js.Dom.HtmlDom;
 	var _svg :js.Dom.HtmlDom;
 	#elseif js

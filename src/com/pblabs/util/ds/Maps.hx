@@ -56,9 +56,16 @@ class Maps
 			}
 		}
 		
-		if (classname == "TInt") {
+		if (classname == "Class") {
+			#if (js || php)
+			return new StringMap<K, V>();
+			#else
+			return new HashMap<K, V>();
+			#end
+		}
+		else if (classname == "TInt") {
 			return new IntHashMap<K, V>();
-		} 
+		}
 		else if (classname == "String") {
 			return new HashMap<K, V>();
 		} 

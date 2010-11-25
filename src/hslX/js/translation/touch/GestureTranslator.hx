@@ -17,7 +17,7 @@ class GestureTranslator extends JSTranslatorBase, implements Translator<GestureE
 	 * You usually want to prevent the default event handling.
 	 */
 	public function new(?preventDefault :Bool = true):Void {
-		super(preventDefault);
+	    super(preventDefault);
 	}
 	public function translate(nativeEvent:NativeEvent):Translation<GestureEvent> {
 		var event :GestureEvent = cast nativeEvent;

@@ -17,7 +17,7 @@ class TouchTranslator extends JSTranslatorBase, implements Translator<TouchEvent
 	 * You usually want to prevent the default touch event handling.
 	 */
 	public function new(?preventDefault :Bool = true):Void {
-		super(preventDefault);
+	    super(preventDefault);
 	}
 	public function translate(nativeEvent:NativeEvent):Translation<TouchEvent> {
 		var event :TouchEvent = cast nativeEvent;

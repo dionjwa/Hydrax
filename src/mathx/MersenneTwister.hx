@@ -135,8 +135,7 @@ class MersenneTwister implements RandomGenerator
 	
 	public function nextBool () :Bool
 	{
-		return false;
-		// nextInt()
+		return nextInt() > Limits.intMax / 2;
 	}
 	
 	public function reseed( seed : Int ) : Void

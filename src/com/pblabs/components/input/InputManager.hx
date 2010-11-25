@@ -39,7 +39,7 @@ using com.pblabs.components.scene.SceneUtil;
 using com.pblabs.util.MathUtil;
 
 #if js
-using js.IOs.TouchListIterator;
+using hsl.js.data.Touch.TouchListIterator;
 #end
 
 /**
@@ -86,7 +86,7 @@ class InputManager extends BaseInputManager
 	
 	#if js
 	@inject
-	var gestures :GestureInputManager;
+	var gestures :com.pblabs.components.input.GestureInputManager;
 	#end
 	
 	
@@ -292,7 +292,7 @@ class InputManager extends BaseInputManager
 	{
 		// var view = context.getManager(SceneView);
 		#if flash
-		m = m.translateToScope(sceneView.layer);//.layer);
+		return new Vector2(m.globalLocation.x, m.globalLocation.y);//m.translateToScope(sceneView.layer);//.layer);
 		#end
 		
 		#if js
@@ -312,6 +312,9 @@ class InputManager extends BaseInputManager
 		_isDeviceDown = true;
 		
 		var adjustedM = adjustMouseLocation(m);
+		if (!isWithinSceneView(adjustedM)) {
+			return;
+		}
 		
 		var cUnderMouse = lookupComponentsUnderMouse(adjustedM)[0];
 		_deviceDownComponent = cUnderMouse;
@@ -377,6 +380,10 @@ class InputManager extends BaseInputManager
 		}
 		
 		var adjustedM = adjustMouseLocation(m);
+		if (!isWithinSceneView(adjustedM)) {
+			return;
+		}
+		
 		#if testing
 		js.Lib.document.getElementById("haxe:deviceMove").innerHTML = "deviceMove: " + adjustedM;
 		#end
@@ -401,6 +408,11 @@ class InputManager extends BaseInputManager
 			
 		}
 		deviceMove.dispatch(_inputCache);
+	}
+	
+	function isWithinSceneView (mouse :Vector2) :Bool
+	{
+	    return !(mouse.x < 0 || mouse.x > sceneView.width || mouse.y < 0 || mouse.y > sceneView.height);
 	}
 	
 	function onDrag (t :InputData) :Void

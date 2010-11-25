@@ -154,10 +154,9 @@ import com.pblabs.util.Predicates;
 import com.pblabs.util.StringUtil;
 
 #if js
-import com.pblabs.components.scene.js.Canvas2DComponent;
-import com.pblabs.components.scene.js.CanvasLayer;
-import com.pblabs.components.scene.js.CanvasScene2D;
-import com.pblabs.components.scene.js.CircleSprite;
+import com.pblabs.components.scene.js.canvas.Canvas2DComponent;
+import com.pblabs.components.scene.js.canvas.CanvasLayer;
+import com.pblabs.components.scene.js.canvas.CanvasScene2D;
 import com.pblabs.components.scene.js.FilledSprite;
 import com.pblabs.components.scene.js.ImageSprite;
 import com.pblabs.engine.resource.js.ImageResources;

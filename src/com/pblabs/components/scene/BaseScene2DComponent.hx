@@ -20,7 +20,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	public var height (get_height, set_height) :Float;
 	public var angle (get_angle, set_angle) :Float;
 	public var scale (get_scale, set_scale) :Float;
-	public var isDirty (get_isDirty, set_isDirty) :Bool;
+	public var isTransformDirty (get_isTransformDirty, set_isTransformDirty) :Bool;
 	
 	public function new ()
 	{
@@ -29,7 +29,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 		_y = 0;
 		_angle = 0;
 		_scale = 1;
-		_isDirty = true;
+		isTransformDirty = true;
 		_width = 0;
 		_height = 0;
 	}
@@ -97,7 +97,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	function set_x (val :Float) :Float
 	{
 		_x = val;
-		_isDirty = true;
+		isTransformDirty = true;
 		return val;
 	}
 	
@@ -109,7 +109,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	function set_y (val :Float) :Float
 	{
 		_y = val;
-		_isDirty = true;
+		isTransformDirty = true;
 		return val;
 	}
 	
@@ -122,7 +122,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	function set_angle (val :Float) :Float
 	{
 		_angle = val;
-		_isDirty = true;
+		isTransformDirty = true;
 		return val;
 	}
 	
@@ -137,14 +137,14 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 		return val;
 	}
 	
-	function get_isDirty () :Bool
+	function get_isTransformDirty () :Bool
 	{
-		return _isDirty;
+		return _isTransformDirty;
 	}
 	
-	function set_isDirty (val :Bool) :Bool
+	function set_isTransformDirty (val :Bool) :Bool
 	{
-		_isDirty = val;
+		_isTransformDirty = val;
 		return val;
 	}
 	
@@ -156,7 +156,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	function set_width (val :Float) :Float
 	{
 		_width = val;
-		_isDirty = true;
+		isTransformDirty = true;
 		return val;
 	}
 	
@@ -168,7 +168,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	function set_height (val :Float) :Float
 	{
 		_height = val;
-		_isDirty = true;
+		isTransformDirty = true;
 		return val;
 	}
 	
@@ -178,5 +178,5 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	var _height :Float;
 	var _angle :Float;
 	var _scale :Float;
-	var _isDirty :Bool;
+	var _isTransformDirty :Bool;
 }

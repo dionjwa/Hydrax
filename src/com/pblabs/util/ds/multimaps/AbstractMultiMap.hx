@@ -8,6 +8,8 @@
  ******************************************************************************/
 package com.pblabs.util.ds.multimaps;
 
+using com.pblabs.util.StringUtil;
+
 class AbstractMultiMap <K, V>
 {
 	public var length (get_length, null) :Int;
@@ -37,15 +39,17 @@ class AbstractMultiMap <K, V>
 		_size = 0;
 	}
 	
+	#if debug
 	public function toString () :String
 	{
 		var s = "{\n";
 		for (k in keys()) {
-			s += "  " + k + ": " + get(k) + "\n";
+			s += "  " + k.getStringKey() + ": " + get(k).getStringKey() + "\n";
 		}
 		s += "}";
 		return s;
 	}
+	#end
 	
 	inline function get_length () :Int
 	{

@@ -1,0 +1,42 @@
+-D use_rtti_doc
+-D debug
+
+-lib feffects
+-lib ArrayTools
+-lib IterTools
+-lib ListTools
+-lib hydrax
+             
+-cp ../../../hydrax/lib/hsl-pico
+-cp ../../src
+-cp src
+
+-swf build/demo.swf
+-swf-version 10
+-swf-header 1400:600:30:FFFFFF
+
+-main Demo
+
+--next
+
+-D use_rtti_doc
+-D debug
+-D jscss
+-D testing
+
+-lib feffects
+-lib ArrayTools
+-lib IterTools
+-lib ListTools
+-lib hydrax
+
+-cp ../../../hydrax/lib/hsl-pico
+-cp ../../src
+-cp src
+
+-js build/haxe.js
+
+-main Demo
+
+-cmd open index.xhtml
+

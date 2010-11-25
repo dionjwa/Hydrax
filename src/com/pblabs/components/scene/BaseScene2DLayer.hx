@@ -11,12 +11,14 @@ class BaseScene2DLayer<Scene :BaseScene2DManager<Dynamic>, Component :BaseScene2
 {
 	public var scene (get_scene, never) :Scene;
 	public var index (get_index, set_index) :Int;
+	public var parallaxFactor (get_parallaxFactor, set_parallaxFactor) :Float;
 	// public var parallaxFactor (get_parallaxFactor, set_parallaxFactor) :Float;
 
 	public function new ()
 	{
 		super();
 		// _index = 0;
+		_parallaxFactor = 1.0;
 	}
 	
 	dynamic public function sortChildren (c1 :Component, c2 :Component) :Int
@@ -51,8 +53,20 @@ class BaseScene2DLayer<Scene :BaseScene2DManager<Dynamic>, Component :BaseScene2
 		// return _index;
 	}
 	
+	function get_parallaxFactor () :Float
+	{
+	    return _parallaxFactor;
+	}
+	
+	function set_parallaxFactor (val :Float) :Float
+	{
+	    _parallaxFactor = val;
+	    return val;
+	}
+	
 	// var _index :Int;
 	var _needsSort :Bool;
+	var _parallaxFactor :Float;
 }
 
 

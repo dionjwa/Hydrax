@@ -27,6 +27,8 @@ class ArrayMultiMap<K, V> extends AbstractMultiMap<K, V>,
 	{
 		super();
 		_map = Maps.newHashMap(keyClass);
+		// trace(com.pblabs.util.Log.getStackTrace());
+		// trace(Type.getClassName(Type.getClass(_map)));
 	}
 	
 	override public function set (key :K, value :V) :Void

@@ -1,0 +1,19 @@
+-D use_rtti_doc
+-D debug
+-D jscss
+-D testing
+
+-lib feffects
+-lib ArrayTools
+-lib IterTools
+-lib ListTools
+-lib hydrax
+
+-cp ../../../hydrax/lib/hsl-pico
+-cp ../../src
+-cp src 
+
+-js build/haxe.js
+
+-main Demo
+

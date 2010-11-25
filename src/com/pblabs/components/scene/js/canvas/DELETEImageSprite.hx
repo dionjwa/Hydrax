@@ -20,7 +20,7 @@ class ImageSprite extends Sprite
 	public var frameWidth (default, null) :Float;
 	public var frameHeight (default, null) :Float;
 
-	public function new (image :Dynamic, ?frames = 1)
+	public function new (image :Image, ?frames = 1)
 	{
 		super();
 		boundingBox = [0.0, 0.0, image.width/frames, image.height];
@@ -59,6 +59,6 @@ class ImageSprite extends Sprite
 		}
 	}
 
-	private var _image :Dynamic;
+	private var _image :Image;
 	private var _frames :Int;
 }

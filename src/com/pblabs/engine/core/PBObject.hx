@@ -29,6 +29,7 @@ class PBObject
 {
 	public function new() { }
 	
+	// @inject
 	@inject("com.pblabs.engine.core.IPBContext")
 	public var context(get_context, set_context) :IPBContext;
 	public var name(get_name, set_name) :String;

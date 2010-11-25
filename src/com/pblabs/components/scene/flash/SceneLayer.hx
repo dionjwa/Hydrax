@@ -9,15 +9,20 @@
 package com.pblabs.components.scene.flash;
 
 import com.pblabs.components.scene.BaseScene2DLayer;
+import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.flash.Scene2DComponent;
 import com.pblabs.components.scene.flash.Scene2DManager;
 import com.pblabs.engine.debug.Log;
+import com.pblabs.geom.Vector2;
+import com.pblabs.util.Preconditions;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
+
+import flash.geom.Matrix;
 
 class SceneLayer extends BaseScene2DLayer<Scene2DManager, Scene2DComponent>
 {
@@ -32,6 +37,8 @@ class SceneLayer extends BaseScene2DLayer<Scene2DManager, Scene2DComponent>
 		// _sceneComponents = Maps.newHashMap(Scene2DComponent);
 		_displayContainer = new Sprite();
 		_displayContainer.mouseEnabled = _displayContainer.mouseChildren = false;
+		_rootTransform = new Matrix();
+		_tempPoint = new Vector2();
 	}
 	
 	override function childAdded (c :Scene2DComponent) :Void
@@ -59,6 +66,43 @@ class SceneLayer extends BaseScene2DLayer<Scene2DManager, Scene2DComponent>
 	{
 		super.onAdd();	  
 		_displayContainer.name = name;
+	}
+	
+	public function updateTransform () :Void
+	{
+		// if (!_transformDirty) {
+		// 	return;
+		// }
+	   // trace("scene updateTransform _transformDirty=" +  _transformDirty);
+		// _transformDirty = false;
+		
+		
+		// Update our transform, if required
+		_rootTransform.identity();
+		// trace(_rootTransform);
+		// trace("x=" + x);
+		// trace("y=" + y);
+		// trace("zoom=" + zoom);
+		// trace("rotation=" + rotation);
+		_rootTransform.translate(parent.x * parallaxFactor, parent.y * parallaxFactor);
+		_rootTransform.scale(parent.zoom, parent.zoom);
+		
+		// Apply rotation.
+		_rootTransform.rotate(parent.rotation);
+		// trace(_rootTransform);
+
+		// Center it appropriately.
+		Preconditions.checkNotNull(_tempPoint);
+		Preconditions.checkNotNull(parent.sceneAlignment);
+		Preconditions.checkNotNull(parent.sceneView);
+		SceneUtil.calculateOutPoint(_tempPoint, parent.sceneAlignment, parent.sceneView.width, parent.sceneView.height);
+		// trace("_tempPoint=" + _tempPoint);
+		// trace("sceneView=" + sceneView);
+		// trace("sceneAlignment=" + sceneAlignment);
+		_rootTransform.translate(_tempPoint.x, _tempPoint.y);
+
+		// Apply the transform.
+		displayContainer.transform.matrix = _rootTransform;
 	}
 
 	// public function get_scene () :Scene2DManager
@@ -168,6 +212,7 @@ class SceneLayer extends BaseScene2DLayer<Scene2DManager, Scene2DComponent>
 	// var _sceneComponents :Map<Scene2DComponent, DisplayObject>;
 
 	// public var _parentScene :Scene2DManager;
+	
+	var _rootTransform :Matrix;
+	var _tempPoint :Vector2;
 }
-
-

@@ -42,7 +42,8 @@ class ResourceManager
 	public function create <T>(resourceName :String, itemName :String) :T
 	{
 		Preconditions.checkArgument(isResource(resourceName), "No IResource with id=" + resourceName); 
-		var rs :IResource<T> = getResource(resourceName);
+		// var rs :IResource<T> = getResource(resourceName);
+		var rs = getResource(resourceName);
 		return rs.create(itemName);
 	}
 
@@ -68,6 +69,7 @@ class ResourceManager
 			var loaded = function () :Void {
 				self.resourceLoaded(rsrc);
 			}
+			Log.debug("Loading resource=" + rsrc);
 			rsrc.load(loaded, handleLoadingError);
 		}
 	}
@@ -87,17 +89,17 @@ class ResourceManager
 		return _pendingResources.exists(resourceName) || _loadedResources.exists(resourceName) || _loadingResources.exists(resourceName);
 	}
 	
-	public function getResource <T>(resourceName :String, ?resourceType :Class<Dynamic>) :IResource<T>
+	public function getResource (resourceName :String) :IResource<Dynamic>
 	{
-		Preconditions.checkArgument(resourceName != null || resourceType != null, "You must give either a resource name or type");
+		Preconditions.checkArgument(resourceName != null , "You must give a resource name");
 		
-		if (resourceType != null) {
-			for (rsrc in _loadedResources) {
-				if (Std.is(rsrc, resourceType)) {
-					return cast rsrc;
-				}
-			}
-		}
+		// if (resourceType != null) {
+		// 	for (rsrc in _loadedResources) {
+		// 		if (Std.is(rsrc, resourceType)) {
+		// 			return cast rsrc;
+		// 		}
+		// 	}
+		// }
 		return cast _loadedResources.get(resourceName);
 	}
 	

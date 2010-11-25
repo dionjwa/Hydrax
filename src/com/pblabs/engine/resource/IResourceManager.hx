@@ -28,6 +28,6 @@ interface IResourceManager implements IPBManager
 	  */
 	function isResource (resourceName :String) :Bool;
 	
-	function getResource <T>(resourceName :String, ?resourceType :Class<T>) :IResource<T>;
+	function getResource (resourceName :String) :IResource<Dynamic>;
 }
 

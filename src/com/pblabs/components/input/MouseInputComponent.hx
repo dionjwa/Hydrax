@@ -127,7 +127,7 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
 		
 		var input = context.getManager(InputManager);
 		#if debug
-		com.pblabs.util.Assert.isNotNull(input);
+		com.pblabs.util.Assert.isNotNull(input, "No InputManager?");
 		#end
 		
 		input.unregisterComponent(this);

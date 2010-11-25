@@ -16,6 +16,14 @@ class CanvasScene2D extends JSSceneManager<CanvasLayer>
 	{
 		super();
 	}
+	
+	override function updateTransform () :Void
+	{
+		for (layer in children) {
+		    layer.isTransformDirty = true;
+		}
+		_transformDirty = false;
+	}
 }
 
 

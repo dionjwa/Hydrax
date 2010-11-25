@@ -9,7 +9,6 @@
 package com.pblabs.engine.resource;
 
 import com.pblabs.engine.debug.Log;
-import com.pblabs.engine.resource.IResource.Source;
 import com.pblabs.engine.resource.ResourceBase;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.util.Preconditions;
@@ -49,6 +48,9 @@ class XMLResource extends ResourceBase<XML>
 	
 	override public function create (?name :String) :XML
 	{
+		if (name != null) {
+			Log.error("create(name): name argument is ignored");
+		}
 		return _xml.firstElement();
 	}
 	

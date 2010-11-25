@@ -37,7 +37,11 @@ class DatalessTranslator<D> extends JSTranslatorBase, implements Translator<D> {
 	 * Creates a new dataless translator.
 	 */
 	public function new():Void {
+<<<<<<< .mine
 		super();
+=======
+	    super();
+>>>>>>> .r117
 	}
 	public function translate(nativeEvent:NativeEvent):Translation<D> {
 		// TODO: Find out whether nativeEvent.target will do here, or the following is needed.

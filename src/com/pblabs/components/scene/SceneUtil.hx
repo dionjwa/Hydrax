@@ -31,7 +31,7 @@ class SceneUtil
 	{
 		#if (flash || cpp)
 		return com.pblabs.components.scene.flash.Scene2DManager;
-		#elseif (js && jscss)
+		#elseif css
 		return com.pblabs.components.scene.js.css.SceneManager;
 		#elseif js
 		return com.pblabs.components.scene.js.canvas.CanvasScene2D;
@@ -44,7 +44,7 @@ class SceneUtil
 	{
 		#if (flash || cpp)
 		return com.pblabs.components.scene.flash.SceneLayer;
-		#elseif (js && jscss)
+		#elseif css
 		return com.pblabs.components.scene.js.css.SceneLayer;
 		#elseif js
 		return com.pblabs.components.scene.js.canvas.CanvasLayer;

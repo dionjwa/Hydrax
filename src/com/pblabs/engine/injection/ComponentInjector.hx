@@ -20,7 +20,6 @@ import com.pblabs.util.Preconditions;
 import com.pblabs.util.SignallingVar;
 
 import hsl.haxe.Bond;
-import hsl.haxe.GenericSignaler;
 import hsl.haxe.Signaler;
 
 import com.pblabs.util.ds.Map;

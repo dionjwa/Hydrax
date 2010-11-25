@@ -12,7 +12,6 @@ import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.PBObject;
 import com.pblabs.engine.debug.Log;
-import com.pblabs.util.Assert;
 import com.pblabs.util.Preconditions;
 
 #if js
@@ -205,7 +204,10 @@ class SceneView
 			_layer.style.borderWidth = "1px";
 			#end
 		}
-		Assert.isNotNull(_layer, "Could not find HTML element with id=" + _layerId);
+		#if debug
+		com.pblabs.util.Assert.isNotNull(_layer, "Could not find HTML element with id=" + _layerId);
+		#end
+		
 		return _layer;
 	}
 	
@@ -228,12 +230,12 @@ class SceneView
 	
 	function get_mouseOffsetX () :Float
 	{
-		return _layer.offsetLeft + Std.parseFloat(_layer.style.borderWidth) * 2;
+		return layer.offsetLeft + Std.parseFloat(_layer.style.borderWidth) * 2;
 	}
 	
 	function get_mouseOffsetY () :Float
 	{
-		return _layer.offsetTop + Std.parseFloat(_layer.style.borderWidth) * 2;
+		return layer.offsetTop + Std.parseFloat(_layer.style.borderWidth) * 2;
 	}
 	#end
 }

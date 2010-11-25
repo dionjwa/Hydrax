@@ -79,12 +79,12 @@ class Injector
 	
 	public function unmap (cls :Class<Dynamic>, ?name :String) :Void
 	{
-		_injectionValues.remove(Type.getClassName(cls));
+		_injectionValues.remove(cls.getClassName());
 		if (name != null) {
 			_injectionValues.remove(name);
 		}
 		if (cls != null) {
-			_injectionValues.remove(Type.getClassName(cls));
+			_injectionValues.remove(cls.getClassName());
 		}
 	}
 	
@@ -98,6 +98,7 @@ class Injector
 	
 	function injectFields (obj :Dynamic, cls :Class<Dynamic>) :Void
 	{
+		// trace("injectFields " +cls.getClassName());
 		Preconditions.checkNotNull(cls, "obj class is null");
 		updateRuntimeCache(cls);
 		for (injectionTuple in instanceFieldInjections.get(cls)) {
@@ -105,6 +106,7 @@ class Injector
 				break;
 			}
 			
+			// trace("injectionTuple=" + injectionTuple);
 			var field = injectionTuple.v1;
 			
 			if (Type.typeof(Reflect.field(obj, field)) == ValueType.TFunction) {
@@ -123,7 +125,7 @@ class Injector
 				
 				var injectedValue :Dynamic = getMapping(null, injectionKey);
 				if (injectedValue == null) {
-					Log.warn("No value set for injection key=" + injectionTuple.v2 + "  ->  " + Type.getClassName(cls) + "." + field);
+					Log.warn("No value set for injection key=" + injectionTuple.v2 + "  ->  " + cls.getClassName() + "." + field);
 					continue;
 				}
 				
@@ -147,7 +149,7 @@ class Injector
 		var superCls = Type.getSuperClass(cls);
 		//Recursively inject superclass fields/listeners
 		if (superCls != null) {
-			Log.debug("Injecting on superclass=" + superCls);
+			Log.debug("Injecting on superclass=" + superCls.getClassName());
 			injectFields(obj, superCls);
 		}
 	}
@@ -163,14 +165,16 @@ class Injector
 	function updateRuntimeCache (cls :Class<Dynamic>) :Void
 	{
 		if (instanceFieldInjections.get(cls) != null) {
-			Log.debug(cls + " already registered");
+			Log.debug(cls.getClassName() + " already registered:" + instanceFieldInjections.get(cls));
+			// trace("instanceFieldInjections=" + instanceFieldInjections);
 			return;
 		}
-		
+		// trace("updateRuntimeCache for " + cls.getClassName() );
 		var m = haxe.rtti.Meta.getFields(cls);
 		if (m != null) {
 			var tup :Tuple<String, Array<String>>;
 			for (field in Reflect.fields(m)) {
+				// trace("field=" + field);
 				var injectString :String = null;
 				//Only cache @inject tags 
 				if (!Reflect.hasField(Reflect.field(m, field), INJECT)) {
@@ -213,7 +217,7 @@ class Injector
 		var superCls = Type.getSuperClass(cls);
 		//Recursively inject superclass fields/listeners
 		if (superCls != null) {
-			Log.debug("Caching injections on superclass=" + superCls);
+			Log.debug("Caching injections on superclass=" + superCls.getClassName());
 			updateRuntimeCache(superCls);
 		}
 	}
@@ -235,7 +239,7 @@ class Injector
 	var _parentInjector :Injector;
 	
 	/** Maps class names to <fieldname, injection member key> */
-	public static var instanceFieldInjections :MultiMap<Dynamic, Tuple<String, Array<String>>> = ArrayMultiMap.create(String);
+	public static var instanceFieldInjections :MultiMap<Dynamic, Tuple<String, Array<String>>> = ArrayMultiMap.create(Class);
 	public static var NULL_INJECTION :Tuple<String, Array<String>> = new Tuple(null, null);
 	static var SINGLE_VALUE_ARRAY :Array<Dynamic> = [null];
 }
