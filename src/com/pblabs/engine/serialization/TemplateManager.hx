@@ -13,10 +13,12 @@
 
 package com.pblabs.engine.serialization;
 
+import com.pblabs.engine.core.Entity;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBGroup;
+import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBGroup;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.debug.Log;
@@ -34,6 +36,9 @@ import com.pblabs.util.ds.maps.DynamicMap;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
+
+using com.pblabs.util.IterUtil;
+using com.pblabs.util.StringUtil;
 
 /**
  * @eventType com.pblabs.engine.core.TemplateEvent.GROUP_LOADED
@@ -59,7 +64,6 @@ import hsl.haxe.Signaler;
  * @see com.pblabs.engine.serialization.Serializer.
  */
 class TemplateManager 
-	// implements haxe.rtti.Infos //For injections 
 {
 	public var signalLoaded :Signaler<XMLResource>;
 	public var signalFailed :Signaler<XMLResource>;
@@ -71,6 +75,9 @@ class TemplateManager
 	
 	@inject("com.pblabs.engine.resource.IResourceManager")
 	public var resourceManager :IResourceManager;
+	
+	@inject("com.pblabs.engine.core.NameManager")
+	public var nameManager :NameManager;
 	
 	/**
 	 * Defines the event to dispatch when a level file is successfully loaded.
@@ -172,17 +179,30 @@ class TemplateManager
 	 */
 	public function instantiateEntity(name :String, context :IPBContext) :IEntity
 	{
+		// Log.debug("name=" + name);
+		Preconditions.checkNotNull(name, "name is null");
+		Preconditions.checkNotNull(context, "context is null");
 		Profiler.enter("instantiateEntity");
 		var entity;
 		try {
 			// Check for a callback.
 			if (_things.exists(name)) {
-				if (_things.get(name).groupCallback != null) {
+				// Log.debug("thing exists=" + _things.get(name));
+				if (_things.get(name).type == RefType.group) {
 					throw "Thing '" + name + "' is a group callback!";
 				}
 				
-				if (_things.get(name).entityCallback != null) {
-					var instantiated = _things.get(name).entityCallback();
+				if (_things.get(name).type == RefType.entity) {
+					// Log.debug("creating entity from a callback");
+					var thing :ThingReference = _things.get(name);
+					var instantiated = null;
+					try {
+						instantiated = thing.createEntity();
+						Log.debug("entity created from callback");
+					}
+					catch (e :Dynamic) {
+						Log.error("createEntity callback error: " + e + "\n" + Log.getStackTrace());
+					}
 					
 					if(instantiated == null) {
 						throw "entityCallback returned NULL!";
@@ -192,7 +212,7 @@ class TemplateManager
 					return instantiated;
 				}
 			}
-			
+			// Log.debug("entity instantiated via XML");			
 			var xml = getXML(name, "template", "entity");
 			if (xml == null) {
 				Log.error("Unable to find a template or entity with the name " + name + ".");
@@ -201,6 +221,7 @@ class TemplateManager
 			}
 			
 			entity = instantiateEntityFromXML(xml, context);
+			// entity.deferring = false;//???
 			Profiler.exit("instantiateEntity");
 		}
 		catch (e :Dynamic) {
@@ -262,6 +283,7 @@ class TemplateManager
 	 */
 	public function instantiateEntityFromXML (xml :XML, context :IPBContext) :IEntity
 	{
+		Log.debug("");
 		Preconditions.checkNotNull(xml);
 		Preconditions.checkNotNull(context);
 		Profiler.enter("instantiateEntityFromXML");
@@ -274,34 +296,44 @@ class TemplateManager
 			if (xml.nodeName == "template") {
 				name = "";
 			}
-			
-			// Make the IEntity instance.
-			entity = context.allocate(IEntity);
-			trace("entity made " + entity);	
-			// To aid with reference handling, initialize FIRST but defer the
-			// reset...
-			entity.initialize(name);
-			entity.deferring = true;
-			trace("initialized");
-			
-			if (!doInstantiateTemplate(entity, xml.get("template"), new DynamicMap<Bool>())) {
-				trace("false on doInstantiateTemplate"); 
-				entity.destroy();
-				Profiler.exit("instantiateEntityFromXML");
-				return null;
+
+			if (!xml.get("template").isBlank() && hasEntityCallback(xml.get("template"))) {
+				Log.debug("instantiating entity from a callback");
+				entity = instantiateEntity(xml.get("template"), context);
+				entity.deferring = true;
+				Log.debug("instantiated entity from a callback");
+			} else {
+				Log.debug("instantiating entity from xml");
+				// Make the IEntity instance.
+				entity = context.allocate(IEntity);
+				// To aid with reference handling, initialize FIRST but defer the
+				// reset...
+				//Important modifaction, now we don't worry about name conflict.  Just create a valid name
+				// entity.initialize(name);
+				entity.initialize(name);//entity.deferring = true;
+				entity.deferring = true;
+				
+				
+				
+				Log.debug("doInstantiateTemplate");
+				if (!doInstantiateTemplate(entity, xml.get("template"), new DynamicMap<Bool>())) {
+					entity.destroy();
+					Profiler.exit("instantiateEntityFromXML");
+					return null;
+				}				
 			}
+			
 			
 			var serializer = context.getManager(Serializer);
 			#if debug
 			com.pblabs.util.Assert.isNotNull(serializer);
 			#end
 			
-			trace("serializer=" + serializer);
 			serializer.deserialize(context, entity, xml);
-			// serializer.clearCurrentEntity();
+			serializer.clearCurrentEntity();
 			
 			// // Don't forget to disable deferring.
-			// entity.deferring = false;
+			entity.deferring = false;
 			
 			// if (!_inGroup) {
 			//	 serializer.reportMissingReferences();
@@ -329,13 +361,15 @@ class TemplateManager
 	 */
 	public function instantiateGroup(context :IPBContext, name :String) :IPBGroup
 	{
+		Log.debug("name=" + name);
 		// Check for a callback.
-		if (_things.exists(name)) {
-			Preconditions.checkArgument(_things.get(name).entityCallback == null, "Thing '" + name + "' is an entity callback!"); 
+		if (_things.exists(name) && _things.get(name).type == RefType.group) {
+			// Log.debug("name exists, type=" + _things.get(name).type);
+			// Preconditions.checkArgument(_things.get(name).type != RefType.entity, "Thing '" + name + "' is an entity callback!"); 
 			// We won't dispatch the GROUP_LOADED event here as it's the callback
 			// author's responsibility.
-			if (null != _things.get(name).groupCallback)
-				return _things.get(name).groupCallback();
+			// if (null != _things.get(name).groupCallback)
+			return _things.get(name).createGroup();
 		}
 		
 		try {
@@ -385,11 +419,13 @@ class TemplateManager
 			return;
 		}
 		
-		var thing = new ThingReference();
+		var thing = new ThingReference(RefType.xml);
 		thing.xmlData = xml;
 		thing.identifier = identifier;
 		thing.version = version;
 		
+		Log.debug("new thing, name=" +name + ", thing=" + thing);
+		Log.debug("previous thing=" + _things.get(name));
 		_things.set(name, thing);
 	}
 	
@@ -401,7 +437,12 @@ class TemplateManager
 	 */
 	public function removeXML (identifier :String) :Void
 	{
-		_things.remove(identifier);
+		for (key in _things.keys().toArray()) {
+			var thing = _things.get(key);
+			if (thing.identifier == identifier) {
+				_things.remove(key);
+			}
+		}
 	}
 	
 	/**
@@ -448,11 +489,14 @@ class TemplateManager
 	 */
 	public function registerEntityCallback(name :String, callBack :Void->IEntity) :Void
 	{
+		Log.debug("name=" + name);
 		Preconditions.checkNotNull(callBack, "Must pass a callback function!");
 		Preconditions.checkArgument(!_things.exists(name), "Already have a thing registered under '" + name + "'!");
 		
-		var newThing = new ThingReference();
-		newThing.entityCallback = callBack;
+		var newThing = new ThingReference(RefType.entity);
+		newThing.createEntity = callBack;
+		// newThing.entityCallback = callBack;
+		Log.debug("newThing=" + newThing);
 		_things.set(name, newThing);
 	}
 	
@@ -466,7 +510,7 @@ class TemplateManager
 			Log.warn("No such template '" + name + "'!");
 			return;
 		}
-		Preconditions.checkNotNull(_things.get(name).entityCallback, "Thing '" + name + "' is not an entity callback!"); 
+		Preconditions.checkNotNull(_things.get(name).type != RefType.entity, "Thing '" + name + "' is not an entity callback!"); 
 		_things.remove(name);
 	}
 	
@@ -483,8 +527,9 @@ class TemplateManager
 		Preconditions.checkNotNull(callBack, "Must pass a callback function!");
 		Preconditions.checkArgument(!_things.exists(name), "Already have a thing registered under '" + name + "'!");
 		
-		var newThing = new ThingReference();
-		newThing.groupCallback = callBack;
+		var newThing = new ThingReference(RefType.group);
+		throw "Not implemented";
+		// newThing.createGroup = callBack;
 		_things.set(name, newThing);
 	}
 	
@@ -496,7 +541,7 @@ class TemplateManager
 	public function unregisterGroupCallback(name :String) :Void
 	{
 		Preconditions.checkArgument(_things.exists(name), "No such thing '" + name + "'!");
-		Preconditions.checkArgument(_things.get(name).groupCallback != null, "Thing '" + name + "' is not a group callback!");
+		Preconditions.checkArgument(_things.get(name).type != RefType.group, "Thing '" + name + "' is not a group callback!");
 		_things.remove(name);
 	}
 	
@@ -508,7 +553,7 @@ class TemplateManager
 		}
 		
 		// No XML on callbacks.
-		if (thing.entityCallback != null || thing.groupCallback != null) {
+		if (thing.type == RefType.entity || thing.type == RefType.group) {
 			return null;
 		}
 		
@@ -555,7 +600,7 @@ class TemplateManager
 		Preconditions.checkNotNull(xml, "Could not find group '" + name + "'"); 
 		
 		//Create the group :
-		var actualGroup :IPBGroup = context.allocate(IPBGroup);
+		var actualGroup :IPBGroup = context.allocate(PBGroup);
 		if(name != context.rootGroup.name) {
 			actualGroup.initialize(name);
 			actualGroup.owningGroup = context.currentGroup;
@@ -636,23 +681,51 @@ class TemplateManager
 	var _things :Map<String, ThingReference>;
 }
 
+enum RefType {
+	xml;
+	entity;
+	group;
+}
+
 /**
  * Helper class to store information about each thing.
  */
 class ThingReference
 {
+	public var type (default, null) :RefType;
 	public var version :Int;
 	public var xmlData :XML;
-	public var entityCallback :Void->IEntity;
-	public var groupCallback :Void->IPBGroup;
+	// public var entityCallback :Void->IEntity;
+	// public var groupCallback :Void->IPBGroup;
 	public var identifier :String;
 	
-	public function new () 
+	public function new (type :RefType) 
 	{
+		this.type = type;
 		version = 0;
 		xmlData = null;
-		entityCallback = null;
-		groupCallback = null;
+		// entityCallback = null;
+		// groupCallback = null;
 		identifier = "";
 	}
+	
+	dynamic public function createEntity () :IEntity
+	{
+		// return new Entity();
+		throw "Not implemented";
+		return null;
+	}
+	
+	dynamic public function createGroup () :IPBGroup
+	{
+		throw "Not implemented";
+		return null;
+	}
+	
+	#if debug
+	public function toString () :String
+	{
+	    return com.pblabs.util.StringUtil.objectToString(this, ["type", "version", "identifier"]);
+	}
+	#end
 }

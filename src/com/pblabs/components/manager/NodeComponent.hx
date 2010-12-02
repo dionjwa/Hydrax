@@ -40,12 +40,21 @@ using com.pblabs.util.XMLUtil;
 	The parent then overrides childAdded to perform specific handling.
 	
 	Although this component is typed, P and C must be EntityComponents.
+	
+	The class has the implementation of ISerializable, although it doesn't 
+	formally implement ISerializable, since that may not be desired behaviour.
+	Just implement ISerializable on the subclass and make sure you call the
+	super methods to get the parent reference serialized.
 */
-class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic, Dynamic>> extends EntityComponent,
-	implements ISerializable
+class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic, Dynamic>> extends EntityComponent
+	// implements ISerializable
 {
 	public var parentProperty :PropertyReference<P>;
+	
+	@editorData({ignore :"true"})
 	public var children (default, null) :Array<C>;
+	
+	@editorData({ignore :"true"})
 	public var parent (default, null) :P;
 	
 	public static function getEntityAndAllParents (e :IEntity, nodeTypeClass :Class<Dynamic>, ?list :List<IEntity>) :Iterable<IEntity>
@@ -139,10 +148,14 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 	
 	public function removeChild (c :C) :Void
 	{
-		Preconditions.checkNotNull(c, "Attempting to remove null child");
-		var cNode :NodeComponent<Dynamic, Dynamic> = cast(c);
+		var cNode :NodeComponent<Dynamic, Dynamic> = cast c;
+		Preconditions.checkNotNull(cNode, "Attempting to remove null child");
 		if (!cNode.hasParent()) {
 			throw "child has no parent";
+			return;
+		}
+		//Run condition with destruction of interlinked NodeComponents
+		if (children == null) {
 			return;
 		}
 		var before = children.length;

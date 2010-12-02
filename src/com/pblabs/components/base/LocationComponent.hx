@@ -59,12 +59,9 @@ class LocationComponent extends EntityComponent,
 
 	function set_x (val :Float):Float
 	{
-		// trace("setting x " + val);
 		if (_vec.x != val) {
 			_vec.x = val;
-			// trace("dispatching? " + signaller.isListenedTo);
 			dispatch();
-			// signaller.dispatch(_vec.x, _vec.y);
 		}
 		return val;
    }
@@ -125,17 +122,14 @@ class LocationComponent extends EntityComponent,
 		dispatch();
 	}
 	
-	inline function dispatch () :Void
+	public function dispatch () :Void
 	{
 		_vecForSignalling.x = _vec.x;
 		_vecForSignalling.y = _vec.y;
 		signaller.dispatch(_vecForSignalling);
 	}
 
-	@editorData({ignore :"true"})
 	var _vec :Vector2;
-	
-	@editorData({ignore :"true"})
 	var _vecForSignalling :Vector2;
 }
 

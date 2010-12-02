@@ -77,21 +77,19 @@ class Canvas2DComponent extends BaseScene2DComponent<CanvasLayer>
 		boundingBox = [0.0, 0.0, 0.0, 0.0];
 	}
 	
-	// public function render (context :easel.display.Context2d) :Void
-	// {
-	// 	#if debug
-	// 	com.pblabs.util.Assert.isNotNull(sprite, "render, but sprite is null");
-	// 	#end
-		
-	// 	sprite.render(context);
-	// 	_isTransformDirty = false;
-	// }
-	
 	override function onReset () :Void
 	{
 		super.onReset();
-		// Assert.isNotNull(sprite);
 	}
+	
+	override function onRemove () :Void
+	{
+		super.onRemove();
+		if (layer != null) {
+			layer.isTransformDirty = true;
+		}
+	}
+	
 	
 	override function set_isTransformDirty (val :Bool) :Bool
 	{

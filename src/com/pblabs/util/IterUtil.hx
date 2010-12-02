@@ -77,4 +77,13 @@ class IterUtil
 		return val;
 	}
 	
+	/**
+	  * Convenience function when about to iterate over a possibly null array
+	  */
+	public static function ensureNotNull <T> (arr :Array<T>) :Array<T>
+	{
+	    return arr  != null ? arr : cast EMPTY_ARRAY;
+	}
+	
+	static var EMPTY_ARRAY :Array<Dynamic> = [];
 }

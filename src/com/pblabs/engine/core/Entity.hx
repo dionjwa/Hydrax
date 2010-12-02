@@ -165,6 +165,8 @@ class Entity extends PBObject,
 	
 	public function deserialize(xml :XML, ?registerComponents:Bool = true):Void
 	{
+		
+		// trace("context=" + context);
 		// Note what entity we're deserializing to the Serializer.
 		context.getManager(Serializer).setCurrentEntity(this);
 
@@ -190,7 +192,7 @@ class Entity extends PBObject,
 			var componentClassName = componentXML.get("type");
 			var component :IEntityComponent = null;
 			
-			if (componentClassName.length > 0) {
+			if (!componentClassName.isBlank()) {
 				// If it specifies a type, instantiate a component and add it.
 				var type :Class<Dynamic> = Type.resolveClass(componentClassName);
 				if (null == type) {
@@ -458,5 +460,3 @@ class PendingComponent
 	public var item :IEntityComponent;
 	public var name :String;
 }
-
-

@@ -11,6 +11,9 @@ import haxe.remoting.Context;
 
 import js.Node;
 
+/**
+  * Haxe HTTP remoting connection for node.js
+  */
 class NodeJSHTMLConnection
 {
 	static var context :Context;
@@ -38,9 +41,7 @@ class NodeJSHTMLConnection
 		req.addListener("end", function() {
 			req.removeAllListeners("data");
 			req.removeAllListeners("end");
-			
 			var result = processRequest(content, context);
-			
 			var hdrs = {};
 			Reflect.setField(hdrs,"Content-Type", "text/plain");
 			Reflect.setField(hdrs,"x-haxe-remoting", 1);
@@ -55,7 +56,7 @@ class NodeJSHTMLConnection
 	static function processRequest(requestData :String, context :Context) :String 
 	{
 		try {
-			var params = StringTools.urlDecode(requestData);
+			var params = requestData;
 			var h :Hash<String> = new Hash();
 			if( params == "" )
 				return "";
@@ -66,11 +67,11 @@ class NodeJSHTMLConnection
 			}
 			
 			requestData = h.get("__x");
-			
 			var u = new haxe.Unserializer(requestData);
 			var path = u.unserialize();
 			var args = u.unserialize();
-			var data = context.call(path,args);
+			var data = context.call(path, args);
+			
 			var s = new haxe.Serializer();
 			s.serialize(data);
 			return "hxr" + s.toString();

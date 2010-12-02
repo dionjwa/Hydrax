@@ -60,6 +60,28 @@ class PBUtil
 		return component;
 	}
 	
+	public static function createEntityAndAddComponent <T> (context :IPBContext, compClass :Class<T>, entityName :String, ?compName :String = null) :T
+	{
+		Preconditions.checkNotNull(context, "Null context");
+		Preconditions.checkNotNull(compClass, "Null compClass");
+		if (compName == null) {
+			compName = ReflectUtil.tinyClassName(compClass);
+		}
+		
+		var component = context.allocate(compClass);
+		#if debug
+		com.pblabs.util.Assert.isNotNull(component, "allocate returned null for compClass=" + compClass);
+		#end
+		
+		Preconditions.checkArgument(Std.is(component, IEntityComponent), "Singleton " + compClass + " is not an IEntityComponent");
+		var e = context.allocate(IEntity);
+		Assert.isNotNull(e.context, "How can the entity context be null? e.name=" +e.name + ", compClass=" + Type.getClassName(compClass));
+		e.initialize(entityName);
+		e.deferring = true;
+		e.addComponent(cast(component, IEntityComponent), compName);
+		return component;
+	}
+	
 	/**
 	 * Converts IPBObject and IEntityComponent objects 
 	 * to the IGameObject/IEntity name.

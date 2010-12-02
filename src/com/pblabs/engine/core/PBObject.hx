@@ -29,14 +29,25 @@ class PBObject
 {
 	public function new() { }
 	
-	// @inject
+	@editorData({ignore :"true"})
 	@inject("com.pblabs.engine.core.IPBContext")
 	public var context(get_context, set_context) :IPBContext;
+	
 	public var name(get_name, set_name) :String;
+	
+	@editorData({ignore :"true"})
 	public var owningGroup (get_owningGroup, set_owningGroup) :IPBGroup;
+	
+	@editorData({ignore :"true"})
 	public var isLiveObject (get_isLiveObject, never) :Bool;
+	
+	@editorData({ignore :"true"})
 	var _name :String;
+	
+	@editorData({ignore :"true"})
 	var _owningGroup :IPBGroup;
+	
+	@editorData({ignore :"true"})
 	var _context :PBContext;
 
 	

@@ -35,8 +35,8 @@ class SignalBondManager extends ArrayMultiMap<Dynamic, Bond>,
 	public function destroyBonds (key :Dynamic) :Void
 	{
 		if (exists(key)) {
-			for (b in get(key)) {
-				b.destroy();
+			for (bond in get(key)) {
+				bond.destroy();
 			}
 			remove(key);
 		}

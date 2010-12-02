@@ -54,20 +54,14 @@ class SceneUtil
 	}
 	
 	
-	public static function createBaseSceneEntity (context :IPBContext, name :String) :IEntity
+	public static function createBaseSceneEntity (context :IPBContext) :IEntity
 	{
 		var e :IEntity = context.allocate(IEntity);
-		e.initialize(name);
-		
 		e.deferring = true;
-		
 		e.addComponent(context.allocate(LocationComponent));
 		e.addComponent(context.allocate(AlphaComponent));
 		e.addComponent(context.allocate(AngleComponent));
 		e.addComponent(context.allocate(TaskComponent));
-		
-		e.deferring = false;
-		
 		return e;
 	}
 	

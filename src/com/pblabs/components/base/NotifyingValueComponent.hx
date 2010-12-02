@@ -41,6 +41,11 @@ class NotifyingValueComponent extends EntityComponent,
 		_value = xml.parseFloat("value");
 	}
 	
+	public function dispatch () :Void
+	{
+	    signaller.dispatch(_value);
+	}
+	
 	function get_value () :Float
 	{
 		return _value;
@@ -50,7 +55,7 @@ class NotifyingValueComponent extends EntityComponent,
 	{
 		if (_value != val) {
 			_value = val;
-			signaller.dispatch(_value);
+			dispatch();
 		}
 		return val;
 	}

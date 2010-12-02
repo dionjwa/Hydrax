@@ -59,7 +59,7 @@ class Comparators
 		} else if (Std.is(clazz, Int)) {
 			return compareInts;
 		} else if (Std.is(clazz, Float)) {
-			return compareNumbers;
+			return compareFloats;
 		} else if (Std.is(clazz, Bool)) {
 			return compareBooleans;
 		} else if (Std.is(clazz, Comparable)) {
@@ -168,7 +168,7 @@ class Comparators
 		} else if (Std.is(o1, Comparable)) {
 			return cast(o1, Comparable<Dynamic>).compareTo(o2); // it doesn't matter if o2 is Comparable
 		} else if (Std.is( o1, Float) && Std.is( o2, Float)) { // ints are Numbers
-			return compareNumbers(cast(o1, Float), cast(o2, Float));
+			return compareFloats(cast(o1, Float), cast(o2, Float));
 		} else if ((Std.is( o1, Bool)) && (Std.is( o2, Bool))) {
 			return compareBooleans(cast(o1, Bool), cast(o2, Bool));
 		} else {
@@ -203,7 +203,7 @@ class Comparators
 	 * WARNING: this is untested in haxe.
 	 * Compares two Float values, taking into account the intricacies of dealing with NaN.
 	 */
-	public static function compareNumbers (v1 :Float, v2 :Float) :Int
+	public static function compareFloats (v1 :Float, v2 :Float) :Int
 	{
 		if (v1 > v2) {
 			return 1;

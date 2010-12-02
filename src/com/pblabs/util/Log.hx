@@ -411,6 +411,22 @@ class Log
 	}
 	
 	#if flash
+	
+	public static function traceWithMethod( v : Dynamic, ?pos : haxe.PosInfos ) {
+		var tf = flash.Boot.getTrace();
+		var pstr = if( pos == null ) "(null)" else pos.fileName+":"+pos.lineNumber + "." +pos.methodName +"()";
+		untyped __global__["trace"](pstr +": "+__string_rec(v,""));
+		lines = lines.concat((pstr +": "+__string_rec(v,"")).split("\n"));
+		tf.text = lines.join("\n");
+		var stage = flash.Lib.current.stage;
+		if( stage == null )
+		return;
+		while( lines.length > 1 && tf.height > stage.stageHeight ) {
+				lines.shift();
+			tf.text = lines.join("\n");
+		}
+	}
+	
 	public static function customTraceFlash (v : Dynamic, ?pos : haxe.PosInfos ) :Void
 	{
 		
@@ -524,7 +540,11 @@ class Log
 		com.pblabs.engine.debug.Log.warn = warningStatic;
 		com.pblabs.engine.debug.Log.error = errorStatic;
 		// com.pblabs.engine.debug.Log.stackDump = dumpStack;
-		
+
+		#if flash
+		//Show the method names
+		haxe.Log.trace = traceWithMethod;
+		#end
 	}
 	
 	/** The module to which this log instance applies. */

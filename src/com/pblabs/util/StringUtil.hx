@@ -62,7 +62,7 @@ class StringUtil
 		var s :StringBuf = new StringBuf();
 		try {
 			s.add("[" + ReflectUtil.tinyClassName(obj));
-			fields = fields == null ? Reflect.fields(obj) : fields;
+			fields = fields == null ? Type.getInstanceFields(Type.getClass(obj)) : fields;
 		} catch (e :Dynamic) {
 			s.add("[undefined");
 			fields = fields == null ? [] : fields;
@@ -234,6 +234,43 @@ class StringUtil
 			return false;
 		}
 	}
+	
+	
+	/**
+		From casalib
+		Creates an "universally unique" identifier (RFC 4122, version 4).
+		
+		@return Returns an UUID.
+	*/
+	public static function uuid() :String 
+	{
+		return StringUtil.createRandomIdentifier(8, 15) + '-' + StringUtil.createRandomIdentifier(4, 15) + '-4' + StringUtil.createRandomIdentifier(3, 15) + '-' + specialChars[Rand.nextIntInRange(0, 3 - 1)] + StringUtil.createRandomIdentifier(3, 15) + '-' + StringUtil.createRandomIdentifier(12, 15);
+	}
+	
+	/**
+		From casalib
+		Creates a random identifier of a specified length and complexity.
+		
+		@param length: The character length of the random identifier.
+		@param radix: The number of unique/allowed values for each character (61 is the maximum complexity).
+		@return Returns a random identifier.
+		@usageNote For a case-insensitive identifier pass in a max <code>radix</code> of 35, for a numberic identifier pass in a max <code>radix</code> of 9.
+	*/
+	public static function createRandomIdentifier(length:UInt, radix:UInt = 61):String 
+	{
+		
+		var id = new Array<String>();
+		radix = (radix > 61) ? 61 : radix;
+		
+		while (length-- > 0) {
+			id.push(characters[Rand.nextIntInRange(0, radix - 1)]);
+		}
+		
+		return id.join('');
+	}
+	
+	static var specialChars = ['8', '9', 'A', 'B'];
+	static var characters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
 }
 
 

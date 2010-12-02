@@ -13,6 +13,7 @@ import com.pblabs.engine.core.PropertyReference;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
+
 /**
  * Encapsulated a variable with a signaller: when the variable is
  * modified, listeners are notified.  This reduces clutter in classes 
@@ -59,5 +60,3 @@ class SignallingVar<T>
 	}
 	var _value :T;
 }
-
-

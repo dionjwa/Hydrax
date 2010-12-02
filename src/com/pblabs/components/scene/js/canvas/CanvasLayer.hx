@@ -75,12 +75,7 @@ class CanvasLayer extends JSLayer<CanvasScene2D, Canvas2DComponent>,
 		// Render
 		if (children != null) {
 			for (c in children) {
-				// ctx.save();
-				var size = 100;
-				// ctx.fillRect(-size / 2, - size / 2, size, size);
-				// ctx.fillRect(10, 10, size, size);
 				c.render(ctx);
-				// ctx.restore();
 			}
 		}
 		isDirty = false;
@@ -91,7 +86,6 @@ class CanvasLayer extends JSLayer<CanvasScene2D, Canvas2DComponent>,
 	{
 		if (canvas == null) {
 			canvas = createCanvas();
-			// div = canvas;
 		}
 		canvas.width = Std.int(parent.sceneView.width);
 		canvas.height = Std.int(parent.sceneView.height);
@@ -107,6 +101,17 @@ class CanvasLayer extends JSLayer<CanvasScene2D, Canvas2DComponent>,
 		ctx = null;
 	}
 	
+	override function childAdded (c :Canvas2DComponent) :Void
+	{
+		super.childAdded(c);
+		isDirty = true;
+	}
+	
+	override function childRemoved (c :Canvas2DComponent) :Void
+	{
+		super.childRemoved(c);
+		isDirty = true;
+	}
 	
 	function createCanvas () :Canvas
 	{

@@ -126,20 +126,22 @@ class InputManager extends BaseInputManager
 		//Dispatch a deviceHeldDown signal, but only if there's something under the device.
 		//NB: this doesn't recheck what's under the device, it's the same from the deviceDown.
 		if (_isDeviceDown) {
-			// trace("_isDeviceDown=" + _isDeviceDown);
-			// trace("_deviceDownComponent=" + _deviceDownComponent);
 			if (_deviceDownComponent != null) {
-				var mouseInput = _deviceDownComponent.owner.lookupComponentByType(MouseInputComponent);
-		
-				if (mouseInput != null) {
-					mouseInput.onDeviceHeldDown();
+				
+				if (_deviceDownComponent.isRegistered) {
+					var mouseInput = _deviceDownComponent.owner.lookupComponentByType(MouseInputComponent);
+			
+					if (mouseInput != null && mouseInput.onDeviceHeldDown != null) {
+						mouseInput.onDeviceHeldDown();
+					}
+				} else {
+					_deviceDownComponent = null;
 				}
 				
 				_inputCache.inputComponent = _deviceDownComponent;
 				_inputCache.inputLocation = _mouseLoc.clone();
 				_inputCache.touchCount = _fingersTouching;
 				_inputCache.isMouseDown = true;
-				// _inputCache.set(_deviceDownComponent, _mouseLoc.clone());
 				deviceHeldDown.dispatch(_inputCache);
 			}
 		}

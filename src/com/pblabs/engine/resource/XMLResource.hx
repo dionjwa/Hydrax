@@ -21,7 +21,7 @@ using com.pblabs.util.EventDispatcherUtil;
 #end
 
 /**
-  * Extend this for platform specific loading.
+  * Represents an XML blob loaded from somewhere.
   */
 class XMLResource extends ResourceBase<XML>
 {
@@ -34,12 +34,17 @@ class XMLResource extends ResourceBase<XML>
 	override public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
 	{
 		super.load(onLoad, onError);
-		switch (_source) {
-			case url (u): loadFromUrl(u);
-			case bytes (b): loadFromBytes(b);
-			case text (t): loadFromText(t);
-			default:
-				Log.error("Resouce source type not handled: " + _source);
+		try{
+			switch (_source) {
+				case url (u): loadFromUrl(u);
+				case bytes (b): loadFromBytes(b);
+				case text (t): loadFromText(t);
+				case embedded (n): loadFromEmbedded(n);
+				default:
+					Log.error("Resouce source type not handled: " + _source);
+			}
+		} catch (e :Dynamic) {
+			onError(e);
 		}
 		
 		//Unlink the source ref, we don't need it now
@@ -95,14 +100,38 @@ class XMLResource extends ResourceBase<XML>
 	function loadFromBytes (bytes :BytesData) :Void
 	{
 		Preconditions.checkNotNull(bytes, "bytes is null");
-		//TODO:
+		#if flash
+		createXMLFromData(bytes.readUTFBytes(bytes.length));
+		#else
 		throw "Not implemented";
+		#end
 	}
 	
 	function loadFromText (txt :String) :Void
 	{
 		Preconditions.checkNotNull(txt, "txt is null");
 		createXMLFromData(txt);
+	}
+	
+	function loadFromEmbedded (embeddedName :String) :Void
+	{
+		Log.debug("loadFromEmbedded");
+		#if flash
+		var cls :Class<Dynamic> = Type.resolveClass("SWFResources_" + embeddedName);
+		Preconditions.checkNotNull(cls, "No embedded resource class SWFResources_" + embeddedName);
+		var bytes :flash.utils.ByteArray = cast Type.createInstance(cls, []);
+		try {
+			loadFromBytes(bytes);
+		} catch (e :Dynamic) {
+			if (cls != null && Reflect.field(cls, "data") != null) {
+				createXMLFromData(Reflect.field(cls, "data"));
+			} else {
+				onLoadError("missing XML data! (From embedded class " +cls);
+			}
+		}
+		#else
+		throw "Not implemented: embedded XML in this target";
+		#end
 	}
 	
 	function createXMLFromData (data :Dynamic) :Void

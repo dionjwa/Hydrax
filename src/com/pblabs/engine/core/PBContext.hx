@@ -38,6 +38,8 @@ import com.pblabs.util.ds.MultiMap;
 import com.pblabs.util.ds.multimaps.ArrayMultiMap;
 
 import hsl.haxe.Bond;
+import hsl.haxe.DirectSignaler;
+import hsl.haxe.Signaler;
 
 class PBContext
 	implements IPBContext 
@@ -47,6 +49,9 @@ class PBContext
 	public var rootGroup (default, null) :IPBGroup;
 	public var currentGroup(get_currentGroup, set_currentGroup) : IPBGroup;
 	public var processManager (get_processManager, null) :ProcessManager;
+	
+	public var signalObjectAdded (default, null) :Signaler<IPBObject>;
+	public var signalObjectRemoved (default, null) :Signaler<IPBObject>;
 	
 	/**
 	 * Maps full property name e.g. #entity2.component3 to
@@ -84,6 +89,9 @@ class PBContext
 		
 		_tempPropertyInfo = new PropertyInfo();
 		
+		
+		signalObjectAdded = new DirectSignaler(this);
+		signalObjectRemoved = new DirectSignaler(this);
 		// rootGroup = new PBGroup();
 		// rootGroup.name = name + " Root Group";
 		// currentGroup = rootGroup;
@@ -174,6 +182,7 @@ class PBContext
 		// ++_objectCount;
 		
 		// objectAddedSignal.dispatch(gameObj);
+		signalObjectAdded.dispatch(object);
 	}
 	
 	//TODO: use object pooling
@@ -203,6 +212,7 @@ class PBContext
 		_nameManager.remove(object);
 		//Remove object from sets
 		getManager(SetManager).removeObjectFromAll(object);
+		signalObjectRemoved.dispatch(object);
 	}
 	
 	public function getObjectNamed (name :String) :IPBObject
@@ -728,5 +738,3 @@ class PropertyInfo
 	
 	inline static var EMPTY_ARRAY :Array<Dynamic> = [];
 }
-
-
