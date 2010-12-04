@@ -12,12 +12,12 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBObject;
+import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PropertyReference;
+import com.pblabs.util.Assert;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.StringUtil;
-
-import com.pblabs.util.Assert;
 
 /**
  * Useful functions relating to Entity and EntityComponent objects.
@@ -58,6 +58,21 @@ class PBUtil
 		}
 		
 		return component;
+	}
+	
+	public static function getSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null) :T
+	{
+		Preconditions.checkNotNull(context, "Null context");
+		Preconditions.checkNotNull(compClass, "Null compClass");
+		if (compName == null) {
+			compName = ReflectUtil.tinyClassName(compClass);
+		}
+		
+		var nm = context.getManager(NameManager);
+		if (nm.get(compName) != null) {
+			return cast(nm.get(compName), IEntity).lookupComponentByName(compName);
+		}
+		return null;
 	}
 	
 	public static function createEntityAndAddComponent <T> (context :IPBContext, compClass :Class<T>, entityName :String, ?compName :String = null) :T
@@ -171,5 +186,3 @@ class PBUtil
 	
 
 }
-
-

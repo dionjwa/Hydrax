@@ -61,6 +61,7 @@ class Serializer
 		_deserializers.set("Bool", deserializeBool);
 		_deserializers.set("Int", deserializeInt);
 		_deserializers.set("Float", deserializeFloat);
+		_deserializers.set("Enum", deserializeEnum);
 		_deserializers.set("Array", deserializeIterable);
 		_deserializers.set("List", deserializeIterable);
 		_deserializers.set("com.pblabs.util.ds.Map", deserializeIterable);
@@ -74,6 +75,7 @@ class Serializer
 		_serializers.set("Bool", serializeBool);
 		_serializers.set("Int", serializeInt);
 		_serializers.set("Float", serializeFloat);
+		_serializers.set("Enum", serializeEnum);
 		_serializers.set("Array", serializeIterable);
 		_serializers.set("List", serializeIterable);
 		_serializers.set("Iterable", serializeIterable);
@@ -137,7 +139,7 @@ class Serializer
 				case TInt: "Int";
 				case TFunction: null;
 				case TFloat: "Float";
-				case TEnum(e): null;
+				case TEnum(e): "Enum";
 				case TClass(c): typeName = Type.getClassName(c); typeName == "String" ? "::DefaultSimple" : "::DefaultComplex";
 				case TBool: "Bool";
 			}
@@ -188,7 +190,7 @@ class Serializer
 	 */
 	public function deserialize(context :IPBContext, object :Dynamic, xml :XML, ?typeHint :String=null) :Dynamic
 	{
-		Log.debug(object);
+		Log.debug("object=" + object + ", typeHint=" + typeHint);
 		Preconditions.checkNotNull(context, "context is null");
 		// Preconditions.checkNotNull(object, "object is null");
 		Preconditions.checkNotNull(xml, "xml is null");
@@ -331,8 +333,6 @@ class Serializer
 	
 	function deserializeComplex(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
 	{
-		trace("deserializeComplex");
-		
 		//Haxe cannot determine  at runtime if an object implements Dynamic 
 		var isDynamic = false;//Std.is(object, Array);// || (TypeUtility.isDynamic(object));// || Std.is(object, Dictionary)
 		var xmlPath = "";			
@@ -360,7 +360,7 @@ class Serializer
 					case TInt: "Int";
 					case TFunction: null;
 					case TFloat: "Float";
-					case TEnum(e): null;
+					case TEnum(e): "Enum";
 					case TClass(c): Type.getClassName(c); 
 					case TBool: "Bool";
 				}	
@@ -528,7 +528,7 @@ class Serializer
 			case TInt: "Int";
 			case TFunction: null;
 			case TFloat: "Float";
-			case TEnum(e): null;
+			case TEnum(e): "Enum";
 			case TClass(c): cls = c; Type.getClassName(c);
 			case TBool: "Bool";
 		}
@@ -616,6 +616,7 @@ class Serializer
 	
 	public static function deserializeInt(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
 	{
+		return Std.parseInt(xml.nodeValue.trim());
 	}
 	
 	public static function serializeInt(val :Dynamic, xml :XML) :Void
@@ -625,11 +626,22 @@ class Serializer
 	
 	public static function deserializeFloat(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
 	{
+		return Std.parseFloat(xml.nodeValue);
 	}
 	
 	public static function serializeFloat(val :Dynamic, xml :XML) :Void
 	{
 		xml.nodeValue = Std.string(val);
+	}
+	
+	public static function deserializeEnum(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
+	{
+		return Type.createEnum(Type.resolveEnum(typeHint.isBlank() ? xml.get("type") :typeHint), xml.nodeValue , []);
+	}
+	
+	public static function serializeEnum(val :Dynamic, xml :XML) :Void
+	{
+		xml.nodeValue = Type.enumConstructor(val);
 	}
 	
 	public static function serializeVector2 (val :Dynamic, xml :XML) :Void
@@ -751,7 +763,6 @@ class Serializer
 		// for (element in object)
 		{
 			
-			// trace("element=" + element + ", " + ReflectUtil.getClassName(element));
 			// Get the information
 			// var propertyName :String = (Std.is(object, Dictionary)) ? element :"_";
 			var propertyName :String = isMap ? Std.string(iteratable[ii]) : "_";

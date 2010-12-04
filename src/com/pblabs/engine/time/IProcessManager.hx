@@ -37,7 +37,7 @@ import com.pblabs.engine.time.ITickedObject;
 		 * will play twice as fast. A value of 0.5 will run the
 		 * game at half speed. A value of 1 is normal.
 		 */
-		public var timeScale (get_timeScale, set_timeScale) :Float;
+		// public var timeScale (get_timeScale, set_timeScale) :Float;
 		
 		/**
 		 * TweenMax uses timeScale as a config property, so by also having a
@@ -84,7 +84,7 @@ import com.pblabs.engine.time.ITickedObject;
 		  * For manually controlling the time steps.  Normally you 
 		  * would never use this.
 		  */
-		function advance (dt :Float) :Void;
+		// function advance (dt :Float) :Void;
 		
 		/**
 		 * Returns true if the process manager is advancing.

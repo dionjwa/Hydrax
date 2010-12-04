@@ -755,7 +755,6 @@ class ProcessManager implements IProcessManager
 	
 	function set_paused (val :Bool) :Bool
 	{
-		// trace("Paused=" + val + "	  " + Log.getStackTrace());
 		_paused = val;
 		return val;
 	}

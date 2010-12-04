@@ -36,71 +36,29 @@ using Lambda;
   * The base game manager.
   * This class inits all the managers, and managers the IPBContexts.
   */
-class PBGameBase //extends PBContext
-	// implements IPBContext
+class PBGameBase
 {
-	// public var name (default, null) :String;
 	public var currentContext(get_currentContext, null) :IPBContext;
 	public var newActiveContextSignaler (default, null) :Signaler<IPBContext>;
 	var injector :Injector;
-	// public var rootGroup (default, null) :IPBGroup;
-	// public var currentGroup (get_currentGroup, set_currentGroup) :IPBGroup;
-	
-	// public var started (default, null):Bool;
-	
-	// #if flash
-	// public var displayContainer (get_displayContainer, null) :flash.display.Sprite;
-	// var _displayContainer :flash.display.Sprite;
-	// #end
 
 	var _contexts :Array<IPBContext>;
 	var _contextsDirty :Bool;
-	// var _isRunning :Bool;
-	// var _hasStarted :Bool;
 	var _managers :Map<String, Dynamic>;
-	// var _processManager :ProcessManager;
-	// var _nameManager :NameManager;
 	
-	public function new()//?name :String = "PBGame context") 
+	public function new() 
 	{
-		// startup();
 	}
 	
 	public function startup () :Void
 	{
-		// super();
-		// this.name = name;
-
 		newActiveContextSignaler = new DirectSignaler(this);
 		_managers = Maps.newHashMap(String);
 
 		injector = createInjector();
-		// injector.mapValue(IPBContext, this);
-		// _nameManager = registerManager(NameManager, new NameManager(), true);
-		
-		// _processManager = registerManager(IProcessManager, new ProcessManager(), true);
-		// _processManager.paused = true;
-		
-		// rootGroup = new PBGroup();
-		// rootGroup.context = this;
-		// injector.mapValue(IPBGroup, rootGroup);
-		// rootGroup.name = _nameManager.validateName("Game RootGroup");
-		
 		_contexts = new Array();
 		_contextsDirty = false;
-		// _isRunning = false;
-		// started = false;
-		
-		// #if flash
-		// _displayContainer = new flash.display.Sprite();
-		// _displayContainer.name = this.name;
-		// _displayContainer.mouseEnabled = _displayContainer.mouseChildren = false;
-		// injector.mapValue(flash.display.Sprite, _displayContainer);
-		// #end
-		
 		initializeManagers();
-		// _nameManager = getManager(Name.add(rootGroup);
-		
 	}
 	
 	public function injectInto(instance:Dynamic):Void
@@ -157,11 +115,7 @@ class PBGameBase //extends PBContext
 			if (Reflect.hasField(ctx, "setInjectorParent") || Type.getInstanceFields(type).has("setInjectorParent")) {
 				Reflect.callMethod(ctx, Reflect.field(ctx, "setInjectorParent"), [injector]);
 			}
-			// #if (flash || cpp)
-			// ctx.startup(_displayContainer);
-			// #else
 			ctx.startup();
-			// #end
 			
 			#if debug
 			com.pblabs.util.Assert.isTrue(ctx.injector.getMapping(IPBContext) == ctx);
@@ -185,52 +139,20 @@ class PBGameBase //extends PBContext
 		startTopContext();
 	}
 	
-	// public function startup () :Void//#if flash ?parentContainer :flash.display.DisplayObjectContainer #end) :Void
-	// {
-		// Preconditions.checkArgument(!started, "Game has already started, do not call this again");
-		// started = true;
-		
-		// #if flash
-		// if (parentContainer != null) {
-		//	 Preconditions.checkNotNull(_displayContainer, "displayContainer is null");
-		//	 parentContainer.addChild(_displayContainer);
-		// } else {
-		//	 // _displayContainer =
-		//	 //If no parent passed in, assume we want to attach to the stage
-		//	 flash.Lib.current.addChild(_displayContainer);
-		// }
-		// #end
-		// startTopContext();
-		
-		
-		
-		// // _hasStarted = true;
-		// Log.debug(["Initializing " + this + " '" + name + "'."]);
-		// #if flash
-		// if (parentContainer != null) {
-		//	 Preconditions.checkNotNull(_displayContainer, "displayContainer is null");
-		//	 parentContainer.addChild(_displayContainer);
-		// } else {
-		//	 _displayContainer = flash.Lib.current;
-		// }
-		// #end
-		
-		// if (currentContext != null) {
-		//	 cast(currentContext.getManager(IProcessManager), ProcessManager).paused = false;
-		// }
-			
-		// if (!_isRunning) {
-		//	 _isRunning = true;
-		//	 // startup();
-			
-		// }
-	// }
-	
 	public function shutdown () :Void
 	{
-		// _processManager.stop();
-		// rootGroup.destroy();
-		// rootGroup = null;
+		getManager(IProcessManager).stop();
+		if (currentContext != null) {
+			currentContext.getManager(IProcessManager).stop();
+			currentContext.rootGroup.destroy();
+		}
+		
+		for (context in _contexts) {
+			if (context != null) {
+				context.shutdown();
+			}
+		}		
+		
 		for (m in _managers) {
 			if (Std.is(m, IPBManager)) {
 				cast(m, IPBManager).shutdown();
@@ -238,6 +160,7 @@ class PBGameBase //extends PBContext
 		}
 		_managers = null;
 		injector = null;
+		_contexts = null;
 	}
 	
 	// Name lookups.
@@ -252,12 +175,6 @@ class PBGameBase //extends PBContext
 		throw "Not implemented";
 		return null;
 	}
-	
-	// public function lookupComponent (entityName:String, componentName:String):IEntityComponent
-	// {
-	//	 throw "Not implemented";
-	//	 return null;
-	// }
 	
 	function stopContexts () :Void
 	{
@@ -275,9 +192,7 @@ class PBGameBase //extends PBContext
 			#end
 			cast(currentContext.getManager(IProcessManager), ProcessManager).paused = false;//!started;
 			newActiveContextSignaler.dispatch(currentContext);
-		} else {
-			// Log.error("startTopContext, but currentContext==" + currentContext);
-		}
+		} 
 	}
 	
 	function get_currentContext() :IPBContext
@@ -289,24 +204,6 @@ class PBGameBase //extends PBContext
 	{
 		return new Injector();
 	}
-	
-	// function get_currentGroup () :IPBGroup
-	// {
-	//	 return rootGroup;
-	// }
-	
-	// function set_currentGroup (val :IPBGroup) :IPBGroup
-	// {
-	//	 throw "Cannot set group of PBGameBase";
-	//	 return val;
-	// }
-	
-	// #if flash
-	// inline function get_displayContainer () :flash.display.Sprite
-	// {
-	//	 return _displayContainer;
-	// }
-	// #end
 	
 	public function initializeManagers():Void
 	{

@@ -73,25 +73,24 @@ class Entity extends PBObject,
 		{
 			// Resolve everything, and everything that that resolution triggers.
 			var needReset:Bool = _deferredComponents.length > 0;
-			var component :IEntityComponent;
 			while(_deferredComponents.length > 0)
 			{
-				var pc:PendingComponent = cast( _deferredComponents.shift(), PendingComponent);
-				pc.item.register(this, pc.name);
-				component = pc.item;
+				var pc = _deferredComponents.shift();
 				
 				//Add the timed components here rather than forcing
 				//each implementing class to add itself.
-				if (Std.is(component, ITickedObject)) {
-					_context.processManager.addTickedObject(cast(component));
+				if (Std.is(pc.item, ITickedObject)) {
+					_context.processManager.addTickedObject(cast(pc.item));
 				}
-				if (Std.is(component, IAnimatedObject)) {
-					_context.processManager.addAnimatedObject(cast(component));
+				if (Std.is(pc.item, IAnimatedObject)) {
+					_context.processManager.addAnimatedObject(cast(pc.item));
 				}
+				pc.item.register(this, pc.name);
 			}
 			
 			// Mark deferring as done.
 			_deferring = false;
+			
 			
 			// Fire off the reset.
 			if(needReset) {
@@ -165,8 +164,6 @@ class Entity extends PBObject,
 	
 	public function deserialize(xml :XML, ?registerComponents:Bool = true):Void
 	{
-		
-		// trace("context=" + context);
 		// Note what entity we're deserializing to the Serializer.
 		context.getManager(Serializer).setCurrentEntity(this);
 
@@ -218,8 +215,10 @@ class Entity extends PBObject,
 				}
 			}
 			
+			Log.debug("deserializing component " + componentName);
 			// Deserialize the XML into the component.
 			serializer.deserialize(context, component, componentXML);
+			Log.debug("deserialized component " + componentName);
 		}
 		
 		// Deal with set membership.
@@ -267,14 +266,15 @@ class Entity extends PBObject,
 			return true;
 		}
 
-		// We have to be careful w.r.t. adding components from another component.
-		component.register(this, componentName);
 		if (Std.is(component, ITickedObject)) {
 			_context.processManager.addTickedObject(cast(component));
 		}
 		if (Std.is(component, IAnimatedObject)) {
 			_context.processManager.addAnimatedObject(cast(component));
 		}
+		
+		// We have to be careful w.r.t. adding components from another component.
+		component.register(this, componentName);
 		
 		// Fire off the reset.
 		doResetComponents();
@@ -437,7 +437,6 @@ class Entity extends PBObject,
 			 
 			 //Inject the signal listeners
 			 bonds = cast(_context.injector, ComponentInjector).injectComponentListeners(component , bonds);
-			  
 			//Reset it!
 			component.reset();				
 		}

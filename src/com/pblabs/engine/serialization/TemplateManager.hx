@@ -298,20 +298,25 @@ class TemplateManager
 			}
 
 			if (!xml.get("template").isBlank() && hasEntityCallback(xml.get("template"))) {
-				Log.debug("instantiating entity from a callback");
-				entity = instantiateEntity(xml.get("template"), context);
-				entity.deferring = true;
-				Log.debug("instantiated entity from a callback");
+				Log.debug("instantiating entity '" + name + "' from a callback");
+				try {
+					entity = instantiateEntity(xml.get("template"), context);
+					entity.deferring = true;
+				} catch (e :Dynamic) {
+					Log.error("Failed instantiating '" + name + "' from an entity callback due to :" + e + "\n" + Log.getStackTrace());
+					Profiler.exit("instantiateEntityFromXML");
+					return null;
+				}
+				Log.debug("instantiated entity '" + name + "' from a callback");
 			} else {
-				Log.debug("instantiating entity from xml");
+				Log.debug("instantiating entity '" + name + "' from xml");
 				// Make the IEntity instance.
 				entity = context.allocate(IEntity);
 				// To aid with reference handling, initialize FIRST but defer the
 				// reset...
 				//Important modifaction, now we don't worry about name conflict.  Just create a valid name
 				// entity.initialize(name);
-				entity.initialize(name);//entity.deferring = true;
-				entity.deferring = true;
+				
 				
 				
 				
@@ -322,6 +327,9 @@ class TemplateManager
 					return null;
 				}				
 			}
+			
+			entity.initialize(name);//entity.deferring = true;
+			entity.deferring = true;
 			
 			
 			var serializer = context.getManager(Serializer);
