@@ -55,6 +55,7 @@ class PropertyReference<T>
 		if (value != _property) {
 			_property = value;
 			cachedLookup = null;
+			getterSetterChecked = false;
 		}
 		return value;
 	   }

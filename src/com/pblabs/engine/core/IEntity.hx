@@ -25,6 +25,8 @@ import com.pblabs.engine.core.IPBObject;
 import com.pblabs.engine.core.IPropertyBag;
 import com.pblabs.engine.serialization.ISerializable;
 
+import hsl.haxe.Signaler;
+
 /**
 * Game objects in PBE are referred to as entities. This interface defines the
 * behavior for an entity. A full featured implementation of this interface is
@@ -44,6 +46,11 @@ import com.pblabs.engine.serialization.ISerializable;
 */
 interface IEntity implements IPropertyBag, implements IPBObject
 {
+	/**
+	  * Called when the entity is destroyed.
+	  */
+	 var destroyedSignal (default, null):Signaler<Void>;
+	
 	/**
 	* When true, onAdd/onRemove callbacks are deferred. When set to false, any
 	* pending callbacks are processed.
@@ -149,5 +156,3 @@ interface IEntity implements IPropertyBag, implements IPBObject
 	/** Iterate over components*/
 	function iterator () :Iterator<IEntityComponent>;
 }
-
-

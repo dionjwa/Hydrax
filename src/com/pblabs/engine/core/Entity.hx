@@ -30,6 +30,8 @@ import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
 import hsl.haxe.Bond;
+import hsl.haxe.DirectSignaler;
+import hsl.haxe.Signaler;
 
 using Lambda;
 
@@ -46,12 +48,15 @@ using com.pblabs.util.StringUtil;
 class Entity extends PBObject, 
 	implements IEntity
 {
+	public var destroyedSignal (default, null):Signaler<Void>;
+	
 	public function new() 
 	{
 		super();
 		_deferring = false;
 		_components = Maps.newHashMap(String);
 		_deferredComponents = new Array();
+		destroyedSignal = new DirectSignaler(this);
 	}
 	
 	/** Iterate over components */
@@ -114,7 +119,8 @@ class Entity extends PBObject,
 	public override function destroy():Void
 	{
 		// Give listeners a chance to act before we start destroying stuff.
-		//TODO: implement with signals?
+		destroyedSignal.dispatch();
+		destroyedSignal.unbindAll();
 		
 		// Unregister our components.
 		for (c in _components)
@@ -135,7 +141,7 @@ class Entity extends PBObject,
 		for (c in _components) {
 			_components.remove(c.name);
 		}
-
+		
 		// Get out of the NameManager and other general cleanup stuff.
 		super.destroy();
 	}

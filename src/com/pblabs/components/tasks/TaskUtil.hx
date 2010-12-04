@@ -45,13 +45,13 @@ class TaskUtil
 	}
 
 	/** Returns true if the IEntity has any tasks. */
-	public function hasTasks (e :IEntity) :Bool
+	public static function hasTasks (e :IEntity) :Bool
 	{
 		return getTaskComponent(e).hasTasks();
 	}
 
 	/** Returns true if the IEntity has any tasks with the given name. */
-	public function hasTasksNamed (e :IEntity, name :String) :Bool
+	public static  function hasTasksNamed (e :IEntity, name :String) :Bool
 	{
 		return getTaskComponent(e).hasTasksNamed(name);
 	}
