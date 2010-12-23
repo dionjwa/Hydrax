@@ -204,9 +204,7 @@ class SceneView
 			_layer.style.borderWidth = "1px";
 			#end
 		}
-		#if debug
 		com.pblabs.util.Assert.isNotNull(_layer, "Could not find HTML element with id=" + _layerId);
-		#end
 		
 		return _layer;
 	}

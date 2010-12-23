@@ -48,9 +48,7 @@ class JSLayer <Scene :JSSceneManager<Dynamic>, Component :BaseScene2DComponent<D
 	
 	public function fixPosition () :Void
 	{
-		#if debug
 		com.pblabs.util.Assert.isNotNull(div, "div is null");
-		#end
 		
 		//Make sure the layers have an adjusted offset
 		var offsetHeight = 0;

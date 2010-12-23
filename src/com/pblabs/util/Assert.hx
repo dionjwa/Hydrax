@@ -13,6 +13,7 @@ import com.pblabs.engine.debug.Log;
 /**
  * Assertion checks.
  */
+#if !debug extern #end 
 class Assert 
 {
 	/**
@@ -20,44 +21,62 @@ class Assert
 	 * @param condition The statement to evaluate.
 	 * @param info Additional information describing the condition.
 	 */
-	inline public static function isTrue(condition:Bool, ?info:String, ?posInfos:haxe.PosInfos)
+	#if debug
+	public static function isTrue (condition:Bool, ?info:String, ?posInfos:haxe.PosInfos) :Void
 	{
 		if (!condition) fail(info, posInfos);
 	}
+	#else
+	public static inline function isTrue (ignored :Dynamic, ?info :Dynamic) :Void
+	{
+	}
+	#end
 	
-	inline public static function isFalse(condition:Bool, ?info:String, ?posInfos:haxe.PosInfos)
+	#if debug
+	public static function isFalse (condition:Bool, ?info:String, ?posInfos:haxe.PosInfos) :Void
 	{
 		if (condition) fail(info, posInfos);
 	}
+	#else
+	public static inline function isFalse (ignored :Dynamic, ?info :Dynamic) :Void {}
+	#end
 	
-	inline public static function isNotNull(value :Dynamic, ?info:String, ?posInfos:haxe.PosInfos)
+	#if debug
+	public static function isNotNull (value :Dynamic, ?info:String, ?posInfos:haxe.PosInfos) :Void
 	{
 		if (value == null) fail(info, posInfos);
 	}
+	#else
+	public static inline function isNotNull (ignored :Dynamic, ?info :Dynamic) :Void {}
+	#end
 	
-	inline public static function isNull(value :Dynamic, ?info:String, ?posInfos:haxe.PosInfos)
+	#if debug
+	public static function isNull (value :Dynamic, ?info:String, ?posInfos:haxe.PosInfos) :Void
 	{
 		if (value != null) fail(info, posInfos);
 	}
+	#else
+	public static inline function isNull (ignored :Dynamic, ?info :Dynamic) :Void {}
+	#end
 	
 	/**
 	  * Assert that value is >= 0 and < length
 	  */
-	inline public static function isValidIndex(value :Int, length :Int, ?info:String, ?posInfos:haxe.PosInfos)
+	#if debug
+	public static function isValidIndex (value :Int, length :Int, ?info:String, ?posInfos:haxe.PosInfos) :Void
 	{
 		if (value < 0 || value >= length) fail(info, posInfos);
 	}
+	#else
+	public static inline function isValidIndex (ignored :Dynamic, ?info :Dynamic) :Void {}
+	#end
 	
 	inline static function fail (message :String, info:haxe.PosInfos) :Void
 	{
-		#if !debug
-		return;
-		#else
-			//Some javascript targets don't show exceptions, so at least log the error
-			#if js
-			Log.error("Assertion '" + message + "' failed in file " + info.fileName + ", line " + info.lineNumber + ", " + info.className + "::" + info.methodName);
-			#end
-		throw "Assertion '" + message + "' failed in file " + info.fileName + ", line " + info.lineNumber + ", " + info.className + "::" + info.methodName;
+		//Some javascript targets don't show exceptions, so at least log the error
+		#if js
+		Log.error("Assertion '" + message + "' failed in file " + info.fileName + ", line " + info.lineNumber + ", " + info.className + "::" + info.methodName);
 		#end
+		throw "Assertion '" + message + "' failed in file " + info.fileName + ", line " + info.lineNumber + ", " + info.className + "::" + info.methodName;
 	}
 }

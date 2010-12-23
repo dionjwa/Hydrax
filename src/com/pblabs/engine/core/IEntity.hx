@@ -49,7 +49,7 @@ interface IEntity implements IPropertyBag, implements IPBObject
 	/**
 	  * Called when the entity is destroyed.
 	  */
-	 var destroyedSignal (default, null):Signaler<Void>;
+	 var destroyedSignal (get_destroyedSignal, null):Signaler<IEntity>;
 	
 	/**
 	* When true, onAdd/onRemove callbacks are deferred. When set to false, any

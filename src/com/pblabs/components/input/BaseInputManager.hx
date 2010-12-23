@@ -43,13 +43,9 @@ class BaseInputManager
         
         if (_layer == null) {
             // var sceneView = context.getManager(SceneView);
-            #if debug
             com.pblabs.util.Assert.isNotNull(sceneView, "Could not find SceneView");
-            #end
             _layer = sceneView.layer;
-            #if debug
             com.pblabs.util.Assert.isNotNull(_layer, "Could not find root container");
-            #end
         }
         #end
     }

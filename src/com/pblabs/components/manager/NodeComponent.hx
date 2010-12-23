@@ -113,6 +113,7 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 	public function new ()
 	{
 		super();
+		children = [];
 		parent = null;
 	}
 	
@@ -132,9 +133,9 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 		Preconditions.checkArgument(Std.is(c, NodeComponent), "Children must be of type NodeComponent");
 		Preconditions.checkArgument(cast(c, IEntityComponent).isRegistered, "Child not registered: " + c);
 		
-		if (children == null) {
-			children = new Array<C>();
-		}
+		// if (children == null) {
+		// 	children = new Array<C>();
+		// }
 		
 		var cNode :NodeComponent<Dynamic, Dynamic> = cast(c);
 		
@@ -155,9 +156,10 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 			return;
 		}
 		//Run condition with destruction of interlinked NodeComponents
-		if (children == null) {
+		if (children.length == 0) {
 			return;
 		}
+		
 		var before = children.length;
 		if (!children.remove(c)) {
 			throw "Removing child with a different manager";
@@ -240,12 +242,10 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 		if (hasParent()) {
 			removeFromParent();
 		}
-		if (children != null) {
-			for (child in children) {
-				cast(child, NodeComponent<Dynamic, Dynamic>).removeFromParent();
-			}
+		for (child in children) {
+			cast(child, NodeComponent<Dynamic, Dynamic>).removeFromParent();
 		}
-		children = null;
+		children = [];
 	}
 }
 

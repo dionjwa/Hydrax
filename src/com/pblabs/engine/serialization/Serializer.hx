@@ -489,9 +489,7 @@ class Serializer
 			var valueInfo = getTypeInfo(ReflectUtil.field(object, f));
 			
 			if (valueInfo != null) {
-				#if debug
 				com.pblabs.util.Assert.isNotNull(_serializers.get(valueInfo.typeKey), "No serializer for the key " + valueInfo.typeKey + " for field=" +f);
-				#end
 				var childXml = Xml.createElement(f);
 				//If we can't work out the type, we default to a String
 				if (valueInfo.typeHint != null && valueInfo.typeHint != "String") {
@@ -714,9 +712,7 @@ class Serializer
 					
 				// Assign, either to key or to end of array.
 				if (!key.isBlank()) {
-					#if debug
 					com.pblabs.util.Assert.isTrue(Std.is(object, Map), "key length >1 but object is not a map");
-					#end
 					cast(object, Map<Dynamic, Dynamic>).set(key, value);
 					// ReflectUtil.setField(object, key, value);
 				}

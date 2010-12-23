@@ -70,9 +70,7 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 	public function addLayer <T>(cls :Class<T>, layerName :String, ?registerAsManager :Bool = true) :T
 	{
 		var layer = context.allocate(cls);
-		#if debug
 		com.pblabs.util.Assert.isTrue(Std.is(layer, BaseScene2DLayer), "Layer class " + cls + " is not a BaseScene2DLayer");
-		#end
 		
 		cast(layer, BaseScene2DLayer<Dynamic, Dynamic>).parentProperty = PBUtil.componentProp(this);
 		owner.addComponent(cast(layer, IEntityComponent), layerName);
@@ -163,9 +161,7 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 	{
 		super.onAdd();	  
 		sceneView = context.getManager(SceneView);
-		#if debug
 		com.pblabs.util.Assert.isNotNull(sceneView, "No SceneView"); 
-		#end
 	}
 
 	override function onRemove () :Void

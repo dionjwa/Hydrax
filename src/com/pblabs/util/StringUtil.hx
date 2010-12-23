@@ -27,6 +27,7 @@
  */
 package com.pblabs.util;
 
+import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 
 /**
@@ -256,9 +257,15 @@ class StringUtil
 		@return Returns a random identifier.
 		@usageNote For a case-insensitive identifier pass in a max <code>radix</code> of 35, for a numberic identifier pass in a max <code>radix</code> of 9.
 	*/
+	#if js
+	public static function createRandomIdentifier(length:Int, radix:Int = 61):String
+	#else
 	public static function createRandomIdentifier(length:UInt, radix:UInt = 61):String 
+	#end
 	{
-		
+		#if js
+		Preconditions.checkArgument(length >= 0 && radix >= 0);
+		#end	
 		var id = new Array<String>();
 		radix = (radix > 61) ? 61 : radix;
 		
@@ -272,5 +279,3 @@ class StringUtil
 	static var specialChars = ['8', '9', 'A', 'B'];
 	static var characters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
 }
-
-

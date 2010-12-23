@@ -182,9 +182,7 @@ class InputManager extends BaseInputManager
 	{
 		// _mouse = context.getManager(MouseInputManager);
 		
-		#if debug
 		com.pblabs.util.Assert.isNotNull(_mouse, "MouseInputManager is null, did you register one?");
-		#end
 		
 		
 		_mouse.mouseDown.bind(onMouseDown);

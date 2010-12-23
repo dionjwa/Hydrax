@@ -63,9 +63,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	{
 		super.onReset();
 		Preconditions.checkNotNull(parentProperty, "parentProperty is null");
-		#if debug
 		com.pblabs.util.Assert.isNotNull(parent, com.pblabs.util.ReflectUtil.tinyClassName(this) + ".parent is null, prop=" + parentProperty);
-		#end
 		
 		owner.lookupComponent(LocationComponent).signaller.unbind(setLocation);
 		owner.lookupComponent(LocationComponent).signaller.bind(setLocation);

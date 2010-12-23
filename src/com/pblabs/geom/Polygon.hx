@@ -30,7 +30,7 @@ class Polygon
  {
 	public var boundingBox(getBoundingBox, null) : Rectangle;
 	public var boundingCircle(getBoundingCircle, null) : Circle;
-	public var center(get_center, null) : Vector2;
+	public var center(get_center, set_center) : Vector2;
 	public var edges(getEdges, null) : Array<LineSegment>;
 	public var vertices(getVertices, null) : Array<Vector2>;
 
@@ -123,10 +123,10 @@ class Polygon
 	{
 		for (v in p._vertices) {
 			if (_vertices.isPointInPolygon2(v)) {
-				return false;
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	/**
@@ -579,6 +579,9 @@ class Polygon
 	
 	public function rotateLocal (angle :Float, ?rotationPoint :Vector2) :Polygon
 	{
+		if (angle == 0) {
+			return this;
+		}
 		rotationPoint = rotationPoint != null ? rotationPoint : center;
 		for (v in _vertices) {
 			v.subtractLocal(rotationPoint).rotateLocal(angle).addLocal(rotationPoint);
@@ -643,6 +646,18 @@ class Polygon
 			_center = _vertices.get_center();
 		}
 		return _center;
+	}
+	
+	function set_center (val :Vector2) :Vector2
+	{
+		getBoundingBox().center = val;
+		
+		var dxdy = val.subtract(this.center);
+		for (v in _vertices) {
+			v.addLocal(dxdy);
+		}
+		_center = val.clone();
+		return val;
 	}
 	
 	function clearCache () :Void

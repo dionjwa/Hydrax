@@ -48,7 +48,15 @@ using com.pblabs.util.StringUtil;
 class Entity extends PBObject, 
 	implements IEntity
 {
-	public var destroyedSignal (default, null):Signaler<Void>;
+	public var destroyedSignal (get_destroyedSignal, null):Signaler<IEntity>;
+	inline function get_destroyedSignal () :Signaler<IEntity>
+	{
+		//Lazily create
+		if (this.destroyedSignal == null) {
+			this.destroyedSignal = new DirectSignaler(this);
+		}
+		return this.destroyedSignal;
+	}
 	
 	public function new() 
 	{
@@ -56,7 +64,6 @@ class Entity extends PBObject,
 		_deferring = false;
 		_components = Maps.newHashMap(String);
 		_deferredComponents = new Array();
-		destroyedSignal = new DirectSignaler(this);
 	}
 	
 	/** Iterate over components */
@@ -178,9 +185,7 @@ class Entity extends PBObject,
 		deferring = true;
 		
 		var serializer = context.getManager(Serializer);
-		#if debug
 		com.pblabs.util.Assert.isNotNull(serializer);
-		#end
 		
 		// Process each component tag in the xml.
 		for (componentXML in xml.elements())
@@ -221,10 +226,14 @@ class Entity extends PBObject,
 				}
 			}
 			
+			try {
 			Log.debug("deserializing component " + componentName);
 			// Deserialize the XML into the component.
 			serializer.deserialize(context, component, componentXML);
 			Log.debug("deserialized component " + componentName);
+			} catch (e :Dynamic) {
+				Log.error("Failed deserializing component " + componentName + "'  due to :" + e + "\n" + Log.getStackTrace());
+			}
 		}
 		
 		// Deal with set membership.

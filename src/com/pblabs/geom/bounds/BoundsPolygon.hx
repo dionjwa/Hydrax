@@ -35,6 +35,7 @@ class BoundsPolygon extends AbstractBounds<BoundsPolygon>
 {
 	/** Don't modify this outside of the Bounds.  The cached bounds will be wrong*/   
 	public var polygon(get_polygon, null) : com.pblabs.geom.Polygon;
+	public var offset :Vector2;
 	
 	public function new (polygon :Polygon)
 	{
@@ -47,27 +48,32 @@ class BoundsPolygon extends AbstractBounds<BoundsPolygon>
 		_polygon = p;
 		_boundsRect = _polygon.boundingBox;
 		_boundsCircle = _polygon.boundingCircle;
+		this.center = center;
 	}
 
 	override function get_center ():Vector2
 	{
-		return _boundsCircle.center;
+		return _boundsCircle.center.clone();
 	}
 	
 	override function set_center (val :Vector2) :Vector2
 	{
-		var c = get_center();
-		var dx = val.x - c.x;
-		var dy = val.y - c.y;
-		_polygon.translateLocal(dx, dy);
-		_boundsCircle.center.x += dx;
-		_boundsCircle.center.y += dy;
-		_boundsRect.x += dx;
-		_boundsRect.y += dy;
+		// var c = get_center();
+		// var dx = val.x - c.x;
+		// var dy = val.y - c.y;
+		// _polygon.translateLocal(dx, dy);
+		_polygon.center = val.clone();
+		_boundsCircle.center = val.clone();
+		// _boundsCircle.center.x += dx;
+		// _boundsCircle.center.y += dy;
+		_boundsRect.center = val.clone();//x = val.x - _boundsRect.width / 2 - offset.x;
+		// _boundsRect.y = val.y - _boundsRect.height / 2 - offset.y;
+		// _boundsRect.x += dx;
+		// _boundsRect.y += dy;
 		return val;
 	}
 
-	inline function get_polygon () :com.pblabs.geom.Polygon
+	function get_polygon () :com.pblabs.geom.Polygon
 	{
 		return _polygon;
 	}

@@ -102,9 +102,7 @@ class PBGameBase
 		}
 		
 		var i = Type.createInstance(type, EMPTY_ARRAY);
-		#if debug
 		com.pblabs.util.Assert.isNotNull(i, "allocated'd instance is null, type=" + type);
-		#end
 		
 		injector.injectInto(i);
 		
@@ -117,9 +115,7 @@ class PBGameBase
 			}
 			ctx.startup();
 			
-			#if debug
 			com.pblabs.util.Assert.isTrue(ctx.injector.getMapping(IPBContext) == ctx);
-			#end
 			if (ctx.getManager(IProcessManager) != null && Std.is(ctx.getManager(IProcessManager), ProcessManager)) {
 				//The IPBContext starts paused, we control the unpausing.
 				cast(ctx.getManager(IProcessManager), ProcessManager).paused = true;

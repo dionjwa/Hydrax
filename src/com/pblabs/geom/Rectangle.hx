@@ -58,7 +58,16 @@ class Rectangle
 	  height = p.y-y;
 	  return p.clone();
    }
-
+   
+   public var center (get_center, set_center) :Vector2;
+   function get_center() { return new Vector2(x+width / 2,y+height / 2); }
+   function set_center(p:Vector2)
+   {
+   	   x = p.x - width / 2;
+   	   y = p.y - height / 2;
+	  return p.clone();
+   }
+   
    public function clone() : com.pblabs.geom.Rectangle
    {
 	  return new Rectangle(x,y,width,height);

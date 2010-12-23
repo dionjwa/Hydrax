@@ -80,7 +80,7 @@ class Tuple <V1, V2>
 	}
 	
 	//Bad idea?  It would fuck up Tuple map keys
-	public function set (v1 :V1, v2 :V2) :Void
+	function set (v1 :V1, v2 :V2) :Void
 	{
 		this.v1 = v1;
 		this.v2 = v2;

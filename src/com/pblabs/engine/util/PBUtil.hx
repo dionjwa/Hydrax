@@ -41,9 +41,7 @@ class PBUtil
 		}
 		
 		var component = context.allocate(compClass);
-		#if debug
 		com.pblabs.util.Assert.isNotNull(component, "allocate returned null for compClass=" + compClass);
-		#end
 		
 		Preconditions.checkArgument(Std.is(component, IEntityComponent), "Singleton " + compClass + " is not an IEntityComponent");
 		var e = context.allocate(IEntity);
@@ -84,9 +82,7 @@ class PBUtil
 		}
 		
 		var component = context.allocate(compClass);
-		#if debug
 		com.pblabs.util.Assert.isNotNull(component, "allocate returned null for compClass=" + compClass);
-		#end
 		
 		Preconditions.checkArgument(Std.is(component, IEntityComponent), "Singleton " + compClass + " is not an IEntityComponent");
 		var e = context.allocate(IEntity);

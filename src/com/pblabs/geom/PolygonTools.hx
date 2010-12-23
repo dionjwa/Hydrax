@@ -7,6 +7,7 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.geom;
+
 import com.pblabs.engine.debug.Log;
 import com.pblabs.geom.Geometry;
 import com.pblabs.geom.LineSegment;
@@ -17,6 +18,9 @@ import com.pblabs.util.ArrayUtil;
 import com.pblabs.util.Comparators;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
+
+import de.polygonal.motor2.geom.math.XY;
+
 using com.pblabs.geom.Geometry;
 using com.pblabs.geom.PolygonTools;
 using com.pblabs.geom.VectorTools;
@@ -58,6 +62,17 @@ class PolygonTools
 		for (line in p.edges) {
 			g.moveTo(line.a.x, line.a.y);
 			g.lineTo(line.b.x, line.b.y);
+		}
+	}
+	
+	public static function drawPoly (arr :Array<XY>, g :flash.display.Graphics, ?color :Int = 0x000000, ?alpha :Float = 1, ?lineWidth :Float = 1) :Void
+	{
+		g.lineStyle(lineWidth, color, alpha);
+		g.moveTo(arr[arr.length - 1].x, arr[arr.length - 1].y);
+		g.lineTo(arr[0].x, arr[0].y);
+		for (i in 1...arr.length) {
+			g.moveTo(arr[i - 1].x, arr[i - 1].y);
+			g.lineTo(arr[i].x, arr[i].y);
 		}
 	}
 	#end
@@ -757,5 +772,3 @@ class PolygonTools
 		// return orderOfUnitsInFormation;
 	}
 }
-
-

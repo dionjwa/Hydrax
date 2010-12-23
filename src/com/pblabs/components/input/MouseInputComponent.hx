@@ -121,14 +121,10 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
 		
 		_bounds = _bounds == null ? owner.lookupComponentByType(IInteractiveComponent) : _bounds;
 		
-		#if debug
 		com.pblabs.util.Assert.isNotNull(!(_bounds == null && boundsProperty == null), "There's no ISpatialObject2D component and the boundsProperty is null.  How are we supposed to work?");
-		#end
 		
 		var input = context.getManager(InputManager);
-		#if debug
 		com.pblabs.util.Assert.isNotNull(input, "No InputManager?");
-		#end
 		
 		input.unregisterComponent(this);
 		input.registerComponent(this);

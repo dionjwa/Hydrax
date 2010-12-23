@@ -333,9 +333,7 @@ class TemplateManager
 			
 			
 			var serializer = context.getManager(Serializer);
-			#if debug
 			com.pblabs.util.Assert.isNotNull(serializer);
-			#end
 			
 			serializer.deserialize(context, entity, xml);
 			serializer.clearCurrentEntity();
@@ -350,7 +348,7 @@ class TemplateManager
 			Profiler.exit("instantiateEntityFromXML");
 		}
 		catch (e :Dynamic) {
-			Log.error("Failed instantiating '" + name + "' due to :" + e + "\n" + Log.getStackTrace());
+			Log.error("Failed instantiating '" + name + "' from XML due to :" + e + "\n" + Log.getStackTrace());
 			entity = null;
 			Profiler.exit("instantiateEntityFromXML");
 		}
