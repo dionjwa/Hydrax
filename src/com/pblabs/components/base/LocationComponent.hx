@@ -14,10 +14,11 @@ import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.geom.Vector2;
-using com.pblabs.util.XMLUtil;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
+
+using com.pblabs.util.XMLUtil;
 
 class LocationComponent extends EntityComponent,
 	implements ISerializable
@@ -91,10 +92,12 @@ class LocationComponent extends EntityComponent,
 		}
 	}
 
+	#if debug
 	public function toString () :String
 	{
 		return "[Location " + x + ", " + y + "]";
 	}
+	#end
 	
 	public function serialize (xml :XML) :Void
 	{

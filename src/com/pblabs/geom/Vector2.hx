@@ -15,15 +15,15 @@ import com.pblabs.util.Equalable;
 /**
  * Basic 2D vector implementation.
  */
-class Vector2 
-	implements Cloneable<Vector2>, implements Equalable<Vector2> 
+class Vector2 extends de.polygonal.motor2.geom.math.XY,
+	implements Cloneable<Vector2>, implements Equalable<Vector2>
  {
 	
 	public var angle(get_angle, null) : Float;
 	public var length(get_length, set_length) : Float;
 	public var lengthSquared(getLengthSquared, null) : Float;
-	public var x:Float;
-	public var y:Float;
+	// public var x:Float;
+	// public var y:Float;
 
 	/**
 	 * Infinite vector - often the result of normalizing a zero vector.

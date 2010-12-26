@@ -71,7 +71,7 @@ class XMLUtil
 	{
 		var child = Xml.createElement(name);
 		if (value != null) {
-			child.nodeValue = Std.string(value);
+			child.addChild(Xml.createPCData(Std.string(value)));
 		}
 		xml.addChild(child);
 		return child;
@@ -80,7 +80,7 @@ class XMLUtil
 	public static function parseFloat (xml :Xml, childName :String) :Float
 	{
 		if (XMLUtil.child(xml, childName) != null) {
-			return Std.parseFloat(XMLUtil.child(xml, childName).nodeValue);
+			return Std.parseFloat(XMLUtil.child(xml, childName).firstChild().nodeValue);
 		}
 		return 0;
 	}

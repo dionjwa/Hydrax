@@ -457,6 +457,8 @@ class ProcessManager implements IProcessManager
 	 */
 	function removeObject(object:Dynamic, list:Array<Dynamic>):Void
 	{
+		com.pblabs.util.Assert.isNotNull(object, Log.getStackTrace());
+		
 		if (listenerCount == 1)// && thinkHeap.size == 0)
 			stop();
 		

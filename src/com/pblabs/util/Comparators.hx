@@ -180,7 +180,7 @@ class Comparators
 	/**
 	 * Compares two Boolean values.
 	 */
-	public static function compareBooleans (v1 :Bool, v2 :Bool = null) :Int
+	public static function compareBooleans (v1 :Bool, v2 :Bool) :Int
 	{
 		return if (v1 == v2) 0 else if (v1) 1 else -1;
 	}

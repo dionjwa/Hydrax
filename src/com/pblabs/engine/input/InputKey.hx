@@ -18,7 +18,7 @@ import com.pblabs.util.Enumerable;
  * Enumeration class that maps friendly key names to their key code equivalent. This class
  * should not be instantiated directly, rather, one of the constants should be used.
  */   
-class InputKey extends Enumerable<InputKey> 
+class InputKey //extends Enumerable<InputKey> 
 {
 	
 	// public var defaultType(getDefaultType, null) : Enumerable<InputKey>;
@@ -364,7 +364,7 @@ class InputKey extends Enumerable<InputKey>
 
 	private function new(name, ?keyCode:Int=0)
 	{
-		super(name);
+		// super(name);
 		_keyCode = keyCode;
 	}
 

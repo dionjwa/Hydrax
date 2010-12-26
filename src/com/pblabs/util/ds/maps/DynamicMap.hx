@@ -69,10 +69,12 @@ class DynamicMap<V>
 		return values.iterator();
 	}
 	
+	#if debug
 	public function toString () :String
 	{
 		return MapUtil.toString(this);
 	}
+	#end
 
 }
 
