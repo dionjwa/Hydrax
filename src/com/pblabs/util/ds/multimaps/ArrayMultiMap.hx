@@ -27,8 +27,6 @@ class ArrayMultiMap<K, V> extends AbstractMultiMap<K, V>,
 	{
 		super();
 		_map = Maps.newHashMap(keyClass);
-		// trace(com.pblabs.util.Log.getStackTrace());
-		// trace(Type.getClassName(Type.getClass(_map)));
 	}
 	
 	override public function set (key :K, value :V) :Void
@@ -87,7 +85,8 @@ class ArrayMultiMap<K, V> extends AbstractMultiMap<K, V>,
 	{
 		var arr = _map.get(key);
 		_size -= if (arr == null) 0 else arr.length;
-		return _map.remove(key);
+		_map.remove(key);
+		return arr != null && arr.length > 0;
 	}
 	
 	public function removeEntry (key :K, value :V) :Bool
