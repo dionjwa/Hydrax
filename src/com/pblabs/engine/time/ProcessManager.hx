@@ -12,28 +12,16 @@
  ******************************************************************************/
 package com.pblabs.engine.time; 
 
-import com.pblabs.engine.debug.Log;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.time.IProcessManager;
-import com.pblabs.engine.time.IQueuedObject;
 import com.pblabs.engine.time.ITickedObject;
-
+import com.pblabs.util.MathUtil;
 import com.pblabs.util.ReflectUtil;
 
-#if flash
-import flash.utils.Timer;
-import flash.display.Stage;
-import flash.events.TimerEvent;
-#else
-import com.pblabs.engine.time.Timer;
-#end
-
-import com.pblabs.util.MathUtil;
-
-import com.pblabs.util.ds.MultiMap;
 using com.pblabs.util.NumberUtil;
 
-/** It provides mechanisms for performing actions every frame, every tick, or
+/** 
+ * It provides mechanisms for performing actions every frame, every tick, or
  * at a specific time in the future.
  * 
  * <p>A tick happens at a set interval defined by the TICKS_PER_SECOND constant.
@@ -49,47 +37,39 @@ class ProcessManager implements IProcessManager
 {
 	public var paused (get_paused, set_paused) :Bool;
 	public var started (get_started, set_started) :Bool;
-	public var TimeScale(get_timeScale, set_timeScale) : Float;
+	/**
+	 * Integer identifying this frame. Incremented by one for every frame.
+	 */
 	public var frameCounter(get_frameCounter, null) : Int;
+	/**
+	 * Used to determine how far we are between ticks. 0.0 at the start of a tick, and
+	 * 1.0 at the end. Useful for smoothly interpolating visual elements.
+	 */
 	public var interpolationFactor(get_interpolationFactor, null) : Float;
 	public var isTicking(get_isTicking, null) : Bool;
 	public var listenerCount(get_listenerCount, null) : Int;
+	/**
+	 * Current time reported by haxe.Timer.stamp(), updated every frame. Use this to avoid
+	 * costly calls to getTimer(), or if you want a unique number representing the
+	 * current frame.  Time is in milliseconds.
+	 */
 	public var platformTime(get_platformTime, set_platformTime) : Float;
+	/**
+	 * The scale at which time advances. If this is set to 2, the game
+	 * will play twice as fast. A value of 0.5 will run the
+	 * game at half speed. A value of 1 is normal.
+	 */
 	public var timeScale(get_timeScale, set_timeScale) : Float;
-	public var virtualTime (get_virtualTime, set_virtualTime) : Float;
+	/**
+	 * The amount of time that has been processed by the process manager. This does
+	 * take the time scale into account. Time is in milliseconds.
+	 */
+	public var virtualTime (get_virtualTime, set_virtualTime) : Int;
 	
 	/**
 	 * Process managers can be under external control.
 	 */
 	public var isUsingInternalTimer :Bool;
-	
-	public function new() 
-	{ 
-		disableSlowWarning = true;
-		TICKS_PER_SECOND = 30;
-		TICK_RATE = 1.0 / TICKS_PER_SECOND;
-		TICK_RATE_MS = Std.int(TICK_RATE * 1000);
-		MAX_TICKS_PER_FRAME = 5;
-		// deferredMethodQueue = [];
-		started = false;
-		virtualTime = 0.0;
-		_interpolationFactor = 0.0;
-		timeScale = 1.0;
-		lastTime = -1.0;
-		elapsed = 0;
-		animatedObjects = new Array();
-		tickedObjects = new Array();
-		needPurgeEmpty = false;
-		_platformTime = 0;
-		_frameCounter = 0;
-		_duringAdvance = false;
-		// thinkHeap = new SimplePriorityQueue(4096);
-		isUsingInternalTimer = true;
-		paused = false;
-	}
-	
-	
-	// public var game:PBGame;
 	
 	/**
 	 * If true, disables warnings about losing ticks.
@@ -127,69 +107,37 @@ class ProcessManager implements IProcessManager
 	 */
 	public var MAX_TICKS_PER_FRAME :Int;
 	
-
-	/**
-	 * The scale at which time advances. If this is set to 2, the game
-	 * will play twice as fast. A value of 0.5 will run the
-	 * game at half speed. A value of 1 is normal.
-	 */
-	function get_timeScale():Float
-	{
-		return timeScale;
-	}
-	
-	function set_timeScale(value:Float):Float
-	{
-		_timeScale = value;
-		return value;
-	}
-	
-	/**
-	 * Used to determine how far we are between ticks. 0.0 at the start of a tick, and
-	 * 1.0 at the end. Useful for smoothly interpolating visual elements.
-	 */
-	function get_interpolationFactor():Float
-	{
-		return _interpolationFactor;
-	}
-	
-	/**
-	 * The amount of time that has been processed by the process manager. This does
-	 * take the time scale into account. Time is in milliseconds.
-	 */
-	function get_virtualTime():Float
-	{
-		return virtualTime;
-	}
-	
-	function set_virtualTime (time :Float) :Float
-	{
-		_virtualTime = time;
-		return time;
+	public function new() 
+	{ 
+		disableSlowWarning = true;
+		TICKS_PER_SECOND = 30;
+		TICK_RATE = 1.0 / TICKS_PER_SECOND;
+		TICK_RATE_MS = Std.int(TICK_RATE * 1000);
+		MAX_TICKS_PER_FRAME = 5;
+		started = false;
+		virtualTime = 0;
+		_interpolationFactor = 0;
+		timeScale = 1.0;
+		lastTime = -1.0;
+		elapsed = 0;
+		animatedObjects = [];
+		tickedObjects = [];
+		needPurgeEmpty = false;
+		_platformTime = 0;
+		_frameCounter = 0;
+		_duringAdvance = false;
+		_deferredCallbacks = [];
+		isUsingInternalTimer = true;
+		paused = false;
 	}
 	
 	/**
-	 * Current time reported by getTimer(), updated every frame. Use this to avoid
-	 * costly calls to getTimer(), or if you want a unique number representing the
-	 * current frame.
-	 */
-	function get_platformTime():Float
+	  * Defer a function until after objects are ticked and animated for the 
+	  * current update loop.
+	  */
+	public function callLater (f :Void->Dynamic) :Void
 	{
-		return _platformTime;
-	}
-	
-	function set_platformTime (time :Float) :Float
-	{
-		throw "Cannot set platform time in this version";
-		return time;
-	}
-	
-	/**
-	 * Integer identifying this frame. Incremented by one for every frame.
-	 */
-	function get_frameCounter():Int
-	{
-		return _frameCounter;
+		_deferredCallbacks.push(f);
 	}
 	
 	/**
@@ -199,10 +147,10 @@ class ProcessManager implements IProcessManager
 	 */
 	public function start ():Void
 	{
-		Log.info("Starting ProcessManager");
+		com.pblabs.util.Log.info("Starting ProcessManager");
 		
 		if (started) {
-			Log.warn("The ProcessManager is already started.");
+			com.pblabs.util.Log.warn("The ProcessManager is already started.");
 			return;
 		}
 		
@@ -211,23 +159,18 @@ class ProcessManager implements IProcessManager
 		
 		if (_timer == null && isUsingInternalTimer) {
 			#if flash
-			_timer = new Timer(untyped flash.Lib.current.stage["frameRate"]);
-			_timer.addEventListener(TimerEvent.TIMER, onFrame);
+			_timer = new flash.utils.Timer(untyped flash.Lib.current.stage["frameRate"]);
+			_timer.addEventListener(flash.events.TimerEvent.TIMER, onFrame);
 			_timer.start();
 			#else
-			_timer = new Timer(Std.int(1000/30));
+			_timer = new com.pblabs.engine.time.Timer(Std.int(1000/30));
 			_timer.run = onFrame;
 			#end
 		}
 		
-		// if (timer == null)
-		//	 timer = new Timer(32);
-		// timer.delay = 1000 / game.mainStage.frameRate;
-		// timer.start();
-		// timer.addEventListener(TimerEvent.TIMER, onFrame);
 		started = true;
 		#if flash
-		Log.info("Started at " + (untyped flash.Lib.current.stage["frameRate"]) + "Hz");
+		com.pblabs.util.Log.info("Started at " + (untyped flash.Lib.current.stage["frameRate"]) + "Hz");
 		#end
 	}
 	
@@ -241,16 +184,16 @@ class ProcessManager implements IProcessManager
 		paused = true;
 		if (!started)
 		{
-			Log.warn("The ProcessManager isn't started.");
+			com.pblabs.util.Log.warn("The ProcessManager isn't started.");
 			return;
 		}
 		
-		Log.info("Stopping ProcessManager");
+		com.pblabs.util.Log.info("Stopping ProcessManager");
 		
 		if (isUsingInternalTimer) {
 			_timer.stop();
 			#if flash
-			_timer.removeEventListener(TimerEvent.TIMER, onFrame);
+			_timer.removeEventListener(flash.events.TimerEvent.TIMER, onFrame);
 			#end
 			// untyped flash.Lib.current.stage.removeEventListener(Event.ENTER_FRAME, onFrame);
 			// game.mainStage.removeEventListener(Event.ENTER_FRAME, onFrame);
@@ -266,29 +209,6 @@ class ProcessManager implements IProcessManager
 	{
 		return started && _timeScale > 0;
 	}
-	
-	/**
-	 * Schedules a function to be called at a specified time in the future.
-	 * 
-	 * @param delay The number of milliseconds in the future to call the function.
-	 * @param thisObject The object on which the function should be called. This
-	 * becomes the 'this' variable in the function.
-	 * @param callback The function to call.
-	 * @param arguments The arguments to pass to the function when it is called.
-	 */
-	// public function schedule(delay:Float, thisObject:Dynamic, callBack:Dynamic, arguments:Array<Dynamic>):Void
-	// {
-	//	 if (!started)
-	//		 start();
-		
-	//	 var schedule:ScheduleObject = new ScheduleObject();
-	//	 schedule.dueTime = virtualTime + delay;
-	//	 schedule.thisObject = thisObject;
-	//	 schedule.callBack = callBack;
-	//	 schedule.arguments = arguments;
-		
-	//	 thinkHeap.enqueue(schedule);
-	// }
 	
 	/**
 	 * Registers an object to receive frame callbacks.
@@ -319,34 +239,6 @@ class ProcessManager implements IProcessManager
 	}
 	
 	/**
-	 * Queue an IQueuedObject for callback. This is a very cheap way to have a callback
-	 * happen on an object. If an object is queued when it is already in the queue, it
-	 * is removed, then added.
-	 */
-	// public function queueObject(object:IQueuedObject):Void
-	// {
-	//	 // Assert if this is in the past.
-	//	 if(object.nextThinkTime < _virtualTime)
-	//		 throw "Tried to queue something into the past, but no flux capacitor is present!";
-		
-	//	 if(object.nextThinkTime >= _virtualTime && thinkHeap.contains(object))
-	//		 thinkHeap.remove(object);
-		
-	//	 if(!thinkHeap.enqueue(object))
-	//		 Log.print(this, "Thinking queue length maxed out!");
-	// }
-	
-	/**
-	 * Remove an IQueuedObject for consideration for callback. No error results if it
-	 * was not in the queue.
-	 */
-	// public function dequeueObject(object:IQueuedObject):Void
-	// {
-	//	 if(thinkHeap.contains(object))
-	//		 thinkHeap.remove(object);
-	// }
-	
-	/**
 	 * Unregisters an object from receiving frame callbacks.
 	 * 
 	 * @param object The object to remove.
@@ -370,7 +262,7 @@ class ProcessManager implements IProcessManager
 	 * Forces the process manager to advance by the specified amount. This should
 	 * only be used for unit testing.
 	 * 
-	 * @param amount The amount of time to simulate.
+	 * @param amount Time in seconds to advance
 	 */
 	public function testAdvance(amount:Float):Void
 	{
@@ -382,15 +274,10 @@ class ProcessManager implements IProcessManager
 	 * This moves virtualTime without calling advance and without processing ticks or frames.
 	 * WARNING: USE WITH CAUTION AND ONLY IF YOU REALLY KNOW THE CONSEQUENCES!
 	 */
-	public function seek(amount:Float):Void
+	public function seek(amount :Int):Void
 	{
 		_virtualTime += amount;
 	}
-	
-	// public function callLater(method:Dynamic, ?args:Array<Dynamic> = null):Void
-	// {
-	//	 PBUtil.callLater(method, args);
-	// }
 	
 	/**
 	 * @return How many objects are depending on the ProcessManager right now?
@@ -411,9 +298,10 @@ class ProcessManager implements IProcessManager
 		// If we are in a tick, defer the add.
 		if(_duringAdvance)
 		{
-			//TODO: call later
-			// PBUtil.callLater(addObject, [ object, priority, list]);
-			trace("during advance, we'll call later, or will we?");
+			var self = this;
+			callLater(function () :Void {
+				self.addObject(object, priority, list);
+			});
 			return;
 		}
 		
@@ -428,7 +316,7 @@ class ProcessManager implements IProcessManager
 			
 			if (list[i].listener == object)
 			{
-				Log.warn("This object has already been added to the process manager.");
+				com.pblabs.util.Log.warn("This object has already been added to the process manager.");
 				return;
 			}
 			
@@ -457,47 +345,45 @@ class ProcessManager implements IProcessManager
 	 */
 	function removeObject(object:Dynamic, list:Array<Dynamic>):Void
 	{
-		com.pblabs.util.Assert.isNotNull(object, Log.getStackTrace());
+		com.pblabs.util.Assert.isNotNull(object, com.pblabs.util.Log.getStackTrace());
+		com.pblabs.util.Log.debug(["", "object", object, "list", list.length, "trace", com.pblabs.util.Log.getStackTrace()]);
+		com.pblabs.util.Log.debug(["", "list", list]);
 		
-		if (listenerCount == 1)// && thinkHeap.size == 0)
+		if (listenerCount == 1) {// && thinkHeap.size == 0)
+			com.pblabs.util.Log.debug("Stopping because listener count == 1");	
 			stop();
+		}
 		
-		for (i in 0...list.length)
-		{
-			if(!list[i])
+		for (i in 0...list.length) {
+			if(list[i] == null)
 				continue;
 			
-			if (list[i].listener == object)
-			{
-				if(_duringAdvance)
-				{
+			if (list[i].listener == object) {
+				if(_duringAdvance) {
 					list[i] = null;
 					needPurgeEmpty = true;
-				}
-				else
-				{
-					list.splice(i, 1);						
+					com.pblabs.util.Log.debug(["removed during advance", "list", list.length]);
+				} else {
+					list.splice(i, 1);
+					com.pblabs.util.Log.debug(["removed outside advance", "i", i, "list", list.length]);
 				}
 				
 				return;
 			}
 		}
 		
-		Log.warn(object + ": object has not been added to the process manager.");
+		com.pblabs.util.Log.warn(ReflectUtil.getClassName(object) + " " + object + ": object has not been added to the process manager.\n" + com.pblabs.util.Log.getStackTrace());
 	}
 	
 	/**
 	 * Main callback; this is called every frame and allows game Logic to run. 
 	 */
-	public function onFrame (#if flash event:TimerEvent #end):Void
+	public function onFrame (#if flash event:flash.events.TimerEvent #end):Void
 	{
 		// This is called from a system event, so it had better be at the 
 		// root of the profiler stack!
-		#if profiler
 		com.pblabs.engine.debug.Profiler.ensureAtRoot();
-		#end
 		
-		// trace("started=" + started + ",  paused=" + paused);
 		// Safety for when we've stop()'ed.
 		if(!started || paused) {
 			lastTime = haxe.Timer.stamp();
@@ -509,7 +395,7 @@ class ProcessManager implements IProcessManager
 		if (lastTime < 0)
 		{
 			lastTime = currentTime;
-			Log.debug("lastTime < 0");
+			com.pblabs.util.Log.debug("lastTime < 0");
 			return;
 		}
 		
@@ -531,23 +417,26 @@ class ProcessManager implements IProcessManager
 		event.updateAfterEvent();
 		untyped flash.Lib.current.stage.invalidate();
 		#end
-		// if(game.mainStage)
-		//	 game.mainStage.invalidate();
 	}
 	
+	/**
+	  * @param deltaTime Time in seconds
+	  */
 	public function advance (deltaTime:Float):Void
 	{
 		advanceInternal(deltaTime);
 	}
 	
-	function advanceInternal (deltaTime:Float, ?suppressSafety:Bool = false):Void
+	/**
+	  * @param deltaTime Time in seconds
+	  */
+	function advanceInternal (deltaTime :Float, ?suppressSafety:Bool = false):Void
 	{
 		// Update platform time, to avoid lots of costly calls to getTimer.
-		_platformTime = haxe.Timer.stamp();
+		_platformTime = haxe.Timer.stamp() * 1000;
 		
 		// Note virtual time we started advancing from.
 		var startTime = _virtualTime;
-		
 		// Add time to the accumulator.
 		elapsed += Std.int(deltaTime * 1000);
 		
@@ -563,30 +452,23 @@ class ProcessManager implements IProcessManager
 			// processScheduledObjects();
 			
 			// Do the onTick callbacks, noting time in profiler appropriately.
-			#if profiler
 			com.pblabs.engine.debug.Profiler.enter("Tick");
-			#end
 			
 			_duringAdvance = true;
+			var object :ProcessObject;
 			for(j in 0...tickedObjects.length)
 			{
-				var object:ProcessObject = cast( tickedObjects[j], ProcessObject);
+				object = tickedObjects[j];
 				if(object == null)
 					continue;
 				
-				#if profiler
 				com.pblabs.engine.debug.Profiler.enter(object.profilerKey);
-				#end
 				(cast( object.listener, ITickedObject)).onTick(TICK_RATE);
-				#if profiler
 				com.pblabs.engine.debug.Profiler.exit(object.profilerKey);
-				#end
 			}
 			_duringAdvance = false;
 			
-			#if profiler
 			com.pblabs.engine.debug.Profiler.exit("Tick");
-			#end
 			
 			// Update virtual time by subtracting from accumulator.
 			_virtualTime += TICK_RATE_MS;
@@ -598,7 +480,7 @@ class ProcessManager implements IProcessManager
 		if (tickCount >= MAX_TICKS_PER_FRAME && !suppressSafety && !disableSlowWarning)
 		{
 			// By default, only show when profiling.
-			Log.warn(["advance", "Exceeded maximum number of ticks for frame (" + elapsed.toFixed(1) + "ms dropped) ."]);
+			com.pblabs.util.Log.warn(["advance", "Exceeded maximum number of ticks for frame (" + elapsed.toFixed(1) + "ms dropped) ."]);
 		}
 		
 		// Make sure that we don't fall behind too far. This helps correct
@@ -615,129 +497,61 @@ class ProcessManager implements IProcessManager
 		// processScheduledObjects();
 		
 		// Update objects wanting OnFrame callbacks.
-		#if profiler
 		com.pblabs.engine.debug.Profiler.enter("frame");
-		#end
 		_duringAdvance = true;
 		_interpolationFactor = elapsed / TICK_RATE_MS;
+		var animatedObject :ProcessObject;
 		for(i in 0...animatedObjects.length)
 		{
-			var animatedObject:ProcessObject = cast( animatedObjects[i], ProcessObject);
+			animatedObject = animatedObjects[i];
 			if(animatedObject == null)
 				continue;
 			
-			#if profiler
 			com.pblabs.engine.debug.Profiler.enter(animatedObject.profilerKey);
-			#end
-			(cast( animatedObject.listener, IAnimatedObject)).onFrame(deltaTime / 1000);
-			#if profiler
+			(cast( animatedObject.listener, IAnimatedObject)).onFrame(deltaTime);
 			com.pblabs.engine.debug.Profiler.exit(animatedObject.profilerKey);
-			#end
 		}
 		_duringAdvance = false;
-		#if profiler
 		com.pblabs.engine.debug.Profiler.exit("frame");
-		#end
 		
 		// Pump the call later queue.
-		// Profiler.enter("callLater_postFrame");
-		// PBUtil.processCallLaters();
-		// Profiler.exit("callLater_postFrame");
+		com.pblabs.engine.debug.Profiler.enter("callLater_postFrame");
+		while (_deferredCallbacks.length > 0) {
+			_deferredCallbacks.pop()();
+		}
+		com.pblabs.engine.debug.Profiler.exit("callLater_postFrame");
 		
 		// Purge the lists if needed.
 		if(needPurgeEmpty)
 		{
 			needPurgeEmpty = false;
 			
-			#if profiler
 			com.pblabs.engine.debug.Profiler.enter("purgeEmpty");
-			#end
 			
 			var j :Int = 0;
 			while (j < animatedObjects.length) {
-				if(animatedObjects[j] == null) {
+				if(animatedObjects[j] != null) {
 					j++;
 					continue;
 				}
+				com.pblabs.util.Log.debug("splicing animatedObject during purge");
 				animatedObjects.splice(j, 1);
 			}
-			// for(j in 0...animatedObjects.length)
-			// {
-				
-				
-			//	 j--;
-			// }
+			
 			j = 0;
 			while (j < tickedObjects.length) {
-				if(tickedObjects[j] == null) {
+				if(tickedObjects[j] != null) {
 					j++;
 					continue;
 				}
+				com.pblabs.util.Log.debug("splicing tickedObject during purge");
 				tickedObjects.splice(j, 1);
 			}
-			
-			// for(k in 0...tickedObjects.length)
-			// {					
-			//	 if(tickedObjects[k])
-			//		 continue;
-				
-			//	 tickedObjects.splice(k, 1);
-			//	 k--;
-			// }
-			
-			#if profiler
 			com.pblabs.engine.debug.Profiler.exit("purgeEmpty");
-			#end
 		}
 		
-		#if profiler
 		com.pblabs.engine.debug.Profiler.ensureAtRoot();
-		#end
 	}
-	
-	// function processScheduledObjects():Void
-	// {
-	//	 // Pump the call later queue.
-	//	 Profiler.enter("callLater");
-	//	 PBUtil.processCallLaters();
-	//	 Profiler.exit("callLater");
-		
-	//	 // Process any queued items.
-	//	 if(thinkHeap.size)
-	//	 {
-	//		 Profiler.enter("Queue");
-			
-	//		 while(thinkHeap.size && thinkHeap.front.priority >= -virtualTime)
-	//		 {
-	//			 var itemRaw:IPrioritizable = thinkHeap.dequeue();
-	//			 var qItem:IQueuedObject = cast( itemRaw, IQueuedObject);
-	//			 var sItem:ScheduleObject = cast( itemRaw, ScheduleObject);
-				
-	//			 var type:String = TypeUtility.getObjectClassName(itemRaw);
-				
-	//			 Profiler.enter(type);
-	//			 if(qItem)
-	//			 {
-	//				 // Check here to avoid else block that throws an error - empty callback
-	//				 // means it unregistered.
-	//				 if(qItem.nextThinkCallback != null)
-	//					 qItem.nextThinkCallback();
-	//			 }
-	//			 else if(sItem && sItem.callback != null)
-	//			 {
-	//				 sItem.callback.apply(sItem.thisObject, sItem.arguments);					
-	//			 }
-	//			 else
-	//			 {
-	//				 throw "Unknown type found in thinkHeap.";
-	//			 }
-	//			 Profiler.exit(type);					
-				
-	//		 }
-			
-	//		 Profiler.exit("Queue");				
-	//	 }
-	// }
 	
 	function get_started () :Bool
 	{
@@ -750,30 +564,76 @@ class ProcessManager implements IProcessManager
 		return value;
 	}
 	
-	function get_paused () :Bool
+	inline function get_paused () :Bool
 	{
 		return _paused;
 	}
 	
-	function set_paused (val :Bool) :Bool
+	inline function set_paused (val :Bool) :Bool
 	{
 		_paused = val;
 		return val;
 	}
 	
+	inline function get_timeScale():Float
+	{
+		return _timeScale;
+	}
+	
+	inline function set_timeScale(value:Float):Float
+	{
+		_timeScale = value;
+		return value;
+	}
+
+	function get_interpolationFactor():Float
+	{
+		return _interpolationFactor;
+	}
+	
+	function get_virtualTime () :Int
+	{
+		return _virtualTime;
+	}
+	
+	function set_virtualTime (time :Int) :Int
+	{
+		_virtualTime = time;
+		return time;
+	}
+	
+	function get_platformTime():Float
+	{
+		return _platformTime;
+	}
+	
+	function set_platformTime (time :Float) :Float
+	{
+		throw "Cannot set platform time in this version";
+		return time;
+	}
+	
+	function get_frameCounter():Int
+	{
+		return _frameCounter;
+	}
+	
 	var _paused :Bool;
-	var _timer :Timer;
-	var _virtualTime :Float;
+	#if flash
+	var _timer :flash.utils.Timer;
+	#else
+	var _timer :com.pblabs.engine.time.Timer;
+	#end
+	var _virtualTime :Int;
 	var _timeScale :Float;
 	var _isStarted :Bool;
 	var _interpolationFactor :Float;
 	var lastTime :Float;
 	var elapsed :Int;
-	var animatedObjects:Array<Dynamic>;
-	var tickedObjects:Array<Dynamic>;
+	var animatedObjects:Array<ProcessObject>;
+	var tickedObjects:Array<ProcessObject>;
 	var needPurgeEmpty:Bool;
-	
-	var _deferredCallbacks :MultiMap<Int, Void->Void>;
+	var _deferredCallbacks :Array<Void->Dynamic>;
 	var _platformTime :Float;
 	var _frameCounter :Int;
 	var _duringAdvance :Bool;
@@ -792,5 +652,3 @@ class ProcessObject
 	public var listener :Dynamic;
 	public var priority :Float;
 }
-
-
