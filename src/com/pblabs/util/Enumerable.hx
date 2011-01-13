@@ -61,12 +61,16 @@ class Enumerable<T>
 	{
 		Preconditions.checkNotNull(cls);
 		Preconditions.checkNotNull(_enums.get(cls));
-		var arr = _enums.get(cls).array();
-		Preconditions.checkPositionIndex(ordinal, arr.length);
-		return cast(arr[ordinal]);
+		for (e in _enums.get(cls)) {
+			if (e.ordinal == ordinal) {
+				return cast e;
+			}
+		}
+		throw "No Enumerable of type " + cls + " with ordinal=" + ordinal;
+		return null;
 	}
 	
-	public static function getOrdinal (e :Enumerable<Dynamic>) :Int
+	static function getOrdinal (e :Enumerable<Dynamic>) :Int
 	{
 		var cls = Type.getClass(e);
 		Preconditions.checkNotNull(cls);
@@ -97,7 +101,7 @@ class Enumerable<T>
 		
 		Preconditions.checkArgument(!map.exists(name), "Enum already exists! " + this);
 		map.set(name, this);
-		_ordinal = Enumerable.getOrdinal(this);
+		_ordinal = map.size();
 		//Be default, the hashCode is the ordinal value.
 		_hashCode = _ordinal; 
 	}
