@@ -26,13 +26,15 @@
 -D debug
 # -D css
 -D testing
+-D enable_logging
 
 -lib feffects
 -lib ArrayTools
 -lib IterTools
 -lib ListTools
 -lib hydrax
--lib libdamago
+# -lib libdamago
+-lib polygonal
 
 -cp ../../../hydrax/lib/hsl-pico
 -cp ../../../hydrax/lib/hsl

@@ -13,13 +13,18 @@ import com.pblabs.components.tasks.LocationTask;
 import com.pblabs.components.tasks.ParallelTask;
 import com.pblabs.components.tasks.SerialTask;
 import com.pblabs.engine.core.IEntity;
+import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
 import com.pblabs.engine.core.PBGameBase;
+import com.pblabs.engine.core.SetManager;
+import com.pblabs.engine.core.SignalBondManager;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ImageResource;
 import com.pblabs.engine.resource.ResourceManager;
 import com.pblabs.engine.resource.Source;
+import com.pblabs.engine.time.IProcessManager;
+import com.pblabs.engine.time.ProcessManager;
 import com.pblabs.util.ds.Tuple;
 using com.pblabs.components.scene.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
@@ -34,15 +39,14 @@ class Demo #if flash extends flash.display.Sprite #end
 		this.name = "Demo Template";
 		#end
 		
-		com.pblabs.util.Log.setupPBGameLog();
-		com.pblabs.util.Log.setLevel("", com.pblabs.util.Log.WARNING);
-		com.pblabs.util.Log.setLevel(ResourceManager, com.pblabs.util.Log.DEBUG);
-		com.pblabs.util.Log.setLevel(ImageResource, com.pblabs.util.Log.DEBUG);
+		com.pblabs.engine.debug.Log.setupPBGameLog();
+		com.pblabs.engine.debug.Log.setLevel(ResourceManager, com.pblabs.engine.debug.Log.DEBUG);
+		com.pblabs.engine.debug.Log.setLevel(ImageResource, com.pblabs.engine.debug.Log.DEBUG);
 		
 		#if (flash || cpp)
 		game = new PBGame();
 		#elseif js
-		game = new com.pblabs.engine.core.JSGame();
+		game = new JSGame();
 		#end
 		
 		trace("Loading");
@@ -59,14 +63,14 @@ class Demo #if flash extends flash.display.Sprite #end
 		
 		//Scene for game elements
 		var gamescene = context.addSingletonComponent(SceneUtil.getPlatformSceneManagerClass());
-		gamescene.sceneAlignment = SceneAlignment.CENTER;
+		gamescene.sceneAlignment = SceneAlignment.TOP_LEFT;
 		var layerCls = SceneUtil.getBasePlatformLayerClass();
 		var backgroundlayer = gamescene.addLayer(layerCls, "background");
 		var layer = gamescene.addLayer(layerCls, "defaultLayer");
 
 		// randMove(createImage("image", backgroundlayer));
 		// createImage("image", backgroundlayer);
-		// randMove(createImage("image", layer));
+		randMove(createImage("image", layer));
 		randMove(createRect("rect", layer));
 		// createRect("rect", layer);
 		gamescene.update();
@@ -96,23 +100,23 @@ class Demo #if flash extends flash.display.Sprite #end
 	function createRect (name :String, layer :BaseScene2DLayer<Dynamic, Dynamic>) :IEntity
 	{
 		var context = layer.context;
-		var e = context.createBaseSceneEntity(name);
+		var e = context.createBaseSceneEntity();
 		var c = context.allocate(RectangleShape);
 		c.parentProperty = layer.entityProp();
 		e.addComponent(c);
-		e.deferring = false;
+		e.initialize(name);
 		return e;
 	}
 	
 	function createImage (name :String, layer :BaseScene2DLayer<Dynamic, Dynamic>) :IEntity
 	{
 		var context = layer.context;
-		var e = context.createBaseSceneEntity(name);
+		var e = context.createBaseSceneEntity();
 		var c = context.allocate(ImageComponent);
 		c.resource = cast context.getManager(IResourceManager).getResource("face");
 		c.parentProperty = layer.entityProp();
 		e.addComponent(c);
-		e.deferring = false;
+		e.initialize(name);
 		return e;
 	}
 	
@@ -126,4 +130,27 @@ class Demo #if flash extends flash.display.Sprite #end
 	}
 	
 	var game :PBGameBase;
+}
+
+class JSGame extends PBGameBase
+{
+    public function new ()
+    {
+        super();
+        startup();
+    }
+    
+    override function initializeManagers():Void
+    {
+        super.initializeManagers();
+
+        // Bring in the standard managers.
+        registerManager(NameManager, new NameManager());
+        registerManager(IProcessManager, new ProcessManager());
+        registerManager(SetManager, new SetManager());
+        registerManager(SignalBondManager, new SignalBondManager());
+        registerManager(IResourceManager, new ResourceManager());
+        registerManager(SceneView, new SceneView());
+    }
+
 }

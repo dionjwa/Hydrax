@@ -1,12 +1,6 @@
-/*******************************************************************************
- * Hydrax: haXe port of the PushButton Engine
- * Copyright (C) 2010 Dion Amago
- * For more information see http://github.com/dionjwa/Hydrax
- *
- * This file is licensed under the terms of the MIT license, which is included
- * in the License.html file at the root directory of this SDK.
- ******************************************************************************/
+
 package;
+
 import flash.display.Sprite;
 
 import com.pblabs.components.base.AlphaComponent;
@@ -34,10 +28,14 @@ import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene.BaseScene2DComponent;
 import com.pblabs.components.scene.BaseScene2DLayer;
 import com.pblabs.components.scene.BaseScene2DManager;
+import com.pblabs.components.scene.CircleShape;
+import com.pblabs.components.scene.ImageComponent;
 import com.pblabs.components.scene.IScene2D;
+import com.pblabs.components.scene.RectangleShape;
 import com.pblabs.components.scene.SceneAlignment;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.SceneView;
+import com.pblabs.components.scene.ShapeComponent;
 import com.pblabs.components.scene.flash.Scene2DComponent;
 import com.pblabs.components.scene.flash.Scene2DManager;
 import com.pblabs.components.scene.flash.SceneLayer;
@@ -78,7 +76,8 @@ import com.pblabs.engine.core.PBObject;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.core.SetManager;
 import com.pblabs.engine.core.SignalBondManager;
-import com.pblabs.util.Log;
+import com.pblabs.engine.debug.Log;
+import com.pblabs.engine.debug.LogTarget;
 import com.pblabs.engine.debug.Profiler;
 import com.pblabs.engine.injection.Attributes;
 import com.pblabs.engine.injection.ComponentInjector;
@@ -143,7 +142,6 @@ import com.pblabs.util.EventDispatcherUtil;
 import com.pblabs.util.GraphicsUtil;
 import com.pblabs.util.IterUtil;
 import com.pblabs.util.Log;
-import com.pblabs.engine.debug.LogTarget;
 import com.pblabs.util.MathUtil;
 import com.pblabs.util.MetaUtil;
 import com.pblabs.util.NumberUtil;
@@ -152,9 +150,11 @@ import com.pblabs.util.Preconditions;
 import com.pblabs.util.Predicates;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.SignalVar;
+import com.pblabs.util.SignalVarAdvanced;
 import com.pblabs.util.Sprintf;
 import com.pblabs.util.StringUtil;
 import com.pblabs.util.XMLUtil;
+import com.pblabs.util.ds.Collection;
 import com.pblabs.util.ds.Hashable;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
@@ -184,6 +184,7 @@ import com.pblabs.util.ds.maps.SortedMap;
 import com.pblabs.util.ds.maps.StringMap;
 import com.pblabs.util.ds.maps.TransformKeyMap;
 import com.pblabs.util.ds.maps.ValueComputingMap;
+import com.pblabs.util.ds.maps.VariableExpiringMap;
 import com.pblabs.util.ds.multimaps.AbstractMultiMap;
 import com.pblabs.util.ds.multimaps.ArrayMultiMap;
 import com.pblabs.util.ds.multimaps.ListMultiMap;
