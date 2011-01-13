@@ -36,6 +36,12 @@ class HashableMap<K :Hashable, V> extends TransformKeyMap<K, Int, V>
 		untyped collection.remove(element);
 	}
 	
+	public static function getValue <T>(map :Map<Dynamic, T>, key :Hashable) :T
+	{
+		//Retrieves a value
+		return untyped map.get(key);
+	}
+	
 	public static function getHashCode (key :Hashable) :Int
 	{
 		return key.hashCode();
