@@ -15,7 +15,7 @@
  ******************************************************************************/
 package easel.display;
 
-typedef Canvas = {#if js > js.HtmlDom, #end
+typedef Canvas = {#if js > js.Dom.HtmlDom, #end
 	var width :Int;
 	var height :Int;
 

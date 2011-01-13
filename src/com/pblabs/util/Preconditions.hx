@@ -51,7 +51,7 @@ class Preconditions
 	{
 		//Some javascript targets don't show exceptions, so at least log the error
 		#if (js && debug)
-		com.pblabs.engine.debug.Log.error(message);
+		com.pblabs.util.Log.error(message);
 		#end
 		throw message;
 	}

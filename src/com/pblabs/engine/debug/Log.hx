@@ -284,7 +284,11 @@ class Log
 		}
 		
 		var logMessage:String = formatMessage(level, msg, args, infos);
+		#if flash
 		logTraceFlash(logMessage);
+		#else
+		trace(logMessage);
+		#end
 		// var htmlLogMessage = "<FONT COLOR=\"" + fontColor + "\">" + logMessage + "</FONT>";
 		var htmlLogMessage = logMessage;
 		// haxe.Log.trace(htmlLogMessage, infos);
@@ -528,8 +532,11 @@ class Log
 		haxe.Log.trace = traceWithMethod;
 		#end
 		
+		//Basic default, in case the user doesn't set anything
+		setLevel("", WARNING);
+		
 		#else
-		trace("Cannot setup " + Type.getClassName(Log));
+		trace("Cannot setup " + Type.getClassName(Log) + ".  Add the option '-D enable_logging' in your .hxml file");
 		#end
 		
 		

@@ -13,7 +13,7 @@ import com.pblabs.components.scene.BaseScene2DLayer;
 class JSLayer <Scene :JSSceneManager<Dynamic>, Component :BaseScene2DComponent<Dynamic>> extends BaseScene2DLayer<Scene, Component>
 #if js
 {
-	public var div (default, null) :HtmlDom;
+	public var div (default, null) :js.Dom.HtmlDom;
 	
 	public function new ()
 	{

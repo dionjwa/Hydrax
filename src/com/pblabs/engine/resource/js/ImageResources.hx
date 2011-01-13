@@ -19,7 +19,7 @@ import com.pblabs.util.ds.Maps;
   * Javascript image loader.
   */
 #if js
-class ImageResources extends ResourceBase<js.Image>
+class ImageResources extends ResourceBase<js.Dom.Image>
 {
 	public function new (name :String, baseLoc :String, imageRefs :Array<String>)
 	{
@@ -36,7 +36,7 @@ class ImageResources extends ResourceBase<js.Image>
 		var complete = 0;
 
 		for (href in _imageRefs) {
-			var image :Image = untyped __js__ ("new Image()");
+			var image :js.Dom.Image = untyped __js__ ("new Image()");
 			image.onload = function (_) {
 				//Format the href to something friendly
 				var key = href.split("/")[href.split("/").length - 1];
@@ -55,12 +55,12 @@ class ImageResources extends ResourceBase<js.Image>
 		}
 	}
 	
-	override public function create (?imageName :String) :Image
+	override public function create (?imageName :String) :js.Dom.Image
 	{
 		Preconditions.checkNotNull(imageName, "image name cannot be null");
 		var srcImage = _images.get(imageName);
 		Preconditions.checkNotNull(srcImage, "No image with key=" + imageName);
-		var newImage :Image = untyped __js__ ("new Image()");
+		var newImage :js.Dom.Image = untyped __js__ ("new Image()");
 		newImage.src = srcImage.src;
 		return newImage;
 	}
@@ -71,7 +71,7 @@ class ImageResources extends ResourceBase<js.Image>
 	}
 
 	var _imageRefs :Array<String>;
-	var _images :Map<String, Image>;
+	var _images :Map<String, js.Dom.Image>;
 	var _baseLocation :String;
 }
 #else

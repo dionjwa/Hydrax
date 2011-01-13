@@ -19,7 +19,7 @@ class JSSceneManager<Layer :JSLayer<Dynamic, Dynamic>> extends BaseScene2DManage
 #if js
 	,implements IAnimatedObject
 {
-	public var container (get_container, null) :js.HtmlDom;
+	public var container (get_container, null) :js.Dom.HtmlDom;
 	
 	public function new ()
 	{
@@ -84,12 +84,12 @@ class JSSceneManager<Layer :JSLayer<Dynamic, Dynamic>> extends BaseScene2DManage
 		_rootContainer = null;
 	}
 	
-	function get_container () :js.HtmlDom
+	function get_container () :js.Dom.HtmlDom
 	{
 		return _rootContainer;
 	}
 	
-	var _rootContainer :js.HtmlDom;
+	var _rootContainer :js.Dom.HtmlDom;
 }
 #else
 {}

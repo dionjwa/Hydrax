@@ -1,9 +1,11 @@
 -D debug
+-D enable_logging
 
 -lib feffects
 -lib ArrayTools
 -lib IterTools
 -lib ListTools
+-lib polygonal
 
 -cp ../../lib/hsl-pico
 -cp ../../lib/hsl

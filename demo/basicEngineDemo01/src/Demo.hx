@@ -2,7 +2,7 @@ package;
 
 import com.pblabs.components.base.AngleComponent;
 import com.pblabs.components.base.LocationComponent;
-import com.pblabs.components.debug.BlobDisplayComponent;
+import com.pblabs.components.scene.CircleShape;
 import com.pblabs.components.scene.flash.Scene2DManager;
 import com.pblabs.components.scene.flash.SceneLayer;
 import com.pblabs.components.tasks.LocationTask;
@@ -28,19 +28,18 @@ class Demo extends flash.display.Sprite
 		
 		var context = game.allocate(PBContext);
 		game.pushContext(context);
-		trace("context.rootGroup=" + context.rootGroup);
 		var scene2D = context.addSingletonComponent(Scene2DManager);
 		var layer = scene2D.addLayer(SceneLayer, "defaultLayer");
 		
-		var so = context.createBaseSceneEntity("SomeSceneObj");
-		var blob  = context.allocate(BlobDisplayComponent);
+		var so = context.createBaseSceneEntity();
+		var blob  = context.allocate(CircleShape);
 		blob.parentProperty = layer.entityProp();
 		so.addComponent(blob);
-		so.deferring = false;
+		so.initialize("SomeSceneObj");
 		
 		//Prevents the first frame have the bits at (0,0)
 		scene2D.update();
-		so.addTask(LocationTask.CreateEaseOut(100, 100, 3));
+		so.addTask(LocationTask.CreateEaseOut(100, 200, 3));
 	}
 
 	public static function main() 
@@ -48,5 +47,3 @@ class Demo extends flash.display.Sprite
 		flash.Lib.current.addChild(new Demo());
 	}
 }
-
-
