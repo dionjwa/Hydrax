@@ -32,6 +32,10 @@ class Tuple <V1, V2>
 	//TODO: make better.  This is a rather crappy hash function.  
 	public static function computeHashCode (v1 :Dynamic, v2 :Dynamic) :Int
 	{
+		if (Std.is(v1, Hashable) && Std.is(v2, Hashable)) {
+			return HashUtil.computeHashCodeFromHashables(cast v1, cast v2);
+		}
+		
 		var value :Int = 17;
 		value = value * 31 + 
 			if (v1 == null) {
@@ -57,13 +61,7 @@ class Tuple <V1, V2>
 		return value;
 	}
 	
-	public static function computeHashCodeFromHashables (v1 :Hashable, v2 :Hashable) :Int
-	{
-		var value :Int = 17;
-		value = value * 31 + (v1 == null ? 0 : v1.hashCode());  
-		value = value * 31 + (v2 == null ? 0 : v2.hashCode());
-		return value;
-	}
+	
 	
 	/**
 	  * Clear references.
