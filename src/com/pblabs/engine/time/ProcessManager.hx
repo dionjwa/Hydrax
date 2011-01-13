@@ -168,15 +168,19 @@ class ProcessManager implements IProcessManager
 		_lastTime = -1.0;
 		_elapsed = 0;
 		
-		if (_timer == null && isUsingInternalTimer) {
+		if (isUsingInternalTimer) {
+			if (_timer == null) {
+				#if flash
+				_timer = new flash.utils.Timer(untyped flash.Lib.current.stage["frameRate"]);
+				#else
+				_timer = new com.pblabs.engine.time.Timer(Std.int(1000/30));
+				_timer.run = onFrame;
+				#end
+			}
 			#if flash
-			_timer = new flash.utils.Timer(untyped flash.Lib.current.stage["frameRate"]);
 			_timer.addEventListener(flash.events.TimerEvent.TIMER, onFrame);
-			_timer.start();
-			#else
-			_timer = new com.pblabs.engine.time.Timer(Std.int(1000/30));
-			_timer.run = onFrame;
 			#end
+			_timer.start();
 		}
 		
 		_isRunning = true;
@@ -323,6 +327,7 @@ class ProcessManager implements IProcessManager
 			}
 		}
 		
+		//Code duplication, but this way it's typed.
 		if (isTickedObject) {
 			var processObject = new ProcessObjectTicked();
 			processObject.listener = object;
@@ -355,10 +360,8 @@ class ProcessManager implements IProcessManager
 	function removeObject(object:Dynamic, list:Array<Dynamic>):Void
 	{
 		com.pblabs.util.Assert.isNotNull(object, com.pblabs.util.Log.getStackTrace());
-		com.pblabs.util.Log.debug(["", "object", object, "list", list.length, "trace", com.pblabs.util.Log.getStackTrace()]);
-		com.pblabs.util.Log.debug(["", "list", list]);
 		
-		if (listenerCount == 1) {// && thinkHeap.size == 0)
+		if (listenerCount == 1) {
 			com.pblabs.util.Log.debug("Stopping because listener count == 1");	
 			stop();
 		}
@@ -371,10 +374,8 @@ class ProcessManager implements IProcessManager
 				if(_duringAdvance) {
 					list[i] = null;
 					_needPurgeEmpty = true;
-					com.pblabs.util.Log.debug(["removed during advance", "list", list.length]);
 				} else {
 					list.splice(i, 1);
-					com.pblabs.util.Log.debug(["removed outside advance", "i", i, "list", list.length]);
 				}
 				
 				return;
@@ -556,7 +557,6 @@ class ProcessManager implements IProcessManager
 					j++;
 					continue;
 				}
-				com.pblabs.util.Log.debug("splicing animatedObject during purge");
 				_animatedObjects.splice(j, 1);
 			}
 			
@@ -566,7 +566,6 @@ class ProcessManager implements IProcessManager
 					j++;
 					continue;
 				}
-				com.pblabs.util.Log.debug("splicing tickedObject during purge");
 				_tickedObjects.splice(j, 1);
 			}
 			com.pblabs.engine.debug.Profiler.exit("purgeEmpty");
