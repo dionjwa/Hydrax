@@ -9,7 +9,7 @@
 package com.pblabs.engine.resource;
 
 import com.pblabs.engine.core.IPBManager;
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.engine.resource.IResource;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.util.Preconditions;

@@ -53,7 +53,8 @@ class MultiMapSet<T> implements MultiSet<T>
 			return false;
 		}
 		if (curCount == 0) {
-			return _source.remove(o);
+			_source.remove(o);
+			return false;
 		} else {
 			_source.set(o, curCount);
 			return true;
@@ -79,12 +80,12 @@ class MultiMapSet<T> implements MultiSet<T>
 		return _source.keys();
 	}
 	
-	public function forEach (fn :Dynamic->Bool) :Void
-	{
-		_source.forEach(function (k :Dynamic, v :Dynamic) :Bool {
-			return fn(k);
-		});
-	}
+	// public function forEach (fn :Dynamic->Dynamic) :Void
+	// {
+	// 	_source.forEach(function (k :Dynamic, v :Dynamic) :Dynamic {
+	// 		return fn(k);
+	// 	});
+	// }
 	
 	/** The map used for our source. */
 	var _source:Map<T, Int>;

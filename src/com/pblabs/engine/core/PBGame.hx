@@ -17,7 +17,7 @@ import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.core.SetManager;
 import com.pblabs.engine.core.SignalBondManager;
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceManager;
 import com.pblabs.engine.serialization.Serializer;
@@ -35,7 +35,7 @@ class PBGame extends PBGameBase
 	{
 		//Set the com.pblabs.engine.debug.Log methods
 		//to be from the Log implementation @ com.pblabs.util
-		com.pblabs.util.Log.setupPBGameLog();
+		com.pblabs.engine.debug.Log.setupPBGameLog();
 		super();
 		startup();
 	}

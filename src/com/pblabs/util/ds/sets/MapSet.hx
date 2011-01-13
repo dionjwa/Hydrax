@@ -18,14 +18,14 @@ using com.pblabs.util.ds.MapUtil;
  */
 class MapSet<T> implements Set<T> 
 {
-	public function new (source :Map<T, T>)
+	public function new (source :Map<T, Bool>)
 	{
 		_source = Preconditions.checkNotNull(source);
 	}
 
 	public function add (o :T) :Void
 	{
-		_source.set(o, o);
+		_source.set(o, true);
 	}
 
 	public function exists (o :T) :Bool
@@ -35,7 +35,9 @@ class MapSet<T> implements Set<T>
 
 	public function remove (o :T) :Bool
 	{
-		return _source.remove(o);
+		var isPrevious = exists(o);
+		_source.remove(o);
+		return isPrevious;
 	}
 
 	public function size () :Int
@@ -56,12 +58,12 @@ class MapSet<T> implements Set<T>
 	{
 		//Iterate over values, not keys, since keys may be converted
 		//to Ints or Strings by the underlying map
-		return _source.iterator();
+		return _source.keys();
 	}
 	
-	public function forEach (fn :Dynamic->Bool) :Void
+	public function forEach (fn :T->Dynamic) :Void
 	{
-		_source.forEach(function (k :Dynamic, v :Dynamic) :Bool {
+		_source.forEach(function (k :T, v :Dynamic) :Bool {
 			return fn(v);
 		});
 	}
@@ -75,6 +77,6 @@ class MapSet<T> implements Set<T>
 	
 	
 	/** The map used for our source. */
-	var _source:Map<T, T>;
+	var _source:Map<T, Bool>;
 }
 

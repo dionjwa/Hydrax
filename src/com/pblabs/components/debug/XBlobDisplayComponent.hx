@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.components.debug;
 
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.geom.Circle;
 import com.pblabs.geom.Rectangle;
 import com.pblabs.geom.Vector2;

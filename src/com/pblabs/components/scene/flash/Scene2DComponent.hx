@@ -1,7 +1,7 @@
 /*******************************************************************************
- * Hydrax :haXe port of the PushButton Engine
+ * Hydrax: haXe port of the PushButton Engine
  * Copyright (C) 2010 Dion Amago
- * For more information see http ://github.com/dionjwa/Hydrax
+ * For more information see http://github.com/dionjwa/Hydrax
  *
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
@@ -13,7 +13,7 @@ import com.pblabs.components.scene.flash.Scene2DManager;
 import com.pblabs.components.scene.flash.SceneLayer;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.engine.time.ITickedObject;
 import com.pblabs.geom.Rectangle;
 import com.pblabs.geom.RectangleTools;

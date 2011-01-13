@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.components.base;
 import com.pblabs.util.ReflectUtil;
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.util.Preconditions;
 
 import flash.display.DisplayObject;

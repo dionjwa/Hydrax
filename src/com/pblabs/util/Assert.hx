@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.util;
 
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 
 /**
  * Assertion checks.
@@ -24,7 +24,7 @@ class Assert
 	#if debug
 	public static function isTrue (condition:Bool, ?info:String, ?posInfos:haxe.PosInfos) :Void
 	{
-		if (!condition) fail(info, posInfos);
+		if (!condition) fail(info == null ? "isTrue" : info, posInfos);
 	}
 	#else
 	public static inline function isTrue (ignored :Dynamic, ?info :Dynamic) :Void
@@ -35,7 +35,7 @@ class Assert
 	#if debug
 	public static function isFalse (condition:Bool, ?info:String, ?posInfos:haxe.PosInfos) :Void
 	{
-		if (condition) fail(info, posInfos);
+		if (condition) fail(info == null ? "isFalse" : info, posInfos);
 	}
 	#else
 	public static inline function isFalse (ignored :Dynamic, ?info :Dynamic) :Void {}
@@ -44,7 +44,7 @@ class Assert
 	#if debug
 	public static function isNotNull (value :Dynamic, ?info:String, ?posInfos:haxe.PosInfos) :Void
 	{
-		if (value == null) fail(info, posInfos);
+		if (value == null) fail(info == null ? "isNotNull" : info, posInfos);
 	}
 	#else
 	public static inline function isNotNull (ignored :Dynamic, ?info :Dynamic) :Void {}
@@ -53,7 +53,7 @@ class Assert
 	#if debug
 	public static function isNull (value :Dynamic, ?info:String, ?posInfos:haxe.PosInfos) :Void
 	{
-		if (value != null) fail(info, posInfos);
+		if (value != null) fail(info == null ? "isNull" : info, posInfos);
 	}
 	#else
 	public static inline function isNull (ignored :Dynamic, ?info :Dynamic) :Void {}
@@ -65,7 +65,7 @@ class Assert
 	#if debug
 	public static function isValidIndex (value :Int, length :Int, ?info:String, ?posInfos:haxe.PosInfos) :Void
 	{
-		if (value < 0 || value >= length) fail(info, posInfos);
+		if (value < 0 || value >= length) fail(info == null ? "isValidIndex" : info, posInfos);
 	}
 	#else
 	public static inline function isValidIndex (ignored :Dynamic, ?info :Dynamic) :Void {}

@@ -13,12 +13,13 @@ package com.pblabs.util.ds;
  *
  * @see com.pblabs.util.ds.Maps
  */
-interface Map<K, V> 
+interface Map<K, V> implements Collection<K> 
 {
 	/**
 	  * Map the key to the value.
+	  * Returns the previous value stored for that key, or undefined.
 	  */
-	function set (key :K, value :V) :Void;
+	function set (key :K, value :V) :V;
 
 	/**
 	  * Get the value associated with the key.
@@ -28,22 +29,23 @@ interface Map<K, V>
 	/**
 	  * Does a key exist that maps to a value
 	  */
-	function exists (key :K) :Bool;
+	// function exists (key :K) :Bool;
 
 	/**
 	  * Removes the key and associated value.
+	  * Returns the associated value.
 	  */
-	function remove (key :K) :Bool;
+	function remove (key :K) :V;
 
 	/**
 	  * The number of [key, value] pairs.
 	  */
-	function size () :Int;
+	// function size () :Int;
 
 	/**
 	  * Remove all keys and values.
 	  */
-	function clear () :Void;
+	// function clear () :Void;
 
 	/**
 	  * Iterator for all keys.
@@ -54,5 +56,11 @@ interface Map<K, V>
 	  * Iterator over all values.
 	  */
 	function iterator() : Iterator<V>;
+	
+	/**
+	  * Iterate over all key-value pairs.  Some maps optimise this to be
+	  * faster than regular iteration over keys, or to apply special functionality.
+	  */
+	function forEach (fn :K->V->Dynamic) :Void;
 
 }

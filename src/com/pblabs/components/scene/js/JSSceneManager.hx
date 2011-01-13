@@ -1,20 +1,25 @@
+/*******************************************************************************
+ * Hydrax: haXe port of the PushButton Engine
+ * Copyright (C) 2010 Dion Amago
+ * For more information see http://github.com/dionjwa/Hydrax
+ *
+ * This file is licensed under the terms of the MIT license, which is included
+ * in the License.html file at the root directory of this SDK.
+ ******************************************************************************/
 package com.pblabs.components.scene.js;
-
 import com.pblabs.components.scene.BaseScene2DManager;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.util.Preconditions;
 
-import js.Dom;
-
-import js.Lib;
-
 using Lambda;
 
-class JSSceneManager<Layer :JSLayer<Dynamic, Dynamic>> extends BaseScene2DManager<Layer>,
-	implements IAnimatedObject
+@:require(js)
+class JSSceneManager<Layer :JSLayer<Dynamic, Dynamic>> extends BaseScene2DManager<Layer>
+#if js
+	,implements IAnimatedObject
 {
-	public var container (get_container, null) :HtmlDom;
+	public var container (get_container, null) :js.HtmlDom;
 	
 	public function new ()
 	{
@@ -79,10 +84,13 @@ class JSSceneManager<Layer :JSLayer<Dynamic, Dynamic>> extends BaseScene2DManage
 		_rootContainer = null;
 	}
 	
-	function get_container () :HtmlDom
+	function get_container () :js.HtmlDom
 	{
 		return _rootContainer;
 	}
 	
-	var _rootContainer :HtmlDom;
+	var _rootContainer :js.HtmlDom;
 }
+#else
+{}
+#end

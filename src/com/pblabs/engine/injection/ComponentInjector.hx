@@ -14,10 +14,10 @@ import com.pblabs.engine.core.Entity;
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.engine.injection.Injector;
 import com.pblabs.util.Preconditions;
-import com.pblabs.util.SignallingVar;
+import com.pblabs.util.SignalVar;
 
 import hsl.haxe.Bond;
 import hsl.haxe.Signaler;
@@ -87,8 +87,8 @@ class ComponentInjector extends Injector
 		if (signalProp == null) {
 			Log.error("Cannot bind " + listenerMethodName + " to signal from ref " + signalRef + ", signaler is null");
 			return null;
-		} else if (Std.is(signalProp, SignallingVar)) {//Check if the signaller is a SignallingVar
-			signaller = cast(signalProp, SignallingVar<Dynamic>).signaller;
+		} else if (Std.is(signalProp, SignalVar)) {//Check if the signaller is a SignalVar
+			signaller = cast(signalProp, SignalVar<Dynamic>).signaller;
 			// return signaller.bind(Reflect.field(obj, listenerMethodName));
 		} else {
 			signaller = cast(signalProp, Signaler<Dynamic>);

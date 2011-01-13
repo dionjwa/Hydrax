@@ -9,7 +9,7 @@
 package com.pblabs.components.input;
 
 import com.pblabs.components.scene.SceneView;
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.util.Preconditions;
 
 import hsl.haxe.DirectSignaler;

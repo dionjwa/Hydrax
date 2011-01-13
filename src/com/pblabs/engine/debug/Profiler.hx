@@ -13,7 +13,7 @@
 package com.pblabs.engine.debug;
 
 #if profiler
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.util.Assert;
 import com.pblabs.util.MathUtil;
 import com.pblabs.util.Sprintf;
@@ -41,7 +41,6 @@ using com.pblabs.util.NumberUtil;
  * reported in percentages of total observed time.
  */
  
-
 class Profiler
 {
 	public static var enabled :Bool = true;
@@ -325,7 +324,7 @@ class ProfileInfo
 }
 
 #else
-class Profiler
+extern class Profiler
 {
 	public static var enabled :Bool = false;
 	public static var indentAmount :Int = 3;

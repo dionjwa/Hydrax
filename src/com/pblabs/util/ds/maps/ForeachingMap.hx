@@ -25,12 +25,38 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.pblabs.util;
+package com.pblabs.util.ds.maps;
+import com.pblabs.util.ds.Map;
 
-interface LogTarget
-{
-	/**
-	 * Log the specified message, which is already fully formatted.
-	 */
-	function log (msg :String) :Void;
+/**
+ * A forwarding Map that runs keys() and values() through forEach(), to take
+ * advantage of subclass logic therein.
+ * @private
+ */
+class ForeachingMap<K,V> extends ForwardingMap<K,V> {
+    
+    public function new (source :Map<K,V>)
+    {
+        super(source);
+    }
+
+    /** @inheritDoc */
+    public override function keys () :Iterator<K>
+    {
+        var arr = new Array<K>();
+        forEach(function (k :K, v :V) :Void {
+            arr.push(k);
+        });
+        return arr.iterator();
+    }
+
+    /** @inheritDoc */
+    public override function iterator() : Iterator<V>
+    {
+        var arr = new Array<V>();
+        forEach(function (k :K, v :V) :Void {
+            arr.push(v);
+        });
+        return arr.iterator();
+    }
 }

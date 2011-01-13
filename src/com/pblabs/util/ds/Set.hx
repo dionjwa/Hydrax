@@ -12,7 +12,7 @@ package com.pblabs.util.ds;
  *
  * @see com.pblabs.util.ds.Sets
  */
-interface Set<T>
+interface Set<T> implements Collection<T>
 {
 	/**
 	 * Adds the specified element to the set if it's not already present.
@@ -20,10 +20,10 @@ interface Set<T>
 	 */
 	function add (o :T) :Void;
 
-	/**
-	 * Returns true if this set contains the specified element.
-	 */
-	function exists (o :T) :Bool;
+	// /**
+	//  * Returns true if this set contains the specified element.
+	//  */
+	// function exists (o :T) :Bool;
 
 	/**
 	 * Removes the specified element from this set if it is present.
@@ -34,7 +34,7 @@ interface Set<T>
 	/**
 	 * Returns the number of elements in this set.
 	 */
-	function size () :Int;
+	// function size () :Int;
 
 	/**
 	 * Returns true if this set contains no elements.
@@ -44,10 +44,12 @@ interface Set<T>
 	/**
 	 * Remove all elements from this set.
 	 */
-	function clear () :Void;
+	// function clear () :Void;
 
 	/**
 	  * Iterate over values.
 	  */
 	function iterator() : Iterator<T>;
+	
+	// function forEach (f :T->Dynamic) :Void;
 }

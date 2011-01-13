@@ -17,15 +17,16 @@ class ImmutableMap<K, V> extends ForwardingMap<K, V>
 		super(source);
 	}
 	
-	override public function set (key :K, value :V) :Void
+	override public function set (key :K, value :V) :V
 	{
 	   throw "Unsupported operation: Immutable";
+	   return null;
 	}
 	
-	override public function remove (key :K) :Bool
+	override public function remove (key :K) :V
 	{
 		throw "Unsupported operation: Immutable";
-		return false;
+		return null;
 	}
 	
 	override public function clear () :Void

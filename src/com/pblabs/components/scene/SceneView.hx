@@ -11,7 +11,7 @@ package com.pblabs.components.scene;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.PBObject;
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.util.Preconditions;
 
 #if js

@@ -118,7 +118,7 @@ class PBGameBase
 			com.pblabs.util.Assert.isTrue(ctx.injector.getMapping(IPBContext) == ctx);
 			if (ctx.getManager(IProcessManager) != null && Std.is(ctx.getManager(IProcessManager), ProcessManager)) {
 				//The IPBContext starts paused, we control the unpausing.
-				cast(ctx.getManager(IProcessManager), ProcessManager).paused = true;
+				cast(ctx.getManager(IProcessManager), ProcessManager).isRunning = false;
 			}
 		}
 		return i;
@@ -131,15 +131,15 @@ class PBGameBase
 		Preconditions.checkArgument(!Std.is(ctx, PBContext) || cast(ctx, PBContext).injector.parent == injector, "PBContext injector has no parent.  Use allocate() to create the PBContext, not new PBContext");
 		stopContexts();
 		_contexts.push(ctx);
-		ctx.getManager(IProcessManager).paused = true;
+		ctx.getManager(IProcessManager).isRunning = true;
 		startTopContext();
 	}
 	
 	public function shutdown () :Void
 	{
-		getManager(IProcessManager).stop();
+		getManager(IProcessManager).isRunning = false;
 		if (currentContext != null) {
-			currentContext.getManager(IProcessManager).stop();
+			currentContext.getManager(IProcessManager).isRunning = false;
 			currentContext.rootGroup.destroy();
 		}
 		
@@ -175,7 +175,7 @@ class PBGameBase
 	function stopContexts () :Void
 	{
 		for (c in _contexts) {
-			c.getManager(IProcessManager).stop;
+			c.getManager(IProcessManager).isRunning = false;
 		}
 	}
 	
@@ -186,7 +186,7 @@ class PBGameBase
 			com.pblabs.util.Assert.isNotNull(currentContext, "How is the top context null?");
 			com.pblabs.util.Assert.isNotNull(currentContext.getManager(IProcessManager), "Where is the IProcessManager?");
 			#end
-			cast(currentContext.getManager(IProcessManager), ProcessManager).paused = false;//!started;
+			cast(currentContext.getManager(IProcessManager), ProcessManager).isRunning = true;
 			newActiveContextSignaler.dispatch(currentContext);
 		} 
 	}

@@ -7,9 +7,9 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.input;
-
+#if js
 import com.pblabs.components.input.BaseInputManager;
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 
 import hsl.haxe.Signaler;
 
@@ -115,3 +115,4 @@ class GestureInputManager extends BaseInputManager
         #end
     }
 }
+#end

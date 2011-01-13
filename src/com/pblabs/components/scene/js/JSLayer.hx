@@ -1,13 +1,17 @@
+/*******************************************************************************
+ * Hydrax: haXe port of the PushButton Engine
+ * Copyright (C) 2010 Dion Amago
+ * For more information see http://github.com/dionjwa/Hydrax
+ *
+ * This file is licensed under the terms of the MIT license, which is included
+ * in the License.html file at the root directory of this SDK.
+ ******************************************************************************/
 package com.pblabs.components.scene.js;
-
 import com.pblabs.components.scene.BaseScene2DComponent;
 import com.pblabs.components.scene.BaseScene2DLayer;
 
-import js.Dom;
-
-import js.Lib;
-
 class JSLayer <Scene :JSSceneManager<Dynamic>, Component :BaseScene2DComponent<Dynamic>> extends BaseScene2DLayer<Scene, Component>
+#if js
 {
 	public var div (default, null) :HtmlDom;
 	
@@ -91,3 +95,6 @@ class JSLayer <Scene :JSSceneManager<Dynamic>, Component :BaseScene2DComponent<D
 		div.style.cssText = "position:relative;left:0px;top:0px;";
 	}
 }
+#else
+{}
+#end

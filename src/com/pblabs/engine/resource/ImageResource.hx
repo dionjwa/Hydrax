@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.engine.resource;
 
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.engine.resource.ResourceBase;
 import com.pblabs.engine.resource.Source;
 import com.pblabs.util.Preconditions;
@@ -16,6 +16,9 @@ import com.pblabs.util.StringUtil;
 #if (flash || cpp)
 using com.pblabs.util.EventDispatcherUtil;
 
+/**
+  * Represents a single image resource.
+  */
 class ImageResource extends ResourceBase<flash.display.Bitmap>
 #elseif js
 class ImageResource extends ResourceBase<js.Dom.Image>

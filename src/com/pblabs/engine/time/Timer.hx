@@ -28,10 +28,20 @@ class Timer {
 	private var timerId : Int;
 	#end
 	
-	private var time_ms :Int;
+	public var delay (default, set_delay):Int;
+	function set_delay (val :Int) :Int
+	{
+		this.delay = val;
+		if (isRunning) {
+			stop();
+			start();
+		}
+		return val;
+	}
 	
-	public function new( time_ms : Int, ?startAutomatically :Bool = true){
-		this.time_ms = time_ms;
+	public function new (delay :Int, ?startAutomatically :Bool = true) 
+	{
+		set_delay(delay);
 		if (startAutomatically) {
 			start();
 		}
@@ -40,17 +50,17 @@ class Timer {
 	public function start () :Void
 	{
 		if (id != null) 
-			return;
+			stop();
 		#if flash9
 			var me = this;
-			id = untyped __global__["flash.utils.setInterval"](function() { me.run(); },time_ms);
+			id = untyped __global__["flash.utils.setInterval"](function() { me.run(); },delay);
 		#elseif flash
 			var me = this;
-			id = untyped _global["setInterval"](function() { me.run(); },time_ms);
+			id = untyped _global["setInterval"](function() { me.run(); },delay);
 		#elseif js
 			id = arr.length;
 			arr[id] = this;
-			timerId = untyped window.setInterval("com.pblabs.engine.time.Timer.arr["+id+"].run();",time_ms);
+			timerId = untyped window.setInterval("com.pblabs.engine.time.Timer.arr["+id+"].run();",delay);
 		#end
 	}
 
@@ -75,17 +85,23 @@ class Timer {
 		id = null;
 	}
 	
+	public var isRunning (get_isRunning, never) :Bool;
+	inline function get_isRunning () :Bool
+	{
+	    return id != null;
+	}
+	
 	public dynamic function run() {
 	}
 	
-	public static function delay( f : Void -> Void, time_ms : Int ) {
-		var t = new haxe.Timer(time_ms);
-		t.run = function() {
-			t.stop();
-			f();
-		};
-		return t;
-	}
+	// public static function delay( f : Void -> Void, delay : Int ) {
+	// 	var t = new haxe.Timer(delay);
+	// 	t.run = function() {
+	// 		t.stop();
+	// 		f();
+	// 	};
+	// 	return t;
+	// }
 
 	#end
 
@@ -108,4 +124,25 @@ class Timer {
 		#end
 	}
 
+	#if editor
+	public static var timers :Array<Timer> = [];
+	public static var stoppedTimers :Array<Timer> = [];
+	public static function stopTimers () :Void
+	{
+	    for (t in timers) {
+	    	if (t.isRunning) {
+	    		stoppedTimers.push(t);
+	    		t.stop();
+	    	}
+	    }
+	}
+	
+	public static function startTimers () :Void
+	{
+	    for (t in stoppedTimers) {
+	    	t.start();
+	    }
+	    stoppedTimers = [];
+	}
+	#end
 }

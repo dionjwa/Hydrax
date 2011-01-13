@@ -8,6 +8,8 @@
  ******************************************************************************/
 package com.pblabs.util;
 
+import com.pblabs.util.ArrayUtil;
+
 /**
  * Tests objects for equality, using the Equalable interface if present.
  */
@@ -26,9 +28,29 @@ class EqualableUtil
 		} else if (Std.is(obj1, Equalable)) {
 			// if obj1 is Equalable, then that decides it
 			return (cast(obj1, Equalable<Dynamic>)).equals(obj2);
-		} else if ((Std.is(obj1, Array)) || (Std.is( obj2, Array))) {
-			throw "Cannot compare Arrays yet";
+		} else if ((Std.is(obj1, Array)) || (Std.is(obj2, Array))) {
+			return isArraysEqual(cast obj1, cast obj2);
 		} 
 		return false;
+	}
+	
+	public static function isArraysEqual (a1 :Array<Dynamic>, a2 :Array<Dynamic>) :Bool
+	{
+		if (a1 == null && a2 == null) {
+			return true;
+		} else if (a1 == null && a2 != null) {
+			return false;
+		} else if (a1 != null && a2 == null) {
+			return false;
+		} else if (a1.length != a2.length) {
+			return false;
+		} else {
+			for (ii in 0...a1.length) {
+				if (!equals(a1[ii], a2[ii])) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 }

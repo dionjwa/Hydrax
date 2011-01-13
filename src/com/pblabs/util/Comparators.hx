@@ -37,7 +37,7 @@ import com.pblabs.util.ReflectUtil;
  * In general, these functions don't handle sorting undefined, it will be coerced to null.
  */
 class Comparators
- {
+{
 	/**
 	 * Create a Comparator function that reverses the ordering of the specified Comparator.
 	 */

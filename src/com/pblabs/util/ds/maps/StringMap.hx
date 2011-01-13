@@ -9,12 +9,11 @@
 package com.pblabs.util.ds.maps;
 
 import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.maps.KeyListMap;
 import com.pblabs.util.StringUtil;
 
 /**
  * Used on platforms without non-Int/String object
- * associative arrays (dictionaries).  Converts the object to a 
+ * associative arrays (dictionaries).  Converts the key to a 
  * string via Std.string(K), so you should implement unique 
  * toString methods on the key objects.
  *
@@ -22,62 +21,10 @@ import com.pblabs.util.StringUtil;
  * is not stored, only String created from the non-String key.
  */
 
-class StringMap<K, V> extends KeyListMap<K, V>,
-	implements Map<K, V>
+ class StringMap<K, V> extends TransformKeyMap<K, String, V>
 {
-	public function new()
-	{ 
-		super();
-		_hash = new Hash();
-	}
-
-	override public function set (key :K, value :V) :Void
+	public function new ()
 	{
-		var hash = getHash(key);
-		if (!_hash.exists(hash)) {
-			super.set(key, value);
-		}
-		_hash.set(hash, value);
+		super(Std.string, new HashMap<String, V>()); 
 	}
-
-	public function get (key :K) :V
-	{
-		return _hash.get(getHash(key));
-	}
-
-	override public function exists (key :K) :Bool
-	{
-		return _hash.exists(getHash(key));
-	}
-
-	override public function remove (key :K) :Bool
-	{
-		var hash = getHash(key);
-		if (!_hash.exists(hash)) {
-			return false;
-		}
-		super.remove(key);
-		var oldVal:V = _hash.get(hash);
-		_hash.remove(hash);
-		return oldVal != null;
-	}
-
-	override public function clear () :Void
-	{
-		super.clear();
-		_hash = new Hash<V>();
-	}
-	
-	public function iterator() : Iterator<V>
-	{
-		return _hash.iterator();
-	}
-	
-	inline function getHash (key :K) :String
-	{
-		return StringUtil.getStringKey(key);
-	}
-	
-	var _hash :Hash<V>;
 }
-

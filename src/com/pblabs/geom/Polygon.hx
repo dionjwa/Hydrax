@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.geom;
 
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 
 import com.pblabs.util.Assert;
 import com.pblabs.util.Cloneable;
@@ -51,7 +51,7 @@ class Polygon
 	public function new (vertices :Array<Vector2>) //<Vector2>
 	{
 		if (vertices == null || vertices.length < 3) {
-			throw "Cannot create a polygon with < 3 vertices=" + vertices;
+			throw "Cannot create a polygon with < 3 vertices=" + vertices + " " + Log.getStackTrace();
 		}
 		_vertices = vertices;
 		// polygon = _vertices;

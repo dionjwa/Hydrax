@@ -19,10 +19,9 @@ import com.pblabs.util.ReflectUtil;
 import easel.display.Canvas;
 import easel.display.Context2d;
 
-import js.Lib;
-
-class CanvasLayer extends JSLayer<CanvasScene2D, Canvas2DComponent>,
-	implements IAnimatedObject
+class CanvasLayer extends JSLayer<CanvasScene2D, Canvas2DComponent>
+#if js
+	,implements IAnimatedObject
 {
 	/** Children mark this when they're modified*/
 	public var isDirty :Bool;
@@ -115,7 +114,7 @@ class CanvasLayer extends JSLayer<CanvasScene2D, Canvas2DComponent>,
 	
 	function createCanvas () :Canvas
 	{
-		var canvas :Canvas = cast Lib.document.createElement("canvas");
+		var canvas :Canvas = cast js.Lib.document.createElement("canvas");
 		canvas.style.position = "relative";
 		canvas.style.left = "0px";
 		canvas.style.top = "0px";
@@ -124,3 +123,6 @@ class CanvasLayer extends JSLayer<CanvasScene2D, Canvas2DComponent>,
 	
 	var _tempPoint :Vector2;
 }
+#else
+{}
+#end

@@ -14,7 +14,7 @@ package com.pblabs.engine.core;
 
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBObject;
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.util.Preconditions;
 
 import com.pblabs.util.ds.Map;

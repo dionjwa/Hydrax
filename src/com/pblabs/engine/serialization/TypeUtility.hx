@@ -12,7 +12,7 @@
  ******************************************************************************/
 package com.pblabs.engine.serialization;
 
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 
 
 /**

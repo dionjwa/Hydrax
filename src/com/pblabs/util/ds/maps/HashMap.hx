@@ -32,7 +32,6 @@ package com.pblabs.util.ds.maps;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 import com.pblabs.util.ds.Set;
-import com.pblabs.util.ds.maps.AbstractMap;
 import com.pblabs.util.StringUtil;
 
 
@@ -43,16 +42,17 @@ import com.pblabs.util.StringUtil;
 **/
 //TODO: This map shouldn't be created on platforms that don't support object (non-string) 
 //dictionary maps.  Those platforms should use a String,IntMap, or HashableMap instead.
-class HashMap<K, V> extends AbstractMap<K, V>, implements Map<K, V>  #if php ,implements php.IteratorAggregate<K, V> #end
+class HashMap<K, V> implements Map<K, V>  #if php ,implements php.IteratorAggregate<K, V> #end
 {
 
 	private var h : #if flash9 flash.utils.Dictionary #elseif php ArrayAccess<K, V> #else Dynamic #end;
+	var _size :Int;
 
 	/**
 		Creates a new empty hashtable.
 	**/
-	public function new() : Void {
-		super();
+	public function new() : Void 
+	{
 		createDictionary();
 	}
 	
@@ -77,19 +77,23 @@ class HashMap<K, V> extends AbstractMap<K, V>, implements Map<K, V>  #if php ,im
 		#elseif php
 		h = untyped __call__('array');
 		#end
+		_size = 0;
 	}
 	
-	override public function clear () :Void
+	public function clear () :Void
 	{
-		super.clear();
 		createDictionary();
 	}
 
 	/**
 		Set a value for the given key.
 	**/
-	override public function set( key : K, value : V ) : Void {
-		super.set(key, value);
+	public function set( key : K, value : V ) : V 
+	{
+		var previous = get(key);
+		if (!exists(key)) {
+			_size++;
+		}
 		#if flash
 		untyped h[key] = value;
 		#elseif js
@@ -101,6 +105,7 @@ class HashMap<K, V> extends AbstractMap<K, V>, implements Map<K, V>  #if php ,im
 		#elseif php
 		untyped h[key] = value;
 		#end
+		return previous;
 	}
 
 	/**
@@ -128,7 +133,8 @@ class HashMap<K, V> extends AbstractMap<K, V>, implements Map<K, V>  #if php ,im
 		In particular, it's useful to tells if a key has
 		a [null] value versus no value.
 	**/
-	override public function exists( key : K ) : Bool {
+	public function exists( key : K ) : Bool 
+	{
 		#if flash
 		return untyped __in__(key, h);
 		#elseif js
@@ -158,27 +164,39 @@ class HashMap<K, V> extends AbstractMap<K, V>, implements Map<K, V>  #if php ,im
 		Removes a hashtable entry. Returns [true] if
 		there was such entry.
 	**/
-	override public function remove( key : K ) : Bool {
-		super.remove(key);
+	public function remove( key : K ) : V
+	{
 		#if flash
-		var k = key;
-		if( untyped !__in__(key, h)) return false;
-		untyped __delete__(h,k);
-		return true;
+		if( untyped !__in__(key, h)) return null;
+		_size--;
+		var previous = get(key);
+		untyped __delete__(h,key);
+		return previous;
 		#elseif js
-		if( !exists(key) )
-			return false;
+		if (!exists(key)) return null;
+		_size--;
+		var previous = get(key);
 		untyped __js__("delete")(h["$"+key]);
-		return true;
+		return previous;
 		#elseif neko
-		return untyped __dollar__hremove(h,key.__s,null);
+		if (exists(key))
+			_size--;
+		var previous = get(key);
+		untyped __dollar__hremove(h,key.__s,null);
+		return previous;
 		#elseif cpp
-		return untyped __global__.__hxcpp_anon_remove(h,key);
+		if (exists(key)) _size--;
+		var previous = get(key);
+		untyped __global__.__hxcpp_anon_remove(h,key);
+		return previous;
 		#elseif php
-		if(!untyped __call__("isset", h[key])) return false;
+		if(!untyped __call__("isset", h[key])) return null;
+		var previous = get(key);
+		_size--;
 		untyped __call__("unset", h[key]);
-		return true;
+		return previous;
 		#else
+		throw "Unsupported platform";
 		return false;
 		#end
 	}
@@ -257,6 +275,18 @@ class HashMap<K, V> extends AbstractMap<K, V>, implements Map<K, V>  #if php ,im
 		#end
 	}
 
+	inline public function size () :Int
+	{
+	    return _size;
+	}
+	
+	public function forEach (fn :K->V->Dynamic) :Void
+    {
+        for (k in keys()) {
+        	fn(k, get(k));
+        }
+    }
+	
 	/**
 		Implement IteratorAggregate for native php iteration
 	**/

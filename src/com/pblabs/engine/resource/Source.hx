@@ -8,12 +8,9 @@
  ******************************************************************************/
 package com.pblabs.engine.resource;
 
-import haxe.io.BytesData;
-
 enum Source {
 	url (u :String);
-	bytes (b :BytesData);
+	bytes (b :haxe.io.BytesData);
 	text (t :String);
 	embedded (name :String);
-	// base64 (data :String); //??Maybe
 }

@@ -81,7 +81,8 @@ class SetMultiMap<K, V> extends AbstractMultiMap<K, V>,
 	{
 		var set = _map.get(key);
 		_size -= if (set == null) 0 else set.size();
-		return _map.remove(key);
+		_map.remove(key);
+		return set != null && set.size() > 0;
 	}
 	
 	public function removeEntry (key :K, value :V) :Bool

@@ -30,16 +30,16 @@ class SortedMap<K, V> extends ForwardingMap<K, V>
 		_sortedKeys.sort(_sortFunction);
 	}
 	
-	override public function set (key :K, value :V) :Void
+	override public function set (key :K, value :V) :V
 	{
-		super.set(key, value);
 		if (!_sortedKeys.has(key)) {
 			_sortedKeys.push(key);
 			_sortedKeys.sort(_sortFunction);
 		}
+		return super.set(key, value);
 	}
 	
-	override public function remove (key :K) :Bool
+	override public function remove (key :K) :V
 	{
 		_sortedKeys.remove(key);
 		return super.remove(key);

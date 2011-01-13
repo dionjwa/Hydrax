@@ -71,7 +71,7 @@ class MapUtil
 	public static function toString(map :MapType) :String 
 	{
 		var s = new StringBuf();
-		s.add("{");
+		s.add("Map {");
 		var it = map.keys();
 		for(i in it) {
 			s.add(StringUtil.getStringKey(i));

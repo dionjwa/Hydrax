@@ -15,12 +15,11 @@ import com.pblabs.util.StringUtil;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
-import js.Dom;
-
 /**
   * Javascript image loader.
   */
-class ImageResources extends ResourceBase<Image>
+#if js
+class ImageResources extends ResourceBase<js.Image>
 {
 	public function new (name :String, baseLoc :String, imageRefs :Array<String>)
 	{
@@ -75,5 +74,6 @@ class ImageResources extends ResourceBase<Image>
 	var _images :Map<String, Image>;
 	var _baseLocation :String;
 }
-
-
+#else
+class ImageResources extends ResourceBase<Dynamic>{}
+#end

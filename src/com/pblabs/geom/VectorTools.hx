@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.geom;
 
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;

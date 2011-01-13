@@ -9,10 +9,10 @@
 
 package com.pblabs.util.ds.maps;
 
-import com.pblabs.util.ds.maps.HashableMap;
-import com.pblabs.util.ds.maps.KeyListMap;
+import com.pblabs.util.ds.Collection;
 import com.pblabs.util.ds.Hashable;
-import com.pblabs.util.ds.Map;
+import com.pblabs.util.ds.maps.HashableMap;
+
 import haxe.FastList;
 
 /**
@@ -20,63 +20,29 @@ import haxe.FastList;
  * where no object dictionary exists, such as js, php (others?).
  * It's not as fast as a String or Int key based map however.
  */
-class HashableMap<K, V> extends KeyListMap<K, V>,
-	implements Map<K, V>
+class HashableMap<K :Hashable, V> extends TransformKeyMap<K, Int, V>
 {
+	/**
+	  * Tests existance of Hashable key ignoring the key type class. 
+	  */
+	public static function existsHashable (collection :Collection<Dynamic>, element :Hashable) :Bool
+	{
+		return collection.exists(element);    
+	}
+	
+	public static function removeHashable (collection :Collection<Dynamic>, element :Hashable) :Void
+	{
+		//Will be a set or map.  The remove method should be identical
+		untyped collection.remove(element);
+	}
+	
+	public static function getHashCode (key :Hashable) :Int
+	{
+		return key.hashCode();
+	}
+	
 	public function new()
 	{ 
-		super();
-		_intMap = new IntHash();
+		super(getHashCode, new IntHashMap());
 	}
-
-	override public function set (key :K, value :V) :Void
-	{
-		var hash = getHash(key);
-		if (!_intMap.exists(hash)) {
-			super.set(key, value);
-		}
-		_intMap.set(hash, value);
-	}
-
-	public function get (key :K) :V
-	{
-		return _intMap.get(getHash(key));
-	}
-
-	override public function exists (key :K) :Bool
-	{
-		return _intMap.exists(getHash(key));
-	}
-
-	override public function remove (key :K) :Bool
-	{
-		var hash = getHash(key);
-		if (!_intMap.exists(hash)) {
-			return false;
-		}
-		super.remove(key);
-		var oldVal:V = _intMap.get(hash);
-		_intMap.remove(hash);
-		return oldVal != null;
-	}
-
-	override public function clear () :Void
-	{
-		super.clear();
-		_intMap = new IntHash<V>();
-	}
-	
-	public function iterator() : Iterator<V>
-	{
-		return _intMap.iterator();
-	}
-	
-	inline function getHash (key :K) :Int
-	{
-		var hashable = cast(key, Hashable);
-		return hashable.hashCode();
-	}
-	
-	var _intMap :IntHash<V>;
 }
-

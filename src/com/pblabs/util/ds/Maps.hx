@@ -16,6 +16,7 @@ import com.pblabs.util.ds.maps.HashMap;
 import com.pblabs.util.ds.maps.HashableMap;
 import com.pblabs.util.ds.maps.IntHashMap;
 import com.pblabs.util.ds.maps.StringMap;
+import com.pblabs.util.ds.maps.TransformKeyMap;
 
 using Lambda;
 
@@ -92,7 +93,7 @@ class Maps
 				return new StringMap<K, V>();
 				#end
 			} else if (Std.is(k, Hashable)) {
-				return new HashableMap<K, V>();
+				untyped return new HashableMap<K, V>();
 			} else {
 				#if (flash || neko || cpp)
 				return new HashMap<K, V>();
@@ -107,4 +108,10 @@ class Maps
 	}
 }
 
-
+// class StringMap<K, V> extends TransformKeyMap<K, String, V>
+// {
+// 	public function new ()
+// 	{
+// 		super(Std.string, new HashMap<String, V>()); 
+// 	}
+// }

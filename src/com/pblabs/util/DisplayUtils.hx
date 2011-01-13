@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.util;
 
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;

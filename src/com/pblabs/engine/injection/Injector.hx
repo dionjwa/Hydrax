@@ -10,7 +10,7 @@ package com.pblabs.engine.injection;
 
 import Type.ValueType;
 
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.util.Preconditions;
 
 import com.pblabs.util.ds.Map;

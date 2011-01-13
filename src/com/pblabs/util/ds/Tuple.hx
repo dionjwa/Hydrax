@@ -16,6 +16,16 @@ import com.pblabs.util.EqualableUtil;
 class Tuple <V1, V2> 
 	implements Hashable, implements Equalable<Dynamic>
 {
+	public static var temp :Tuple<Dynamic, Dynamic> = new Tuple(null, null);
+	
+	public static function containsTuple (c :Collection<Dynamic>, v1 :Dynamic, v2 :Dynamic) :Bool
+	{
+		temp.set(v1, v2);
+	    var isValue = c.exists(temp);
+	    temp.clear();
+	    return isValue;
+	}
+	
 	public var v1 (default, null) :V1;
 	public var v2 (default, null) :V2;
 	
@@ -45,6 +55,22 @@ class Tuple <V1, V2>
 				StringUtil.hashCode("" + v2);
 			}	
 		return value;
+	}
+	
+	public static function computeHashCodeFromHashables (v1 :Hashable, v2 :Hashable) :Int
+	{
+		var value :Int = 17;
+		value = value * 31 + (v1 == null ? 0 : v1.hashCode());  
+		value = value * 31 + (v2 == null ? 0 : v2.hashCode());
+		return value;
+	}
+	
+	/**
+	  * Clear references.
+	  */
+	public static function shutdown () :Void
+	{
+		temp.set(null, null);
 	}
 	
 	public function new (v1 :V1, v2 :V2)
@@ -80,11 +106,16 @@ class Tuple <V1, V2>
 	}
 	
 	//Bad idea?  It would fuck up Tuple map keys
-	function set (v1 :V1, v2 :V2) :Void
+	public function set (v1 :V1, v2 :V2) :Tuple <V1, V2>
 	{
 		this.v1 = v1;
 		this.v2 = v2;
-		_hashCode = computeHashCode(v1, v2);
+		if (v1 == null && v2 == null) {
+			_hashCode = 0;
+		} else {
+			_hashCode = computeHashCode(v1, v2);
+		}
+		return this;
 	}
 
 	var _hashCode :Int;

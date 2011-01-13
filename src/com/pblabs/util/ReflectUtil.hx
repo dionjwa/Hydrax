@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.util;
 
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 
 import haxe.rtti.CType;
 
@@ -47,6 +47,19 @@ class ReflectUtil
 	{
 		return getClass(obj1) == getClass(obj2);
 	}
+	
+	public static function hasSuperClass (cls :Class<Dynamic>, superClass :Class<Dynamic>) :Bool
+	{
+	    var sc = Type.getSuperClass(cls);
+	    while (sc != null) {
+	    	if (superClass == sc) {
+	    		return true;
+	    	}
+	    	sc = Type.getSuperClass(sc);
+	    }
+	    return false;
+	}
+	
 	
 	public static function getClass (obj :Dynamic) :Class<Dynamic>
 	{

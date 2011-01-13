@@ -29,17 +29,17 @@ class BiMap<K, V> extends ForwardingMap<K, V>
 		}
 	}
 	
-	override public function set (key :K, value :V) :Void
+	override public function set (key :K, value :V) :V
 	{
-		// checkInverse(value);
 		if (_inverse != null && exists(key)) {
 			_inverse.remove(get(key));
 		}
-		super.set(key, value);
+		var previous = super.set(key, value);
 		_inverse.set(value, key);
+		return previous;
 	}
 	
-	override public function remove (key :K) :Bool
+	override public function remove (key :K) :V
 	{
 		if (exists(key)) {
 			_inverse.remove(get(key));
@@ -59,23 +59,9 @@ class BiMap<K, V> extends ForwardingMap<K, V>
 	  */
 	public function inverse () :Map<V, K>
 	{
-		// Preconditions.checkArgument(_inverse != null || size() > 0, "Cannot get the inverse before any non-null values are added, we cannot determine the inverse map type.");
 		return _inverseView;
 	}
 	
-	// function checkInverse (val :V) :Void
-	// {
-	//	 if (_inverse != null) {
-	//		 return;
-	//	 }
-	//	 if (val == null) {
-	//		 //Cannot create an inverse map from a null value
-	//		 return;
-	//	 }
-	//	 _inverse = Maps.newHashMap(val);
-	//	 _inverseView = new ImmutableMap(_inverse);
-	// }
-
 	var _inverse :Map<V, K>;
 	var _inverseView :ImmutableMap<V, K>;
 }

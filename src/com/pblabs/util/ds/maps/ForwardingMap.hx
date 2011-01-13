@@ -22,9 +22,9 @@ class ForwardingMap<K, V> implements Map<K, V>
 		_source = Preconditions.checkNotNull(source);
 	}
 
-	public function set (key :K, value :V) :Void
+	public function set (key :K, value :V) :V
 	{
-		_source.set(key, value);
+		return _source.set(key, value);
 	}
 
 	public function get (key :K) :V
@@ -37,7 +37,7 @@ class ForwardingMap<K, V> implements Map<K, V>
 		return _source.exists(key);
 	}
 
-	public function remove (key :K) :Bool
+	public function remove (key :K) :V
 	{
 		return _source.remove(key);
 	}
@@ -66,6 +66,11 @@ class ForwardingMap<K, V> implements Map<K, V>
 	{
 		return Std.string(_source);
 	}
+	
+	public function forEach (fn :K->V->Dynamic) :Void
+    {
+        _source.forEach(fn);
+    }
 
 	var _source:Map<K, V>;
 }

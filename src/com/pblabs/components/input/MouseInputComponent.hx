@@ -14,7 +14,7 @@ import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene.BaseScene2DComponent;
 import com.pblabs.components.scene.BaseScene2DManager;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Comparable;
 import com.pblabs.util.Comparators;

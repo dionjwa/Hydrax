@@ -14,7 +14,7 @@ import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene.BaseScene2DComponent;
 import com.pblabs.components.scene.js.canvas.CanvasLayer;
 import com.pblabs.components.scene.js.canvas.CanvasScene2D;
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.engine.util.PBUtil;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Assert;

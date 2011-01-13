@@ -13,8 +13,7 @@
 package com.pblabs.engine.time;
 
 import com.pblabs.engine.core.IPBManager;
-import com.pblabs.engine.time.IAnimatedObject;
-import com.pblabs.engine.time.ITickedObject;
+
 /**
  * The process manager manages all time related functionality in the engine.
  * It provides mechanisms for performing actions every frame, every tick, or
@@ -29,7 +28,7 @@ import com.pblabs.engine.time.ITickedObject;
  * @see ITickedObject
  * @see IAnimatedObject
  */
-interface IProcessManager//, implements IPBManager
+interface IProcessManager implements IPBManager
 {
 	/**
 	 * The amount of time that has been processed by the process manager. This does
@@ -42,28 +41,13 @@ interface IProcessManager//, implements IPBManager
 	 * costly calls to getTimer(), or if you want a unique number representing the
 	 * current frame.  Time is in milliseconds.
 	 */
-	 var platformTime (get_platformTime, set_platformTime) :Float;
+	 var platformTime (get_platformTime, set_platformTime) :Int;
 
-	/**
-	 * Starts the process manager. This is automatically called when the first object
-	 * is added to the process manager. If the manager is stopped manually, then this
-	 * will have to be called to restart it.
-	 */
-	function start():Void;
-
-	/**
-	 * Stops the process manager. This is automatically called when the last object
-	 * is removed from the process manager, but can also be called manually to, for
-	 * example, pause the game.
-	 */
-	function stop():Void;
-	
-	var paused (get_paused, set_paused) :Bool;
-	
 	/**
 	 * Returns true if the process manager is advancing.
+	 * Setting starts and stops the process manager.
 	 */ 
-	var isTicking(get_isTicking, never):Bool;
+	var isRunning(get_isRunning, set_isRunning):Bool;
 
 	/**
 	 * Registers an object to receive frame callbacks.
@@ -110,4 +94,3 @@ interface IProcessManager//, implements IPBManager
 	 */
 	function callLater(method:Void->Dynamic):Void;
 }
-

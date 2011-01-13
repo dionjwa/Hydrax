@@ -25,16 +25,13 @@ using com.pblabs.util.IterUtil;
 * values. They can be used to add type safety to properties that need to be
 * limited to a specific subset of values.
 * 
-* HaXe enums don't have this convenient field accession. and allow multiple instances, 
-* but to also have the compiler checking of enums in switches, this class wraps enum types.
+* HaXe enums don't have this convenient field accession, and allow multiple instances.
 */
-class Enumerable<T,E>
-	implements Hashable, implements Equalable<Enumerable<T,E>>, implements Comparable<Enumerable<T,E>>  
+class Enumerable<T>
+	implements Hashable, implements Equalable<Enumerable<T>>, implements Comparable<Enumerable<T>>  
 {
 	public var name (get_name, never) :String;
 	public var ordinal (get_ordinal, never) :Int;
-	/** Corresponding enum.  Used for haxe compiler enum functionality e.g. switches. */
-	public var e (get_enum, never) :E;
 	
 	public static function values <T>(cls :Class<T>) :Iterable<T>
 	{
@@ -52,15 +49,11 @@ class Enumerable<T,E>
 	
 	public static function valueOf <T>(cls :Class<T>, name :String) :T
 	{
-		// trace("cls=" + cls);
-		// trace("_enums.get(cls)=" + com.pblabs.util.ds.MapUtil.toString(_enums.get(cls)));
 		return cast(_enums.get(cls).get(name));
 	}
 	
 	public static function serializedValueOf <T>(clsName :String, name :String) :T
 	{
-		// trace("clsName=" + clsName);
-		// trace("name=" + name);
 		return valueOf(Type.resolveClass(clsName), name);
 	}
 	
@@ -73,7 +66,7 @@ class Enumerable<T,E>
 		return cast(arr[ordinal]);
 	}
 	
-	public static function getOrdinal (e :Enumerable<Dynamic, Dynamic>) :Int
+	public static function getOrdinal (e :Enumerable<Dynamic>) :Int
 	{
 		var cls = Type.getClass(e);
 		Preconditions.checkNotNull(cls);
@@ -82,7 +75,7 @@ class Enumerable<T,E>
 	}
 	
 	//For map functions
-	static function getEnumName (e :Enumerable<Dynamic, Dynamic>) :String
+	static function getEnumName (e :Enumerable<Dynamic>) :String
 	{
 		return e.name;
 	}
@@ -90,15 +83,10 @@ class Enumerable<T,E>
 	/**
 	  * Keep the constructor private
 	  */
-	private function new (en :E) 
+	private function new (name :String) 
 	{
-		Preconditions.checkNotNull(en);
-		Preconditions.checkArgument(switch(Type.typeof(en)) {
-			case TEnum(e): true;
-			default: false;
-		}, "en must be an Enum");
-		_enum = en;
-		_name = Type.enumConstructor(en);
+		Preconditions.checkNotNull(name);
+		_name = name;
 		var cls = Type.getClass(this);
 		
 		if (!_enums.exists(cls)) {
@@ -114,12 +102,12 @@ class Enumerable<T,E>
 		_hashCode = _ordinal; 
 	}
 	
-	inline public function equals (other :Enumerable<T,E>) :Bool
+	inline public function equals (other :Enumerable<T>) :Bool
 	{
 		return other == this;
 	}
 
-	inline public function hashCode () :Int
+	public function hashCode () :Int
 	{
 		return _hashCode;
 	}
@@ -129,7 +117,7 @@ class Enumerable<T,E>
 		return name;
 	}
 	
-	public function compareTo (other :Enumerable<T,E>) :Int
+	public function compareTo (other :Enumerable<T>) :Int
 	{
 		com.pblabs.util.Assert.isTrue(Std.is(other, Type.getClass(this)), "Not same Enumerable type");
 		return Comparators.compareInts(this.ordinal, other.ordinal);
@@ -145,18 +133,12 @@ class Enumerable<T,E>
 		return _ordinal;
 	}
 	
-	inline function get_enum () :E
-	{
-		return _enum;
-	}
-	
 	var _name :String;
-	var _enum :E;
 	var _hashCode :Int;
 	var _ordinal :Int;
 	
 	//Hidden static map of all Enumerable instances.
-	static var _enums :Map<Class<Dynamic>, Map<String, Enumerable<Dynamic, Dynamic>>> = new StringMap();
+	static var _enums :Map<Class<Dynamic>, Map<String, Enumerable<Dynamic>>> = new StringMap();
 }
 
 

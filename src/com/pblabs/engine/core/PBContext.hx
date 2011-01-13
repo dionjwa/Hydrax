@@ -23,7 +23,7 @@ import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBGroup;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.core.SetManager;
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.engine.injection.ComponentInjector;
 import com.pblabs.engine.injection.Injector;
 import com.pblabs.engine.time.IProcessManager;
@@ -84,7 +84,7 @@ class PBContext
 		_managers = Maps.newHashMap(String);
 		
 		_processManager = registerManager(IProcessManager, new ProcessManager(), true);
-		_processManager.paused = true;
+		_processManager.isRunning = false;
 		// _managers.set(Util.getManagerName(IProcessManager), _processManager);
 		
 		_tempPropertyInfo = new PropertyInfo();
@@ -333,7 +333,7 @@ class PBContext
 	
 	public function shutdown () :Void
 	{
-		_processManager.stop();
+		_processManager.shutdown();
 		rootGroup.destroy();
 		rootGroup = null;
 		_currentGroup = null;
@@ -345,8 +345,6 @@ class PBContext
 		_managers = null;
 		injector = null;
 		_tempPropertyInfo = null;
-		
-		// Console.unregisterContext(this);  
 	}
 	
 	function initializeName():Void
@@ -682,7 +680,7 @@ class PropertyInfo
 		Preconditions.checkNotNull(p, "PropertyReference cannot be null");
 		if(propertyName != null) {
 			if (p.getterName == null) {
-				// return getCheckForSignallingVars(Reflect.field(propertyParent,  propertyName));
+				// return getCheckForSignalVars(Reflect.field(propertyParent,  propertyName));
 				return Reflect.field(propertyParent,  propertyName);
 			} else {
 				return Reflect.callMethod(propertyParent, Reflect.field(propertyParent, p.getterName), EMPTY_ARRAY);
@@ -696,7 +694,7 @@ class PropertyInfo
 	inline public function setValue<T> (value :Dynamic, ?p :PropertyReference<T>) :Void
 	{
 		if (propertyName != null) {
-			// if (p == null || p.setterName == null && !setCheckForSignallingVars(Reflect.field(propertyParent,  propertyName), value)) {
+			// if (p == null || p.setterName == null && !setCheckForSignalVars(Reflect.field(propertyParent,  propertyName), value)) {
 			if (p == null || p.setterName == null) {
 				Reflect.setField(propertyParent,  propertyName, value);
 			} else {
@@ -717,19 +715,19 @@ class PropertyInfo
 		return "PropertyInfo propertyParent=" + ReflectUtil.getClass(propertyParent) + ", propertyName=" + propertyName + ", isRuntimeProperty=" + isRuntimeProperty;
 	}
 	
-	// inline function getCheckForSignallingVars<T> (field :Dynamic) :T
+	// inline function getCheckForSignalVars<T> (field :Dynamic) :T
 	// {
-	//	 if (Std.is(field, SignallingVar)) {
-	//		 return cast(field, SignallingVar<Dynamic>).value;
+	//	 if (Std.is(field, SignalVar)) {
+	//		 return cast(field, SignalVar<Dynamic>).value;
 	//	 } else {
 	//		 return field;
 	//	 }
 	// }
 	
-	// inline function setCheckForSignallingVars<T> (field :Dynamic, val :T) :Bool
+	// inline function setCheckForSignalVars<T> (field :Dynamic, val :T) :Bool
 	// {
-	//	 if (Std.is(field, SignallingVar)) {
-	//		 cast(field, SignallingVar<Dynamic>).value = val;
+	//	 if (Std.is(field, SignalVar)) {
+	//		 cast(field, SignalVar<Dynamic>).value = val;
 	//		 return true;
 	//	 } else {
 	//		 return false;

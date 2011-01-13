@@ -17,7 +17,6 @@ import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.util.PBUtil;
 import com.pblabs.util.Preconditions;
-
 import com.pblabs.util.ReflectUtil;
 
 /**
@@ -121,9 +120,9 @@ class EntityComponent
   
   public function reset():Void
   {
-	  _sanityCheck = false;
-	 onReset();
-	 Preconditions.checkArgument(_sanityCheck, "Forgot to call super.onReset(); in " + this + "!");
+  	  _sanityCheck = false;
+  	  onReset();
+  	  Preconditions.checkArgument(_sanityCheck, "Forgot to call super.onReset(); in " + this + "!");
   }
   
   /**
@@ -160,6 +159,13 @@ class EntityComponent
 	  _sanityCheck = true;
   }
   
+  #if debug
+  public function postDestructionCheck () :Void
+  {
+  	  //Subclasses override
+  }
+  #end
+  
   @editorData({ignore :"true"})
   var _isRegistered :Bool;
   
@@ -175,5 +181,3 @@ class EntityComponent
   @editorData({ignore :"true"})
    var _sanityCheck:Bool;
 }
-
-

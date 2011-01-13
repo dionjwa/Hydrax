@@ -15,12 +15,12 @@ package com.pblabs.engine.serialization;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
-import com.pblabs.engine.debug.Log;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.serialization.TemplateManager;
 import com.pblabs.engine.serialization.TypeUtility;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Enumerable;
+import com.pblabs.util.Log;
 import com.pblabs.util.MetaUtil;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
@@ -67,7 +67,9 @@ class Serializer
 		_deserializers.set("com.pblabs.util.ds.Map", deserializeIterable);
 		_deserializers.set("Class", deserializeClass);
 		_deserializers.set("com.pblabs.util.Enumerable", deserializeEnumerable);
-		// _deserializers.set("com.pblabs.util.SignallingVar", deserializeSignallingVar);
+		_deserializers.set("com.pblabs.util.EnumWrappedEnumerable", deserializeEnumerable);
+		
+		// _deserializers.set("com.pblabs.util.SignalVar", deserializeSignalVar);
 		_deserializers.set("com.pblabs.geom.Vector2", deserializeVector2);
 		
 		_serializers.set("::DefaultSimple", serializeSimple);
@@ -81,7 +83,8 @@ class Serializer
 		_serializers.set("Iterable", serializeIterable);
 		_serializers.set("com.pblabs.util.ds.Map", serializeIterable);
 		_serializers.set("com.pblabs.util.Enumerable", serializeEnumerable);
-		// _serializers.set("com.pblabs.util.SignallingVar", serializeSignallingVar);
+		_serializers.set("com.pblabs.util.EnumWrappedEnumerable", serializeEnumerable);
+		// _serializers.set("com.pblabs.util.SignalVar", serializeSignalVar);
 		_serializers.set("ISerializable", serializeSerializable);
 		_serializers.set("com.pblabs.geom.Vector2", serializeVector2);
 		
@@ -221,7 +224,7 @@ class Serializer
 		if (typeHint != null) {
 			var cls = Type.resolveClass(typeHint);
 			if (cls != null) {
-				if (Type.getSuperClass(cls) == Enumerable) {
+				if (ReflectUtil.hasSuperClass(cls, Enumerable)) {
 					return deserializeEnumerable (context, object, xml, typeHint);
 				}
 			}
@@ -424,7 +427,7 @@ class Serializer
 	
 	public static  function serializeEnumerable (object :Dynamic, xml :XML) :Void
 	{
-		var e :Enumerable<Dynamic, Dynamic> = object;
+		var e :Enumerable<Dynamic> = object;
 		// trace("serializeEnumerable");
 		// trace("xml.nodeType=" + xml.nodeType);
 		xml.addChild(XML.createPCData(e.name));
@@ -562,10 +565,10 @@ class Serializer
 			_typeInfo.typeKey = "Iterable";
 		} else if (Std.is(val, Enumerable)) {
 			_typeInfo.typeKey = "com.pblabs.util.Enumerable";
-		} else if (clsName == "com.pblabs.util.SignallingVar") {
-			//Don't serialize the SignallingVar, rather the value
+		} else if (clsName == "com.pblabs.util.SignalVar") {
+			//Don't serialize the SignalVar, rather the value
 			_typeInfo.typeHint = _typeInfo.typeKey = _typeInfo.val = null;
-			return getTypeInfo(cast(val, com.pblabs.util.SignallingVar<Dynamic>).value);
+			return getTypeInfo(cast(val, com.pblabs.util.SignalVar<Dynamic>).value);
 		} else if (_serializers.exists(clsName)) {
 			_typeInfo.typeKey = clsName;
 		} else {

@@ -79,7 +79,8 @@ class ListMultiMap<K, V> extends AbstractMultiMap<K, V>,
 	{
 		var arr = _map.get(key);
 		_size -= if (arr == null) 0 else arr.length;
-		return _map.remove(key);
+		_map.remove(key);
+		return arr != null;
 	}
 	
 	public function removeEntry (key :K, value :V) :Bool

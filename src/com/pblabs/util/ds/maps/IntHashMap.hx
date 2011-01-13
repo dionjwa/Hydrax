@@ -36,15 +36,16 @@ import com.pblabs.util.ds.Map;
 	A copy of IntMap but paramaterized for keys and values.
 	Don't instatiate directly, use Maps.createNewHashMap().
 **/
-class IntHashMap<K, V> extends AbstractMap<K, V>, implements Map<K, V> #if php , implements php.IteratorAggregate<V> #end {
+class IntHashMap<K, V> implements Map<K, V> #if php , implements php.IteratorAggregate<V> #end {
 
 	private var h : #if flash9 flash.utils.Dictionary #elseif php ArrayAccess<K> #else Dynamic #end;
+	private var _size :Int;
 
 	/**
 		Creates a new empty hashtable.
 	**/
-	public function new() : Void {
-		super();
+	public function new() : Void 
+	{
 		createDictionary();
 	}
 	
@@ -67,19 +68,20 @@ class IntHashMap<K, V> extends AbstractMap<K, V>, implements Map<K, V> #if php ,
 		#elseif cpp
 		h = untyped __global__.__int_hash_create();
 		#end
+		_size = 0;
 	}
 	
-	override public function clear () :Void
+	public function clear () :Void
 	{
-		super.clear();
 		createDictionary();
 	}
 
-	/**
-		Set a value for the given key.
-	**/
-	override public function set( key : K, value : V ) : Void {
-		super.set(key, value);
+	public function set( key : K, value : V ) : V
+	{
+		var previous = get(key);
+		if (!exists(key)) {
+			_size++;
+		}
 		#if (flash || php)
 		untyped h[key] = value;
 		#elseif js
@@ -89,12 +91,14 @@ class IntHashMap<K, V> extends AbstractMap<K, V>, implements Map<K, V> #if php ,
 		#elseif cpp
 		untyped __global__.__int_hash_set(h,key,value);
 		#end
+		return previous;
 	}
 
 	/**
 		Get a value for the given key.
 	**/
-	public function get( key : K ) : Null<V> {
+	public function get( key : K ) : Null<V> 
+	{
 		#if flash
 		return untyped h[key];
 		#elseif js
@@ -116,7 +120,7 @@ class IntHashMap<K, V> extends AbstractMap<K, V>, implements Map<K, V> #if php ,
 		In particular, it's useful to tells if a key has
 		a [null] value versus no value.
 	**/
-	override public function exists( key : K ) : Bool {
+	public function exists( key : K ) : Bool {
 		#if flash9
 		return untyped h.hasOwnProperty(key);
 		#elseif flash
@@ -138,41 +142,49 @@ class IntHashMap<K, V> extends AbstractMap<K, V>, implements Map<K, V> #if php ,
 		Removes a hashtable entry. Returns [true] if
 		there was such entry.
 	**/
-	override public function remove( key : K ) : Bool {
+	public function remove( key : K ) : V {
 		#if flash9
-		if( untyped !h.hasOwnProperty(key) ) return false;
-		untyped __delete__(h,key);
+		if( untyped !h.hasOwnProperty(key) ) return null;
+		var previous = get(key);
 		_size--;
-		return true;
+		untyped __delete__(h,key);
+		return previous;
 		#elseif flash
-		if( untyped !h["hasOwnProperty"](key) ) return false;
+		if( untyped !h["hasOwnProperty"](key) ) return null;
+		var previous = get(key);
+		_size--;
 		untyped __delete__(h,key);
-		_size--;
-		return true;
+		return previous;
 		#elseif js
-		if( untyped h[key] == null ) return false;
-		untyped  __js__("delete")(h[key]);
+		if( untyped h[key] == null ) return null;
 		_size--;
-		return true;
+		var previous = get(key);
+		untyped  __js__("delete")(h[key]);
+		return previous;
 		#elseif neko
+		var previous = get(key);
 		if (untyped __dollar__hremove(h,key,null)) {
 			_size--;
-			return true;
+			return previous;
 		} else {
-			return false;
+			return null;
 		}
 		#elseif php
-		if(!untyped __call__("isset", h[key])) return false;
+		if(!untyped __call__("isset", h[key])) return null;
+		var previous = get(key);
 		untyped __call__("unset", h[key]);
 		_size--;
-		return true;
+		return previous;
 		#elseif cpp
+		var previous = get(key);
 		if (untyped __global__.__int_hash_remove(h,key)) {
-			_size--;	
+			_size--;
+			return previous;
 		} else {
-			return false;
+			return null;
 		}
 		#else
+		throw "Unsupported platform";
 		return false;
 		#end
 	}
@@ -248,6 +260,24 @@ class IntHashMap<K, V> extends AbstractMap<K, V>, implements Map<K, V> #if php ,
 		#end
 	}
 
+	public function forEach (fn :K->V->Dynamic) :Void
+	{
+	    for (k in keys()) {
+	    	fn(k, get(k));
+	    }
+	}
+	
+	#if debug
+	public function toString () :String
+	{
+	    return com.pblabs.util.ds.MapUtil.toString(this);
+	}
+	#end
+	
+	inline public function size () :Int
+	{
+	    return _size;
+	}
 	/**
 		Implement IteratorAggregate for native php iteration
 	**/

@@ -21,9 +21,10 @@ class DynamicMap<V>
 {
 	public function new () {}
 	
-	public function set (key :String, value :V) :Void
+	public function set (key :String, value :V) :V
 	{
 		Reflect.setField(this, key, value);
+		return value;
 	}
 
 	public function get (key :String) :V
@@ -36,9 +37,11 @@ class DynamicMap<V>
 		return Reflect.hasField(this, key);
 	}
 
-	public function remove (key :String) :Bool
+	public function remove (key :String) :V
 	{
-		return Reflect.deleteField(this, key);
+		var previous = get(key);
+		Reflect.deleteField(this, key);
+		return previous;
 	}
 
 	public function size () :Int
@@ -72,9 +75,14 @@ class DynamicMap<V>
 	#if debug
 	public function toString () :String
 	{
-		return MapUtil.toString(this);
+		return null;//MapUtil.toString(this);
 	}
 	#end
+	
+	public function forEach (fn :String->V->Dynamic) :Void
+    {
+        throw "Abstract";
+    }
 
 }
 

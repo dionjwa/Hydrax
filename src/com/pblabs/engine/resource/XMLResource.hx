@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.engine.resource;
 
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.engine.resource.ResourceBase;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.util.Preconditions;
@@ -22,6 +22,7 @@ using com.pblabs.util.EventDispatcherUtil;
 
 /**
   * Represents an XML blob loaded from somewhere.
+  * Most, but not all, targets/Source types are implemented.  
   */
 class XMLResource extends ResourceBase<XML>
 {

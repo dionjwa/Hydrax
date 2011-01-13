@@ -17,7 +17,7 @@ import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.PBObject;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.core.SignalBondManager;
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.engine.injection.ComponentInjector;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.serialization.Serializer;
@@ -147,6 +147,9 @@ class Entity extends PBObject,
 		// And remove their references from the dictionary.
 		for (c in _components) {
 			_components.remove(c.name);
+			#if debug
+			c.postDestructionCheck();
+			#end
 		}
 		
 		// Get out of the NameManager and other general cleanup stuff.
@@ -227,12 +230,15 @@ class Entity extends PBObject,
 			}
 			
 			try {
-			Log.debug("deserializing component " + componentName);
-			// Deserialize the XML into the component.
-			serializer.deserialize(context, component, componentXML);
-			Log.debug("deserialized component " + componentName);
+				Log.debug("deserializing component " + componentName);
+				// Deserialize the XML into the component.
+				serializer.deserialize(context, component, componentXML);
+				Log.debug("deserialized component " + componentName);
 			} catch (e :Dynamic) {
 				Log.error("Failed deserializing component " + componentName + "'  due to :" + e + "\n" + Log.getStackTrace());
+				#if debug
+				com.pblabs.engine.debug.Log.setLevel(Type.getClass(component), com.pblabs.engine.debug.Log.DEBUG);
+				#end
 			}
 		}
 		

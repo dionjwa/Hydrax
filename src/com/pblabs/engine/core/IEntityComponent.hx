@@ -100,5 +100,9 @@ interface IEntityComponent
    * owner entity should be purged and re-looked up.
    */
   function reset():Void;
+  
+  #if debug
+  function postDestructionCheck () :Void;
+  #end
 }
 

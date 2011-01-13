@@ -21,7 +21,7 @@ import com.pblabs.engine.core.IPBGroup;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBGroup;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.engine.debug.Profiler;
 import com.pblabs.engine.resource.IResource;
 import com.pblabs.engine.resource.IResourceManager;

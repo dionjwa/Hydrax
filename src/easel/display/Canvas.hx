@@ -14,9 +14,8 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package easel.display;
-import js.Dom;
 
-typedef Canvas = {> HtmlDom,
+typedef Canvas = {#if js > js.HtmlDom, #end
 	var width :Int;
 	var height :Int;
 

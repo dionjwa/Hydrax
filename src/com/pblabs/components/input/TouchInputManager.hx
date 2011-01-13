@@ -7,8 +7,7 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.input;
-
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.geom.Vector2;
 
 import hsl.haxe.Signaler;
@@ -17,9 +16,6 @@ import hsl.js.translating.JSSignaler;
 import hsl.js.data.Touch;
 using hsl.js.data.Touch.TouchListIterator;
 
-import js.Lib;
-
-
 /**
  * Javascript only ATM.  What other platforms support gestures?
  * 
@@ -27,6 +23,7 @@ import js.Lib;
  * Can funnel into MouseInputManager if no specific gesture logic.
  * 
  */
+@:require(js)
 class TouchInputManager extends BaseInputManager
 {
     @inject
@@ -146,9 +143,9 @@ class TouchInputManager extends BaseInputManager
     function bindSignals () :Void
     {
         #if js
-        touchStart = new hsl.js.translating.JSSignaler(this, Lib.document, JSEventType.TOUCHSTART, new hsl.js.translation.touch.TouchTranslator());
-        touchMove = new hsl.js.translating.JSSignaler(this, Lib.document, JSEventType.TOUCHMOVE, new hsl.js.translation.touch.TouchTranslator());
-        touchEnd = new hsl.js.translating.JSSignaler(this, Lib.document, JSEventType.TOUCHEND, new hsl.js.translation.touch.TouchTranslator());
+        touchStart = new hsl.js.translating.JSSignaler(this, js.Lib.document, JSEventType.TOUCHSTART, new hsl.js.translation.touch.TouchTranslator());
+        touchMove = new hsl.js.translating.JSSignaler(this, js.Lib.document, JSEventType.TOUCHMOVE, new hsl.js.translation.touch.TouchTranslator());
+        touchEnd = new hsl.js.translating.JSSignaler(this, js.Lib.document, JSEventType.TOUCHEND, new hsl.js.translation.touch.TouchTranslator());
         #else
         Log.error("Platform gestures are not yet implemented.  Currently JS only.");
         #end

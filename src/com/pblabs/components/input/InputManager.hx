@@ -17,7 +17,7 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.SetManager;
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Assert;
 import com.pblabs.util.Comparators;

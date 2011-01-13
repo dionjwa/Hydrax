@@ -8,11 +8,14 @@
  ******************************************************************************/
 package com.pblabs.engine.resource;
 
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.engine.resource.IResource;
 
 import com.pblabs.util.StringUtil;
 
+/**
+  * Base class for extending to more specific Resource types.
+  */
 class ResourceBase<T>
 	implements IResource<T> 
 {

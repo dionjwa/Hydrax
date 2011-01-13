@@ -13,7 +13,7 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.engine.debug.Log;
+import com.pblabs.util.Log;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.util.PBUtil;
 import com.pblabs.util.Assert;

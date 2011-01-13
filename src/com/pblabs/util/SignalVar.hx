@@ -19,26 +19,28 @@ import hsl.haxe.Signaler;
  * modified, listeners are notified.  This reduces clutter in classes 
  * from the getter/setter property functions.
  *
- * The Editor correctly handles SignallingVar fields.
+ * The Editor correctly handles SignalVar fields.
  */
-class SignallingVar<T>
+class SignalVar<T>
 {
 	public var signaller (default, null) :Signaler<T>;
 	public var value (get_value, set_value) :T;
+	var _checkForValueDiff :Bool;
 	
-	public static function checkForSignallingVar<V> (prop :String, c :IEntityComponent, fieldName :String) :PropertyReference<V>
+	public static function checkForSignalVar<V> (prop :String, c :IEntityComponent, fieldName :String) :PropertyReference<V>
 	{
-		if (Std.is(Reflect.field(c, fieldName), SignallingVar)) {
+		if (Std.is(Reflect.field(c, fieldName), SignalVar) || Std.is(Reflect.field(c, fieldName), SignalVarAdvanced)) {
 			return new PropertyReference(prop + ".value");
 		} else {
 			return new PropertyReference(prop);
 		}
 	}
 	
-	public function new (initialValue :T)
+	public function new (initialValue :T, ?checkForValueDiff :Bool = false)
 	{
 		signaller = new DirectSignaler(this);
 		_value = initialValue;
+		_checkForValueDiff = checkForValueDiff;
 	}
 	
 	public function clear () :Void
@@ -54,8 +56,10 @@ class SignallingVar<T>
 	
 	inline function set_value (val :T) :T
 	{
-		_value = val;
-		signaller.dispatch(_value);
+		if (!_checkForValueDiff || _value != val) {
+			_value = val;
+			signaller.dispatch(_value);
+		}
 		return val;
 	}
 	var _value :T;
