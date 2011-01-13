@@ -75,35 +75,18 @@ class PBContext
 	
 	public function new (?name:String)
 	{
-		if (name == null)
+		if (name == null) {
 			initializeName();
-		else
+		} else {
 			this.name = name;
+		}
 			
 		injector = createInjector();
 		_managers = Maps.newHashMap(String);
-		
 		_processManager = registerManager(IProcessManager, new ProcessManager(), true);
-		_processManager.isRunning = false;
-		// _managers.set(Util.getManagerName(IProcessManager), _processManager);
-		
 		_tempPropertyInfo = new PropertyInfo();
-		
-		
 		signalObjectAdded = new DirectSignaler(this);
 		signalObjectRemoved = new DirectSignaler(this);
-		// rootGroup = new PBGroup();
-		// rootGroup.name = name + " Root Group";
-		// currentGroup = rootGroup;
-		
-		// #if flash
-		// _displayContainer = new flash.display.Sprite();
-		// _displayContainer.name = this.name;
-		// _displayContainer.mouseEnabled = _displayContainer.mouseChildren = false; 
-		// #end
-		
-		
-		// objectBonds = ArrayMultiMap.create(String);
 	}
 	
 	public function allocateEntity () :IEntity
