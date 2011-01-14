@@ -25,7 +25,6 @@ class SignalVar<T>
 {
 	public var signaller (default, null) :Signaler<T>;
 	public var value (get_value, set_value) :T;
-	var _checkForValueDiff :Bool;
 	
 	public static function checkForSignalVar<V> (prop :String, c :IEntityComponent, fieldName :String) :PropertyReference<V>
 	{
@@ -36,11 +35,10 @@ class SignalVar<T>
 		}
 	}
 	
-	public function new (initialValue :T, ?checkForValueDiff :Bool = false)
+	public function new (initialValue :T)
 	{
 		signaller = new DirectSignaler(this);
 		_value = initialValue;
-		_checkForValueDiff = checkForValueDiff;
 	}
 	
 	public function clear () :Void
@@ -56,11 +54,10 @@ class SignalVar<T>
 	
 	inline function set_value (val :T) :T
 	{
-		if (!_checkForValueDiff || _value != val) {
-			_value = val;
-			signaller.dispatch(_value);
-		}
+		_value = val;
+		signaller.dispatch(_value);
 		return val;
 	}
+	
 	var _value :T;
 }
