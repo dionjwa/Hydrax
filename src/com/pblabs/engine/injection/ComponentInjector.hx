@@ -55,6 +55,8 @@ class ComponentInjector extends Injector
 				//If the field type is a function, we are looking for signal property references.
 			if (Reflect.field(obj, field) != null && Type.typeof(Reflect.field(obj, field)) == ValueType.TFunction) {
 				for (injectionKey in injectionTuple.v2) {
+					// trace(injectionTuple);
+					// continue;
 					// #if js
 					// Log.error("JS does not maintain proper listener scope, signal injection fail: " + ReflectUtil.tinyClassName(obj) + "." + field);
 					// trace("JS does not maintain proper listener scope, signal injection fail: " + ReflectUtil.tinyClassName(obj) + "." + field);
@@ -83,23 +85,23 @@ class ComponentInjector extends Injector
 	public function bindSignaller (obj :IEntityComponent, listenerMethodName :String, signalRef :String) :Bond
 	{
 		var signalProp :Dynamic = obj.owner.getProperty(getProperty(signalRef));
-		var signaller :Signaler<Dynamic> = null;
+		var signaler :Signaler<Dynamic> = null;
 		if (signalProp == null) {
 			Log.error("Cannot bind " + listenerMethodName + " to signal from ref " + signalRef + ", signaler is null");
 			return null;
-		} else if (Std.is(signalProp, SignalVar)) {//Check if the signaller is a SignalVar
-			signaller = cast(signalProp, SignalVar<Dynamic>).signaller;
-			// return signaller.bind(Reflect.field(obj, listenerMethodName));
+		} else if (Std.is(signalProp, SignalVar)) {//Check if the signaler is a SignalVar
+			signaler = cast(signalProp, SignalVar<Dynamic>).signaler;
+			// return signaler.bind(Reflect.field(obj, listenerMethodName));
 		} else {
-			signaller = cast(signalProp, Signaler<Dynamic>);
+			signaler = cast(signalProp, Signaler<Dynamic>);
 			Log.debug("Binding " + obj.name + "." + listenerMethodName + " to " + signalRef);
 			// return cast(signalProp, Signaler<Dynamic>).bind(Reflect.field(obj, listenerMethodName));
 		}
 		
 		#if js
-		return signaller.bind(Reflect.field(obj, listenerMethodName), obj);
+		return signaler.bind(Reflect.field(obj, listenerMethodName), obj);
 		#else
-		return signaller.bind(Reflect.field(obj, listenerMethodName));
+		return signaler.bind(Reflect.field(obj, listenerMethodName));
 		#end
 	}
 	

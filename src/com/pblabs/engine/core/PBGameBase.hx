@@ -46,7 +46,7 @@ class PBGameBase
 	var _contextsDirty :Bool;
 	var _managers :Map<String, Dynamic>;
 	
-	public function new() 
+	public function new()
 	{
 	}
 	
@@ -147,7 +147,7 @@ class PBGameBase
 			if (context != null) {
 				context.shutdown();
 			}
-		}		
+		}
 		
 		for (m in _managers) {
 			if (Std.is(m, IPBManager)) {

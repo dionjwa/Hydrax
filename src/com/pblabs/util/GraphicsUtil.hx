@@ -31,9 +31,9 @@ class GraphicsUtil
 		g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);
 	}
 
-	public static function drawCircle (g :Graphics, ?color :Int = 0x00ffff, ?r :Float = 10, ?x :Float = 0, ?y :Float = 0) :Void
+	public static function drawCircle (g :Graphics, ?color :Int = 0x00ffff, ?r :Float = 10, ?x :Float = 0, ?y :Float = 0, ?lineThickness :Float = 1) :Void
 	{
-		g.lineStyle(1, color);
+		g.lineStyle(lineThickness, color);
 		g.drawCircle(x, y, r);
 		g.lineStyle(0, 0, 0);
 	}
@@ -47,16 +47,16 @@ class GraphicsUtil
 	}
 
 	public static function drawRect (g :Graphics, width :Float, height :Float, ?color :Int = 0x000000,
-		?alpha :Float = 1) :Void
+		?alpha :Float = 1, ?lineWidth :Int = 1) :Void
 	{
-		g.lineStyle(1, color, alpha);
+		g.lineStyle(lineWidth, color, alpha);
 		g.drawRect(0, 0, width, height);
 	}
 
 	public static function drawRectangle (g :Graphics, rect :Rectangle, ?color :Int = 0x000000,
-		?alpha :Float = 1) :Void
+		?alpha :Float = 1, ?lineWidth :Int = 1) :Void
 	{
-		g.lineStyle(1, color, alpha);
+		g.lineStyle(lineWidth, color, alpha);
 		g.drawRect(rect.left, rect.top, rect.width, rect.height);
 	}
 
@@ -117,10 +117,8 @@ class GraphicsUtil
 	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 	 * THE SOFTWARE.
 	 */
-	public static function drawArrow(graphics:Graphics,
-				start:Point,end:Point,
-				?style:Dynamic=null):Void {
-
+	public static function drawArrow(graphics:Graphics, start:Point,end:Point, ?style:Dynamic=null):Void 
+	{
 		if (start.equals(end)) return;
 
 		var arrowStyle:ArrowStyle;
@@ -338,7 +336,7 @@ class GraphicsUtil
 	 */
 class ArrowStyle implements Dynamic
 {
-	public var headWidth:Int; //Relative width of arrow head
+	public var headWidth:Float; //Relative width of arrow head
 
 	/**
 	 *
@@ -346,11 +344,11 @@ class ArrowStyle implements Dynamic
 	 * determined by the points passed in
 	 *
 	 */
-	public var headLength:Int; //Pixel Length of arrow head
+	public var headLength:Float; //Pixel Length of arrow head
 
 
-	public var shaftThickness:Int;
-	public var shaftPosition:Int;
+	public var shaftThickness:Float;
+	public var shaftPosition:Float;
 
 	/**
 	 *  Not used in drawArrow, only drawArrowHead

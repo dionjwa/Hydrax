@@ -22,7 +22,6 @@ import com.pblabs.engine.core.IPBObject;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBGroup;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.engine.core.SetManager;
 import com.pblabs.util.Log;
 import com.pblabs.engine.injection.ComponentInjector;
 import com.pblabs.engine.injection.Injector;
@@ -48,7 +47,7 @@ class PBContext
 	public var started (default, null) :Bool;
 	public var rootGroup (default, null) :IPBGroup;
 	public var currentGroup(get_currentGroup, set_currentGroup) : IPBGroup;
-	public var processManager (get_processManager, null) :ProcessManager;
+	public var processManager (get_processManager, null) :IProcessManager;
 	
 	public var signalObjectAdded (default, null) :Signaler<IPBObject>;
 	public var signalObjectRemoved (default, null) :Signaler<IPBObject>;
@@ -68,7 +67,7 @@ class PBContext
 	public var injector :Injector;
 	var _managers :Map<String, Dynamic>;
 	
-	var _processManager :ProcessManager;
+	var _processManager :IProcessManager;
 	var _tempPropertyInfo :PropertyInfo;
 	var _currentGroup :IPBGroup;
 	var _nameManager :NameManager;
@@ -83,7 +82,7 @@ class PBContext
 			
 		injector = createInjector();
 		_managers = Maps.newHashMap(String);
-		_processManager = registerManager(IProcessManager, new ProcessManager(), true);
+		_processManager = registerManager(IProcessManager, createProcessManager(), true);
 		_tempPropertyInfo = new PropertyInfo();
 		signalObjectAdded = new DirectSignaler(this);
 		signalObjectRemoved = new DirectSignaler(this);
@@ -194,8 +193,13 @@ class PBContext
 		// Clear out the NameManager.
 		_nameManager.remove(object);
 		//Remove object from sets
-		getManager(SetManager).removeObjectFromAll(object);
-		signalObjectRemoved.dispatch(object);
+		// getManager(SetManager).removeObjectFromAll(object);
+		
+	}
+	
+	public function dispatchObjectDestroyed (obj :IPBObject) :Void
+	{
+	    signalObjectRemoved.dispatch(obj);
 	}
 	
 	public function getObjectNamed (name :String) :IPBObject
@@ -629,7 +633,7 @@ class PBContext
 	// }
 	// #end
 	
-	inline function get_processManager () :ProcessManager
+	inline function get_processManager () :IProcessManager
 	{
 		return _processManager;
 	}
@@ -637,6 +641,11 @@ class PBContext
 	function createInjector () :Injector
 	{
 		return new ComponentInjector();
+	}
+	
+	function createProcessManager () :IProcessManager
+	{
+		return new ProcessManager();	
 	}
 	
 	inline static var EMPTY_ARRAY :Array<Dynamic> = [];

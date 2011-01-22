@@ -118,6 +118,9 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>
 		_displayObject.name = name;
 	}
 	
+	
+	
+	
 //	 public function getAlpha () :Float{
 // //		return displayObject.alpha
 //		 return _alpha;
@@ -384,9 +387,9 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>
 	//	 return _rotation;
 	// }
 
-	// @inject("@LocationComponent.signaller")
-	// public function setLocation (x :Float, y :Float) :Void
-
+	//public function setLocation (x :Float, y :Float) :Void
+	
+	// @inject("@LocationComponent.signaler")
 	override public function setLocation (loc :Vector2) :Void
 	{
 		super.setLocation(loc);
@@ -419,7 +422,7 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>
    //	  return value;
    // }
 
-   @inject("@AngleComponent.signaller")
+   // @inject("@AngleComponent.signaler")
    override function set_angle (value :Float) :Float
    {
 	   super.set_angle(value);

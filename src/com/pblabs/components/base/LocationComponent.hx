@@ -23,12 +23,12 @@ using com.pblabs.util.XMLUtil;
 class LocationComponent extends EntityComponent,
 	implements ISerializable
 {
-	public var point(getPoint, setPoint) : Vector2;
+	public var point(get_point, set_point) : Vector2;
 	
 	public var x (get_x, set_x) : Float;
 	public var y (get_y, set_y) : Float;
 	
-	public var signaller (default, null) :Signaler<Vector2>;
+	public var signaler (default, null) :Signaler<Vector2>;
 	
 	public static var P_X :PropertyReference<Float> = new PropertyReference("@LocationComponent.x");
 	public static var P_Y :PropertyReference<Float> = new PropertyReference("@LocationComponent.y");
@@ -37,17 +37,17 @@ class LocationComponent extends EntityComponent,
 	public function new() 
 	{ 
 		super();
-		signaller = new DirectSignaler(this);
+		signaler = new DirectSignaler(this);
 		_vec = new Vector2();
 		_vecForSignalling = new Vector2();
 	}
 
-	function getPoint ():Vector2
+	function get_point ():Vector2
 	{
 		return _vec.clone();
 	}
 
-	function setPoint (p :Vector2):Vector2
+	function set_point (p :Vector2):Vector2
 	{
 		setLocation(p.x, p.y);
 		return p;
@@ -77,7 +77,6 @@ class LocationComponent extends EntityComponent,
 		if (_vec.y != val) {
 			_vec.y = val;
 			dispatch();
-			// signaller.dispatch(_vec.x, _vec.y);
 		}
 		return val;
    }
@@ -88,7 +87,6 @@ class LocationComponent extends EntityComponent,
 			_vec.x = xLoc;
 			_vec.y = yLoc;
 			dispatch();
-			// signaller.dispatch(_vec.x, _vec.y);
 		}
 	}
 
@@ -113,7 +111,7 @@ class LocationComponent extends EntityComponent,
 	
 	override function onRemove () :Void
 	{
-		signaller.unbindAll();
+		signaler.unbindAll();
 		_vec.x = 0;
 		_vec.y = 0;
 		super.onRemove();
@@ -129,11 +127,19 @@ class LocationComponent extends EntityComponent,
 	{
 		_vecForSignalling.x = _vec.x;
 		_vecForSignalling.y = _vec.y;
-		signaller.dispatch(_vecForSignalling);
+		signaler.dispatch(_vecForSignalling);
 	}
 
 	var _vec :Vector2;
 	var _vecForSignalling :Vector2;
+	
+	#if debug
+	override public function postDestructionCheck () :Void
+	{
+		super.postDestructionCheck();
+		com.pblabs.util.Assert.isFalse(signaler.isListenedTo);
+	}
+	#end
 }
 
 

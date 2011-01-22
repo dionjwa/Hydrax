@@ -39,7 +39,6 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 	public var y (get_y, set_y) :Float;
 	public var rotation (get_rotation, set_rotation) :Float;
 	
-
 	/**
 	 * Maximum allowed zoom level.
 	 *
@@ -64,7 +63,7 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 	public function new ()
 	{
 		super();
-		zoomMax = 5;
+		zoomMax = 100;
 		zoomMin = 0;
 		sceneAlignment = SceneAlignment.CENTER;
 		_currentViewRect = new Rectangle();
@@ -246,8 +245,8 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 		if (_zoom == value) {
 			return _zoom;
 		}
-
 		_zoom = value;
+		trace("setting zoom=" + _zoom);
 		_transformDirty = true;
 		return value;
 	}

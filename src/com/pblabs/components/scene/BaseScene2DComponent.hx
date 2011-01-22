@@ -7,10 +7,12 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.scene;
+
 import com.pblabs.components.base.AngleComponent;
 import com.pblabs.components.base.LocationComponent;
 import com.pblabs.components.input.IInteractiveComponent;
 import com.pblabs.components.manager.NodeComponent;
+import com.pblabs.engine.core.SignalBondManager;
 import com.pblabs.geom.RectangleTools;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Preconditions;
@@ -59,7 +61,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 		#end
 	}
 	
-	@inject("@LocationComponent.signaller")
+	// @inject("@LocationComponent.signaler")
 	public function setLocation (loc :Vector2) :Void
 	{
 		set_x(loc.x);
@@ -68,26 +70,41 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	
 	override function onReset () :Void
 	{
+		com.pblabs.util.Log.debug("");
 		super.onReset();
 		Preconditions.checkNotNull(parentProperty, "parentProperty is null");
 		com.pblabs.util.Assert.isNotNull(parent, com.pblabs.util.ReflectUtil.tinyClassName(this) + ".parent is null, prop=" + parentProperty);
 		
-		owner.lookupComponent(LocationComponent).signaller.unbind(setLocation);
-		owner.lookupComponent(LocationComponent).signaller.bind(setLocation);
+		if (owner.lookupComponent(LocationComponent) != null) {
+			SignalBondManager.bindSignal(this, owner.lookupComponent(LocationComponent).signaler, setLocation);
+		}
+		if (owner.lookupComponent(AngleComponent) != null) {
+			SignalBondManager.bindSignal(this, owner.lookupComponent(AngleComponent).signaler, set_angle);
+		} else {
+			com.pblabs.util.Log.error("No AngleComponent found");
+		}
+			
+			// com.pblabs.util.Assert.isNotNull(owner.lookupComponent(LocationComponent), "No LocationComponent");
+			// com.pblabs.util.Assert.isNotNull(owner.lookupComponent(AngleComponent), "No AngleComponent");
 		
-		owner.lookupComponent(AngleComponent).signaller.unbind(set_angle);
-		owner.lookupComponent(AngleComponent).signaller.bind(set_angle);
+		
+		// owner.lookupComponent(LocationComponent).signaler.unbind(setLocation);
+		// owner.lookupComponent(LocationComponent).signaler.bind(setLocation);
+		
+		// owner.lookupComponent(AngleComponent).signaler.unbind(set_angle);
+		// owner.lookupComponent(AngleComponent).signaler.bind(set_angle);
 		
 		//TODO: Bind scale component, not yet implemented
+		com.pblabs.util.Log.debug("finished");
 	}
 	
-	override function onRemove () :Void
-	{
-		super.onRemove();
-		owner.lookupComponent(LocationComponent).signaller.unbind(setLocation);
-		owner.lookupComponent(AngleComponent).signaller.unbind(set_angle);
-		//TODO: unbind scale component
-	}
+	// override function onRemove () :Void
+	// {
+	// 	super.onRemove();
+	// 	owner.lookupComponent(LocationComponent).signaler.unbind(setLocation);
+	// 	owner.lookupComponent(AngleComponent).signaler.unbind(set_angle);
+	// 	//TODO: unbind scale component
+	// }
 	
 	function get_layer () :Layer
 	{
@@ -123,7 +140,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 		return _angle;
 	}
 	
-	@inject("@AngleComponent.signaller")
+	// @inject("@AngleComponent.signaler")
 	function set_angle (val :Float) :Float
 	{
 		_angle = val;

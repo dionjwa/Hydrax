@@ -192,6 +192,18 @@ class HealthComponent extends EntityComponent,
 	var _lastDamageOriginator :IEntity;
 	var _timeOfLastDamage :Float;
 	var _cachedHealthEvent :HealthEvent;
+	
+	#if debug
+	override public function postDestructionCheck () :Void
+	{
+		super.postDestructionCheck();
+		com.pblabs.util.Assert.isFalse(signalDamaged.isListenedTo);
+		com.pblabs.util.Assert.isFalse(signalDied.isListenedTo);
+		com.pblabs.util.Assert.isFalse(signalHealed.isListenedTo);
+		com.pblabs.util.Assert.isFalse(signalResurrected.isListenedTo);
+		
+	}
+	#end
 }
 
 /**

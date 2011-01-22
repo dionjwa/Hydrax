@@ -58,7 +58,7 @@ class SceneLayer extends BaseScene2DLayer<Scene2DManager, Scene2DComponent>
 	{
 		super.addedToParent();
 		cast(_displayContainer, Sprite).graphics.clear();
-		com.pblabs.util.GraphicsUtil.drawRect(cast(_displayContainer, Sprite).graphics, parent.sceneView.width - 1, parent.sceneView.height - 1, 0x000000, 1);
+		com.pblabs.util.GraphicsUtil.drawRect(cast(_displayContainer, Sprite).graphics, parent.sceneView.width - 1, parent.sceneView.height - 1, 0x000000, 1, 0);
 	}
 	#end
 	

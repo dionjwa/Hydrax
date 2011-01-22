@@ -126,13 +126,25 @@ class PBUtil
 	 */
 	public static function componentProp<T> (c :Dynamic, ?fieldName :String) :PropertyReference<T>
 	{
+		return new PropertyReference(componentPropString(c, fieldName));
+	}
+	
+	public static function componentPropString (c :Dynamic, ?fieldName :String) :String
+	{
 		var compName = componentName(c);
-		return new PropertyReference("@" + compName + fieldToken(fieldName));
+		return "@" + compName + fieldToken(fieldName);
 	}
 
 	public static function entityProp <T> (c :IEntityComponent, ?fieldName :String) :PropertyReference<T>
 	{
-		return new PropertyReference("#" + c.owner.name + "." + componentName(c) + fieldToken(fieldName));
+		return new PropertyReference(entityPropString(c, fieldName));
+	}
+	
+	public static function entityPropString (c :IEntityComponent, ?fieldName :String) :String
+	{
+		com.pblabs.util.Assert.isNotNull(c, "IEntityComponent is null");
+		com.pblabs.util.Assert.isTrue(c.isRegistered, "Cannot get the PropertyReference of an unregistered IEntityComponent (type=" + ReflectUtil.getClassName(c) + ")");
+		return "#" + c.owner.name + "." + componentName(c) + fieldToken(fieldName);
 	}
 
 	public static function singletonProp <T> (component :Dynamic, ?fieldName :String =

@@ -33,9 +33,12 @@ using com.pblabs.util.ReflectUtil;
   * An object can belong to any number of sets.  Removal of 
   * sets do not automatically destroy the set member objects.
   */
-class SetManager 
-	implements IPBManager
+class SetManager extends PBManagerBase
+	//implements IPBManager, 
+	,implements haxe.rtti.Infos
 {
+	
+	// var context :IPBContext;
 	
 	//The static functions are for "using" 
 	public static function addToSet (obj :IPBObject, set :String) :Void
@@ -54,8 +57,9 @@ class SetManager
 		getSetManager(obj.context).removeObjectFromAll(obj);
 	}
 	
-	public function new ()
+	public function new (game :PBGameBase)
 	{
+		super(game);
 		_sets = SetMultiMap.create(String);
 		_objects = SetMultiMap.create(PBObject);
 	}
@@ -128,26 +132,18 @@ class SetManager
 		return _sets.keys();
 	}
 	
-	public function startup():Void
+	public function onObjectDestroyed (obj :IPBObject) :Void
 	{
+	    removeObjectFromAll(obj);
 	}
 	
-	public function shutdown():Void
+	override public function shutdown():Void
 	{
 		_sets.clear();
 		_objects.clear();
 		_sets = null;
 		_objects = null;
-	}
-	
-	public function toString () :String
-	{
-		var s = "Sets {";
-		for (set in this) {
-			s += "\n  " + set + ": " + _sets.get(set).count();
-		}
-		s += "\n}, objects: " + _objects.keys().toArray().count();
-		return s;
+		super.shutdown();
 	}
 	
 	public function injectSets (obj :IEntityComponent, ?cls :Class<Dynamic>) :Void
@@ -167,6 +163,21 @@ class SetManager
 		}
 	}
 	
+	override function contextSwitched (c :IPBContext) :Void
+	{
+		super.contextSwitched(c);
+		if (context != null) {
+			cast(context, PBContext).signalObjectRemoved.bind(onObjectDestroyed);
+		}
+	}
+	
+	override function onContextRemoval () :Void
+	{
+		if (context != null) {
+			cast(context, PBContext).signalObjectRemoved.unbind(onObjectDestroyed);
+		}
+	}
+	
 	static function getSetManager (context :IPBContext) :SetManager
 	{
 		Preconditions.checkNotNull(context, "Null context");
@@ -182,6 +193,16 @@ class SetManager
 	
 	static var EMPTY_STRING_ARRAY :Array<String> = [];
 	static var EMPTY_OBJECT_ARRAY :Array<IPBObject> = [];
+	
+	#if debug
+	public function toString () :String
+	{
+		var s = "Sets {";
+		for (set in this) {
+			s += "\n  " + set + ": " + _sets.get(set).count();
+		}
+		s += "\n}, objects: " + _objects.keys().toArray().count();
+		return s;
+	}
+	#end
 }
-
-

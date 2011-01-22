@@ -9,10 +9,12 @@
 package com.pblabs.engine.core;
 
 import com.pblabs.engine.core.IPBManager;
+import com.pblabs.util.ds.multimaps.ArrayMultiMap;
 
 import hsl.haxe.Bond;
+import hsl.haxe.Signaler;
 
-import com.pblabs.util.ds.multimaps.ArrayMultiMap;
+using com.pblabs.engine.util.PBUtil;
 
 /**
   * Manages signal bonds for convenient access to destroy.
@@ -24,15 +26,32 @@ import com.pblabs.util.ds.multimaps.ArrayMultiMap;
   * The suggested use is to register listeners on initialization,
   * and then call destroyBonds on destruction.
   */
-class SignalBondManager extends ArrayMultiMap<Dynamic, Bond>,
-	implements IPBManager
+class SignalBondManager extends ArrayMultiMap<String, Bond>,
+	implements IPBManager, implements haxe.rtti.Infos
 {
+	@inject
+	var context :IPBContext;
+	
+	public static function bindSignal <T>(component :IEntityComponent, signaler :Signaler<T>, listener :T->Dynamic) :Void
+	{
+	    var bonds = component.context.getManager(SignalBondManager);
+	    com.pblabs.util.Assert.isNotNull(bonds);
+	    bonds.bind(component, signaler, listener);
+	}
+	
 	public function new ()
 	{
 		super();
 	}
 
-	public function destroyBonds (key :Dynamic) :Void
+	public function bind <T>(component :IEntityComponent, signaler :Signaler<T>, listener :T->Dynamic) :Void
+	{
+		var key = component.entityPropString();
+		var bond = signaler.bind(listener);
+		set(key, bond);
+	}
+	
+	public function destroyBonds (key :String) :Void
 	{
 		if (exists(key)) {
 			for (bond in get(key)) {
@@ -44,17 +63,32 @@ class SignalBondManager extends ArrayMultiMap<Dynamic, Bond>,
 	
 	public function startup():Void
 	{
+		com.pblabs.util.Preconditions.checkNotNull(context, "Context is null");
+		com.pblabs.util.Preconditions.checkArgument(Std.is(context, PBContext), "No PBContext");
+		cast(context, PBContext).signalObjectRemoved.bind(destroyBondOnEntity);
 	}
 	
 	public function shutdown():Void
 	{
+		cast(context, PBContext).signalObjectRemoved.unbind(destroyBondOnEntity);
 		for (k in keys()) {
 			for (b in get(k)) {
 				b.destroy();
 			}
 		}
 		clear();
+		context = null;
+	}
+	
+	public function destroyBondOnEntity (obj :IPBObject) :Dynamic
+	{
+		destroyBonds(obj.name);
+		if (Std.is(obj, IEntity)) {
+			//Signals bound to component signalers
+			for (c in cast(obj, IEntity)) {
+				com.pblabs.util.Assert.isNotNull(c, "??IEntityComponent is null??");
+				destroyBonds(c.entityPropString());
+			}
+		}
 	}
 }
-
-

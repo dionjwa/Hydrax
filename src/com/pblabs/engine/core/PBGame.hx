@@ -16,7 +16,6 @@ import com.pblabs.components.scene.SceneView;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.core.SetManager;
-import com.pblabs.engine.core.SignalBondManager;
 import com.pblabs.util.Log;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceManager;
@@ -50,8 +49,7 @@ class PBGame extends PBGameBase
 		// Bring in the standard managers.
 		registerManager(NameManager, new NameManager());
 		registerManager(IProcessManager, new ProcessManager());
-		registerManager(SetManager, new SetManager());
-		registerManager(SignalBondManager, new SignalBondManager());
+		registerManager(SetManager, new SetManager(this));
 		// var view = new SceneView();
 		// #if flash
 		// displayContainer.addChild(view.layer);

@@ -22,13 +22,13 @@ class NotifyingValueComponent extends EntityComponent,
 {
 	
 	public var value (get_value, set_value) : Float;
-	public var signaller (default, null) :Signaler<Float>;
+	public var signaler (default, null) :Signaler<Float>;
 	
 	public function new () 
 	{ 
 		super();
 		_value = 0;
-		signaller = new DirectSignaler(this);
+		signaler = new DirectSignaler(this);
 	}
 	
 	public function serialize (xml :XML) :Void
@@ -43,7 +43,7 @@ class NotifyingValueComponent extends EntityComponent,
 	
 	public function dispatch () :Void
 	{
-	    signaller.dispatch(_value);
+	    signaler.dispatch(_value);
 	}
 	
 	function get_value () :Float
@@ -63,17 +63,25 @@ class NotifyingValueComponent extends EntityComponent,
 	override function onRemove():Void
 	{
 		super.onRemove();
-		signaller.unbindAll();
+		signaler.unbindAll();
 		_value = 0;
 	}
 	
 	override function onReset () :Void
 	{
 		super.onReset();
-		signaller.dispatch(_value);
+		signaler.dispatch(_value);
 	}
 
 	var _value :Float;
+	
+	#if debug
+	override public function postDestructionCheck () :Void
+	{
+		super.postDestructionCheck();
+		com.pblabs.util.Assert.isFalse(signaler.isListenedTo);
+	}
+	#end
 }
 
 

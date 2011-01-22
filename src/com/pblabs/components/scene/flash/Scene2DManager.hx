@@ -35,6 +35,7 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
 	implements IAnimatedObject
 {
 	
+	public var zoomSignal (default, null):hsl.haxe.Signaler<Float>;
 	// public var componentReference(lookupComponentReference, null) :PropertyReference<Scene2DManager>;
 	// public var currentViewRect(getCurrentViewRect, null) :Rectangle;
 	// public var debug(null, setDebug) :Bool;
@@ -108,16 +109,27 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
 		super.onAdd();
 		_rootSprite.name = name;
 		context.getManager(SceneView).addDisplayObject(displayContainer);
+		zoomSignal = new hsl.haxe.DirectSignaler(this);
 		// context.displayContainer.addChild(displayContainer);
 	}
 	
 	override function onRemove () :Void
 	{
 		super.onRemove();
-		// if (displayContainer.parent != null) {
-		//	 displayContainer.parent.removeChild(displayContainer);
-		// }
 		context.getManager(SceneView).removeDisplayObject(displayContainer);
+		com.pblabs.util.Assert.isFalse(zoomSignal.isListenedTo, "Still has listeners");
+		zoomSignal = null;
+		
+		com.pblabs.util.Assert.isTrue(_rootSprite.numChildren == 0);
+		com.pblabs.util.Assert.isTrue(_rootSprite.parent == null);
+	}
+	
+	override function set_zoom (value :Float) :Float
+	{
+		// Make sure our zoom level stays within the desired bounds
+		value = super.set_zoom(value);
+		zoomSignal.dispatch(value);
+		return value;
 	}
 	
 

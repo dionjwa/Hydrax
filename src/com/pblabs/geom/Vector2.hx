@@ -9,13 +9,14 @@
 package com.pblabs.geom;
 
 import com.pblabs.util.Cloneable;
-
 import com.pblabs.util.Equalable;
+
+import de.polygonal.motor2.geom.math.XY;
 
 /**
  * Basic 2D vector implementation.
  */
-class Vector2 extends de.polygonal.motor2.geom.math.XY,
+class Vector2 extends XY,
 	implements Cloneable<Vector2>, implements Equalable<Vector2>
  {
 	
@@ -315,5 +316,3 @@ class Vector2 extends de.polygonal.motor2.geom.math.XY,
 	}
 	#end
 }
-
-

@@ -15,7 +15,7 @@ import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
 /**
- * Encapsulated a variable with a signaller: when the variable is
+ * Encapsulated a variable with a signaler: when the variable is
  * modified, listeners are notified.  This reduces clutter in classes 
  * from the getter/setter property functions.
  *
@@ -23,7 +23,7 @@ import hsl.haxe.Signaler;
  */
 class SignalVar<T>
 {
-	public var signaller (default, null) :Signaler<T>;
+	public var signaler (default, null) :Signaler<T>;
 	public var value (get_value, set_value) :T;
 	
 	public static function checkForSignalVar<V> (prop :String, c :IEntityComponent, fieldName :String) :PropertyReference<V>
@@ -37,13 +37,13 @@ class SignalVar<T>
 	
 	public function new (initialValue :T)
 	{
-		signaller = new DirectSignaler(this);
+		signaler = new DirectSignaler(this);
 		_value = initialValue;
 	}
 	
 	public function clear () :Void
 	{
-		signaller.unbindAll();
+		signaler.unbindAll();
 		_value = null;
 	}
 	
@@ -55,7 +55,7 @@ class SignalVar<T>
 	inline function set_value (val :T) :T
 	{
 		_value = val;
-		signaller.dispatch(_value);
+		signaler.dispatch(_value);
 		return val;
 	}
 	

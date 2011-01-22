@@ -31,7 +31,6 @@ class ShapeComponent
         #if flash
         _displayObject = new flash.display.Sprite();
         cast(_displayObject, flash.display.Sprite).mouseChildren = cast(_displayObject, flash.display.Sprite).mouseEnabled = false;
-        // redraw();
         #end
         
     }
@@ -50,10 +49,35 @@ class ShapeComponent
     }
     #end
     
+    #if flash
+    override function addedToParent () :Void
+	{
+		com.pblabs.util.Log.debug("");
+		super.addedToParent();
+		parent.parent.zoomSignal.bind(onZoomChange);
+		redraw();
+		com.pblabs.util.Log.debug("finished");
+	}
+	
+	override function removingFromParent () :Void
+	{
+		super.removingFromParent();
+		parent.parent.zoomSignal.unbind(onZoomChange);
+	}
+	
+	function onZoomChange (zoom :Float) :Void
+	{
+		trace("redrawing from zoom change");
+		 redraw();
+	}
+    #end
+    
     override function onReset () :Void
     {
+    	com.pblabs.util.Log.debug("");
         super.onReset();
         redraw();
+        com.pblabs.util.Log.debug("finished");
     }
     
     override function set_width (val :Float) :Float
@@ -70,7 +94,7 @@ class ShapeComponent
         return val;
     }
     
-    function redraw () :Void
+    public function redraw () :Void
     {
         throw "Subclasses must override";
     }

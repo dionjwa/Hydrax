@@ -89,13 +89,6 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
 		return new Vector2(x, y);
 	}
 	
-	#if debug
-	public function toString () :String
-	{
-		return cast(owner, com.pblabs.engine.core.Entity).toString();
-	}
-	#end
-	
 	dynamic public function onClick () :Void
 	{
 		// trace(owner + " clicked");
@@ -121,7 +114,7 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
 		
 		_bounds = _bounds == null ? owner.lookupComponentByType(IInteractiveComponent) : _bounds;
 		
-		com.pblabs.util.Assert.isNotNull(!(_bounds == null && boundsProperty == null), "There's no ISpatialObject2D component and the boundsProperty is null.  How are we supposed to work?");
+		com.pblabs.util.Assert.isNotNull(_bounds, "bounds is null, There's no IInteractiveComponent by type and the boundsProperty is null.  How are we supposed to work?");
 		
 		var input = context.getManager(InputManager);
 		com.pblabs.util.Assert.isNotNull(input, "No InputManager?");
@@ -214,4 +207,11 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
 	}
 	
 	var _bounds :IInteractiveComponent;
+	
+	#if debug
+	public function toString () :String
+	{
+		return cast(owner, com.pblabs.engine.core.Entity).toString();
+	}
+	#end
 }

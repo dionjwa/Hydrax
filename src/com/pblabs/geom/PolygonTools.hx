@@ -56,8 +56,9 @@ class PolygonTools
 	#end
 	
 	#if flash
-	public static function draw (p :Polygon, g :flash.display.Graphics, ?color :Int = 0x000000, ?alpha :Float = 1, ?lineWidth :Float = 1) :Void
+	public static function draw (p :Polygon, g :flash.display.Graphics, ?color :Int = 0x000000, ?alpha :Float = 1, ?lineWidth :Float = 1.0) :Void
 	{
+		g.beginFill(color, alpha);
 		g.lineStyle(lineWidth, color, alpha);
 		for (line in p.edges) {
 			g.moveTo(line.a.x, line.a.y);
@@ -74,6 +75,18 @@ class PolygonTools
 			g.moveTo(arr[i - 1].x, arr[i - 1].y);
 			g.lineTo(arr[i].x, arr[i].y);
 		}
+	}
+	
+	public static function fillPoly (arr :Array<XY>, g :flash.display.Graphics, ?color :Int = 0x000000, ?alpha :Float = 1) :Void
+	{
+		g.beginFill(color, alpha);
+		g.moveTo(arr[arr.length - 1].x, arr[arr.length - 1].y);
+		g.lineTo(arr[0].x, arr[0].y);
+		for (i in 1...arr.length) {
+			g.moveTo(arr[i - 1].x, arr[i - 1].y);
+			g.lineTo(arr[i].x, arr[i].y);
+		}
+		g.endFill();
 	}
 	#end
 	

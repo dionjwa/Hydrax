@@ -20,19 +20,19 @@ using com.pblabs.util.EqualableUtil;
   */
 class SignalVarAdvanced<T>
 {
-	public var signaller (default, null) :Signaler<StateChange<T>>;
+	public var signaler (default, null) :Signaler<StateChange<T>>;
 	public var value (get_value, set_value) :T;
 	
 	public function new (initialValue :T)
 	{
-		signaller = new DirectSignaler(this);
+		signaler = new DirectSignaler(this);
 		_value = initialValue;
 		_change = new StateChange();
 	}
 	
 	public function clear () :Void
 	{
-		signaller.unbindAll();
+		signaler.unbindAll();
 		_change.clear();
 		_value = null;
 	}
@@ -47,7 +47,7 @@ class SignalVarAdvanced<T>
 		if (!_value.equals(val)) {
 			_change.set(_value, val);
 			_value = val;
-			signaller.dispatch(_change);
+			signaler.dispatch(_change);
 			_change.clear();
 		}
 		return val;

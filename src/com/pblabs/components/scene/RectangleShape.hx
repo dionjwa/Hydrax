@@ -52,6 +52,13 @@ class RectangleShape extends ShapeComponent
         div.appendChild(_rect);
         #end
         redraw();
+        context.getManager(com.pblabs.engine.time.IProcessManager).callLater(redraw);
+    }
+    
+    override function onReset () :Void
+    {
+    	super.onReset();
+    	redraw();
     }
     
     override function redraw () :Void
@@ -62,7 +69,14 @@ class RectangleShape extends ShapeComponent
         g.beginFill(this.fillColor, 1);
         g.drawRect(-width / 2, -height / 2, width, height);
         g.endFill();
-        g.lineStyle(borderWidth, borderColor, 1);
+        var lineThickness = 1.0;// / (parent != null && parent.parent != null ? parent.parent.zoom : 1);
+        // trace("parent=" + parent);
+        // if (parent != null) {
+        // 	trace("parent.parent=" + parent.parent);
+        // 	trace("parent.parent.zoom=" + parent.parent.zoom);
+        // }
+        // trace("lineThickness=" + lineThickness);
+        g.lineStyle(borderWidth, borderColor, lineThickness);
         g.drawRect(-width / 2, -height / 2, width - borderWidth, height - borderWidth);
         #elseif css
         _rect.style.cssText = " width:" + width + "px; height:" + height + "px; background-color:" + StringUtil.toColorString(fillColor, "#") + "; border-color:" + StringUtil.toColorString(borderColor, "#") + "; border-style:solid; border-width:" + borderWidth + "px;";

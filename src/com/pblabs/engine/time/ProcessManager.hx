@@ -80,14 +80,14 @@ class ProcessManager implements IProcessManager
 	public var TICKS_PER_SECOND :Int;
 	
 	/**
-	 * The rate at which ticks are fired, in seconds.
+	 * The number of seconds between each tick.
 	 */
-	public var TICK_RATE :Float;
+	public var SECONDS_PER_TICK :Float;
 	
 	/**
-	 * The rate at which ticks are fired, in milliseconds.
+	 * The number of milliseconds between each tick.
 	 */
-	public var TICK_RATE_MS :Int;
+	public var MS_PER_TICK :Int;
 	
 	/**
 	 * The maximum number of ticks that can be processed in a frame.
@@ -105,12 +105,12 @@ class ProcessManager implements IProcessManager
 	 */
 	public var MAX_TICKS_PER_FRAME :Int;
 	
-	public function new (useInternalTimer :Bool = true) 
+	public function new (?ticksPerSecond :Int = 30, useInternalTimer :Bool = true) 
 	{ 
 		disableSlowWarning = true;
-		TICKS_PER_SECOND = 30;
-		TICK_RATE = 1.0 / TICKS_PER_SECOND;
-		TICK_RATE_MS = Std.int(TICK_RATE * 1000);
+		TICKS_PER_SECOND = ticksPerSecond;
+		SECONDS_PER_TICK = 1.0 / TICKS_PER_SECOND;
+		MS_PER_TICK = Std.int(SECONDS_PER_TICK * 1000);
 		MAX_TICKS_PER_FRAME = 5;
 		virtualTime = 0;
 		_interpolationFactor = 0;
@@ -173,6 +173,7 @@ class ProcessManager implements IProcessManager
 				#if flash
 				_timer = new flash.utils.Timer(untyped flash.Lib.current.stage["frameRate"]);
 				#else
+				Log.warn("Assuming a frame rate of 30fps");
 				_timer = new com.pblabs.engine.time.Timer(Std.int(1000/30));
 				_timer.run = onFrame;
 				#end
@@ -452,7 +453,7 @@ class ProcessManager implements IProcessManager
 		
 		// Perform ticks, respecting tick caps.
 		var tickCount:Int = 0;
-		while (_elapsed >= TICK_RATE_MS && (suppressSafety || tickCount < MAX_TICKS_PER_FRAME))
+		while (_elapsed >= MS_PER_TICK && (suppressSafety || tickCount < MAX_TICKS_PER_FRAME))
 		{
 			// Ticks always happen on interpolation boundary.
 			_interpolationFactor = 0.0;
@@ -473,8 +474,8 @@ class ProcessManager implements IProcessManager
 					continue;
 				
 				com.pblabs.engine.debug.Profiler.enter(object.profilerKey);
-				object.listener.onTick(TICK_RATE);
-				// (cast( object.listener, ITickedObject)).onTick(TICK_RATE);
+				object.listener.onTick(SECONDS_PER_TICK);
+				// (cast( object.listener, ITickedObject)).onTick(SECONDS_PER_TICK);
 				com.pblabs.engine.debug.Profiler.exit(object.profilerKey);
 			}
 			_duringAdvance = false;
@@ -482,8 +483,8 @@ class ProcessManager implements IProcessManager
 			com.pblabs.engine.debug.Profiler.exit("Tick");
 			
 			// Update virtual time by subtracting from accumulator.
-			_virtualTime += TICK_RATE_MS;
-			_elapsed -= TICK_RATE_MS;
+			_virtualTime += MS_PER_TICK;
+			_elapsed -= MS_PER_TICK;
 			tickCount++;
 		}
 		
@@ -510,7 +511,7 @@ class ProcessManager implements IProcessManager
 		// Update objects wanting OnFrame callbacks.
 		com.pblabs.engine.debug.Profiler.enter("frame");
 		_duringAdvance = true;
-		_interpolationFactor = _elapsed / TICK_RATE_MS;
+		_interpolationFactor = _elapsed / MS_PER_TICK;
 		var animatedObject :ProcessObjectAnimated;
 		for(i in 0..._animatedObjects.length) {
 			animatedObject = _animatedObjects[i];

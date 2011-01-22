@@ -16,9 +16,7 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.PBObject;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.engine.core.SignalBondManager;
 import com.pblabs.util.Log;
-import com.pblabs.engine.injection.ComponentInjector;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.serialization.Serializer;
 import com.pblabs.engine.time.IAnimatedObject;
@@ -126,8 +124,11 @@ class Entity extends PBObject,
 	public override function destroy():Void
 	{
 		// Give listeners a chance to act before we start destroying stuff.
-		destroyedSignal.dispatch();
-		destroyedSignal.unbindAll();
+		destroyedSignal.dispatch(this);
+		//The context destruction dispatcher
+		cast(context, PBContext).dispatchObjectDestroyed(this);
+		
+		// destroyedSignal.unbindAll();
 		
 		// Unregister our components.
 		for (c in _components)
@@ -141,7 +142,6 @@ class Entity extends PBObject,
 			if (Std.is(c, IAnimatedObject)) {
 				_context.processManager.removeAnimatedObject(cast(c));
 			}
-			
 		}
 		
 		// And remove their references from the dictionary.
@@ -154,6 +154,7 @@ class Entity extends PBObject,
 		
 		// Get out of the NameManager and other general cleanup stuff.
 		super.destroy();
+		com.pblabs.util.Assert.isFalse(destroyedSignal.isListenedTo);
 	}
 	
 	/**
@@ -237,7 +238,8 @@ class Entity extends PBObject,
 			} catch (e :Dynamic) {
 				Log.error("Failed deserializing component " + componentName + "'  due to :" + e + "\n" + Log.getStackTrace());
 				#if debug
-				com.pblabs.engine.debug.Log.setLevel(Type.getClass(component), com.pblabs.engine.debug.Log.DEBUG);
+				// com.pblabs.engine.debug.Log.setLevel(Type.getClass(component), com.pblabs.engine.debug.Log.DEBUG);
+				com.pblabs.engine.debug.Log.setLevel("", com.pblabs.engine.debug.Log.DEBUG);
 				#end
 			}
 		}
@@ -354,7 +356,7 @@ class Entity extends PBObject,
 		
 		for (component in _components)
 		{
-			if (Std.is( component, componentType))
+			if (Std.is(component, componentType))
 				list.push(component);
 		}
 		
@@ -438,11 +440,11 @@ class Entity extends PBObject,
 		deferring = true;
 		
 		var sm = context.getManager(SignalBondManager);
-		sm.destroyBonds(this);
+		sm.destroyBondOnEntity(this);
 		
 		var sets = context.getManager(SetManager);
 		
-		var bonds :Array<Bond> = null;
+		// var bonds :Array<Bond> = null;
 		for (component in _components)
 		{
 			// Skip unregistered entities. 
@@ -457,13 +459,13 @@ class Entity extends PBObject,
 			 sets.injectSets(component);
 			 
 			 //Inject the signal listeners
-			 bonds = cast(_context.injector, ComponentInjector).injectComponentListeners(component , bonds);
+			 // bonds = cast(_context.injector, ComponentInjector).injectComponentListeners(component , bonds);
 			//Reset it!
 			component.reset();				
 		}
-		if (bonds != null) {
-			sm.setAll(this, bonds);
-		}
+		// if (bonds != null) {
+		// 	sm.setAll(this.name, bonds);
+		// }
 		
 		deferring = false;
 	}

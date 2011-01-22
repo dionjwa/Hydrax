@@ -16,7 +16,7 @@ class CircleShape extends ShapeComponent
 {
     public var radius (get_radius, set_radius) :Float;
     
-    public function new (?r :Float = 10, ?color :Int = 0xff0000)
+    public function new (?r :Float = 50, ?color :Int = 0xff0000)
     {
         super(color);
         
@@ -37,20 +37,6 @@ class CircleShape extends ShapeComponent
     override public function containsScreenPoint (pos :Vector2) :Bool
     {
         return CircleUtil.isWithinCircle(parent.scene.translateScreenToWorld(pos), x, y, width);
-        // #if (flash || cpp)
-        // //The flash pos argument is already transformed to the 
-        // //SceneManager coords.
-        // // return false;
-        // // .contains(x - displayObject.width / 2, y - displayObject.height / 2, displayObject.width, displayObject.height, pos);
-        // #elseif js
-        // // trace(pos + "==>" + parent.scene.translateScreenToWorld(pos));
-        // // trace(this + ".....hit? " + RectangleTools.contains(x - _width / 2, y - _height / 2, _width, _height, parent.scene.translateScreenToWorld(pos)));
-        // return CircleUtil.isWithinCircle(parent.scene.translateScreenToWorld(pos), x, y, width);
-        // // return RectangleTools.contains(x - _width / 2, y - _height / 2, _width, _height, parent.scene.translateScreenToWorld(pos), angle);
-        // //Translate coords
-        // #else
-        // return false;
-        // #end
     }
     
     #if css
@@ -67,25 +53,10 @@ class CircleShape extends ShapeComponent
     }
     #end
     
-    // #if css
-    // override public function onFrame (dt :Float) :Void
-    // {
-    //     #if debug
-    //     com.pblabs.util.Assert.isNotNull(parent);
-    //     #end
-        
-    //     if (isDirty) {
-    //         isDirty = false;
-    //         var xOffset = parent.xOffset - (width / 2);
-    //         var yOffset = parent.yOffset- (height / 2);
-    //         untyped div.style.webkitTransform = "translate(" + (_x + xOffset) + "px, " + (_y + yOffset) + "px) rotate(" + _angle + "rad)";
-    //     }
-    // }
-    // #end
-    
     #if css
     override function onAdd () :Void
     {
+    	Log.debug("");
         super.onAdd();
         
         //Put the element in the base div element
@@ -93,20 +64,23 @@ class CircleShape extends ShapeComponent
         //http://dev.opera.com/articles/view/css3-transitions-and-2d-transforms/#transforms
         redraw();
         div.appendChild(_svgContainer);
+        Log.debug("finished");
     }
     #end
     
-    override function redraw () :Void
+    override public function redraw () :Void
     {
         #if flash
+        var zoom = parent != null && parent.parent != null ? parent.parent.zoom : 1.0;
         var g = cast(_displayObject, flash.display.Sprite).graphics;
+        g.clear();
         g.beginFill(this.fillColor, 1);
         g.drawCircle(0, 0, radius);
         g.endFill();
-        g.lineStyle(borderWidth, borderColor, 1);
+        g.lineStyle(borderWidth / zoom, borderColor, 1);
         g.drawCircle(0, 0, radius);
-        g.lineStyle(2, 0x000000);
-        g.moveTo(0,0);
+        g.lineStyle(2 / zoom, 0x000000);
+        g.moveTo(0, 0);
         g.lineTo(radius, 0);
         #elseif css
         _svg.setAttribute("cx", radius + "px");
@@ -139,24 +113,22 @@ class CircleShape extends ShapeComponent
     
     override function get_height () :Float
     {
-        return width;
+        return get_width();
     }
     
     override function set_height (val :Float) :Float
     {
-        super.set_width(val);
-        return val;
+        return super.set_width(val);
     }
     
     function get_radius () :Float
     {
-        return width;
+        return get_width();
     }
     
     function set_radius (val :Float) :Float
     {
-        width = val;
-        return val;
+        return set_width(val);
     }
 
     #if css

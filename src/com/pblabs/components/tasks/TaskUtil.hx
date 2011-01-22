@@ -21,12 +21,12 @@ import com.pblabs.engine.core.IEntity;
   */
 class TaskUtil
 {
-	public static function When (task :IEntityTask, predicate :Void->Bool) :IEntityTask
+	public static function when (task :IEntityTask, predicate :Void->Bool) :IEntityTask
 	{
 		return new SerialTask(new FunctionTask(predicate), task);
 	}
 	
-	public static function After (task :IEntityTask, duration :Float) :IEntityTask
+	public static function after (task :IEntityTask, duration :Float) :IEntityTask
 	{
 		return (if (duration > 0) new SerialTask(new TimedTask(duration), task) else task);
 	}

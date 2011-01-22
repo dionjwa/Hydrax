@@ -395,7 +395,7 @@ class InputManager extends BaseInputManager
 		
 		
 		// _inputCache.set(_deviceDownComponent, new Vector2(adjustedM.x, adjustedM.y));
-		if (_deviceDownComponent != null) {
+		if (_deviceDownComponent != null && drag.isListenedTo) {
 			// var stageMouse = getMouseLoc();
 			// Assert.isNotNull(stageMouse);
 			// Assert.isNotNull(_deviceDownLoc);
@@ -515,6 +515,9 @@ class InputManager extends BaseInputManager
 	
 	function lookupComponentsUnderMouse (mouseLoc :Vector2) :Array<MouseInputComponent>
 	{
+		com.pblabs.util.Assert.isNotNull(mouseLoc);
+		com.pblabs.util.Assert.isNotNull(_checked);
+		com.pblabs.util.Assert.isNotNull(_tempVec);
 		// trace("lookupComponentsUnderMouse");
 		_checked.clear();
 		
@@ -523,11 +526,14 @@ class InputManager extends BaseInputManager
 		var inputComp :MouseInputComponent;
 		// var mouseLoc = m != null ? new Vector2(m.x, m.y) : getMouseLoc();
 		
+		com.pblabs.util.Assert.isNotNull(_components);
 		for (c in _components) {//_sets.getObjectsInSet(INPUT_SET)) {
 			// if (!Std.is(c, IEntity)) {
 			//	 // Log.debug("weird, c is not an entity");
 			//	 continue;
 			// }
+			
+			com.pblabs.util.Assert.isNotNull(c);
 			
 			if (_checked.exists(c.owner.name)) {
 				continue;
@@ -576,6 +582,7 @@ class InputManager extends BaseInputManager
 			//Copy to the cached vector just in cast the original is modified.
 			_tempVec.x = mouseLoc.x;
 			_tempVec.y = mouseLoc.y;
+			com.pblabs.util.Assert.isNotNull(c.bounds);
 			if (c.bounds.containsScreenPoint(_tempVec)) {
 				underMouse.push(c);
 			}
