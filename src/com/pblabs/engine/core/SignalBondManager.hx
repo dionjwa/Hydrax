@@ -34,9 +34,15 @@ class SignalBondManager extends ArrayMultiMap<String, Bond>,
 	
 	public static function bindSignal <T>(component :IEntityComponent, signaler :Signaler<T>, listener :T->Dynamic) :Void
 	{
-	    var bonds = component.context.getManager(SignalBondManager);
-	    com.pblabs.util.Assert.isNotNull(bonds);
-	    bonds.bind(component, signaler, listener);
+		com.pblabs.util.Assert.isNotNull(component, "component is null");
+		com.pblabs.util.Assert.isNotNull(signaler, "signaler is null");
+		com.pblabs.util.Assert.isNotNull(listener, "listener is null");
+		com.pblabs.util.Assert.isNotNull(component.context, "component.context is null");
+		
+		var bonds = component.context.getManager(SignalBondManager);
+		com.pblabs.util.Assert.isNotNull(bonds, "SignalBondManager is null");
+		
+		bonds.bind(component, signaler, listener);
 	}
 	
 	public function new ()
@@ -46,6 +52,11 @@ class SignalBondManager extends ArrayMultiMap<String, Bond>,
 
 	public function bind <T>(component :IEntityComponent, signaler :Signaler<T>, listener :T->Dynamic) :Void
 	{
+		com.pblabs.util.Assert.isNotNull(component, "component is null");
+		com.pblabs.util.Assert.isNotNull(signaler, "signaler is null");
+		com.pblabs.util.Assert.isNotNull(listener, "listener is null");
+		com.pblabs.util.Assert.isTrue(component.isRegistered, "component is unregistered");
+		
 		var key = component.entityPropString();
 		var bond = signaler.bind(listener);
 		set(key, bond);

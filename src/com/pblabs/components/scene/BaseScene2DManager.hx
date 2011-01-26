@@ -13,7 +13,6 @@ import com.pblabs.components.scene.SceneAlignment;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.SceneView;
 import com.pblabs.engine.core.IEntityComponent;
-import com.pblabs.util.Log;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.util.PBUtil;
 import com.pblabs.geom.Rectangle;
@@ -133,7 +132,7 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 
 	override function childAdded (c :Layer) :Void
 	{
-		Log.debug("adding scene layer " + c);
+		com.pblabs.util.Log.debug("adding scene layer " + c);
 		super.childAdded(c);
 		_transformDirty = true;
 	}
@@ -141,7 +140,7 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 	override function childRemoved (c :Layer) :Void
 	{
 		super.childRemoved(c);
-		Log.debug("removing scene layer " + c);
+		com.pblabs.util.Log.debug("removing scene layer " + c);
 		_transformDirty = true;
 	}
 
@@ -246,7 +245,6 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 			return _zoom;
 		}
 		_zoom = value;
-		trace("setting zoom=" + _zoom);
 		_transformDirty = true;
 		return value;
 	}

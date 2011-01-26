@@ -20,7 +20,6 @@ import com.pblabs.engine.serialization.TemplateManager;
 import com.pblabs.engine.serialization.TypeUtility;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Enumerable;
-import com.pblabs.util.Log;
 import com.pblabs.util.MetaUtil;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
@@ -103,7 +102,7 @@ class Serializer
 		// if(TypeUtility.getTypeHint(tmd, "someArray") != "Number")
 		// {
 		//	 // Don't error, as it makes it very hard for CS4 people to develop.
-		//	 Log.print(this, "Metadata is not included in this build of the engine, so serialization will not work!\n" + 
+		//	 com.pblabs.util.Log.print(this, "Metadata is not included in this build of the engine, so serialization will not work!\n" + 
 		//		 "Add --keep-as3-metadata+=TypeHint,EditorData,Embed,Inject to your compiler arguments to get around this.");
 		// }
 	}
@@ -156,13 +155,13 @@ class Serializer
 			} else if (_serializers.exists(valueKey)) {
 				_serializers.get(valueKey)(object, xml);
 			} else {
-				Log.error("No serializer for " + typeName);
+				com.pblabs.util.Log.error("No serializer for " + typeName);
 			}
 				
 			
 			
 			// throw "Currently all serializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object);
-			// Log.warn("Currently all serializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object));
+			// com.pblabs.util.Log.warn("Currently all serializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object));
 			// // Normal case - determine type and call the right Serializer.
 			// var typeName = ReflectUtil.getClassName(object);
 			// trace("serializer for " +typeName + ": " +_serializers.exists(typeName));
@@ -171,7 +170,7 @@ class Serializer
 			// 	trace("typeName=" + typeName);
 			// 	_serializers.get(typeName)(object, xml);
 			// } else {
-			// 	Log.error("No serializer for " + typeName);
+			// 	com.pblabs.util.Log.error("No serializer for " + typeName);
 			// }
 			// serializeComplex(name :String, object :Dynamic, xml :XML) :Void
 			
@@ -193,7 +192,7 @@ class Serializer
 	 */
 	public function deserialize(context :IPBContext, object :Dynamic, xml :XML, ?typeHint :String=null) :Dynamic
 	{
-		Log.debug("object=" + object + ", typeHint=" + typeHint);
+		com.pblabs.util.Log.debug("object=" + object + ", typeHint=" + typeHint);
 		Preconditions.checkNotNull(context, "context is null");
 		// Preconditions.checkNotNull(object, "object is null");
 		Preconditions.checkNotNull(xml, "xml is null");
@@ -206,7 +205,7 @@ class Serializer
 			}
 			else if (Std.is(object, IEntity)) {
 				_currentEntity = cast(object, IEntity);
-				Log.debug("deserializing entity");
+				com.pblabs.util.Log.debug("deserializing entity");
 				_currentEntity.deserialize(xml, true);
 				resolveReferences();
 				return cast(object, IEntity);
@@ -230,7 +229,7 @@ class Serializer
 			}
 		}
 		
-		Log.error("No deserializer found for " + xml + ", typeHint=" + typeHint);
+		com.pblabs.util.Log.error("No deserializer found for " + xml + ", typeHint=" + typeHint);
 		//Fall back to deserializing complex
 		// deserializeComplex(context, object, xml, typeHint);
 		
@@ -243,7 +242,7 @@ class Serializer
 		
 		
 		
-		// Log.warn("Currently all deserializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object));
+		// com.pblabs.util.Log.warn("Currently all deserializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object));
 		return object;
 		// throw "Currently all deserializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object);
 		// // Normal case - determine type and call the right Serializer.
@@ -389,7 +388,7 @@ class Serializer
 					// Deal with typehints.
 					// var childTypeHint :String = null;//TypeUtility.getTypeHint(object, fieldName);
 					// child = deserialize(context, child, fieldXML, childTypeHint);
-					Log.error("The field " + fieldName + " of type " + typeName + " could not be instantiated");
+					com.pblabs.util.Log.error("The field " + fieldName + " of type " + typeName + " could not be instantiated");
 					continue;
 				}
 				
@@ -399,7 +398,7 @@ class Serializer
 					// object[fieldName] = child;
 				} catch(e :Dynamic) {
 					xmlPath = reportXMLPath(fieldXML);
-					Log.error("The field " + fieldName + " could not be set to '" + child + "' due to :" + e.toString() + " " + xmlPath);
+					com.pblabs.util.Log.error("The field " + fieldName + " could not be set to '" + child + "' due to :" + e.toString() + " " + xmlPath);
 				}
 			}
 		}
@@ -420,7 +419,7 @@ class Serializer
 		try {
 			return Enumerable.serializedValueOf(typeHint, xml.nodeValue);
 		} catch (e :Dynamic){
-			Log.error("Problem getting Enumerable, type=" + xml.get("type") + ", value=" + xml.nodeValue + ", " + e); 
+			com.pblabs.util.Log.error("Problem getting Enumerable, type=" + xml.get("type") + ", value=" + xml.nodeValue + ", " + e); 
 			return null;
 		}
 	}
@@ -689,7 +688,7 @@ class Serializer
 			if (key.isBlank() && Std.is(object, Map))
 			{
 				var xmlPath = reportXMLPath(childXML);
-				Log.error([object, "deserialize", "Cannot add a value to a Map without a key. " + xmlPath]);
+				com.pblabs.util.Log.error([object, "deserialize", "Cannot add a value to a Map without a key. " + xmlPath]);
 				continue;
 			}
 				
@@ -877,7 +876,7 @@ class Serializer
 		// Note we want to check for null here; null is distinct from coerce-to-false.
 		if (childObject == null) {
 			var xmlPath :String = reportXMLPath(fieldXml);
-			Log.error("Unable to create type " + typeName + " for the field " + fieldName + ". " + xmlPath);
+			com.pblabs.util.Log.error("Unable to create type " + typeName + " for the field " + fieldName + ". " + xmlPath);
 			return null;
 		}
 		
@@ -923,7 +922,7 @@ class Serializer
 	
 	public function resolveReferences() :Void
 	{
-		Log.debug("");
+		com.pblabs.util.Log.debug("");
 		var i = 0;
 		while (i < _deferredReferences.length) {
 			var reference = _deferredReferences[i];
@@ -979,7 +978,7 @@ private class ResourceNote
 	
 	// public function onFailed(resource :Resource) :Void
 	// {
-	//	 Log.error(owner, "set " + fieldName, "No resource was found with filename " + resource.filename + ".");
+	//	 com.pblabs.util.Log.error(owner, "set " + fieldName, "No resource was found with filename " + resource.filename + ".");
 	//	 context.getManager(Serializer).removeResource(resource.filename);
 	// }
 	
@@ -1079,19 +1078,19 @@ private class ReferenceNote
 		
 		// Name reference.
 		if(nameReference != null) {
-			Log.warn(firstPart + "Couldn't resolve reference to named entity '" + nameReference + "'");
+			com.pblabs.util.Log.warn(firstPart + "Couldn't resolve reference to named entity '" + nameReference + "'");
 			return; 
 		}
 		
 		// Look up a component on a named object by name (first) or type (second).
 		if (componentReference != "") {
-			Log.warn(firstPart + " Couldn't find named entity '" + componentReference + "'");
+			com.pblabs.util.Log.warn(firstPart + " Couldn't find named entity '" + componentReference + "'");
 			return;
 		}
 		
 		// Component reference on the entity being deserialized when the reference was created.
 		if (componentName != "") {
-			Log.warn(firstPart + " Couldn't find component on same entity named '" + componentName + "'");
+			com.pblabs.util.Log.warn(firstPart + " Couldn't find component on same entity named '" + componentName + "'");
 			return;
 		}
 	}
@@ -1106,19 +1105,19 @@ private class ReferenceNote
 		
 		// Name reference.
 		if(nameReference != null) {
-			Log.warn(firstPart + " After failure, was able to resolve reference to named entity '" + nameReference + "'");
+			com.pblabs.util.Log.warn(firstPart + " After failure, was able to resolve reference to named entity '" + nameReference + "'");
 			return; 
 		}
 		
 		// Look up a component on a named object by name (first) or type (second).
 		if (!StringUtil.isBlank(componentReference)) {
-			Log.warn(firstPart + " After failure, was able to find named entity '" + componentReference + "'");
+			com.pblabs.util.Log.warn(firstPart + " After failure, was able to find named entity '" + componentReference + "'");
 			return;
 		}
 		
 		// Component reference on the entity being deserialized when the reference was created.
 		if (!StringUtil.isBlank(componentName)) {
-			Log.warn(firstPart + " After failure, was able to find component on same entity named '" + componentName + "'");
+			com.pblabs.util.Log.warn(firstPart + " After failure, was able to find component on same entity named '" + componentName + "'");
 			return;
 		}
 	}

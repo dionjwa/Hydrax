@@ -29,12 +29,10 @@ class CanvasDemo
 		app = new PBGame();
 		Assert.isNotNull(app.getManager(SceneView));
 		app.getManager(SceneView).layerId = "screen";
-		var rsrc = new ResourceManager();
-		app.registerManager(IResourceManager, rsrc);
 		var man = new ImageResource("man", Source.url("man.png"));
-		rsrc.addResource(man);
+		app.getManager(IResourceManager).addResource(man);
 		
-		rsrc.load(onLoad, function (e :Dynamic) :Void {
+		app.getManager(IResourceManager).load(onLoad, function (e :Dynamic) :Void {
 			trace("Error loading " + e);
 		});
 	}

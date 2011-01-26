@@ -9,10 +9,12 @@
 -lib IterTools
 -lib ListTools
 -lib polygonal
+-lib hydrax
+-lib hsl-1
 
--cp ../../lib/hsl-pico
--cp ../../lib/hsl
--cp ../../src
+# -cp ../../lib/hsl-pico
+# -cp ../../lib/hsl
+# -cp ../../src
 -cp src
 
 -swf build/out.swf

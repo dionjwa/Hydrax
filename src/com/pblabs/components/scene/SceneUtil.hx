@@ -9,8 +9,7 @@
 package com.pblabs.components.scene;
 
 import com.pblabs.components.base.AlphaComponent;
-import com.pblabs.components.base.AngleComponent;
-import com.pblabs.components.base.LocationComponent;
+import com.pblabs.components.base.Coordinates;
 import com.pblabs.components.tasks.TaskComponent;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
@@ -53,26 +52,24 @@ class SceneUtil
 		#end
 	}
 	
-	
 	public static function createBaseSceneEntity (context :IPBContext) :IEntity
 	{
 		var e :IEntity = context.allocate(IEntity);
 		e.deferring = true;
-		e.addComponent(context.allocate(LocationComponent));
+		e.addComponent(context.allocate(Coordinates));
 		e.addComponent(context.allocate(AlphaComponent));
-		e.addComponent(context.allocate(AngleComponent));
 		e.addComponent(context.allocate(TaskComponent));
 		return e;
 	}
 	
 	public static function setLocation (e :IEntity, x :Float, y :Float) :Void
 	{
-		e.lookupComponent(LocationComponent).setLocation(x, y);
+		e.lookupComponent(Coordinates).setLocation(x, y);
 	}
 	
 	public static function setAngle (e :IEntity, angle :Float) :Void
 	{
-		e.lookupComponent(AngleComponent).angle = angle;
+		e.lookupComponent(Coordinates).angle = angle;
 	}
 	
 	/**

@@ -111,7 +111,7 @@ class LocationComponent extends EntityComponent,
 	
 	override function onRemove () :Void
 	{
-		signaler.unbindAll();
+		// signaler.unbindAll();
 		_vec.x = 0;
 		_vec.y = 0;
 		super.onRemove();

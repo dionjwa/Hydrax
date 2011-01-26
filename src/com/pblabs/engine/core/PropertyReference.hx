@@ -40,41 +40,20 @@ class PropertyReference<T>
 	/**
 	 * The path to the property that this references.
 	 */
-	
-	public var property(getProperty, setProperty) : String;
-	/**
-	 * The path to the property that this references.
-	 */
-	public function getProperty():String
-	{
-		return _property;
-	}
+	public var property (default, null) : String;
 
-	public function setProperty(value:String):String
+	public function new (property:String)
 	{
-		if (value != _property) {
-			_property = value;
-			cachedLookup = null;
-			getterSetterChecked = false;
-		}
-		return value;
-	   }
-
-	public function new (?property:String = null)
-	{
-		_property = property;
-		// isGetterSetter = false;
+		this.property = property;
 		getterSetterChecked = false;
 	}
 
 	public function toString () :String
 	{
-		return _property;
+		return property;
 	}
 
-	var _property :String;
 	public var cachedLookup :Array<String>;
-	// public var isGetterSetter :Bool;
 	public var getterName :String;
 	public var setterName :String;
 	public var getterSetterChecked :Bool;

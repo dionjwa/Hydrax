@@ -13,7 +13,6 @@ import com.pblabs.components.scene.flash.Scene2DManager;
 import com.pblabs.components.scene.flash.SceneLayer;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.util.Log;
 import com.pblabs.engine.time.ITickedObject;
 import com.pblabs.geom.Rectangle;
 import com.pblabs.geom.RectangleTools;
@@ -72,7 +71,6 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>
 	/**
 	 * If set, rotation is gotten from this property every frame.
 	 */
-	// @inject("@AngleComponent.angle")	
 	// public var rotationProperty :PropertyReference<Float>;
 	// public var scaleXRef :PropertyReference<Float>;
 	// public var scaleYRef :PropertyReference<Float>;
@@ -83,9 +81,7 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>
 
 	// public var updateOnEvents :Array<Dynamic>;
 
-	// @inject("@LocationComponent.x")
 	// public var xProperty :PropertyReference<Float>;
-	// @inject("@LocationComponent.y")
 	// public var yProperty :PropertyReference<Float>;
 
 	/**
@@ -368,8 +364,18 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>
 	//	 return _x;
 	// }
 
-	// function set_x (value :Float) :Float
-	// {
+	override function set_x (value :Float) :Float
+	{
+		_displayObject.x = value;
+		return super.set_x(value);
+	}
+	
+	override function set_y (value :Float) :Float
+	{
+		_displayObject.y = value;
+		return super.set_y(value);
+	}
+	
 	//	 // trace("setting scene2d x" + value);
 	//	 if (value == _x) {
 	//		 return value;
@@ -389,7 +395,6 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>
 
 	//public function setLocation (x :Float, y :Float) :Void
 	
-	// @inject("@LocationComponent.signaler")
 	override public function setLocation (loc :Vector2) :Void
 	{
 		super.setLocation(loc);
@@ -398,8 +403,6 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>
 		//	 _y = loc.y;
 		//	 _transformDirty = true;
 		// }
-		_displayObject.x = _x;
-		_displayObject.y = _y;
 	}
 		// trace("_transformDirty=" + _transformDirty);
 		

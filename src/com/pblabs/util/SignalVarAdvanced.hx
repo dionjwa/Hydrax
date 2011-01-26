@@ -32,9 +32,9 @@ class SignalVarAdvanced<T>
 	
 	public function clear () :Void
 	{
-		signaler.unbindAll();
+		// signaler.unbindAll();
 		_change.clear();
-		_value = null;
+		// _value = null;
 	}
 	
 	inline function get_value () :T

@@ -13,7 +13,6 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.util.Log;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.util.PBUtil;
 import com.pblabs.util.Assert;
@@ -207,7 +206,7 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 		Preconditions.checkArgument(cast(newParent, IEntityComponent).isRegistered, "Parent not registered: " + newParent);
 		
 		if (hasParent()) {
-			Log.warn(" but " + name + ".hasParent " + parent + " " + ReflectUtil.getClassName(parent) + " " + Log.getStackTrace());
+			com.pblabs.util.Log.warn(" but " + name + ".hasParent " + parent + " " + ReflectUtil.getClassName(parent) + " " + com.pblabs.util.Log.getStackTrace());
 			return;
 		}
 		cast(newParent, NodeComponent<Dynamic, Dynamic>).addChild(this);

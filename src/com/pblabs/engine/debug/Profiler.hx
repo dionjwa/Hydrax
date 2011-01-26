@@ -13,7 +13,6 @@
 package com.pblabs.engine.debug;
 
 #if profiler
-import com.pblabs.util.Log;
 import com.pblabs.util.Assert;
 import com.pblabs.util.MathUtil;
 import com.pblabs.util.Sprintf;

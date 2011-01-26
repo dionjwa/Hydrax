@@ -8,7 +8,6 @@
  ******************************************************************************/
 package com.pblabs.geom;
 
-import com.pblabs.util.Log;
 
 import com.pblabs.util.Assert;
 import com.pblabs.util.Cloneable;
@@ -51,7 +50,7 @@ class Polygon
 	public function new (vertices :Array<Vector2>) //<Vector2>
 	{
 		if (vertices == null || vertices.length < 3) {
-			throw "Cannot create a polygon with < 3 vertices=" + vertices + " " + Log.getStackTrace();
+			throw "Cannot create a polygon with < 3 vertices=" + vertices + " " + com.pblabs.util.Log.getStackTrace();
 		}
 		_vertices = vertices;
 		// polygon = _vertices;
@@ -612,7 +611,7 @@ class Polygon
 	public function union (p :Polygon) :Polygon
 	{
 		if (!isIntersection(p)) {
-			Log.debug(["union, no intersection", "poly1", this, "poly2", p]);
+			com.pblabs.util.Log.debug(["union, no intersection", "poly1", this, "poly2", p]);
 			return new Polygon([]);
 		}
 

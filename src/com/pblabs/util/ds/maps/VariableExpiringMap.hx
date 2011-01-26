@@ -7,7 +7,6 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.util.ds.maps;
-import com.pblabs.util.Log;
 import com.pblabs.engine.time.Timer;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ds.maps.ExpiringEntry;

@@ -9,7 +9,6 @@
 package com.pblabs.engine.resource;
 
 import com.pblabs.engine.core.IPBManager;
-import com.pblabs.util.Log;
 import com.pblabs.engine.resource.IResource;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.util.Preconditions;
@@ -56,7 +55,7 @@ class ResourceManager
 		_onErrorCallbacks.push(onError);
 		
 		if (_pendingResources.size() == 0 && _loadingResources.size() == 0) {
-			Log.info("No resources to load, calling onLoad");
+			com.pblabs.util.Log.info("No resources to load, calling onLoad");
 			allResourcesLoaded();
 			return;
 		}
@@ -69,7 +68,7 @@ class ResourceManager
 			var loaded = function () :Void {
 				self.resourceLoaded(rsrc);
 			}
-			Log.debug("Loading resource=" + rsrc);
+			com.pblabs.util.Log.debug("Loading resource=" + rsrc);
 			rsrc.load(loaded, handleLoadingError);
 		}
 	}

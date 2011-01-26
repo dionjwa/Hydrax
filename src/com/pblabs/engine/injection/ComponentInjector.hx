@@ -14,7 +14,6 @@ import com.pblabs.engine.core.Entity;
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.util.Log;
 import com.pblabs.engine.injection.Injector;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.SignalVar;
@@ -58,7 +57,7 @@ class ComponentInjector extends Injector
 					// trace(injectionTuple);
 					// continue;
 					// #if js
-					// Log.error("JS does not maintain proper listener scope, signal injection fail: " + ReflectUtil.tinyClassName(obj) + "." + field);
+					// com.pblabs.util.Log.error("JS does not maintain proper listener scope, signal injection fail: " + ReflectUtil.tinyClassName(obj) + "." + field);
 					// trace("JS does not maintain proper listener scope, signal injection fail: " + ReflectUtil.tinyClassName(obj) + "." + field);
 					// #else
 					var bond = bindSignaller(obj, field, injectionKey);
@@ -76,7 +75,7 @@ class ComponentInjector extends Injector
 		var superCls = Type.getSuperClass(cls);
 		//Recursively inject superclass fields/listeners
 		if (superCls != null && superCls != EntityComponent) {
-			Log.debug(" injecting listeners on superclass=" + superCls);
+			com.pblabs.util.Log.debug(" injecting listeners on superclass=" + superCls);
 			bonds = injectComponentListeners(obj, bonds, superCls);
 		}
 		return bonds;
@@ -84,25 +83,27 @@ class ComponentInjector extends Injector
 	
 	public function bindSignaller (obj :IEntityComponent, listenerMethodName :String, signalRef :String) :Bond
 	{
-		var signalProp :Dynamic = obj.owner.getProperty(getProperty(signalRef));
-		var signaler :Signaler<Dynamic> = null;
-		if (signalProp == null) {
-			Log.error("Cannot bind " + listenerMethodName + " to signal from ref " + signalRef + ", signaler is null");
-			return null;
-		} else if (Std.is(signalProp, SignalVar)) {//Check if the signaler is a SignalVar
-			signaler = cast(signalProp, SignalVar<Dynamic>).signaler;
-			// return signaler.bind(Reflect.field(obj, listenerMethodName));
-		} else {
-			signaler = cast(signalProp, Signaler<Dynamic>);
-			Log.debug("Binding " + obj.name + "." + listenerMethodName + " to " + signalRef);
-			// return cast(signalProp, Signaler<Dynamic>).bind(Reflect.field(obj, listenerMethodName));
-		}
+		throw "Not implemented";
+		return null;
+		// var signalProp :Dynamic = obj.owner.getProperty(getProperty(signalRef));
+		// var signaler :Signaler<Dynamic> = null;
+		// if (signalProp == null) {
+		// 	com.pblabs.util.Log.error("Cannot bind " + listenerMethodName + " to signal from ref " + signalRef + ", signaler is null");
+		// 	return null;
+		// } else if (Std.is(signalProp, SignalVar)) {//Check if the signaler is a SignalVar
+		// 	signaler = cast(signalProp, SignalVar<Dynamic>).signaler;
+		// 	// return signaler.bind(Reflect.field(obj, listenerMethodName));
+		// } else {
+		// 	signaler = cast(signalProp, Signaler<Dynamic>);
+		// 	com.pblabs.util.Log.debug("Binding " + obj.name + "." + listenerMethodName + " to " + signalRef);
+		// 	// return cast(signalProp, Signaler<Dynamic>).bind(Reflect.field(obj, listenerMethodName));
+		// }
 		
-		#if js
-		return signaler.bind(Reflect.field(obj, listenerMethodName), obj);
-		#else
-		return signaler.bind(Reflect.field(obj, listenerMethodName));
-		#end
+		// #if js
+		// return signaler.bind(Reflect.field(obj, listenerMethodName), obj);
+		// #else
+		// return signaler.bind(Reflect.field(obj, listenerMethodName));
+		// #end
 	}
 	
 	function getProperty (s :String) :PropertyReference<Dynamic>

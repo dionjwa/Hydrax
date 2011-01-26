@@ -16,7 +16,6 @@ import com.pblabs.components.scene.SceneView;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.core.SetManager;
-import com.pblabs.util.Log;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceManager;
 import com.pblabs.engine.serialization.Serializer;
@@ -28,6 +27,8 @@ import com.pblabs.engine.time.ProcessManager;
   * Standard game.  Starts up the most commonly used
   * managers that provide functionality that most games requre.
   */
+  
+#if flash
 class PBGame extends PBGameBase 
 {
 	public function new() 
@@ -63,12 +64,37 @@ class PBGame extends PBGameBase
 		registerManager(TemplateManager, new TemplateManager());
 	}
 	
-	#if flash
 	public function registerType(clazz:Class<Dynamic>):Void
 	{
 		// NOP - passing it is enough for it to be linked into the SWF.
 	}
-	#end
 }
+#elseif js
+/**
+  * Minimal base game for Javascript games. 
+  */
+class PBGame extends PBGameBase
+{
+	public function new ()
+	{
+		super();
+		startup();
+	}
+	
+	override function initializeManagers():Void
+	{
+		super.initializeManagers();
+
+		// Bring in the standard managers.
+		registerManager(NameManager, new NameManager());
+		registerManager(IProcessManager, new ProcessManager());
+		registerManager(SetManager, new SetManager(this));
+		registerManager(IResourceManager, new ResourceManager());
+		registerManager(SceneView, new SceneView());
+		//Sensible default
+		getManager(SceneView).layerId = "screen";
+	}
+}
+#end
 
 

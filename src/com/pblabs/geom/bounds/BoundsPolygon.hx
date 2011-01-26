@@ -8,7 +8,6 @@
  ******************************************************************************/
 package com.pblabs.geom.bounds;
 
-import com.pblabs.util.Log;
 
 import com.pblabs.util.MathUtil;
 

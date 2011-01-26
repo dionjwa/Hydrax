@@ -10,7 +10,6 @@ package com.pblabs.components.scene.js.css;
 
 import com.pblabs.components.scene.SceneView;
 import com.pblabs.components.scene.js.JSSceneManager;
-import com.pblabs.util.Log;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.Predicates;
 

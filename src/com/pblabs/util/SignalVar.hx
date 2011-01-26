@@ -41,11 +41,11 @@ class SignalVar<T>
 		_value = initialValue;
 	}
 	
-	public function clear () :Void
-	{
-		signaler.unbindAll();
-		_value = null;
-	}
+	// public function clear () :Void
+	// {
+	// 	// signaler.unbindAll();
+	// 	_value = null;
+	// }
 	
 	inline function get_value () :T
 	{

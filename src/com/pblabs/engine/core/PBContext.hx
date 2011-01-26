@@ -22,7 +22,6 @@ import com.pblabs.engine.core.IPBObject;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBGroup;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.util.Log;
 import com.pblabs.engine.injection.ComponentInjector;
 import com.pblabs.engine.injection.Injector;
 import com.pblabs.engine.time.IProcessManager;
@@ -240,9 +239,9 @@ class PBContext
 		rg.name = _nameManager.validateName(name + " RootGroup");
 		_nameManager.add(rg);
 		rootGroup = rg;
-		Log.debug("about to set current group, currentGroup=" + currentGroup);
+		com.pblabs.util.Log.debug("about to set current group, currentGroup=" + currentGroup);
 		currentGroup = rg;
-		Log.debug("done set current group");
+		com.pblabs.util.Log.debug("done set current group");
 		injector.mapValue(IPBGroup, rootGroup);
 		
 		// Do manager startup.
@@ -252,6 +251,9 @@ class PBContext
 	public function initializeManagers():Void
 	{
 		// Mostly will come from subclasses.
+		//Some core classes
+		//Needed for correct operation of many core components
+		registerManager(com.pblabs.engine.core.SignalBondManager, new com.pblabs.engine.core.SignalBondManager());
 	}
 
 	// public function registerManager <T> (clazz :Class<T>, 
@@ -409,7 +411,7 @@ class PBContext
 	{
 		// Early out if we got a null property reference.
 		if (reference == null || reference.property == null || reference.property == "") {
-			// Log.debug("  null bail out early");
+			// com.pblabs.util.Log.debug("  null bail out early");
 			return null;
 		}
 
@@ -421,7 +423,7 @@ class PBContext
 		// Cached lookups apply only to components.
 		if (reference.cachedLookup != null && reference.cachedLookup.length > 0) {
 			if (entity == null) {
-				Log.error("Cached prop lookup, but entity is null");
+				com.pblabs.util.Log.error("Cached prop lookup, but entity is null");
 				return null;
 			}
 			
@@ -460,7 +462,7 @@ class PBContext
 		var parentElem :Dynamic = null;
 		if (startChar == "@") {
 			if (entity == null) {
-				Log.error("component ref but no entity given for " + reference);
+				com.pblabs.util.Log.error("component ref but no entity given for " + reference + " " + com.pblabs.util.Log.getStackTrace());
 				return null;
 			}
 			
@@ -555,7 +557,7 @@ class PBContext
 		Preconditions.checkNotNull(info, "Null PropertyInfo");
 		
 		if (info.propertyParent == null) {
-			Log.error(["info.propertyParent", info.propertyParent]);
+			com.pblabs.util.Log.error(["info.propertyParent", info.propertyParent]);
 			return;
 		}
 		
@@ -578,7 +580,7 @@ class PBContext
 		if (msg == null) {
 			msg = "findProperty couldn't resolve";
 		}
-		Log.warn([msg, "context", context, "ref", reference.property, Log.getStackTrace()]);
+		com.pblabs.util.Log.warn([msg, "context", context, "ref", reference.property, com.pblabs.util.Log.getStackTrace()]);
 	}
 	
 	public function getProperty<T> (property :PropertyReference<T>, ?defaultVal :T = null, ?entity :IEntity = null) :T
@@ -619,7 +621,7 @@ class PBContext
 		if (info != null) {
 			info.setValue(value, property);
 		} else {
-			Log.warn(["property", property, "info", info]);
+			com.pblabs.util.Log.warn(["property", property, "info", info]);
 		}
 
 		// Clean up to avoid dangling references.

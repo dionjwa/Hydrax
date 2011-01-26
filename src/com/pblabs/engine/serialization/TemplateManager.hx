@@ -21,7 +21,6 @@ import com.pblabs.engine.core.IPBGroup;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBGroup;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.util.Log;
 import com.pblabs.engine.debug.Profiler;
 import com.pblabs.engine.resource.IResource;
 import com.pblabs.engine.resource.IResourceManager;
@@ -144,7 +143,7 @@ class TemplateManager
 		}
 		
 		var onError = function (e :Dynamic) :Void {
-			Log.error("Failed to load " + filename + ", error=" + e);
+			com.pblabs.util.Log.error("Failed to load " + filename + ", error=" + e);
 			self.signalFailed.dispatch(rsrc);
 		}
 		
@@ -179,7 +178,7 @@ class TemplateManager
 	 */
 	public function instantiateEntity(name :String, context :IPBContext) :IEntity
 	{
-		// Log.debug("name=" + name);
+		// com.pblabs.util.Log.debug("name=" + name);
 		Preconditions.checkNotNull(name, "name is null");
 		Preconditions.checkNotNull(context, "context is null");
 		Profiler.enter("instantiateEntity");
@@ -187,21 +186,21 @@ class TemplateManager
 		try {
 			// Check for a callback.
 			if (_things.exists(name)) {
-				// Log.debug("thing exists=" + _things.get(name));
+				// com.pblabs.util.Log.debug("thing exists=" + _things.get(name));
 				if (_things.get(name).type == RefType.group) {
 					throw "Thing '" + name + "' is a group callback!";
 				}
 				
 				if (_things.get(name).type == RefType.entity) {
-					// Log.debug("creating entity from a callback");
+					// com.pblabs.util.Log.debug("creating entity from a callback");
 					var thing :ThingReference = _things.get(name);
 					var instantiated = null;
 					try {
 						instantiated = thing.createEntity();
-						Log.debug("entity created from callback");
+						com.pblabs.util.Log.debug("entity created from callback");
 					}
 					catch (e :Dynamic) {
-						Log.error("createEntity callback error: " + e + "\n" + Log.getStackTrace());
+						com.pblabs.util.Log.error("createEntity callback error: " + e + "\n" + com.pblabs.util.Log.getStackTrace());
 					}
 					
 					if(instantiated == null) {
@@ -212,10 +211,10 @@ class TemplateManager
 					return instantiated;
 				}
 			}
-			// Log.debug("entity instantiated via XML");			
+			// com.pblabs.util.Log.debug("entity instantiated via XML");			
 			var xml = getXML(name, "template", "entity");
 			if (xml == null) {
-				Log.error("Unable to find a template or entity with the name " + name + ".");
+				com.pblabs.util.Log.error("Unable to find a template or entity with the name " + name + ".");
 				Profiler.exit("instantiateEntity");
 				return null;
 			}
@@ -225,7 +224,7 @@ class TemplateManager
 			Profiler.exit("instantiateEntity");
 		}
 		catch (e :Dynamic) {
-			Log.error("Failed instantiating '" + name + "' due to :" + e.toString() + "\n" + e.getStackTrace());
+			com.pblabs.util.Log.error("Failed instantiating '" + name + "' due to :" + e.toString() + "\n" + e.getStackTrace());
 			entity = null;
 			Profiler.exit("instantiateEntity");
 		}
@@ -283,7 +282,7 @@ class TemplateManager
 	 */
 	public function instantiateEntityFromXML (xml :XML, context :IPBContext) :IEntity
 	{
-		Log.debug("");
+		com.pblabs.util.Log.debug("");
 		Preconditions.checkNotNull(xml);
 		Preconditions.checkNotNull(context);
 		Profiler.enter("instantiateEntityFromXML");
@@ -298,18 +297,22 @@ class TemplateManager
 			}
 
 			if (!xml.get("template").isBlank() && hasEntityCallback(xml.get("template"))) {
-				Log.debug("instantiating entity '" + name + "' from a callback");
+				com.pblabs.util.Log.debug("instantiating entity '" + name + "' from a callback");
 				try {
 					entity = instantiateEntity(xml.get("template"), context);
 					entity.deferring = true;
 				} catch (e :Dynamic) {
-					Log.error("Failed instantiating '" + name + "' from an entity callback due to :" + e + "\n" + Log.getStackTrace());
+					#if flash
+					com.pblabs.util.Log.error("Failed instantiating '" + name + "' from an entity callback due to :" + e + "\n" + cast(e, flash.errors.Error).getStackTrace());
+					#else
+					com.pblabs.util.Log.error("Failed instantiating '" + name + "' from an entity callback due to :" + e + "\n" + com.pblabs.util.Log.getStackTrace());
+					#end
 					Profiler.exit("instantiateEntityFromXML");
 					return null;
 				}
-				Log.debug("instantiated entity '" + name + "' from a callback");
+				com.pblabs.util.Log.debug("instantiated entity '" + name + "' from a callback");
 			} else {
-				Log.debug("instantiating entity '" + name + "' from xml");
+				com.pblabs.util.Log.debug("instantiating entity '" + name + "' from xml");
 				// Make the IEntity instance.
 				entity = context.allocate(IEntity);
 				// To aid with reference handling, initialize FIRST but defer the
@@ -320,7 +323,7 @@ class TemplateManager
 				
 				
 				
-				Log.debug("doInstantiateTemplate");
+				com.pblabs.util.Log.debug("doInstantiateTemplate");
 				if (!doInstantiateTemplate(entity, xml.get("template"), new DynamicMap<Bool>())) {
 					entity.destroy();
 					Profiler.exit("instantiateEntityFromXML");
@@ -348,7 +351,7 @@ class TemplateManager
 			Profiler.exit("instantiateEntityFromXML");
 		}
 		catch (e :Dynamic) {
-			Log.error("Failed instantiating '" + name + "' from XML due to :" + e + "\n" + Log.getStackTrace());
+			com.pblabs.util.Log.error("Failed instantiating '" + name + "' from XML due to :" + e + "\n" + com.pblabs.util.Log.getStackTrace());
 			entity = null;
 			Profiler.exit("instantiateEntityFromXML");
 		}
@@ -367,10 +370,10 @@ class TemplateManager
 	 */
 	public function instantiateGroup(context :IPBContext, name :String) :IPBGroup
 	{
-		Log.debug("name=" + name);
+		com.pblabs.util.Log.debug("name=" + name);
 		// Check for a callback.
 		if (_things.exists(name) && _things.get(name).type == RefType.group) {
-			// Log.debug("name exists, type=" + _things.get(name).type);
+			// com.pblabs.util.Log.debug("name exists, type=" + _things.get(name).type);
 			// Preconditions.checkArgument(_things.get(name).type != RefType.entity, "Thing '" + name + "' is an entity callback!"); 
 			// We won't dispatch the GROUP_LOADED event here as it's the callback
 			// author's responsibility.
@@ -392,7 +395,7 @@ class TemplateManager
 			return group;
 		}
 		catch (e :Dynamic) {
-			Log.error("Failed to instantiate group '" + name + "' due to :" + e.toString());
+			com.pblabs.util.Log.error("Failed to instantiate group '" + name + "' due to :" + e.toString());
 			return null;
 		}
 		
@@ -416,12 +419,12 @@ class TemplateManager
 		var name = xml.get("name");
 		
 		if (name.length == 0) {
-			Log.warn("XML object description added without a 'name' attribute.");
+			com.pblabs.util.Log.warn("XML object description added without a 'name' attribute.");
 			return;
 		}
 		
 		if (_things.exists(name)) {
-			Log.warn("An XML object description with name " + name + " has already been added.");
+			com.pblabs.util.Log.warn("An XML object description with name " + name + " has already been added.");
 			return;
 		}
 		
@@ -430,8 +433,8 @@ class TemplateManager
 		thing.identifier = identifier;
 		thing.version = version;
 		
-		Log.debug("new thing, name=" +name + ", thing=" + thing);
-		Log.debug("previous thing=" + _things.get(name));
+		com.pblabs.util.Log.debug("new thing, name=" +name + ", thing=" + thing);
+		com.pblabs.util.Log.debug("previous thing=" + _things.get(name));
 		_things.set(name, thing);
 	}
 	
@@ -495,14 +498,14 @@ class TemplateManager
 	 */
 	public function registerEntityCallback(name :String, callBack :Void->IEntity) :Void
 	{
-		Log.debug("name=" + name);
+		com.pblabs.util.Log.debug("name=" + name);
 		Preconditions.checkNotNull(callBack, "Must pass a callback function!");
 		Preconditions.checkArgument(!_things.exists(name), "Already have a thing registered under '" + name + "'!");
 		
 		var newThing = new ThingReference(RefType.entity);
 		newThing.createEntity = callBack;
 		// newThing.entityCallback = callBack;
-		Log.debug("newThing=" + newThing);
+		com.pblabs.util.Log.debug("newThing=" + newThing);
 		_things.set(name, newThing);
 	}
 	
@@ -513,7 +516,7 @@ class TemplateManager
 	public function unregisterEntityCallback(name :String) :Void
 	{
 		if (!_things.exists(name)) {
-			Log.warn("No such template '" + name + "'!");
+			com.pblabs.util.Log.warn("No such template '" + name + "'!");
 			return;
 		}
 		Preconditions.checkNotNull(_things.get(name).type != RefType.entity, "Thing '" + name + "' is not an entity callback!"); 
@@ -580,13 +583,13 @@ class TemplateManager
 		}
 		
 		if (tree.exists(templateName)) {
-			Log.warn("Cyclical template detected. " + templateName + " has already been instantiated.");
+			com.pblabs.util.Log.warn("Cyclical template detected. " + templateName + " has already been instantiated.");
 			return false;
 		}
 		
 		var templateXML = getXML(templateName, "template");
 		if (null == templateXML) {
-			Log.warn("Unable to find the template " + templateName + ".");
+			com.pblabs.util.Log.warn("Unable to find the template " + templateName + ".");
 			return false;
 		}
 		
@@ -631,7 +634,7 @@ class TemplateManager
 						return null;
 					}
 				} catch (err :Dynamic) {
-					Log.warn("Failed to instantiate group '" + childName + "' from groupReference in '" + name + "' due to :" + err);
+					com.pblabs.util.Log.warn("Failed to instantiate group '" + childName + "' from groupReference in '" + name + "' due to :" + err);
 					return null;
 				}
 			} else if (objectXML.nodeName == "objectReference") {
@@ -639,7 +642,7 @@ class TemplateManager
 				instantiateEntity(childName, context);
 				_inGroup=false;
 			} else {
-				Log.warn("Encountered unknown tag " + objectXML.nodeName + " in group.");
+				com.pblabs.util.Log.warn("Encountered unknown tag " + objectXML.nodeName + " in group.");
 			}
 		}
 		
@@ -659,7 +662,7 @@ class TemplateManager
 			addXML(xml, sourceName, version);
 		}
 		
-		Log.info("Loaded " + thingCount + " from " + sourceName);			
+		com.pblabs.util.Log.info("Loaded " + thingCount + " from " + sourceName);			
 	}
 	
 	function onLoaded(resource :XMLResource) :Void
@@ -672,7 +675,7 @@ class TemplateManager
 			addXML(childxml, resource.name, version);
 		}
 		
-		Log.info("Loaded " + thingCount + " from " + resource.name);
+		com.pblabs.util.Log.info("Loaded " + thingCount + " from " + resource.name);
 		
 		// signalLoaded.dispatch(resource);
 	}

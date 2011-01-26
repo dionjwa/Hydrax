@@ -8,7 +8,6 @@
  ******************************************************************************/
 package com.pblabs.util;
 
-import com.pblabs.util.Log;
 
 /**
  * Assertion checks.

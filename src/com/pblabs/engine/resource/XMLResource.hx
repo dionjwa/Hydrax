@@ -8,7 +8,6 @@
  ******************************************************************************/
 package com.pblabs.engine.resource;
 
-import com.pblabs.util.Log;
 import com.pblabs.engine.resource.ResourceBase;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.util.Preconditions;
@@ -42,7 +41,7 @@ class XMLResource extends ResourceBase<XML>
 				case text (t): loadFromText(t);
 				case embedded (n): loadFromEmbedded(n);
 				default:
-					Log.error("Resouce source type not handled: " + _source);
+					com.pblabs.util.Log.error("Resouce source type not handled: " + _source);
 			}
 		} catch (e :Dynamic) {
 			onError(e);
@@ -55,7 +54,7 @@ class XMLResource extends ResourceBase<XML>
 	override public function create (?name :String) :XML
 	{
 		if (name != null) {
-			Log.error("create(name): name argument is ignored");
+			com.pblabs.util.Log.error("create(name): name argument is ignored");
 		}
 		return _xml.firstElement();
 	}
@@ -116,7 +115,7 @@ class XMLResource extends ResourceBase<XML>
 	
 	function loadFromEmbedded (embeddedName :String) :Void
 	{
-		Log.debug("loadFromEmbedded");
+		com.pblabs.util.Log.debug("loadFromEmbedded");
 		#if flash
 		var cls :Class<Dynamic> = Type.resolveClass("SWFResources_" + embeddedName);
 		Preconditions.checkNotNull(cls, "No embedded resource class SWFResources_" + embeddedName);

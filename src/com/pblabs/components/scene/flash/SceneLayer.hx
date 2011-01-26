@@ -12,7 +12,6 @@ import com.pblabs.components.scene.BaseScene2DLayer;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.flash.Scene2DComponent;
 import com.pblabs.components.scene.flash.Scene2DManager;
-import com.pblabs.util.Log;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ds.Map;

@@ -13,7 +13,6 @@ import com.pblabs.components.scene.SceneAlignment;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.SceneView;
 import com.pblabs.components.scene.flash.SceneLayer;
-import com.pblabs.util.Log;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Preconditions;
@@ -76,7 +75,7 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
 	 * If set, every frame, trackObject's position is read and assigned
 	 * to the scene's position, so that the scene follows the trackObject.
 	 */
-	// public var trackObject :LocationComponent;
+	// public var trackObject :Coordinates;
 
 	//	public var sceneBoundsRef :RectangleReference;
 
@@ -321,7 +320,7 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
 
 	// public function addSceneComponent (obj :Scene2DComponent) :Void
 	// {
-	//	 Log.debug("adding scene component");
+	//	 com.pblabs.util.Log.debug("adding scene component");
 	//	 if (_sceneComponents.exists(obj)) {
 	//		 throw "Already contains obj " + obj;
 	//	 }
@@ -336,7 +335,7 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
 
 	//	 var layerName = obj.sceneLayerName;
 	//	 if (null == layerName) {
-	//		 Log.warn("obj.sceneLayerName is null, using the default layer");
+	//		 com.pblabs.util.Log.warn("obj.sceneLayerName is null, using the default layer");
 	//		 layerName = DEFAULT_LAYER_NAME;
 	//	 }
 
@@ -348,7 +347,7 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
 
 	//	 if (null == layer) {
 	//		 // throw "No layer named " + layerName;
-	//		 Log.warn("No layer named " + layerName + ", creating");
+	//		 com.pblabs.util.Log.warn("No layer named " + layerName + ", creating");
 	//		 layer = new SceneLayer();
 	//		 addLayer(layer, layerName);
 	//	 }
@@ -499,7 +498,7 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
 	// public function removeSceneComponent (obj :Scene2DComponent) :Void
 	// {
 	//	 if (!_sceneComponents.exists(obj)) {
-	//		 Log.warn("Doesn't contain " + obj + " " + Log.getStackTrace() + "\nmap :" + ReflectUtil.getClass(_sceneComponents) + "\n" + _sceneComponents);
+	//		 com.pblabs.util.Log.warn("Doesn't contain " + obj + " " + com.pblabs.util.Log.getStackTrace() + "\nmap :" + ReflectUtil.getClass(_sceneComponents) + "\n" + _sceneComponents);
 	//		 return;
 	//	 }
 	//	 var layer :SceneLayer = cast(_sceneComponents.get(obj), SceneLayer);
@@ -556,7 +555,7 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
 	{
 		//		trace("updating scene");
 		if (sceneView == null) {
-			Log.warn(this + " sceneView is null, so we aren't rendering.");
+			com.pblabs.util.Log.warn(this + " sceneView is null, so we aren't rendering.");
 			return;
 		}
 		// if (trackObject != null) {

@@ -16,7 +16,6 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.PBObject;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.util.Log;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.serialization.Serializer;
 import com.pblabs.engine.time.IAnimatedObject;
@@ -196,7 +195,7 @@ class Entity extends PBObject,
 		{
 			// Error if it's an unexpected tag.
 			if(componentXML.nodeName.toLowerCase() != "component") {
-				Log.error("Found unexpected tag '" + componentXML.nodeName.toString() + "', only <component/> is valid, ignoring tag. Error in entity '" + name + "'.");
+				com.pblabs.util.Log.error("Found unexpected tag '" + componentXML.nodeName.toString() + "', only <component/> is valid, ignoring tag. Error in entity '" + name + "'.");
 				continue;
 			}
 			
@@ -208,13 +207,13 @@ class Entity extends PBObject,
 				// If it specifies a type, instantiate a component and add it.
 				var type :Class<Dynamic> = Type.resolveClass(componentClassName);
 				if (null == type) {
-					Log.error("Unable to find type '" + componentClassName + "' for component '" + componentName +"' on entity '" + name + "'.");
+					com.pblabs.util.Log.error("Unable to find type '" + componentClassName + "' for component '" + componentName +"' on entity '" + name + "'.");
 					continue;
 				}
 				
 				component = cast(context.allocate(type), IEntityComponent);
 				if (null == component) {
-					Log.error("Unable to instantiate component " + componentName + " of type " + componentClassName + " on entity '" + name + "'.");
+					com.pblabs.util.Log.error("Unable to instantiate component " + componentName + " of type " + componentClassName + " on entity '" + name + "'.");
 					continue;
 				}
 				
@@ -225,20 +224,20 @@ class Entity extends PBObject,
 				// Otherwise just get the existing one of that name.
 				component = lookupComponentByName(componentName);
 				if (null == component) {
-					Log.error("No type specified for the component " + componentName + " and the component doesn't exist on a parent template for entity '" + name + "'.");
+					com.pblabs.util.Log.error("No type specified for the component " + componentName + " and the component doesn't exist on a parent template for entity '" + name + "'.");
 					continue;
 				}
 			}
 			
 			try {
-				Log.debug("deserializing component " + componentName);
+				com.pblabs.util.Log.debug("deserializing component " + componentName);
 				// Deserialize the XML into the component.
 				serializer.deserialize(context, component, componentXML);
-				Log.debug("deserialized component " + componentName);
+				com.pblabs.util.Log.debug("deserialized component " + componentName);
 			} catch (e :Dynamic) {
-				Log.error("Failed deserializing component " + componentName + "'  due to :" + e + "\n" + Log.getStackTrace());
+				com.pblabs.util.Log.error("Failed deserializing component " + componentName + "'  due to :" + e + "\n" + com.pblabs.util.Log.getStackTrace());
 				#if debug
-				// com.pblabs.engine.debug.Log.setLevel(Type.getClass(component), com.pblabs.engine.debug.Log.DEBUG);
+				// com.pblabs.engine.debug.com.pblabs.util.Log.setLevel(Type.getClass(component), com.pblabs.engine.debug.com.pblabs.util.Log.DEBUG);
 				com.pblabs.engine.debug.Log.setLevel("", com.pblabs.engine.debug.Log.DEBUG);
 				#end
 			}
@@ -387,18 +386,18 @@ class Entity extends PBObject,
 	{
 		if (componentName == "")
 		{
-			Log.warn(["AddComponent", "A component name was not specified. This might cause problems later."]);
+			com.pblabs.util.Log.warn(["AddComponent", "A component name was not specified. This might cause problems later."]);
 		}
 		
 		if (component.owner != null)
 		{
-			Log.error(["AddComponent", "The component " + componentName + " already has an owner. (" + name + ")"]);
+			com.pblabs.util.Log.error(["AddComponent", "The component " + componentName + " already has an owner. (" + name + ")"]);
 			return false;
 		}
 		
 		if (_components.get(componentName) != null)
 		{
-			Log.error(["AddComponent", "A component with name " + componentName + " already exists on this entity (" + name + ")."]);
+			com.pblabs.util.Log.error(["AddComponent", "A component with name " + componentName + " already exists on this entity (" + name + ")."]);
 			return false;
 		}
 		
@@ -411,13 +410,13 @@ class Entity extends PBObject,
 	{
 		if (component.owner != this)
 		{
-			Log.error(["AddComponent", "The component " + component.name + " is not owned by this entity. (" + name + ")"]);
+			com.pblabs.util.Log.error(["AddComponent", "The component " + component.name + " is not owned by this entity. (" + name + ")"]);
 			return false;
 		}
 		
 		if (_components.get(component.name) == null)
 		{
-			Log.error(["AddComponent", "The component " + component.name + " was not found on this entity. (" + name + ")"]);
+			com.pblabs.util.Log.error(["AddComponent", "The component " + component.name + " was not found on this entity. (" + name + ")"]);
 			return false;
 		}
 		
@@ -445,6 +444,7 @@ class Entity extends PBObject,
 		var sets = context.getManager(SetManager);
 		
 		// var bonds :Array<Bond> = null;
+		com.pblabs.util.Log.debug(name + " started reseting");
 		for (component in _components)
 		{
 			// Skip unregistered entities. 
@@ -461,8 +461,10 @@ class Entity extends PBObject,
 			 //Inject the signal listeners
 			 // bonds = cast(_context.injector, ComponentInjector).injectComponentListeners(component , bonds);
 			//Reset it!
+			com.pblabs.util.Log.debug("    reseting " + component.name);
 			component.reset();				
 		}
+		com.pblabs.util.Log.debug("  finished reseting");
 		// if (bonds != null) {
 		// 	sm.setAll(this.name, bonds);
 		// }

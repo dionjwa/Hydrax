@@ -14,7 +14,6 @@ import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene.BaseScene2DComponent;
 import com.pblabs.components.scene.BaseScene2DManager;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.util.Log;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Comparable;
 import com.pblabs.util.Comparators;
@@ -54,7 +53,7 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
 	public static function compare (a :MouseInputComponent, b :MouseInputComponent) :Int
 	{
 		#if flash
-		Log.error("Implement me, scene objects not ordered.");
+		com.pblabs.util.Log.error("Implement me, scene objects not ordered.");
 		return 0;//if (com.pblabs.util.DisplayUtils.isAbove(a.displayObject, b.displayObject)) -1 else 1;
 		#elseif js
 		var scenea = a.owner.lookupComponent(BaseScene2DComponent);
@@ -62,7 +61,7 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
 		var scene :BaseScene2DManager<Dynamic> = scenea.parent.parent;
 		return Comparators.compareInts(scene.getLayerIndex(sceneb.parent), scene.getLayerIndex(scenea.parent));
 		#else
-		Log.error("Not implemented");
+		com.pblabs.util.Log.error("Not implemented");
 		return 0;
 		#end
 	}
@@ -70,9 +69,9 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
 	public function new ()
 	{
 		super();
-		xProperty = new PropertyReference("@LocationComponent.x");
-		yProperty = new PropertyReference("@LocationComponent.y");
-		angleProperty = new PropertyReference("@AngleComponent.angle");
+		xProperty = new PropertyReference("@Coordinates.x");
+		yProperty = new PropertyReference("@Coordinates.y");
+		angleProperty = new PropertyReference("@Coordinates.angle");
 		scaleProperty = new PropertyReference("@ScaleComponent.scale");
 		
 		//The default is not movable, rotatable, or scalable.

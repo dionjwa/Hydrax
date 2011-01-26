@@ -1,7 +1,5 @@
 package;
 
-import com.pblabs.components.base.AngleComponent;
-import com.pblabs.components.base.LocationComponent;
 import com.pblabs.components.scene.CircleShape;
 import com.pblabs.components.scene.flash.Scene2DManager;
 import com.pblabs.components.scene.flash.SceneLayer;

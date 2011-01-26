@@ -8,7 +8,6 @@
  ******************************************************************************/
 package com.pblabs.engine.resource;
 
-import com.pblabs.util.Log;
 import com.pblabs.engine.resource.IResource;
 
 import com.pblabs.util.StringUtil;

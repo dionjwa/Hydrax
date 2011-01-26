@@ -9,7 +9,6 @@
 package com.pblabs.components.input;
 
 import com.pblabs.components.scene.SceneView;
-import com.pblabs.util.Log;
 import com.pblabs.util.Preconditions;
 
 import hsl.haxe.DirectSignaler;
@@ -19,10 +18,6 @@ import hsl.haxe.data.mouse.MouseLocation;
 
 #if js
 import hsl.js.translating.JSSignaler;
-
-import js.Dom;
-
-import js.Lib;
 #end
 
 /**
@@ -31,11 +26,17 @@ import js.Lib;
  */
 class MouseInputManager extends BaseInputManager
 {
+	#if js
     public var mouseDown (default, null) :Signaler<MouseLocation>;
     public var mouseUp (default, null) :Signaler<MouseLocation>;
     public var mouseMove (default, null) :Signaler<MouseLocation>;
     public var mouseClick (default, null) :Signaler<MouseLocation>;
-    
+    #elseif flash
+    public var mouseDown (default, null) :Signaler<MouseLocation>;
+    public var mouseUp (default, null) :Signaler<MouseLocation>;
+    public var mouseMove (default, null) :Signaler<MouseLocation>;
+    public var mouseClick (default, null) :Signaler<MouseLocation>;
+    #end
     /** Used if there is a TouchInputManager */
     public var currentTouches :Int;
     
@@ -135,10 +136,11 @@ class MouseInputManager extends BaseInputManager
     function bindSignals () :Void
     {
         #if js
-        mouseDown = new hsl.js.translating.JSSignaler(this, Lib.document, JSEventType.MOUSEDOWN, new hsl.js.translation.mouse.MouseLocationTranslator());
-        mouseUp = new hsl.js.translating.JSSignaler(this, Lib.document, JSEventType.MOUSEUP, new hsl.js.translation.mouse.MouseLocationTranslator());
-        mouseMove = new hsl.js.translating.JSSignaler(this, Lib.document, JSEventType.MOUSEMOVE, new hsl.js.translation.mouse.MouseLocationTranslator());
-        mouseClick = new hsl.js.translating.JSSignaler(this, Lib.document, JSEventType.CLICK, new hsl.js.translation.mouse.MouseLocationTranslator());
+        var signaler = hsl.js.translating.JSSignaler;
+        mouseDown = new hsl.js.translating.JSSignaler(this, js.Lib.document, hsl.js.translating.JSEventType.MOUSEDOWN, new hsl.js.translation.mouse.MouseLocationTranslator());
+        mouseUp = new hsl.js.translating.JSSignaler(this, js.Lib.document, hsl.js.translating.JSEventType.MOUSEUP, new hsl.js.translation.mouse.MouseLocationTranslator());
+        mouseMove = new hsl.js.translating.JSSignaler(this, js.Lib.document, hsl.js.translating.JSEventType.MOUSEMOVE, new hsl.js.translation.mouse.MouseLocationTranslator());
+        mouseClick = new hsl.js.translating.JSSignaler(this, js.Lib.document, hsl.js.translating.JSEventType.CLICK, new hsl.js.translation.mouse.MouseLocationTranslator());
         #elseif (flash || cpp)
         //Only listen to the context root layer, not the global layer.  This means that mouse events are automatically translated to local coords.
         var layer = sceneView.layer;//context.getManager(SceneView).layer;//context.displayContainer;
@@ -154,10 +156,16 @@ class MouseInputManager extends BaseInputManager
     function freeSignals () :Void
     {
         #if (js || flash || cpp)
-        mouseDown.unbindAll();
-        mouseUp.unbindAll();
-        mouseMove.unbindAll();
-        mouseClick.unbindAll();
+        #if debug
+        com.pblabs.util.Assert.isFalse(mouseDown.isListenedTo);
+        com.pblabs.util.Assert.isFalse(mouseUp.isListenedTo);
+        com.pblabs.util.Assert.isFalse(mouseMove.isListenedTo);
+        com.pblabs.util.Assert.isFalse(mouseClick.isListenedTo);
+        #end
+        // mouseDown.unbindAll();
+        // mouseUp.unbindAll();
+        // mouseMove.unbindAll();
+        // mouseClick.unbindAll();
         
         mouseDown = null;
         mouseUp = null;

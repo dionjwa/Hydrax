@@ -8,15 +8,16 @@
  ******************************************************************************/
 package com.pblabs.components.scene;
 
-import com.pblabs.components.base.AngleComponent;
-import com.pblabs.components.base.LocationComponent;
+import com.pblabs.components.base.Coordinates;
 import com.pblabs.components.input.IInteractiveComponent;
 import com.pblabs.components.manager.NodeComponent;
-import com.pblabs.engine.core.SignalBondManager;
+import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.geom.RectangleTools;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Preconditions;
 using com.pblabs.components.scene.SceneUtil;
+using com.pblabs.engine.core.SignalBondManager;
+using com.pblabs.engine.util.PBUtil;
 using com.pblabs.util.StringUtil;
 
 class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends NodeComponent<Layer, Dynamic>,
@@ -31,6 +32,9 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	public var scale (get_scale, set_scale) :Float;
 	public var isTransformDirty (get_isTransformDirty, set_isTransformDirty) :Bool;
 	
+	/** We will listen to the signals of this coordinates component. */
+	public var coordinatesProperty :PropertyReference<Coordinates>;
+	
 	public function new ()
 	{
 		super();
@@ -41,6 +45,8 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 		isTransformDirty = true;
 		_width = 0;
 		_height = 0;
+		//Sensible default
+		coordinatesProperty = Coordinates.componentProp();
 	}
 	
 	public function containsScreenPoint (pos :Vector2) :Bool
@@ -61,7 +67,6 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 		#end
 	}
 	
-	// @inject("@LocationComponent.signaler")
 	public function setLocation (loc :Vector2) :Void
 	{
 		set_x(loc.x);
@@ -75,36 +80,21 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 		Preconditions.checkNotNull(parentProperty, "parentProperty is null");
 		com.pblabs.util.Assert.isNotNull(parent, com.pblabs.util.ReflectUtil.tinyClassName(this) + ".parent is null, prop=" + parentProperty);
 		
-		if (owner.lookupComponent(LocationComponent) != null) {
-			SignalBondManager.bindSignal(this, owner.lookupComponent(LocationComponent).signaler, setLocation);
-		}
-		if (owner.lookupComponent(AngleComponent) != null) {
-			SignalBondManager.bindSignal(this, owner.lookupComponent(AngleComponent).signaler, set_angle);
+		var coords = coordinatesProperty != null ? owner.getProperty(coordinatesProperty) : null;
+		
+		if (coords != null) {
+			// this.bindSignal(coords.signalerLocation, setLocation);
+			// this.bindSignal(coords.signalerX, set_x);
+			// this.bindSignal(coords.signalerY, set_y);
+			this.bindSignal(coords.signalerLocation, setLocation);
+			this.bindSignal(coords.signalerAngle, set_angle);
 		} else {
-			com.pblabs.util.Log.error("No AngleComponent found");
+			com.pblabs.util.Log.warn("No coords component found, you are on your own regarding updating Scene components " + com.pblabs.util.Log.getStackTrace());
 		}
 			
-			// com.pblabs.util.Assert.isNotNull(owner.lookupComponent(LocationComponent), "No LocationComponent");
-			// com.pblabs.util.Assert.isNotNull(owner.lookupComponent(AngleComponent), "No AngleComponent");
-		
-		
-		// owner.lookupComponent(LocationComponent).signaler.unbind(setLocation);
-		// owner.lookupComponent(LocationComponent).signaler.bind(setLocation);
-		
-		// owner.lookupComponent(AngleComponent).signaler.unbind(set_angle);
-		// owner.lookupComponent(AngleComponent).signaler.bind(set_angle);
-		
 		//TODO: Bind scale component, not yet implemented
 		com.pblabs.util.Log.debug("finished");
 	}
-	
-	// override function onRemove () :Void
-	// {
-	// 	super.onRemove();
-	// 	owner.lookupComponent(LocationComponent).signaler.unbind(setLocation);
-	// 	owner.lookupComponent(AngleComponent).signaler.unbind(set_angle);
-	// 	//TODO: unbind scale component
-	// }
 	
 	function get_layer () :Layer
 	{

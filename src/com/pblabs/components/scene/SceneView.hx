@@ -11,7 +11,6 @@ package com.pblabs.components.scene;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.PBObject;
-import com.pblabs.util.Log;
 import com.pblabs.util.Preconditions;
 
 #if js
@@ -186,7 +185,7 @@ class SceneView
 		_width = flash.Lib.current.stage.stageWidth;
 		_height = flash.Lib.current.stage.stageHeight;
 		
-		Log.debug("added to stage " + _layer.width + " " + _layer.height);
+		com.pblabs.util.Log.debug("added to stage " + _layer.width + " " + _layer.height);
 	}
 	#end
 	

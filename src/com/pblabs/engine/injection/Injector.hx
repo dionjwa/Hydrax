@@ -10,7 +10,6 @@ package com.pblabs.engine.injection;
 
 import Type.ValueType;
 
-import com.pblabs.util.Log;
 import com.pblabs.util.Preconditions;
 
 import com.pblabs.util.ds.Map;
@@ -30,7 +29,7 @@ using com.pblabs.util.ReflectUtil;
 /**
   *Injects component PropertyReference fields and hsl signal listeners
   * Use @inject("<id>") to inject fields and functions (as signal listeners)
-  * E.g. @inject LocationComponent.x
+  * E.g. @inject Coordinates.x
   * If there is no manually assigned field injections (via setFieldInjection),
   * the injection label must correspond with a property reference.
   
@@ -110,14 +109,14 @@ class Injector
 			var field = injectionTuple.v1;
 			
 			if (Type.typeof(Reflect.field(obj, field)) == ValueType.TFunction) {
-				Log.debug("Not injecting into " + Type.getClassName(Type.getClass(obj)) + "." + field + ", field is a function");
+				com.pblabs.util.Log.debug("Not injecting into " + Type.getClassName(Type.getClass(obj)) + "." + field + ", field is a function");
 				continue;
 			}
 			
 			//Don't inject into fields with existing values
 			//TODO: check if the field is a function
 			if (Reflect.field(obj, field) != null) {
-				Log.warn("Not injecting into " + Type.getClassName(Type.getClass(obj)) + "." + field + ", field is not null, " + field + "=" + Reflect.field(obj, field));
+				com.pblabs.util.Log.warn("Not injecting into " + Type.getClassName(Type.getClass(obj)) + "." + field + ", field is not null, " + field + "=" + Reflect.field(obj, field));
 				continue;
 			}
 			
@@ -125,7 +124,7 @@ class Injector
 				
 				var injectedValue :Dynamic = getMapping(null, injectionKey);
 				if (injectedValue == null) {
-					Log.warn("No value set for injection key=" + injectionTuple.v2 + "  ->  " + cls.getClassName() + "." + field);
+					com.pblabs.util.Log.warn("No value set for injection key=" + injectionTuple.v2 + "  ->  " + cls.getClassName() + "." + field);
 					continue;
 				}
 				
@@ -139,7 +138,7 @@ class Injector
 							Reflect.setField(obj, field, injectedValue);
 					}
 				} catch (e :Dynamic) {
-					// Log.error(["Could not inject", "injectedValue", injectedValue, "obj", obj, "field", field]);
+					// com.pblabs.util.Log.error(["Could not inject", "injectedValue", injectedValue, "obj", obj, "field", field]);
 					throw "Could not inject:  " + obj + "." + field + "=" + injectedValue + ", type=" + ReflectUtil.getClassName(injectedValue) + "\n" + e;
 				}
 			}
@@ -149,7 +148,7 @@ class Injector
 		var superCls = Type.getSuperClass(cls);
 		//Recursively inject superclass fields/listeners
 		if (superCls != null) {
-			Log.debug("Injecting on superclass=" + superCls.getClassName());
+			com.pblabs.util.Log.debug("Injecting on superclass=" + superCls.getClassName());
 			injectFields(obj, superCls);
 		}
 	}
@@ -165,7 +164,7 @@ class Injector
 	function updateRuntimeCache (cls :Class<Dynamic>) :Void
 	{
 		if (instanceFieldInjections.get(cls) != null) {
-			Log.debug(cls.getClassName() + " already registered:" + instanceFieldInjections.get(cls));
+			com.pblabs.util.Log.debug(cls.getClassName() + " already registered:" + instanceFieldInjections.get(cls));
 			// trace("instanceFieldInjections=" + instanceFieldInjections);
 			return;
 		}
@@ -190,23 +189,23 @@ class Injector
 							case CClass(name, params):
 								tup = new Tuple(field, [name]);
 								instanceFieldInjections.set(cls, tup);
-								Log.debug("Binding field injection " + cls.getClassName() + "." + field + " <- " + name);
+								com.pblabs.util.Log.debug("Binding field injection " + cls.getClassName() + "." + field + " <- " + name);
 							default:
-							Log.error("@inject on " + cls.getClassName() + "." + field + ", not a class type: " + cls.getFieldType(field));
+							com.pblabs.util.Log.error("@inject on " + cls.getClassName() + "." + field + ", not a class type: " + cls.getFieldType(field));
 						}
 					} else {
-						Log.error("@inject on " + cls.getClassName() + "." + field + ", but there is no inject annotation, and the class does not implement haxe.rtti.Infos, so we cannot get the class field types at runtime.");
+						com.pblabs.util.Log.error("@inject on " + cls.getClassName() + "." + field + ", but there is no inject annotation, and the class does not implement haxe.rtti.Infos, so we cannot get the class field types at runtime.");
 					}
 					
 				} else {
 					var injectArr :Array<String> = cast(injectMeta);
-					Log.debug("Binding field injection " + cls.getClassName() + "." + field + " -> " + injectArr);
+					com.pblabs.util.Log.debug("Binding field injection " + cls.getClassName() + "." + field + " -> " + injectArr);
 					tup = new Tuple(field, injectArr);
 					instanceFieldInjections.set(cls, tup);
 				}
 			}
 		} else {
-			Log.debug("No injections");
+			com.pblabs.util.Log.debug("No injections");
 		}
 		
 		//Mark with a null injection, so we know this class has been checked
@@ -217,7 +216,7 @@ class Injector
 		var superCls = Type.getSuperClass(cls);
 		//Recursively inject superclass fields/listeners
 		if (superCls != null) {
-			Log.debug("Caching injections on superclass=" + superCls.getClassName());
+			com.pblabs.util.Log.debug("Caching injections on superclass=" + superCls.getClassName());
 			updateRuntimeCache(superCls);
 		}
 	}

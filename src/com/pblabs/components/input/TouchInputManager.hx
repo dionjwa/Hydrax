@@ -7,7 +7,6 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.input;
-import com.pblabs.util.Log;
 import com.pblabs.geom.Vector2;
 
 import hsl.haxe.Signaler;
@@ -137,7 +136,18 @@ class TouchInputManager extends BaseInputManager
     override public function shutdown () :Void
     {
         super.shutdown();
-        freeSignals();
+        // freeSignals();
+        
+        #if js
+        #if debug
+        com.pblabs.util.Assert.isFalse(touchStart.isListenedTo);
+        com.pblabs.util.Assert.isFalse(touchMove.isListenedTo);
+        com.pblabs.util.Assert.isFalse(touchEnd.isListenedTo);
+        #end
+        touchStart = null;
+        touchMove = null;
+        touchEnd = null;
+        #end
     }
     
     function bindSignals () :Void
@@ -151,18 +161,18 @@ class TouchInputManager extends BaseInputManager
         #end
     }
     
-    function freeSignals () :Void
-    {
-        #if js
-        touchStart.unbindAll();
-        touchMove.unbindAll();
-        touchEnd.unbindAll();
+    // function freeSignals () :Void
+    // {
+    //     #if js
+    //     // touchStart.unbindAll();
+    //     // touchMove.unbindAll();
+    //     // touchEnd.unbindAll();
         
-        touchStart = null;
-        touchMove = null;
-        touchEnd = null;
-        #end
-    }
+    //     touchStart = null;
+    //     touchMove = null;
+    //     touchEnd = null;
+    //     #end
+    // }
     
     var _firstTouchId :Int;
 }

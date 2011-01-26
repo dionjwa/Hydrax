@@ -9,7 +9,6 @@
 package com.pblabs.components.input;
 #if js
 import com.pblabs.components.input.BaseInputManager;
-import com.pblabs.util.Log;
 
 import hsl.haxe.Signaler;
 
@@ -105,9 +104,14 @@ class GestureInputManager extends BaseInputManager
     function freeSignals () :Void
     {
         #if js
-        gestureStart.unbindAll();
-        gestureChange.unbindAll();
-        gestureEnd.unbindAll();
+        #if debug
+        com.pblabs.util.Assert.isFalse(gestureStart.isListenedTo);
+        com.pblabs.util.Assert.isFalse(gestureChange.isListenedTo);
+        com.pblabs.util.Assert.isFalse(gestureEnd.isListenedTo);
+        #end
+        // gestureStart.unbindAll();
+        // gestureChange.unbindAll();
+        // gestureEnd.unbindAll();
         
         gestureStart = null;
         gestureChange = null;

@@ -16,7 +16,7 @@ class CircleShape extends ShapeComponent
 {
     public var radius (get_radius, set_radius) :Float;
     
-    public function new (?r :Float = 50, ?color :Int = 0xff0000)
+    public function new (?r :Float = 20, ?color :Int = 0xff0000)
     {
         super(color);
         
@@ -56,7 +56,7 @@ class CircleShape extends ShapeComponent
     #if css
     override function onAdd () :Void
     {
-    	Log.debug("");
+    	com.pblabs.util.Log.debug("");
         super.onAdd();
         
         //Put the element in the base div element
@@ -64,7 +64,7 @@ class CircleShape extends ShapeComponent
         //http://dev.opera.com/articles/view/css3-transitions-and-2d-transforms/#transforms
         redraw();
         div.appendChild(_svgContainer);
-        Log.debug("finished");
+        com.pblabs.util.Log.debug("finished");
     }
     #end
     
@@ -130,7 +130,7 @@ class CircleShape extends ShapeComponent
     {
         return set_width(val);
     }
-
+    
     #if css
     var _svgContainer :js.Dom.HtmlDom;
     var _svg :js.Dom.HtmlDom;

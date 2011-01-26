@@ -14,7 +14,6 @@ package com.pblabs.engine.core;
 
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBObject;
-import com.pblabs.util.Log;
 import com.pblabs.util.Preconditions;
 
 import com.pblabs.util.ds.Map;
@@ -46,9 +45,9 @@ class NameManager
 		Preconditions.checkNotNull(object);
 		
 		if (object.name != null && object.name != "") {
-			Log.debug("Adding named object: " + object.name);
+			com.pblabs.util.Log.debug("Adding named object: " + object.name);
 			if (_objects.get(object.name) != null) {
-				Log.warn("An object with the name already exists: " + object.name);
+				com.pblabs.util.Log.warn("An object with the name already exists: " + object.name);
 			}
 			_objects.set(object.name, object);
 		}

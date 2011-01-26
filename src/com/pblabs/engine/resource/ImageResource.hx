@@ -8,7 +8,6 @@
  ******************************************************************************/
 package com.pblabs.engine.resource;
 
-import com.pblabs.util.Log;
 import com.pblabs.engine.resource.ResourceBase;
 import com.pblabs.engine.resource.Source;
 import com.pblabs.util.Preconditions;
@@ -34,7 +33,7 @@ class ImageResource extends ResourceBase<js.Dom.Image>
 		var loader = _loader;
 		var self = this;
 		var onComplete = function (e :flash.events.Event) :Void {
-			Log.debug("onComplete");
+			com.pblabs.util.Log.debug("onComplete");
 			loader.contentLoaderInfo.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
 			loader.contentLoaderInfo.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
 			self._image = cast loader.content;
@@ -50,14 +49,14 @@ class ImageResource extends ResourceBase<js.Dom.Image>
 	
 	override public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
 	{
-		Log.debug("load " + _source);
+		com.pblabs.util.Log.debug("load " + _source);
 		super.load(onLoad, onError);
 		var self = this;
 		switch (_source) {
 			case url (u): loadFromUrl(u);
 			case embedded (n): loadFromEmbedded(n);
 			default:
-				Log.error("Resource source type not handled: " + _source);
+				com.pblabs.util.Log.error("Resource source type not handled: " + _source);
 		}
 	}
 	
@@ -68,7 +67,7 @@ class ImageResource extends ResourceBase<js.Dom.Image>
 #end
 	{
 		if (name != null) {
-			Log.error("create(name): name argument is ignored");
+			com.pblabs.util.Log.error("create(name): name argument is ignored");
 		}
 		
 		#if (flash || cpp)
@@ -136,7 +135,7 @@ class ImageResource extends ResourceBase<js.Dom.Image>
 	
 	function loadFromEmbedded (embeddedName :String) :Void
 	{
-		Log.debug("loadFromEmbedded");
+		com.pblabs.util.Log.debug("loadFromEmbedded");
 		#if js
 		onLoadError("Don't use Source.embedded for JS, use Source.url instead");
 		#elseif flash

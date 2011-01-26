@@ -8,7 +8,6 @@
  ******************************************************************************/
 package com.pblabs.geom;
 
-import com.pblabs.util.Log;
 import com.pblabs.geom.Geometry;
 import com.pblabs.geom.LineSegment;
 import com.pblabs.geom.Polygon;
@@ -664,11 +663,11 @@ class PolygonTools
 	{
 		var v:Vector2;
 		var bounds = initialLocations.getBounds();
-		Log.debug(["bounds", bounds]);
+		com.pblabs.util.Log.debug(["bounds", bounds]);
 
 		var maxFormationRadius = Math.max(bounds.width, bounds.height) * Geometry.SQRT2;
 
-		Log.debug(["maxFormationRadius", maxFormationRadius]);
+		com.pblabs.util.Log.debug(["maxFormationRadius", maxFormationRadius]);
 
 		var center = new Vector2(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
 

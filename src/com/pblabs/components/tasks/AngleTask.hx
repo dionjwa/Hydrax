@@ -8,13 +8,13 @@
  ******************************************************************************/
 package com.pblabs.components.tasks;
 
-import feffects.easing.Cubic;
-import feffects.easing.Linear;
-
-import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.components.base.AngleComponent;
+import com.pblabs.components.base.Coordinates;
 import com.pblabs.components.tasks.AnimatePropertyTask;
 import com.pblabs.components.tasks.IEntityTask;
+import com.pblabs.engine.core.PropertyReference;
+
+import feffects.easing.Cubic;
+import feffects.easing.Linear;
 
 class AngleTask extends AnimatePropertyTask 
 {
@@ -46,7 +46,7 @@ class AngleTask extends AnimatePropertyTask
 	public function new (angle :Float, ?time :Float = 0,
 							   ?easingFn :Float->Float->Float->Float->Float = null, ?ref :PropertyReference<Float>)
 	{
-		super(ref == null ? AngleComponent.P_ANGLE : ref, angle, time, easingFn);
+		super(ref == null ? Coordinates.P_ANGLE : ref, angle, time, easingFn);
 	}
 
 	public override function clone () :IEntityTask
@@ -55,5 +55,3 @@ class AngleTask extends AnimatePropertyTask
 	}
 
 }
-
-

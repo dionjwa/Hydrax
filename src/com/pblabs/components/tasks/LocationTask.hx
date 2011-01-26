@@ -28,14 +28,13 @@
  
 package com.pblabs.components.tasks;
 
-import haxe.Public;
-
-import com.pblabs.components.base.LocationComponent;
+import com.pblabs.components.base.Coordinates;
 import com.pblabs.components.tasks.AnimatePropertyTask;
 import com.pblabs.components.tasks.LocationTask;
 import com.pblabs.components.tasks.ParallelTask;
-
 import com.pblabs.engine.core.PropertyReference;
+
+import haxe.Public;
 
 class LocationTask extends ParallelTask {
 	
@@ -63,11 +62,10 @@ class LocationTask extends ParallelTask {
 		x :Float, y :Float, ?time :Float = 0, ?easingFn :Float->Float->Float->Float->Float = null)
 	{
 		super();
-		xRef = if (xRef == null) LocationComponent.P_X else xRef;
-		yRef = if (yRef == null) LocationComponent.P_Y else yRef;
+		xRef = if (xRef == null) Coordinates.P_X else xRef;
+		yRef = if (yRef == null) Coordinates.P_Y else yRef;
 		addTask(new AnimatePropertyTask(xRef, x, time, easingFn));
 		addTask(new AnimatePropertyTask(yRef, y, time, easingFn));
 	}
 
 }
-

@@ -8,7 +8,6 @@
  ******************************************************************************/
 package com.pblabs.geom;
 
-import com.pblabs.util.Log;
 
 import com.pblabs.geom.LineSegment;
 import com.pblabs.geom.Vector2;

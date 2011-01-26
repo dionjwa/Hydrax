@@ -44,6 +44,8 @@ class Vector2 extends XY,
 	 */
 	public function new (?x :Float = 0, ?y :Float = 0)
 	{
+		com.pblabs.util.Assert.isFalse(Math.isNaN(x), com.pblabs.util.Log.getStackTrace());
+		com.pblabs.util.Assert.isFalse(Math.isNaN(y), com.pblabs.util.Log.getStackTrace());
 		this.x = x;
 		this.y = y;
 	}

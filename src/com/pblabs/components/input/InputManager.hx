@@ -17,7 +17,6 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.SetManager;
-import com.pblabs.util.Log;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Assert;
 import com.pblabs.util.Comparators;
@@ -193,7 +192,7 @@ class InputManager extends BaseInputManager
 		#if js
 		if (gestures != null) {
 			var self = this;
-			gestures.gestureChange.bind(function (e :js.IOs.GestureEvent) :Void {
+			gestures.gestureChange.bind(function (e :hsl.js.data.Touch.GestureEvent) :Void {
 				// trace("gesture changed");
 				// trace(e.rotation);
 				#if testing
@@ -229,7 +228,7 @@ class InputManager extends BaseInputManager
 					}
 				}
 			});
-			gestures.gestureStart.bind(function (e :js.IOs.GestureEvent) :Void {
+			gestures.gestureStart.bind(function (e :hsl.js.data.Touch.GestureEvent) :Void {
 				self._isGesturing = true;
 				//No selected component when gesturing.  Could it be that the use put two fingers down at the same time?
 				if (self._deviceDownComponent == null) {
@@ -247,7 +246,7 @@ class InputManager extends BaseInputManager
 					}
 				}
 			});
-			gestures.gestureEnd.bind(function (e :js.IOs.GestureEvent) :Void {
+			gestures.gestureEnd.bind(function (e :hsl.js.data.Touch.GestureEvent) :Void {
 				self._isGesturing = false;
 			});
 			
@@ -263,7 +262,7 @@ class InputManager extends BaseInputManager
 	
 	function freeSignals () :Void
 	{
-		// Log.debug("");
+		// com.pblabs.util.Log.debug("");
 		// deviceDown.unbindAll();
 		// deviceMove.unbindAll();
 		// deviceUp.unbindAll();
@@ -286,9 +285,13 @@ class InputManager extends BaseInputManager
 		//	 _deviceClick.unbindAll();
 		//	 _deviceClick = null;
 		// }
-	}
+	}                                                                                                                                                              
 
+	#if js
 	function adjustMouseLocation (m :MouseLocation) :Vector2
+	#else
+	function adjustMouseLocation (m :MouseLocation) :Vector2
+	#end
 	{
 		// var view = context.getManager(SceneView);
 		#if flash
@@ -305,7 +308,11 @@ class InputManager extends BaseInputManager
 		#end
 	}
 	
+	#if js
 	function onMouseDown (m :MouseLocation) :Void
+	#else
+	function onMouseDown (m :MouseLocation) :Void
+	#end
 	{
 		//Reset markers
 		_isGesturing =  _isZooming = false;//_isRotating =
@@ -343,11 +350,15 @@ class InputManager extends BaseInputManager
 			mouseInput.onDeviceDown();
 		}
 		
-		Log.info("mouse down  " + _inputCache);
+		com.pblabs.util.Log.info("mouse down  " + _inputCache);
 		deviceDown.dispatch(_inputCache);
 	} 
 	
+	#if js
 	function onMouseUp (m :MouseLocation) :Void
+	#else
+	function onMouseUp (m :MouseLocation) :Void
+	#end
 	{
 		_isDeviceDown = false;
 		var adjustedM = adjustMouseLocation(m);
@@ -363,7 +374,7 @@ class InputManager extends BaseInputManager
 		js.Lib.document.getElementById("haxe:deviceUp").innerHTML = "deviceUp: " + adjustedM;
 		#end
 		// if (_inputCache.v1 != null) {
-		//	 Log.info("mouse up  " + _inputCache);
+		//	 com.pblabs.util.Log.info("mouse up  " + _inputCache);
 		// }
 		
 		_deviceDownComponent = null;
@@ -372,7 +383,11 @@ class InputManager extends BaseInputManager
 		deviceUp.dispatch(_inputCache);
 	}
 	
+	#if js
 	function onMouseMove (m :MouseLocation) :Void
+	#else
+	function onMouseMove (m :MouseLocation) :Void
+	#end
 	{
 		//While gesturing, ignore mouse/touch moves
 		if (_isGesturing) {
@@ -422,7 +437,7 @@ class InputManager extends BaseInputManager
 			var offset = mouseInput.offset;
 			var scene2dComp :BaseScene2DComponent<Dynamic> = cast(t.inputComponent.bounds, BaseScene2DComponent<Dynamic>);
 			if (scene2dComp == null) {
-				Log.error("WTF, how to translate scene to world without a Base2DComponent");
+				com.pblabs.util.Log.error("WTF, how to translate scene to world without a Base2DComponent");
 				return;
 			}
 			var sceneManager :BaseScene2DManager<Dynamic> = cast(scene2dComp.parent.parent, BaseScene2DManager<Dynamic>);
@@ -439,9 +454,13 @@ class InputManager extends BaseInputManager
 		
 	}
 	
+	#if js
 	function onMouseClick (m :MouseLocation) :Void
+	#else
+	function onMouseClick (m :MouseLocation) :Void
+	#end
 	{
-		Log.info("Mouse clicked " + m.x + ", " + m.y);
+		com.pblabs.util.Log.info("Mouse clicked " + m.x + ", " + m.y);
 		var adjustedM = adjustMouseLocation(m);
 		// trace("onMouseClick " + adjustedM);
 		// var clicked = new Array<IInteractiveComponent>();
@@ -453,7 +472,7 @@ class InputManager extends BaseInputManager
 		_inputCache.isMouseDown = false;
 		
 		if (_inputCache.inputComponent != null) {
-			Log.info("click  " + _inputCache);
+			com.pblabs.util.Log.info("click  " + _inputCache);
 			deviceClick.dispatch(_inputCache);
 		}
 		
@@ -465,19 +484,19 @@ class InputManager extends BaseInputManager
 		// var inputComps :Iterable<IInteractiveComponent>;
 		// for (c in _context.getObjectsInGroup(IInteractiveComponent.INPUT_GROUP)) {
 		//	 if (!Std.is(c, IEntity)) {
-		//		 Log.debug("weird, c is not an entity");
+		//		 com.pblabs.util.Log.debug("weird, c is not an entity");
 		//		 continue;
 		//	 }
 		//	 inputComps = cast(c, IEntity).lookupComponentsByType(IInteractiveComponent);
-		//	 Log.debug("Checking " + inputComps.count() + " input components");
+		//	 com.pblabs.util.Log.debug("Checking " + inputComps.count() + " input components");
 		//	 for (inc in inputComps) {
 		//		 if (inc.displayObject == null) {
-		//			 Log.error("IInteractiveComponent.displayObject == null");
+		//			 com.pblabs.util.Log.error("IInteractiveComponent.displayObject == null");
 		//			 continue;
 		//		 }
 		//		 if (inc.displayObject.hitTestVector2(flash.Lib.current.stage.mouseX, flash.Lib.current.stage.mouseY)) {
 		//			 _inputCache.set(cast(inc), new Vector2(flash.Lib.current.stage.mouseX, flash.Lib.current.stage.mouseY));
-		//			 Log.info("click  " + _inputCache);
+		//			 com.pblabs.util.Log.info("click  " + _inputCache);
 		//			 deviceClick.dispatch(_inputCache);
 		//		 }
 		//	 }
@@ -489,18 +508,18 @@ class InputManager extends BaseInputManager
 	//	 var inputComps :Iterable<IInteractiveComponent>;
 	//	 for (c in _context.getObjectsInGroup(IInteractiveComponent.INPUT_GROUP)) {
 	//		 if (!Std.is(c, IEntity)) {
-	//			 Log.debug("weird, c is not an entity");
+	//			 com.pblabs.util.Log.debug("weird, c is not an entity");
 	//			 continue;
 	//		 }
 	//		 inputComps = cast(c, IEntity).lookupComponentsByType(IInteractiveComponent);
-	//		 Log.debug("Checking " + inputComps.count() + " input components");
+	//		 com.pblabs.util.Log.debug("Checking " + inputComps.count() + " input components");
 	//		 for (inc in inputComps) {
 	//			 if (inc.displayObject == null) {
-	//				 Log.error("IInteractiveComponent.displayObject == null");
+	//				 com.pblabs.util.Log.error("IInteractiveComponent.displayObject == null");
 	//				 continue;
 	//			 }
 	//			 if (inc.displayObject.hitTestPoint(flash.Lib.current.stage.mouseX, flash.Lib.current.stage.mouseY)) {
-	//				 Log.info("under mouse  " + _inputCache);
+	//				 com.pblabs.util.Log.info("under mouse  " + _inputCache);
 	//				 return inc;
 	//			 }
 	//		 }
@@ -529,7 +548,7 @@ class InputManager extends BaseInputManager
 		com.pblabs.util.Assert.isNotNull(_components);
 		for (c in _components) {//_sets.getObjectsInSet(INPUT_SET)) {
 			// if (!Std.is(c, IEntity)) {
-			//	 // Log.debug("weird, c is not an entity");
+			//	 // com.pblabs.util.Log.debug("weird, c is not an entity");
 			//	 continue;
 			// }
 			
@@ -541,14 +560,14 @@ class InputManager extends BaseInputManager
 			
 			// inputComp = c.owner.lookupComponentByType(IInteractiveComponent);
 			// if (inputComp == null) {
-			//	 Log.error("Entity '" + cast(c, IEntity).name + "' registered in the set IInteractiveComponent does not have the IInteractiveComponent interface");
+			//	 com.pblabs.util.Log.error("Entity '" + cast(c, IEntity).name + "' registered in the set IInteractiveComponent does not have the IInteractiveComponent interface");
 			//	 continue;
 			// }
 			// if (inputComp.bounds ==null) {
 			//	 continue;
 			// }
 			// if (inputComp.displayObject == null) {
-			//	 Log.error("IInteractiveComponent.displayObject == null");
+			//	 com.pblabs.util.Log.error("IInteractiveComponent.displayObject == null");
 			//	 continue;
 			// }
 			
@@ -574,7 +593,7 @@ class InputManager extends BaseInputManager
 			
 			// trace("is " + inputComp.owner.name + " under mouse, bounds=" + inputComp.bounds.boundingRect + ", =" + inputComp.bounds.containsPoint(mouseLoc)); 
 			// if (inputComp.bounds.containsPoint(mouseLoc)) {
-			//	 // Log.info("under mouse  " + _inputCache);
+			//	 // com.pblabs.util.Log.info("under mouse  " + _inputCache);
 			//	 underMouse.push(inputComp);
 			//	 // return inc;
 			// }
@@ -588,7 +607,7 @@ class InputManager extends BaseInputManager
 			}
 			
 			// if (inc.displayObject.hitTestPoint(flash.Lib.current.stage.mouseX, flash.Lib.current.stage.mouseY)) {
-			//	 // Log.info("under mouse  " + _inputCache);
+			//	 // com.pblabs.util.Log.info("under mouse  " + _inputCache);
 			//	 underMouse.push(inc);
 			//	 // return inc;
 			// }
@@ -607,7 +626,7 @@ class InputManager extends BaseInputManager
 		#elseif js
 		//TODO: find this
 		#else
-		Log.warn("No mouse detection on this platform");
+		com.pblabs.util.Log.warn("No mouse detection on this platform");
 		#end
 		
 		return _mouseLoc;

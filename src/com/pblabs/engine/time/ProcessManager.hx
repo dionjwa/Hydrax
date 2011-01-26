@@ -173,7 +173,7 @@ class ProcessManager implements IProcessManager
 				#if flash
 				_timer = new flash.utils.Timer(untyped flash.Lib.current.stage["frameRate"]);
 				#else
-				Log.warn("Assuming a frame rate of 30fps");
+				com.pblabs.util.Log.info("Assuming a frame rate of 30fps");
 				_timer = new com.pblabs.engine.time.Timer(Std.int(1000/30));
 				_timer.run = onFrame;
 				#end
@@ -467,6 +467,7 @@ class ProcessManager implements IProcessManager
 			
 			_duringAdvance = true;
 			var object :ProcessObjectTicked;
+			com.pblabs.util.Log.debug("tick");
 			for(j in 0..._tickedObjects.length)
 			{
 				object = _tickedObjects[j];
@@ -479,6 +480,7 @@ class ProcessManager implements IProcessManager
 				com.pblabs.engine.debug.Profiler.exit(object.profilerKey);
 			}
 			_duringAdvance = false;
+			com.pblabs.util.Log.debug("finished tick");
 			
 			com.pblabs.engine.debug.Profiler.exit("Tick");
 			

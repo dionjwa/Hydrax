@@ -27,7 +27,6 @@
  */
 package com.pblabs.util.ds.maps;
 import com.pblabs.engine.time.Timer;
-import com.pblabs.util.Log;
 import com.pblabs.util.ds.Map;
 
 /**
