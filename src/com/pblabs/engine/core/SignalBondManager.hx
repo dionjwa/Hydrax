@@ -43,25 +43,6 @@ class SignalBondManager extends ArrayMultiMap<String, Bond>,
 		bonds.bind(component, signaler, listener);
 	}
 	
-	public static function destroyAllBonds (c :IEntityComponent) :Void
-	{
-		com.pblabs.util.Assert.isNotNull(c, "component is null");
-		com.pblabs.util.Assert.isNotNull(c.context, "component.context is null");
-		
-		var bonds = c.context.getManager(SignalBondManager);
-		com.pblabs.util.Assert.isNotNull(bonds, "SignalBondManager is null");
-		bonds.destroyBonds(c.entityPropString());
-	}
-	
-	/**
-	  * Assumes that signals are rebound on the IEntityComponentonReset() call.
-	  */
-	public static function resetBonds (c :IEntityComponent) :Void
-	{
-		destroyAllBonds(c);
-		c.reset();
-	}
-	
 	public function new ()
 	{
 		super();
