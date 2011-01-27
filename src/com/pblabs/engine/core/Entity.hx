@@ -147,7 +147,8 @@ class Entity extends PBObject,
 		for (c in _components) {
 			_components.remove(c.name);
 			#if debug
-			c.postDestructionCheck();
+			context.getManager(com.pblabs.engine.time.IProcessManager).callLater(createDestructionCheckCallback(c));
+			// c.postDestructionCheck();
 			#end
 		}
 		
@@ -155,6 +156,16 @@ class Entity extends PBObject,
 		super.destroy();
 		com.pblabs.util.Assert.isFalse(destroyedSignal.isListenedTo);
 	}
+	
+	#if debug
+	//Check the references, etc, etc at the end of the update loop.
+	function createDestructionCheckCallback (c :IEntityComponent) :Void->Void
+	{
+		return function () :Void {
+			c.postDestructionCheck();
+		}
+	}
+	#end
 	
 	/**
 	 * Serializes an entity. Pass in the current XML stream, and it automatically

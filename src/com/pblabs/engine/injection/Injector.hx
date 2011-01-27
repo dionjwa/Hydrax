@@ -29,7 +29,7 @@ using com.pblabs.util.ReflectUtil;
 /**
   *Injects component PropertyReference fields and hsl signal listeners
   * Use @inject("<id>") to inject fields and functions (as signal listeners)
-  * E.g. @inject Coordinates.x
+  * E.g. @inject Coordinates2D.x
   * If there is no manually assigned field injections (via setFieldInjection),
   * the injection label must correspond with a property reference.
   

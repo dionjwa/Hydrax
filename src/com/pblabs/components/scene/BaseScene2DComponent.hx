@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.components.scene;
 
-import com.pblabs.components.base.Coordinates;
+import com.pblabs.components.base.Coordinates2D;
 import com.pblabs.components.input.IInteractiveComponent;
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.engine.core.PropertyReference;
@@ -33,7 +33,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	public var isTransformDirty (get_isTransformDirty, set_isTransformDirty) :Bool;
 	
 	/** We will listen to the signals of this coordinates component. */
-	public var coordinatesProperty :PropertyReference<Coordinates>;
+	public var coordinatesProperty :PropertyReference<Coordinates2D>;
 	
 	public function new ()
 	{
@@ -46,7 +46,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 		_width = 0;
 		_height = 0;
 		//Sensible default
-		coordinatesProperty = Coordinates.componentProp();
+		coordinatesProperty = Coordinates2D.componentProp();
 	}
 	
 	public function containsScreenPoint (pos :Vector2) :Bool
@@ -83,11 +83,12 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 		var coords = coordinatesProperty != null ? owner.getProperty(coordinatesProperty) : null;
 		
 		if (coords != null) {
-			// this.bindSignal(coords.signalerLocation, setLocation);
-			// this.bindSignal(coords.signalerX, set_x);
-			// this.bindSignal(coords.signalerY, set_y);
 			this.bindSignal(coords.signalerLocation, setLocation);
 			this.bindSignal(coords.signalerAngle, set_angle);
+			//Manually set the location on reseting: there may be discrepencies in timing
+			//such that the listeners and values are inconsistant.  So manually reset location.
+			setLocation(coords.point);
+			angle = coords.angle;
 		} else {
 			com.pblabs.util.Log.warn("No coords component found, you are on your own regarding updating Scene components " + com.pblabs.util.Log.getStackTrace());
 		}

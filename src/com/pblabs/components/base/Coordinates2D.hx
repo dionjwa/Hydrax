@@ -13,10 +13,10 @@ using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.util.XMLUtil;
 
 /**
-  * 2D Coordinates (x, y, angle) that can be set to be a scaled version of another
-  * Coordinates component.
+  * 2D Coordinates2D (x, y, angle) that can be set to be a scaled version of another
+  * Coordinates2D component.
   */
-class Coordinates extends EntityComponent,
+class Coordinates2D extends EntityComponent,
 	implements ISerializable
 {
 	public var point(get_point, set_point) : Vector2;
@@ -26,21 +26,17 @@ class Coordinates extends EntityComponent,
 	public var angle (get_angle, set_angle) : Float;
 	
 	public var signalerLocation (default, null) :Signaler<Vector2>;
-	// public var signalerX (default, null) :Signaler<Float>;
-	// public var signalerY (default, null) :Signaler<Float>;
 	public var signalerAngle (default, null) :Signaler<Float>;
 	
-	public static var P_X :PropertyReference<Float> = new PropertyReference("@Coordinates.x");
-	public static var P_Y :PropertyReference<Float> = new PropertyReference("@Coordinates.y");
-	public static var P_POINT :PropertyReference<Vector2> = new PropertyReference("@Coordinates.point");
-	public static var P_ANGLE :PropertyReference<Float> = new PropertyReference("@Coordinates.angle");
-	public static var P_COORDINATES :PropertyReference<Coordinates> = new PropertyReference("@Coordinates");
+	public static var P_X :PropertyReference<Float> = new PropertyReference("@Coordinates2D.x");
+	public static var P_Y :PropertyReference<Float> = new PropertyReference("@Coordinates2D.y");
+	public static var P_POINT :PropertyReference<Vector2> = new PropertyReference("@Coordinates2D.point");
+	public static var P_ANGLE :PropertyReference<Float> = new PropertyReference("@Coordinates2D.angle");
+	public static var P_COORDINATES :PropertyReference<Coordinates2D> = new PropertyReference("@Coordinates2D");
 	
 	public function new() 
 	{ 
 		super();
-		// signalerX = new DirectSignaler(this);
-		// signalerY = new DirectSignaler(this);
 		signalerAngle = new DirectSignaler(this);
 		signalerLocation = new DirectSignaler(this);
 		_vec = new Vector2();
@@ -80,10 +76,9 @@ class Coordinates extends EntityComponent,
 
 	function set_x (val :Float):Float
 	{
-		com.pblabs.util.Assert.isFalse(Math.isNaN(val), com.pblabs.util.Log.getStackTrace());
+		// com.pblabs.util.Assert.isFalse(Math.isNaN(val), com.pblabs.util.Log.getStackTrace());
 		if (_vec.x != val) {
 			_vec.x = val;
-			// dispatchX();
 			dispatchLocation();
 		}
 		return val;
@@ -96,10 +91,9 @@ class Coordinates extends EntityComponent,
 
 	function set_y (val :Float):Float
 	{
-		com.pblabs.util.Assert.isFalse(Math.isNaN(val), com.pblabs.util.Log.getStackTrace());
+		// com.pblabs.util.Assert.isFalse(Math.isNaN(val), com.pblabs.util.Log.getStackTrace());
 		if (_vec.y != val) {
 			_vec.y = val;
-			// dispatchY();
 			dispatchLocation();
 		}
 		return val;
@@ -112,18 +106,9 @@ class Coordinates extends EntityComponent,
 		if (_vec.x != xLoc || _vec.y != yLoc) {
 			_vec.x = xLoc;
 			_vec.y = yLoc;
-			// dispatchX();
-			// dispatchY();
 			dispatchLocation();
 		}
 	}
-
-	#if debug
-	public function toString () :String
-	{
-		return "[x=" + x + ", y=" + y + ", angle=" + angle + "]";
-	}
-	#end
 	
 	public function serialize (xml :XML) :Void
 	{
@@ -153,20 +138,6 @@ class Coordinates extends EntityComponent,
 		dispatchAll();
 	}
 	
-	// public function dispatchX () :Void
-	// {
-	// 	if (signalerX.isListenedTo) {
-	// 		signalerX.dispatch(_vec.x);
-	// 	}
-	// }
-	
-	// public function dispatchY () :Void
-	// {
-	// 	if (signalerY.isListenedTo) {
-	// 		signalerY.dispatch(_vec.y);
-	// 	}
-	// }
-	
 	public function dispatchAngle () :Void
 	{
 		if (signalerAngle.isListenedTo) {
@@ -176,7 +147,7 @@ class Coordinates extends EntityComponent,
 	
 	public function dispatchLocation () :Void
 	{
-		if (signalerLocation.isListenedTo) {
+		if ( signalerLocation.isListenedTo) {
 			_vecForSignalling.x = _vec.x;
 			_vecForSignalling.y = _vec.y;
 			signalerLocation.dispatch(_vecForSignalling);
@@ -185,8 +156,6 @@ class Coordinates extends EntityComponent,
 	
 	public function dispatchAll () :Void
 	{
-		// dispatchX();
-		// dispatchY();
 		dispatchAngle();
 		dispatchLocation();
 	}
@@ -196,11 +165,14 @@ class Coordinates extends EntityComponent,
 	var _angle :Float;
 	
 	#if debug
+	public function toString () :String
+	{
+		return "[x=" + x + ", y=" + y + ", angle=" + angle + "]";
+	}
+	
 	override public function postDestructionCheck () :Void
 	{
 		super.postDestructionCheck();
-		// com.pblabs.util.Assert.isFalse(signalerX.isListenedTo);
-		// com.pblabs.util.Assert.isFalse(signalerY.isListenedTo);
 		com.pblabs.util.Assert.isFalse(signalerLocation.isListenedTo);
 		com.pblabs.util.Assert.isFalse(signalerAngle.isListenedTo);
 	}

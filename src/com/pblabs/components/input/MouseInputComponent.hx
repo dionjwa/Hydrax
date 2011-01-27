@@ -69,9 +69,9 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
 	public function new ()
 	{
 		super();
-		xProperty = new PropertyReference("@Coordinates.x");
-		yProperty = new PropertyReference("@Coordinates.y");
-		angleProperty = new PropertyReference("@Coordinates.angle");
+		xProperty = new PropertyReference("@Coordinates2D.x");
+		yProperty = new PropertyReference("@Coordinates2D.y");
+		angleProperty = new PropertyReference("@Coordinates2D.angle");
 		scaleProperty = new PropertyReference("@ScaleComponent.scale");
 		
 		//The default is not movable, rotatable, or scalable.

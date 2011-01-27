@@ -9,23 +9,23 @@ using com.pblabs.util.XMLUtil;
 
 /**
   * Coordinate information used by display related components.  
-  * Separate from the Coordinates class that is used for non-display
-  * coord data.  The Coordinates class is optional.
+  * Separate from the Coordinates2D class that is used for non-display
+  * coord data.  The Coordinates2D class is optional.
   */
-class DisplayCoordinates extends Coordinates
+class DisplayCoordinates2D extends Coordinates2D
 {
-	public static var P_X :PropertyReference<Float> = new PropertyReference("@Coordinates.x");
-	public static var P_Y :PropertyReference<Float> = new PropertyReference("@Coordinates.y");
+	public static var P_X :PropertyReference<Float> = new PropertyReference("@Coordinates2D.x");
+	public static var P_Y :PropertyReference<Float> = new PropertyReference("@Coordinates2D.y");
 	
 	public var scaleFactor :Float;
-	public var scaledCoords :Coordinates;
-	public var scaledCoordsProperty :PropertyReference<Coordinates>;
+	public var scaledCoords :Coordinates2D;
+	public var scaledCoordsProperty :PropertyReference<Coordinates2D>;
 	
 	public function new ()
 	{
 		super();
 		scaleFactor = 1;
-		scaledCoordsProperty = Coordinates.componentProp();
+		scaledCoordsProperty = Coordinates2D.componentProp();
 	}
 	
 	override public function dispatch () :Void
@@ -54,7 +54,7 @@ class DisplayCoordinates extends Coordinates
 			onChildLocationChanged(scaledCoords.point);
 			onChildAngleChanged(scaledCoords.angle);
 		} else {
-			com.pblabs.util.Log.debug("DisplayCoordinates have no scaledCoords field set.  Check the property reference");
+			com.pblabs.util.Log.debug("DisplayCoordinates2D have no scaledCoords field set.  Check the property reference");
 		}
 	}
 	

@@ -8,18 +8,11 @@
  ******************************************************************************/
 package com.pblabs.components.input;
 
-import com.pblabs.components.input.MouseInputComponent;
-import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene.BaseScene2DComponent;
 import com.pblabs.components.scene.BaseScene2DManager;
-import com.pblabs.components.scene.SceneView;
-import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
-import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.SetManager;
 import com.pblabs.geom.Vector2;
-import com.pblabs.util.Assert;
-import com.pblabs.util.Comparators;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.ds.Set;
@@ -27,7 +20,6 @@ import com.pblabs.util.ds.Sets;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
-import hsl.haxe.data.mathematics.Point;
 import hsl.haxe.data.mouse.MouseLocation;
 
 using IterTools;
@@ -38,6 +30,7 @@ using com.pblabs.components.scene.SceneUtil;
 using com.pblabs.util.MathUtil;
 
 #if js
+import com.pblabs.components.scene.js.css.Base2DComponent;
 using hsl.js.data.Touch.TouchListIterator;
 #end
 
@@ -46,7 +39,6 @@ using hsl.js.data.Touch.TouchListIterator;
  * and provides the components that react to input.
  */
 class InputManager extends BaseInputManager
-	// implements IPBManager, implements haxe.rtti.Infos
 {
 	public var deviceDown(default, null) :Signaler<InputData>;
 	public var deviceUp(default, null) :Signaler<InputData>;
@@ -67,27 +59,18 @@ class InputManager extends BaseInputManager
 	var _isDeviceDown :Bool;
 	
 	
-	// var _isRotating :Bool;
 	var _startingAngle :Float;//Radians
 	var _startingScale :Float;
-	// var _startingLocation :Vector2;
 	var _isZooming :Bool;
-	
-	// @inject
-	// var context :IPBContext;
-	
 	@inject
 	var _mouse :MouseInputManager;
-	
 	@inject
 	var _sets :SetManager;
-	
 	
 	#if js
 	@inject
 	var gestures :com.pblabs.components.input.GestureInputManager;
 	#end
-	
 	
 	public function new ()
 	{
@@ -109,14 +92,8 @@ class InputManager extends BaseInputManager
 		_mouseLoc = new Vector2();
 		_isDeviceDown = false;
 		_isGesturing = false;
-		
-		// _startingLocation = new Vector2();
 		_tempVec = new Vector2();
-		
 		_fingersTouching = 0;
-		
-		drag.bind(onDrag);
-		
 		_components = [];
 	}
 	
@@ -161,9 +138,7 @@ class InputManager extends BaseInputManager
 	override public function startup () :Void
 	{
 		super.startup();
-		// Preconditions.checkNotNull(context, "Context is null");
-		_sets = Preconditions.checkNotNull(_sets);//context.getManager(SetManager));
-		
+		_sets = Preconditions.checkNotNull(_sets);
 		bindSignals();
 		_timer = new haxe.Timer(Std.int(1000.0 / 30));
 		_timer.run = onFrame;
@@ -175,11 +150,21 @@ class InputManager extends BaseInputManager
 		freeSignals();
 		_timer.stop();
 		_timer =  null;
+		
+		deviceDown = null;
+		deviceUp = null;
+		deviceMove = null;
+		deviceClick = null;
+		deviceHeldDown = null;
+		drag = null;
+		doubleClick = null;
+		rotate = null;
+		scale = null;
 	}
 	
 	function bindSignals () :Void
 	{
-		// _mouse = context.getManager(MouseInputManager);
+		drag.bind(onDrag);
 		
 		com.pblabs.util.Assert.isNotNull(_mouse, "MouseInputManager is null, did you register one?");
 		
@@ -262,6 +247,13 @@ class InputManager extends BaseInputManager
 	
 	function freeSignals () :Void
 	{
+		drag.unbind(onDrag);
+		if (_mouse != null) {
+			_mouse.mouseDown.unbind(onMouseDown);
+			_mouse.mouseMove.unbind(onMouseMove);
+			_mouse.mouseUp.unbind(onMouseUp);
+			_mouse.mouseClick.unbind(onMouseClick);
+		}
 		// com.pblabs.util.Log.debug("");
 		// deviceDown.unbindAll();
 		// deviceMove.unbindAll();
@@ -451,7 +443,6 @@ class InputManager extends BaseInputManager
 				mouseInput.y = worldPoint.y;
 			}
 		}
-		
 	}
 	
 	#if js

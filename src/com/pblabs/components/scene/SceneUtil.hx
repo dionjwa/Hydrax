@@ -9,7 +9,7 @@
 package com.pblabs.components.scene;
 
 import com.pblabs.components.base.AlphaComponent;
-import com.pblabs.components.base.Coordinates;
+import com.pblabs.components.base.Coordinates2D;
 import com.pblabs.components.tasks.TaskComponent;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
@@ -56,7 +56,7 @@ class SceneUtil
 	{
 		var e :IEntity = context.allocate(IEntity);
 		e.deferring = true;
-		e.addComponent(context.allocate(Coordinates));
+		e.addComponent(context.allocate(Coordinates2D));
 		e.addComponent(context.allocate(AlphaComponent));
 		e.addComponent(context.allocate(TaskComponent));
 		return e;
@@ -64,12 +64,12 @@ class SceneUtil
 	
 	public static function setLocation (e :IEntity, x :Float, y :Float) :Void
 	{
-		e.lookupComponent(Coordinates).setLocation(x, y);
+		e.lookupComponent(Coordinates2D).setLocation(x, y);
 	}
 	
 	public static function setAngle (e :IEntity, angle :Float) :Void
 	{
-		e.lookupComponent(Coordinates).angle = angle;
+		e.lookupComponent(Coordinates2D).angle = angle;
 	}
 	
 	/**
@@ -104,7 +104,7 @@ class SceneUtil
 	{
 		var viewOffset = new Vector2();
 		calculateOutPoint(viewOffset, sceneManager.sceneAlignment, sceneManager.sceneView.width, sceneManager.sceneView.height);
-		var p = screen.subtract(viewOffset).scale(1/sceneManager.zoom).rotate(-sceneManager.rotation).subtract(new Vector2(sceneManager.x, sceneManager.y));
+		var p = screen.subtract(viewOffset).scale(1.0/sceneManager.zoom).rotate(-sceneManager.rotation).subtract(new Vector2(sceneManager.x, sceneManager.y));
 		return p;
 	}
 	

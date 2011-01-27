@@ -467,7 +467,6 @@ class ProcessManager implements IProcessManager
 			
 			_duringAdvance = true;
 			var object :ProcessObjectTicked;
-			com.pblabs.util.Log.debug("tick");
 			for(j in 0..._tickedObjects.length)
 			{
 				object = _tickedObjects[j];
@@ -480,7 +479,6 @@ class ProcessManager implements IProcessManager
 				com.pblabs.engine.debug.Profiler.exit(object.profilerKey);
 			}
 			_duringAdvance = false;
-			com.pblabs.util.Log.debug("finished tick");
 			
 			com.pblabs.engine.debug.Profiler.exit("Tick");
 			

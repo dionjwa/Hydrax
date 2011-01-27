@@ -143,7 +143,7 @@ class PBUtil
 	public static function entityPropString (c :IEntityComponent, ?fieldName :String) :String
 	{
 		com.pblabs.util.Assert.isNotNull(c, "IEntityComponent is null");
-		com.pblabs.util.Assert.isTrue(c.isRegistered, "Cannot get the PropertyReference of an unregistered IEntityComponent (type=" + ReflectUtil.getClassName(c) + ")");
+		com.pblabs.util.Assert.isTrue(c.isRegistered, "Cannot get the PropertyReference of an unregistered IEntityComponent (type=" + ReflectUtil.getClassName(c) + ") " + com.pblabs.util.Log.getStackTrace());
 		return "#" + c.owner.name + "." + componentName(c) + fieldToken(fieldName);
 	}
 

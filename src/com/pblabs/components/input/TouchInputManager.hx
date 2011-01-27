@@ -128,7 +128,7 @@ class TouchInputManager extends BaseInputManager
         }
         
         if (convertTouchEventsToMouse && mouse == null) {
-            Log.error("Convert touch events to mouse, but no MouseInputManager");
+            com.pblabs.util.Log.error("Convert touch events to mouse, but no MouseInputManager");
         }
         
     }

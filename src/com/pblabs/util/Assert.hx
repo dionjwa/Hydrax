@@ -26,9 +26,7 @@ class Assert
 		if (!condition) fail(info == null ? "isTrue" : info, posInfos);
 	}
 	#else
-	public static inline function isTrue (ignored :Dynamic, ?info :Dynamic) :Void
-	{
-	}
+	public static inline function isTrue (ignored :Dynamic, ?info :Dynamic) :Void {}
 	#end
 	
 	#if debug

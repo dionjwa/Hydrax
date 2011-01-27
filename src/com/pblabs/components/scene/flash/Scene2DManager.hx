@@ -75,7 +75,7 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
 	 * If set, every frame, trackObject's position is read and assigned
 	 * to the scene's position, so that the scene follows the trackObject.
 	 */
-	// public var trackObject :Coordinates;
+	// public var trackObject :Coordinates2D;
 
 	//	public var sceneBoundsRef :RectangleReference;
 

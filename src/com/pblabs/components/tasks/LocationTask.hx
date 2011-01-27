@@ -28,7 +28,7 @@
  
 package com.pblabs.components.tasks;
 
-import com.pblabs.components.base.Coordinates;
+import com.pblabs.components.base.Coordinates2D;
 import com.pblabs.components.tasks.AnimatePropertyTask;
 import com.pblabs.components.tasks.LocationTask;
 import com.pblabs.components.tasks.ParallelTask;
@@ -62,8 +62,8 @@ class LocationTask extends ParallelTask {
 		x :Float, y :Float, ?time :Float = 0, ?easingFn :Float->Float->Float->Float->Float = null)
 	{
 		super();
-		xRef = if (xRef == null) Coordinates.P_X else xRef;
-		yRef = if (yRef == null) Coordinates.P_Y else yRef;
+		xRef = if (xRef == null) Coordinates2D.P_X else xRef;
+		yRef = if (yRef == null) Coordinates2D.P_Y else yRef;
 		addTask(new AnimatePropertyTask(xRef, x, time, easingFn));
 		addTask(new AnimatePropertyTask(yRef, y, time, easingFn));
 	}
