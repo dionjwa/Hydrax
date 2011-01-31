@@ -17,21 +17,23 @@ class Preconditions
 	 * Checks that the argument is not null, and returns the validated argument.
 	 * @return the validated reference.
 	 */
-	public static function checkNotNull <T> (ref :T, ?message :String = null) :T
+	public static function checkNotNull <T> (ref :T, ?message :String = null, ?info :haxe.PosInfos) :T
 	{
 		if (ref == null) {
-			fail(if (message != null) message else "Argument is null");
+			fail(if (message != null) message else "Argument is null in file " + info.fileName + ", line " + info.lineNumber + ", " + info.className + "::" + info.methodName);
 		}
 		return ref;
+		
+		
 	}
 	
 	/**
 	 * Checks that an argument is true.
 	 */
-	public static function checkArgument (expression :Bool, ?message :String = null) :Void
+	public static function checkArgument (expression :Bool, ?message :String = null, ?info :haxe.PosInfos) :Void
 	{
 		if (!expression) {
-			fail(if (message != null) message else "Argument is false");
+			fail(if (message != null) message else "Argument is false in file " + info.fileName + ", line " + info.lineNumber + ", " + info.className + "::" + info.methodName);
 		}
 	}
 
@@ -39,10 +41,10 @@ class Preconditions
 	 * Check that the index is between 0 and (size - 1) inclusive.
 	 * @return the validated index.
 	 */
-	public static function checkPositionIndex (index :Int, size :Int, ?message :String = null) :Int
+	public static function checkPositionIndex (index :Int, size :Int, ?message :String = null, ?info :haxe.PosInfos) :Int
 	{
 		if (index < 0 || index >= size) {
-			fail("Index out of bounds " + index + ", [0, " + (size - 1) + "].");
+			fail("Index out of bounds " + index + ", [0, " + (size - 1) + "]. in file " + info.fileName + ", line " + info.lineNumber + ", " + info.className + "::" + info.methodName);
 		}
 		return index;
 	}
