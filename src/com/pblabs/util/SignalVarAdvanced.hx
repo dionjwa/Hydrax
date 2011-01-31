@@ -54,6 +54,13 @@ class SignalVarAdvanced<T>
 	}
 	var _value :T;
 	var _change :StateChange<T>;
+	
+	#if debug
+	public function toString () :String
+	{
+	    return Std.string(_value);
+	}
+	#end
 }
 
 class StateChange<T>

@@ -60,4 +60,11 @@ class SignalVar<T>
 	}
 	
 	var _value :T;
+	
+	#if debug
+	public function toString () :String
+	{
+	    return Std.string(_value);
+	}
+	#end
 }
