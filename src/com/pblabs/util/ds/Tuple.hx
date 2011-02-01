@@ -13,6 +13,9 @@ import com.pblabs.util.Equalable;
 import com.pblabs.util.StringUtil;
 import com.pblabs.util.EqualableUtil;
 
+/**
+  * Order dependent pair
+  */
 class Tuple <V1, V2> 
 	implements Hashable, implements Equalable<Dynamic>
 {
