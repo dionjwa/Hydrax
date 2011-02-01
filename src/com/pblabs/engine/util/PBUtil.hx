@@ -58,6 +58,22 @@ class PBUtil
 		return component;
 	}
 	
+	public static function addSingleComponent (context :IPBContext, component :IEntityComponent, ?compName :String = null) :Void
+	{
+		Preconditions.checkNotNull(context, "Null context");
+		Preconditions.checkNotNull(component, "Null comp");
+		if (compName == null) {
+			compName = ReflectUtil.tinyClassName(component);
+		}
+		
+		var e = context.allocate(IEntity);
+		Assert.isNotNull(e.context, "How can the entity context be null? e.name=" +e.name + ", compClass=" + ReflectUtil.getClassName(component));
+		e.initialize(compName);
+		e.addComponent(component, compName);
+		e.deferring = false;
+		Assert.isTrue(cast(component, IEntityComponent).isRegistered, "addsingle, not registered");
+	}
+	
 	public static function getSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null) :T
 	{
 		Preconditions.checkNotNull(context, "Null context");
