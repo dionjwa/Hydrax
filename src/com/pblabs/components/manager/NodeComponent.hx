@@ -15,10 +15,10 @@ import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.util.PBUtil;
-import com.pblabs.util.Assert;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
-import com.pblabs.util.StringUtil;
+
+import flash.xml.XML;
 
 using Lambda;
 
@@ -46,7 +46,6 @@ using com.pblabs.util.XMLUtil;
 	super methods to get the parent reference serialized.
 */
 class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic, Dynamic>> extends EntityComponent
-	// implements ISerializable
 {
 	public var parentProperty :PropertyReference<P>;
 	
@@ -132,10 +131,6 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 		Preconditions.checkArgument(Std.is(c, NodeComponent), "Children must be of type NodeComponent");
 		Preconditions.checkArgument(cast(c, IEntityComponent).isRegistered, "Child not registered: " + c);
 		
-		// if (children == null) {
-		// 	children = new Array<C>();
-		// }
-		
 		var cNode :NodeComponent<Dynamic, Dynamic> = cast(c);
 		
 		Preconditions.checkArgument(!cNode.hasParent(), cNode + " already has a parent, not adding");
@@ -163,14 +158,14 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 		if (!children.remove(c)) {
 			throw "Removing child with a different manager";
 		}
-		Assert.isFalse(children.length == before, "children.length the same after removal");
+		com.pblabs.util.Assert.isFalse(children.length == before, "children.length the same after removal");
 		
 		if (children.has(null)) {
 			throw "After child removal, we have null in children=" + children;
 		}
 		cNode.removingFromParent();
 		cNode.parent = null;
-		Assert.isNull(cNode.parent);
+		com.pblabs.util.Assert.isNull(cNode.parent);
 		childRemoved(c);
 	}
 	
@@ -203,13 +198,13 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 		
 		Preconditions.checkNotNull(newParent, "Parent cannot be null, parentProperty=" + parentProperty);
 		Preconditions.checkArgument(Std.is(newParent, NodeComponent), "Parent must be of type NodeComponent, parent is type=" + ReflectUtil.getClassName(newParent));
-		Preconditions.checkArgument(cast(newParent, IEntityComponent).isRegistered, "Parent not registered: " + newParent);
+		Preconditions.checkArgument(newParent.isRegistered, "Parent not registered: " + newParent);
 		
 		if (hasParent()) {
 			com.pblabs.util.Log.warn(" but " + name + ".hasParent " + parent + " " + ReflectUtil.getClassName(parent) + " " + com.pblabs.util.Log.getStackTrace());
 			return;
 		}
-		cast(newParent, NodeComponent<Dynamic, Dynamic>).addChild(this);
+		newParent.addChild(this);
 	}
 	
 	public function removeFromParent () :Void
@@ -217,7 +212,7 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 		if (!hasParent()) {
 			return;
 		}
-		cast(parent, NodeComponent<Dynamic, Dynamic>).removeChild(this);
+		parent.removeChild(this);
 		parent = null;
 	}
 	
@@ -242,10 +237,8 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 			removeFromParent();
 		}
 		for (child in children) {
-			cast(child, NodeComponent<Dynamic, Dynamic>).removeFromParent();
+			child.removeFromParent();
 		}
 		children = [];
 	}
 }
-
-
