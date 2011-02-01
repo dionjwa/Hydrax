@@ -33,14 +33,15 @@ using com.pblabs.util.ReflectUtil;
   * An object can belong to any number of sets.  Removal of 
   * sets do not automatically destroy the set member objects.
   */
-class SetManager extends PBManagerBase
-	//implements IPBManager, 
-	,implements haxe.rtti.Infos
+class SetManager extends PBManagerBase,
+	implements haxe.rtti.Infos
 {
-	
-	// var context :IPBContext;
-	
 	//The static functions are for "using" 
+	public static function getAllInSet(context :IPBContext, set :String) :Iterable<IPBObject>
+	{
+		return getSetManager(context).getObjectsInSet(set);
+	}
+	
 	public static function addToSet (obj :IPBObject, set :String) :Void
 	{
 		getSetManager(obj.context).addObjectToSet(obj , set);
