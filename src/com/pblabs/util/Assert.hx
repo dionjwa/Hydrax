@@ -68,6 +68,16 @@ class Assert
 	public static inline function isValidIndex (ignored :Dynamic, ?info :Dynamic) :Void {}
 	#end
 	
+	#if debug
+	/** Checks if a value is [low, high] */
+	public static function isWithinRange (value :Float, low :Float, high :Float, ?info:String, ?posInfos:haxe.PosInfos) :Void
+	{
+		if (value < low || value > high) fail(info == null ? "isWithinRange" : info, posInfos);
+	}
+	#else
+	public static inline function isWithinRange (ignored :Dynamic, ignored :Dynamic, ignored :Dynamic ?info :Dynamic) :Void {}
+	#end
+	
 	inline static function fail (message :String, info:haxe.PosInfos) :Void
 	{
 		//Some javascript targets don't show exceptions, so at least log the error
