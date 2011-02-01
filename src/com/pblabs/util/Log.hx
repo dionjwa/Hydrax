@@ -71,7 +71,7 @@ class Log
 	public static inline function error (msg :Dynamic) :Void {}
 	#end
 	
-	public static function getStackTrace () :String
+	inline public static function getStackTrace () :String
 	{
 		return haxe.Stack.toString(haxe.Stack.callStack());
 	}
