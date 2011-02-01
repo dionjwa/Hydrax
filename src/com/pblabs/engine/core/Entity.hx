@@ -318,11 +318,11 @@ class Entity extends PBObject,
 	public function removeComponent(component:IEntityComponent):Void
 	{
 		// Update the dictionary.
-		if (!doRemoveComponent(component))
+		if (component.isRegistered && !doRemoveComponent(component))
 			return;
 
 		// Deal with pending.
-		if(component.isRegistered == false)
+		if(!component.isRegistered)
 		{
 			// Remove it from the deferred list.
 			for(i in 0..._deferredComponents.length)
@@ -331,9 +331,15 @@ class Entity extends PBObject,
 					continue;
 				
 				// TODO: Forcibly call register/unregister to ensure onAdd/onRemove semantics?
-				
 				_deferredComponents.splice(i, 1);
 				break;
+			}
+			
+			for (k in _components.keys()) {
+				if (_components.get(k) == component) {
+					_components.remove(k);
+					break;
+				}
 			}
 
 			return;
@@ -348,7 +354,7 @@ class Entity extends PBObject,
 	{
 		for (component in _components)
 		{
-			if (Std.is( component, componentType))
+			if (Std.is(component, componentType))
 				return cast(component);
 		}
 		
@@ -421,13 +427,13 @@ class Entity extends PBObject,
 	{
 		if (component.owner != this)
 		{
-			com.pblabs.util.Log.error(["AddComponent", "The component " + component.name + " is not owned by this entity. (" + name + ")"]);
+			com.pblabs.util.Log.error(["doRemoveComponent", "The component " + component.name + " is not owned by this entity. (" + name + ")"]);
 			return false;
 		}
 		
 		if (_components.get(component.name) == null)
 		{
-			com.pblabs.util.Log.error(["AddComponent", "The component " + component.name + " was not found on this entity. (" + name + ")"]);
+			com.pblabs.util.Log.error(["doRemoveComponent", "The component " + component.name + " was not found on this entity. (" + name + ")"]);
 			return false;
 		}
 		
