@@ -25,32 +25,28 @@ enum SceneAlignment {
 
 class SceneUtil
 {
-	
-	public static function getPlatformSceneManagerClass () :Class<BaseScene2DManager<Dynamic>>
-	{
+	public static var MANAGER_CLASS :Class<BaseScene2DManager<Dynamic>> = 
 		#if (flash || cpp)
-		return com.pblabs.components.scene.flash.Scene2DManager;
+		com.pblabs.components.scene.flash.Scene2DManager;
 		#elseif css
-		return com.pblabs.components.scene.js.css.SceneManager;
+		com.pblabs.components.scene.js.css.SceneManager;
 		#elseif js
-		return com.pblabs.components.scene.js.canvas.CanvasScene2D;
+		com.pblabs.components.scene.js.canvas.CanvasScene2D;
 		#else
-		return null;
+		null;
 		#end
-	}
-	
-	public static function getBasePlatformLayerClass () :Class<BaseScene2DLayer<Dynamic, Dynamic>>
-	{
+		
+		
+	public static var LAYER_CLASS :Class<BaseScene2DLayer<Dynamic, Dynamic>> = 
 		#if (flash || cpp)
-		return com.pblabs.components.scene.flash.SceneLayer;
+		com.pblabs.components.scene.flash.SceneLayer;
 		#elseif css
-		return com.pblabs.components.scene.js.css.SceneLayer;
+		com.pblabs.components.scene.js.css.SceneLayer;
 		#elseif js
-		return com.pblabs.components.scene.js.canvas.CanvasLayer;
+		com.pblabs.components.scene.js.canvas.CanvasLayer;
 		#else
-		return null;
+		null;
 		#end
-	}
 	
 	public static function createBaseSceneEntity (context :IPBContext) :IEntity
 	{
