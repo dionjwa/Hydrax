@@ -15,9 +15,11 @@ using com.pblabs.components.scene.SceneUtil;
 
 class RectangleShape extends ShapeComponent
 {
-    public function new (?w :Float = 20, ?h :Float = 10, ?color :Int = 0xff0000)
+    public function new ()
     {
-        super(color);
+        super();
+        var w :Float = 20;
+        var h :Float = 10;
         #if css
         _rect = cast js.Lib.document.createElement("div");
         #elseif js

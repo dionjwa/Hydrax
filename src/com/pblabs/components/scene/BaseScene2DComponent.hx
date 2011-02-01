@@ -30,6 +30,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	public var height (get_height, set_height) :Float;
 	public var angle (get_angle, set_angle) :Float;
 	public var scale (get_scale, set_scale) :Float;
+	public var alpha (get_alpha, set_alpha) :Float;
 	public var isTransformDirty (get_isTransformDirty, set_isTransformDirty) :Bool;
 	
 	/** We will listen to the signals of this coordinates component. */
@@ -42,6 +43,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 		_y = 0;
 		_angle = 0;
 		_scale = 1;
+		_alpha = 1;
 		isTransformDirty = true;
 		_width = 0;
 		_height = 0;
@@ -185,11 +187,23 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 		return val;
 	}
 	
+	function get_alpha () :Float
+	{
+		return _alpha;
+	}
+	
+	function set_alpha (val :Float) :Float
+	{
+		_alpha = val;
+		return val;
+	}
+	
 	var _x :Float;
 	var _y :Float;
 	var _width :Float;
 	var _height :Float;
 	var _angle :Float;
 	var _scale :Float;
+	var _alpha :Float;
 	var _isTransformDirty :Bool;
 }

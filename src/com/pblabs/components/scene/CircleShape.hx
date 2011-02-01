@@ -16,10 +16,11 @@ class CircleShape extends ShapeComponent
 {
     public var radius (get_radius, set_radius) :Float;
     
-    public function new (?r :Float = 20, ?color :Int = 0xff0000)
+    public function new ()
     {
-        super(color);
+        super();
         
+        var r = 20.0;
         #if css
         _svgContainer = untyped js.Lib.document.createElementNS("http://www.w3.org/2000/svg", "svg");
         _svgContainer.setAttribute("width", (r * 2) + "px");
@@ -29,7 +30,7 @@ class CircleShape extends ShapeComponent
         _svg = untyped js.Lib.document.createElementNS("http://www.w3.org/2000/svg", "circle");
         _svgContainer.appendChild(_svg);
         #elseif js
-        boundingBox = [-r / 2, -r / 2, r, r];
+        boundingBox = [-4 / 2, -r / 2, r, r];
         #end
         radius = r;
     }
@@ -74,12 +75,12 @@ class CircleShape extends ShapeComponent
         var zoom = parent != null && parent.parent != null ? parent.parent.zoom : 1.0;
         var g = cast(_displayObject, flash.display.Sprite).graphics;
         g.clear();
-        g.beginFill(this.fillColor, 1);
+        g.beginFill(fillColor);
         g.drawCircle(0, 0, radius);
         g.endFill();
-        g.lineStyle(borderWidth / zoom, borderColor, 1);
+        g.lineStyle(borderWidth / zoom, borderColor);
         g.drawCircle(0, 0, radius);
-        g.lineStyle(2 / zoom, 0x000000);
+        g.lineStyle(2 / zoom, borderColor);
         g.moveTo(0, 0);
         g.lineTo(radius, 0);
         #elseif css

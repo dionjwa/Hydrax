@@ -22,12 +22,12 @@ class ShapeComponent
     public var borderColor (get_borderColor, set_borderColor) :Int;
     public var borderWidth (get_borderWidth, set_borderWidth) :Float;
     
-    public function new (?fillcolor :Int = 0xff0000, ?borderWidth :Float = 1, ?borderColor :Int = 0x000000)
+    public function new ()
     {
         super();
-        _fillColor = fillcolor;
-		_borderColor = borderColor;
-		_borderWidth = borderWidth;
+        _fillColor = 0xff0000;
+		_borderColor = 0x000000;
+		_borderWidth = 1;
         #if flash
         _displayObject = new flash.display.Sprite();
         cast(_displayObject, flash.display.Sprite).mouseChildren = cast(_displayObject, flash.display.Sprite).mouseEnabled = false;
@@ -133,6 +133,13 @@ class ShapeComponent
         _borderWidth = val;
         redraw();
         return val;
+    }
+    
+    override function set_alpha (val :Float) :Float
+    {
+    	super.set_alpha(val);
+    	redraw();
+    	return val;
     }
     
     var _fillColor :Int;
