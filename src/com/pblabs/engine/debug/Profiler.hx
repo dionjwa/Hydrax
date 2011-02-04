@@ -45,7 +45,7 @@ class Profiler
 	public static var enabled :Bool = true;
 	public static var indentAmount :Int = 3;
 	public static var nameFieldWidth :Int = 80;
-
+	
 	/**
 	 * Call this outside of all Enter/Exit calls to make sure that things
 	 * have not gotten unbalanced. If all enter'ed blocks haven't been
@@ -71,25 +71,6 @@ class Profiler
 
 		// If we're at the root then we can update our Internal enabled state.
 		if (_stackDepth == 0) {
-			// Hack - if they press, then release insert, start/stop and dump
-			// the profiler.
-			//			  if(PBE.isKeyDown(InputKey.P))
-			//			  {
-			//				  if(!enabled)
-			//				  {
-			//					  _wantWipe = true;
-			//					  enabled = true;
-			//				  }
-			//			  }
-			//			  else
-			//			  {
-//							  if(enabled)
-//							  {
-//								  _wantReport = true;
-//								  enabled = false;
-//							  }
-			//			  }
-
 			_reallyEnabled = enabled;
 
 			if (_wantWipe) {
@@ -179,20 +160,14 @@ class Profiler
 
 	static function doReport () :Void
 	{
-		// _rootNode.print(1);
-		// return;
 		_wantReport = false;
 		Assert.isNotNull(_rootNode);
-		// var header :String = "\n" + sprIntf("%-" + nameFieldWidth + "s%-8s%-8s%-8s%-8s%-8s%-8s", "name",
-		//	 "Calls", "Total%", "NonSub%", "AvgMs", "MinMs", "MaxMs");
 		var header = "\n" + Sprintf.format("%-" + nameFieldWidth + "s%-8s%-8s%-8s%-8s%-8s%-8s", ["name",
 		"Calls", "Total%", "NonSub%", "AvgMs", "MinMs", "MaxMs"]);
 		
 		var report = header + report_R(_rootNode, 0);
-		// log.debug(header + report_R(_rootNode, 0));
 		trace(report);
-//		Log.prInt(Profiler, header);
-//		report_R(_rootNode, 0);
+		_wantWipe = true;
 	}
 
 	static function doWipe (pi :ProfileInfo = null) :Void
@@ -241,8 +216,6 @@ class Profiler
 		if (indent == 0) {
 			"\n+Root";
 		} else {
-			// entry + "";
-			// entry = "\n" + "" + pi.name;
 			"\n" + Sprintf.format("%-" + (indent * indentAmount) + "s%-" + (nameFieldWidth - indent *
 				indentAmount) + "s%-8i%-8.2f%-8.2f%-8.2f%-8.2f%-8.2f", ["", (hasKids ? "+" : "-") + pi.name,
 				pi.activations, displayTime, displayNonSubTime,
@@ -252,7 +225,6 @@ class Profiler
 
 		// Sort and draw our kids.
 		var tmpArray = new Array<ProfileInfo>();
-		// if (pi.children.iterator().hasNext()) {
 		for (childPi in pi.children) {
 			tmpArray.push(childPi);
 		}
@@ -267,6 +239,22 @@ class Profiler
 		return s;
 	}
 
+	public static function bindToKey () :Void
+	{
+		#if flash
+		if (!_bound) {
+			_bound = true;
+			flash.Lib.current.stage.addEventListener(flash.events.KeyboardEvent.KEY_DOWN, function (keyEvent :flash.events.KeyboardEvent) :Void {
+				if (keyEvent.keyCode == com.pblabs.engine.input.InputKey.P.keyCode) {
+					trace("calling report");
+					Profiler.report();
+				}
+			});
+		}
+		#end    
+	}
+	
+	
 	static var _currentNode :ProfileInfo;
 
 	/**
@@ -279,7 +267,8 @@ class Profiler
 	static var _stackDepth :Int = 0;
 	static var _wantReport :Bool = false;
 	static var _wantWipe :Bool = false;
-	// static var log :Log = Log.getLog(Profiler);
+	
+	static var _bound :Bool = false;
 }
 
 class ProfileInfo
@@ -301,7 +290,7 @@ class ProfileInfo
 		parent = p;
 		wipe();
 	}
-
+	
 	public function wipe () :Void
 	{
 		startTime = totalTime = activations = 0;
@@ -336,37 +325,30 @@ extern class Profiler
 	 *
 	 * Useful for ensuring that profiler statements aren't mismatched.
 	 */
-	inline public static function ensureAtRoot () :Void
-	{
-	}
+	inline public static function ensureAtRoot () :Void {}
 
 	/**
 	 * Indicate we are entering a named execution block.
 	 */
-	inline public static function enter (blockName :String) :Void
-	{
-	}
+	inline public static function enter (blockName :String) :Void {}
 
 	/**
 	 * Indicate we are exiting a named exection block.
 	 */
-	inline public static function exit (blockName :String) :Void
-	{
-	}
+	inline public static function exit (blockName :String) :Void {}
 
 	/**
 	 * Dumps statistics to the log next time we reach bottom of stack.
 	 */
-	inline public static function report () :Void
-	{
-	}
+	inline public static function report () :Void {}
 
 	/**
 	 * Reset all statistics to zero.
 	 */
-	inline public static function wipe () :Void
-	{
-	}
+	inline public static function wipe () :Void {}
+	
+	inline public static function bindToKey () :Void {}
+	
 }
 #end
 
