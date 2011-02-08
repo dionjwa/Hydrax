@@ -105,7 +105,7 @@ class ImageResource extends ResourceBase<js.Dom.Image>
 	
 	#if (flash || cpp)
 	public var bitmapData (get_bitmapData, null) :flash.display.BitmapData;
-	inline function get_bitmapData () :flash.display.BitmapData
+	function get_bitmapData () :flash.display.BitmapData
     {
         return _image.bitmapData;
     }

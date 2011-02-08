@@ -11,12 +11,12 @@ package com.pblabs.util.ds;
 import com.pblabs.util.StringUtil;
 import com.pblabs.util.ds.Map;
 
-#if debug
+// #if debug
 typedef MapType = {
 	function keys () :Iterator<Dynamic>;
 	function get (key :Dynamic) :Dynamic;
 }
-#end
+// #end
 
 /**
  *Use using com.pblabs.util.ds.MapUtil 
@@ -67,7 +67,7 @@ class MapUtil
 		return index;
 	}
 	
-	#if debug
+	// #if debug
 	public static function toString(map :MapType) :String 
 	{
 		var s = new StringBuf();
@@ -83,9 +83,9 @@ class MapUtil
 		s.add("}");
 		return s.toString();
 	}
-	#end
+	// #end
 	
-	inline static var EMPTY_ARRAY :Array<Dynamic> = [];
+	static var EMPTY_ARRAY :Array<Dynamic> = [];
 }
 
 

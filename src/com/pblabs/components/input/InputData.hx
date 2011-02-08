@@ -16,6 +16,7 @@ import com.pblabs.geom.Vector2;
 class InputData
 {
     public var inputComponent :MouseInputComponent;
+    public var inputComponents :Array<MouseInputComponent>;
     public var inputLocation :Vector2;
     public var touchCount :Int;
     public var isMouseDown :Bool;
@@ -24,5 +25,6 @@ class InputData
     {
         touchCount = 1;
         isMouseDown = false;
+        inputComponents = [];
     }
 }

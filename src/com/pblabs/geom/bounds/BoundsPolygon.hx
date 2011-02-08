@@ -42,7 +42,7 @@ class BoundsPolygon extends AbstractBounds<BoundsPolygon>
 		set_polygon(polygon);
 	}
 	
-	inline function set_polygon (p :Polygon) :Void
+	function set_polygon (p :Polygon) :Void
 	{
 		_polygon = p;
 		_boundsRect = _polygon.boundingBox;

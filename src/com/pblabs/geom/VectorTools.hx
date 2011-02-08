@@ -8,14 +8,16 @@
  ******************************************************************************/
 package com.pblabs.geom;
 
-
+import com.pblabs.geom.Vector2;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
-import com.pblabs.geom.Vector2;
+
+import de.polygonal.motor2.geom.math.XY;
 
 using Lambda;
 
 using com.pblabs.geom.Geometry;
+
 /**
  * Use "using com.pblabs.geom.VectorTools" for code 
  * completion access to these functions.
@@ -34,18 +36,18 @@ class VectorTools
 	public static inline var ZERO :Vector2 = new Vector2(); //0.017453293;
 	public static inline var PI2 :Float = Math.PI * 2;
 
-	inline public static function distance (a :Vector2, b :Vector2) :Float
+	inline public static function distance (a :XY, b :XY) :Float
 	{
 		return Math.sqrt((b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y));
 	}
 	
-	inline public static function distanceSq (a :Vector2, b :Vector2) :Float
+	inline public static function distanceSq (a :XY, b :XY) :Float
 	{
 		return  (b.x - a.x) * (b.x - a.x) + (b.y - a.y) * (b.y - a.y);
 	}
 	
 	//Returns the angle between two points
-	public static function calcAngle (p1 :Vector2, p2 :Vector2) :Float
+	public static function calcAngle (p1 :XY, p2 :XY) :Float
 	{
 		var angle = Math.atan((p2.y - p1.y) / (p2.x - p1.x));
 
@@ -83,7 +85,7 @@ class VectorTools
 	/**
 	 * Returns the angle (radians) from v1 to v2.
 	 */
-	inline public static function angleTo (v1 :Vector2, v2 :Vector2) :Float
+	inline public static function angleTo (v1 :XY, v2 :XY) :Float
 	{
 		return getAngle(v1.x, v1.y, v2.x, v2.y);
 	}
@@ -94,15 +96,21 @@ class VectorTools
 		return (angle >= 0 ? angle : angle + PI2);
 	}
 	
-	inline public static function getMidpoint (v1 :Vector2, v2 :Vector2) :Vector2
+	inline public static function getMidpoint (v1 :XY, v2 :XY) :Vector2
 	{
 		return new Vector2(v1.x + (v2.x - v1.x) / 2, v1.y + (v2.y - v1.y) / 2);
 	}
 	
-	inline public static function lengthSq (v1 :Vector2) :Float
+	inline public static function lengthSq (v1 :XY) :Float
 	{
 		return v1.x*v1.x + v1.y*v1.y;
 	}
+	
+	inline public static function isEqual (v1 :XY, v2 :XY) :Bool
+	{
+		return v1.x == v2.x && v1.y == v2.y;    
+	}
+	
 
 	  //origin means original starting radian, dest destination radian around a circle
 	/**
@@ -146,37 +154,6 @@ class VectorTools
 		} else {
 			return radian;
 		}
-
-//		if(radian > Math.PI || radian < -Math.PI)
-//		{
-//			var newRadian:Number;
-//			newRadian = radian - int(radian / PI2) * PI2;
-//			if(radian > 0)
-//			{
-//				if(newRadian < Math.PI)
-//				{
-//					return newRadian;
-//				}
-//				else
-//				{
-//					newRadian =- (PI2 - newRadian);
-//					return newRadian;
-//				}
-//			}
-//			else
-//			{
-//				if(newRadian > -Math.PI)
-//				{
-//					return newRadian;
-//				}
-//				else
-//				{
-//					newRadian = ((PI2) + newRadian);
-//					return newRadian;
-//				}
-//			}
-//		}
-//		return radian;
 	}
 
 	/**
@@ -194,6 +171,12 @@ class VectorTools
 		return -diff;
 	}
 	
+	public static function clone (xy :XY) :XY
+	{
+		return new Vector2(xy.x, xy.y);    
+	}
+	
+	
 	#if flash
 	/**
 	 * Converts Point p to a Vector2.
@@ -203,11 +186,9 @@ class VectorTools
 		return new Vector2(p.x, p.y);
 	}
 	
-	public static function toPoint (v :Vector2) :flash.geom.Point
+	public static function toPoint (v :XY) :flash.geom.Point
 	{
 		return new flash.geom.Point(v.x, v.y);
 	}
 	#end
 }
-
-

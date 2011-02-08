@@ -275,7 +275,7 @@ class HashMap<K, V> implements Map<K, V>  #if php ,implements php.IteratorAggreg
 		#end
 	}
 
-	inline public function size () :Int
+	public function size () :Int
 	{
 	    return _size;
 	}

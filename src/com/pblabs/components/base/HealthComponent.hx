@@ -10,7 +10,6 @@ package com.pblabs.components.base;
 
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntity;
-import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.util.MathUtil;
@@ -60,7 +59,7 @@ class HealthComponent extends EntityComponent,
 		xml.createChild("healthMax", healthMax);
 	}
 	
-	public function deserialize (xml :XML, context :IPBContext) :Dynamic
+	public function deserialize (xml :XML) :Dynamic
 	{
 		_health = xml.parseFloat("health");
 		healthMax = xml.parseFloat("healthMax");
@@ -87,12 +86,12 @@ class HealthComponent extends EntityComponent,
 		return healthMax - _health;
 	}
 
-	inline function get_health ():Float
+	function get_health ():Float
 	{
 		return _health;
 	}
 
-	inline function set_health (value :Float):Float
+	function set_health (value :Float):Float
 	{
 		// Clamp the amount of damage.
 		value = MathUtil.fclamp(value, 0, healthMax);

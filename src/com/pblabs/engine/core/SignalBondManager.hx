@@ -15,6 +15,7 @@ import hsl.haxe.Bond;
 import hsl.haxe.Signaler;
 
 using com.pblabs.engine.util.PBUtil;
+using com.pblabs.util.ReflectUtil;
 using com.pblabs.util.StringUtil;
 
 /**
@@ -29,8 +30,10 @@ using com.pblabs.util.StringUtil;
 class SignalBondManager extends ArrayMultiMap<String, Bond>,
 	implements IPBManager, implements haxe.rtti.Infos
 {
+	public static var OBJECT_DESTROYED_KEY :String = SignalBondManager.getClassName() + ".entityDestroyed";
+	
 	@inject
-	var context :IPBContext;
+	var game :PBGameBase;
 	
 	public static function bindSignal <T>(component :IEntityComponent, signaler :Signaler<T>, listener :T->Dynamic) :Void
 	{
@@ -74,21 +77,19 @@ class SignalBondManager extends ArrayMultiMap<String, Bond>,
 	
 	public function startup():Void
 	{
-		com.pblabs.util.Preconditions.checkNotNull(context, "Context is null");
-		com.pblabs.util.Preconditions.checkArgument(Std.is(context, PBContext), "No PBContext");
-		cast(context, PBContext).signalObjectRemoved.bind(destroyBondOnEntity);
+		com.pblabs.util.Assert.isNotNull(game);
+		game.newActiveContextSignaler.bind(onNewContext);
 	}
 	
 	public function shutdown():Void
 	{
-		cast(context, PBContext).signalObjectRemoved.unbind(destroyBondOnEntity);
 		for (k in keys()) {
 			for (b in get(k)) {
 				b.destroy();
 			}
 		}
 		clear();
-		context = null;
+		game = null;
 	}
 	
 	public function destroyBondOnEntity (obj :IPBObject) :Dynamic
@@ -101,5 +102,11 @@ class SignalBondManager extends ArrayMultiMap<String, Bond>,
 				destroyBonds(c.entityPropString());
 			}
 		}
+	}
+	
+	function onNewContext (c :IPBContext) :Void
+	{
+		destroyBonds(OBJECT_DESTROYED_KEY);
+		set(OBJECT_DESTROYED_KEY, cast(c, PBContext).signalObjectRemoved.bind(destroyBondOnEntity));
 	}
 }

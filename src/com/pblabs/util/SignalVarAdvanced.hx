@@ -37,12 +37,12 @@ class SignalVarAdvanced<T>
 		// _value = null;
 	}
 	
-	inline function get_value () :T
+	function get_value () :T
 	{
 		return _value;
 	}
 	
-	inline function set_value (val :T) :T
+	function set_value (val :T) :T
 	{
 		if (!_value.equals(val)) {
 			_change.set(_value, val);
@@ -68,15 +68,18 @@ class StateChange<T>
 	public var oldValue :T;
 	public var newValue :T;
 	
-	public function new () {}
+	public function new (?oldvalue :T, ?newvalue: T)
+	{
+		set(oldvalue, newvalue);
+	}
 	
-	inline	public function set (oldvalue :T, newvalue: T) :Void
+	public function set (oldvalue :T, newvalue: T) :Void
 	{
 		this.oldValue = oldvalue;
 		this.newValue = newvalue;
 	}
 	
-	inline public function clear () :Void
+	public function clear () :Void
 	{
 	    oldValue = newValue = null;
 	}

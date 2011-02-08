@@ -9,7 +9,6 @@
 package com.pblabs.components.base;
 
 import com.pblabs.engine.core.EntityComponent;
-import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.serialization.ISerializable;
 
 import hsl.haxe.DirectSignaler;
@@ -36,7 +35,7 @@ class NotifyingValueComponent extends EntityComponent,
 		xml.createChild("value", _value);
 	}
 	
-	public function deserialize (xml :XML, context :IPBContext) :Dynamic
+	public function deserialize (xml :XML) :Dynamic
 	{
 		_value = xml.parseFloat("value");
 	}

@@ -403,17 +403,19 @@ class Log
 	public static function traceWithMethod( v : Dynamic, ?pos : haxe.PosInfos ) {
 		var tf = flash.Boot.getTrace();
 		var pstr = if( pos == null ) "(null)" else pos.fileName+":"+pos.lineNumber + "." +pos.methodName +"()";
-		untyped __global__["trace"](pstr +": "+__string_rec(v,""));
-		lines = lines.concat((pstr +": "+__string_rec(v,"")).split("\n"));
+		untyped __global__["trace"](pstr +": "+flash.Boot.__string_rec(v,""));
+		if( lines == null ) lines = [];
+		lines = lines.concat((pstr +": "+flash.Boot.__string_rec(v,"")).split("\n"));
 		tf.text = lines.join("\n");
 		var stage = flash.Lib.current.stage;
 		if( stage == null )
-		return;
+			return;
 		while( lines.length > 1 && tf.height > stage.stageHeight ) {
-				lines.shift();
+			lines.shift();
 			tf.text = lines.join("\n");
 		}
 	}
+	#end
 	
 	static function logTraceFlash (line :String) :Void
 	{
@@ -439,55 +441,13 @@ class Log
 		}
 	}
 	
-	//Copied from flash.Boot
-	private static function __string_rec( v : Dynamic, str : String ) {
-		var cname = untyped __global__["flash.utils.getQualifiedClassName"](v);
-		switch( cname ) {
-		case "Object":
-			var k : Array<String> = untyped __keys__(v);
-			var s = "{";
-			var first = true;
-			for( i in 0...k.length ) {
-				var key = k[i];
-				if( first )
-					first = false;
-				else
-					s += ",";
-				s += " "+key+" : "+__string_rec(v[untyped key],str);
-			}
-			if( !first )
-				s += " ";
-			s += "}";
-			return s;
-		case "Array":
-			var s = "[";
-			var i;
-			var first = true;
-			var a : Array<Dynamic> = v;
-			for( i in 0...a.length ) {
-				if( first )
-					first = false;
-				else
-					s += ",";
-				s += __string_rec(a[i],str);
-			}
-			return s+"]";
-		default:
-			switch( untyped __typeof__(v) ) {
-			case "function": return "<function>";
-			}
-		}
-		return new String(v);
-	}
-	#end
-	
 	static function __init__ () :Void
 	{
 		_setLevels = new Hash<Int>();
 		_targets = new List<LogTarget>();
 		#if flash
 			_setLevels.set("", if (flash.system.Capabilities.isDebugger) 0 else 4);//Debug or Off (0 or 4)
-			// haxe.Log.trace = customTraceFlash;
+			haxe.Log.trace = traceWithMethod;
 			_targets.add(new FlashLogTarget());
 		#else
 			_setLevels.set("", 4);//4==OFF, but the static OFF value not known here
@@ -520,26 +480,20 @@ class Log
 	
 	public static function setupPBGameLog () :Void
 	{
-		Log.showDateTime = false;
-		#if enable_logging
-		com.pblabs.util.Log.debug = debugStatic;
-		com.pblabs.util.Log.info = infoStatic;
-		com.pblabs.util.Log.warn = warningStatic;
-		com.pblabs.util.Log.error = errorStatic;
-		
 		#if flash
 		//Show the method names
 		haxe.Log.trace = traceWithMethod;
 		#end
 		
+		#if !no_logging
+		Log.showDateTime = false;
+		com.pblabs.util.Log.debug = debugStatic;
+		com.pblabs.util.Log.info = infoStatic;
+		com.pblabs.util.Log.warn = warningStatic;
+		com.pblabs.util.Log.error = errorStatic;
 		//Basic default, in case the user doesn't set anything
 		setLevel("", WARNING);
-		
-		#else
-		trace("Cannot setup " + Type.getClassName(Log) + ".  Add the option '-D enable_logging' in your .hxml file");
 		#end
-		
-		
 	}
 	
 	/** The module to which this log instance applies. */

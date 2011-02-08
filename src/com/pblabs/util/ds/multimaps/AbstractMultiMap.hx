@@ -51,7 +51,7 @@ class AbstractMultiMap <K, V>
 	}
 	#end
 	
-	inline function get_length () :Int
+	function get_length () :Int
 	{
 		return _size;
 	}

@@ -43,23 +43,23 @@ class Circle
 		return "[r=" + radius + ", x=" + x + ", y=" + y + "]";
 	}
 	
-	inline function get_x () :Float
+	function get_x () :Float
 	{
 		return center.x;
 	}
 	
-	inline function set_x (val :Float) :Float
+	function set_x (val :Float) :Float
 	{
 		center.x = val;
 		return val;
 	}
 	
-	inline function get_y () :Float
+	function get_y () :Float
 	{
 		return center.y;
 	}
 	
-	inline function set_y (val :Float) :Float
+	function set_y (val :Float) :Float
 	{
 		center.y = val;
 		return val;

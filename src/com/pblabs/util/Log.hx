@@ -36,10 +36,15 @@ import haxe.Stack;
  * transparently using any logger without a giant refactor.
  * Just replace the dynamic functions with your chosen logger.
  */
-#if !enable_logging extern #end 
+#if no_logging extern #end 
 class Log
 {
-	#if enable_logging
+	#if no_logging
+	public static inline function debug (ignored :Dynamic, ?ignored :Dynamic) :Void {}
+	public static inline function info (ignored :Dynamic, ?ignored :Dynamic) :Void {}
+	public static inline function warn (ignored :Dynamic, ?ignored :Dynamic) :Void {}
+	public static inline function error (ignored :Dynamic, ?ignored :Dynamic) :Void {}
+	#else
 	public static dynamic function debug (msg :Dynamic, ?infos : PosInfos) :Void
 	{
 		trace("debug: " + msg, infos);
@@ -59,16 +64,6 @@ class Log
 	{
 		trace("error: " + msg, infos);
 	}
-	
-	public static dynamic function print (msg :Dynamic, ?infos : PosInfos) :Void
-	{
-		haxe.Log.trace(msg, infos);
-	}
-	#else
-	public static inline function debug (msg :Dynamic) :Void {}
-	public static inline function info (msg :Dynamic) :Void {}
-	public static inline function warn (msg :Dynamic) :Void {}
-	public static inline function error (msg :Dynamic) :Void {}
 	#end
 	
 	inline public static function getStackTrace () :String

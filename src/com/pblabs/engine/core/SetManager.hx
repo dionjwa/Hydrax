@@ -8,22 +8,17 @@
  ******************************************************************************/
 package com.pblabs.engine.core;
 
-import com.pblabs.engine.core.IEntityComponent;
-import com.pblabs.engine.core.IPBContext;
-import com.pblabs.engine.core.IPBManager;
-import com.pblabs.engine.core.IPBObject;
-import com.pblabs.engine.core.PBObject;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ds.MultiMap;
-import com.pblabs.util.ds.Set;
-import com.pblabs.util.ds.Sets;
-import com.pblabs.util.ds.multimaps.ArrayMultiMap;
 import com.pblabs.util.ds.multimaps.SetMultiMap;
+
+import hsl.haxe.Bond;
 
 using Lambda;
 
 using com.pblabs.util.IterUtil;
 using com.pblabs.util.ReflectUtil;
+using com.pblabs.util.StringUtil;
 
 /**
   * Manages IPBObject set membership.  It's recommended to 
@@ -31,15 +26,22 @@ using com.pblabs.util.ReflectUtil;
   * the instance methods.
   *
   * An object can belong to any number of sets.  Removal of 
-  * sets do not automatically destroy the set member objects.
+  * sets do not automatically destroy the set member objects,
+  * however, destruction of Entity objects triggers set removal
   */
 class SetManager extends PBManagerBase,
 	implements haxe.rtti.Infos
 {
+	var _bonds :Array<Bond>;
+	
 	//The static functions are for "using" 
 	public static function getAllInSet(context :IPBContext, set :String) :Iterable<IPBObject>
 	{
-		return getSetManager(context).getObjectsInSet(set);
+		com.pblabs.util.Assert.isNotNull(context);
+		com.pblabs.util.Assert.isNotNull(getSetManager(context));
+		com.pblabs.util.Assert.isNotNull(getSetManager(context).getObjectsInSet(set));
+		com.pblabs.util.Assert.isFalse(set.isBlank());
+		return getSetManager(context).getObjectsInSet(set).filter(com.pblabs.util.Predicates.notNull);
 	}
 	
 	public static function addToSet (obj :IPBObject, set :String) :Void
@@ -58,9 +60,10 @@ class SetManager extends PBManagerBase,
 		getSetManager(obj.context).removeObjectFromAll(obj);
 	}
 	
-	public function new (game :PBGameBase)
+	public function new ()
 	{
-		super(game);
+		super();
+		_bonds = [];
 		_sets = SetMultiMap.create(String);
 		_objects = SetMultiMap.create(PBObject);
 	}
@@ -82,6 +85,12 @@ class SetManager extends PBManagerBase,
 	{
 		var it = _sets.get(set);
 		return it == null ? EMPTY_OBJECT_ARRAY : it;
+	}
+	
+	public function getEntitiesInSet(set :String) :Iterable<IEntity>
+	{
+		var it = _sets.get(set);
+		return cast(it == null ? EMPTY_OBJECT_ARRAY : it);
 	}
 	
 	public function getObjectSets (obj :IPBObject) :Iterable<String>
@@ -140,6 +149,8 @@ class SetManager extends PBManagerBase,
 	
 	override public function shutdown():Void
 	{
+		removeBonds();
+		_bonds = null;
 		_sets.clear();
 		_objects.clear();
 		_sets = null;
@@ -164,19 +175,23 @@ class SetManager extends PBManagerBase,
 		}
 	}
 	
-	override function contextSwitched (c :IPBContext) :Void
+	override function onNewContext () :Void
 	{
-		super.contextSwitched(c);
-		if (context != null) {
-			cast(context, PBContext).signalObjectRemoved.bind(onObjectDestroyed);
-		}
+		com.pblabs.util.Assert.isNotNull(context);
+	    _bonds.push(cast(context, PBContext).signalObjectRemoved.bind(onObjectDestroyed));		
 	}
 	
 	override function onContextRemoval () :Void
 	{
-		if (context != null) {
-			cast(context, PBContext).signalObjectRemoved.unbind(onObjectDestroyed);
+		removeBonds();
+	}
+	
+	function removeBonds () :Void
+	{
+		for (bond in _bonds) {
+			bond.destroy();
 		}
+		_bonds = [];
 	}
 	
 	static function getSetManager (context :IPBContext) :SetManager

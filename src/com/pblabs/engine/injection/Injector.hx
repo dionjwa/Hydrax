@@ -39,7 +39,7 @@ using com.pblabs.util.ReflectUtil;
   */
 class Injector
 {
-	inline public static var INJECT :String = "inject";
+	public static var INJECT :String = "inject";
 	public var parent (get_parent, set_parent) :Injector;
 	public var isParentInjector (get_isParentInjector, never) :Bool;
 	

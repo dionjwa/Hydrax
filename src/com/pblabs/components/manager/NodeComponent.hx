@@ -11,7 +11,6 @@ package com.pblabs.components.manager;
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
-import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.util.PBUtil;
@@ -115,12 +114,17 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 		parent = null;
 	}
 	
+	public function iterator () :Iterator<C>
+	{
+		return children.iterator();
+	}
+	
 	public function serialize (xml :XML) :Void
 	{
 		xml.createChild("parent", parent != null ? PBUtil.entityProp(cast(parent)) :parentProperty);
 	}
 	
-	public function deserialize (xml :XML, context :IPBContext) :Dynamic
+	public function deserialize (xml :XML) :Dynamic
 	{
 		parentProperty = cast(xml.parsePropertyReference("parent"));
 	}

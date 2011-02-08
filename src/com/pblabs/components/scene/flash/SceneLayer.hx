@@ -202,7 +202,7 @@ class SceneLayer extends BaseScene2DLayer<Scene2DManager, Scene2DComponent>
 	//	 render();
 	// }
 
-	inline function get_displayContainer () :DisplayObjectContainer
+	function get_displayContainer () :DisplayObjectContainer
 	{
 		return _displayContainer;
 	}

@@ -42,7 +42,6 @@ using com.pblabs.util.NumberUtil;
  
 class Profiler
 {
-	public static var enabled :Bool = true;
 	public static var indentAmount :Int = 3;
 	public static var nameFieldWidth :Int = 80;
 	
@@ -71,7 +70,6 @@ class Profiler
 
 		// If we're at the root then we can update our Internal enabled state.
 		if (_stackDepth == 0) {
-			_reallyEnabled = enabled;
 
 			if (_wantWipe) {
 				doWipe();
@@ -84,9 +82,6 @@ class Profiler
 
 		// Update stack depth and early out.
 		_stackDepth++;
-		if (!_reallyEnabled) {
-			return;
-		}
 
 		// Look for child; create if absent.
 		var newNode :ProfileInfo = _currentNode.children.get(blockName);
@@ -109,9 +104,6 @@ class Profiler
 	{
 		// Update stack depth and early out.
 		_stackDepth--;
-		if (!_reallyEnabled) {
-			return;
-		}
 
 		if (blockName != _currentNode.name){
 			throw "Mismatched Profiler.enter/Profiler.exit calls, got '" + _currentNode.name + "' but was expecting '" + blockName + "'";
@@ -256,13 +248,6 @@ class Profiler
 	
 	
 	static var _currentNode :ProfileInfo;
-
-	/**
-	 * Because we have to keep the stack balanced, we can only enabled/disable
-	 * when we return to the root node. So we keep an Internal flag.
-	 */
-	static var _reallyEnabled :Bool = true;
-
 	static var _rootNode :ProfileInfo;
 	static var _stackDepth :Int = 0;
 	static var _wantReport :Bool = false;
@@ -314,7 +299,6 @@ class ProfileInfo
 #else
 extern class Profiler
 {
-	public static var enabled :Bool = false;
 	public static var indentAmount :Int = 3;
 	public static var nameFieldWidth :Int = 70;
 
@@ -351,5 +335,3 @@ extern class Profiler
 	
 }
 #end
-
-

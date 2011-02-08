@@ -175,7 +175,7 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 		_sceneView == null;
 	}
 	
-	inline function get_layerCount () :Int
+	function get_layerCount () :Int
 	{
 		return children != null ? children.length : 0;
 	}

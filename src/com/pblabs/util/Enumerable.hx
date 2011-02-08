@@ -8,6 +8,7 @@
  ******************************************************************************/
 package com.pblabs.util;
 
+import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.util.Comparators;
 import com.pblabs.util.Equalable;
 import com.pblabs.util.Preconditions;
@@ -15,7 +16,11 @@ import com.pblabs.util.ds.Hashable;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.maps.StringMap;
 
+import haxe.Md5;
+
 using Lambda;
+
+using StringTools;
 
 using com.pblabs.util.IterUtil;
 
@@ -26,16 +31,28 @@ using com.pblabs.util.IterUtil;
 * limited to a specific subset of values.
 * 
 * HaXe enums don't have this convenient field accession, and allow multiple instances.
+*
+* The data in Enumerables can also be defined in xml files.  This is useful for editors, where
+* you may want to edit the constants.  Embed the xml file of the deserialized Enumerable e.g.
+* -resource rsrc/gamedata/YourEnumerable.xml@com.foo.YourEnumerable
+* Then call Enumerable.deserializeAllFromEmbeddedXML() at some point to load all embedded
+* Enumerables.  Currently only Float fields annotated with @serializable are automatically
+* serialized/deserialized, otherwise you can override the ISerializable methods.
 */
 class Enumerable<T>
-	implements Hashable, implements Equalable<Enumerable<T>>, implements Comparable<Enumerable<T>>  
+	implements Hashable, implements Equalable<Enumerable<T>>, implements Comparable<Enumerable<T>> 
 {
 	public var name (get_name, never) :String;
 	public var ordinal (get_ordinal, never) :Int;
-	
+
 	public static function values <T>(cls :Class<T>) :Iterable<T>
 	{
-		return cast(_enums.get(cls));
+		return cast(_enumsSorted.get(cls));
+	}
+	
+	public static function enumerables () :Iterable<Class<Dynamic>>
+	{
+		return _enums.keys().toArray();
 	}
 	
 	public static function names (cls :Class<Dynamic>) :Iterator<String>
@@ -85,6 +102,54 @@ class Enumerable<T>
 	}
 	
 	/**
+	  * Serializes all Enumerables of the class
+	  */
+	public static  function serializeEnumerable (xml :XML, cls :Class<Dynamic>) :Void
+	{
+		xml.set("type", Type.getClassName(cls));
+		com.pblabs.util.Assert.isNotNull(_enums.get(cls), "No Enumerable of type " + cls);
+		for (e in _enums.get(cls)) {
+			var child = XML.createElement(e.name);
+			xml.addChild(child);
+			e.serialize(child);
+		}
+	}
+	
+	/**
+	  * Deserializes all Enumerables of the class
+	  */
+	public static function deserializeEnumerable (xml :XML) :Dynamic
+	{
+		com.pblabs.util.Assert.isNotNull(xml);
+		com.pblabs.util.Assert.isNotNull(xml.get("type"));
+		var cls = Type.resolveClass(xml.get("type"));
+		com.pblabs.util.Assert.isNotNull(cls, "Resolved class is null from 'type' attribute=" + xml.get("type"));
+		com.pblabs.util.Assert.isNotNull(_enums.get(cls), "No Enumerable of type " + cls);
+		var enums = _enums.get(cls);
+		for (childXML in xml) {
+			if (childXML.nodeType == Xml.Element) {
+				var e = enums.get(childXML.nodeName);
+				com.pblabs.util.Assert.isNotNull("No Enumerable of type " + cls + " with name=" + childXML.nodeName);
+				e.deserialize(childXML);
+			}
+		}
+	}
+	
+	/**
+	  * Deserialize all Enumerables with embedded XML data.
+	  */
+	public static function deserializeAllFromEmbeddedXML () :Void
+	{
+		for (enumCls in _enums.keys()) {
+			if (haxe.Resource.listNames().has(Type.getClassName(enumCls))) {
+				com.pblabs.util.Log.debug("Deserializing  " + Type.getClassName(enumCls));
+				var root = Xml.parse(haxe.Resource.getString(Type.getClassName(enumCls)).trim());
+				Enumerable.deserializeEnumerable(root.firstChild());
+			}
+		}
+	}
+	
+	/**
 	  * Keep the constructor private
 	  */
 	private function new (name :String) 
@@ -95,18 +160,21 @@ class Enumerable<T>
 		
 		if (!_enums.exists(cls)) {
 			_enums.set(cls, new StringMap());
+			_enumsSorted.set(cls, new Array());
 		}
 		
 		var map = _enums.get(cls);
+		var arr =_enumsSorted.get(cls);
 		
 		Preconditions.checkArgument(!map.exists(name), "Enum already exists! " + this);
 		map.set(name, this);
+		arr.push(this);
 		_ordinal = map.size();
-		//Be default, the hashCode is the ordinal value.
-		_hashCode = _ordinal; 
+		//Make sure the hash values aren't close to each other
+		_hashCode = StringUtil.hashCode(Md5.encode(Type.getClassName(cls) + _ordinal)); 
 	}
 	
-	inline public function equals (other :Enumerable<T>) :Bool
+	public function equals (other :Enumerable<T>) :Bool
 	{
 		return other == this;
 	}
@@ -116,6 +184,47 @@ class Enumerable<T>
 		return _hashCode;
 	}
 
+	public function serialize (xml :XML) :Void
+	{
+		//Get the serializable fields by parsing the original xml
+		var root = Xml.parse(haxe.Resource.getString(ReflectUtil.getClassName(this)).trim()).firstChild();
+		var serializableFields = [];
+		
+		var breakout = false;
+		for (xmlChild in root) {
+			if (xmlChild.nodeType == Xml.Element) {
+				breakout = true;
+				for (field in xmlChild) {
+					if (field.nodeType == Xml.Element) {
+						serializableFields.push(field.nodeName);
+					}
+				}
+			}
+			if (breakout) break;
+		}
+		
+		for (fieldName in serializableFields) {
+			var fieldXml = Xml.createElement(fieldName);
+			xml.addChild(fieldXml);
+			fieldXml.addChild(Xml.createPCData(Std.string(Reflect.field(this, fieldName))));
+		}
+	}
+	
+	public function deserialize (xml :XML) :Dynamic
+	{
+		var cls = Type.getClass(this);
+		for (fieldElement in xml) {
+			if (fieldElement.nodeType != Xml.Element) {
+				continue;
+			}
+			var fieldName = fieldElement.nodeName;
+			var data = fieldElement.firstChild().nodeValue;
+			if (!Math.isNaN(Std.parseFloat(data))) {
+				Reflect.setField(this, fieldName, Std.parseFloat(data));
+			}
+		}
+	}
+	
 	public function toString () :String
 	{
 		return name;
@@ -143,6 +252,5 @@ class Enumerable<T>
 	
 	//Hidden static map of all Enumerable instances.
 	static var _enums :Map<Class<Dynamic>, Map<String, Enumerable<Dynamic>>> = new StringMap();
+	static var _enumsSorted :Map<Class<Dynamic>, Array<Enumerable<Dynamic>>> = new StringMap();
 }
-
-

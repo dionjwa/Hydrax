@@ -205,6 +205,8 @@ class Comparators
 	 */
 	public static function compareFloats (v1 :Float, v2 :Float) :Int
 	{
+		com.pblabs.util.Assert.isFalse(Math.isNaN(v1));
+		com.pblabs.util.Assert.isFalse(Math.isNaN(v2));
 		if (v1 > v2) {
 			return 1;
 		} else if (v1 < v2) {
@@ -215,6 +217,13 @@ class Comparators
 		// at this point, we know that at least one value is NaN. Luckily, there doesn't seem
 		// to be a -0 in actionscript, even though it's supposedly IEEE-754. TODO: test more?
 		return compareBooleans(Math.isNaN(v1), Math.isNaN(v2));
+	}
+	
+	public static function compareHashables (v1 :com.pblabs.util.ds.Hashable, v2 :com.pblabs.util.ds.Hashable) :Int
+	{
+		com.pblabs.util.Assert.isNotNull(v1);
+		com.pblabs.util.Assert.isNotNull(v2);
+		return compareInts(v1.hashCode(), v2.hashCode());
 	}
 }
 

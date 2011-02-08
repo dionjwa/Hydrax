@@ -70,9 +70,11 @@ class PBContext
 	var _tempPropertyInfo :PropertyInfo;
 	var _currentGroup :IPBGroup;
 	var _nameManager :NameManager;
+	var _isSetup :Bool;
 	
 	public function new (?name:String)
 	{
+		_isSetup = false;
 		if (name == null) {
 			initializeName();
 		} else {
@@ -206,29 +208,18 @@ class PBContext
 		return _nameManager.get(name);
 	}
 	
-	public function startup () :Void//#if flash ?parentContainer :flash.display.DisplayObjectContainer #end) :Void
+	public function setup () :Void
 	{
+		com.pblabs.util.Assert.isFalse(_isSetup, "Only call setup once");
+		_isSetup = true;
 		Preconditions.checkNotNull(injector, "WTF is the injector null?");
 		_nameManager = getManager(NameManager);
 		
 		Preconditions.checkNotNull(_nameManager, "WTF is the nameManager null?");
 		
-		// #if flash
-		// if (parentContainer != null) {
-		//	 Preconditions.checkNotNull(displayContainer, "displayContainer is null");
-		//	 parentContainer.addChild(displayContainer);
-		// } else {
-		//	 // _displayContainer =
-		//	 //If no parent passed in, assume we want to attach to the stage
-		//	 flash.Lib.current.addChild(displayContainer);
-		// }
-		// #end
-		
 		injector.mapValue(IPBContext, this);
 		Preconditions.checkArgument(injector.getMapping(IPBContext) == this, "Injector borked");
 
-		// Preconditions.checkNotNull(injector.getMapping(IPBGroup), "No IPBGroup in injector");
-		
 		// Set up root and current group.
 		//The root group cannot easily be injected due to 
 		//conflicting root groups/contexts at this stage.
@@ -247,13 +238,26 @@ class PBContext
 		// Do manager startup.
 		initializeManagers();
 	}
+	
+	public function enter () :Void
+	{
+	}
+	
+	public function exit () :Void
+	{
+	}
 
 	public function initializeManagers():Void
 	{
 		// Mostly will come from subclasses.
 		//Some core classes
 		//Needed for correct operation of many core components
-		registerManager(com.pblabs.engine.core.SignalBondManager, new com.pblabs.engine.core.SignalBondManager());
+		// registerManager(com.pblabs.engine.core.SignalBondManager, new com.pblabs.engine.core.SignalBondManager());
+		// registerManager(SetManager, new SetManager());
+		
+		//Some core managers that
+		// registerManager(SignalBondManager, new SignalBondManager());
+		// registerManager(SetManager, new SetManager());
 	}
 
 	// public function registerManager <T> (clazz :Class<T>, 
@@ -635,7 +639,7 @@ class PBContext
 	// }
 	// #end
 	
-	inline function get_processManager () :IProcessManager
+	function get_processManager () :IProcessManager
 	{
 		return _processManager;
 	}
@@ -650,7 +654,7 @@ class PBContext
 		return new ProcessManager();	
 	}
 	
-	inline static var EMPTY_ARRAY :Array<Dynamic> = [];
+	static var EMPTY_ARRAY :Array<Dynamic> = [];
 }
 
 /**
@@ -669,7 +673,7 @@ class PropertyInfo
 	public var propertyName :String;
 	public var isRuntimeProperty :Bool;
 
-	inline public function getValue <T> (p :PropertyReference<T>) :T
+	public function getValue <T> (p :PropertyReference<T>) :T
 	{
 		Preconditions.checkNotNull(p, "PropertyReference cannot be null");
 		if(propertyName != null) {
@@ -685,7 +689,7 @@ class PropertyInfo
 		}
 	}
 
-	inline public function setValue<T> (value :Dynamic, ?p :PropertyReference<T>) :Void
+	public function setValue<T> (value :Dynamic, ?p :PropertyReference<T>) :Void
 	{
 		if (propertyName != null) {
 			// if (p == null || p.setterName == null && !setCheckForSignalVars(Reflect.field(propertyParent,  propertyName), value)) {
@@ -697,7 +701,7 @@ class PropertyInfo
 		}
 	}
 
-	inline public function clear():Void
+	public function clear():Void
 	{
 		propertyParent = null;
 		propertyName = null;
@@ -728,5 +732,5 @@ class PropertyInfo
 	//	 }
 	// }
 	
-	inline static var EMPTY_ARRAY :Array<Dynamic> = [];
+	static var EMPTY_ARRAY :Array<Dynamic> = [];
 }

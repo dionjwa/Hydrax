@@ -60,7 +60,14 @@ class SceneUtil
 	
 	public static function setLocation (e :IEntity, x :Float, y :Float) :Void
 	{
+		com.pblabs.util.Assert.isNotNull(e);
 		e.lookupComponent(Coordinates2D).setLocation(x, y);
+	}
+	
+	public static function getLocation (e :IEntity) :Vector2
+	{
+		com.pblabs.util.Assert.isNotNull(e);
+		return e.lookupComponent(Coordinates2D).point;
 	}
 	
 	public static function setAngle (e :IEntity, angle :Float) :Void

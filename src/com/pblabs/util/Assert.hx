@@ -75,9 +75,10 @@ class Assert
 		if (value < low || value > high) fail(info == null ? "isWithinRange" : info, posInfos);
 	}
 	#else
-	public static inline function isWithinRange (ignored :Dynamic, ignored :Dynamic, ignored :Dynamic ?info :Dynamic) :Void {}
+	public static inline function isWithinRange (ignored :Dynamic, ignored :Dynamic, ignored :Dynamic) :Void {}
 	#end
-	
+
+	#if debug	
 	inline static function fail (message :String, info:haxe.PosInfos) :Void
 	{
 		//Some javascript targets don't show exceptions, so at least log the error
@@ -86,4 +87,5 @@ class Assert
 		#end
 		throw "Assertion '" + message + "' failed in file " + info.fileName + ", line " + info.lineNumber + ", " + info.className + "::" + info.methodName;
 	}
+	#end
 }

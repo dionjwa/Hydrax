@@ -11,7 +11,6 @@ package com.pblabs.components.input;
 import com.pblabs.components.scene.BaseScene2DComponent;
 import com.pblabs.components.scene.BaseScene2DManager;
 import com.pblabs.engine.core.IPBContext;
-import com.pblabs.engine.core.SetManager;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
@@ -64,8 +63,6 @@ class InputManager extends BaseInputManager
 	var _isZooming :Bool;
 	@inject
 	var _mouse :MouseInputManager;
-	@inject
-	var _sets :SetManager;
 	
 	#if js
 	@inject
@@ -138,7 +135,6 @@ class InputManager extends BaseInputManager
 	override public function startup () :Void
 	{
 		super.startup();
-		_sets = Preconditions.checkNotNull(_sets);
 		bindSignals();
 		_timer = new haxe.Timer(Std.int(1000.0 / 30));
 		_timer.run = onFrame;
@@ -315,7 +311,11 @@ class InputManager extends BaseInputManager
 			return;
 		}
 		
-		var cUnderMouse = lookupComponentsUnderMouse(adjustedM)[0];
+		// for (m in lookupComponentsUnderMouse(adjustedM)) {
+		// 	trace("under mouse " + m.owner.name);
+		// }
+		var underMouse = lookupComponentsUnderMouse(adjustedM);
+		var cUnderMouse = underMouse[0];
 		_deviceDownComponent = cUnderMouse;
 		
 		
@@ -329,6 +329,8 @@ class InputManager extends BaseInputManager
 		_deviceDownLoc = adjustedM.clone();
 		_inputCache.inputComponent = cUnderMouse;
 		_inputCache.inputLocation = adjustedM.clone();
+		_inputCache.inputComponents = underMouse;
+		
 		// .set(cUnderMouse, adjustedM.clone());
 		
 		var mouseInput = _deviceDownComponent;// != null ? _deviceDownComponent.owner.lookupComponentByType(MouseInputComponent) : null;
@@ -528,20 +530,13 @@ class InputManager extends BaseInputManager
 		com.pblabs.util.Assert.isNotNull(mouseLoc);
 		com.pblabs.util.Assert.isNotNull(_checked);
 		com.pblabs.util.Assert.isNotNull(_tempVec);
-		// trace("lookupComponentsUnderMouse");
 		_checked.clear();
 		
-		// trace("objects in mouse set: " + _sets.getObjectsInSet(IInteractiveComponent.INPUT_GROUP).count());
 		underMouse = new Array<MouseInputComponent>();
 		var inputComp :MouseInputComponent;
-		// var mouseLoc = m != null ? new Vector2(m.x, m.y) : getMouseLoc();
 		
 		com.pblabs.util.Assert.isNotNull(_components);
-		for (c in _components) {//_sets.getObjectsInSet(INPUT_SET)) {
-			// if (!Std.is(c, IEntity)) {
-			//	 // com.pblabs.util.Log.debug("weird, c is not an entity");
-			//	 continue;
-			// }
+		for (c in _components) {
 			
 			com.pblabs.util.Assert.isNotNull(c);
 			
@@ -606,10 +601,11 @@ class InputManager extends BaseInputManager
 		// if (underMouse.length > 1) {
 		//	 underMouse.sort(Comparators.compareComparables);
 		// }
+		underMouse.sort(com.pblabs.util.Comparators.compareComparables);
 		return underMouse;
 	}
 	
-	inline function getMouseLoc () :Vector2
+	function getMouseLoc () :Vector2
 	{
 		#if flash
 		_mouseLoc.x = flash.Lib.current.stage.mouseX;
@@ -629,8 +625,6 @@ class InputManager extends BaseInputManager
 	}
 	
 	var _components :Array<MouseInputComponent>;
-	// var _mouse :MouseInputManager;
-	// var _sets :SetManager;
 	var _deviceDownComponent :MouseInputComponent;
 	var _deviceDownComponentLoc :Vector2;
 	var _deviceDownLoc :Vector2;

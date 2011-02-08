@@ -33,9 +33,6 @@ class PBGame extends PBGameBase
 {
 	public function new() 
 	{
-		//Set the com.pblabs.engine.debug.Log methods
-		//to be from the Log implementation @ com.pblabs.util
-		com.pblabs.engine.debug.Log.setupPBGameLog();
 		super();
 		startup();
 	}
@@ -48,9 +45,13 @@ class PBGame extends PBGameBase
 		registerManager(PBGameBase, this);
 		
 		// Bring in the standard managers.
+		
 		registerManager(NameManager, new NameManager());
 		registerManager(IProcessManager, new ProcessManager());
-		registerManager(SetManager, new SetManager(this));
+		
+		registerManager(SignalBondManager, new SignalBondManager());
+		registerManager(SetManager, new SetManager());
+		
 		// var view = new SceneView();
 		// #if flash
 		// displayContainer.addChild(view.layer);

@@ -44,8 +44,6 @@ class Vector2 extends XY,
 	 */
 	public function new (?x :Float = 0, ?y :Float = 0)
 	{
-		com.pblabs.util.Assert.isFalse(Math.isNaN(x), com.pblabs.util.Log.getStackTrace());
-		com.pblabs.util.Assert.isFalse(Math.isNaN(y), com.pblabs.util.Log.getStackTrace());
 		this.x = x;
 		this.y = y;
 	}
@@ -78,7 +76,7 @@ class Vector2 extends XY,
 	/**
 	 * Returns the angle represented by this Vector2, in radians.
 	 */
-	inline function get_angle ():Float
+	function get_angle ():Float
 	{
 		var angle:Float = Math.atan2(y, x);
 		return (angle >= 0 ? angle : angle + (2 * Math.PI));
@@ -87,7 +85,7 @@ class Vector2 extends XY,
 	/**
 	 * Returns this vector's length.
 	 */
-	inline function get_length ():Float
+	function get_length ():Float
 	{
 		return Math.sqrt(x * x + y * y);
 	}
@@ -95,7 +93,7 @@ class Vector2 extends XY,
 	/**
 	 * Sets this vector's length.
 	 */
-	inline function set_length (newLen :Float):Float
+	function set_length (newLen :Float):Float
 	{
 		var scale:Float = newLen / this.length;
 
@@ -116,7 +114,7 @@ class Vector2 extends XY,
 	 * Rotates the vector in place by 'radians'.
 	 * Returns a reference to 'this', for chaining.
 	 */
-	public inline function rotateLocal (radians :Float) :Vector2
+	public function rotateLocal (radians :Float) :Vector2
 	{
 		// if (radians == 0) {
 		//	 return this;

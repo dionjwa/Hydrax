@@ -47,12 +47,12 @@ class SignalVar<T>
 	// 	_value = null;
 	// }
 	
-	inline function get_value () :T
+	function get_value () :T
 	{
 		return _value;
 	}
 	
-	inline function set_value (val :T) :T
+	function set_value (val :T) :T
 	{
 		_value = val;
 		signaler.dispatch(_value);

@@ -57,7 +57,7 @@ interface ISerializable
 	* 
 	* @see ../../../../../Examples/DeserializingObjects.html Deserializing Objects
 	*/
-	function deserialize (xml :XML, context :IPBContext) :Dynamic;
+	function deserialize (xml :XML) :Dynamic;
 }
 
 

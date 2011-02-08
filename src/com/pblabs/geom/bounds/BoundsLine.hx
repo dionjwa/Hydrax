@@ -34,7 +34,7 @@ class BoundsLine extends AbstractBounds<BoundsLine>
 		_lineSegment = new LineSegment(_p1, _p2);
 	}
 
-	inline function getLineSegment ():LineSegment
+	function getLineSegment ():LineSegment
 	{
 		return _lineSegment;
 	}

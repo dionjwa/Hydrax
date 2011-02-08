@@ -10,7 +10,6 @@ package com.pblabs.components.base;
 
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntity;
-import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.geom.Vector2;
@@ -103,7 +102,7 @@ class LocationComponent extends EntityComponent,
 		xml.createChild("y", _vec.y);
 	}
 	
-	public function deserialize (xml :XML, context :IPBContext) :Dynamic
+	public function deserialize (xml :XML) :Dynamic
 	{
 		_vec.x = xml.parseFloat("x");
 		_vec.y = xml.parseFloat("y");

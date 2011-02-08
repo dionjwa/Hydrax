@@ -25,12 +25,12 @@ class BoundedComponent extends EntityComponent
 		_bounds = bounds;
 	}
 
-	inline function get_bounds ():IBounds<Dynamic>
+	function get_bounds ():IBounds<Dynamic>
 	{
 		return _bounds;
 	}
 
-	inline function set_bounds (val :IBounds<Dynamic>):IBounds<Dynamic>
+	function set_bounds (val :IBounds<Dynamic>):IBounds<Dynamic>
 	{
 		_bounds = val;
 		return val;

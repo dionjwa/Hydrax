@@ -80,7 +80,12 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
 	
 	public function compareTo (a :MouseInputComponent) :Int
 	{
-		return compare(this, a);
+		return compareInternal(this, a);
+	}
+	
+	dynamic public function compareInternal (a :MouseInputComponent, b :MouseInputComponent) :Int
+	{
+	    return compare(a, b);
 	}
 	
 	public function getPoint () :Vector2

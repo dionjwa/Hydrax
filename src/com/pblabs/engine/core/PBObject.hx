@@ -12,12 +12,7 @@
  ******************************************************************************/
 package com.pblabs.engine.core;
 
-import com.pblabs.engine.core.IPBContext;
-import com.pblabs.engine.core.IPBGroup;
-import com.pblabs.engine.core.IPBObject;
-import com.pblabs.engine.core.PBContext;
 import com.pblabs.util.Preconditions;
-import com.pblabs.util.StringUtil;
 
 /**
  * Base implementation of a named object that can exist in PBSets or PBGroups.
@@ -63,7 +58,7 @@ class PBObject
 		return c;
 	}
 	
-	inline function get_owningGroup() :IPBGroup
+	function get_owningGroup() :IPBGroup
 	{
 		return _owningGroup;
 	}
@@ -85,12 +80,12 @@ class PBObject
 		return value;
 	}
 	
-	inline function get_name() :String
+	function get_name() :String
 	{
 		return _name;
 	}
 	
-	inline function set_name(name :String) :String
+	function set_name(name :String) :String
 	{
 		Preconditions.checkArgument(_name == null, this + " already has a name");
 		_name = name;
@@ -121,9 +116,9 @@ class PBObject
 	}
 	
 	#if debug
-	dynamic public function toString () :String
+	public function toString () :String
 	{
-		return StringUtil.objectToString(this, ["name"]);
+		return name;//StringUtil.objectToString(this, ["name"]);
 	}
 	#end
 	
@@ -133,5 +128,3 @@ class PBObject
 	}
 	
 }
-
-

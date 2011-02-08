@@ -163,8 +163,8 @@ class ReflectUtil
 	public static function field (obj :Dynamic, field :String) :Dynamic
 	{
 		if (Lambda.has(Type.getInstanceFields(Type.getClass(obj)), "get_" + field)) {
-		//Probably faster
-		// if (Reflect.field(obj, "get_" + field) != null) {
+		//Probably faster, but sometimes doesn't work
+		// if (Reflect.field(obj, "get_" + field) != null) {cg
 			return Reflect.callMethod(obj, Reflect.field(obj, "get_" + field), EMPTY_ARRAY);
 		} else {
 			return Reflect.field(obj, field);
@@ -173,7 +173,8 @@ class ReflectUtil
 	
 	public static function setField (obj :Dynamic, field :String, val :Dynamic) :Void
 	{
-		if (Reflect.field(obj, "set_" + field) != null) {
+		// if (Reflect.field(obj, "set_" + field) != null) {
+		if (Reflect.hasField(obj, "set_" + field)) {
 			Reflect.callMethod(obj, Reflect.field(obj, "set_" + field), [val]);
 		} else {
 			Reflect.setField(obj, field, val);

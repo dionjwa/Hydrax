@@ -201,7 +201,7 @@ class Serializer
 			
 			// Dispatch our special cases - entities and ISerializables.
 			if (Std.is(object, ISerializable)) {
-				return cast(object, ISerializable).deserialize(xml, context);
+				return cast(object, ISerializable).deserialize(xml);
 			}
 			else if (Std.is(object, IEntity)) {
 				_currentEntity = cast(object, IEntity);

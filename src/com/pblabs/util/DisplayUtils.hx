@@ -291,6 +291,20 @@ class DisplayUtils
 		return children;
 	}
 
+	public static function getChildNamed (parent :DisplayObjectContainer, name :String) :DisplayObject
+	{
+		var namedChild :DisplayObject = null;
+		var getname = function (d :DisplayObject) :Bool {
+			if (d.name == name) {
+				namedChild = d;
+				return true;
+			}
+			return false;
+		}
+		com.pblabs.util.DisplayUtils.applyToHierarchy(parent, getname);
+		return namedChild;
+	}
+	
 	public static function getGlobalScale (d :DisplayObject, ?currentScale :Float = 1) :Float
 	{
 		if (d == null || d.stage == null || d == d.stage) {

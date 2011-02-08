@@ -46,7 +46,7 @@ class Entity extends PBObject,
 	implements IEntity
 {
 	public var destroyedSignal (get_destroyedSignal, null):Signaler<IEntity>;
-	inline function get_destroyedSignal () :Signaler<IEntity>
+	function get_destroyedSignal () :Signaler<IEntity>
 	{
 		//Lazily create
 		if (this.destroyedSignal == null) {
@@ -127,8 +127,6 @@ class Entity extends PBObject,
 		//The context destruction dispatcher
 		cast(context, PBContext).dispatchObjectDestroyed(this);
 		
-		// destroyedSignal.unbindAll();
-		
 		// Unregister our components.
 		for (c in _components)
 		{
@@ -144,7 +142,8 @@ class Entity extends PBObject,
 		}
 		
 		// And remove their references from the dictionary.
-		for (c in _components) {
+		for (c in _components.array()) {
+			com.pblabs.util.Assert.isNotNull(c, "How can the component be null?");
 			_components.remove(c.name);
 			#if debug
 			context.getManager(com.pblabs.engine.time.IProcessManager).callLater(createDestructionCheckCallback(c));
@@ -152,9 +151,18 @@ class Entity extends PBObject,
 			#end
 		}
 		
+		if (_deferredComponents != null && _deferredComponents.length > 0) {
+			for (p in _deferredComponents) {
+				p.item.unregister();
+			}
+		}
+		
 		// Get out of the NameManager and other general cleanup stuff.
 		super.destroy();
 		com.pblabs.util.Assert.isFalse(destroyedSignal.isListenedTo);
+		_components = null;
+		destroyedSignal = null;
+		_deferredComponents = null;
 	}
 	
 	#if debug
@@ -240,18 +248,18 @@ class Entity extends PBObject,
 				}
 			}
 			
-			try {
+			// try {
 				com.pblabs.util.Log.debug("deserializing component " + componentName);
 				// Deserialize the XML into the component.
 				serializer.deserialize(context, component, componentXML);
 				com.pblabs.util.Log.debug("deserialized component " + componentName);
-			} catch (e :Dynamic) {
-				com.pblabs.util.Log.error("Failed deserializing component " + componentName + "'  due to :" + e + "\n" + com.pblabs.util.Log.getStackTrace());
-				#if debug
-				// com.pblabs.engine.debug.com.pblabs.util.Log.setLevel(Type.getClass(component), com.pblabs.engine.debug.com.pblabs.util.Log.DEBUG);
-				com.pblabs.engine.debug.Log.setLevel("", com.pblabs.engine.debug.Log.DEBUG);
-				#end
-			}
+			// } catch (e :Dynamic) {
+			// 	com.pblabs.util.Log.error("Failed deserializing component " + componentName + "'  due to :" + e + "\n" + com.pblabs.util.Log.getStackTrace());
+			// 	#if debug
+			// 	// com.pblabs.engine.debug.com.pblabs.util.Log.setLevel(Type.getClass(component), com.pblabs.engine.debug.com.pblabs.util.Log.DEBUG);
+			// 	com.pblabs.engine.debug.Log.setLevel("", com.pblabs.engine.debug.Log.DEBUG);
+			// 	#end
+			// }
 		}
 		
 		// Deal with set membership.
@@ -317,6 +325,7 @@ class Entity extends PBObject,
 	
 	public function removeComponent(component:IEntityComponent):Void
 	{
+		com.pblabs.util.Assert.isNotNull(component, "Why is the component null?");
 		// Update the dictionary.
 		if (component.isRegistered && !doRemoveComponent(component))
 			return;
@@ -480,6 +489,7 @@ class Entity extends PBObject,
 			//Reset it!
 			com.pblabs.util.Log.debug("    reseting " + component.name);
 			component.reset();				
+			com.pblabs.util.Log.debug("    done reseting " + component.name);
 		}
 		com.pblabs.util.Log.debug("  finished reseting");
 		// if (bonds != null) {

@@ -769,7 +769,7 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
 		_rootSprite.removeChild(layer.displayContainer);
 	}
 	
-	inline function get_displayContainer () :DisplayObjectContainer
+	function get_displayContainer () :DisplayObjectContainer
 	{
 		return _rootSprite;
 	}

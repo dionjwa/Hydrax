@@ -48,10 +48,13 @@ class PBGameBase
 	
 	public function new()
 	{
+		//Start profiling.  This is disabled if the "profiler" compiler key command is not set
+		com.pblabs.engine.debug.Profiler.bindToKey();
 	}
 	
 	public function startup () :Void
 	{
+		//Called by the constructor.
 		newActiveContextSignaler = new DirectSignaler(this);
 		_managers = Maps.newHashMap(String);
 
@@ -113,7 +116,7 @@ class PBGameBase
 			if (Reflect.hasField(ctx, "setInjectorParent") || Type.getInstanceFields(type).has("setInjectorParent")) {
 				Reflect.callMethod(ctx, Reflect.field(ctx, "setInjectorParent"), [injector]);
 			}
-			ctx.startup();
+			ctx.setup();
 			
 			com.pblabs.util.Assert.isTrue(ctx.injector.getMapping(IPBContext) == ctx);
 			if (ctx.getManager(IProcessManager) != null && Std.is(ctx.getManager(IProcessManager), ProcessManager)) {
@@ -177,6 +180,9 @@ class PBGameBase
 		for (c in _contexts) {
 			c.getManager(IProcessManager).isRunning = false;
 		}
+		if (_contexts.length > 0) {
+			_contexts[_contexts.length].exit();
+		}
 	}
 	
 	function startTopContext () :Void
@@ -187,7 +193,9 @@ class PBGameBase
 			com.pblabs.util.Assert.isNotNull(currentContext.getManager(IProcessManager), "Where is the IProcessManager?");
 			#end
 			cast(currentContext.getManager(IProcessManager), ProcessManager).isRunning = true;
+			//Dispatch the signaller first, so that managers are notified.
 			newActiveContextSignaler.dispatch(currentContext);
+			currentContext.enter();
 		} 
 	}
 	
@@ -206,5 +214,5 @@ class PBGameBase
 		// Mostly will come from subclasses.
 	}
 	
-	inline static var EMPTY_ARRAY :Array<Dynamic> = [];
+	 static var EMPTY_ARRAY :Array<Dynamic> = [];
 }

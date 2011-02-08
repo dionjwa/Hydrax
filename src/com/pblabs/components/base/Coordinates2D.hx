@@ -1,7 +1,7 @@
 package com.pblabs.components.base;
 
 import com.pblabs.engine.core.EntityComponent;
-import com.pblabs.engine.core.IPBContext;
+import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.geom.Vector2;
@@ -19,6 +19,11 @@ using com.pblabs.util.XMLUtil;
 class Coordinates2D extends EntityComponent,
 	implements ISerializable
 {
+	public static function getLocation (c :IEntity) :Vector2	
+	{
+	    return c.lookupComponent(Coordinates2D).point;
+	}
+	
 	public var point(get_point, set_point) : Vector2;
 	
 	public var x (get_x, set_x) : Float;
@@ -117,7 +122,7 @@ class Coordinates2D extends EntityComponent,
 		xml.createChild("angle", _angle);
 	}
 	
-	public function deserialize (xml :XML, context :IPBContext) :Dynamic
+	public function deserialize (xml :XML) :Dynamic
 	{
 		_vec.x = xml.parseFloat("x");
 		_vec.y = xml.parseFloat("y");

@@ -71,13 +71,7 @@ class RectangleShape extends ShapeComponent
         g.beginFill(this.fillColor, 1);
         g.drawRect(-width / 2, -height / 2, width, height);
         g.endFill();
-        var lineThickness = 1.0;// / (parent != null && parent.parent != null ? parent.parent.zoom : 1);
-        // trace("parent=" + parent);
-        // if (parent != null) {
-        // 	trace("parent.parent=" + parent.parent);
-        // 	trace("parent.parent.zoom=" + parent.parent.zoom);
-        // }
-        // trace("lineThickness=" + lineThickness);
+        var lineThickness = 1.0;
         g.lineStyle(borderWidth, borderColor, lineThickness);
         g.drawRect(-width / 2, -height / 2, width - borderWidth, height - borderWidth);
         #elseif css

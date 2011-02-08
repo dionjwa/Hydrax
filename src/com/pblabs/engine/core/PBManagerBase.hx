@@ -1,23 +1,26 @@
 package com.pblabs.engine.core;
 
 /**
-  * Manager that listens for changes in the IPBContext
+  * Manager that listens for changes in the IPBContext.
+  * Designed to be initialized in the PBGame, not the PBContext 
   */
 class PBManagerBase
-	implements IPBManager
+	implements IPBManager, implements haxe.rtti.Infos
 {
+	// @inject
 	var context :IPBContext;
+	@inject
 	var game :PBGameBase;
 	
-	public function new (game :PBGameBase)
+	public function new ()
 	{
-		com.pblabs.util.Assert.isNotNull(game);
-		game.newActiveContextSignaler.bind(contextSwitched);
+		
 	}
 	
 	public function startup () :Void
 	{
-	    
+	    com.pblabs.util.Assert.isNotNull(game);
+		game.newActiveContextSignaler.bind(contextSwitched);
 	}
 	
 	public function shutdown () :Void
@@ -34,9 +37,16 @@ class PBManagerBase
 			onContextRemoval();
 		}
 		context = c;
+		if (context != null) {
+			onNewContext();
+		}
 	}
 	
 	function onContextRemoval () :Void
+	{
+	}
+	
+	function onNewContext () :Void
 	{
 	}
 }

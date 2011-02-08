@@ -333,7 +333,9 @@ class ProcessManager implements IProcessManager
 			var processObject = new ProcessObjectTicked();
 			processObject.listener = object;
 			processObject.priority = priority;
+			#if profiler
 			processObject.profilerKey = ReflectUtil.getClassName(object);
+			#end
 			
 			if (position < 0 || position >= list.length)
 				list.push(processObject);
@@ -343,7 +345,9 @@ class ProcessManager implements IProcessManager
 			var processObject = new ProcessObjectAnimated();
 			processObject.listener = object;
 			processObject.priority = priority;
+			#if profiler
 			processObject.profilerKey = ReflectUtil.getClassName(object);
+			#end
 			
 			if (position < 0 || position >= list.length)
 				list.push(processObject);
@@ -473,10 +477,14 @@ class ProcessManager implements IProcessManager
 				if(object == null)
 					continue;
 				
+				#if profiler 
 				com.pblabs.engine.debug.Profiler.enter(object.profilerKey);
+				#end
 				object.listener.onTick(SECONDS_PER_TICK);
 				// (cast( object.listener, ITickedObject)).onTick(SECONDS_PER_TICK);
+				#if profiler
 				com.pblabs.engine.debug.Profiler.exit(object.profilerKey);
+				#end
 			}
 			_duringAdvance = false;
 			
@@ -518,10 +526,14 @@ class ProcessManager implements IProcessManager
 			if(animatedObject == null)
 				continue;
 			
+			#if profiler
 			com.pblabs.engine.debug.Profiler.enter(animatedObject.profilerKey);
+			#end
 			// (cast( animatedObject.listener, IAnimatedObject)).onFrame(deltaTime);
 			animatedObject.listener.onFrame(deltaTime);
+			#if profiler
 			com.pblabs.engine.debug.Profiler.exit(animatedObject.profilerKey);
+			#end
 		}
 		_duringAdvance = false;
 		com.pblabs.engine.debug.Profiler.exit("frame");
@@ -671,12 +683,16 @@ class ProcessObjectTicked
 {
 	public function new () 
 	{
+		#if profiler
 		profilerKey = null;
+		#end
 		priority = 0.0;
 		listener = null;
 	}
 	
+	#if profiler
 	public var profilerKey :String;
+	#end
 	public var listener :ITickedObject;
 	public var priority :Float;
 }
@@ -685,12 +701,16 @@ class ProcessObjectAnimated
 {
 	public function new () 
 	{
+		#if profiler
 		profilerKey = null;
+		#end
 		priority = 0.0;
 		listener = null;
 	}
 	
+	#if profiler
 	public var profilerKey :String;
+	#end
 	public var listener :IAnimatedObject;
 	public var priority :Float;
 }

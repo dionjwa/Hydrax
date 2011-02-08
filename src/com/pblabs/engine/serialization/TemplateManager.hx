@@ -183,7 +183,7 @@ class TemplateManager
 		Preconditions.checkNotNull(context, "context is null");
 		Profiler.enter("instantiateEntity");
 		var entity;
-		try {
+		// try {
 			// Check for a callback.
 			if (_things.exists(name)) {
 				// com.pblabs.util.Log.debug("thing exists=" + _things.get(name));
@@ -195,13 +195,13 @@ class TemplateManager
 					// com.pblabs.util.Log.debug("creating entity from a callback");
 					var thing :ThingReference = _things.get(name);
 					var instantiated = null;
-					try {
+					// try {
 						instantiated = thing.createEntity();
 						com.pblabs.util.Log.debug("entity created from callback");
-					}
-					catch (e :Dynamic) {
-						com.pblabs.util.Log.error("createEntity callback error: " + e + "\n" + com.pblabs.util.Log.getStackTrace());
-					}
+					// }
+					// catch (e :Dynamic) {
+					// 	com.pblabs.util.Log.error("createEntity callback error: " + e + "\n" + com.pblabs.util.Log.getStackTrace());
+					// }
 					
 					if(instantiated == null) {
 						throw "entityCallback returned NULL!";
@@ -222,12 +222,12 @@ class TemplateManager
 			entity = instantiateEntityFromXML(xml, context);
 			// entity.deferring = false;//???
 			Profiler.exit("instantiateEntity");
-		}
-		catch (e :Dynamic) {
-			com.pblabs.util.Log.error("Failed instantiating '" + name + "' due to :" + e.toString() + "\n" + e.getStackTrace());
-			entity = null;
-			Profiler.exit("instantiateEntity");
-		}
+		// }
+		// catch (e :Dynamic) {
+		// 	com.pblabs.util.Log.error("Failed instantiating '" + name + "' due to :" + e.toString() + "\n" + e.getStackTrace());
+		// 	entity = null;
+		// 	Profiler.exit("instantiateEntity");
+		// }
 		
 		return entity;
 	}
@@ -289,7 +289,7 @@ class TemplateManager
 		
 		var entity :IEntity;
 		var name = null;
-		try {
+		// try {
 			// Get at the name...
 			name = xml.get("name");
 			if (xml.nodeName == "template") {
@@ -298,18 +298,18 @@ class TemplateManager
 
 			if (!xml.get("template").isBlank() && hasEntityCallback(xml.get("template"))) {
 				com.pblabs.util.Log.debug("instantiating entity '" + name + "' from a callback");
-				try {
+				// try {
 					entity = instantiateEntity(xml.get("template"), context);
 					entity.deferring = true;
-				} catch (e :Dynamic) {
-					#if flash
-					com.pblabs.util.Log.error("Failed instantiating '" + name + "' from an entity callback due to :" + e + "\n" + cast(e, flash.errors.Error).getStackTrace());
-					#else
-					com.pblabs.util.Log.error("Failed instantiating '" + name + "' from an entity callback due to :" + e + "\n" + com.pblabs.util.Log.getStackTrace());
-					#end
-					Profiler.exit("instantiateEntityFromXML");
-					return null;
-				}
+				// } catch (e :Dynamic) {
+				// 	#if flash
+				// 	com.pblabs.util.Log.error("Failed instantiating '" + name + "' from an entity callback due to :" + e + "\n" + cast(e, flash.errors.Error).getStackTrace());
+				// 	#else
+				// 	com.pblabs.util.Log.error("Failed instantiating '" + name + "' from an entity callback due to :" + e + "\n" + com.pblabs.util.Log.getStackTrace());
+				// 	#end
+				// 	Profiler.exit("instantiateEntityFromXML");
+				// 	return null;
+				// }
 				com.pblabs.util.Log.debug("instantiated entity '" + name + "' from a callback");
 			} else {
 				com.pblabs.util.Log.debug("instantiating entity '" + name + "' from xml");
@@ -349,12 +349,12 @@ class TemplateManager
 			// }
 			
 			Profiler.exit("instantiateEntityFromXML");
-		}
-		catch (e :Dynamic) {
-			com.pblabs.util.Log.error("Failed instantiating '" + name + "' from XML due to :" + e + "\n" + com.pblabs.util.Log.getStackTrace());
-			entity = null;
-			Profiler.exit("instantiateEntityFromXML");
-		}
+		// }
+		// catch (e :Dynamic) {
+		// 	com.pblabs.util.Log.error("Failed instantiating '" + name + "' from XML due to :" + e + "\n" + com.pblabs.util.Log.getStackTrace());
+		// 	entity = null;
+		// 	Profiler.exit("instantiateEntityFromXML");
+		// }
 		
 		return entity;
 	}
@@ -381,7 +381,7 @@ class TemplateManager
 			return _things.get(name).createGroup();
 		}
 		
-		try {
+		// try {
 			// Create the group.
 			var group = doInstantiateGroup(name, new DynamicMap<Bool>(), context); 
 			if (null == group) {
@@ -393,11 +393,11 @@ class TemplateManager
 			}
 			
 			return group;
-		}
-		catch (e :Dynamic) {
-			com.pblabs.util.Log.error("Failed to instantiate group '" + name + "' due to :" + e.toString());
-			return null;
-		}
+		// }
+		// catch (e :Dynamic) {
+		// 	com.pblabs.util.Log.error("Failed to instantiate group '" + name + "' due to :" + e.toString());
+		// 	return null;
+		// }
 		
 		// Should never get here, one branch or the other of the try will take it.
 		throw "Somehow skipped both branches of group instantiation try/catch block!";
@@ -629,14 +629,14 @@ class TemplateManager
 				
 				// Don't need to check for return value, as it will throw an error 
 				// if something bad happens.
-				try {
+				// try {
 					if (doInstantiateGroup(childName, tree, context) == null) {
 						return null;
 					}
-				} catch (err :Dynamic) {
-					com.pblabs.util.Log.warn("Failed to instantiate group '" + childName + "' from groupReference in '" + name + "' due to :" + err);
-					return null;
-				}
+				// } catch (err :Dynamic) {
+				// 	com.pblabs.util.Log.warn("Failed to instantiate group '" + childName + "' from groupReference in '" + name + "' due to :" + err);
+				// 	return null;
+				// }
 			} else if (objectXML.nodeName == "objectReference") {
 				_inGroup = true;
 				instantiateEntity(childName, context);

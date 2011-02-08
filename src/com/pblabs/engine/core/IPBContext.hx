@@ -38,23 +38,24 @@ interface IPBContext
 	var currentGroup (get_currentGroup, set_currentGroup) :IPBGroup;
 	var started (default, null):Bool;
 	
-	// #if flash
-	// var displayContainer (get_displayContainer, null) :flash.display.Sprite;
-	// #end
-	
-	function startup() :Void;//#if flash ?parentContainer :flash.display.DisplayObjectContainer #end):Void;
+	/** Called once to initialize  */
+	function setup () :Void;
+	/** Called when destroyed */
 	function shutdown():Void;
+	/** Called when this becomes the active IPBContext */
+	function enter () :Void;
+	/** Called when this becomes stops being the active IPBContext */
+	function exit () :Void;
 	
 	function registerManager <T>(clazz:Class<T>, ?instance:T = null, ?optionalName:String = null, ?suppressInject:Bool = false):T;
 	function getManager <T>(clazz:Class<T>, ?optionalName:String = null):T;
 
 	function allocate <T>(type:Class<T>):T;
-	// function allocateEntity():IEntity;
 	function injectInto (instance:Dynamic):Void;
 	
 	// Name lookups.
-	function lookup (name:String):Dynamic;
-	function lookupEntity (name:String):IEntity;
+	function lookup (name :String):Dynamic;
+	function lookupEntity (name :String):IEntity;
 	// function lookupComponent (entityName:String, componentName:String):IEntityComponent;
 }
 

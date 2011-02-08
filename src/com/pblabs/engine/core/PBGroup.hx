@@ -12,13 +12,9 @@
  ******************************************************************************/
 package com.pblabs.engine.core;
 
-import com.pblabs.engine.core.IPBGroup;
-import com.pblabs.engine.core.IPBObject;
-import com.pblabs.engine.core.PBObject;
 import com.pblabs.util.Preconditions;
-
-import com.pblabs.util.StringUtil;
 using com.pblabs.util.IterUtil;
+
 /**
  * A group which owns the objects contained it. When the PBGroup is
  * deleted, it deletes its owned objects. Assign a PBObject to a PBGroup
@@ -38,13 +34,6 @@ class PBGroup extends PBObject,
 		items = [];
 	}
   
-	#if debug
-	dynamic override public function toString () :String
-	{
-		return StringUtil.objectToString(this, ["name", "length", "owningGroup"]);
-	}
-	#end
-	
 	public function iterator () :Iterator<IPBObject>
 	{
 		return items.iterator();
@@ -81,7 +70,7 @@ class PBGroup extends PBObject,
 	/**
 	 * How many PBObjects are in this group?
 	 */
-	inline function get_length() :Int
+	function get_length() :Int
 	{
 		return items.length;
 	}
@@ -113,6 +102,11 @@ class PBGroup extends PBObject,
 		}
 		return cur;
 	}
+	
+	#if debug
+	override public function toString () :String
+	{
+		return com.pblabs.util.StringUtil.objectToString(this, ["name", "length", "owningGroup"]);
+	}
+	#end
 }
-
-
