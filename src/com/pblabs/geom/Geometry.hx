@@ -80,10 +80,10 @@ class Geometry
 		return radian;
 	}
 	
-		public static function rand (min :Int, max :Int) :Int
-	{
-		return min + Math.floor(Math.random() * (max - min + 1));
-	}
+	// public static function rand (min :Int, max :Int) :Int
+	// {
+	// 	return min + Math.floor(Math.random() * (max - min + 1));
+	// }
 
 	/**
 	 * Converts degrees to radians.

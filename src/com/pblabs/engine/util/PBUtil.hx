@@ -191,6 +191,13 @@ class PBUtil
 		return s.toString();
 	}
 	
+	/**
+	  * Used in Lambda.map
+	  */
+	public static function getEntity (c :IEntityComponent) :IEntity
+	{
+	    return c == null ? null : c.owner;
+	}
 	
 	static function fieldToken (fieldName :String) :String
 	{

@@ -121,9 +121,9 @@ class Enumerable<T>
 	public static function deserializeEnumerable (xml :XML) :Dynamic
 	{
 		com.pblabs.util.Assert.isNotNull(xml);
-		com.pblabs.util.Assert.isNotNull(xml.get("type"));
-		var cls = Type.resolveClass(xml.get("type"));
-		com.pblabs.util.Assert.isNotNull(cls, "Resolved class is null from 'type' attribute=" + xml.get("type"));
+		com.pblabs.util.Assert.isNotNull(xml.get("class"));
+		var cls = Type.resolveClass(xml.get("class"));
+		com.pblabs.util.Assert.isNotNull(cls, "Resolved class is null from 'class' attribute=" + xml.get("class"));
 		com.pblabs.util.Assert.isNotNull(_enums.get(cls), "No Enumerable of type " + cls);
 		var enums = _enums.get(cls);
 		for (childXML in xml) {
