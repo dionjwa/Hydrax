@@ -79,7 +79,15 @@ class PBMacros
 				//Instance fields
 				if (!doneInstanceFields) {
 					for (fieldChild in childXML) {
-						var instanceFieldExpr = { name : "public__" + fieldChild.nodeName, type : tFloat, expr : null};
+						//If there is a type specified as an attribute of the parent, use that, otherwise default to float
+						var type = tFloat;
+						if (root.exists(fieldChild.nodeName)) {
+							var pack = root.get(fieldChild.nodeName).split(".");
+							var name = pack.pop();
+							type = TPath({ pack : pack, name : name, params : [], sub : null });
+						}
+						
+						var instanceFieldExpr = { name : "public__" + fieldChild.nodeName, type : type, expr : null};
 						fields.push(p(EVars([instanceFieldExpr])));
 					}
 					doneInstanceFields = true;
