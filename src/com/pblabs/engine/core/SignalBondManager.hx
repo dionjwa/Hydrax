@@ -92,7 +92,7 @@ class SignalBondManager extends ArrayMultiMap<String, Bond>,
 		game = null;
 	}
 	
-	public function destroyBondOnEntity (obj :IPBObject) :Dynamic
+	public function destroyBondOnEntity (obj :IPBObject) :Void
 	{
 		destroyBonds(obj.name);
 		if (Std.is(obj, IEntity)) {
@@ -102,6 +102,12 @@ class SignalBondManager extends ArrayMultiMap<String, Bond>,
 				destroyBonds(c.entityPropString());
 			}
 		}
+	}
+	
+	public function destroyBondsOnComponent (c :IEntityComponent) :Void
+	{
+		com.pblabs.util.Assert.isNotNull(c, "??IEntityComponent is null??");
+		destroyBonds(c.entityPropString());
 	}
 	
 	function onNewContext (c :IPBContext) :Void
