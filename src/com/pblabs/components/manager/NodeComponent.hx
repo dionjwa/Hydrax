@@ -240,7 +240,8 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 		if (hasParent()) {
 			removeFromParent();
 		}
-		for (child in children) {
+		//Make a copy of the array modified within the loop
+		for (child in children.copy()) {
 			child.removeFromParent();
 		}
 		children = [];

@@ -632,13 +632,6 @@ class PBContext
 		_tempPropertyInfo.clear();
 	}
 	
-	// #if (flash || cpp)
-	// inline function get_displayContainer () :flash.display.Sprite
-	// {
-	//	 return _displayContainer;
-	// }
-	// #end
-	
 	function get_processManager () :IProcessManager
 	{
 		return _processManager;

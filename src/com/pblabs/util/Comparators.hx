@@ -121,7 +121,7 @@ class Comparators
 	/**
 	 * A standard Comparator for comparing Comparable values.
 	 */
-	inline public static function compareComparables (c1 :Comparable<Dynamic>, c2 :Comparable<Dynamic> = null) :Int
+	public static function compareComparables (c1 :Comparable<Dynamic>, c2 :Comparable<Dynamic> = null) :Int
 	{
 		return c1.compareTo(c2);
 	}
@@ -131,7 +131,7 @@ class Comparators
 	 * Yes, you can pass any objects to this function, and actionscript will coerce them
 	 * to Strings, calling toString() if not a simple type.
 	 */
-	inline public static function compareStrings (s1 :String, s2 :String) :Int
+	public static function compareStrings (s1 :String, s2 :String) :Int
 	{
 		return (s1 == s2) ? 0 : ((s1 > s2) ? 1 : -1);
 	}
@@ -141,7 +141,7 @@ class Comparators
 	 * Yes, you can pass any objects to this function, and actionscript will coerce them
 	 * to Strings, calling toString() if not a simple type.
 	 */
-	inline public static function compareStringsInsensitively (s1 :String, s2 :String) :Int
+	public static function compareStringsInsensitively (s1 :String, s2 :String) :Int
 	{
 		return compareStrings(s1.toLowerCase(), s2.toLowerCase());
 	}
@@ -180,7 +180,7 @@ class Comparators
 	/**
 	 * Compares two Boolean values.
 	 */
-	inline public static function compareBooleans (v1 :Bool, v2 :Bool) :Int
+	public static function compareBooleans (v1 :Bool, v2 :Bool) :Int
 	{
 		return if (v1 == v2) 0 else if (v1) 1 else -1;
 	}
@@ -188,7 +188,7 @@ class Comparators
 	/**
 	 * Compares two int values in an overflow safe manner.
 	 */
-	inline public static function compareInts (v1 :Int, v2 :Int) :Int
+	public static function compareInts (v1 :Int, v2 :Int) :Int
 	{
 		if (v1 > v2) {
 			return 1;
@@ -219,7 +219,7 @@ class Comparators
 		return compareBooleans(Math.isNaN(v1), Math.isNaN(v2));
 	}
 	
-	inline public static function compareHashables (v1 :com.pblabs.util.ds.Hashable, v2 :com.pblabs.util.ds.Hashable) :Int
+	public static function compareHashables (v1 :com.pblabs.util.ds.Hashable, v2 :com.pblabs.util.ds.Hashable) :Int
 	{
 		com.pblabs.util.Assert.isNotNull(v1);
 		com.pblabs.util.Assert.isNotNull(v2);
