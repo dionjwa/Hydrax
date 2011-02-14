@@ -21,7 +21,7 @@ using com.pblabs.engine.util.PBUtil;
 using com.pblabs.util.StringUtil;
 
 class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends NodeComponent<Layer, Dynamic>,
-		implements IInteractiveComponent
+		implements IInteractiveComponent, implements haxe.rtti.Infos
 {
 	public var layer (get_layer, null) :Layer;
 	public var x (get_x, set_x) :Float;
@@ -29,26 +29,62 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	public var width (get_width, set_width) :Float;
 	public var height (get_height, set_height) :Float;
 	public var angle (get_angle, set_angle) :Float;
-	public var scale (get_scale, set_scale) :Float;
+	public var scale (get_scale, set_scale) :Vector2;
 	public var alpha (get_alpha, set_alpha) :Float;
 	public var isTransformDirty (get_isTransformDirty, set_isTransformDirty) :Bool;
+	
+	@editor({ui:"NumericStepper", min:0})
+	public var zIndex (get_zIndex, set_zIndex) :Int;
+	@editor({ui:"NumericStepper", min:0})
+	public var layerIndex (get_layerIndex, set_layerIndex) :Int;
+	public var locationOffset (get_locationOffset, set_locationOffset) :Vector2;
+	public var angleOffset (get_angleOffset, set_angleOffset) :Float;
+	public var registrationPoint (get_registrationPoint, set_registrationPoint) :Vector2;
 	
 	/** We will listen to the signals of this coordinates component. */
 	public var coordinatesProperty :PropertyReference<Coordinates2D>;
 	
+	var _x :Float;
+	var _y :Float;
+	var _width :Float;
+	var _height :Float;
+	var _angle :Float;
+	var _scale :Vector2;
+	var _alpha :Float;
+	var _isTransformDirty :Bool;
+	var _layerIndex :Int;
+	var _zIndex :Int;
+	var _angleOffset :Float;
+	var _locationOffset :Vector2;
+	var _layerIndexDirty :Bool;
+	var _zIndexDirty :Bool;
+	var _registrationPoint :Vector2;
+	
 	public function new ()
 	{
 		super();
+		setDefaultVars();
+	}
+	
+	function setDefaultVars () :Void
+	{
 		_x = 0;
 		_y = 0;
 		_angle = 0;
-		_scale = 1;
+		_scale = new Vector2(1, 1);
 		_alpha = 1;
-		isTransformDirty = true;
 		_width = 0;
 		_height = 0;
+		_layerIndex = 0;
+		_zIndex = 0;
+		isTransformDirty = true;
+		_locationOffset = new Vector2();
+		_angleOffset = 0;
+		_layerIndexDirty = true;
+		_zIndexDirty = true;
+		_registrationPoint = new Vector2(0, 0);
 		//Sensible default
-		coordinatesProperty = Coordinates2D.componentProp();
+		coordinatesProperty = Coordinates2D.classToComponentProp();	
 	}
 	
 	public function containsScreenPoint (pos :Vector2) :Bool
@@ -80,7 +116,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 		com.pblabs.util.Log.debug("");
 		super.onReset();
 		Preconditions.checkNotNull(parentProperty, "parentProperty is null");
-		com.pblabs.util.Assert.isNotNull(parent, com.pblabs.util.ReflectUtil.tinyClassName(this) + ".parent is null, prop=" + parentProperty);
+		com.pblabs.util.Assert.isNotNull(parent, com.pblabs.util.ReflectUtil.tinyClassName(Type.getClass(this)) + ".parent is null, prop=" + parentProperty);
 		
 		var coords = coordinatesProperty != null ? owner.getProperty(coordinatesProperty) : null;
 		
@@ -97,6 +133,13 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 			
 		//TODO: Bind scale component, not yet implemented
 		com.pblabs.util.Log.debug("finished");
+	}
+	
+	override function onRemove () :Void
+	{
+		super.onRemove();
+		//Reset defaults in case we are pooled
+		setDefaultVars();
 	}
 	
 	function get_layer () :Layer
@@ -133,22 +176,28 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 		return _angle;
 	}
 	
-	// @inject("@AngleComponent.signaler")
 	function set_angle (val :Float) :Float
 	{
+		if (_angle == val) {
+			return val;
+		}
 		_angle = val;
 		isTransformDirty = true;
 		return val;
 	}
 	
-	function get_scale () :Float
+	function get_scale () :Vector2
 	{
-		return _scale;
+		return _scale.clone();
 	}
 	
-	function set_scale (val :Float) :Float
+	function set_scale (val :Vector2) :Vector2
 	{
+		if (_scale.equals(val)) {
+			return val;
+		}
 		_scale = val;
+		_isTransformDirty = true;
 		return val;
 	}
 	
@@ -194,16 +243,80 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	
 	function set_alpha (val :Float) :Float
 	{
+		if (_alpha == val) {
+			return val;
+		}
 		_alpha = val;
+		isTransformDirty = true;
 		return val;
 	}
 	
-	var _x :Float;
-	var _y :Float;
-	var _width :Float;
-	var _height :Float;
-	var _angle :Float;
-	var _scale :Float;
-	var _alpha :Float;
-	var _isTransformDirty :Bool;
+	function get_zIndex () :Int
+	{
+		return _zIndex;
+	}
+	
+	function set_zIndex (val :Int) :Int
+	{
+		if (_zIndex == val) {
+			return val;
+		}
+		_zIndex = val;
+		_zIndexDirty = true;
+		return val;
+	}
+	
+	function get_layerIndex () :Int
+	{
+		return _layerIndex;
+	}
+	
+	function set_layerIndex (val :Int) :Int
+	{
+		if (_layerIndex == val) {
+			return val;
+		}
+		_layerIndex = val;
+		_layerIndexDirty = true;
+		return val;
+	}
+	
+	function get_registrationPoint () :Vector2
+	{
+		return _registrationPoint;
+	}
+	
+	function set_registrationPoint (val :Vector2) :Vector2
+	{
+		if (_registrationPoint.equals(val)) {
+			return val;
+		}
+		_registrationPoint = val;
+		isTransformDirty = true;
+		return val;
+	}
+	
+	function get_locationOffset () :Vector2
+	{
+		return _locationOffset;
+	}
+	
+	function set_locationOffset (val :Vector2) :Vector2
+	{
+		_locationOffset = val;
+		isTransformDirty = true;
+		return val;
+	}
+	
+	function get_angleOffset () :Float
+	{
+		return _angleOffset;
+	}
+	
+	function set_angleOffset (val :Float) :Float
+	{
+		_angleOffset = val;
+		isTransformDirty = true;
+		return val;
+	}
 }

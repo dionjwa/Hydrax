@@ -20,19 +20,16 @@ using Lambda;
   */
 class ReflectUtil
 {
-
 	static var cacheXml = new Hash<Xml>();
 	static var cacheClassdef = new Hash<Classdef>();
 	static var classDefParser = new haxe.rtti.XmlParser();
 	static var fieldTypes = new Hash<CType>();
 	
-	
-	public static function tinyClassName (obj :Dynamic) :String
+	inline public static function tinyClassName (cls :Class<Dynamic>) :String
 	{
-		var name :String =getClassName(obj);
-		if (name == null) {
-			return null;
-		}
+		com.pblabs.util.Assert.isNotNull(cls);
+		var name = Type.getClassName(cls);//getClassName(obj);
+		com.pblabs.util.Assert.isNotNull(name, "null class name from class object");
 		var tokens = name.split(".");
 		return tokens[tokens.length - 1];
 	}
@@ -58,7 +55,6 @@ class ReflectUtil
 	    }
 	    return false;
 	}
-	
 	
 	public static function getClass (obj :Dynamic) :Class<Dynamic>
 	{

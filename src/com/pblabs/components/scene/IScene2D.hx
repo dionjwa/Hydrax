@@ -16,7 +16,7 @@ import com.pblabs.engine.core.IEntityComponent;
   * This interface doesn't need any methods as the Scene2DComponent
   * implemetations are typed.
   *
-  * It extends IEntityComponent so the PropertyRefernce can be 
+  * It extends IEntityComponent so the PropertyReference can be 
   * retrieved.
   */
 interface IScene2D implements IEntityComponent

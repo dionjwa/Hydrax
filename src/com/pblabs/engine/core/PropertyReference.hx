@@ -44,6 +44,8 @@ class PropertyReference<T>
 
 	public function new (property:String)
 	{
+		com.pblabs.util.Assert.isNotNull(property, "Null property string illegal");
+		com.pblabs.util.Assert.isTrue(property.length > 1, property + " is not a valid property");
 		this.property = property;
 		getterSetterChecked = false;
 	}

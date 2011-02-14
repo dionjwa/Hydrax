@@ -27,6 +27,8 @@ import com.pblabs.util.StringUtil;
  */
 class PBUtil
 {
+	public static var KEY_COUNT :Int = 1;
+	
 	public static function getManagerName (cls :Class<Dynamic>, ?name :String) :String
 	{
 		return StringUtil.getStringKey(cls) + if (name == null) "" else "|" + name;
@@ -63,7 +65,7 @@ class PBUtil
 		Preconditions.checkNotNull(context, "Null context");
 		Preconditions.checkNotNull(component, "Null comp");
 		if (compName == null) {
-			compName = ReflectUtil.tinyClassName(component);
+			compName = ReflectUtil.tinyClassName(Type.getClass(component));
 		}
 		
 		var e = context.allocate(IEntity);
@@ -94,7 +96,7 @@ class PBUtil
 		Preconditions.checkNotNull(context, "Null context");
 		Preconditions.checkNotNull(compClass, "Null compClass");
 		if (compName == null) {
-			compName = ReflectUtil.tinyClassName(compClass);
+			compName = getDefaultComponentName(compClass);
 		}
 		
 		var component = context.allocate(compClass);
@@ -140,15 +142,33 @@ class PBUtil
 	 * @param fieldName
 	 * @return
 	 */
-	public static function componentProp<T> (c :Dynamic, ?fieldName :String) :PropertyReference<T>
+	public static function componentProp<T> (c :IEntityComponent, ?fieldName :String) :PropertyReference<T>
 	{
-		return new PropertyReference(componentPropString(c, fieldName));
+		// if (c.isRegistered) {
+			return new PropertyReference(componentPropString(c, fieldName));
+		// } else {
+		// 	return new PropertyReference("@" + getDefaultComponentName(Type.getClass(c)) + fieldToken(fieldName)); 
+		// }
 	}
 	
-	public static function componentPropString (c :Dynamic, ?fieldName :String) :String
+	inline public static function componentPropString (c :IEntityComponent, ?fieldName :String) :String
 	{
-		var compName = componentName(c);
-		return "@" + compName + fieldToken(fieldName);
+		com.pblabs.util.Assert.isTrue(c.isRegistered, Type.getClass(c) + " is not yet registered");
+		// if (c.isRegistered) {
+			return "@" + c.name + fieldToken(fieldName);
+		// } else {
+			// return "@" + getDefaultComponentName(Type.getClass(c)) + fieldToken(fieldName); 
+		// }
+	}
+	
+	inline public static function classToComponentProp <T>(cls :Class<Dynamic>, ?fieldName :String = null) :PropertyReference<T>
+	{
+		return new PropertyReference("@" + ReflectUtil.tinyClassName(cls) + fieldToken(fieldName));
+	}
+	
+	inline public static function getDefaultComponentName <T>(componentClass :Class<Dynamic>) :String
+	{
+		return ReflectUtil.tinyClassName(componentClass);
 	}
 
 	public static function entityProp <T> (c :IEntityComponent, ?fieldName :String) :PropertyReference<T>
@@ -163,11 +183,10 @@ class PBUtil
 		return "#" + c.owner.name + "." + componentName(c) + fieldToken(fieldName);
 	}
 
-	public static function singletonProp <T> (component :Dynamic, ?fieldName :String =
-		null) :PropertyReference<T>
+	inline public static function componentClassToSingletonProp <T> (entityComponentClass :Class<Dynamic>, ?field :String = null) :PropertyReference<T>
 	{
-		var compName = componentName(component);
-		return new PropertyReference("#" + compName + "." + compName + fieldToken(fieldName));
+		var compName = ReflectUtil.tinyClassName(entityComponentClass);
+		return new PropertyReference("#" + compName + "." + compName + fieldToken(field));
 	}
 	
 	public static function createPropertyCallback<T> (e :IEntity, p :PropertyReference<T>) :Void->T
@@ -199,20 +218,24 @@ class PBUtil
 	    return c == null ? null : c.owner;
 	}
 	
-	static function fieldToken (fieldName :String) :String
+	inline public static function classToEntityName (cls :Class<IEntityComponent>) :String
+	{
+	    return ReflectUtil.tinyClassName(cls);
+	}
+	
+	inline static function fieldToken (fieldName :String) :String
 	{
 		return if (fieldName != null) "." + fieldName else "";
 	}
 	
-	static function componentName (c :Dynamic) :String
+	inline static function componentName (c :IEntityComponent) :String
 	{
-		if (Std.is(c, String)) {
-			return cast(c);
-		} else if (Std.is(c, IEntityComponent) && cast(c, IEntityComponent).isRegistered) {
-			return cast(c, IEntityComponent).name;
+		if (c.isRegistered) {
+			return c.name;
 		} else {
-			return ReflectUtil.tinyClassName(c);
+			return ReflectUtil.tinyClassName(Type.getClass(c));
 		}
+		// return c.isRegistered ? c.name : ReflectUtil.tinyClassName(Type.getClass(c)); 
 	}
 	
 

@@ -47,6 +47,8 @@ class MathUtil
 	inline public static var PI = 3.141592653589793;
 	/** 2 * Math.PI constant. */
 	inline public static var PI2 = 6.283185307179586;
+	/** 0.5 * Math.PI constant. */
+	inline public static var PI_2 = PI / 2;
 	/** Multiply value by this to convert from radians to degrees. */
 	inline public static var RAD_DEG = 180 / PI;
 	/** Multiply value by this to convert from degrees to radians. */

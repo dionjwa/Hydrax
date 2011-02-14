@@ -109,6 +109,7 @@ extends com.pblabs.components.scene.js.canvas.Canvas2DComponent
         //Offset so in the center
         image.x = -image.width / 2;
         image.y = -image.height / 2;
+        updateTransform();
         #end
     }
     

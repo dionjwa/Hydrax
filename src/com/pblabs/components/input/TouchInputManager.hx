@@ -157,7 +157,7 @@ class TouchInputManager extends BaseInputManager
         touchMove = new hsl.js.translating.JSSignaler(this, js.Lib.document, JSEventType.TOUCHMOVE, new hsl.js.translation.touch.TouchTranslator());
         touchEnd = new hsl.js.translating.JSSignaler(this, js.Lib.document, JSEventType.TOUCHEND, new hsl.js.translation.touch.TouchTranslator());
         #else
-        Log.error("Platform gestures are not yet implemented.  Currently JS only.");
+        com.pblabs.util.Log.error("Platform gestures are not yet implemented.  Currently JS only.");
         #end
     }
     

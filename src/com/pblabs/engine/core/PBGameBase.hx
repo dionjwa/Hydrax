@@ -32,22 +32,36 @@ import hsl.haxe.Signaler;
 
 using Lambda;
 
+using com.pblabs.util.ArrayUtil;
+
+typedef PBContextFriend = {
+	function setupInternal () :Void;
+	function shutdownInternal () :Void;
+	function enter () :Void;
+	function exit () :Void;
+}
+
 /**
   * The base game manager.
   * This class inits all the managers, and managers the IPBContexts.
   */
 class PBGameBase
 {
-	public var currentContext(get_currentContext, null) :IPBContext;
+	
+	public var currentContext (get_currentContext, null) :IPBContext;
+	var _currentContext :IPBContext;
 	public var newActiveContextSignaler (default, null) :Signaler<IPBContext>;
 	var injector :Injector;
 
 	var _contexts :Array<IPBContext>;
-	var _contextsDirty :Bool;
+	var _contextTransitions :Array<ContextTransition>;
+	var _isUpdatingContextTransition :Bool;
 	var _managers :Map<String, Dynamic>;
 	
 	public function new()
 	{
+		_contextTransitions = [];
+		_isUpdatingContextTransition = false;
 		//Start profiling.  This is disabled if the "profiler" compiler key command is not set
 		com.pblabs.engine.debug.Profiler.bindToKey();
 	}
@@ -60,7 +74,7 @@ class PBGameBase
 
 		injector = createInjector();
 		_contexts = new Array();
-		_contextsDirty = false;
+		// _contextsDirty = false;
 		initializeManagers();
 	}
 	
@@ -129,13 +143,41 @@ class PBGameBase
 	
 	public function pushContext (ctx :IPBContext) :Void
 	{
-		Preconditions.checkNotNull(ctx, "Cannot add a null context");
-		Preconditions.checkArgument(!_contexts.has(ctx), "Context already added");
-		Preconditions.checkArgument(!Std.is(ctx, PBContext) || cast(ctx, PBContext).injector.parent == injector, "PBContext injector has no parent.  Use allocate() to create the PBContext, not new PBContext");
-		stopContexts();
-		_contexts.push(ctx);
-		ctx.getManager(IProcessManager).isRunning = true;
-		startTopContext();
+		_contextTransitions.push(ContextTransition.PUSH(ctx));
+		updateContextTransitions();
+		
+		// Preconditions.checkNotNull(ctx, "Cannot add a null context");
+		// Preconditions.checkArgument(!_contexts.has(ctx), "Context already added");
+		// Preconditions.checkArgument(!Std.is(ctx, PBContext) || cast(ctx, PBContext).injector.parent == injector, "PBContext injector has no parent.  Use allocate() to create the PBContext, not new PBContext");
+		// stopContexts();
+		// _contexts.push(ctx);
+		// ctx.getManager(IProcessManager).isRunning = true;
+		// startTopContext();
+	}
+	
+	public function popContext () :Void
+	{
+	    _contextTransitions.push(ContextTransition.POP);
+		updateContextTransitions();
+	}
+	
+	public function changeContext (c :IPBContext) :Void
+	{
+	    _contextTransitions.push(ContextTransition.CHANGE(c));
+		updateContextTransitions();
+	}
+	
+	public function removeContext (c :IPBContext) :Void
+	{
+		_contextTransitions.push(ContextTransition.REMOVE(c));
+		updateContextTransitions();
+		
+	    // com.pblabs.util.Assert.isNotNull(c);
+	    // if (c != currentContext && currentContext != null) {
+	    // 	currentContext.exit();
+	    // }
+	    // _contexts.remove(c);
+	    
 	}
 	
 	public function shutdown () :Void
@@ -162,46 +204,126 @@ class PBGameBase
 		_contexts = null;
 	}
 	
-	// Name lookups.
-	public function lookup (name:String):Dynamic
+	function updateContextTransitions () :Void
 	{
-		throw "Not implemented";
-		return null;
-	}
+		if (_isUpdatingContextTransition) {
+			return;
+		}
+		
+		var self = this;
+		//Update transitions in between updates
+		if (_currentContext != null && _currentContext.getManager(IProcessManager).isRunning) {
+			//Local access
+			var ctx = _currentContext; 
+			ctx.getManager(IProcessManager).callLater(function () :Void {
+				if (ctx.getManager(IProcessManager).isRunning) {
+					ctx.getManager(IProcessManager).isRunning = false;
+				}
+				self.updateContextTransitions();
+			});
+			return;
+		}
 	
-	public function lookupEntity (name:String):IEntity
-	{
-		throw "Not implemented";
-		return null;
-	}
-	
-	function stopContexts () :Void
-	{
-		for (c in _contexts) {
+		var hasShutdown = [];
+		
+		var curCtx = _currentContext;
+		
+		var removeContext = function (c :IPBContext) :Void {
+			com.pblabs.util.Assert.isNotNull(c);
 			c.getManager(IProcessManager).isRunning = false;
+			self._contexts.remove(c);
+			c.exit();
+			c.shutdown();
+			hasShutdown.push(c);
 		}
-		if (_contexts.length > 0) {
-			_contexts[_contexts.length].exit();
+		
+		
+		_isUpdatingContextTransition = true;
+		
+		//Do the transitions, then set the _currentContext at the end
+		while (_contextTransitions.length > 0) {
+			switch (_contextTransitions.shift()) {
+				case PUSH(c):
+					if (_currentContext != null) {
+						_currentContext.exit();
+						_currentContext = null;
+					}
+				_contexts.push(c);
+				case POP:
+					if (_currentContext != null) {
+						removeContext(_currentContext);
+						_currentContext = null;
+					} else {
+						_contexts.pop();
+					}
+				case CHANGE(c):
+					if (_currentContext != null) {
+						removeContext(_currentContext);
+						_currentContext = null;
+					} else {
+						_contexts.pop();
+					}
+					_contexts.push(c);
+				case REMOVE(c):
+					if (c == _currentContext) {
+						removeContext(_currentContext);
+					} else {
+						_contexts.remove(c);	
+					}
+			}
 		}
+		
+		
+		_currentContext = _contexts[0];
+		_isUpdatingContextTransition = false;
+		
+		if (_currentContext != null) {
+			//Dispatch the signaller first, so that managers are notified.
+			newActiveContextSignaler.dispatch(_currentContext);
+			_currentContext.enter();
+			_currentContext.getManager(IProcessManager).isRunning = true;
+		}
+		
+		
+		
+		// Preconditions.checkNotNull(ctx, "Cannot add a null context");
+		// Preconditions.checkArgument(!_contexts.has(ctx), "Context already added");
+		// Preconditions.checkArgument(!Std.is(ctx, PBContext) || cast(ctx, PBContext).injector.parent == injector, "PBContext injector has no parent.  Use allocate() to create the PBContext, not new PBContext");
+		// stopContexts();
+		// _contexts.push(ctx);
+		// ctx.getManager(IProcessManager).isRunning = true;
+		// startTopContext();
 	}
 	
-	function startTopContext () :Void
-	{
-		if (currentContext != null) {
-			#if debug
-			com.pblabs.util.Assert.isNotNull(currentContext, "How is the top context null?");
-			com.pblabs.util.Assert.isNotNull(currentContext.getManager(IProcessManager), "Where is the IProcessManager?");
-			#end
-			cast(currentContext.getManager(IProcessManager), ProcessManager).isRunning = true;
-			//Dispatch the signaller first, so that managers are notified.
-			newActiveContextSignaler.dispatch(currentContext);
-			currentContext.enter();
-		} 
-	}
+	
+	// function stopContexts () :Void
+	// {
+	// 	for (c in _contexts) {
+	// 		c.getManager(IProcessManager).isRunning = false;
+	// 	}
+	// 	if (_contexts.length > 0) {
+	// 		_contexts[_contexts.length].exit();
+	// 	}
+	// }
+	
+	// function startTopContext () :Void
+	// {
+	// 	if (currentContext != null) {
+	// 		#if debug
+	// 		com.pblabs.util.Assert.isNotNull(currentContext, "How is the top context null?");
+	// 		com.pblabs.util.Assert.isNotNull(currentContext.getManager(IProcessManager), "Where is the IProcessManager?");
+	// 		#end
+	// 		cast(currentContext.getManager(IProcessManager), ProcessManager).isRunning = true;
+	// 		//Dispatch the signaller first, so that managers are notified.
+	// 		newActiveContextSignaler.dispatch(currentContext);
+	// 		currentContext.enter();
+	// 	} 
+	// }
 	
 	function get_currentContext() :IPBContext
 	{
-		return _contexts[_contexts.length - 1];
+		return _currentContext;
+		// return _contexts[_contexts.length - 1];
 	}
 	
 	function createInjector () :Injector
@@ -215,4 +337,11 @@ class PBGameBase
 	}
 	
 	 static var EMPTY_ARRAY :Array<Dynamic> = [];
+}
+
+enum	ContextTransition {
+	PUSH(c :IPBContext);
+	POP;
+	CHANGE(c :IPBContext);
+	REMOVE(c :IPBContext);
 }

@@ -29,12 +29,15 @@ import com.pblabs.util.ReflectUtil;
 class EntityComponent 
 	implements IEntityComponent, implements haxe.rtti.Infos 
 {
-   @inject
-   @editorData({ignore :"true"})
-   public var context (get_context, set_context) :IPBContext;
-   
-   @editorData({ignore :"true"})
-   public var owner (get_owner, set_owner) :IEntity;
+	/** Key for hashing. */
+	public var key :Int;
+	
+	@inject
+	@editorData({ignore :"true"})
+	public var context (get_context, set_context) :IPBContext;
+ 
+	@editorData({ignore :"true"})
+	public var owner (get_owner, set_owner) :IEntity;
    
    @editorData({ignore :"true"})
    public var isRegistered (get_isRegistered, never) :Bool;
@@ -43,7 +46,8 @@ class EntityComponent
    public var name (get_name, set_name) :String;
    
    public function new() 
-   { 
+   {
+   	   key = com.pblabs.engine.util.PBUtil.KEY_COUNT++;
 	   _context =null;
 	   _sanityCheck = false;
 	   _isRegistered = false;

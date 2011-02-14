@@ -19,7 +19,6 @@ import com.pblabs.geom.bounds.BoundsPoint;
 import com.pblabs.geom.bounds.BoundsPolygon;
 import com.pblabs.geom.bounds.BoundsUtil;
 import com.pblabs.geom.bounds.IBounds;
-import com.pblabs.util.ReflectUtil;
 using com.pblabs.geom.PolygonTools;
 using com.pblabs.geom.RectangleTools;
 
@@ -67,11 +66,6 @@ class BoundsRectangle extends BoundsForwarding<BoundsRectangle>
 		return super.distanceToPoint(v);
 	}
 	
-	public function toString () :String
-	{
-		return ReflectUtil.tinyClassName(this) + "[" + _boundsRect + "]";
-	}
-	
 	override function get_boundingRect () :Rectangle
 	{
 		return _boundsRect;
@@ -93,6 +87,11 @@ class BoundsRectangle extends BoundsForwarding<BoundsRectangle>
 	}
 	
 	var _polygonBounds :BoundsPolygon;
+	
+	#if debug
+	public function toString () :String
+	{
+		return com.pblabs.util.ReflectUtil.getClassName(this) + "[" + _boundsRect + "]";
+	}
+	#end
 }
-
-

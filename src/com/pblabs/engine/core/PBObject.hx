@@ -22,7 +22,13 @@ import com.pblabs.util.Preconditions;
 class PBObject 
 	implements IPBObject//, implements haxe.rtti.Infos 
 {
-	public function new() { }
+	/** Key for hashing. */
+	public var key :Int;
+	
+	public function new () 
+	{
+		key = com.pblabs.engine.util.PBUtil.KEY_COUNT++;
+	}
 	
 	@editorData({ignore :"true"})
 	@inject("com.pblabs.engine.core.IPBContext")

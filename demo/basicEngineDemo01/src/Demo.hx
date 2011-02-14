@@ -10,6 +10,7 @@ import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.input.InputKey;
+import com.pblabs.geom.Vector2;
 using com.pblabs.components.scene.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
@@ -32,6 +33,7 @@ class Demo extends flash.display.Sprite
 		var so = context.createBaseSceneEntity();
 		var blob  = context.allocate(CircleShape);
 		blob.parentProperty = layer.entityProp();
+		blob.scale = new Vector2(1, 2.4);
 		so.addComponent(blob);
 		so.initialize("SomeSceneObj");
 		

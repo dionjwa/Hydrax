@@ -9,9 +9,8 @@
 package com.pblabs.components.scene;
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene.BaseScene2DLayer;
-import com.pblabs.components.scene.SceneAlignment;
-import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.SceneView;
+import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.util.PBUtil;
@@ -74,6 +73,7 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 	
 	public function addLayer <T>(cls :Class<T>, layerName :String, ?registerAsManager :Bool = true) :T
 	{
+		com.pblabs.util.Assert.isNotNull(context);
 		var layer = context.allocate(cls);
 		com.pblabs.util.Assert.isTrue(Std.is(layer, BaseScene2DLayer), "Layer class " + cls + " is not a BaseScene2DLayer");
 		

@@ -1,8 +1,8 @@
 package com.pblabs.util.ds;
 
-import com.pblabs.util.EqualableUtil;
 import com.pblabs.util.HashUtil;
 import com.pblabs.util.StringUtil;
+using com.pblabs.util.EqualableUtil;
 
 class Pair<T:Hashable>
 	implements Hashable
@@ -15,6 +15,11 @@ class Pair<T:Hashable>
 	    var isValue = c.exists(temp);
 	    temp.clear();
 	    return isValue;
+	}
+	
+	public static function comparePairs (a :Pair<Dynamic>, b :Pair<Dynamic>) :Int
+	{
+		return com.pblabs.util.Comparators.compareInts(a.hashCode(), b.hashCode());    
 	}
 	
 	public var v1 (default, null) :T;
@@ -32,12 +37,7 @@ class Pair<T:Hashable>
 	
 	public function equals (other :Pair<T>) :Bool
 	{
-		return other.hashCode() == this.hashCode();
-	}
-	
-	public function toString () :String
-	{
-		return "Pair[" + v1 + ", " + v2 + "]";
+		return v1.equals(other.v1) && v2.equals(other.v2);//other.hashCode() == this.hashCode();
 	}
 	
 	//Bad idea?
@@ -67,4 +67,11 @@ class Pair<T:Hashable>
 	}
 
 	var _hashCode :Int;
+	
+	#if debug
+	public function toString () :String
+	{
+		return "Pair[" + v1 + ", " + v2 + "]";
+	}
+	#end
 }

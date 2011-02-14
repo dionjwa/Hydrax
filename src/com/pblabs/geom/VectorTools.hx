@@ -145,7 +145,7 @@ class VectorTools
 	 * @param radian
 	 * @return
 	 */
-	inline public static function simplifyRadian (radian :Float) :Float
+	public static function simplifyRadian (radian :Float) :Float
 	{
 		radian = radian.normalizeRadians();
 
@@ -155,6 +155,18 @@ class VectorTools
 			return radian;
 		}
 	}
+	
+	
+	// public static function simplifyRadian (radian :Float) :Float
+	// {
+	// 	radian = radian.normalizeRadians();
+
+	// 	if (radian > Math.PI) {
+	// 		return radian - PI2;
+	// 	} else {
+	// 		return radian;
+	// 	}
+	// }
 
 	/**
 	 * The smallest difference between two angles with the right sign and clamped (-Pi, Pi)
@@ -168,7 +180,7 @@ class VectorTools
 		if( diff < -Math.PI) {
 			diff = PI2 + diff;
 		}
-		return -diff;
+		return simplifyRadian(-diff);
 	}
 	
 	public static function clone (xy :XY) :XY

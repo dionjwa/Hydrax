@@ -27,7 +27,7 @@ class Canvas2DComponent extends BaseScene2DComponent<CanvasLayer>
 {
 	// public var sprite :Sprite;
 	
-	public var alpha :Float;
+	// public var alpha :Float;
 
 	// TODO: Make both of these dirtyContents
 //	public var mask :Sprite;

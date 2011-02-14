@@ -9,7 +9,6 @@
 package com.pblabs.components.scene.flash;
 
 import com.pblabs.components.scene.BaseScene2DManager;
-import com.pblabs.components.scene.SceneAlignment;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.SceneView;
 import com.pblabs.components.scene.flash.SceneLayer;

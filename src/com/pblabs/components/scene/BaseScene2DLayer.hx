@@ -14,10 +14,13 @@ import com.pblabs.util.Preconditions;
   * A 2D layer holding 2DSceneComponents.
   * TODO: migrate the parallax and independent location code.
   */
-class BaseScene2DLayer<Scene :BaseScene2DManager<Dynamic>, Component :BaseScene2DComponent<Dynamic>> extends NodeComponent<Scene, Component>
+class BaseScene2DLayer<Scene :BaseScene2DManager<Dynamic>, Component :BaseScene2DComponent<Dynamic>> extends NodeComponent<Scene, Component>,
+	implements haxe.rtti.Infos
 {
 	public var scene (get_scene, never) :Scene;
+	@editor({ui:"NumericStepper", min:0})
 	public var index (get_index, set_index) :Int;
+	@editor({ui:"HUISlider", min:0.0, max:3.0})
 	public var parallaxFactor (get_parallaxFactor, set_parallaxFactor) :Float;
 	// public var parallaxFactor (get_parallaxFactor, set_parallaxFactor) :Float;
 

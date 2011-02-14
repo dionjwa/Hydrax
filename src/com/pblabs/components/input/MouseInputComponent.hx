@@ -8,6 +8,7 @@
  ******************************************************************************/
 package com.pblabs.components.input;
 
+import com.pblabs.components.Constants;
 import com.pblabs.components.input.IInteractiveComponent;
 import com.pblabs.components.input.InputManager;
 import com.pblabs.components.manager.NodeComponent;
@@ -69,10 +70,10 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
 	public function new ()
 	{
 		super();
-		xProperty = new PropertyReference("@Coordinates2D.x");
-		yProperty = new PropertyReference("@Coordinates2D.y");
-		angleProperty = new PropertyReference("@Coordinates2D.angle");
-		scaleProperty = new PropertyReference("@ScaleComponent.scale");
+		xProperty = Constants.DEFAULT_X_PROP;
+		yProperty = Constants.DEFAULT_Y_PROP;
+		angleProperty = Constants.DEFAULT_ANGLE_PROP;
+		scaleProperty = Constants.DEFAULT_SCALE_PROP;
 		
 		//The default is not movable, rotatable, or scalable.
 		isScalable = isRotatable = isTranslatable = false;
@@ -131,13 +132,16 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
 	{
 		super.onRemove();
 		context.getManager(InputManager).unregisterComponent(this);
-		xProperty = null;
-		yProperty = null;
-		angleProperty = null;
-		scaleProperty = null;
+		xProperty = Constants.DEFAULT_X_PROP;
+		yProperty = Constants.DEFAULT_Y_PROP;
+		angleProperty = Constants.DEFAULT_ANGLE_PROP;
+		scaleProperty = Constants.DEFAULT_SCALE_PROP;
+		isScalable = isRotatable = isTranslatable = false;
 		boundsProperty = null;
 		_bounds = null;
-		isScalable = isRotatable = isTranslatable = false;
+		onClick = null;
+		onDeviceDown = null;
+		onDeviceHeldDown = null;
 	}
 	
 	function get_bounds () :IInteractiveComponent

@@ -78,12 +78,10 @@ class Entity extends PBObject,
 	
 	public function set_deferring(value:Bool):Bool
 	{
-		if(_deferring == true && value == false)
-		{
+		if(_deferring == true && value == false) {
 			// Resolve everything, and everything that that resolution triggers.
 			var needReset:Bool = _deferredComponents.length > 0;
-			while(_deferredComponents.length > 0)
-			{
+			while(_deferredComponents.length > 0) {
 				var pc = _deferredComponents.shift();
 				
 				//Add the timed components here rather than forcing
@@ -100,16 +98,14 @@ class Entity extends PBObject,
 			// Mark deferring as done.
 			_deferring = false;
 			
-			
 			// Fire off the reset.
 			if(needReset) {
 				doResetComponents();
 			}				
 		}
-		
 		_deferring = value;
 		return value;
-	   }
+   }
 	
 	public override function initialize (?name :String = null) :Void
 	{			
@@ -146,8 +142,13 @@ class Entity extends PBObject,
 			com.pblabs.util.Assert.isNotNull(c, "How can the component be null?");
 			_components.remove(c.name);
 			#if debug
-			context.getManager(com.pblabs.engine.time.IProcessManager).callLater(createDestructionCheckCallback(c));
+			// context.getManager(com.pblabs.engine.time.IProcessManager).callLater(createDestructionCheckCallback(c));
+			c.postDestructionCheck();
 			// c.postDestructionCheck();
+			#end
+			
+			#if !disable_object_pooling
+			com.pblabs.engine.pooling.ObjectPoolMgr.SINGLETON.add(c);
 			#end
 		}
 		
@@ -286,7 +287,7 @@ class Entity extends PBObject,
 	{
 		Preconditions.checkNotNull(component, "Cannot add a null component");
 		
-		componentName = componentName == null ? ReflectUtil.tinyClassName(component) : componentName; 
+		componentName = componentName == null ? PBUtil.getDefaultComponentName(Type.getClass(component)) : componentName; 
 		// Check the context.
 		// Preconditions.checkArgument(component.context != null, "Component has a null context!");
 		// Preconditions.checkArgument(context != null, "Entity has a null context!");
@@ -298,8 +299,7 @@ class Entity extends PBObject,
 		}
 
 		// If we are deferring registration, put it on the list.
-		if(deferring)
-		{
+		if (deferring) {
 			var p = new PendingComponent();
 			p.item = component;
 			p.name = componentName;
@@ -355,8 +355,9 @@ class Entity extends PBObject,
 		}
 		
 		component.unregister();
-		
-		doResetComponents();
+		if (!deferring) {
+			doResetComponents();
+		}
 	}
 	
 	public function lookupComponentByType <T>(componentType:Class<T>):T
@@ -410,24 +411,22 @@ class Entity extends PBObject,
 	
 	function doAddComponent(component:IEntityComponent, componentName:String):Bool
 	{
-		if (componentName == "")
-		{
+		if (componentName == "") {
 			com.pblabs.util.Log.warn(["AddComponent", "A component name was not specified. This might cause problems later."]);
 		}
 		
-		if (component.owner != null)
-		{
+		if (component.owner != null) {
 			com.pblabs.util.Log.error(["AddComponent", "The component " + componentName + " already has an owner. (" + name + ")"]);
 			return false;
 		}
 		
-		if (_components.get(componentName) != null)
-		{
+		if (_components.exists(componentName)) {
 			com.pblabs.util.Log.error(["AddComponent", "A component with name " + componentName + " already exists on this entity (" + name + ")."]);
 			return false;
 		}
 		
 		component.owner = this;
+		component.name = componentName;
 		_components.set(componentName, component);
 		return true;
 	}
@@ -461,6 +460,7 @@ class Entity extends PBObject,
 	 */
 	function doResetComponents():Void
 	{
+		com.pblabs.engine.debug.Profiler.enter("doResetComponents");
 		var oldDefer:Bool = _deferring;
 		deferring = true;
 		
@@ -480,7 +480,6 @@ class Entity extends PBObject,
 			
 			//Inject the component fields
 			 _context.injectInto(component);
-			 
 			 //Inject the sets (components annotated with @sets("set1", "set2") at the constructor
 			 sets.injectSets(component);
 			 
@@ -488,14 +487,16 @@ class Entity extends PBObject,
 			 // bonds = cast(_context.injector, ComponentInjector).injectComponentListeners(component , bonds);
 			//Reset it!
 			com.pblabs.util.Log.debug("    reseting " + component.name);
-			component.reset();				
+			com.pblabs.engine.debug.Profiler.enter("reseting " + component.name);
+			component.reset();
+			com.pblabs.engine.debug.Profiler.exit("reseting " + component.name);
 			com.pblabs.util.Log.debug("    done reseting " + component.name);
 		}
 		com.pblabs.util.Log.debug("  finished reseting");
 		// if (bonds != null) {
 		// 	sm.setAll(this.name, bonds);
 		// }
-		
+		com.pblabs.engine.debug.Profiler.exit("doResetComponents");
 		deferring = false;
 	}
 	

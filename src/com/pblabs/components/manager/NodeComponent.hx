@@ -17,8 +17,6 @@ import com.pblabs.engine.util.PBUtil;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 
-import flash.xml.XML;
-
 using Lambda;
 
 using com.pblabs.util.ArrayUtil;

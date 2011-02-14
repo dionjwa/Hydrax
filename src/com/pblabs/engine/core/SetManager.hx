@@ -132,8 +132,10 @@ class SetManager extends PBManagerBase,
 	
 	public function destroySet (set :String) :Void
 	{
-		for (obj in removeSet(set)) {
-			obj.destroy();
+		for (obj in removeSet(set).array()) {
+			if (obj != null && obj.isLiveObject) {
+				obj.destroy();
+			}
 		}
 	}
 	

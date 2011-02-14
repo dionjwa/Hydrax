@@ -3,7 +3,6 @@ package ;
 import com.pblabs.components.scene.BaseScene2DLayer;
 import com.pblabs.components.scene.ImageComponent;
 import com.pblabs.components.scene.RectangleShape;
-import com.pblabs.components.scene.SceneAlignment;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.SceneView;
 import com.pblabs.components.scene.js.canvas.CanvasLayer;
@@ -62,9 +61,9 @@ class Demo #if flash extends flash.display.Sprite #end
 		game.pushContext(context);
 		
 		//Scene for game elements
-		var gamescene = context.addSingletonComponent(SceneUtil.getPlatformSceneManagerClass());
+		var gamescene = context.addSingletonComponent(SceneUtil.MANAGER_CLASS);
 		gamescene.sceneAlignment = SceneAlignment.TOP_LEFT;
-		var layerCls = SceneUtil.getBasePlatformLayerClass();
+		var layerCls = SceneUtil.LAYER_CLASS;//getBasePlatformLayerClass();
 		var backgroundlayer = gamescene.addLayer(layerCls, "background");
 		var layer = gamescene.addLayer(layerCls, "defaultLayer");
 

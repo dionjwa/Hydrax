@@ -10,8 +10,6 @@ package com.pblabs.components.tasks;
 
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntity;
-import com.pblabs.engine.time.IProcessManager;
-import com.pblabs.engine.time.ITickedObject;
 import com.pblabs.util.Preconditions;
 
 import haxe.FastList;
@@ -24,8 +22,7 @@ import com.pblabs.util.ReflectUtil;
 import com.pblabs.components.tasks.IEntityTask;
 import com.pblabs.components.tasks.ParallelTask;
 
-class TaskComponent extends EntityComponent, 
-	implements ITickedObject 
+class TaskComponent extends EntityComponent 
 {
 	
 	public static var NAME :String = ReflectUtil.tinyClassName(TaskComponent);
@@ -42,7 +39,6 @@ class TaskComponent extends EntityComponent,
 		_namedTasks = new FastList<ParallelTask>();
 		_taskNames = new FastList<String>();
 		_updatingTasks = false;
-		_tasksFinished = true;
 	}
 	
 	/** Adds a named task to this IEntity. */
@@ -69,8 +65,6 @@ class TaskComponent extends EntityComponent,
 		}
 
 		namedTaskContainer.addTask(task);
-		_tasksFinished = false;
-		updatingCheck();
 	}
 	
 	function getNamedTask (name :String) :ParallelTask
@@ -89,41 +83,17 @@ class TaskComponent extends EntityComponent,
 	public function onTick (dt :Float) :Void
 	{
 		_updatingTasks = true;
-		_tasksFinished = _anonymousTasks.update(dt, owner);
 		for (namedTask in _namedTasks) {
-			_tasksFinished = namedTask.update(dt, owner) && _tasksFinished;
+			namedTask.update(dt, owner);
 		}
 		_updatingTasks = false;
-		if (!_tasksFinished) {//If we're updating, assume we're added to the process manager
-			updatingCheck();
-		}
 	}
 	
-	/**
-	 * When we don't have any tasks, remove ourselves from
-	 * the updater.
-	 */
-	function updatingCheck () :Void
-	{
-		if (owner == null) {
-			return;
-		}
-		if (!_tasksFinished && !_addedToProcessManager) {
-			context.getManager(IProcessManager).addTickedObject(this);
-			_addedToProcessManager = true;
-		} else if (_tasksFinished && _addedToProcessManager) {
-			context.getManager(IProcessManager).removeTickedObject(this);
-			_addedToProcessManager = false;
-		}
-	}
-
 	/** Adds an unnamed task to this IEntity. */
 	public function addTask (task :IEntityTask) :Void
 	{
 		Preconditions.checkNotNull(task, "task must be non-null");
 		_anonymousTasks.addTask(task);
-		_tasksFinished = false;
-		updatingCheck();
 	}
 
 	/** Returns true if the IEntity has any tasks. */
@@ -194,20 +164,12 @@ class TaskComponent extends EntityComponent,
 		super.onRemove();
 	}
 	
-	override function onAdd () :Void
-	{
-		super.onAdd();
-		_addedToProcessManager = true;
-	}
-	
 	var _anonymousTasks:ParallelTask;
 
 	// stores a mapping from String to ParallelTask
 	var _namedTasks :FastList<ParallelTask>;
 	var _taskNames :FastList<String>;
 	var _updatingTasks :Bool;
-	var _tasksFinished :Bool;
-	var _addedToProcessManager :Bool;
 }
 
 

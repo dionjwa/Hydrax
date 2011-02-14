@@ -89,7 +89,7 @@ class PBGame extends PBGameBase
 		// Bring in the standard managers.
 		registerManager(NameManager, new NameManager());
 		registerManager(IProcessManager, new ProcessManager());
-		registerManager(SetManager, new SetManager(this));
+		registerManager(SetManager, new SetManager());
 		registerManager(IResourceManager, new ResourceManager());
 		registerManager(SceneView, new SceneView());
 		//Sensible default

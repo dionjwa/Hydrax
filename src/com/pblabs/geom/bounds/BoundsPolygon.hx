@@ -125,7 +125,7 @@ class BoundsPolygon extends AbstractBounds<BoundsPolygon>
 		// else if (Std.is( b, BoundsLine)) {
 		//	 return _polygon.distanceToLine(cast(b, BoundsLine).lineSegment);
 		// }
-		throw "Not implemented between " + ReflectUtil.tinyClassName(this) + " and " + ReflectUtil.tinyClassName(b);
+		throw "Not implemented between " + ReflectUtil.getClassName(this) + " and " + ReflectUtil.getClassName(b);
 		return Math.NaN;
 	}
 	
@@ -143,7 +143,7 @@ class BoundsPolygon extends AbstractBounds<BoundsPolygon>
 		// else if (Std.is( b, BoundsLine)) {
 		//	 return _polygon.distanceToLine(cast(b, BoundsLine).lineSegment);
 		// }
-		throw "Not implemented between " + ReflectUtil.tinyClassName(this) + " and " + ReflectUtil.tinyClassName(b);
+		throw "Not implemented between " + ReflectUtil.getClassName(this) + " and " + ReflectUtil.getClassName(b);
 		return false;
 	}
 

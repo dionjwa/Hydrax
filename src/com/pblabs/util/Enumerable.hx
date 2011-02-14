@@ -106,7 +106,7 @@ class Enumerable<T>
 	  */
 	public static  function serializeEnumerable (xml :XML, cls :Class<Dynamic>) :Void
 	{
-		xml.set("type", Type.getClassName(cls));
+		xml.set("class", Type.getClassName(cls));
 		com.pblabs.util.Assert.isNotNull(_enums.get(cls), "No Enumerable of type " + cls);
 		for (e in _enums.get(cls)) {
 			var child = XML.createElement(e.name);

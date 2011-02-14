@@ -198,7 +198,7 @@ class ProcessManager implements IProcessManager
 	function stop():Void
 	{
 		if (!_isRunning) {
-			com.pblabs.util.Log.warn("The ProcessManager isn't started.");
+			com.pblabs.util.Log.info("The ProcessManager isn't started.");
 			return;
 		}
 		_isRunning = false;
@@ -387,7 +387,7 @@ class ProcessManager implements IProcessManager
 			}
 		}
 		
-		com.pblabs.util.Log.warn(ReflectUtil.getClassName(object) + " " + object + ": object has not been added to the process manager.\n" + com.pblabs.util.Log.getStackTrace());
+		com.pblabs.util.Log.info(ReflectUtil.getClassName(object) + " " + object + ": object has not been added to the process manager.\n" + com.pblabs.util.Log.getStackTrace());
 	}
 	
 	/**
@@ -677,6 +677,15 @@ class ProcessManager implements IProcessManager
 	var _deferredObjects :Array<Tuple<Dynamic, Float>>;
 	var _frameCounter :Int;
 	var _duringAdvance :Bool;
+	
+	#if debug
+	public function toString () :String
+	{
+	    return "_virtualTime=" + _virtualTime + 
+	    	"\ntotalObjects=" + _tickedObjects.length + 
+	    	"\n_tickedObjects=" + _tickedObjects;
+	}
+	#end
 }
 
 class ProcessObjectTicked
@@ -695,6 +704,13 @@ class ProcessObjectTicked
 	#end
 	public var listener :ITickedObject;
 	public var priority :Float;
+	
+	#if debug
+	public function toString () :String
+	{
+	    return "\n" + com.pblabs.util.ReflectUtil.tinyClassName(Type.getClass(listener)) + " " + Std.string(listener);
+	}
+	#end
 }
 
 class ProcessObjectAnimated
@@ -713,4 +729,11 @@ class ProcessObjectAnimated
 	#end
 	public var listener :IAnimatedObject;
 	public var priority :Float;
+	
+	#if debug
+	public function toString () :String
+	{
+	    return Std.string(listener);
+	}
+	#end
 }

@@ -74,8 +74,8 @@ class BoundsCircle extends AbstractBounds<BoundsCircle>
 		// else if (Std.is(b, BoundsLine)) {
 		//	 return BoundsUtil.distancePointLine(this, cast(b));
 		// }
-		throw "Not implemented between " + ReflectUtil.tinyClassName(this) +
-			" and " + ReflectUtil.tinyClassName(b);
+		throw "Not implemented between " + ReflectUtil.getClassName(this) +
+			" and " + ReflectUtil.getClassName(b);
 		return Math.NaN;
 	}
 
@@ -101,8 +101,8 @@ class BoundsCircle extends AbstractBounds<BoundsCircle>
 			
 		//	 return BoundsUtil.distancePointLine(this, cast(b), d);
 		// }
-		throw "Not implemented between " + ReflectUtil.tinyClassName(this) +
-			" and " + ReflectUtil.tinyClassName(b);
+		throw "Not implemented between " + ReflectUtil.getClassName(this) +
+			" and " + ReflectUtil.getClassName(b);
 		return false;
 	}
 
@@ -125,7 +125,7 @@ class BoundsCircle extends AbstractBounds<BoundsCircle>
 
 	public function toString () :String
 	{
-		return ReflectUtil.tinyClassName(this) + "[" + _boundsCircle + "]";
+		return ReflectUtil.tinyClassName(Type.getClass(this)) + "[" + _boundsCircle + "]";
 	}
 	
 }

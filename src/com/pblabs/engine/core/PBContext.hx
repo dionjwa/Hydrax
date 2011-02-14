@@ -170,7 +170,7 @@ class PBContext
 	
 	//TODO: use object pooling
 	public function allocate <T>(type :Class<T>) :T
-	{
+	{                                                                           
 		Assert.isNotNull(currentGroup);
 		Assert.isTrue(currentGroup.context == this);
 		Preconditions.checkNotNull(type, "Type class is null");
@@ -178,7 +178,11 @@ class PBContext
 		if (type == IEntity) {
 			untyped type = Type.resolveClass("com.pblabs.engine.core.Entity");
 		}
+		#if disable_object_pooling
 		var i = Type.createInstance(type, EMPTY_ARRAY);
+		#else
+		var i = com.pblabs.engine.pooling.ObjectPoolMgr.SINGLETON.get(type);
+		#end
 		Assert.isNotNull(i, "allocated'd instance is null, type=" + type);
 		//Components get injected by the entity
 		if (!Std.is(i, IEntityComponent)) {
@@ -243,6 +247,7 @@ class PBContext
 	{
 	}
 	
+	/** Subclasses override */
 	public function exit () :Void
 	{
 	}
@@ -335,6 +340,11 @@ class PBContext
 				cast(m, IPBManager).shutdown();
 			}
 		}
+		
+		var game = getManager(PBGameBase);
+		com.pblabs.util.Assert.isNotNull(game);
+		
+		
 		_managers = null;
 		injector = null;
 		_tempPropertyInfo = null;
@@ -614,6 +624,7 @@ class PBContext
 	
 	public function setProperty (property :PropertyReference<Dynamic>, value :Dynamic, ?entity :IEntity = null) :Void
 	{
+		com.pblabs.util.Assert.isNotNull(property);
 		// Look up and set.
 		var info:PropertyInfo = findProperty(this, entity, property, true, _tempPropertyInfo);
 		

@@ -74,8 +74,8 @@ class BoundsPoint extends AbstractBounds<BoundsPoint>
 		} else if (Std.is(b, BoundsLine)) {
 			return BoundsUtil.distancePointLine(this, cast(b));
 		}
-		throw "Not implemented between " + ReflectUtil.tinyClassName(this) +
-			" and " + ReflectUtil.tinyClassName(b);
+		throw "Not implemented between " + ReflectUtil.getClassName(this) +
+			" and " + ReflectUtil.getClassName(b);
 		return Math.NaN;
 	}
 
@@ -95,8 +95,8 @@ class BoundsPoint extends AbstractBounds<BoundsPoint>
 			
 		//	 return BoundsUtil.distancePointLine(this, cast(b), d);
 		// }
-		throw "Not implemented between " + ReflectUtil.tinyClassName(this) +
-			" and " + ReflectUtil.tinyClassName(b);
+		throw "Not implemented between " + ReflectUtil.getClassName(this) +
+			" and " + ReflectUtil.getClassName(b);
 		return false;
 	}
 

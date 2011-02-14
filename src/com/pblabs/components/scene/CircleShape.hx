@@ -71,6 +71,7 @@ class CircleShape extends ShapeComponent
     
     override public function redraw () :Void
     {
+    	com.pblabs.engine.debug.Profiler.enter("redraw");
         #if flash
         var zoom = parent != null && parent.parent != null ? parent.parent.zoom : 1.0;
         var g = cast(_displayObject, flash.display.Sprite).graphics;
@@ -94,6 +95,7 @@ class CircleShape extends ShapeComponent
         _svgContainer.setAttribute("width", (radius * 2) + "px");
         _svgContainer.setAttribute("height", (radius * 2) + "px");
         #end
+        com.pblabs.engine.debug.Profiler.exit("redraw");
     }
     
     #if (js && !css)

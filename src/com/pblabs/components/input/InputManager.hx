@@ -122,9 +122,8 @@ class InputManager extends BaseInputManager
 	
 	public function registerComponent (c :MouseInputComponent) :Void
 	{
-		if (!_components.has(c)) {
-			_components.push(c);
-		}
+		_components.remove(c);
+		_components.push(c);
 	}
 	
 	public function unregisterComponent (c :MouseInputComponent) :Void
@@ -341,7 +340,9 @@ class InputManager extends BaseInputManager
 			//Cache the initial angle, in case we start rotating
 			// _startingScale = _inputCache.v1.scale;
 			// trace("mouseInput.onDeviceDown" );
-			mouseInput.onDeviceDown();
+			if (mouseInput.onDeviceDown != null) {
+				mouseInput.onDeviceDown();
+			}
 		}
 		
 		com.pblabs.util.Log.info("mouse down  " + _inputCache);
@@ -470,7 +471,7 @@ class InputManager extends BaseInputManager
 		}
 		
 		var mouseInput = _inputCache.inputComponent != null ? _inputCache.inputComponent.owner.lookupComponentByType(MouseInputComponent) : null; 
-		if (mouseInput != null) {
+		if (mouseInput != null && mouseInput.onClick != null) {
 			mouseInput.onClick();
 		}
 		
