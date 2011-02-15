@@ -14,6 +14,6 @@ package com.pblabs.engine.core;
 
 interface IPBManager
 {
-	function startup():Void;
-	function shutdown():Void;
+	function startup () :Void;
+	function shutdown () :Void;
 }

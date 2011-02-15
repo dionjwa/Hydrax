@@ -15,6 +15,7 @@ import flash.display.DisplayObject;
 
 import flash.geom.Matrix;
 
+using com.pblabs.engine.util.PBUtil;
 using com.pblabs.util.MathUtil;
 
 class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
@@ -31,6 +32,28 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
 	
 	public function onFrame (dt :Float) :Void
 	{
+		if (_layerIndexDirty) {
+			com.pblabs.util.Assert.isNotNull(parent, "Cannot change layer index if not attached to a scene, since which layer?");
+			var scene = parent.parent;
+			var newlayer = scene.getLayerAt(layerIndex);
+			if (newlayer != null) {
+				this.removeFromParent();
+				parentProperty = newlayer.entityProp();
+				addToParent(newlayer);
+				_layerIndexDirty = false;
+				_zIndex = parent.children.length - 1;
+				_zIndexDirty = true;
+			} else {
+				_layerIndex = scene.getLayerIndex(parent);
+			}
+		}
+		if (_zIndexDirty) {
+			com.pblabs.util.Assert.isNotNull(parent);
+			_zIndex = _zIndex.clamp(0, parent.displayContainer.numChildren - 1);
+			parent.displayContainer.setChildIndex(displayObject, _zIndex);
+			_zIndexDirty = false;
+			_isTransformDirty = true;
+		}
 		if (_isTransformDirty) {
 			updateTransform();
 		}

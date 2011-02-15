@@ -20,6 +20,11 @@ import com.bit101.components.UpdatingList;
 import com.bit101.components.VBox;
 import com.bit101.components.Window;
 
+import com.pblabs.components.input.InputManager;
+import com.pblabs.components.scene.SceneUtil;
+import com.pblabs.editor.CreationPanel;
+import com.pblabs.editor.EntityPanel;
+import com.pblabs.editor.TimePanel;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.input.InputKey;
@@ -35,10 +40,6 @@ import flash.text.TextFormat;
 
 import haxe.PosInfos;
 
-import com.pblabs.editor.CreationPanel;
-import com.pblabs.editor.EntityPanel;
-import com.pblabs.editor.TimePanel;
-
 using IterTools;
 
 using Lambda;
@@ -51,6 +52,7 @@ using Type;
 
 using com.pblabs.engine.core.SetManager;
 using com.pblabs.engine.util.PBUtil;
+using com.pblabs.components.scene.SceneUtil;
 using com.pblabs.geom.bounds.BoundsUtil;
 using com.pblabs.util.DisplayUtils;
 using com.pblabs.util.IterUtil;
@@ -77,6 +79,24 @@ using de.polygonal.gl.DisplayListIterator;
 class Editor extends Sprite
 {
 	public static var ENTITY_WINDOW_NAME :String = "EntityPanel";
+	public static var EDITING :Bool = true;
+	
+	public var templatePanel :TemplatePanel;
+	public var entityPanel :EntityPanel;
+	public var creationPanel :CreationPanel;
+	var _game :PBGameBase;
+	var _ctx :IPBContext;
+	var _active :Bool;
+	
+	//UI
+	var _rootPanel :Panel;
+	var _rootVbox :VBox;
+	var _mainAccordion :Accordion;
+	var _LogWindow :Window;
+	var _layer :Sprite;
+	// var _mouseDownComponent :BaseScene2DComponent;
+	// var _mouseDownLocation
+	
 	public function new (app :PBGameBase, ?x :Int = 700, ?y :Int = 0)
 	{
 		super();
@@ -131,9 +151,9 @@ class Editor extends Sprite
 			com.pblabs.engine.debug.Profiler.report();
 			#end
 		} else if (e.charCode == InputKey.BACKSPACE.keyCode || e.charCode == InputKey.DELETE.keyCode) {
-			if (_entityPanel.selectedObject != null) {
-				_entityPanel.selectedObject.destroy();
-				_entityPanel.selectedObject = null;
+			if (entityPanel.selectedObject != null) {
+				entityPanel.selectedObject.destroy();
+				entityPanel.selectedObject = null;
 			}
 		}
 	}
@@ -149,7 +169,16 @@ class Editor extends Sprite
 		_rootVbox = new VBox(_rootPanel);
 		_rootVbox.setSize(_rootPanel.width, _rootPanel.height);
 		var root = _rootVbox;
-		new Label(root, 0, 0, "HydraxEditor");
+		
+		var headerBox = new HBox(root);
+		new Label(headerBox, 0, 0, "Hydrax Editor");
+		var toggleButton :PushButton = null;
+		toggleButton = new PushButton(headerBox, 0, 0, function (e :flash.events.Event) :Void {
+			EDITING = toggleButton.selected ? false : true;
+			toggleButton.label = EDITING ? "Editing enabled" : "Editing disabled";
+		});
+		toggleButton.toggle = true;
+		toggleButton.label = EDITING ? "Editing enabled" : "Editing disabled";
 		
 		var timePanel = new TimePanel(root, _game);
 		
@@ -164,27 +193,33 @@ class Editor extends Sprite
 		//Creation
 		var windowIndex = 0;
 		_mainAccordion.getWindowAt(windowIndex).title = "Load/Save";
-		_templatePanel = new TemplatePanel(_mainAccordion.getWindowAt(windowIndex).content, _game);
+		templatePanel = new TemplatePanel(_mainAccordion.getWindowAt(windowIndex).content, _game);
 		//Offset a little to aid in navigating the accordion tabs
-		_templatePanel.x = 10;
+		templatePanel.x = 10;
 		
 		
 		//Creation
 		windowIndex = 1;
 		_mainAccordion.getWindowAt(windowIndex).title = "Create";
-		_creationPanel = new CreationPanel(_mainAccordion.getWindowAt(windowIndex).content, _game);
+		creationPanel = new CreationPanel(_mainAccordion.getWindowAt(windowIndex).content, _game);
 		//Offset a little to aid in navigating the accordion tabs
-		_creationPanel.x = 10;
+		creationPanel.x = 10;
 		
 		//Editing
 		_mainAccordion.addWindow(ENTITY_WINDOW_NAME);
 		windowIndex = 2;
 		_mainAccordion.getWindowAt(windowIndex).title = ENTITY_WINDOW_NAME;
-		_entityPanel = new EntityPanel(_mainAccordion.getWindowAt(windowIndex).content, _game);
+		entityPanel = new EntityPanel(_mainAccordion.getWindowAt(windowIndex).content, _game);
 		//Offset a little to aid in navigating the accordion tabs
-		_entityPanel.x = 10;
+		entityPanel.x = 10;
 		//If an object is created, select it too
-		_creationPanel.objectSelected = _entityPanel.objectSelected;
+		creationPanel.objectSelected = entityPanel.objectSelected;
+		
+		//Setup mouse listening
+		var input = _game.getManager(InputManager);
+		input.deviceDown.bindAdvanced(onMouseDown);
+		// input.deviceMove.bindAdvanced(onMouseMove);
+		// input.deviceUp.bindAdvanced(onMouseUp);
 	}
 	
 	function createTraceContainer (root :DisplayObjectContainer) :TextArea
@@ -216,17 +251,41 @@ class Editor extends Sprite
 		return ta;
 	}
 	
-	var _game :PBGameBase;
-	var _ctx :IPBContext;
-	var _active :Bool;
+	function onMouseDown (listener :hsl.haxe.Signal<com.pblabs.components.input.InputData>) :Void
+	{
+		if (!isEditing()) { return; }
+		listener.stopImmediatePropagation();
+		
+		//Get displayobjects
+		var scene = _game.currentContext.getManager(SceneUtil.MANAGER_CLASS);
+		var underMouse = scene.getDisplayComponentUnderPoint(listener.data.inputLocation);
+		if (underMouse != null) {
+			var dragger = _game.currentContext.getManager(com.pblabs.components.input.DragManager);
+			if (dragger != null) {
+				com.pblabs.util.Assert.isNotNull(dragger);
+				dragger.startDragging(underMouse);
+			}
+		}
+		trace("underMouse=" + underMouse);
+	}
 	
-	//UI
-	var _rootPanel :Panel;
-	var _rootVbox :VBox;
-	var _mainAccordion :Accordion;
-	var _templatePanel :TemplatePanel;
-	var _entityPanel :EntityPanel;
-	var _creationPanel :CreationPanel;
-	var _LogWindow :Window;
-	var _layer :Sprite;
+	// function onMouseMove (listener :hsl.haxe.Signal<com.pblabs.components.input.InputData>) :Void
+	// {
+	// 	if (!isEditing()) { return; }
+	// 	listener.stopImmediatePropagation();
+		
+	// 	if (_mouseDownComponent != null) {
+	// 	}
+	// }
+	
+	// function onMouseUp (listener :hsl.haxe.Signal<com.pblabs.components.input.InputData>) :Void
+	// {
+	// 	if (!isEditing()) { return; }
+	// 	listener.stopImmediatePropagation();
+	// }
+	
+	inline function isEditing () :Bool
+	{
+		return EDITING && _game.currentContext != null;
+	}
 }

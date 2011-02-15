@@ -206,4 +206,22 @@ class SceneUtil
 		return p;
 	}
 	
+	public static function getDisplayComponentUnderPoint (scene :BaseScene2DManager<Dynamic>, screenPoint :Vector2) :BaseScene2DComponent<Dynamic>
+	{
+		var layerIndex :Int = scene.layerCount - 1;
+		while (layerIndex >= 0) {
+			var layer :BaseScene2DLayer<Dynamic, BaseScene2DComponent<Dynamic>> = scene.getLayerAt(layerIndex);
+			var dispIndex :Int = layer.children.length - 1;
+			while (dispIndex >= 0) {
+				if (layer.children[dispIndex].containsScreenPoint(screenPoint)) {
+					return layer.children[dispIndex];
+				}
+				dispIndex--;
+			}
+			layerIndex--;
+		}
+		return null;
+	}
+	
+	
 }

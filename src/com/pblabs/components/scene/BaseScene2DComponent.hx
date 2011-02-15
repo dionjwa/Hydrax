@@ -30,6 +30,29 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	public var height (get_height, set_height) :Float;
 	public var angle (get_angle, set_angle) :Float;
 	public var scale (get_scale, set_scale) :Vector2;
+	@editor({ui:"HUISlider", min:0})
+	public var scaleX (get_scaleX, set_scaleX) :Float;
+	function get_scaleX () :Float
+	{
+		return scale.x;
+	}
+	function set_scaleX (val :Float) :Float
+	{
+		scale = new Vector2(val, scale.y);
+		return val;
+	}
+	@editor({ui:"HUISlider", min:0})
+	public var scaleY (get_scaleY, set_scaleY) :Float;
+	function get_scaleY () :Float
+	{
+		return scale.y;
+	}
+	function set_scaleY (val :Float) :Float
+	{
+		scale = new Vector2(scale.x, val);
+		return val;
+	}
+	
 	public var alpha (get_alpha, set_alpha) :Float;
 	public var isTransformDirty (get_isTransformDirty, set_isTransformDirty) :Bool;
 	

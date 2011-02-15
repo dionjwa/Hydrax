@@ -82,7 +82,7 @@ extends com.pblabs.components.scene.js.canvas.Canvas2DComponent
         #end
         
         super.onAdd();
-        com.pblabs.util.Assert.isNotNull(resource);
+        com.pblabs.util.Assert.isNotNull(resource, "resource is null for #" + owner.name + "." + name);
         
         #if js
         //Get the DomResource, this makes sure the inline image is loaded

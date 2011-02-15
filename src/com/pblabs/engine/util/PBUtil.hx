@@ -34,7 +34,7 @@ class PBUtil
 		return StringUtil.getStringKey(cls) + if (name == null) "" else "|" + name;
 	}
 	
-	public static function addSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null, ?isManager :Bool = false) :T
+	public static function addSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null) :T
 	{
 		Preconditions.checkNotNull(context, "Null context");
 		Preconditions.checkNotNull(compClass, "Null compClass");
@@ -52,10 +52,10 @@ class PBUtil
 		e.addComponent(cast(component, IEntityComponent), compName);
 		e.deferring = false;
 		Assert.isTrue(cast(component, IEntityComponent).isRegistered, "addsingle, not registered");
-		//Register under the component name
-		if (isManager) {
-			context.registerManager(compClass, component, compName, true);
-		}
+		// //Register under the component name
+		// if (isManager) {
+		// 	context.registerManager(compClass, component, compName, true);
+		// }
 		
 		return component;
 	}
@@ -174,6 +174,12 @@ class PBUtil
 	public static function entityProp <T> (c :IEntityComponent, ?fieldName :String) :PropertyReference<T>
 	{
 		return new PropertyReference(entityPropString(c, fieldName));
+	}
+	
+	public static function singletonProp <T> (componentClass :Class<Dynamic>, ?fieldName :String) :PropertyReference<T>
+	{
+		var compName = ReflectUtil.tinyClassName(componentClass);
+		return new PropertyReference("#" + compName + "." + compName + fieldToken(fieldName));
 	}
 	
 	public static function entityPropString (c :IEntityComponent, ?fieldName :String) :String

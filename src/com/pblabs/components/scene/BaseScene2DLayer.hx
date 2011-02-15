@@ -17,6 +17,7 @@ import com.pblabs.util.Preconditions;
 class BaseScene2DLayer<Scene :BaseScene2DManager<Dynamic>, Component :BaseScene2DComponent<Dynamic>> extends NodeComponent<Scene, Component>,
 	implements haxe.rtti.Infos
 {
+	@editor({ui:"UpdatingLabel"})
 	public var scene (get_scene, never) :Scene;
 	@editor({ui:"NumericStepper", min:0})
 	public var index (get_index, set_index) :Int;

@@ -30,11 +30,15 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 	@inject
 	public var sceneView(get_sceneView, set_sceneView) :SceneView;
 	
+	@editor({ui:"UpdatingLabel"})
 	public var zoom(get_zoom, set_zoom) :Float;
 	public var sceneBounds(get_sceneBounds, set_sceneBounds) :Rectangle;
 	public var layerCount(get_layerCount, never) :Int;
+	@editor({ui:"UpdatingLabel"})
 	public var x (get_x, set_x) :Float;
+	@editor({ui:"UpdatingLabel"})
 	public var y (get_y, set_y) :Float;
+	@editor({ui:"UpdatingLabel"})
 	public var rotation (get_rotation, set_rotation) :Float;
 	
 	/**
@@ -274,4 +278,11 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 	
 	public static var DEFAULT_LAYER_NAME :String = "defaultLayer";
 	static var EMPTY_ARRAY :Array<Dynamic> = [];
+	
+	#if (debug || editor)
+	public function toString () :String
+	{
+	    return owner != null ? owner.name : name;
+	}
+	#end
 }

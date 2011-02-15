@@ -2,14 +2,19 @@ package com.pblabs.editor;
 
 import com.bit101.components.ComboBox;
 import com.bit101.components.HBox;
+import com.bit101.components.Label;
+import com.bit101.components.VBox;
 
+import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBObject;
+import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.util.Log;
+import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.util.Comparators;
+import com.pblabs.util.Log;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
@@ -19,14 +24,16 @@ import flash.events.Event;
 
 using Lambda;
 
+using com.pblabs.engine.util.PBUtil;
 using com.pblabs.util.IterUtil;
 
 /**
   * Create new objects
   */
-class CreationPanel extends HBox
+class CreationPanel extends VBox
 {
 	var creationComboBox :ComboBox;
+	var _imageCreationComboBox :ComboBox;
 	var game :PBGameBase;
 	var creationCallbacks :Map<String, PropertyReference<Void->IEntity>>;
 	
@@ -34,14 +41,31 @@ class CreationPanel extends HBox
 	{
 		super(parent);
 		this.game = game;
-		
+		new Label(this, 0, 0, "Create custom type:");
 		creationComboBox = new ComboBox(this, 0, 0, "none", []);
 		var self = this;
 		creationComboBox.addEventListener(Event.SELECT, function (e :Event) :Void {
 			self.createObject(self.creationComboBox.selectedItem);
 		});
 		
+		new Label(this, 0, 0, "Create image:");
+		_imageCreationComboBox = new ComboBox(this, 0, 0, "none", []);
+		var self = this;
+		_imageCreationComboBox.addEventListener(Event.SELECT, function (e :Event) :Void {
+			self.createImage(self._imageCreationComboBox.selectedItem);
+		});
+		
+		
 		creationCallbacks = Maps.newHashMap(String);
+	}
+	
+	public function setImageIds (imageIds :Array<String>) :Void
+	{
+	    _imageCreationComboBox.removeAll();
+	    imageIds.sort(com.pblabs.util.Comparators.compareStrings);
+	    for (id in imageIds) {
+	    	_imageCreationComboBox.addItem(id);	
+	    }
 	}
 	
 	/** The prop avoids a reference that would change when the context changes */
@@ -57,6 +81,8 @@ class CreationPanel extends HBox
 	{
 		
 	}
+	
+	
 	
 	function createObject (objectKey :String) :Void
 	{
@@ -80,6 +106,29 @@ class CreationPanel extends HBox
 			Log.error("No entity created for prop " + prop);
 			return;
 		}
+		
+		//Place in the middle of the screen?
+		objectSelected(e);
+	}
+	
+	function createImage (objectKey :String) :Void
+	{
+		var context :PBContext = cast game.currentContext;
+		
+		var e = context.allocate(IEntity);
+		e.deferring = true;
+		e.addComponent(context.allocate(com.pblabs.components.base.Coordinates2D));
+		var image = context.allocate(com.pblabs.components.scene.ImageComponent);
+		
+		var scene = context.getManager(SceneUtil.MANAGER_CLASS);
+		com.pblabs.util.Assert.isNotNull(scene, "No scene");
+		com.pblabs.util.Assert.isNotNull(scene.getLayerAt(0), "No layer at index=0");
+		
+		image.parentProperty = com.pblabs.engine.util.PBUtil.entityProp(scene.getLayerAt(0));
+		image.resource = cast context.getManager(IResourceManager).getResource(objectKey);
+		e.addComponent(image);
+		
+		e.initialize(context.getManager(NameManager).validateName(objectKey));
 		
 		//Place in the middle of the screen?
 		objectSelected(e);
