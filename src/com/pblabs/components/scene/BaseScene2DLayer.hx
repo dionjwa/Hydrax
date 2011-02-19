@@ -23,12 +23,23 @@ class BaseScene2DLayer<Scene :BaseScene2DManager<Dynamic>, Component :BaseScene2
 	public var index (get_index, set_index) :Int;
 	@editor({ui:"HUISlider", min:0.0, max:3.0})
 	public var parallaxFactor (get_parallaxFactor, set_parallaxFactor) :Float;
-	// public var parallaxFactor (get_parallaxFactor, set_parallaxFactor) :Float;
 
+	#if editor
+	@editor({ui:"UpdatingLabel"})
+	public var childCount (get_childCount, never) :Int;
+	function get_childCount () :Int
+	{
+		return children.length;
+	}
+	#end
+	
+	/** If true, scene objects in this layer ignore mouse/input events */
+	public var ignoreInput :Bool;
+	
 	public function new ()
 	{
 		super();
-		// _index = 0;
+		ignoreInput = false;
 		_parallaxFactor = 1.0;
 	}
 	
@@ -39,7 +50,7 @@ class BaseScene2DLayer<Scene :BaseScene2DManager<Dynamic>, Component :BaseScene2
 
 	function get_scene () :Scene
 	{
-		return cast parent;
+		return parent;
 	}
 	
 	function get_index () :Int

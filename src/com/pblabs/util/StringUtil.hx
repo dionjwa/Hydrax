@@ -61,7 +61,7 @@ class StringUtil
 	{
 		var s :StringBuf = new StringBuf();
 		try {
-			s.add("[" + ReflectUtil.tinyClassName(obj));
+			s.add("[" + ReflectUtil.tinyClassName(Type.getClass(obj)));
 			fields = fields == null ? Type.getInstanceFields(Type.getClass(obj)) : fields;
 		} catch (e :Dynamic) {
 			s.add("[undefined");

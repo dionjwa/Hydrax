@@ -410,7 +410,7 @@ class Log
 		var stage = flash.Lib.current.stage;
 		if( stage == null )
 			return;
-		while( lines.length > 1 && tf.height > stage.stageHeight ) {
+		while( lines.length > 1 && tf.height > 300) {//stage.stageHeight ) {
 			lines.shift();
 			tf.text = lines.join("\n");
 		}

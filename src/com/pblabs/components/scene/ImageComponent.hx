@@ -7,7 +7,9 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.scene;
+
 import com.pblabs.components.input.IInteractiveComponent;
+import com.pblabs.engine.resource.IResource;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ImageResource;
 import com.pblabs.geom.RectangleTools;
@@ -19,17 +21,17 @@ using com.pblabs.components.scene.SceneUtil;
 /**
   * Cross platform Image using Scene2D component.
   */
-class ImageComponent
+class ImageComponent 
 #if css
 extends com.pblabs.components.scene.js.css.Base2DComponent
 #elseif js
 extends com.pblabs.components.scene.js.canvas.Canvas2DComponent
 #elseif (flash || cpp)
-	extends com.pblabs.components.scene.flash.Scene2DComponent  
+extends com.pblabs.components.scene.flash.Scene2DComponent  
 #end
 {
     /** The IResource name and item id.  Id can be null */
-    public var resource  :ImageResource;
+    public var resource  :IResource<flash.display.DisplayObject>;
     
     #if (js && !css)
     public var displayObject (default, set_displayObject) :js.Dom.Image;
@@ -54,7 +56,7 @@ extends com.pblabs.components.scene.js.canvas.Canvas2DComponent
         #if (flash || cpp)
         //The flash pos argument is already transformed to the 
         //SceneManager coords.
-        return RectangleTools.contains(x - displayObject.width / 2, y - displayObject.height / 2, displayObject.width, displayObject.height, pos);
+        return RectangleTools.contains(x - displayObject.width / 2, y - displayObject.height / 2, displayObject.width, displayObject.height, parent.scene.translateScreenToWorld(pos));
         #elseif js
         // trace(pos + "==>" + parent.scene.translateScreenToWorld(pos));
         // trace(this + ".....hit? " + RectangleTools.contains(x - _width / 2, y - _height / 2, _width, _height, parent.scene.translateScreenToWorld(pos)));
@@ -140,49 +142,4 @@ extends com.pblabs.components.scene.js.canvas.Canvas2DComponent
         return super.set_height(val);
     }
     #end
-    
-    #if (flash || cpp)
-    /**
-	 * Update the object's transform based on its current state. Normally
-	 * called automatically, but in some cases you might have to force it
-	 * to update immediately.
-	 * @param updateProps Read fresh values from any mapped properties.
-	 */
-	// public function updateTransform(?updateProps :Bool = false):Void
-	// {
-	// 	if(displayObject == null)
-	// 		return;
-		
-			
-			
-	// 	if(updateProps)
-	// 		updateProperties();
-		
-	// 	// If size is active, it always takes precedence over scale.
-	// 	var tmpScaleX:Number = _scale.x;
-	// 	var tmpScaleY:Number = _scale.y;
-	// 	if(_size)
-	// 	{
-	// 		var localDimensions:Rectangle = displayObject.getBounds(displayObject);
-	// 		tmpScaleX = _scale.x * (_size.x / localDimensions.width);
-	// 		tmpScaleY = _scale.y * (_size.y / localDimensions.height);
-	// 	}
-		
-		
-	// 	_transformMatrix.identity();
-	// 	_transformMatrix.scale(tmpScaleX, tmpScaleY);
-	// 	_transformMatrix.translate(-_registrationPoint.x * tmpScaleX, -_registrationPoint.y * tmpScaleY);
-	// 	_transformMatrix.rotate(PBUtil.getRadiansFromDegrees(_rotation) + _rotationOffset);
-	// 	_transformMatrix.translate(_position.x + _positionOffset.x, _position.y + _positionOffset.y);
-		
-	// 	displayObject.transform.matrix = _transformMatrix;
-	// 	displayObject.alpha = _alpha;
-	// 	displayObject.blendMode = _blendMode;
-	// 	displayObject.visible = (alpha > 0);
-		
-	// 	_transformDirty = false;
-    //     }
-    #end
-    
-    
 }

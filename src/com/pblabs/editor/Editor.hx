@@ -26,6 +26,7 @@ import com.pblabs.editor.CreationPanel;
 import com.pblabs.editor.EntityPanel;
 import com.pblabs.editor.TimePanel;
 import com.pblabs.engine.core.IPBContext;
+import com.pblabs.engine.core.IPBObject;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.input.InputKey;
 import com.pblabs.util.Preconditions;
@@ -50,9 +51,9 @@ using Reflect;
 
 using Type;
 
+using com.pblabs.components.scene.SceneUtil;
 using com.pblabs.engine.core.SetManager;
 using com.pblabs.engine.util.PBUtil;
-using com.pblabs.components.scene.SceneUtil;
 using com.pblabs.geom.bounds.BoundsUtil;
 using com.pblabs.util.DisplayUtils;
 using com.pblabs.util.IterUtil;
@@ -94,8 +95,6 @@ class Editor extends Sprite
 	var _mainAccordion :Accordion;
 	var _LogWindow :Window;
 	var _layer :Sprite;
-	// var _mouseDownComponent :BaseScene2DComponent;
-	// var _mouseDownLocation
 	
 	public function new (app :PBGameBase, ?x :Int = 700, ?y :Int = 0)
 	{
@@ -116,6 +115,15 @@ class Editor extends Sprite
 		
 		_ctx = _game.currentContext;
 		setup();
+		
+		//Move the console down
+		flash.Boot.getTrace().y = 640;
+	}
+	
+	public function objectSelected (obj :IPBObject) :Void
+	{
+	    selectAccordionWindowNamed(com.pblabs.editor.Editor.ENTITY_WINDOW_NAME);
+	    entityPanel.objectSelected(obj);
 	}
 	
 	public function selectAccordionWindowNamed (windowName :String) :Void
@@ -260,29 +268,14 @@ class Editor extends Sprite
 		var scene = _game.currentContext.getManager(SceneUtil.MANAGER_CLASS);
 		var underMouse = scene.getDisplayComponentUnderPoint(listener.data.inputLocation);
 		if (underMouse != null) {
+			objectSelected(underMouse.owner);
 			var dragger = _game.currentContext.getManager(com.pblabs.components.input.DragManager);
 			if (dragger != null) {
 				com.pblabs.util.Assert.isNotNull(dragger);
-				dragger.startDragging(underMouse);
-			}
+				dragger.startDragging(underMouse);//, listener.data.inputLocation);
+			} 
 		}
-		trace("underMouse=" + underMouse);
 	}
-	
-	// function onMouseMove (listener :hsl.haxe.Signal<com.pblabs.components.input.InputData>) :Void
-	// {
-	// 	if (!isEditing()) { return; }
-	// 	listener.stopImmediatePropagation();
-		
-	// 	if (_mouseDownComponent != null) {
-	// 	}
-	// }
-	
-	// function onMouseUp (listener :hsl.haxe.Signal<com.pblabs.components.input.InputData>) :Void
-	// {
-	// 	if (!isEditing()) { return; }
-	// 	listener.stopImmediatePropagation();
-	// }
 	
 	inline function isEditing () :Bool
 	{

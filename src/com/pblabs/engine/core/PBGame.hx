@@ -25,7 +25,7 @@ import com.pblabs.engine.time.ProcessManager;
 
 /**
   * Standard game.  Starts up the most commonly used
-  * managers that provide functionality that most games requre.
+  * managers that provide functionality that most games require.
   */
   
 #if flash
@@ -45,21 +45,11 @@ class PBGame extends PBGameBase
 		registerManager(PBGameBase, this);
 		
 		// Bring in the standard managers.
-		
 		registerManager(NameManager, new NameManager());
 		registerManager(IProcessManager, new ProcessManager());
-		
 		registerManager(SignalBondManager, new SignalBondManager());
 		registerManager(SetManager, new SetManager());
-		
-		// var view = new SceneView();
-		// #if flash
-		// displayContainer.addChild(view.layer);
-		// #end
 		registerManager(SceneView, new SceneView());
-		
-		//Not yet converted to haXe
-		// registerManager(InputManager, new InputManager());
 		registerManager(IResourceManager, new ResourceManager());
 		registerManager(Serializer, new Serializer());
 		registerManager(TemplateManager, new TemplateManager());

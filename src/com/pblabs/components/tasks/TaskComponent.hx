@@ -24,8 +24,14 @@ import com.pblabs.components.tasks.ParallelTask;
 
 class TaskComponent extends EntityComponent 
 {
-	
 	public static var NAME :String = ReflectUtil.tinyClassName(TaskComponent);
+
+	var _anonymousTasks:ParallelTask;
+
+	// stores a mapping from String to ParallelTask
+	var _namedTasks :FastList<ParallelTask>;
+	var _taskNames :FastList<String>;
+	var _updatingTasks :Bool;
 	
 	public static function getFrom (e :IEntity) :TaskComponent
 	{
@@ -163,13 +169,6 @@ class TaskComponent extends EntityComponent
 		removeAllTasks();
 		super.onRemove();
 	}
-	
-	var _anonymousTasks:ParallelTask;
-
-	// stores a mapping from String to ParallelTask
-	var _namedTasks :FastList<ParallelTask>;
-	var _taskNames :FastList<String>;
-	var _updatingTasks :Bool;
 }
 
 

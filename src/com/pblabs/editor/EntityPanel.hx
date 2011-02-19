@@ -5,6 +5,7 @@ import com.bit101.components.ComboBox;
 import com.bit101.components.HBox;
 import com.bit101.components.HUISlider;
 import com.bit101.components.Label;
+import com.bit101.components.NumericStepper;
 import com.bit101.components.Panel;
 import com.bit101.components.ScrollPane;
 import com.bit101.components.TextArea;
@@ -16,6 +17,7 @@ import com.bit101.components.Window;
 import com.pblabs.components.input.InputData;
 import com.pblabs.components.input.InputManager;
 import com.pblabs.components.manager.NodeComponent;
+import com.pblabs.editor.CustomEditorPanelComponent;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBObject;
@@ -23,11 +25,11 @@ import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.core.SetManager;
-import com.pblabs.util.Log;
 import com.pblabs.engine.util.PBUtil;
 import com.pblabs.util.Comparators;
 import com.pblabs.util.DisplayUtils;
 import com.pblabs.util.Enumerable;
+import com.pblabs.util.Log;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.SignalVar;
 
@@ -40,8 +42,6 @@ import flash.events.MouseEvent;
 import hsl.haxe.Signal;
 
 import net.amago.components.minimalcomp.VBox;
-
-import com.pblabs.editor.CustomEditorPanelComponent;
 
 using IterTools;
 
@@ -70,6 +70,7 @@ class EntityPanel extends HBox
 	var _groupComboBox :ComboBox;
 	var _customePanelsWindow :Window;
 	var _entityList :com.bit101.components.List;
+	var _componentList :com.bit101.components.List;
 	var _textGutterPanel :Panel;
 	
 	var _editorFieldsWindow :Window;
@@ -92,10 +93,6 @@ class EntityPanel extends HBox
 	{
 		this.removeAllChildren();
 		_sets = c.getManager(SetManager);
-		
-		//Do this first, so we recieve the events first and can stop
-		//propagation if needed
-		game.getManager(InputManager).deviceClick.bindAdvanced(onClick);
 		
 		//Object selection
 		_accordion = new AccordionExtended(this);
@@ -138,6 +135,17 @@ class EntityPanel extends HBox
 			self.objectNameSelected(self._entityList.selectedItem);
 		});
 		
+		//Component list.  Clicking on a component calls trace(component.toString())
+		var compListLabel = new Label(groupSelectorWindow.content, entityListLabel.x, _entityList.y + _entityList.height, "Comps:");
+		_componentList = new com.bit101.components.List(groupSelectorWindow.content, _entityList.x, compListLabel.y + 5, []);
+		_componentList.setSize(_groupComboBox.width, _entityList.height);
+		_componentList.addEventListener(Event.SELECT, function (e :Event) :Void {
+			if (Std.is(self.selectedObject, IEntity)) {
+				var e = cast(self.selectedObject, IEntity);
+				trace(Std.string(e.lookupComponentByName(self._componentList.selectedItem)));
+			}
+		});
+		
 		//Custom window left of the entity window
 		_editorFieldsWindow = new Window(this, 0, 0, "Editor fields");
 		_editorFieldsWindow.setSize(_accordion.width, _accordion.height);
@@ -158,6 +166,7 @@ class EntityPanel extends HBox
 		if (selectedObject == obj) {
 			return;
 		}
+		
 		selectedObject = obj;
 		
 		com.pblabs.util.Assert.isNotNull(_componentsWindowBox);
@@ -169,11 +178,13 @@ class EntityPanel extends HBox
 		//Show the entity
 		var nameLabel = new Label(_componentsWindowBox, 0, 0, "Object name: " + obj.name);
 		var componentLabel = new Label(_componentsWindowBox, nameLabel.x, nameLabel.y + nameLabel.height, "Components: ");
-
+		
 		com.pblabs.util.Assert.isNotNull(_editorFieldsWindow);
 		com.pblabs.util.Assert.isNotNull(_editorFieldsWindow.content);
 		DisplayUtils.removeAllChildren(_editorFieldsWindow.content);
-		// DisplayUtils.removeAllChildren(_editorFieldsScrollPane.content);
+		var scrollPane = new ScrollPane(_editorFieldsWindow.content);
+		scrollPane.setSize(_accordion.width, 300);
+		var metadataVBox = new VBox(scrollPane.content);
 		
 		com.pblabs.util.Assert.isNotNull(_customePanelsWindow);
 		com.pblabs.util.Assert.isNotNull(_customePanelsWindow.content);
@@ -198,19 +209,27 @@ class EntityPanel extends HBox
 			var components = new Array<DisplayObject>();
 			com.pblabs.util.Assert.isNotNull(_editorFieldsWindow);
 			com.pblabs.util.Assert.isNotNull(_editorFieldsWindow.content);
-			showEntityMetaData(_editorFieldsWindow.content, e, new List<IEntity>(), components);
-			// showEntityMetaData(_editorFieldsScrollPane.content, e, new List<IEntity>(), components);
-			
-		
-			DisplayUtils.distributeChildrenVertically(_editorFieldsWindow.content, 0, 0);
+			showEntityMetaData(metadataVBox, e, new List<IEntity>(), components);
 			
 			//Add the custom panels, defined in the entity components itself
 			_customEntityPanelsBox = new VBox(_customePanelsWindow.content);
-			new Label(_customEntityPanelsBox, 0, 0, "Fucking test");
 			for (ent in NodeComponent.getEntityAndAllParents(e, null)) {
 				for (c in ent.lookupComponentsByType(CustomEditorPanelComponent)) {
 					_customEntityPanelsBox.addChildAt(c.panel, _customEntityPanelsBox.numChildren); 
 				}
+			}
+		}
+		
+		//Show the entity component list
+		_componentList.removeAll();
+		if (Std.is(selectedObject, IEntity)) {
+			var names = [];
+			for (c in cast(selectedObject, IEntity)) {
+				names.push(c.name);
+			}
+			names.sort(Comparators.compareStrings);
+			for (name in names) {
+				_componentList.addItem(name);
 			}
 		}
 	}
@@ -218,14 +237,10 @@ class EntityPanel extends HBox
 	function groupSelected (name :String) :Void
 	{
 		_entityList.removeAll();
-		if (name == NONE_GROUP) {
-			for (name in getUngroupedObjectNames()) {
-				_entityList.addItem(name);
-			}
-		} else {
-			for (name in _sets.getObjectsInSet(name).map(PBUtil.objectNameMapping)) {
-				_entityList.addItem(name);
-			}
+		var names = name == NONE_GROUP ? getUngroupedObjectNames() :  _sets.getObjectsInSet(name).map(PBUtil.objectNameMapping).toArray();
+		names.sort(Comparators.compareStrings);
+		for (name in names) {
+			_entityList.addItem(name);
 		}
 	}
 	
@@ -250,26 +265,21 @@ class EntityPanel extends HBox
 		return arr;
 	}
 	
-	function onClick (signal :Signal<InputData>) :Void
-	{
-		Log.debug("Editor detects click " + signal.data1);
-		//Since we're the editor, stop regular game event propagation
-		signal.stopImmediatePropagation();
-		objectSelected(signal.data.inputComponent.owner);
-	}
-	
 	/** Recursive */
-	function showEntityMetaData (root :DisplayObjectContainer, e :IEntity, shown :List<IEntity>, components :Array<DisplayObject>) :Void
+	function showEntityMetaData (root :DisplayObjectContainer, e :IEntity, shown :List<IEntity>, components :Array<DisplayObject>, 
+		?processed :Array<Dynamic> = null) :Void
 	{
-		if (e == null || shown.has(e)) {
+		processed = processed == null ? [] : processed;
+		if (e == null || shown.has(e) || processed.has(e)) {
 			return;
 		}
 		shown.add(e);
+		processed.push(e);
 		
 		var cl = components.length;
 		//Show the components on this entity
 		for (c in e) {
-			showEditableMetaData(root, c, components);
+			showEditableMetaData(root, c, components, processed);
 		}
 		
 		if (cl != components.length) {
@@ -277,96 +287,137 @@ class EntityPanel extends HBox
 			root.setChildIndex(components[cl] , cl);
 		}
 		
+		//Show the NodeComponent parents
 		for (c in e) {
 			if (Std.is(c, NodeComponent)) {
 				var n :NodeComponent<NodeComponent<Dynamic, Dynamic>, Dynamic> = cast(c);
-				if (n.parent != null) {
-					showEntityMetaData(root, n.parent.owner, shown, components);
+				n = cast n.parent;
+				while (n != null) {
+					components.push(new Label(root, 0, 0, "------" + n.owner.name + "." + n.name));
+					showEditableMetaData(root, n, components, processed);
+					n = cast n.parent;
 				}
 			}
 		}
 	}
 	
-	function showEditableMetaData (root :DisplayObjectContainer, component :IEntityComponent, components :Array<DisplayObject>) :Void
+	function showEditableMetaData (root :DisplayObjectContainer, component :IEntityComponent, 
+		components :Array<DisplayObject>, processed :Array<Dynamic>) :Void
 	{
-		var cls = component.getClass();
-		var m = haxe.rtti.Meta.getFields(cls);
-		if (m != null) {
-			var fields = Reflect.fields(m);
-			com.pblabs.util.Assert.isNotNull(fields);
-			fields.sort(Comparators.compareStrings);
-			for (f in fields) {
-				com.pblabs.util.Assert.isNotNull(Reflect.field(m, f));
-				var injectMeta :Dynamic = Reflect.field(Reflect.field(m, f), "editor");
-				if (injectMeta == null) {
-					continue;
-				}
-				com.pblabs.util.Assert.isTrue(Std.is(injectMeta, Array));
-				for (editable in cast(injectMeta, Array<Dynamic>)) {
-					com.pblabs.util.Assert.isNotNull(editable, "editable is null");
-					// var uiElementCls = Type.resolveClass("com.bit101.components." + Reflect.field(editable, "ui"));
-					var label = if (Reflect.field(editable, "label") != null) Reflect.field(editable, "label") else f;
-					//If the field is a SignalVar, adjust the PropertyReference
-					var valueprop :PropertyReference<Dynamic> = SignalVar.checkForSignalVar("#" + component.owner.name + "." + component.name + "." + f, component, f);
-					switch (Reflect.field(editable, "ui")) {
-						case "HUISlider":
-							var maxFieldName = if (Reflect.field(editable, "maximum") == null) f + "Max" else Reflect.field(editable, "maximum"); 
-							var maxvalueprop = SignalVar.checkForSignalVar("#" + component.owner.name + "." + component.name + "." + maxFieldName, component, maxFieldName);
-							var minimum = if (Reflect.field(editable, "minimum") != null) Reflect.field(editable, "minimum") else 0;
-							var slider = new HUISlider(root, 0, 0, label);
-							slider.setSize(_editorFieldsWindow.width, slider.height);
-							slider.maximum = component.owner.getProperty(maxvalueprop);//component.componentProp(Reflect.field(editable, "maximum")));
-							slider.minimum = 0;
-							slider.value = component.owner.getProperty(valueprop);//component.componentProp(f));
-							slider.addEventListener(Event.CHANGE, function (ev :Event) :Void {
-								if (!component.isRegistered) return;
-								component.owner.setProperty(valueprop, slider.value);
-							});
-							slider.addEventListener(Event.ENTER_FRAME, function (ev :Event) :Void {
-								if (!component.isRegistered) return;
-								slider.value = component.owner.getProperty(valueprop);
-							});
-							components.push(slider);
-						case "UpdatingLabel":
-							var updatingLabel = new UpdatingLabel(root, 0, 0, 
-								label + ": ", PBUtil.createPropertyCallback(component.owner, valueprop));
-							components.push(updatingLabel);
-						case "UpdatingList":
-							components.push(new com.bit101.components.Label(root, 0, 0, label + ": "));
-							var list = new UpdatingList(root, 0, 0, PBUtil.createPropertyCallback(component.owner, valueprop));
-							list.setSize(_editorFieldsWindow.width, 75);
-							components.push(list);
-						case "ComboBox":
-							
-							components.push(new com.bit101.components.Label(root, 0, 0, label + ": "));
-							var enumClass = ReflectUtil.getClass(component.owner.getProperty(valueprop));
-							var values = Enumerable.names(enumClass).toArray();
-							
-							if (values == null) {
-								Log.error("Cannot create a ComboBox for the editable field:" + f + ", there are no Enumerables of type " + enumClass);
-								continue;
-							}
-							
-							var combo = new ComboBox(root, 0, 0, "none", values);
-							combo.selectedIndex = values.indexOf(cast(component.owner.getProperty(valueprop), Enumerable<Dynamic>).name);
-							combo.addEventListener(Event.SELECT, function (e :Event) :Void {
-								component.owner.setProperty(valueprop, Enumerable.valueOf(enumClass, combo.selectedItem));
-							});
-							components.push(combo);
-						case "TextArea":
-							components.push(new com.bit101.components.Label(root, 0, 0, label + ": "));
-							var ta = new TextArea(root);
-							ta.setSize(_editorFieldsWindow.width, 80);
-							ta.addEventListener(Event.ENTER_FRAME, function (ev :Event) :Void {
-								if (!component.isRegistered) return;
-								ta.text = component.owner.getProperty(valueprop);
-							});
-							components.push(ta);
-						default:
-							Log.error("editable class type not handled");
+		com.pblabs.util.Assert.isNotNull(processed);
+		com.pblabs.util.Assert.isNotNull(component);
+		if (processed.has(component)) {
+			return;
+		}
+		processed.push(component);
+		var cls :Class<Dynamic> = component.getClass();
+		
+		while (cls != null) {
+			var m = haxe.rtti.Meta.getFields(cls);
+			if (m != null) {
+				var fields = Reflect.fields(m);
+				com.pblabs.util.Assert.isNotNull(fields);
+				fields.sort(Comparators.compareStrings);
+				for (f in fields) {
+					com.pblabs.util.Assert.isNotNull(Reflect.field(m, f));
+					var injectMeta :Dynamic = Reflect.field(Reflect.field(m, f), "editor");
+					if (injectMeta == null) {
+						continue;
+					}
+					com.pblabs.util.Assert.isTrue(Std.is(injectMeta, Array));
+					for (editable in cast(injectMeta, Array<Dynamic>)) {
+						com.pblabs.util.Assert.isNotNull(editable, "editable is null");
+						// var uiElementCls = Type.resolveClass("com.bit101.components." + Reflect.field(editable, "ui"));
+						var label = if (Reflect.field(editable, "label") != null) Reflect.field(editable, "label") else f;
+						//If the field is a SignalVar, adjust the PropertyReference
+						var valueprop :PropertyReference<Dynamic> = SignalVar.checkForSignalVar("#" + component.owner.name + "." + component.name + "." + f, component, f);
+						switch (Reflect.field(editable, "ui")) {
+							case "HUISlider":
+								var slider = new HUISlider(root, 0, 0, label);
+								slider.setSize(_editorFieldsWindow.width, slider.height);
+								slider.maximum = Reflect.field(editable, "max") == null ? ReflectUtil.field(component, f) == 0 ? 1 :ReflectUtil.field(component, f) * 1.5 : Reflect.field(editable, "max");
+								slider.minimum = Reflect.field(editable, "min") == null ? Math.min(0, ReflectUtil.field(component, f)) : Reflect.field(editable, "min");
+								slider.value = component.owner.getProperty(valueprop);//component.componentProp(f));
+								slider.addEventListener(Event.CHANGE, function (ev :Event) :Void {
+									if (!component.isRegistered) return;
+									component.owner.setProperty(valueprop, slider.value);
+								});
+								slider.addEventListener(Event.ENTER_FRAME, function (ev :Event) :Void {
+									if (!component.isRegistered) return;
+									slider.value = component.owner.getProperty(valueprop);
+								});
+								
+								if (slider.maximum < 0.1) {
+									slider.tick = 0.002;
+									slider.labelPrecision = 4;
+								} else if (slider.maximum < 1) {
+									slider.tick = 0.02;
+									slider.labelPrecision = 3;
+								} else if (slider.maximum < 10) {
+									slider.tick = 0.2;
+									slider.labelPrecision = 2;
+								} else if (slider.maximum < 100) {
+									slider.tick = 2;
+									slider.labelPrecision = 0;
+								}
+								components.push(slider);
+							case "UpdatingLabel":
+								var updatingLabel = new UpdatingLabel(root, 0, 0, 
+									label + ": ", PBUtil.createPropertyCallback(component.owner, valueprop));
+								components.push(updatingLabel);
+							case "UpdatingList":
+								components.push(new com.bit101.components.Label(root, 0, 0, label + ": "));
+								var list = new UpdatingList(root, 0, 0, PBUtil.createPropertyCallback(component.owner, valueprop));
+								list.setSize(_editorFieldsWindow.width, 75);
+								components.push(list);
+							case "ComboBox":
+								
+								components.push(new com.bit101.components.Label(root, 0, 0, label + ": "));
+								var enumClass = ReflectUtil.getClass(component.owner.getProperty(valueprop));
+								var values = Enumerable.names(enumClass) != null ? Enumerable.names(enumClass).toArray() : null;
+								
+								if (values == null) {
+									Log.error("Cannot create a ComboBox for the editable field:" + f + ", there are no Enumerables of type " + enumClass);
+									continue;
+								}
+								
+								var combo = new ComboBox(root, 0, 0, "none", values);
+								combo.selectedIndex = values.indexOf(cast(component.owner.getProperty(valueprop), Enumerable<Dynamic>).name);
+								combo.addEventListener(Event.SELECT, function (e :Event) :Void {
+									component.owner.setProperty(valueprop, Enumerable.valueOf(enumClass, combo.selectedItem));
+								});
+								components.push(combo);
+							case "TextArea":
+								components.push(new com.bit101.components.Label(root, 0, 0, label + ": "));
+								var ta = new TextArea(root);
+								ta.setSize(_editorFieldsWindow.width, 80);
+								ta.addEventListener(Event.ENTER_FRAME, function (ev :Event) :Void {
+									if (!component.isRegistered) return;
+									ta.text = component.owner.getProperty(valueprop);
+								});
+								components.push(ta);
+							case "NumericStepper":
+								components.push(new com.bit101.components.Label(root, 0, 0, label + ": "));
+								var stepper :NumericStepper = null;
+								stepper = new NumericStepper(root, 0, 0, function (e :Event) :Void {
+									// trace("step changed " + stepper.value);
+									ReflectUtil.setField(component, f, stepper.value);
+									stepper.value = ReflectUtil.field(component, f);
+								});
+								stepper.step = 1;
+								stepper.minimum = Reflect.hasField(editable, "min") ? Reflect.field(editable, "min") : 0;
+								stepper.maximum = Reflect.hasField(editable, "max") ? Reflect.field(editable, "max") : 100;
+								stepper.labelPrecision = 0;
+								stepper.value = ReflectUtil.field(component, f);
+								components.push(stepper);
+							default:
+								Log.error("editable class field not handled: " + Type.getClassName(cls) + "." + f + ", " + Reflect.field(editable, "ui"));
+						}
 					}
 				}
 			}
+			//Do the superclass fields
+			cls = Type.getSuperClass(cls);
 		}
 	}
 	

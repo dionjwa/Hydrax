@@ -92,8 +92,7 @@ class VectorTools
 
 	inline public static function getAngle (x1 :Float, y1 :Float, x2 :Float, y2 :Float) :Float
 	{
-		var angle = Math.atan2(y2 - y1, x2 - x1);
-		return (angle >= 0 ? angle : angle + PI2);
+		return Math.atan2(y2 - y1, x2 - x1);
 	}
 	
 	inline public static function getMidpoint (v1 :XY, v2 :XY) :Vector2

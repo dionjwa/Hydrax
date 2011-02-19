@@ -197,7 +197,6 @@ class SceneUtil
 		return p;
 	}
 	
-	/** UNTESTED */
 	public static function translateWorldToScreen (sceneManager :BaseScene2DManager<Dynamic>, world :Vector2) :Vector2
 	{
 		var viewOffset = new Vector2();
@@ -211,6 +210,12 @@ class SceneUtil
 		var layerIndex :Int = scene.layerCount - 1;
 		while (layerIndex >= 0) {
 			var layer :BaseScene2DLayer<Dynamic, BaseScene2DComponent<Dynamic>> = scene.getLayerAt(layerIndex);
+			layerIndex--;
+			#if !editor
+			if (layer.ignoreInput) {
+				continue;
+			}
+			#end
 			var dispIndex :Int = layer.children.length - 1;
 			while (dispIndex >= 0) {
 				if (layer.children[dispIndex].containsScreenPoint(screenPoint)) {
@@ -218,7 +223,6 @@ class SceneUtil
 				}
 				dispIndex--;
 			}
-			layerIndex--;
 		}
 		return null;
 	}

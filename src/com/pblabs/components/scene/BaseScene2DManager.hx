@@ -7,10 +7,11 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.scene;
+
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene.BaseScene2DLayer;
-import com.pblabs.components.scene.SceneView;
 import com.pblabs.components.scene.SceneUtil;
+import com.pblabs.components.scene.SceneView;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.util.PBUtil;
@@ -75,18 +76,28 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 		_transformDirty = false;
 	}
 	
-	public function addLayer <T>(cls :Class<T>, layerName :String, ?registerAsManager :Bool = true) :T
+	public function addLayer <T>(cls :Class<Dynamic>, layerName :String, ?registerAsManager :Bool = true) :T
 	{
 		com.pblabs.util.Assert.isNotNull(context);
-		var layer = context.allocate(cls);
-		com.pblabs.util.Assert.isTrue(Std.is(layer, BaseScene2DLayer), "Layer class " + cls + " is not a BaseScene2DLayer");
 		
-		cast(layer, BaseScene2DLayer<Dynamic, Dynamic>).parentProperty = PBUtil.componentProp(this);
+		//Get the order of the children first
+		var childrenCopy = children.copy();
+		
+		var layer = context.allocate(cls);
+		com.pblabs.util.Assert.isTrue(Std.is(layer, SceneUtil.LAYER_CLASS), "Layer class " + cls + " is not a " + SceneUtil.LAYER_CLASS);
+		var layerCast :com.pblabs.components.manager.NodeComponent<Dynamic, Dynamic> = cast layer;
+		layerCast.parentProperty = PBUtil.componentProp(this);
 		owner.addComponent(cast(layer, IEntityComponent), layerName);
 		if (registerAsManager) {
-			context.registerManager(cast(BaseScene2DLayer), layer, layerName, true);
+			context.registerManager(SceneUtil.LAYER_CLASS, layer, layerName, true);
 		}
-		return layer;
+		
+		//Put the children in the previous order
+		childrenCopy.push(cast layer);
+		for (i in 0...childrenCopy.length) {
+			setLayerIndex(childrenCopy[i], i);
+		}
+		return cast layer;
 	}
 	
 	/** Calls onFrame on this and all children to make sure they're in the right place on the first frame */
@@ -123,6 +134,7 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 	
 	public function getLayerIndex (layer :Layer) :Int
 	{
+		com.pblabs.util.Assert.isTrue(children.indexOf(layer) >= 0 && children.indexOf(layer) < children.length);
 		return children.indexOf(layer);
 	}
 	

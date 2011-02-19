@@ -44,7 +44,18 @@ using com.pblabs.util.XMLUtil;
 */
 class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic, Dynamic>> extends EntityComponent
 {
-	public var parentProperty :PropertyReference<P>;
+	var _parentProperty :PropertyReference<P>;
+	public var parentProperty (get_parentProperty, set_parentProperty) :PropertyReference<P>;
+	function get_parentProperty () :PropertyReference<P>
+	{
+		return _parentProperty;
+	}
+	
+	function set_parentProperty (val :PropertyReference<P>) :PropertyReference<P>
+	{
+		_parentProperty = val;
+		return val;
+	}
 	
 	@editorData({ignore :"true"})
 	public var children (default, null) :Array<C>;
@@ -195,8 +206,10 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 	{
 		Preconditions.checkArgument(isRegistered, "Component must first be registered");
 		Preconditions.checkArgument(newParent != null || parentProperty != null, "No parent or parent property provided");
-		
+
+		// trace(owner.name + "." + name + " being adding to " + parentProperty);
 		newParent = newParent == null ? owner.getProperty(parentProperty) : newParent;
+		// trace("      newParent=" + newParent);
 		
 		Preconditions.checkNotNull(newParent, "Parent cannot be null, parentProperty=" + parentProperty);
 		Preconditions.checkArgument(Std.is(newParent, NodeComponent), "Parent must be of type NodeComponent, parent is type=" + ReflectUtil.getClassName(newParent));

@@ -62,7 +62,6 @@ class NotifyingValueComponent extends EntityComponent,
 	override function onRemove():Void
 	{
 		super.onRemove();
-		// signaler.unbindAll();
 		_value = 0;
 	}
 	

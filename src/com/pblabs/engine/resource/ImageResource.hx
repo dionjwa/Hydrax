@@ -23,6 +23,14 @@ class ImageResource extends ResourceBase<flash.display.Bitmap>
 class ImageResource extends ResourceBase<js.Dom.Image>
 #end
 {
+	#if (flash || cpp)
+	var _image :flash.display.Bitmap;
+	var _loader :flash.display.Loader;
+	#elseif js
+	var _image :js.Dom.Image;
+	#end
+	var _source :Source;
+	
 	public function new (name :String, source :Source)
 	{
 		super(name);
@@ -151,12 +159,4 @@ class ImageResource extends ResourceBase<js.Dom.Image>
 	{
 		_onError(e);
 	}
-	
-	#if (flash || cpp)
-	var _image :flash.display.Bitmap;
-	var _loader :flash.display.Loader;
-	#elseif js
-	var _image :js.Dom.Image;
-	#end
-	var _source :Source;
 }

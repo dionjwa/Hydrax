@@ -76,10 +76,11 @@ class Vector2 extends XY,
 	/**
 	 * Returns the angle represented by this Vector2, in radians.
 	 */
-	function get_angle ():Float
+	inline function get_angle ():Float
 	{
-		var angle:Float = Math.atan2(y, x);
-		return (angle >= 0 ? angle : angle + (2 * Math.PI));
+		// var angle:Float = 
+		return Math.atan2(y, x);
+		// return (angle >= 0 ? angle : angle + (2 * Math.PI));
 	}
 
 	/**

@@ -28,6 +28,12 @@ class AlphaComponent extends NotifyingValueComponent
 	{
 		return "Alpha=" + alpha; 
 	}
+
+	override function onRemove():Void
+	{
+		super.onRemove();
+		_value = 1;
+	}
 	
 	function get_alpha () :Float
 	{

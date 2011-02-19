@@ -126,9 +126,15 @@ class CreationPanel extends VBox
 		
 		image.parentProperty = com.pblabs.engine.util.PBUtil.entityProp(scene.getLayerAt(0));
 		image.resource = cast context.getManager(IResourceManager).getResource(objectKey);
+		//Start the image with the same scale factor as the scene, to help with large scale factors
+		image.scaleXY = 1 / scene.zoom;
 		e.addComponent(image);
 		
 		e.initialize(context.getManager(NameManager).validateName(objectKey));
+		
+		com.pblabs.util.Assert.isNotNull(image.layer, "After creating the image, no layer");
+		com.pblabs.util.Assert.isNotNull(image.layer.parent, "After creating the image, no layer.parent");
+		com.pblabs.util.Assert.isNotNull(image.layer.scene, "After creating the image, no layer.scene");
 		
 		//Place in the middle of the screen?
 		objectSelected(e);

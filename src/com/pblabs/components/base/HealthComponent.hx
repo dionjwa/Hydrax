@@ -38,19 +38,26 @@ class HealthComponent extends EntityComponent,
 	var damageModifier :Hash<Float>;
 	public var destroyOnDeath :Bool;
 	public var healthMax :Float;
-
+	//Local cache to avoid variable creation
+	var _tempPrevHealth :Float;
+	
 	public function new ()
 	{
-		
 		super();
 		signalDamaged = new DirectSignaler(this);
 		signalDied = new DirectSignaler(this);
 		signalHealed = new DirectSignaler(this);
 		signalResurrected = new DirectSignaler(this);
+		_cachedHealthEvent = new HealthEvent(0, 0, null);
+		setDefaults();
+	}
+	
+	inline function setDefaults () :Void
+	{
 		damageMagnitude = 1.0;
 		destroyOnDeath = false;
 		_health = healthMax = 100;
-		_cachedHealthEvent = new HealthEvent(0, 0, null);
+		_timeOfLastDamage = -1000;
 	}
 	
 	public function serialize (xml :XML) :Void
@@ -63,11 +70,6 @@ class HealthComponent extends EntityComponent,
 	{
 		_health = xml.parseFloat("health");
 		healthMax = xml.parseFloat("healthMax");
-	}
-	
-	public function toString () :String
-	{
-		return "Health=" + health + " / " + healthMax; 
 	}
 	
 	public function setDamageModifier (key :String, multiplier :Float) :Void
@@ -95,32 +97,32 @@ class HealthComponent extends EntityComponent,
 	{
 		// Clamp the amount of damage.
 		value = MathUtil.fclamp(value, 0, healthMax);
-
+		
 		// Notify via a HealthEvent.
-
-		if (value < _health) {
-			_cachedHealthEvent.reset(value - _health, value, _lastDamageOriginator);
-			signalDamaged.dispatch(_cachedHealthEvent);
-		}
-
-		if (_health > 0 && value == 0) {
-			_cachedHealthEvent.reset(value - _health, value, _lastDamageOriginator);
-			signalDied.dispatch(_cachedHealthEvent);
-		}
-
-		if (_health == 0 && value > 0) {
-			_cachedHealthEvent.reset(value - _health, value, _lastDamageOriginator);
-			signalResurrected.dispatch(_cachedHealthEvent);
-		}
-
-		if (_health > 0 && value > _health) {
-			_cachedHealthEvent.reset(value - _health, value, _lastDamageOriginator);
-			signalHealed.dispatch(_cachedHealthEvent);
-		}
-
+		_tempPrevHealth = _health;
 		// Set new health value.
 		//Log.print(this, "Health becomes " + _Health);
 		_health = value;
+		
+		if (value < _tempPrevHealth && signalDamaged.isListenedTo) {
+			_cachedHealthEvent.reset(value - _tempPrevHealth, value, _lastDamageOriginator);
+			signalDamaged.dispatch(_cachedHealthEvent);
+		}
+
+		if (_tempPrevHealth > 0 && value == 0 && signalDied.isListenedTo) {
+			_cachedHealthEvent.reset(value - _tempPrevHealth, value, _lastDamageOriginator);
+			signalDied.dispatch(_cachedHealthEvent);
+		}
+
+		if (_tempPrevHealth == 0 && value > 0 && signalResurrected.isListenedTo) {
+			_cachedHealthEvent.reset(value - _tempPrevHealth, value, _lastDamageOriginator);
+			signalResurrected.dispatch(_cachedHealthEvent);
+		}
+
+		if (_tempPrevHealth > 0 && value > _tempPrevHealth && signalHealed.isListenedTo) {
+			_cachedHealthEvent.reset(value - _tempPrevHealth, value, _lastDamageOriginator);
+			signalHealed.dispatch(_cachedHealthEvent);
+		}
 
 		// Handle destruction...
 		if (destroyOnDeath && _health <= 0) {
@@ -179,7 +181,12 @@ class HealthComponent extends EntityComponent,
 	{
 		super.onAdd();
 		_health = healthMax;
-		_timeOfLastDamage = -1000;
+	}
+	
+	override function onRemove () :Void
+	{
+		super.onRemove();
+		setDefaults();
 	}
 
 	function get_time ():Float
@@ -201,6 +208,12 @@ class HealthComponent extends EntityComponent,
 		com.pblabs.util.Assert.isFalse(signalHealed.isListenedTo);
 		com.pblabs.util.Assert.isFalse(signalResurrected.isListenedTo);
 		
+	}
+	#end
+	#if (debug || editor)
+	public function toString () :String
+	{
+		return "Health=" + health + " / " + healthMax; 
 	}
 	#end
 }

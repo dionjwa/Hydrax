@@ -40,12 +40,11 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
 				this.removeFromParent();
 				parentProperty = newlayer.entityProp();
 				addToParent(newlayer);
-				_layerIndexDirty = false;
 				_zIndex = parent.children.length - 1;
 				_zIndexDirty = true;
-			} else {
-				_layerIndex = scene.getLayerIndex(parent);
 			}
+			_layerIndexDirty = false;
+			_layerIndex = scene.getLayerIndex(parent);
 		}
 		if (_zIndexDirty) {
 			com.pblabs.util.Assert.isNotNull(parent);
@@ -57,6 +56,14 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
 		if (_isTransformDirty) {
 			updateTransform();
 		}
+	}
+	
+	override function addedToParent () :Void
+	{
+		super.addedToParent();
+		zIndex = parent.getChildIndex(this);
+		com.pblabs.util.Assert.isNotNull(parent.parent);
+		layerIndex = parent.parent.getLayerIndex(parent); 
 	}
 	
 	override function setDefaultVars () :Void
@@ -150,5 +157,4 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
     }
 	
 	var _displayObject :DisplayObject;
-
 }

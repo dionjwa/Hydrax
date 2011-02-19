@@ -77,6 +77,8 @@ class TaskComponentTicked extends TaskComponent,
 	{
 		removeAllTasks();
 		super.onRemove();
+		_tasksFinished = true;
+		_addedToProcessManager = false;
 	}
 	
 	var _tasksFinished :Bool;
