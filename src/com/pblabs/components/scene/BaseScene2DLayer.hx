@@ -7,7 +7,9 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.scene;
+
 import com.pblabs.components.manager.NodeComponent;
+import com.pblabs.engine.core.ObjectType;
 import com.pblabs.util.Preconditions;
 
 /**
@@ -17,6 +19,8 @@ import com.pblabs.util.Preconditions;
 class BaseScene2DLayer<Scene :BaseScene2DManager<Dynamic>, Component :BaseScene2DComponent<Dynamic>> extends NodeComponent<Scene, Component>,
 	implements haxe.rtti.Infos
 {
+	/** For ignoring all objects in a layer */
+	public var inputMask :ObjectType;
 	@editor({ui:"UpdatingLabel"})
 	public var scene (get_scene, never) :Scene;
 	@editor({ui:"NumericStepper", min:0})
@@ -39,6 +43,8 @@ class BaseScene2DLayer<Scene :BaseScene2DManager<Dynamic>, Component :BaseScene2
 	public function new ()
 	{
 		super();
+		//By default, searches all children
+		inputMask = ObjectType.ALL;
 		ignoreInput = false;
 		_parallaxFactor = 1.0;
 	}
@@ -90,5 +96,3 @@ class BaseScene2DLayer<Scene :BaseScene2DManager<Dynamic>, Component :BaseScene2
 	var _needsSort :Bool;
 	var _parallaxFactor :Float;
 }
-
-

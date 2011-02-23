@@ -9,31 +9,31 @@
 package com.pblabs.geom;	
 
 import com.pblabs.util.Cloneable;
-
-import com.pblabs.geom.Vector2;
 import com.pblabs.util.Equalable;
 
-using com.pblabs.geom.VectorTools;
+import de.polygonal.motor2.geom.math.XY;
+
 using com.pblabs.geom.LineSegmentTools;
+using com.pblabs.geom.VectorTools;
 
 class LineSegment 
 	implements Equalable<LineSegment>, implements Cloneable<LineSegment>
 {
-	public var a :Vector2;
-	public var b :Vector2;
+	public var a :XY;
+	public var b :XY;
 	public var length (getLength, null) :Float;
 
-	public var normalVector(getNormalVector, null) : Vector2;
+	public var normalVector(getNormalVector, null) : XY;
 
-	public static function closestPoint (a :Vector2, b :Vector2, p :Vector2) :Vector2
+	public static function closestPoint (a :XY, b :XY, p :XY) :XY
 	{
-		var closestPoint:Vector2 = new Vector2();
+		var closestPoint:XY = new Vector2();
 		distToLineSegment(a, b, p, closestPoint);
 		return closestPoint;
 	}
 
-	public static function distanceLineSegments (p1 :Vector2, p2 :Vector2, p3 :Vector2, p4 :Vector2,
-		pa :Vector2, pb :Vector2) :Float
+	public static function distanceLineSegments (p1 :XY, p2 :XY, p3 :XY, p4 :XY,
+		pa :XY, pb :XY) :Float
 	{
 		// trace("p1=" + p1);
 		// trace("p2=" + p2);
@@ -44,9 +44,9 @@ class LineSegment
 		var mua:Float;
 		var mub:Float;
 
-		var p13:Vector2 = new Vector2();
-		var p43:Vector2 = new Vector2();
-		var p21:Vector2 = new Vector2();
+		var p13:XY = new Vector2();
+		var p43:XY = new Vector2();
+		var p21:XY = new Vector2();
 
 		var d1343:Float;
 		var d4321:Float;
@@ -129,8 +129,8 @@ class LineSegment
 	 * http://local.wasp.uwa.edu.au/~pbourke.geom/pointline/
 	 *
 	 */
-	public static function distToLineSegment (A :Vector2, B :Vector2, P :Vector2,
-		?closestPoint :Vector2 = null) :Float
+	public static function distToLineSegment (A :XY, B :XY, P :XY,
+		?closestPoint :XY = null) :Float
 	{
 		return Math.sqrt(distToLineSegmentSq(A, B, P, closestPoint));
 		//		var dx:Number=B.x-A.x;
@@ -163,8 +163,8 @@ class LineSegment
 		//		return Math.sqrt(dx * dx +  dy * dy);
 	}
 
-	public static function distToLineSegmentSq (A :Vector2, B :Vector2, P :Vector2,
-		?closestPoint :Vector2 = null) :Float
+	public static function distToLineSegmentSq (A :XY, B :XY, P :XY,
+		?closestPoint :XY = null) :Float
 	{
 		var dx = B.x - A.x;
 		var dy = B.y - A.y;
@@ -221,14 +221,14 @@ class LineSegment
 		//		return dx * dx +  dy * dy;
 	}
 
-	public static function isConnected (A :Vector2, B :Vector2, E :Vector2, F :Vector2) :Bool
+	public static function isConnected (A :XY, B :XY, E :XY, F :XY) :Bool
 	{
 		return (A.equals(E) && !B.equals(F)) || (!A.equals(E) && B.equals(F)) || (A.equals(F) &&
 			!B.equals(E)) || (!A.equals(F) && B.equals(E));
 	}
 
-	public static function isLinesIntersecting (A :Vector2, B :Vector2, E :Vector2,
-		F :Vector2) :Bool
+	public static function isLinesIntersecting (A :XY, B :XY, E :XY,
+		F :XY) :Bool
 	{
 		return lineIntersectLine(A, B, E, F) != null;
 	}
@@ -240,10 +240,10 @@ class LineSegment
 	//Return null if there is no intersection
 	//Replacement for lineIntersection, which does not work
 	//---------------------------------------------------------------
-	public static function lineIntersectLine (A :Vector2, B :Vector2, E :Vector2, F :Vector2,
-		?as_seg :Bool = true) :Vector2
+	public static function lineIntersectLine (A :XY, B :XY, E :XY, F :XY,
+		?as_seg :Bool = true) :XY
 	{
-		var ip:Vector2;
+		var ip:XY;
 		var a1:Float;
 		var a2:Float;
 		var b1:Float;
@@ -290,7 +290,7 @@ class LineSegment
 		return ip;
 	}
 
-	public function new (x1 :Vector2, x2 :Vector2)
+	public function new (x1 :XY, x2 :XY)
 	{
 		a = x1;
 		b = x2;
@@ -309,13 +309,13 @@ class LineSegment
 		var midX = b.x + dx / 2;
 		var midY = b.y + dy / 2;
 
-		var A:Vector2 = new Vector2(midX + dy / 2, midY + -dx / 2);
-		var B:Vector2 = new Vector2(midX - dy / 2, midY + dx / 2);
+		var A:XY = new Vector2(midX + dy / 2, midY + -dx / 2);
+		var B:XY = new Vector2(midX - dy / 2, midY + dx / 2);
 		return new LineSegment(A, B);
 	}
 
 	//Anticlockwise, from (0,0)
-	function getNormalVector ():Vector2
+	function getNormalVector ():XY
 	{
 		var dx = a.x - b.x;
 		var dy = a.y - b.y;
@@ -323,7 +323,7 @@ class LineSegment
 		var midX = b.x + dx / 2;
 		var midY = b.y + dy / 2;
 
-		var A:Vector2 = new Vector2(midX + dy / 2, midY + -dx / 2);
+		var A:XY = new Vector2(midX + dy / 2, midY + -dx / 2);
 		A.x = midX - A.x;
 		A.y = midY - A.y;
 		return A;
@@ -348,7 +348,7 @@ class LineSegment
 	//	 * @return the distance from P -> AB
 	//	 *
 	//	 */
-	//	public static function distToLineSegmentSq (A:Vector2, B:Vector2, P:Vector2) :Number
+	//	public static function distToLineSegmentSq (A:XY, B:XY, P:XY) :Number
 	//	{
 	//		var dotA:Number = (P.x - A.x)*(B.x - A.x) + (P.y - A.y)*(B.y - A.y);
 	//
@@ -359,7 +359,7 @@ class LineSegment
 	//		if (dotB <= 0) return VectorTools.distanceSq(B, P);
 	//
 	//		// .. Find closest point to P on line segment ...
-	//		var point:Vector2 = B.subtract(A);
+	//		var point:XY = B.subtract(A);
 	//		point.scaleLocal(dotA);
 	//		point.scaleLocal(1/(dotA+dotB));
 	//		point.addLocal(A);
@@ -367,14 +367,14 @@ class LineSegment
 	//		return VectorTools.distanceSq(P, point);
 	//	}
 
-	public function closestPointTo (P :Vector2) :Vector2
+	public function closestPointTo (P :XY) :XY
 	{
-		var closestPoint:Vector2 = new Vector2();
+		var closestPoint:XY = new Vector2();
 		distToLineSegment(a, b, P, closestPoint);
 		return closestPoint;
 	}
 
-	public function dist (P :Vector2) :Float
+	public function dist (P :XY) :Float
 	{
 		return distToLineSegment(a, b, P);
 	}
@@ -391,42 +391,42 @@ class LineSegment
 			Math.min(distToLineSegmentSq(line.a, line.b, a), distToLineSegmentSq(line.a, line.b, b)));
 	}
 
-	public function distSq (P :Vector2) :Float
+	public function distSq (P :XY) :Float
 	{
 		return distToLineSegmentSq(a, b, P);
 	}
 
-	public function equalToPoints (p1 :Vector2, p2 :Vector2) :Bool
+	public function equalToPoints (p1 :XY, p2 :XY) :Bool
 	{
 		return (a.equals(p1) && b.equals(p2)) || (a.equals(p2) && b.equals(p1));
 	}
 
-	public function intersectionPoint (line :LineSegment, ?as_seg :Bool = true) :Vector2
+	public function intersectionPoint (line :LineSegment, ?as_seg :Bool = true) :XY
 	{
 		return lineIntersectLine(a, b, line.a, line.b, as_seg);
 	}
 
-	public function intersectionPointLinePoints (v1 :Vector2, v2 :Vector2, ?as_seg :Bool =
-		true) :Vector2
+	public function intersectionPointLinePoints (v1 :XY, v2 :XY, ?as_seg :Bool =
+		true) :XY
 	{
 		return lineIntersectLine(a, b, v1, v2, as_seg);
 	}
 
-	public function isIntersected (v1 :Vector2, v2 :Vector2) :Bool
+	public function isIntersected (v1 :XY, v2 :XY) :Bool
 	{
-		var intersectionPoint:Vector2 = lineIntersectLine(a, b, v1, v2, true);
+		var intersectionPoint:XY = lineIntersectLine(a, b, v1, v2, true);
 		return intersectionPoint != null;
 	}
 
 	public function isIntersectedByLine (line :LineSegment) :Bool
 	{
-		var intersectionPoint:Vector2 = lineIntersectLine(a, b, line.a, line.b, true);
+		var intersectionPoint:XY = lineIntersectLine(a, b, line.a, line.b, true);
 		return intersectionPoint != null;
 	}
 
 	public function reversePoints () :Void
 	{
-		var x:Vector2 = a;
+		var x:XY = a;
 		a = b;
 		b = x;
 	}
@@ -438,7 +438,7 @@ class LineSegment
 
 	public function rotateLocal (angle :Float) :LineSegment
 	{
-		var mid:Vector2 = getMidpoint();
+		var mid:XY = getMidpoint();
 		a.subtractLocal(mid).rotateLocal(angle);
 		b.subtractLocal(mid).rotateLocal(angle);
 		return this;
@@ -449,5 +449,3 @@ class LineSegment
 		return "Line [" + a + ", " + b + "]";
 	}
 }
-
-

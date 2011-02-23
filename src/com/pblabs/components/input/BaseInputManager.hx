@@ -39,9 +39,7 @@ class BaseInputManager
     public var layer (get_layer, set_layer) :LayerClass;
     #end
     
-    public function new ()
-    {
-    }
+    public function new () {}
     
     public function startup () :Void
     {

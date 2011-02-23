@@ -42,7 +42,8 @@ using com.pblabs.util.XMLUtil;
 	Just implement ISerializable on the subclass and make sure you call the
 	super methods to get the parent reference serialized.
 */
-class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic, Dynamic>> extends EntityComponent
+class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic, Dynamic>> extends EntityComponent,
+	implements INode<P, C>
 {
 	var _parentProperty :PropertyReference<P>;
 	public var parentProperty (get_parentProperty, set_parentProperty) :PropertyReference<P>;

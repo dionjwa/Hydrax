@@ -51,25 +51,11 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
 	
 	override public function setLayerIndex (layer :SceneLayer, index :Int) :Void
 	{
-		// trace("layer=" + layer.name + ", " + layer.displayContainer.name);
-		// trace("index=" + index);
 		super.setLayerIndex(layer, index);
 		_rootSprite.removeAllChildren();
 		for (c in children) {
 			_rootSprite.addChild(c.displayContainer);
 		}
-		// var idx = getLayerIndex(layer);
-		// trace("idx=" + idx);
-		// trace(" before");
-		// for (child in _rootSprite) {
-		// 	trace("      " + _rootSprite.getChildIndex(child) + " " + child.name);
-		// }
-		// _rootSprite.setChildIndex(layer.displayContainer, idx);
-		// trace("getChildIndex=" + _rootSprite.getChildIndex(layer.displayContainer));
-		// trace(" after");
-		// for (child in _rootSprite) {
-		// 	trace("      " +  _rootSprite.getChildIndex(child) + " " + child.name);
-		// }
 	}
 	
 	override function onAdd () :Void
@@ -79,6 +65,27 @@ class Scene2DManager extends BaseScene2DManager<SceneLayer>,
 		context.getManager(SceneView).addDisplayObject(displayContainer);
 		zoomSignal = new hsl.haxe.DirectSignaler(this);
 	}
+	
+	// #if (flash && debug)
+	// override function onReset () :Void
+	// {
+	// 	super.onReset();
+	// 	com.pblabs.engine.core.SignalBondManager.bindSignal(this, cast(context, com.pblabs.engine.core.PBContext).signalEnter, unDim);
+	// 	com.pblabs.engine.core.SignalBondManager.bindSignal(this, cast(context, com.pblabs.engine.core.PBContext).signalExit, dim);
+	// }
+	
+	// function dim (?ignored :Dynamic) :Void
+	// {
+	// 	trace("");
+	// 	_rootSprite.alpha = 0.3;
+	// }
+	
+	// function unDim (?ignored :Dynamic) :Void
+	// {
+	// 	trace("");
+	// 	_rootSprite.alpha = 1.0;
+	// }
+	// #end
 	
 	override function onRemove () :Void
 	{

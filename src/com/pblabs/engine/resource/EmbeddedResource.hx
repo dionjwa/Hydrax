@@ -24,7 +24,7 @@ class EmbeddedResource extends ResourceBase<Dynamic>
 {
 	public static var NAME :String = "embedded";
 	
-	public function new (?name :String)
+	public function new (?name :String = null)
 	{
 		super(name == null ? NAME : name);
 	}
@@ -44,8 +44,7 @@ class EmbeddedResource extends ResourceBase<Dynamic>
 		js.Lib.window.onload = pageLoaded;
 		
 		#elseif flash
-		//In Flash, is the delay necessary? 
-		haxe.Timer.delay(loaded, 1);
+		loaded();
 		#end
 	}
 	
@@ -58,7 +57,16 @@ class EmbeddedResource extends ResourceBase<Dynamic>
 		return element.cloneNode(true);
 		#elseif flash
 		var cls :Class<Dynamic> = Type.resolveClass("SWFResources_" + elementName);
-		Preconditions.checkNotNull(cls, "No embedded resource class SWFResources_" + elementName);
+		if (cls == null) {
+			cls = Type.resolveClass(elementName);
+		}
+		if (cls == null) {
+			cls = Type.resolveClass("SWFResources_" + elementName.toUpperCase());
+		}
+		if (cls == null) {
+			cls = Type.resolveClass(elementName.toUpperCase());
+		}
+		Preconditions.checkNotNull(cls, "No embedded resource class SWFResources_" + elementName + " or " + elementName);
 		return Type.createInstance(cls, EMPTY_ARRAY);
 		#end
 	}

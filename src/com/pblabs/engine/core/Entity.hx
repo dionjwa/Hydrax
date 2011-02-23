@@ -396,7 +396,7 @@ class Entity extends PBObject,
 	
 	public function doesPropertyExist (property :PropertyReference<Dynamic>):Bool
 	{
-		return getProperty(property) != null;
+		return _context.getProperty(property, null, this, true) != null;
 	}
 	
 	public function getProperty <T> (property :PropertyReference<T>, ?defaultVal :T = null) :T

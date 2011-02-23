@@ -8,105 +8,38 @@
  ******************************************************************************/
 package com.pblabs.components.input;
 
-import com.pblabs.components.Constants;
-import com.pblabs.components.input.IInteractiveComponent;
-import com.pblabs.components.input.InputManager;
-import com.pblabs.components.manager.NodeComponent;
-import com.pblabs.components.scene.BaseScene2DComponent;
-import com.pblabs.components.scene.BaseScene2DManager;
+import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.Comparable;
-import com.pblabs.util.Comparators;
+import com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.geom.PolygonTools;
 
 /**
- * The base component for interacting with a mouse or other input device.  At the minimum simply provides the 
- * IInteractiveComponent, but can also do additional behaviour such as rotating or movement easily, 
- * and has it's own dynamic input callback methods.
+ * Convenient class for interacting with input pointers, as an alternative to 
+ * interacting with the InputManager.
  */
-class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputComponent>,
-	implements Comparable<MouseInputComponent>
+class MouseInputComponent extends EntityComponent
 {
 	/**
 	  * If there is an IInteractiveComponent in the Entity, you don't have to explicity set the properties.
 	  */
 	public var boundsProperty :PropertyReference<IInteractiveComponent>;
-	public var xProperty :PropertyReference<Float>;
-	public var yProperty :PropertyReference<Float>;
-	public var angleProperty :PropertyReference<Float>;
-	public var scaleProperty :PropertyReference<Float>;
-	public var offsetProperty :PropertyReference<Vector2>;
-	
-	
-	public var y (get_y, set_y) :Float;
-	public var x (get_x, set_x) :Float;
-	public var angle (get_angle, set_angle) :Float;
-	public var scale (get_scale, set_scale) :Float;
 	public var bounds (get_bounds, set_bounds) :IInteractiveComponent;
-	public var offset (get_offset, set_offset) :Vector2;
+	
+	public var onClick :Void->Void;
+	public var onDeviceDown :Void->Void;
+	public var onDeviceHeldDown :Void->Void;
+	
 	
 	public var isScalable :Bool;
 	public var isRotatable :Bool;
 	/** Moveable in the x/y? */
 	public var isTranslatable :Bool;
 	
-	public static function compare (a :MouseInputComponent, b :MouseInputComponent) :Int
-	{
-		#if flash
-		com.pblabs.util.Log.error("Implement me, scene objects not ordered.");
-		return 0;//if (com.pblabs.util.DisplayUtils.isAbove(a.displayObject, b.displayObject)) -1 else 1;
-		#elseif js
-		var scenea = a.owner.lookupComponent(BaseScene2DComponent);
-		var sceneb = b.owner.lookupComponent(BaseScene2DComponent);
-		var scene :BaseScene2DManager<Dynamic> = scenea.parent.parent;
-		return Comparators.compareInts(scene.getLayerIndex(sceneb.parent), scene.getLayerIndex(scenea.parent));
-		#else
-		com.pblabs.util.Log.error("Not implemented");
-		return 0;
-		#end
-	}
-	
 	public function new ()
 	{
 		super();
-		xProperty = Constants.DEFAULT_X_PROP;
-		yProperty = Constants.DEFAULT_Y_PROP;
-		angleProperty = Constants.DEFAULT_ANGLE_PROP;
-		scaleProperty = Constants.DEFAULT_SCALE_PROP;
-		
 		//The default is not movable, rotatable, or scalable.
 		isScalable = isRotatable = isTranslatable = false;
-	}
-	
-	public function compareTo (a :MouseInputComponent) :Int
-	{
-		return compareInternal(this, a);
-	}
-	
-	dynamic public function compareInternal (a :MouseInputComponent, b :MouseInputComponent) :Int
-	{
-	    return compare(a, b);
-	}
-	
-	public function getPoint () :Vector2
-	{
-		return new Vector2(x, y);
-	}
-	
-	dynamic public function onClick () :Void
-	{
-		// trace(owner + " clicked");
-	}
-	
-	dynamic public function onDeviceDown () :Void
-	{
-		// trace(owner + " device down");
-	}
-	
-	dynamic public function onDeviceHeldDown () :Void
-	{
-		// trace(owner + " device down");
 	}
 	
 	override function onReset () :Void
@@ -123,19 +56,14 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
 		
 		var input = context.getManager(InputManager);
 		com.pblabs.util.Assert.isNotNull(input, "No InputManager?");
-		
-		input.unregisterComponent(this);
-		input.registerComponent(this);
+
+		SignalBondManager.bindSignal(this, input.deviceDown, onMouseDownInternal);
+		SignalBondManager.bindSignal(this, input.deviceClick, onClickInternal);
 	}
 	
 	override function onRemove () :Void
 	{
 		super.onRemove();
-		context.getManager(InputManager).unregisterComponent(this);
-		xProperty = Constants.DEFAULT_X_PROP;
-		yProperty = Constants.DEFAULT_Y_PROP;
-		angleProperty = Constants.DEFAULT_ANGLE_PROP;
-		scaleProperty = Constants.DEFAULT_SCALE_PROP;
 		isScalable = isRotatable = isTranslatable = false;
 		boundsProperty = null;
 		_bounds = null;
@@ -155,63 +83,26 @@ class MouseInputComponent extends NodeComponent<MouseInputComponent, MouseInputC
 		return bounds;
 	}
 	
-	function get_x () :Float
+	function onMouseDownInternal (data :IInputData) :Void
 	{
-		return owner.getProperty(xProperty);
-	}
-	
-	function set_x (val :Float) :Float
-	{
-		owner.setProperty(xProperty, val);
-		return val;
-	}
-	
-	function get_y () :Float
-	{
-		return owner.getProperty(yProperty);
-	}
-	
-	function set_y (val :Float) :Float
-	{
-		owner.setProperty(yProperty, val);
-		return val;
-	}
-	
-	function get_angle () :Float
-	{
-		return owner.getProperty(angleProperty);
-	}
-	
-	function set_angle (val :Float) :Float
-	{
-		owner.setProperty(angleProperty, val);
-		return val;
-	}
-	
-	function get_scale () :Float
-	{
-		return owner.getProperty(scaleProperty);
-	}
-	
-	function set_scale (val :Float) :Float
-	{
-		owner.setProperty(scaleProperty, val);
-		return val;
-	}
-	
-	function get_offset () :Vector2
-	{
-		if (offsetProperty != null) {
-			return owner.getProperty(offsetProperty);
-		} else {
-			return null;
+		if ((onDeviceDown != null || isTranslatable) && data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
+			if (onDeviceDown != null) {
+				onDeviceDown();
+			}
+			if (isTranslatable) {
+				var dragger = context.getManager(com.pblabs.components.input.DragManager);
+				if (dragger != null) {
+					dragger.startDragging(cast _bounds);
+				}
+			}
 		}
 	}
 	
-	function set_offset (val :Vector2) :Vector2
+	function onClickInternal (data :IInputData) :Void
 	{
-		owner.setProperty(offsetProperty, val);
-		return val;
+		if (onClick != null && data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
+			onClick();
+		}
 	}
 	
 	var _bounds :IInteractiveComponent;

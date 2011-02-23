@@ -95,6 +95,13 @@ class Injector
 		injectFields(obj, cls);
 	}
 	
+	public function shutdown () :Void
+	{
+		_injectionValues.clear();
+		_injectionValues = null;
+		_parentInjector = null;
+	}
+	
 	function injectFields (obj :Dynamic, cls :Class<Dynamic>) :Void
 	{
 		// trace("injectFields " +cls.getClassName());

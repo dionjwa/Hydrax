@@ -13,6 +13,8 @@ import com.pblabs.geom.Vector2;
 import com.pblabs.geom.bounds.AbstractBounds;
 import com.pblabs.geom.bounds.IBounds;
 
+import de.polygonal.motor2.geom.math.XY;
+
 /**
  * For using computationally lighter bounds first
  */ 
@@ -34,7 +36,7 @@ class BoundsHighLowRes extends BoundsForwarding<Dynamic>
 		}
 	}
 	
-	override public function containsPoint (v :Vector2) :Bool
+	override public function containsPoint (v :XY) :Bool
 	{
 		if (!_lowResBounds().containsPoint(v)) {
 			return false;
@@ -66,5 +68,3 @@ class BoundsHighLowRes extends BoundsForwarding<Dynamic>
 	var _lowResBounds :Void->IBounds<Dynamic>;
 	var _highResBounds :Void->IBounds<Dynamic>;
 }
-
-

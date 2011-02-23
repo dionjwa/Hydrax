@@ -52,11 +52,6 @@ class PBUtil
 		e.addComponent(cast(component, IEntityComponent), compName);
 		e.deferring = false;
 		Assert.isTrue(cast(component, IEntityComponent).isRegistered, "addsingle, not registered");
-		// //Register under the component name
-		// if (isManager) {
-		// 	context.registerManager(compClass, component, compName, true);
-		// }
-		
 		return component;
 	}
 	
@@ -144,21 +139,13 @@ class PBUtil
 	 */
 	public static function componentProp<T> (c :IEntityComponent, ?fieldName :String) :PropertyReference<T>
 	{
-		// if (c.isRegistered) {
-			return new PropertyReference(componentPropString(c, fieldName));
-		// } else {
-		// 	return new PropertyReference("@" + getDefaultComponentName(Type.getClass(c)) + fieldToken(fieldName)); 
-		// }
+		return new PropertyReference(componentPropString(c, fieldName));
 	}
 	
 	inline public static function componentPropString (c :IEntityComponent, ?fieldName :String) :String
 	{
 		com.pblabs.util.Assert.isTrue(c.isRegistered, Type.getClass(c) + " is not yet registered");
-		// if (c.isRegistered) {
-			return "@" + c.name + fieldToken(fieldName);
-		// } else {
-			// return "@" + getDefaultComponentName(Type.getClass(c)) + fieldToken(fieldName); 
-		// }
+		return "@" + c.name + fieldToken(fieldName);
 	}
 	
 	inline public static function classToComponentProp <T>(cls :Class<Dynamic>, ?fieldName :String = null) :PropertyReference<T>
@@ -241,8 +228,5 @@ class PBUtil
 		} else {
 			return ReflectUtil.tinyClassName(Type.getClass(c));
 		}
-		// return c.isRegistered ? c.name : ReflectUtil.tinyClassName(Type.getClass(c)); 
 	}
-	
-
 }

@@ -9,16 +9,19 @@
 package com.pblabs.geom;
 
 import com.pblabs.geom.Rectangle;
-import com.pblabs.geom.Vector2;
+
+import de.polygonal.motor2.geom.math.XY;
+
+using com.pblabs.geom.VectorTools;
 
 class RectangleTools
 {
-	public static function center (rect :Rectangle) :Vector2
+	public static function center (rect :Rectangle) :XY
 	{
 		return new Vector2(rect.left + rect.width / 2, rect.top + rect.height / 2);
 	}
 	
-   public static function contains (x :Float, y :Float, w :Float, h :Float, query :Vector2, ?rotation :Float = 0) : Bool
+   public static function contains (x :Float, y :Float, w :Float, h :Float, query :XY, ?rotation :Float = 0) : Bool
    {
 	   if (rotation != 0) {
 		   var relativeToRectCenter = query.clone();
@@ -32,5 +35,3 @@ class RectangleTools
 	   return query.x >= x && query.x <= (x + w) && query.y >= y && query.y <= (y + h);
    }
 }
-
-

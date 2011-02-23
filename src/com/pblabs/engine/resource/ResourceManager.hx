@@ -38,16 +38,24 @@ class ResourceManager
 		_onErrorCallbacks = new Array();
 	}
 	
-	public function create <T>(resourceName :String, itemName :String) :T
+	public function create <T>(resourceToken :ResourceToken<T>) :T
+	{
+		com.pblabs.util.Assert.isNotNull(resourceToken);
+		return createFromName(resourceToken.resourceId, resourceToken.key);
+	}
+	
+	public function createFromName <T>(resourceName :String, itemName :String) :T
 	{
 		Preconditions.checkArgument(isResource(resourceName), "No IResource with id=" + resourceName); 
 		// var rs :IResource<T> = getResource(resourceName);
 		var rs = getResource(resourceName);
+		com.pblabs.util.Assert.isNotNull(rs, "No resource " + resourceName);
 		return rs.create(itemName);
 	}
 
 	public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
 	{
+		com.pblabs.util.Log.info("");
 		Preconditions.checkNotNull(onLoad);
 		Preconditions.checkNotNull(onError);
 		
@@ -109,8 +117,10 @@ class ResourceManager
 		Preconditions.checkArgument(!isResource(rsrc.name), "Resource with name=" + rsrc.name  + " alrady exists");
 		
 		if (rsrc.isLoaded()) {
+			com.pblabs.util.Log.info("adding to loadedResources: " + rsrc);
 			_loadedResources.set(rsrc.name, rsrc);
 		} else {
+			com.pblabs.util.Log.info("adding to _pendingResources: " + rsrc);
 			_pendingResources.set(rsrc.name, rsrc);
 		}
 	}
@@ -159,15 +169,17 @@ class ResourceManager
 	
 	function resourceLoaded (rsrc :IResource<Dynamic>) :Void
 	{
+		com.pblabs.util.Log.info(rsrc);
 		_loadingResources.remove(rsrc.name);
 		_loadedResources.set(rsrc.name, rsrc);
-		if (_loadingResources.size() == 0) {
+		if (_loadingResources.size() == 0 && _pendingResources.size() == 0) {
 			allResourcesLoaded();
 		}
 	}
 	
 	function allResourcesLoaded () :Void
 	{
+		com.pblabs.util.Log.info("");
 		while (_onLoadCallbacks.length > 0) {
 			_onLoadCallbacks.pop()();
 		}

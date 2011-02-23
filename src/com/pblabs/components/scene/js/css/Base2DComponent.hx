@@ -47,21 +47,10 @@ class Base2DComponent extends BaseScene2DComponent<SceneLayer>,
         // com.pblabs.util.Assert.isNotNull(div.parentNode);
         #end
         
-        // var divlayer :SceneLayer = cast _layer;
-        // if (divlayer != null) {
-        //     divlayer.div.removeChild(div);
-        // }
-        // super.set_layer(layer);
-        // divlayer = cast _layer;
-        // if (divlayer != null) {
-        //     divlayer.div.appendChild(div);
-        // }
         parent.div.appendChild(div);
         
         com.pblabs.util.Assert.isNotNull(div.parentNode);
         onFrame(0);
-        // return layer;
-        
     }
     
     override function removingFromParent () :Void
@@ -102,6 +91,8 @@ class Base2DComponent extends BaseScene2DComponent<SceneLayer>,
         div.style.cssText = "position:absolute";
         // div.style.cssText = "position:relative";
         // div.style.cssText = "position:absolute;left:0px;top:0px;";
+        
+        displayObject = _displayObject;
         super.onAdd();
     }
     
@@ -113,31 +104,35 @@ class Base2DComponent extends BaseScene2DComponent<SceneLayer>,
     function set_displayObject (val :HtmlDom) :HtmlDom
     {
     	if (_displayObject != null) {
-    		
+    		if (_displayObject.parentNode != null) {
+    			_displayObject.parentNode.removeChild(_displayObject);
+    		}
     	}
         _displayObject = val;
-        div.appendChild(_displayObject);
+        if (_displayObject != null) {
+    		if (_displayObject.parentNode != null) {
+    			_displayObject.parentNode.removeChild(_displayObject);
+			}
+        	if (div != null) {
+        		div.appendChild(_displayObject);
+        	}
+        	
+        	if (_width == 0) {
+				_width = Std.parseFloat(displayObject.getAttribute("width"));
+			} else {
+				set_width(_width);
+			}
+			if (_height == 0) {
+				_height = Std.parseFloat(displayObject.getAttribute("width"));
+			} else {
+				set_height(_height);
+			}
+			trace("x=" + Std.parseFloat(displayObject.getAttribute("x")));
+			trace("y=" + Std.parseFloat(displayObject.getAttribute("y")));
+        }
+        isTransformDirty = true;
         return val;
     }
-    
-    // override function set_layer (layer :SceneLayer) :SceneLayer
-    // {
-    //     var divlayer :SceneLayer = cast _layer;
-    //     if (divlayer != null) {
-    //         divlayer.div.removeChild(div);
-    //     }
-    //     super.set_layer(layer);
-    //     divlayer = cast _layer;
-    //     if (divlayer != null) {
-    //         divlayer.div.appendChild(div);
-    //     }
-        
-    //     #if debug
-    //     com.pblabs.util.Assert.isNotNull(div.parentNode);
-    //     #end
-    //     onFrame(0);
-    //     return layer;
-    // }
     
     var _displayObject :HtmlDom;
 }

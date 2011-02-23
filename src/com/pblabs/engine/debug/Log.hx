@@ -399,7 +399,6 @@ class Log
 	}
 	
 	#if flash
-	
 	public static function traceWithMethod( v : Dynamic, ?pos : haxe.PosInfos ) {
 		var tf = flash.Boot.getTrace();
 		var pstr = if( pos == null ) "(null)" else pos.fileName+":"+pos.lineNumber + "." +pos.methodName +"()";
@@ -410,19 +409,18 @@ class Log
 		var stage = flash.Lib.current.stage;
 		if( stage == null )
 			return;
-		while( lines.length > 1 && tf.height > 300) {//stage.stageHeight ) {
+		while( lines.length > 1 && tf.height > stage.stageHeight ) {
 			lines.shift();
 			tf.text = lines.join("\n");
 		}
 	}
-	#end
 	
 	static function logTraceFlash (line :String) :Void
 	{
 		
 		var tf = flash.Boot.getTrace();
 		lines.push(line);
-			
+		
 		if (useHTML) {
 			tf.htmlText = lines.join("<br/>\n");
 		} else {
@@ -430,7 +428,7 @@ class Log
 		}
 		var stage = flash.Lib.current.stage;
 		if( stage == null )
-			return;
+		return;
 		while( lines.length > 1 && tf.height > stage.stageHeight ) {
 			lines.shift();
 			if (useHTML) {
@@ -440,6 +438,7 @@ class Log
 			}
 		}
 	}
+	#end
 	
 	static function __init__ () :Void
 	{

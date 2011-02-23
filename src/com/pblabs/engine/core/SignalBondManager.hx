@@ -64,8 +64,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		com.pblabs.util.Assert.isFalse(component.owner.name.isBlank(), "owner has no name");
 		
 		com.pblabs.engine.debug.Profiler.enter("prop");
-		// var key = component.entityPropString();
-		var key = component.key;//"#" + component.owner.name + "." + component.name;
+		var key = component.key;
 		com.pblabs.engine.debug.Profiler.exit("prop");
 		com.pblabs.engine.debug.Profiler.enter("bind actual");
 		var bond = signaler.bind(listener);

@@ -10,11 +10,22 @@ package com.pblabs.components.scene;
 
 import com.pblabs.components.base.AlphaComponent;
 import com.pblabs.components.base.Coordinates2D;
+#if css
+import com.pblabs.components.scene.js.JSSceneManager;
+#end
 import com.pblabs.components.tasks.TaskComponentTicked;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
+import com.pblabs.engine.core.ObjectType;
 import com.pblabs.geom.Vector2;
+
+import de.polygonal.motor2.geom.math.XY;
+
 using com.pblabs.engine.util.PBUtil;
+using com.pblabs.geom.VectorTools;
+
+#if css
+#end
 
 enum SceneAlignment {
 	BOTTOM_LEFT;
@@ -60,7 +71,7 @@ class SceneUtil
 		context.registerManager(MANAGER_CLASS, scene, null, true);
 	    com.pblabs.util.Assert.isNotNull(scene);
 	    if (addDefaultLayer) {
-	    	scene.addLayer(LAYER_CLASS, DEFAULT_LAYER_NAME);
+	    	scene.addLayer(SceneUtil.DEFAULT_LAYER_NAME);
 	    }
 	    return scene;
 	}
@@ -83,7 +94,7 @@ class SceneUtil
 		e.lookupComponent(Coordinates2D).setLocation(x, y);
 	}
 	
-	public static function getLocation (e :IEntity) :Vector2
+	public static function getLocation (e :IEntity) :XY
 	{
 		com.pblabs.util.Assert.isNotNull(e);
 		return e.lookupComponent(Coordinates2D).point;
@@ -115,7 +126,7 @@ class SceneUtil
 	 * @param sceneHeight
 	 *
 	 */
-	public static function calculateOutPoint (outPoint :Vector2, alignment :SceneAlignment, sceneWidth :Float, sceneHeight :Float) :Vector2
+	public static function calculateOutPoint (outPoint :XY, alignment :SceneAlignment, sceneWidth :Float, sceneHeight :Float) :XY
 	{
 		switch (alignment) {
 			case CENTER:
@@ -136,7 +147,7 @@ class SceneUtil
 		return outPoint;
 	}
 	
-	public static function getAlignedPoint (scene :BaseScene2DManager<Dynamic>, borderAlignment :SceneAlignment) :Vector2
+	public static function getAlignedPoint (scene :BaseScene2DManager<Dynamic>, borderAlignment :SceneAlignment) :XY
 	{
 		var alignment = scene.sceneAlignment;
 		var sceneWidth = scene.sceneView.width;
@@ -189,7 +200,7 @@ class SceneUtil
 		return borderPoint;
 	}
 	
-	public static function translateScreenToWorld (sceneManager :BaseScene2DManager<Dynamic>, screen :Vector2) :Vector2
+	public static function translateScreenToWorld (sceneManager :BaseScene2DManager<Dynamic>, screen :XY) :XY
 	{
 		var viewOffset = new Vector2();
 		calculateOutPoint(viewOffset, sceneManager.sceneAlignment, sceneManager.sceneView.width, sceneManager.sceneView.height);
@@ -197,7 +208,7 @@ class SceneUtil
 		return p;
 	}
 	
-	public static function translateWorldToScreen (sceneManager :BaseScene2DManager<Dynamic>, world :Vector2) :Vector2
+	public static function translateWorldToScreen (sceneManager :BaseScene2DManager<Dynamic>, world :XY) :XY
 	{
 		var viewOffset = new Vector2();
 		calculateOutPoint(viewOffset, sceneManager.sceneAlignment, sceneManager.sceneView.width, sceneManager.sceneView.height);
@@ -205,7 +216,7 @@ class SceneUtil
 		return p;
 	}
 	
-	public static function getDisplayComponentUnderPoint (scene :BaseScene2DManager<Dynamic>, screenPoint :Vector2) :BaseScene2DComponent<Dynamic>
+	public static function getDisplayComponentUnderPoint (scene :BaseScene2DManager<Dynamic>, screenPoint :XY, mask :ObjectType) :BaseScene2DComponent<Dynamic>
 	{
 		var layerIndex :Int = scene.layerCount - 1;
 		while (layerIndex >= 0) {
@@ -218,7 +229,7 @@ class SceneUtil
 			#end
 			var dispIndex :Int = layer.children.length - 1;
 			while (dispIndex >= 0) {
-				if (layer.children[dispIndex].containsScreenPoint(screenPoint)) {
+				if (layer.children[dispIndex].containsScreenPoint(screenPoint, mask)) {
 					return layer.children[dispIndex];
 				}
 				dispIndex--;

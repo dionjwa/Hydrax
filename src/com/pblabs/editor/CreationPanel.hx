@@ -127,7 +127,7 @@ class CreationPanel extends VBox
 		image.parentProperty = com.pblabs.engine.util.PBUtil.entityProp(scene.getLayerAt(0));
 		image.resource = cast context.getManager(IResourceManager).getResource(objectKey);
 		//Start the image with the same scale factor as the scene, to help with large scale factors
-		image.scaleXY = 1 / scene.zoom;
+		image.scale = 1 / scene.zoom;
 		e.addComponent(image);
 		
 		e.initialize(context.getManager(NameManager).validateName(objectKey));

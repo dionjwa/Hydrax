@@ -19,13 +19,18 @@ import com.pblabs.geom.Rectangle;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.MathUtil;
 import com.pblabs.util.Preconditions;
+
+import de.polygonal.motor2.geom.math.XY;
+
 using com.pblabs.util.IterUtil;
+using com.pblabs.util.StringUtil;
+using com.pblabs.engine.util.PBUtil;
 
 /**
   * Layers are arranged: smaller index is behind.
   */
 @sets("Scene2DManager")
-class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends NodeComponent<Dynamic, Layer>,
+class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends NodeComponent<SceneManagerList, Layer>,
 	implements haxe.rtti.Infos, implements IScene2D
 {
 	@inject
@@ -41,6 +46,8 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 	public var y (get_y, set_y) :Float;
 	@editor({ui:"UpdatingLabel"})
 	public var rotation (get_rotation, set_rotation) :Float;
+	
+	public var index :Int;
 	
 	/**
 	 * Maximum allowed zoom level.
@@ -74,16 +81,38 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 		_rotation = 0;
 		_position = new Vector2();
 		_transformDirty = false;
+		parentProperty = SceneManagerList.PROP;
 	}
 	
-	public function addLayer <T>(cls :Class<Dynamic>, layerName :String, ?registerAsManager :Bool = true) :T
+	public function addLayer (?layerName :String = null, ?cls :Class<Dynamic> = null, ?registerAsManager :Bool = false) :BaseScene2DLayer<Dynamic, Dynamic>
 	{
 		com.pblabs.util.Assert.isNotNull(context);
 		
 		//Get the order of the children first
 		var childrenCopy = children.copy();
 		
+		if (layerName.isBlank()) {
+			if (children.length == 0) {
+				layerName = SceneUtil.DEFAULT_LAYER_NAME;
+			} else {
+				layerName = SceneUtil.DEFAULT_LAYER_NAME + (children.length + 1);
+			}
+		}
+		
+		//Check for existing layers with the same name, maybe we could do something other than throw an error?
+		for (l in children	) {
+			if (l.name == layerName) {
+				throw "Existing layer with default name=" + layerName;
+			}
+		}
+		
+		//Use default class is none is given
+		if (cls == null) {
+			cls = SceneUtil.LAYER_CLASS;
+		}
+		
 		var layer = context.allocate(cls);
+		//Check compatability
 		com.pblabs.util.Assert.isTrue(Std.is(layer, SceneUtil.LAYER_CLASS), "Layer class " + cls + " is not a " + SceneUtil.LAYER_CLASS);
 		var layerCast :com.pblabs.components.manager.NodeComponent<Dynamic, Dynamic> = cast layer;
 		layerCast.parentProperty = PBUtil.componentProp(this);
@@ -160,7 +189,7 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 		_transformDirty = true;
 	}
 
-	public function getTopLayer () :Layer
+	public function getTopLayer () :BaseScene2DLayer<Dynamic, Dynamic>
 	{
 		if (children.length > 0) {
 			return children[children.length - 1];
@@ -180,9 +209,16 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 
 	override function onAdd () :Void
 	{
+		// Check for SceneManagerList, add and register if there is none.
+		if (context.getManager(SceneManagerList) == null) {
+			var scenelist = com.pblabs.engine.util.PBUtil.addSingletonComponent(context, SceneManagerList, SceneManagerList.NAME);
+			context.registerManager(com.pblabs.components.scene.SceneManagerList, scenelist, com.pblabs.components.scene.SceneManagerList.NAME, true);
+		}
+		
+		parentProperty = context.getManager(com.pblabs.components.scene.SceneManagerList).entityProp(); 
 		super.onAdd();	  
 		sceneView = context.getManager(SceneView);
-		com.pblabs.util.Assert.isNotNull(sceneView, "No SceneView"); 
+		com.pblabs.util.Assert.isNotNull(sceneView, "No SceneView");
 	}
 
 	override function onRemove () :Void
@@ -277,7 +313,7 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 		return val;
 	}
 	
-	var _position :Vector2;
+	var _position :XY;
 	var _zoom :Float;
 	var _rotation :Float;
 	var _transformDirty :Bool;

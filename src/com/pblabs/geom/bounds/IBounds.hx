@@ -10,14 +10,15 @@ package com.pblabs.geom.bounds;
 
 import com.pblabs.geom.Circle;
 import com.pblabs.geom.Rectangle;
-import com.pblabs.geom.Vector2;
 import com.pblabs.util.Cloneable;
+
+import de.polygonal.motor2.geom.math.XY;
 
 interface IBounds<T> 
 	implements Cloneable<T>//, implements ISpatialObject2D
 {
-	public var center(get_center, set_center) : Vector2;
-	public var topLeft(get_topLeft, set_topLeft) : Vector2;
+	public var center(get_center, set_center) : XY;
+	public var topLeft(get_topLeft, set_topLeft) : XY;
 	// public var boundingRect (get_boundingRect, null) :Rectangle;
 	public var boundingCircle (get_boundingCircle, null) :Circle;
 
@@ -25,10 +26,8 @@ interface IBounds<T>
 	public function containsBounds (b :IBounds<Dynamic>) :Bool;
 	public function isWithinDistance(b :IBounds<Dynamic>, d :Float) :Bool;
 	
-	public function containsPoint (v :Vector2) :Bool;
-	// public function distanceToPoint (v :Vector2) :Float;
-	// public function getBoundedPoint (v :Vector2, ?v :Vector2) :Vector2;
-	// public function getBoundedPointFromMove (originX :Float, originY :Float, targetX :Float, targetY :Float, ?v :Vector2) :Vector2;
+	public function containsPoint (v :XY) :Bool;
+	// public function distanceToPoint (v :XY) :Float;
+	// public function getBoundedPoint (v :XY, ?v :XY) :XY;
+	// public function getBoundedPointFromMove (originX :Float, originY :Float, targetX :Float, targetY :Float, ?v :XY) :XY;
 }
-
-

@@ -8,9 +8,6 @@
  ******************************************************************************/
 package com.pblabs.geom.bounds;
 
-
-import com.pblabs.util.MathUtil;
-
 import com.pblabs.geom.Circle;
 import com.pblabs.geom.LineSegment;
 import com.pblabs.geom.Polygon;
@@ -22,7 +19,10 @@ import com.pblabs.geom.bounds.BoundsLine;
 import com.pblabs.geom.bounds.BoundsPoint;
 import com.pblabs.geom.bounds.BoundsUtil;
 import com.pblabs.geom.bounds.IBounds;
+import com.pblabs.util.MathUtil;
 import com.pblabs.util.ReflectUtil;
+
+import de.polygonal.motor2.geom.math.XY;
 
 using Lambda;
 
@@ -34,7 +34,7 @@ class BoundsPolygon extends AbstractBounds<BoundsPolygon>
 {
 	/** Don't modify this outside of the Bounds.  The cached bounds will be wrong*/   
 	public var polygon(get_polygon, null) : com.pblabs.geom.Polygon;
-	public var offset :Vector2;
+	public var offset :XY;
 	
 	public function new (polygon :Polygon)
 	{
@@ -50,12 +50,12 @@ class BoundsPolygon extends AbstractBounds<BoundsPolygon>
 		this.center = center;
 	}
 
-	override function get_center ():Vector2
+	override function get_center ():XY
 	{
 		return _boundsCircle.center.clone();
 	}
 	
-	override function set_center (val :Vector2) :Vector2
+	override function set_center (val :XY) :XY
 	{
 		// var c = get_center();
 		// var dx = val.x - c.x;
@@ -103,7 +103,7 @@ class BoundsPolygon extends AbstractBounds<BoundsPolygon>
 		return new BoundsPolygon(_polygon.clone());
 	}
 
-	override public function containsPoint (v :Vector2) :Bool
+	override public function containsPoint (v :XY) :Bool
 	{
 		if (!_polygon.boundingBox.contains(v.x, v.y)) {
 			return false;
@@ -147,7 +147,7 @@ class BoundsPolygon extends AbstractBounds<BoundsPolygon>
 		return false;
 	}
 
-	override public function distanceToPoint (v :Vector2) :Float
+	override public function distanceToPoint (v :XY) :Float
 	{
 		return _polygon.distToPolygonEdge(v);
 	}
@@ -164,5 +164,3 @@ class BoundsPolygon extends AbstractBounds<BoundsPolygon>
 
 	var _polygon :Polygon;
 }
-
-

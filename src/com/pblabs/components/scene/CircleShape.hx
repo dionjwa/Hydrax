@@ -7,9 +7,14 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.scene;
+
+import com.pblabs.engine.core.ObjectType;
 import com.pblabs.geom.CircleUtil;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.StringUtil;
+
+import de.polygonal.motor2.geom.math.XY;
+
 using com.pblabs.components.scene.SceneUtil;
 
 class CircleShape extends ShapeComponent
@@ -35,9 +40,9 @@ class CircleShape extends ShapeComponent
         radius = r;
     }
     
-    override public function containsScreenPoint (pos :Vector2) :Bool
+    override public function containsWorldPoint (pos :XY, mask :ObjectType) :Bool
     {
-        return CircleUtil.isWithinCircle(parent.scene.translateScreenToWorld(pos), x, y, width);
+        return CircleUtil.isWithinCircle(pos, x + radius - registrationPoint.x, y + radius - registrationPoint.y, radius);
     }
     
     #if css
@@ -72,28 +77,29 @@ class CircleShape extends ShapeComponent
     override public function redraw () :Void
     {
     	com.pblabs.engine.debug.Profiler.enter("redraw");
+        var r = radius;
         #if flash
         var zoom = parent != null && parent.parent != null ? parent.parent.zoom : 1.0;
         var g = cast(_displayObject, flash.display.Sprite).graphics;
         g.clear();
         g.beginFill(fillColor);
-        g.drawCircle(0, 0, radius);
+        g.drawCircle(r, r, r);
         g.endFill();
-        g.lineStyle(borderWidth / zoom, borderColor);
-        g.drawCircle(0, 0, radius);
-        g.lineStyle(2 / zoom, borderColor);
-        g.moveTo(0, 0);
-        g.lineTo(radius, 0);
+        g.lineStyle(0.0, borderColor);
+        g.drawCircle(r, r, r);
+        g.lineStyle(0.0, borderColor);
+        g.moveTo(r, r);
+        g.lineTo(r * 2, r);
         #elseif css
-        _svg.setAttribute("cx", radius + "px");
-        _svg.setAttribute("cy", radius + "px");
-        _svg.setAttribute( "r",  radius + "px");
+        _svg.setAttribute("cx", r + "px");
+        _svg.setAttribute("cy", r + "px");
+        _svg.setAttribute( "r",  r + "px");
         _svg.setAttribute("fill", StringUtil.toColorString(fillColor, "#"));
         _svg.setAttribute( "stroke",  StringUtil.toColorString(borderColor, "#"));
         _svg.setAttribute( "stroke-width",  "" + borderWidth);
         
-        _svgContainer.setAttribute("width", (radius * 2) + "px");
-        _svgContainer.setAttribute("height", (radius * 2) + "px");
+        _svgContainer.setAttribute("width", (r * 2) + "px");
+        _svgContainer.setAttribute("height", (r * 2) + "px");
         #end
         com.pblabs.engine.debug.Profiler.exit("redraw");
     }
@@ -126,12 +132,12 @@ class CircleShape extends ShapeComponent
     
     function get_radius () :Float
     {
-        return get_width();
+        return get_width() / 2;
     }
     
     function set_radius (val :Float) :Float
     {
-        return set_width(val);
+        return set_width(val * 2);
     }
     
     #if css

@@ -682,8 +682,8 @@ class ProcessManager implements IProcessManager
 	public function toString () :String
 	{
 	    return "_virtualTime=" + _virtualTime + 
-	    	"\ntotalObjects=" + _tickedObjects.length + 
-	    	"\n_tickedObjects=" + _tickedObjects;
+	    	"\ntotalObjects=" + (_tickedObjects != null ? _tickedObjects.length : 0); 
+	    	// "\n_tickedObjects=" + _tickedObjects;
 	}
 	#end
 }

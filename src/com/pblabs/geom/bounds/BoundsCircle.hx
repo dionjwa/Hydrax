@@ -8,7 +8,6 @@
  ******************************************************************************/
 package com.pblabs.geom.bounds;
 
-
 import com.pblabs.geom.Circle;
 import com.pblabs.geom.Geometry;
 import com.pblabs.geom.Rectangle;
@@ -21,6 +20,9 @@ import com.pblabs.geom.bounds.BoundsPolygon;
 import com.pblabs.geom.bounds.BoundsUtil;
 import com.pblabs.geom.bounds.IBounds;
 import com.pblabs.util.ReflectUtil;
+
+import de.polygonal.motor2.geom.math.XY;
+
 using com.pblabs.geom.CircleUtil;
 using com.pblabs.geom.VectorTools;
 
@@ -34,14 +36,15 @@ class BoundsCircle extends AbstractBounds<BoundsCircle>
 		set_center(new Vector2(c.x, c.y));
 	}
 
-	override function get_center ():Vector2
+	override function get_center ():XY
 	{
 		return _boundsCircle.center;
 	}
 
-	override function set_center (v :Vector2) :Vector2
+	override function set_center (v :XY) :XY
 	{
-		_center = _boundsCircle.center = v;
+		_boundsCircle.center = v;
+		_center = _boundsCircle.center; 
 		_boundsRect.x = _center.x - _boundsCircle.radius;
 		_boundsRect.y = _center.y - _boundsCircle.radius;
 		_boundsRect.width = _boundsRect.height = _boundsCircle.radius * _boundsCircle.radius;
@@ -53,7 +56,7 @@ class BoundsCircle extends AbstractBounds<BoundsCircle>
 		return new BoundsCircle(_boundsCircle.clone());
 	}
 
-	override public function containsPoint (v :Vector2) :Bool
+	override public function containsPoint (v :XY) :Bool
 	{
 		return _boundsCircle.containsPoint(v);
 	}
@@ -79,7 +82,7 @@ class BoundsCircle extends AbstractBounds<BoundsCircle>
 		return Math.NaN;
 	}
 
-	override public function distanceToPoint (v :Vector2) :Float
+	override public function distanceToPoint (v :XY) :Float
 	{
 		return _boundsCircle.distancePoint(v);
 	}
@@ -106,7 +109,7 @@ class BoundsCircle extends AbstractBounds<BoundsCircle>
 		return false;
 	}
 
-	// override public function getBoundedPoint (v :Vector2, ?v :Vector2) :Vector2
+	// override public function getBoundedPoint (v :XY, ?v :XY) :XY
 	// {
 	//	 if (v != null) {
 	//		 v.x = _center.x;
@@ -118,7 +121,7 @@ class BoundsCircle extends AbstractBounds<BoundsCircle>
 	// }
 
 	// override public function getBoundedPointFromMove (originX :Float, originY :Float,
-	//	 targetX :Float, targetY :Float, ?v :Vector2) :Vector2
+	//	 targetX :Float, targetY :Float, ?v :XY) :XY
 	// {
 	//	 return _center;
 	// }
@@ -129,5 +132,3 @@ class BoundsCircle extends AbstractBounds<BoundsCircle>
 	}
 	
 }
-
-

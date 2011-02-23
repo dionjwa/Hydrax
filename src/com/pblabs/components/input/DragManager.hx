@@ -9,10 +9,13 @@ import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.geom.Vector2;
 
+import de.polygonal.motor2.geom.math.XY;
+
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
 using com.pblabs.engine.util.PBUtil;
+using com.pblabs.geom.VectorTools;
 
 class DragManager
 	implements IPBManager, implements haxe.rtti.Infos
@@ -27,8 +30,8 @@ class DragManager
 	var _dragged :BaseScene2DComponent<Dynamic>;
 	var _xProp :PropertyReference<Float>;
 	var _yProp :PropertyReference<Float>;
-	var _startMouse :Vector2;
-	var _startObj :Vector2;
+	var _startMouse :XY;
+	var _startObj :XY;
 	
 	public function new ()
 	{
@@ -39,6 +42,8 @@ class DragManager
 	
 	public function startDragging (comp :BaseScene2DComponent<Dynamic>, ?xProp :PropertyReference<Float> = null, ?yProp :PropertyReference<Float> = null) :Void
 	{
+		com.pblabs.util.Assert.isNotNull(context);
+		com.pblabs.util.Assert.isTrue(comp.context == context, "WTF?  The drag target has a different context to the DragManager.\ncomp.context=" + comp.context + ", context=" + context);
 		com.pblabs.util.Assert.isNotNull(comp);
 		stopDragging();
 		_dragged = comp;
@@ -63,8 +68,8 @@ class DragManager
 		com.pblabs.util.Assert.isNotNull(_xProp);
 		com.pblabs.util.Assert.isNotNull(_yProp);
 		
-		// _startMouse.x = mouseLoc.x;
-		// _startMouse.y = mouseLoc.y;
+		_startMouse.x = input.inputLocation.x;
+		_startMouse.y = input.inputLocation.y;
 		
 		_startObj.x = comp.owner.getProperty(_xProp);
 		_startObj.y = comp.owner.getProperty(_yProp);
@@ -76,21 +81,21 @@ class DragManager
 	public function stopDragging () :Void
 	{
 	    _dragged = null;
-		// input.deviceMove.unbind(onDeviceMove);
-		input.deviceMove.unbind(onDeviceUp);
+	    com.pblabs.util.Assert.isNotNull(input);
+	    com.pblabs.util.Assert.isNotNull(input.deviceMove);
+		input.deviceMove.unbind(onDeviceMove);
+		input.deviceUp.unbind(onDeviceUp);
 	}
 	
 	public function startup () :Void
 	{
 		com.pblabs.util.Assert.isNotNull(context);
 		com.pblabs.util.Assert.isNotNull(input);
-		input.deviceMove.bind(onDeviceMove);
 	}
 	
 	public function shutdown () :Void
 	{
 		stopDragging();
-		input.deviceMove.unbind(onDeviceMove);
 		context = null;
 		input = null;
 		_dragged = null;
@@ -101,15 +106,12 @@ class DragManager
 		dragSignaler = null;
 	}
 	
-	function onDeviceMove (e :InputData) :Void
+	function onDeviceMove (e :IInputData) :Void
 	{
-		// com.pblabs.util.Assert.isNotNull(_dragged, "Dragged entity should not be null if we're listening to mouse moves");
 		com.pblabs.util.Assert.isNotNull(e, "No InputData??");
 		com.pblabs.util.Assert.isNotNull(e.inputLocation, "No InputData.inputLocation??");
 		if (_dragged == null) {
-			//No dragging, but record mouse loc for future use.
-			_startMouse.x = e.inputLocation.x;
-			_startMouse.y = e.inputLocation.y;
+			stopDragging();
 			return;
 		}
 		com.pblabs.util.Assert.isNotNull(_startMouse, "Null _startMouse?");
@@ -126,11 +128,8 @@ class DragManager
 		}
 	}
 	
-	function onDeviceUp (e :InputData) :Void
+	function onDeviceUp (e :IInputData) :Void
 	{
-		if (_dragged == null) {
-			return;
-		}
 		stopDragging();
 	}
 }

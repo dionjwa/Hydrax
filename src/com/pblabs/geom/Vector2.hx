@@ -57,13 +57,13 @@ class Vector2 extends XY,
 		this.y = y;
 	}
 
-	/**
-	 * Returns the dot product of this vector with vector v.
-	 */
-	public function dot (v :Vector2) :Float
-	{
-		return x * v.x + y * v.y;
-	}
+	// /**
+	//  * Returns the dot product of this vector with vector v.
+	//  */
+	// public function dot (v :Vector2) :Float
+	// {
+	// 	return x * v.x + y * v.y;
+	// }
 
 	/**
 	 * Returns a copy of this Vector2.
@@ -115,28 +115,28 @@ class Vector2 extends XY,
 	 * Rotates the vector in place by 'radians'.
 	 * Returns a reference to 'this', for chaining.
 	 */
-	public function rotateLocal (radians :Float) :Vector2
-	{
-		// if (radians == 0) {
-		//	 return this;
-		// }
-		var cosTheta = Math.cos(radians);
-		var sinTheta = Math.sin(radians);
+	// public function rotateLocal (radians :Float) :Vector2
+	// {
+	// 	// if (radians == 0) {
+	// 	//	 return this;
+	// 	// }
+	// 	var cosTheta = Math.cos(radians);
+	// 	var sinTheta = Math.sin(radians);
 
-		var oldX = x;
-		x = (cosTheta * oldX) - (sinTheta * y);
-		y = (sinTheta * oldX) + (cosTheta * y);
+	// 	var oldX = x;
+	// 	x = (cosTheta * oldX) - (sinTheta * y);
+	// 	y = (sinTheta * oldX) + (cosTheta * y);
 
-		return this;
-	}
+	// 	return this;
+	// }
 
-	/**
-	 * Returns a rotated copy of this vector.
-	 */
-	public function rotate (radians :Float) :Vector2
-	{
-		return clone().rotateLocal(radians);
-	}
+	// /**
+	//  * Returns a rotated copy of this vector.
+	//  */
+	// public function rotate (radians :Float) :Vector2
+	// {
+	// 	return clone().rotateLocal(radians);
+	// }
 
 	/**
 	 * Normalizes the vector in place and returns its original length.
@@ -173,45 +173,45 @@ class Vector2 extends XY,
 		return clone().normalizeLocal();
 	}
 
-	/**
-	 * Adds another Vector2 to this, in place.
-	 * Returns a reference to 'this', for chaining.
-	 */
-	public function addLocal (v :Vector2) :Vector2
-	{
-		x += v.x;
-		y += v.y;
+	// /**
+	//  * Adds another Vector2 to this, in place.
+	//  * Returns a reference to 'this', for chaining.
+	//  */
+	// public function addLocal (v :Vector2) :Vector2
+	// {
+	// 	x += v.x;
+	// 	y += v.y;
 
-		return this;
-	}
+	// 	return this;
+	// }
 
-	/**
-	 * Returns a copy of this vector added to 'v'.
-	 */
-	public function add (v :Vector2) :Vector2
-	{
-		return clone().addLocal(v);
-	}
+	// /**
+	//  * Returns a copy of this vector added to 'v'.
+	//  */
+	// public function add (v :Vector2) :Vector2
+	// {
+	// 	return clone().addLocal(v);
+	// }
 
 	/**
 	 * Subtracts another vector from this one, in place.
 	 * Returns a reference to 'this', for chaining.
 	 */
-	public function subtractLocal (v :Vector2) :Vector2
-	{
-		x -= v.x;
-		y -= v.y;
+	// public function subtractLocal (v :Vector2) :Vector2
+	// {
+	// 	x -= v.x;
+	// 	y -= v.y;
 
-		return this;
-	}
+	// 	return this;
+	// }
 
-	/**
-	 * Returns (this - v).
-	 */
-	public function subtract (v :Vector2) :Vector2
-	{
-	   return clone().subtractLocal(v);
-	}
+	// /**
+	//  * Returns (this - v).
+	//  */
+	// public function subtract (v :Vector2) :Vector2
+	// {
+	//    return clone().subtractLocal(v);
+	// }
 
 	/**
 	 * Returns a vector that is perpendicular to this one.
@@ -230,19 +230,19 @@ class Vector2 extends XY,
 	/**
 	 * Scales this vector by value.
 	 */
-	public function scaleLocal (value :Float) :Vector2
-	{
-		x *= value;
-		y *= value;
+	// public function scaleLocal (value :Float) :Vector2
+	// {
+	// 	x *= value;
+	// 	y *= value;
 
-		return this;
-	}
+	// 	return this;
+	// }
 
-	/** Returns (this * value). */
-	public function scale (value :Float) :Vector2
-	{
-		return clone().scaleLocal(value);
-	}
+	// /** Returns (this * value). */
+	// public function scale (value :Float) :Vector2
+	// {
+	// 	return clone().scaleLocal(value);
+	// }
 
 	/**
 	 * Inverts the vector.
@@ -281,19 +281,6 @@ class Vector2 extends XY,
 	}
 
 	/**
-	 * Returns a new vector that is the linear interpolation of vectors a and b
-	 * at proportion p, where p is in [0, 1], p = 0 means the result is equal to a,
-	 * and p = 1 means the result is equal to b.
-	 */
-	public static function interpolate (a :Vector2, b :Vector2, p :Float) :Vector2
-	{
-		// todo: maybe convert this into a non-static function, to fit the rest of the class?
-		var q:Float = 1 - p;
-		return new Vector2(q * a.x + p * b.x,
-						   q * a.y + p * b.y);
-	}
-
-	/**
 	 * Returns the smaller of the two angles between v1 and v2, in radians.
 	 * Result will be in range [0, pi].
 	 */
@@ -302,7 +289,7 @@ class Vector2 extends XY,
 		// v1 dot v2 == |v1||v2|cos(theta)
 		// theta = acos ((v1 dot v2) / (|v1||v2|))
 
-		var dot:Float = v1.dot(v2);
+		var dot:Float = com.pblabs.geom.VectorTools.dot(v1, v2);
 		var len1:Float = v1.length;
 		var len2:Float = v2.length;
 

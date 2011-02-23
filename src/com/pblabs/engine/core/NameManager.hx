@@ -15,9 +15,10 @@ package com.pblabs.engine.core;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBObject;
 import com.pblabs.util.Preconditions;
-
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
+using com.pblabs.util.StringUtil;
+
 /**
  * The name manager stores references to IPBObject that have been given
  * names. These IPBObjects can be looked up by name.
@@ -44,7 +45,7 @@ class NameManager
 	{
 		Preconditions.checkNotNull(object);
 		
-		if (object.name != null && object.name != "") {
+		if (!object.name.isBlank()) {
 			com.pblabs.util.Log.debug("Adding named object: " + object.name);
 			if (_objects.get(object.name) != null) {
 				com.pblabs.util.Log.warn("An object with the name already exists: " + object.name);
@@ -158,5 +159,3 @@ class NameManager
 	
 	var _objects :Map<String, IPBObject>;
 }
-
-

@@ -17,7 +17,7 @@ import de.polygonal.motor2.geom.math.XY;
 using Lambda;
 
 using com.pblabs.geom.Geometry;
-
+using com.pblabs.geom.VectorTools;
 /**
  * Use "using com.pblabs.geom.VectorTools" for code 
  * completion access to these functions.
@@ -186,7 +186,123 @@ class VectorTools
 	{
 		return new Vector2(xy.x, xy.y);    
 	}
+
+	/**
+	 * Returns true if this vector is equal to v.
+	 */
+	public static function equals (v1 :XY, v2 :XY) :Bool
+	{
+		return if (v1 != null && v2 != null) v1.x == v2.x && v1.y == v2.y else false;
+	}
 	
+	/**
+	 * Returns the dot product of this vector with vector v.
+	 */
+	public static function dot (v1 :XY, v2 :XY) :Float
+	{
+		return v1.x * v2.x + v1.y * v2.y;
+	}
+	
+	/**
+	 * Returns this vector's length.
+	 */
+	public static function getLength (v :XY) :Float
+	{
+		return Math.sqrt(v.x * v.x + v.y * v.y);
+	}
+	
+	/**
+	 * Adds another Vector2 to this, in place.
+	 * Returns a reference to 'this', for chaining.
+	 */
+	public static function addLocal (v1 :XY, v2 :XY) :XY
+	{
+		v1.x += v2.x;
+		v1.y += v2.y;
+
+		return v1;
+	}
+
+	/**
+	 * Returns a copy of this vector added to 'v'.
+	 */
+	public static function add (v1 :XY, v2 :XY) :XY
+	{
+		return v1.clone().addLocal(v2);
+	}
+	
+	/**
+	 * Subtracts another vector from this one, in place.
+	 * Returns a reference to 'this', for chaining.
+	 */
+	public static function subtractLocal (v1 :XY, v2 :XY) :XY
+	{
+		v1.x -= v2.x;
+		v1.y -= v2.y;
+
+		return v1;
+	}
+
+	/**
+	 * Returns (this - v).
+	 */
+	public static function subtract (v1: XY, v2 :XY) :XY
+	{
+	   return clone(v1).subtractLocal(v2);
+	}
+	
+	/**
+	 * Scales this vector by value.
+	 */
+	public static function scaleLocal (v :XY, value :Float) :XY
+	{
+		v.x *= value;
+		v.y *= value;
+
+		return v;
+	}
+
+	/** Returns (this * value). */
+	public static function scale (v :XY, value :Float) :XY
+	{
+		return v.clone().scaleLocal(value);
+	}
+	
+	public static function rotateLocal (xy :XY, radians :Float) :XY
+	{
+		var cosTheta = Math.cos(radians);
+		var sinTheta = Math.sin(radians);
+
+		var oldX = xy.x;
+		xy.x = (cosTheta * oldX) - (sinTheta * xy.y);
+		xy.y = (sinTheta * oldX) + (cosTheta * xy.y);
+
+		return xy;
+	}
+	
+	/**
+	 * Returns a rotated copy of this vector.
+	 */
+	public static function rotate (v :XY, radians :Float) :XY
+	{
+		return v.clone().rotateLocal(radians);
+	}
+	
+	public static function angle (v :XY) :Float
+	{
+		return Math.atan2(v.y, v.x);
+	}
+	
+	/**
+	 * Returns a new vector that is the linear interpolation of vectors a and b
+	 * at proportion p, where p is in [0, 1], p = 0 means the result is equal to a,
+	 * and p = 1 means the result is equal to b.
+	 */
+	public static function interpolate (a :XY, b :XY, p :Float) :XY
+	{
+		var q:Float = 1 - p;
+		return new Vector2(q * a.x + p * b.x, q * a.y + p * b.y);
+	}
 	
 	#if flash
 	/**

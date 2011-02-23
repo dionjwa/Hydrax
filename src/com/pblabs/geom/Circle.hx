@@ -8,16 +8,17 @@
  ******************************************************************************/
 package com.pblabs.geom;
 
-import com.pblabs.util.Cloneable;
-
 import com.pblabs.geom.CircleUtil;
 import com.pblabs.geom.Geometry;
 import com.pblabs.geom.Vector2;
+import com.pblabs.util.Cloneable;
+
+import de.polygonal.motor2.geom.math.XY;
 
 class Circle
 	implements Cloneable<Circle>
 {
-	public var center :Vector2;
+	public var center :XY;
 	public var radius :Float;
 	public var x (get_x, set_x) :Float;
 	public var y (get_y, set_y) :Float;
@@ -66,5 +67,3 @@ class Circle
 	}
 
 }
-
-

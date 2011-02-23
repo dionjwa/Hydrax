@@ -27,6 +27,7 @@ import com.pblabs.editor.EntityPanel;
 import com.pblabs.editor.TimePanel;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBObject;
+import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.input.InputKey;
 import com.pblabs.util.Preconditions;
@@ -117,7 +118,7 @@ class Editor extends Sprite
 		setup();
 		
 		//Move the console down
-		flash.Boot.getTrace().y = 640;
+		// flash.Boot.getTrace().y = 640;
 	}
 	
 	public function objectSelected (obj :IPBObject) :Void
@@ -259,14 +260,14 @@ class Editor extends Sprite
 		return ta;
 	}
 	
-	function onMouseDown (listener :hsl.haxe.Signal<com.pblabs.components.input.InputData>) :Void
+	function onMouseDown (listener :hsl.haxe.Signal<com.pblabs.components.input.IInputData>) :Void
 	{
 		if (!isEditing()) { return; }
 		listener.stopImmediatePropagation();
 		
 		//Get displayobjects
 		var scene = _game.currentContext.getManager(SceneUtil.MANAGER_CLASS);
-		var underMouse = scene.getDisplayComponentUnderPoint(listener.data.inputLocation);
+		var underMouse = scene.getDisplayComponentUnderPoint(listener.data.inputLocation, ObjectType.ALL);
 		if (underMouse != null) {
 			objectSelected(underMouse.owner);
 			var dragger = _game.currentContext.getManager(com.pblabs.components.input.DragManager);

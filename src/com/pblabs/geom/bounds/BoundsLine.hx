@@ -18,6 +18,8 @@ import com.pblabs.geom.bounds.BoundsPolygon;
 import com.pblabs.geom.bounds.IBounds;
 import com.pblabs.util.ReflectUtil;
 
+import de.polygonal.motor2.geom.math.XY;
+
 class BoundsLine extends AbstractBounds<BoundsLine>
 	// implements IBounds<BoundsLine> 
 {
@@ -39,9 +41,9 @@ class BoundsLine extends AbstractBounds<BoundsLine>
 		return _lineSegment;
 	}
 
-	override function get_center ():Vector2
+	override function get_center ():XY
 	{
-		return Vector2.interpolate(_p1, _p2, 0.5);
+		return VectorTools.interpolate(_p1, _p2, 0.5);
 	}
 	
 	override function computeBoundingRect () :Rectangle
@@ -69,15 +71,15 @@ class BoundsLine extends AbstractBounds<BoundsLine>
 		return new BoundsLine(_p1.x, _p1.y, _p2.x, _p2.y);
 	}
 
-	override public function containsPoint (v :Vector2) :Bool
+	override public function containsPoint (v :XY) :Bool
 	{
 		return LineSegment.distToLineSegment(_p1, _p2, v) == 0;
 	}
 
 	// public function convertToGlobal (localDisp :DisplayObject) :Bounds<BoundsLine>
 	// {
-	//	 var p1:Vector2 = Vector2.toVector2(localDisp.localToGlobal(_p1.toPoint()));
-	//	 var p2:Vector2 = Vector2.toVector2(localDisp.localToGlobal(_p2.toPoint()));
+	//	 var p1:XY = XY.toXY(localDisp.localToGlobal(_p1.toPoint()));
+	//	 var p2:XY = XY.toXY(localDisp.localToGlobal(_p2.toPoint()));
 	//	 return new BoundsLine(p1.x, p1.y, p2.x, p2.y);
 	// }
 
@@ -106,12 +108,12 @@ class BoundsLine extends AbstractBounds<BoundsLine>
 
 	}
 
-	override public function distanceToPoint (p :Vector2) :Float
+	override public function distanceToPoint (p :XY) :Float
 	{
 		return LineSegment.distToLineSegment(_p1, _p2, p);
 	}
 
-	override public function getBoundedPoint (v :Vector2, ?bounded :Vector2) :Vector2
+	override public function getBoundedPoint (v :XY, ?bounded :XY) :XY
 	{
 		if (bounded != null) {
 			var p = LineSegment.closestPoint(_p1, _p2, v);
@@ -123,14 +125,12 @@ class BoundsLine extends AbstractBounds<BoundsLine>
 		}
 	}
 
-	override public function getBoundedPointFromMove (originX :Float, originY :Float, targetX :Float, targetY :Float, ?bounded :Vector2) :Vector2
+	override public function getBoundedPointFromMove (originX :Float, originY :Float, targetX :Float, targetY :Float, ?bounded :XY) :XY
 	{
 		return getBoundedPoint(new Vector2(targetX, targetY));
 	}
 
 	var _lineSegment:LineSegment;
-	var _p1:Vector2;
-	var _p2:Vector2;
+	var _p1:XY;
+	var _p2:XY;
 }
-
-

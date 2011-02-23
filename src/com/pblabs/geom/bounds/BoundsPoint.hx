@@ -8,7 +8,6 @@
  ******************************************************************************/
 package com.pblabs.geom.bounds;
 
-
 import com.pblabs.geom.Circle;
 import com.pblabs.geom.Geometry;
 import com.pblabs.geom.Rectangle;
@@ -19,6 +18,9 @@ import com.pblabs.geom.bounds.BoundsPolygon;
 import com.pblabs.geom.bounds.BoundsUtil;
 import com.pblabs.geom.bounds.IBounds;
 import com.pblabs.util.ReflectUtil;
+
+import de.polygonal.motor2.geom.math.XY;
+
 using com.pblabs.geom.VectorTools;
 
 class BoundsPoint extends AbstractBounds<BoundsPoint>
@@ -33,12 +35,12 @@ class BoundsPoint extends AbstractBounds<BoundsPoint>
 		set_center(new Vector2(x, y));
 	}
 
-	override function get_center ():Vector2
+	override function get_center ():XY
 	{
 		return _center;
 	}
 
-	override function set_center (v :Vector2) :Vector2
+	override function set_center (v :XY) :XY
 	{
 		_center = v;
 		_boundsRect.x = _center.x;
@@ -53,7 +55,7 @@ class BoundsPoint extends AbstractBounds<BoundsPoint>
 		return new BoundsPoint(_center.x, _center.y);
 	}
 
-	override public function containsPoint (v :Vector2) :Bool
+	override public function containsPoint (v :XY) :Bool
 	{
 		return v.equals(_center);
 	}
@@ -79,7 +81,7 @@ class BoundsPoint extends AbstractBounds<BoundsPoint>
 		return Math.NaN;
 	}
 
-	override public function distanceToPoint (v :Vector2) :Float
+	override public function distanceToPoint (v :XY) :Float
 	{
 		return _center.distance(v);
 	}
@@ -100,7 +102,7 @@ class BoundsPoint extends AbstractBounds<BoundsPoint>
 		return false;
 	}
 
-	override public function getBoundedPoint (v :Vector2, ?v :Vector2) :Vector2
+	override public function getBoundedPoint (v :XY, ?v :XY) :XY
 	{
 		if (v != null) {
 			v.x = _center.x;
@@ -112,7 +114,7 @@ class BoundsPoint extends AbstractBounds<BoundsPoint>
 	}
 
 	override public function getBoundedPointFromMove (originX :Float, originY :Float,
-		targetX :Float, targetY :Float, ?v :Vector2) :Vector2
+		targetX :Float, targetY :Float, ?v :XY) :XY
 	{
 		return _center;
 	}
@@ -123,5 +125,3 @@ class BoundsPoint extends AbstractBounds<BoundsPoint>
 	}
 
 }
-
-

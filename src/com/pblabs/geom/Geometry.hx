@@ -8,11 +8,12 @@
  ******************************************************************************/
 package com.pblabs.geom;
 
-
 import com.pblabs.geom.LineSegment;
 import com.pblabs.geom.Vector2;
-using com.pblabs.geom.VectorTools;
 
+import de.polygonal.motor2.geom.math.XY;
+
+using com.pblabs.geom.VectorTools;
 
 class Geometry
 {
@@ -173,7 +174,7 @@ class Geometry
 	public static function whereIsPoint (point :Vector2, pointOnPlane :Vector2,
 		planeNormal :Vector2) :Int
 	{
-		var dir:Vector2 = pointOnPlane.subtract(point);
+		var dir = pointOnPlane.subtract(point);
 
 		var d = dir.dot(planeNormal);
 
@@ -196,8 +197,8 @@ class Geometry
 	public static function getRayCircleIntersect (rayOrigin :Vector2, rayHeading :Vector2,
 		circleCenter :Vector2, radius :Float) :Float
 	{
-		var toCircle:Vector2	= circleCenter.subtract(rayOrigin);
-		var length	   = toCircle.length;
+		var toCircle	= circleCenter.subtract(rayOrigin);
+		var length	   = toCircle.getLength();
 		var v			= toCircle.dot(rayHeading);
 		var d			= radius * radius - (length * length - v * v);
 
@@ -218,8 +219,8 @@ class Geometry
 	public static function doesRayIntersectCircle (rayOrigin :Vector2, rayHeading :Vector2,
 		circleCenter :Vector2, radius :Float) :Bool
 	{
-		var toCircle:Vector2	 = circleCenter.subtract(rayOrigin);
-		var length		 = toCircle.length;
+		var toCircle = circleCenter.subtract(rayOrigin);
+		var length		 = toCircle.getLength();
 		var v			= toCircle.dot(rayHeading);
 		var d			= radius * radius - (length * length - v * v);
 
@@ -874,7 +875,7 @@ class Geometry
 	 * @return true if circle overlaps the line segment
 	 *
 	 */
-	public static function isCircleOverlappingSegment(A:Vector2, B:Vector2, circle:Vector2, radius:Float):Bool{
+	public static function isCircleOverlappingSegment(A:XY, B:XY, circle:XY, radius:Float):Bool{
 
 		var distSq = LineSegment.distToLineSegmentSq(A,B,circle);
 		if (distSq < radius * radius) return true;
@@ -1401,5 +1402,3 @@ class Geometry
 	}
 
 }
-
-

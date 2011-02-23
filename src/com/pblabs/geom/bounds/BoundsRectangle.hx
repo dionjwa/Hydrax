@@ -8,7 +8,6 @@
  ******************************************************************************/
 package com.pblabs.geom.bounds;
 
-
 import com.pblabs.geom.Circle;
 import com.pblabs.geom.Polygon;
 import com.pblabs.geom.Rectangle;
@@ -19,6 +18,9 @@ import com.pblabs.geom.bounds.BoundsPoint;
 import com.pblabs.geom.bounds.BoundsPolygon;
 import com.pblabs.geom.bounds.BoundsUtil;
 import com.pblabs.geom.bounds.IBounds;
+
+import de.polygonal.motor2.geom.math.XY;
+
 using com.pblabs.geom.PolygonTools;
 using com.pblabs.geom.RectangleTools;
 
@@ -33,12 +35,12 @@ class BoundsRectangle extends BoundsForwarding<BoundsRectangle>
 		set_center(new Vector2(r.left + r.width / 2, r.top + r.height / 2));
 	}
 
-	override function get_center ():Vector2
+	override function get_center ():XY
 	{
 		return _center;
 	}
 
-	override function set_center (v :Vector2) :Vector2
+	override function set_center (v :XY) :XY
 	{
 		super.set_center(center);
 		_center = _boundsCircle.center = v;
@@ -53,12 +55,12 @@ class BoundsRectangle extends BoundsForwarding<BoundsRectangle>
 		return new BoundsRectangle(_boundsRect.clone());
 	}
 
-	override public function containsPoint (v :Vector2) :Bool
+	override public function containsPoint (v :XY) :Bool
 	{
 		return _boundsRect.contains(v.x, v.y);
 	}
 
-	override public function distanceToPoint (v :Vector2) :Float
+	override public function distanceToPoint (v :XY) :Float
 	{
 		if (containsPoint(v)) {
 			return 0;

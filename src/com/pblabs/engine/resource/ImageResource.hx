@@ -148,7 +148,10 @@ class ImageResource extends ResourceBase<js.Dom.Image>
 		onLoadError("Don't use Source.embedded for JS, use Source.url instead");
 		#elseif flash
 		var cls :Class<Dynamic> = Type.resolveClass("SWFResources_" + embeddedName);
-		Preconditions.checkNotNull(cls, "No embedded resource class SWFResources_" + embeddedName);
+		if (cls == null) {
+			cls = Type.resolveClass(embeddedName);
+		}
+		Preconditions.checkNotNull(cls, "No embedded resource class SWFResources_" + embeddedName + " or " + embeddedName);
 		com.pblabs.util.Assert.isTrue(Std.is(Type.createInstance(cls, []), flash.utils.ByteArray)); 
 		var bytes :flash.utils.ByteArray = cast Type.createInstance(cls, []);
 		_loader.loadBytes(bytes);

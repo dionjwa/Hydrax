@@ -75,7 +75,10 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
 	override function onAdd () :Void
 	{
 		super.onAdd();
+		com.pblabs.util.Assert.isNotNull(_displayObject);
 		_displayObject.name = name;
+		_width = _displayObject.width;
+		_height = _displayObject.height;
 	}
 	
 	function get_displayObject () :DisplayObject
@@ -87,34 +90,36 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
 	{
 		Preconditions.checkArgument(_displayObject == null && !isRegistered);
 		_displayObject = d;
+		_width = _displayObject.width;
+		_height = _displayObject.height;
 		return d;
 	}
 
-	override function set_x (value :Float) :Float
-	{
-		_displayObject.x = value;
-		return super.set_x(value);
-	}
+	// override function set_x (value :Float) :Float
+	// {
+	// 	_displayObject.x = value;
+	// 	return super.set_x(value);
+	// }
 	
-	override function set_y (value :Float) :Float
-	{
-		_displayObject.y = value;
-		return super.set_y(value);
-	}
+	// override function set_y (value :Float) :Float
+	// {
+	// 	// _displayObject.y = value;
+	// 	return super.set_y(value);
+	// }
 	
-   override function set_angle (value :Float) :Float
-   {
-	   super.set_angle(value);
-	   _displayObject.rotation = _angle.toDeg();
-	   return _angle;
-   }
+   // override function set_angle (value :Float) :Float
+   // {
+	//    super.set_angle(value);
+	//    _displayObject.rotation = _angle.toDeg();
+	//    return _angle;
+   // }
    
-	override function set_alpha (val :Float) :Float
-	{
-		super.set_alpha(val);
-		_displayObject.alpha = _alpha;
-		return val;
-	}
+	// override function set_alpha (val :Float) :Float
+	// {
+	// 	super.set_alpha(val);
+	// 	_displayObject.alpha = _alpha;
+	// 	return val;
+	// }
 
 	/**
 	 * Update the object's transform based on its current state. Normally
@@ -143,8 +148,8 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
 		
 		
 		_transformMatrix.identity();
-		_transformMatrix.scale(_scale.x, _scale.y);
-		_transformMatrix.translate(-registrationPoint.x * _scale.x, - registrationPoint.y * _scale.y);
+		_transformMatrix.scale(_scaleX, _scaleY);
+		_transformMatrix.translate(-registrationPoint.x * _scaleX, - registrationPoint.y * _scaleY);
 		_transformMatrix.rotate(_angle + _angleOffset);
 		_transformMatrix.translate(_x + _locationOffset.x, _y + _locationOffset.y);
 		

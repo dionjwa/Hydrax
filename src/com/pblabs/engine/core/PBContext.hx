@@ -12,16 +12,6 @@
  ******************************************************************************/
 package com.pblabs.engine.core;
 
-import com.pblabs.engine.core.Entity;
-import com.pblabs.engine.core.IEntity;
-import com.pblabs.engine.core.IEntityComponent;
-import com.pblabs.engine.core.IPBContext;
-import com.pblabs.engine.core.IPBGroup;
-import com.pblabs.engine.core.IPBManager;
-import com.pblabs.engine.core.IPBObject;
-import com.pblabs.engine.core.NameManager;
-import com.pblabs.engine.core.PBGroup;
-import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.injection.ComponentInjector;
 import com.pblabs.engine.injection.Injector;
 import com.pblabs.engine.time.IProcessManager;
@@ -32,10 +22,7 @@ import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
-import com.pblabs.util.ds.MultiMap;
-import com.pblabs.util.ds.multimaps.ArrayMultiMap;
 
-import hsl.haxe.Bond;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
@@ -51,17 +38,8 @@ class PBContext
 	public var signalObjectAdded (default, null) :Signaler<IPBObject>;
 	public var signalObjectRemoved (default, null) :Signaler<IPBObject>;
 	
-	/**
-	 * Maps full property name e.g. #entity2.component3 to
-	 * a list of Bonds.  These can be destroyed when the 
-	 * component is reset.
-	 */
-	// public var objectBonds (default, null) :MultiMap<String, Bond>;
-	
-	// #if flash
-	// public var displayContainer (get_displayContainer, null) :flash.display.Sprite;
-	// var _displayContainer :flash.display.Sprite;
-	// #end
+	public var signalEnter (default, null) :Signaler<Void>;
+	public var signalExit (default, null) :Signaler<Void>;
 	
 	public var injector :Injector;
 	var _managers :Map<String, Dynamic>;
@@ -87,6 +65,8 @@ class PBContext
 		_tempPropertyInfo = new PropertyInfo();
 		signalObjectAdded = new DirectSignaler(this);
 		signalObjectRemoved = new DirectSignaler(this);
+		signalEnter = new DirectSignaler(this);
+		signalExit = new DirectSignaler(this);
 	}
 	
 	public function allocateEntity () :IEntity
@@ -117,60 +97,11 @@ class PBContext
 		}
 		
 		Preconditions.checkArgument(object.owningGroup.rootGroup == rootGroup, "Object root group is not the context");
-		
-		// var gameObj = cast(obj, GameObject);
-		
-		// Preconditions.checkNotNull(gameObj, "obj must be non-null and of type GameObject");
-		// Preconditions.checkArgument(!gameObj.isLiveObject, "obj already belongs to an ObjectDB");
-		
-		
-		// //Add object to various holders
-		// _gameObjects.add(gameObj);
-		
-		// // does the object have a name?
-		// var objectName :String = obj.name;
-		// if (null != objectName) {
-		//	 _namedObjects.set(objectName, gameObj);
-		// }
-
-		// //Updating
-		// if (Std.is(obj, ITickedObject)) {
-		//	 _updatableObjectManager.addObject(cast( obj, ITickedObject));
-		// }
-		
-		// //Groups
-		// if (Std.is(obj, IGroupObject)) {
-		//	 for (group in cast(obj, IGroupObject).groupNames()) {
-		//		 addToGroup(group, obj);
-		//	 }
-		// }
-		
-		// // initialize object
-		// var friend :GameObjectFriend = gameObj;
-		// friend._parentDB = this;
-		// friend.addedToDBInternal();
-		
-		// //Add the component groups here, the components may have 
-		// //been modified after onAdd
-		// if (Std.is(obj, Entity)) {
-		//	 for (c in cast(obj, Entity)._components) {
-		//		 if (Std.is(c, IGroupObject)) {
-		//			 for (group in cast(c, IGroupObject).groupNames()) {
-		//				 addToGroup(group, obj);
-		//			 }
-		//		 }
-		//	 }
-		// }
-		
-		// ++_objectCount;
-		
-		// objectAddedSignal.dispatch(gameObj);
 		signalObjectAdded.dispatch(object);
 	}
 	
-	//TODO: use object pooling
 	public function allocate <T>(type :Class<T>) :T
-	{                                                                           
+	{
 		Assert.isNotNull(currentGroup);
 		Assert.isTrue(currentGroup.context == this);
 		Preconditions.checkNotNull(type, "Type class is null");
@@ -197,8 +128,6 @@ class PBContext
 	{
 		// Clear out the NameManager.
 		_nameManager.remove(object);
-		//Remove object from sets
-		// getManager(SetManager).removeObjectFromAll(object);
 		
 	}
 	
@@ -230,7 +159,6 @@ class PBContext
 		//Better to just setup this important group manually.
 		var rg = new PBGroup();
 		rg.context = this;
-		// rg.owningGroup = rg;
 		rg.name = _nameManager.validateName(name + " RootGroup");
 		_nameManager.add(rg);
 		rootGroup = rg;
@@ -245,53 +173,26 @@ class PBContext
 	
 	public function enter () :Void
 	{
+		signalEnter.dispatch();
 	}
 	
 	/** Subclasses override */
 	public function exit () :Void
 	{
+		signalExit.dispatch();
 	}
 
 	public function initializeManagers():Void
 	{
 		// Mostly will come from subclasses.
-		//Some core classes
-		//Needed for correct operation of many core components
-		// registerManager(com.pblabs.engine.core.SignalBondManager, new com.pblabs.engine.core.SignalBondManager());
-		// registerManager(SetManager, new SetManager());
-		
-		//Some core managers that
-		// registerManager(SignalBondManager, new SignalBondManager());
-		// registerManager(SetManager, new SetManager());
 	}
 
-	// public function registerManager <T> (clazz :Class<T>, 
-	//	 ?instance :T = null, ?name :String = null, ?suppressInject :Bool = false) :T
-	// {
-	//	 var i:T = if (instance == null) Type.createInstance(clazz, null) else instance;
-	//	 name = getManagerName(clazz, name);
-	//	 _managers.set(name, i);
-	//	 // _managers[clazz + "|" + name] = i;
-	//	 // injector.mapValue(clazz, i, name);
-	//	 if (!suppressInject) {
-	//		 injector.injectInto(i);
-	//	 }
-		
-	//	 if (Std.is(i, IPBManager)) {
-	//		 cast(i, IPBManager).startup();
-	//	 }
-	//	 return i;
-	// }
-	
 	public function getManager <T>(cls :Class<T>, ?name :String = null):T
 	{
-		// trace("getManager, key=" + 
-		// return _managers.get(Util.getManagerName(clazz, name));
 		return injector.getMapping(cls, name);
-		//injector.getMapping(clazz, optionalName).getResponse(injector);
 	}
 	
-	public function unregisterManager (clazz:Class<Dynamic>, ?name :String = null) :Void
+	public function unregisterManager (clazz :Class<Dynamic>, ?name :String = null) :Void
 	{
 		var mng = _managers.remove(PBUtil.getManagerName(clazz, name));
 		if (Std.is(mng, IPBManager)) {
@@ -300,32 +201,9 @@ class PBContext
 		injector.unmap(clazz, name);
 	}
 	
-	// public function registerContext (ctx :IPBContext):Void
-	// {
-	//	 Preconditions.checkArgument(!_contexts.exists(ctx.name), "Cannot have two contexts with the same name!"); 
-		
-	//	 // Store it and set up.
-	//	 _contexts.set(ctx.name, ctx);
-	//	 // var ctxObj:Dynamic = ctx;
-	//	 // if(ctxObj['setInjectorParent'])
-	//	 //	 ctxObj.setInjectorParent(injector);
-	// }
-	
-	// public function unregisterContext(ctx:IPBContext):Void
-	// {
-	//	 Preconditions.checkNotNull(_contexts.get(ctx.name), "Unknown context '" + ctx.name + "'!");
-	//	 _contexts.remove(ctx.name);
-		
-	//	 // Remove everything.
-	//	 // var ctxObj:Dynamic = ctx;
-	//	 // if(ctxObj['setInjectorParent'])
-	//	 //	 ctxObj.setInjectorParent(null);
-	//	 // _contexts[ctx.name] = null;
-	// }
-	
 	public function inject (object :Dynamic) :Void
 	{
-		// injector.injectInto(object);
+		injector.injectInto(object);
 	}
 	
 	
@@ -336,6 +214,9 @@ class PBContext
 		rootGroup = null;
 		_currentGroup = null;
 		for (m in _managers) {
+			if (m == null) {
+				continue;
+			}
 			if (Std.is(m, IPBManager)) {
 				cast(m, IPBManager).shutdown();
 			}
@@ -344,16 +225,22 @@ class PBContext
 		var game = getManager(PBGameBase);
 		com.pblabs.util.Assert.isNotNull(game);
 		
-		
+		_managers.clear();
 		_managers = null;
+		injector.shutdown();
 		injector = null;
 		_tempPropertyInfo = null;
+		
+		#if debug
+		com.pblabs.util.Assert.isFalse(signalEnter.isListenedTo);
+		com.pblabs.util.Assert.isFalse(signalExit.isListenedTo);
+		#end
 	}
 	
 	function initializeName():Void
 	{
 		contextNameCounter++;
-		name = "Context" + contextNameCounter;
+		name = ReflectUtil.tinyClassName(Type.getClass(this)) + contextNameCounter;
 	}
 	
 	function get_currentGroup () :IPBGroup
@@ -598,13 +485,13 @@ class PBContext
 		com.pblabs.util.Log.warn([msg, "context", context, "ref", reference.property, com.pblabs.util.Log.getStackTrace()]);
 	}
 	
-	public function getProperty<T> (property :PropertyReference<T>, ?defaultVal :T = null, ?entity :IEntity = null) :T
+	public function getProperty<T> (property :PropertyReference<T>, ?defaultVal :T = null, ?entity :IEntity = null, ?suppressErrors :Bool = false) :T
 	{
 		if (property == null) {
 			return null;
 		}
 		// Look up the property.
-		var info :PropertyInfo = findProperty(this, entity, property, false, _tempPropertyInfo, false);
+		var info :PropertyInfo = findProperty(this, entity, property, false, _tempPropertyInfo, suppressErrors);
 		var result :T = null;
 		if (info != null && !property.getterSetterChecked) {
 			checkForHaxeProperties(info, property);
@@ -658,6 +545,13 @@ class PBContext
 	{
 		return new ProcessManager();	
 	}
+
+	#if debug
+	public function toString () :String
+	{
+		return name;	
+	}
+	#end
 	
 	static var EMPTY_ARRAY :Array<Dynamic> = [];
 }
@@ -713,29 +607,12 @@ class PropertyInfo
 		isRuntimeProperty = false;
 	}
 	
+	#if debug	
 	public function toString () :String
 	{
 		return "PropertyInfo propertyParent=" + ReflectUtil.getClass(propertyParent) + ", propertyName=" + propertyName + ", isRuntimeProperty=" + isRuntimeProperty;
 	}
-	
-	// inline function getCheckForSignalVars<T> (field :Dynamic) :T
-	// {
-	//	 if (Std.is(field, SignalVar)) {
-	//		 return cast(field, SignalVar<Dynamic>).value;
-	//	 } else {
-	//		 return field;
-	//	 }
-	// }
-	
-	// inline function setCheckForSignalVars<T> (field :Dynamic, val :T) :Bool
-	// {
-	//	 if (Std.is(field, SignalVar)) {
-	//		 cast(field, SignalVar<Dynamic>).value = val;
-	//		 return true;
-	//	 } else {
-	//		 return false;
-	//	 }
-	// }
+	#end
 	
 	static var EMPTY_ARRAY :Array<Dynamic> = [];
 }

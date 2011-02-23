@@ -14,6 +14,8 @@ import com.pblabs.geom.Vector2;
 import com.pblabs.geom.bounds.AbstractBounds;
 import com.pblabs.geom.bounds.IBounds;
 
+import de.polygonal.motor2.geom.math.XY;
+
 using com.pblabs.geom.CircleUtil;
 
 class BoundsForwarding<T> extends AbstractBounds<T>
@@ -24,12 +26,12 @@ class BoundsForwarding<T> extends AbstractBounds<T>
 		_forwarding = forwadingBounds;
 	}
 
-	override function get_center ():Vector2
+	override function get_center ():XY
 	{
 		return _forwarding().get_center();
 	}
 	
-	override function set_center (v :Vector2) :Vector2
+	override function set_center (v :XY) :XY
 	{
 		_forwarding().set_center(v);
 		return v;
@@ -50,7 +52,7 @@ class BoundsForwarding<T> extends AbstractBounds<T>
 		return _forwarding().computeBoundingRect();
 	}
 
-	override public function containsPoint (v :Vector2) :Bool
+	override public function containsPoint (v :XY) :Bool
 	{
 		return _forwarding().containsPoint(v);
 	}
@@ -70,7 +72,7 @@ class BoundsForwarding<T> extends AbstractBounds<T>
 		return _forwarding().isWithinDistance(b, d);
 	}
 
-	override public function distanceToPoint (p :Vector2) :Float
+	override public function distanceToPoint (p :XY) :Float
 	{
 		return _forwarding().distanceToPoint(p);
 	}
@@ -82,5 +84,3 @@ class BoundsForwarding<T> extends AbstractBounds<T>
 
 	var _forwarding :Void->AbstractBounds<Dynamic>;
 }
-
-

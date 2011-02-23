@@ -19,7 +19,7 @@ class PBManagerBase
 	
 	public function startup () :Void
 	{
-	    com.pblabs.util.Assert.isNotNull(game);
+	    com.pblabs.util.Assert.isNotNull(game, "No PBGameBase?");
 		game.newActiveContextSignaler.bind(contextSwitched);
 	}
 	

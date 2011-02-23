@@ -7,15 +7,17 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.input;
+
 import com.pblabs.engine.core.IEntityComponent;
-import com.pblabs.geom.Vector2;
+import com.pblabs.engine.core.ObjectType;
+
+import de.polygonal.motor2.geom.math.XY;
 
 /**
   * Minimal functionality needed to begin mouse/input device interactions.
   */
 interface IInteractiveComponent implements IEntityComponent
 {
-	function containsScreenPoint (pos :Vector2) :Bool;
+	var objectMask (get_objectMask, set_objectMask) :ObjectType;
+	function containsScreenPoint (pos :XY, mask :ObjectType) :Bool;
 }
-
-

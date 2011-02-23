@@ -66,14 +66,17 @@ class RectangleShape extends ShapeComponent
     override function redraw () :Void
     {
         #if flash
+        var zoom = parent != null && parent.parent != null ? parent.parent.zoom : 1.0;
         var g = cast(_displayObject, flash.display.Sprite).graphics;
         g.clear();
         g.beginFill(this.fillColor, 1);
-        g.drawRect(-width / 2, -height / 2, width, height);
+        // g.drawRect(-width / 2, -height / 2, width, height);
+        g.drawRect(0, 0, width, height);
         g.endFill();
-        var lineThickness = 1.0;
-        g.lineStyle(borderWidth, borderColor, lineThickness);
-        g.drawRect(-width / 2, -height / 2, width - borderWidth, height - borderWidth);
+        var lineThickness = .0;
+        g.lineStyle(lineThickness, borderColor, 1.0);
+        // g.drawRect(-width / 2, -height / 2, width - borderWidth, height - borderWidth);
+        g.drawRect(0, 0, width, height);
         #elseif css
         _rect.style.cssText = " width:" + width + "px; height:" + height + "px; background-color:" + StringUtil.toColorString(fillColor, "#") + "; border-color:" + StringUtil.toColorString(borderColor, "#") + "; border-style:solid; border-width:" + borderWidth + "px;";
         #elseif js

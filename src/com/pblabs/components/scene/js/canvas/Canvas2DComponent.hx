@@ -154,10 +154,10 @@ class Canvas2DComponent extends BaseScene2DComponent<CanvasLayer>
 			cy += boundingBox[1];
 		}
 
-		transform[0] = scale * cos;
-		transform[1] = scale * sin;
-		transform[2] = scale * -sin;
-		transform[3] = scale * cos;
+		transform[0] = scaleX * cos;
+		transform[1] = scaleY * sin;
+		transform[2] = scaleX * -sin;
+		transform[3] = scaleY * cos;
 		// TODO: Disable pixel snapping?
 		transform[4] = Math.floor(cx*transform[0] + cy*transform[2] + x);
 		transform[5] = Math.floor(cx*transform[1] + cy*transform[3] + y);

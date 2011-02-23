@@ -13,6 +13,8 @@ import com.pblabs.geom.Geometry;
 import com.pblabs.geom.Rectangle;
 import com.pblabs.geom.Vector2;
 
+import de.polygonal.motor2.geom.math.XY;
+
 class CircleUtil
 {
 	#if flash
@@ -45,7 +47,7 @@ class CircleUtil
 		return Geometry.distance(c1.x,  c1.y, c2.x , c2.y) - (c1.radius + c2.radius) <= d;
 	}
 	
-	public static function isPointWithinDistance (c1 :Circle, v :Vector2, d :Float) :Bool
+	public static function isPointWithinDistance (c1 :Circle, v :XY, d :Float) :Bool
 	{
 		if (Math.abs(c1.x - v.x) - c1.radius > d || 
 		Math.abs(c1.y - v.y) - c1.radius > d) {
@@ -59,12 +61,12 @@ class CircleUtil
 		return Geometry.distance(c1.x,  c1.y, c2.x , c2.y) - (c1.radius + c2.radius);
 	}
 	
-	inline public static function distancePoint (c1 :Circle, v :Vector2) :Float
+	inline public static function distancePoint (c1 :Circle, v :XY) :Float
 	{
 		return Geometry.distance(c1.x,  c1.y, v.x , v.y) - c1.radius;
 	}
 	
-	inline public static function distanceSqPoint (c1 :Circle, v :Vector2) :Float
+	inline public static function distanceSqPoint (c1 :Circle, v :XY) :Float
 	{
 		return Geometry.distanceSq(c1.x,  c1.y, v.x , v.y) - c1.radius * c1.radius;
 	}
@@ -74,15 +76,13 @@ class CircleUtil
 		return  Geometry.distanceSq(c1.x,  c1.y, c2.x , c2.y) - (c1.radius * c1.radius + c2.radius * c2.radius);
 	}
 	
-	inline public static function containsPoint (c1 :Circle, v :Vector2) :Bool
+	inline public static function containsPoint (c1 :Circle, v :XY) :Bool
 	{
 		return distancePoint(c1, v) <= 0;
 	}
 	
-	public static function isWithinCircle (v :Vector2, x :Float, y :Float, r :Float) :Bool
+	public static function isWithinCircle (v :XY, x :Float, y :Float, r :Float) :Bool
 	{
-		return Geometry.distance(x,  y, v.x , v.y) - r <= 0;
+		return Geometry.distance(x, y, v.x , v.y) - r <= 0;
 	}
 }
-
-
