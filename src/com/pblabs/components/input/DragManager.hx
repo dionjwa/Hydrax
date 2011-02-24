@@ -102,8 +102,7 @@ class DragManager
 		_xProp = null;
 		_yProp = null;
 		
-		com.pblabs.util.Assert.isFalse(dragSignaler.isListenedTo);
-		dragSignaler = null;
+		#if debug callPostDestructionCheck(); #end
 	}
 	
 	function onDeviceMove (e :IInputData) :Void
@@ -132,4 +131,16 @@ class DragManager
 	{
 		stopDragging();
 	}
+	
+	#if debug
+	public function postDestructionCheck () :Void
+	{
+		com.pblabs.util.Assert.isFalse(dragSignaler.isListenedTo);
+	}
+	
+	public function callPostDestructionCheck () :Void
+	{
+		haxe.Timer.delay(postDestructionCheck, 1);
+	}
+	#end
 }

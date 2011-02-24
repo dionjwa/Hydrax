@@ -80,17 +80,12 @@ class InputManager extends BaseInputManager,
     var _game :PBGameBase;
 	
 	//Variables to make queries more efficient
-	/** Objects that don't match this mask are never checked again */
-	// public var preScreenMask :ObjectType;
 	var _sceneManagers :Array<BaseScene2DManager<Dynamic>>;
-	// var _spatialManager :ISpatialManager2D;
-	// var _spatialObjects :Array<ISpatialObject2D>;
-	var _spatialObjectsUnderPoint :Map<Int, Array<BaseScene2DComponent<Dynamic>>>;
-	var _spatialObjectFirstUnderPoint :Map<Int, BaseScene2DComponent<Dynamic>>;
-	// var _spatialObjectFirstUnderPoint :ISpatialObject2D;
+	var _displayObjectsUnderPoint :Map<Int, Array<BaseScene2DComponent<Dynamic>>>;
+	var _displayObjectFirstUnderPoint :Map<Int, BaseScene2DComponent<Dynamic>>;
 
 	
-	var _components :Array<MouseInputComponent>;
+	// var _components :Array<MouseInputComponent>;
 	var _deviceDownComponent :MouseInputComponent;
 	var _deviceDownComponentLoc :Vector2;
 	var _deviceDownLoc :Vector2;
@@ -112,25 +107,23 @@ class InputManager extends BaseInputManager,
 		deviceUp = new DirectSignaler(this);
 		deviceClick = new DirectSignaler(this);
 		deviceHeldDown = new DirectSignaler(this);
-		// drag = new DirectSignaler(this);
 		doubleClick = new DirectSignaler(this);
 		rotate = new DirectSignaler(this);
 		scale = new DirectSignaler(this);
 		
 		_inputCache = new InputData();
 		_gestureCache = new GestureData();
-		// underMouse = new Array();
 		_checked = Sets.newSetOf(String);
 		_deviceLoc = new Vector2();
 		_isDeviceDown = false;
 		_isGesturing = false;
 		_tempVec = new Vector2();
 		_fingersTouching = 0;
-		_components = [];
+		// _components = [];
 		
 		_sceneManagers = [];
-		_spatialObjectsUnderPoint = Maps.newHashMap(Int);
-		_spatialObjectFirstUnderPoint = Maps.newHashMap(Int);
+		_displayObjectsUnderPoint = Maps.newHashMap(Int);
+		_displayObjectFirstUnderPoint = Maps.newHashMap(Int);
 	}
 	
 	public function onFrame () :Void
@@ -160,17 +153,6 @@ class InputManager extends BaseInputManager,
 		}
 	}
 	
-	// public function registerComponent (c :MouseInputComponent) :Void
-	// {
-	// 	_components.remove(c);
-	// 	_components.push(c);
-	// }
-	
-	// public function unregisterComponent (c :MouseInputComponent) :Void
-	// {
-	// 	_components.remove(c);
-	// }
-	
 	override public function startup () :Void
 	{
 		super.startup();
@@ -192,7 +174,6 @@ class InputManager extends BaseInputManager,
 		deviceMove = null;
 		deviceClick = null;
 		deviceHeldDown = null;
-		// drag = null;
 		doubleClick = null;
 		rotate = null;
 		scale = null;
@@ -223,38 +204,8 @@ class InputManager extends BaseInputManager,
 		return _sceneManagers;
 	}
 	
-	// inline function getSpatialManager () :ISpatialManager2D
-	// {
-	// 	if (_spatialManager == null) {
-	// 		com.pblabs.util.Assert.isNotNull(_game);
-	// 		com.pblabs.util.Assert.isNotNull(_game.currentContext);
-	// 		_spatialManager = _game.currentContext.getManager(ISpatialManager2D);
-	// 		com.pblabs.util.Assert.isNotNull(_spatialManager);
-	// 		cast(_spatialManager, BasicSpatialManager2D).childrenDirtySignaler.bind(onSpatialObjectChanged);
-	// 		_spatialObjects = null;
-	// 	}
-	// }
-	
-	// inline function getSpatialObjects () :Array<ISpatialObject2D>
-	// {
-	// 	if (_spatialObjects == null) {
-	// 		_spatialObjects = preScreenMask == null ? _spatialManager.children.copy() : 
-	// 			_spatialManager.children.filter(function (child :ISpatialObject2D) :Bool {
-	// 				return child.objectMask == null || child.objectMask.and(preScreenMask);
-	// 			});
-	// 	}
-	// 	return _spatialObjects;
-	// }
-	
-	// function onSpatialObjectChanged (mng :ISpatialManager2D) :Void
-	// {
-	// 	_spatialObjects = null;
-	// }
-	
 	function bindSignals () :Void
 	{
-		// drag.bind(onDrag);
-		
 		com.pblabs.util.Assert.isNotNull(_mouse, "MouseInputManager is null, did you register one?");
 
 		_game.newActiveContextSignaler.bind(onNewContext);		
@@ -330,44 +281,15 @@ class InputManager extends BaseInputManager,
 		
 	}
 	
-	// function modeRemoved (m :IPBContext) :Void
-	// {
-	// 	freeSignals();
-	// }
-	
 	function freeSignals () :Void
 	{
 		_game.newActiveContextSignaler.unbind(onNewContext);
-		// drag.unbind(onDrag);
 		if (_mouse != null) {
 			_mouse.mouseDown.unbind(onMouseDown);
 			_mouse.mouseMove.unbind(onMouseMove);
 			_mouse.mouseUp.unbind(onMouseUp);
 			_mouse.mouseClick.unbind(onMouseClick);
 		}
-		// com.pblabs.util.Log.debug("");
-		// deviceDown.unbindAll();
-		// deviceMove.unbindAll();
-		// deviceUp.unbindAll();
-		// deviceClick.unbindAll();
-		// drag.unbindAll();
-		
-		// if (_deviceDown != null) {
-		//	 _deviceDown.unbindAll();
-		//	 _deviceDown = null;
-		// }
-		// if (_deviceMove != null) {
-		//	 _deviceMove.unbindAll();
-		//	 _deviceMove = null;
-		// }
-		// if (_deviceUp != null) {
-		//	 _deviceUp.unbindAll();
-		//	 _deviceUp = null;
-		// }
-		// if (_deviceClick != null) {
-		//	 _deviceClick.unbindAll();
-		//	 _deviceClick = null;
-		// }
 	}                                                                                                                                                              
 
 	#if js
@@ -376,15 +298,11 @@ class InputManager extends BaseInputManager,
 	function adjustDeviceLocation (m :MouseLocation) :Vector2
 	#end
 	{
-		// var view = context.getManager(SceneView);
 		#if flash
 		return new Vector2(m.globalLocation.x, m.globalLocation.y);//m.translateToScope(sceneView.layer);//.layer);
 		#end
 		
 		#if js
-		// if (m == null || m.scope == sceneView.layer) {
-		//	 return new Vector2(m.x, m.y);
-		// }
 		return new Vector2(m.globalLocation.x - sceneView.mouseOffsetX, m.globalLocation.y - sceneView.mouseOffsetY);
 		#else
 		return new Vector2(m.x, m.y);
@@ -410,44 +328,6 @@ class InputManager extends BaseInputManager,
 		}
 		clearInputDataCache();
 		deviceDown.dispatch(this);
-		
-		// for (m in lookupComponentsUnderMouse(adjustedM)) {
-		// 	trace("under mouse " + m.owner.name);
-		// }
-		// var underMouse = lookupComponentsUnderMouse(adjustedM);
-		// var cUnderMouse = underMouse[0];
-		// _deviceDownComponent = cUnderMouse;
-		
-		
-		
-		// #if testing
-		// js.Lib.document.getElementById("haxe:deviceDown").innerHTML = "deviceDown: " + adjustedM + ", under=" + cUnderMouse;
-		// js.Lib.document.getElementById("haxe:selected").innerHTML = "selected: " + (_deviceDownComponent == null ? "null" : Std.string(_deviceDownComponent.owner));
-		
-		// #end
-		
-		// _deviceDownLoc = adjustedM.clone();
-		// _inputCache.inputComponent = cUnderMouse;
-		// _inputCache.inputLocation = adjustedM.clone();
-		// _inputCache.inputComponents = underMouse;
-		
-		// .set(cUnderMouse, adjustedM.clone());
-		
-		// var mouseInput = _deviceDownComponent;// != null ? _deviceDownComponent.owner.lookupComponentByType(MouseInputComponent) : null;
-		
-		// trace("mouseInput=" + mouseInput);
-		// if (mouseInput != null) {
-		// 	_startingAngle = mouseInput.angle;
-		// 	//Cache the initial angle, in case we start rotating
-		// 	// _startingScale = _inputCache.v1.scale;
-		// 	// trace("mouseInput.onDeviceDown" );
-		// 	if (mouseInput.onDeviceDown != null) {
-		// 		mouseInput.onDeviceDown();
-		// 	}
-		// }
-		
-		// com.pblabs.util.Log.info("mouse down  " + _inputCache);
-		// deviceDown.dispatch(_inputCache);
 	} 
 	
 	#if js
@@ -468,25 +348,6 @@ class InputManager extends BaseInputManager,
 			return;
 		}
 		deviceUp.dispatch(this);
-		
-		
-		
-		// var adjustedM = adjustDeviceLocation(m);
-		// var cUnderMouse = lookupComponentsUnderMouse(adjustedM)[0];
-		
-		// _inputCache.inputComponent = cUnderMouse;
-		// _inputCache.inputLocation = adjustedM.clone();
-		// _inputCache.isMouseDown = false;
-		
-		
-		// #if testing
-		// js.Lib.document.getElementById("haxe:deviceUp").innerHTML = "deviceUp: " + adjustedM;
-		// #end
-		
-		// _deviceDownComponent = null;
-		// _deviceDownComponentLoc = null;
-		// _deviceDownLoc = null;
-		// deviceUp.dispatch(_inputCache);
 	}
 	
 	#if js
@@ -510,58 +371,12 @@ class InputManager extends BaseInputManager,
 		}
 		clearInputDataCache();
 		deviceMove.dispatch(this);
-		
-		
-		
-		// var adjustedM = adjustDeviceLocation(m);
-		// if (!isWithinSceneView(adjustedM)) {
-		// 	return;
-		// }
-		
-		// #if testing
-		// js.Lib.document.getElementById("haxe:deviceMove").innerHTML = "deviceMove: " + adjustedM;
-		// #end
-		// _deviceLoc = adjustedM.clone();
-		
-		// _inputCache.inputComponent = _deviceDownComponent;
-		// _inputCache.inputLocation = adjustedM.clone();
-		// _inputCache.isMouseDown = _isDeviceDown;
-		
-		
-		// if (_deviceDownComponent != null && drag.isListenedTo) {
-		// 	drag.dispatch(_inputCache);
-			
-		// }
-		// deviceMove.dispatch(_inputCache);
 	}
 	
 	function isWithinSceneView (mouse :Vector2) :Bool
 	{
 	    return !(mouse.x < 0 || mouse.x > sceneView.width || mouse.y < 0 || mouse.y > sceneView.height);
 	}
-	
-	// function onDrag (t :InputData) :Void
-	// {
-	// 	var mouseInput = t.inputComponent;//.owner.lookupComponentByType(MouseInputComponent);
-	// 	if (mouseInput != null && mouseInput.isTranslatable) {
-	// 		var offset = mouseInput.offset;
-	// 		var scene2dComp :BaseScene2DComponent<Dynamic> = cast(t.inputComponent.bounds, BaseScene2DComponent<Dynamic>);
-	// 		if (scene2dComp == null) {
-	// 			com.pblabs.util.Log.error("WTF, how to translate scene to world without a Base2DComponent");
-	// 			return;
-	// 		}
-	// 		var sceneManager :BaseScene2DManager<Dynamic> = cast(scene2dComp.parent.parent, BaseScene2DManager<Dynamic>);
-			
-	// 		var worldPoint = sceneManager.translateScreenToWorld(t.inputLocation);
-	// 		if (offset != null) {
-	// 			mouseInput.x = worldPoint.x + offset.x;
-	// 			mouseInput.y = worldPoint.y + offset.y;
-	// 		} else {
-	// 			mouseInput.x = worldPoint.x;
-	// 			mouseInput.y = worldPoint.y;
-	// 		}
-	// 	}
-	// }
 	
 	#if js
 	function onMouseClick (m :MouseLocation) :Void
@@ -579,90 +394,7 @@ class InputManager extends BaseInputManager,
 		}
 		clearInputDataCache();
 		deviceClick.dispatch(this);
-		
-		
-		// _spatialObjectsUnderPoint.clear();
-		// _spatialObjectFirstUnderPoint.clear();
-		
-		// com.pblabs.util.Log.info("Mouse clicked " + m.x + ", " + m.y);
-		// var adjustedM = adjustDeviceLocation(m);
-		
-		// _inputCache.inputComponent = lookupComponentsUnderMouse(adjustedM)[0];
-		// _inputCache.inputLocation = adjustedM.clone();
-		// _inputCache.isMouseDown = false;
-		
-		// if (_inputCache.inputComponent != null) {
-		// 	com.pblabs.util.Log.info("click  " + _inputCache);
-		// 	deviceClick.dispatch(_inputCache);
-		// }
-		
-		// var mouseInput = _inputCache.inputComponent != null ? _inputCache.inputComponent.owner.lookupComponentByType(MouseInputComponent) : null; 
-		// if (mouseInput != null && mouseInput.onClick != null) {
-		// 	mouseInput.onClick();
-		// }
-		
 	}
-	
-	// function lookupComponentUnderMouse (m :MouseLocation) :IInteractiveComponent
-	// {
-	//	 var inputComps :Iterable<IInteractiveComponent>;
-	//	 for (c in _context.getObjectsInGroup(IInteractiveComponent.INPUT_GROUP)) {
-	//		 if (!Std.is(c, IEntity)) {
-	//			 com.pblabs.util.Log.debug("weird, c is not an entity");
-	//			 continue;
-	//		 }
-	//		 inputComps = cast(c, IEntity).lookupComponentsByType(IInteractiveComponent);
-	//		 com.pblabs.util.Log.debug("Checking " + inputComps.count() + " input components");
-	//		 for (inc in inputComps) {
-	//			 if (inc.displayObject == null) {
-	//				 com.pblabs.util.Log.error("IInteractiveComponent.displayObject == null");
-	//				 continue;
-	//			 }
-	//			 if (inc.displayObject.hitTestPoint(flash.Lib.current.stage.mouseX, flash.Lib.current.stage.mouseY)) {
-	//				 com.pblabs.util.Log.info("under mouse  " + _inputCache);
-	//				 return inc;
-	//			 }
-	//		 }
-	//	 }
-	//	 return null;
-	// }
-	
-	// function onGestureZoom (zoom :Float) :
-	// {
-	//	 ;
-	// }
-	
-	// function lookupComponentsUnderMouse (mouseLoc :Vector2) :Array<MouseInputComponent>
-	// {
-	// 	com.pblabs.util.Assert.isNotNull(mouseLoc);
-	// 	com.pblabs.util.Assert.isNotNull(_checked);
-	// 	com.pblabs.util.Assert.isNotNull(_tempVec);
-	// 	_checked.clear();
-		
-	// 	underMouse = new Array<MouseInputComponent>();
-	// 	var inputComp :MouseInputComponent;
-		
-	// 	com.pblabs.util.Assert.isNotNull(_components);
-	// 	for (c in _components) {
-			
-	// 		com.pblabs.util.Assert.isNotNull(c);
-			
-	// 		if (_checked.exists(c.owner.name)) {
-	// 			continue;
-	// 		}
-			
-	// 		//Copy to the cached vector just in cast the original is modified.
-	// 		_tempVec.x = mouseLoc.x;
-	// 		_tempVec.y = mouseLoc.y;
-	// 		com.pblabs.util.Assert.isNotNull(c.bounds);
-	// 		if (c.bounds.containsScreenPoint(_tempVec)) {
-	// 			underMouse.push(c);
-	// 		}
-			
-	// 	}
-	// 	underMouse.sort(com.pblabs.util.Comparators.compareComparables);
-	// 	return underMouse;
-	// }
 	
 	function getMouseLoc () :Vector2
 	{
@@ -688,8 +420,8 @@ class InputManager extends BaseInputManager,
 	{
 		mask = mask == null ? ObjectType.ALL : mask;
 		
-		if (_spatialObjectsUnderPoint.exists(mask.hashCode())) {
-			return _spatialObjectsUnderPoint.get(mask.hashCode());
+		if (_displayObjectsUnderPoint.exists(mask.hashCode())) {
+			return _displayObjectsUnderPoint.get(mask.hashCode());
 		}
 		
 		var underPoint = new Array<BaseScene2DComponent<Dynamic>>();
@@ -698,14 +430,18 @@ class InputManager extends BaseInputManager,
 		}
 		
 		for (sceneManager in getSceneManagers()) {
-			for (l in sceneManager.children) {
-				var layer :BaseScene2DLayer<Dynamic, Dynamic> = cast l;
+			var layerIndex =  sceneManager.children.length - 1;
+			while (layerIndex >= 0) {
+				var layer :BaseScene2DLayer<Dynamic, Dynamic> = sceneManager.children[layerIndex];
+				layerIndex--;
 				//If the layer doesn't match the mask, ignore all the children.  Saves iterations
-				if (!layer.inputMask.and(mask)) {
+				if (!layer.objectMask.and(mask)) {
 					continue;
 				}
-				for (obj in layer.children) {
-					var so :BaseScene2DComponent<Dynamic> = cast obj;
+				var childIndex = layer.children.length -1;
+				while (childIndex >= 0) {
+					var so :BaseScene2DComponent<Dynamic> = layer.children[childIndex];
+					childIndex--;
 					if (so.containsScreenPoint(inputLocation, mask)) {
 						underPoint.push(so);
 					}
@@ -713,7 +449,7 @@ class InputManager extends BaseInputManager,
 			}
 		}
 		
-		_spatialObjectsUnderPoint.set(mask.hashCode(), underPoint);
+		_displayObjectsUnderPoint.set(mask.hashCode(), underPoint);
 		return underPoint;
 	}
 	
@@ -721,9 +457,9 @@ class InputManager extends BaseInputManager,
 	{
 		mask = mask == null ? ObjectType.ALL : mask;
 		
-		com.pblabs.util.Assert.isNotNull(_spatialObjectFirstUnderPoint);
-		if (_spatialObjectFirstUnderPoint.exists(mask.hashCode())) {
-			return _spatialObjectFirstUnderPoint.get(mask.hashCode());
+		com.pblabs.util.Assert.isNotNull(_displayObjectFirstUnderPoint);
+		if (_displayObjectFirstUnderPoint.exists(mask.hashCode())) {
+			return _displayObjectFirstUnderPoint.get(mask.hashCode());
 		}
 		
 		if (getSceneManagers() == null) {
@@ -731,22 +467,26 @@ class InputManager extends BaseInputManager,
 		}
 		com.pblabs.util.Assert.isNotNull(getSceneManagers());
 		for (sceneManager in getSceneManagers()) {
-			for (l in sceneManager.children) {
-				var layer :BaseScene2DLayer<Dynamic, Dynamic> = cast l;
+			var layerIndex =  sceneManager.children.length - 1;
+			while (layerIndex >= 0) {
+				var layer :BaseScene2DLayer<Dynamic, Dynamic> = sceneManager.children[layerIndex];
+				layerIndex--;
 				//If the layer doesn't match the mask, ignore all the children.  Saves iterations
-				if (!layer.inputMask.and(mask)) {
+				if (!layer.objectMask.and(mask)) {
 					continue;
 				}
-				for (obj in layer.children) {
-					var so :BaseScene2DComponent<Dynamic> = cast obj;
+				var childIndex = layer.children.length -1;
+				while (childIndex >= 0) {
+					var so :BaseScene2DComponent<Dynamic> = layer.children[childIndex];
+					childIndex--;
 					if (so.containsScreenPoint(inputLocation, mask)) {
-						_spatialObjectFirstUnderPoint.set(mask.hashCode(), so);
+						_displayObjectFirstUnderPoint.set(mask.hashCode(), so);
 						return so;
 					}
 				}
 			}
 		}
-		_spatialObjectFirstUnderPoint.set(mask.hashCode(), null);
+		_displayObjectFirstUnderPoint.set(mask.hashCode(), null);
 		return null;
 	}
 	
@@ -758,8 +498,8 @@ class InputManager extends BaseInputManager,
 	
 	function clearInputDataCache () :Void
 	{
-		_spatialObjectFirstUnderPoint.clear();
-		_spatialObjectsUnderPoint.clear();
+		_displayObjectFirstUnderPoint.clear();
+		_displayObjectsUnderPoint.clear();
 	}
 	
 	#if js

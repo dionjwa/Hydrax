@@ -1,7 +1,7 @@
 package com.pblabs.components.manager;
 
 interface INode<Parent, Child>
+	implements INodeChild<Parent>
 {
-	var children (default, null) :Array<Child>;
-	var parent (default, null) :Parent;
+	var children (get_children, null) :Array<Child>;
 }

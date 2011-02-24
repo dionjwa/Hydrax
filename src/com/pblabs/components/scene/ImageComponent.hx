@@ -33,7 +33,7 @@ extends com.pblabs.components.scene.js.canvas.Canvas2DComponent
 #elseif (flash || cpp)
 extends com.pblabs.components.scene.flash.Scene2DComponent  
 #end
-{
+ {
 	/** The IResource name and item id.  Id can be null */
 	#if flash
 	public var resource :ResourceToken<flash.display.DisplayObject>;

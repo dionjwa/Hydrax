@@ -22,7 +22,7 @@ import de.polygonal.motor2.geom.primitive.AABB2;
  * It is enough to do broad phase collision checks and ray casts.
  */ 
 interface ISpatialObject2D
-	implements IEntityComponent, implements INode<ISpatialManager2D, Dynamic> 
+	implements IEntityComponent, implements INodeChild<ISpatialManager2D> 
 {
 	
 	// var x (get_x, set_x) :Float;

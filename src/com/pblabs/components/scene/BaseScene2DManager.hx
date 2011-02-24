@@ -73,8 +73,8 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 	public function new ()
 	{
 		super();
-		zoomMax = 100;
-		zoomMin = 0;
+		zoomMax = 300;
+		zoomMin = 0.001;
 		sceneAlignment = SceneAlignment.CENTER;
 		_currentViewRect = new Rectangle();
 		_zoom = 1.0;
@@ -291,8 +291,11 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 
 	function set_zoom (value :Float) :Float
 	{
+		com.pblabs.util.Assert.isFalse(Math.isNaN(_zoom));
+		com.pblabs.util.Assert.isFalse(Math.isNaN(value));
 		// Make sure our zoom level stays within the desired bounds
 		value = MathUtil.fclamp(value, zoomMin, zoomMax);
+		com.pblabs.util.Assert.isFalse(Math.isNaN(value));
 		if (_zoom == value) {
 			return _zoom;
 		}

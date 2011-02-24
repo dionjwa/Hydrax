@@ -20,8 +20,6 @@ import com.pblabs.geom.Vector2;
 import de.polygonal.motor2.geom.math.XY;
 import de.polygonal.motor2.geom.primitive.AABB2;
 
-import flash.xml.XML;
-
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 

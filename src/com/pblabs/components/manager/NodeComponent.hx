@@ -59,10 +59,19 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 	}
 	
 	@editorData({ignore :"true"})
-	public var children (default, null) :Array<C>;
+	public var children (get_children, null) :Array<C>;
+	var _children :Array<C>;
+	function get_children () :Array<C>
+	{
+		if (_children == null) {
+			_children = [];
+		}
+		return _children;
+	}
 	
 	@editorData({ignore :"true"})
-	public var parent (default, null) :P;
+	/** Don't set this yourself, use addToParent(p); instead */
+	public var parent :P;
 	
 	public static function getEntityAndAllParents (e :IEntity, nodeTypeClass :Class<Dynamic>, ?list :List<IEntity>) :Iterable<IEntity>
 	{
@@ -99,9 +108,11 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 		list.add(e);
 		for (c in e.lookupComponentsByType(nodeTypeClass)) {
 			var n :NodeComponent<Dynamic, Dynamic> = cast(c);
-			if (!n.children.isEmpty()) {
-				for (child in n.children) {
-					getEntityAndAllChildren(cast(child, IEntityComponent).owner, nodeTypeClass, list);
+			if (n._children != null) {
+				if (!n.children.isEmpty()) {
+					for (child in n.children) {
+						getEntityAndAllChildren(cast(child, IEntityComponent).owner, nodeTypeClass, list);
+					}
 				}
 			}
 		}
@@ -120,7 +131,7 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 	public function new ()
 	{
 		super();
-		children = [];
+		// children = [];
 		parent = null;
 	}
 	
@@ -145,14 +156,16 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 		Preconditions.checkArgument(Std.is(c, NodeComponent), "Children must be of type NodeComponent");
 		Preconditions.checkArgument(cast(c, IEntityComponent).isRegistered, "Child not registered: " + c);
 		
-		var cNode :NodeComponent<Dynamic, Dynamic> = cast(c);
+		var child :INodeChild<Dynamic> = cast c;
 		
-		Preconditions.checkArgument(!cNode.hasParent(), cNode + " already has a parent, not adding");
+		Preconditions.checkArgument(child.parent == null, c + " already has a parent, not adding");
 		
-		cNode.parent = this;
+		child.parent = this;
 		children.push(c);
 		childAdded(c);
-		cNode.addedToParent();
+		if (Std.is(child, NodeComponent)) {
+			cast(c, NodeComponent<Dynamic, Dynamic>).addedToParent();
+		}
 	}
 	
 	public function removeChild (c :C) :Void
@@ -253,9 +266,11 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 			removeFromParent();
 		}
 		//Make a copy of the array modified within the loop
-		for (child in children.copy()) {
-			child.removeFromParent();
+		if (_children != null && _children.length > 0) {
+			for (child in children.copy()) {
+				child.removeFromParent();
+			}
 		}
-		children = [];
+		_children = null;
 	}
 }

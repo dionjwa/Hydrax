@@ -42,7 +42,7 @@ class CircleShape extends ShapeComponent
     
     override public function containsWorldPoint (pos :XY, mask :ObjectType) :Bool
     {
-        return CircleUtil.isWithinCircle(pos, x + radius - registrationPoint.x, y + radius - registrationPoint.y, radius);
+        return CircleUtil.isWithinCircle(pos, x + (- _registrationPoint.x * _scaleX) - _locationOffset.x, y + (- _registrationPoint.y * _scaleY) - _locationOffset.y, radius * _scaleX);
     }
     
     #if css
@@ -83,13 +83,13 @@ class CircleShape extends ShapeComponent
         var g = cast(_displayObject, flash.display.Sprite).graphics;
         g.clear();
         g.beginFill(fillColor);
-        g.drawCircle(r, r, r);
+        g.drawCircle(0, 0, r);
         g.endFill();
         g.lineStyle(0.0, borderColor);
-        g.drawCircle(r, r, r);
+        g.drawCircle(0, 0, r);
         g.lineStyle(0.0, borderColor);
-        g.moveTo(r, r);
-        g.lineTo(r * 2, r);
+        g.moveTo(0, 0);
+        g.lineTo(r, 0);
         #elseif css
         _svg.setAttribute("cx", r + "px");
         _svg.setAttribute("cy", r + "px");

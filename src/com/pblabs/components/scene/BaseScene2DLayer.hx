@@ -14,15 +14,14 @@ import com.pblabs.util.Preconditions;
 
 /**
   * A 2D layer holding 2DSceneComponents.
-  * TODO: migrate the parallax and independent location code.
   */
 class BaseScene2DLayer<Scene :BaseScene2DManager<Dynamic>, Component :BaseScene2DComponent<Dynamic>> extends NodeComponent<Scene, Component>,
 	implements haxe.rtti.Infos
 {
 	/** For ignoring all objects in a layer */
-	public var inputMask :ObjectType;
+	public var objectMask :ObjectType;
 	@editor({ui:"UpdatingLabel"})
-	public var scene (get_scene, never) :Scene;
+	public var scene (get_scene, never) :BaseScene2DManager<Dynamic>;
 	@editor({ui:"NumericStepper", min:0})
 	public var index (get_index, set_index) :Int;
 	@editor({ui:"HUISlider", min:0.0, max:3.0})
@@ -44,7 +43,7 @@ class BaseScene2DLayer<Scene :BaseScene2DManager<Dynamic>, Component :BaseScene2
 	{
 		super();
 		//By default, searches all children
-		inputMask = ObjectType.ALL;
+		objectMask = ObjectType.ALL;
 		ignoreInput = false;
 		_parallaxFactor = 1.0;
 	}
@@ -54,9 +53,9 @@ class BaseScene2DLayer<Scene :BaseScene2DManager<Dynamic>, Component :BaseScene2
 		return 0;
 	}
 
-	function get_scene () :Scene
+	function get_scene () :BaseScene2DManager<Dynamic>
 	{
-		return parent;
+		return cast parent;
 	}
 	
 	function get_index () :Int
@@ -70,15 +69,6 @@ class BaseScene2DLayer<Scene :BaseScene2DManager<Dynamic>, Component :BaseScene2
 		Preconditions.checkNotNull(parent, "You must property add the Layer component before changing the index");
 		parent.setLayerIndex(this, val);
 		return parent.getLayerIndex(this);
-		
-		// throw "Check here";
-		// if (parent != null) {
-		//	 parent.setLayerIndex(this, val);
-		//	 _index = parent.getLayerIndex(this);
-		// } else {
-		//	 _index = val;
-		// }
-		// return _index;
 	}
 	
 	function get_parallaxFactor () :Float
@@ -92,7 +82,6 @@ class BaseScene2DLayer<Scene :BaseScene2DManager<Dynamic>, Component :BaseScene2
 	    return val;
 	}
 	
-	// var _index :Int;
 	var _needsSort :Bool;
 	var _parallaxFactor :Float;
 }

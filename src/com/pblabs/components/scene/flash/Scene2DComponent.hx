@@ -32,6 +32,9 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
 	
 	public function onFrame (dt :Float) :Void
 	{
+		if (parent == null) {
+			return;
+		}
 		if (_layerIndexDirty) {
 			com.pblabs.util.Assert.isNotNull(parent, "Cannot change layer index if not attached to a scene, since which layer?");
 			var scene = parent.parent;
@@ -95,32 +98,6 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
 		return d;
 	}
 
-	// override function set_x (value :Float) :Float
-	// {
-	// 	_displayObject.x = value;
-	// 	return super.set_x(value);
-	// }
-	
-	// override function set_y (value :Float) :Float
-	// {
-	// 	// _displayObject.y = value;
-	// 	return super.set_y(value);
-	// }
-	
-   // override function set_angle (value :Float) :Float
-   // {
-	//    super.set_angle(value);
-	//    _displayObject.rotation = _angle.toDeg();
-	//    return _angle;
-   // }
-   
-	// override function set_alpha (val :Float) :Float
-	// {
-	// 	super.set_alpha(val);
-	// 	_displayObject.alpha = _alpha;
-	// 	return val;
-	// }
-
 	/**
 	 * Update the object's transform based on its current state. Normally
 	 * called automatically, but in some cases you might have to force it
@@ -151,7 +128,7 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
 		_transformMatrix.scale(_scaleX, _scaleY);
 		_transformMatrix.translate(-registrationPoint.x * _scaleX, - registrationPoint.y * _scaleY);
 		_transformMatrix.rotate(_angle + _angleOffset);
-		_transformMatrix.translate(_x + _locationOffset.x, _y + _locationOffset.y);
+		_transformMatrix.translate(_x - _locationOffset.x, _y - _locationOffset.y);
 		
 		_displayObject.transform.matrix = _transformMatrix;
 		_displayObject.alpha = _alpha;

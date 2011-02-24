@@ -31,7 +31,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 		implements IInteractiveComponent, implements haxe.rtti.Infos
 {
 	public var objectMask (get_objectMask, set_objectMask) :ObjectType;
-	public var layer (get_layer, null) :Layer;
+	public var layer (get_layer, null) :BaseScene2DLayer<Dynamic, Dynamic>;
 	public var x (get_x, set_x) :Float;
 	public var y (get_y, set_y) :Float;
 	public var width (get_width, set_width) :Float;
@@ -41,23 +41,6 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	public var scale (get_scale, set_scale) :Float;
 	public var scaleX (get_scaleX, set_scaleX) :Float;
 	public var scaleY (get_scaleY, set_scaleY) :Float;
-	
-	// #if editor
-	// @editor({ui:"HUISlider", min:0})
-	// public var scaleXY (get_scaleXY, set_scaleXY) :Float;
-	// function get_scaleXY () :Float
-	// {
-	// 	return scale.x;
-	// }
-	// function set_scaleXY (val :Float) :Float
-	// {
-	// 	var sc = scale;
-	// 	sc.x = val;
-	// 	sc.y = val;
-	// 	set_scale(sc);
-	// 	return val;
-	// }
-	// #end
 	
 	public var alpha (get_alpha, set_alpha) :Float;
 	public var isTransformDirty (get_isTransformDirty, set_isTransformDirty) :Bool;
@@ -135,9 +118,10 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 		if (!mask.and(objectMask)) {
 			return false;
 		}
+		
 		#if (flash || cpp)
-		// return RectangleTools.contains(x - width / 2, y - height / 2, width, height, pos, angle);
-		return RectangleTools.contains(x - registrationPoint.x, y - registrationPoint.y, width, height, pos, angle);
+		return RectangleTools.contains(x - (_width / 2 * _scaleX) - _locationOffset.x, 
+			y -(_height / 2 * _scaleY) - _locationOffset.y, width * _scaleX, height * _scaleY, pos, angle);
 		#elseif js
 		return RectangleTools.contains(x - _width / 2, y - _height / 2, _width, _height, pos, angle);
 		#else
@@ -183,7 +167,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 		setDefaultVars();
 	}
 	
-	function get_layer () :Layer
+	function get_layer () :BaseScene2DLayer<Dynamic, Dynamic>
 	{
 		return cast parent;
 	}
