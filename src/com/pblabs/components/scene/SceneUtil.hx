@@ -9,23 +9,18 @@
 package com.pblabs.components.scene;
 
 import com.pblabs.components.base.AlphaComponent;
-import com.pblabs.components.base.Coordinates2D;
-#if css
-import com.pblabs.components.scene.js.JSSceneManager;
-#end
+import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.components.tasks.TaskComponentTicked;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.ObjectType;
+import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.geom.Vector2;
 
 import de.polygonal.motor2.geom.math.XY;
 
 using com.pblabs.engine.util.PBUtil;
 using com.pblabs.geom.VectorTools;
-
-#if css
-#end
 
 enum SceneAlignment {
 	BOTTOM_LEFT;
@@ -80,7 +75,7 @@ class SceneUtil
 	{
 		var e :IEntity = context.allocate(IEntity);
 		e.deferring = true;
-		e.addComponent(context.allocate(Coordinates2D));
+		e.addComponent(context.allocate(SpatialComponent), SpatialComponent.NAME);
 		e.addComponent(context.allocate(AlphaComponent));
 		if (addTasks) {
 			e.addComponent(context.allocate(TaskComponentTicked), com.pblabs.components.tasks.TaskComponent.NAME);
@@ -91,30 +86,31 @@ class SceneUtil
 	public static function setLocation (e :IEntity, x :Float, y :Float) :Void
 	{
 		com.pblabs.util.Assert.isNotNull(e);
-		e.lookupComponent(Coordinates2D).setLocation(x, y);
+		e.lookupComponent(SpatialComponent).setLocation(x, y);
 	}
 	
 	public static function getLocation (e :IEntity) :XY
 	{
 		com.pblabs.util.Assert.isNotNull(e);
-		return e.lookupComponent(Coordinates2D).point;
+		return e.lookupComponent(SpatialComponent).position;
 	}
 	
 	public static function setAngle (e :IEntity, angle :Float) :Void
 	{
-		e.lookupComponent(Coordinates2D).angle = angle;
+		e.lookupComponent(SpatialComponent).angle = angle;
 	}
 	
 	public static function getWidth (e :IEntity) :Float
 	{
-	    com.pblabs.util.Assert.isNotNull(e.lookupComponentByType(BaseScene2DComponent));
-	    return e.lookupComponentByType(BaseScene2DComponent).width;
+	    // com.pblabs.util.Assert.isNotNull(e.lookupComponentByType(BaseScene2DComponent));
+	    return e.lookupComponentByType(SpatialComponent).worldExtents.intervalX;
 	}
 	
 	public static function getHeight (e :IEntity) :Float
 	{
-	    com.pblabs.util.Assert.isNotNull(e.lookupComponentByType(BaseScene2DComponent));
-	    return e.lookupComponentByType(BaseScene2DComponent).height;
+	    // com.pblabs.util.Assert.isNotNull(e.lookupComponentByType(BaseScene2DComponent));
+	    // return e.lookupComponentByType(BaseScene2DComponent).height;
+	    return e.lookupComponentByType(SpatialComponent).worldExtents.intervalY;
 	}
 	
 	
@@ -237,6 +233,16 @@ class SceneUtil
 		}
 		return null;
 	}
-	
+
+	public static function updateIfUpdatable (obj :Dynamic) :Void
+	{
+		// if (Std.is(obj, ITickedObject)) {
+		// 	cast(obj, ITickedObject).onTick(0);
+		// }
+		if (Std.is(obj, IAnimatedObject)) {
+			cast(obj, IAnimatedObject).onFrame(0);
+		}
+	}
+			
 	
 }

@@ -48,6 +48,18 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		bonds.bind(component, signaler, listener);
 	}
 	
+	public static function bindVoidSignal (component :EntityComponent, signaler :Signaler<Void>, listener :Void->Dynamic) :Void
+	{
+		com.pblabs.util.Assert.isNotNull(component, "component is null");
+		com.pblabs.util.Assert.isNotNull(component.context, "component.context is null");
+		com.pblabs.engine.debug.Profiler.enter("SignalBondManager lookup");		
+		var bonds = component.context.getManager(SignalBondManager);
+		com.pblabs.engine.debug.Profiler.exit("SignalBondManager lookup");
+		com.pblabs.util.Assert.isNotNull(bonds, "SignalBondManager is null");
+		
+		bonds.bindVoid(component, signaler, listener);
+	}
+	
 	public function new ()
 	{
 		super();
@@ -68,6 +80,28 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		com.pblabs.engine.debug.Profiler.exit("prop");
 		com.pblabs.engine.debug.Profiler.enter("bind actual");
 		var bond = signaler.bind(listener);
+		com.pblabs.engine.debug.Profiler.exit("bind actual");
+		com.pblabs.engine.debug.Profiler.enter("set");
+		set(key, bond);
+		com.pblabs.engine.debug.Profiler.exit("set");
+		com.pblabs.engine.debug.Profiler.exit("bind");
+	}
+	
+	public function bindVoid (component :EntityComponent, signaler :Signaler<Void>, listener :Void->Dynamic) :Void
+	{
+		com.pblabs.engine.debug.Profiler.enter("bind");
+		com.pblabs.util.Assert.isNotNull(component, "component is null");
+		com.pblabs.util.Assert.isNotNull(signaler, "signaler is null");
+		com.pblabs.util.Assert.isNotNull(listener, "listener is null");
+		com.pblabs.util.Assert.isTrue(component.isRegistered, "component is unregistered");
+		com.pblabs.util.Assert.isTrue(component.owner.isLiveObject, "component entity is not initialized.  Entities much be initialized first");
+		com.pblabs.util.Assert.isFalse(component.owner.name.isBlank(), "owner has no name");
+		
+		com.pblabs.engine.debug.Profiler.enter("prop");
+		var key = component.key;
+		com.pblabs.engine.debug.Profiler.exit("prop");
+		com.pblabs.engine.debug.Profiler.enter("bind actual");
+		var bond = signaler.bindVoid(listener);
 		com.pblabs.engine.debug.Profiler.exit("bind actual");
 		com.pblabs.engine.debug.Profiler.enter("set");
 		set(key, bond);

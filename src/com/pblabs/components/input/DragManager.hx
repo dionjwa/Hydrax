@@ -3,6 +3,7 @@ package com.pblabs.components.input;
 import com.pblabs.components.Constants;
 import com.pblabs.components.scene.BaseScene2DComponent;
 import com.pblabs.components.scene.SceneUtil;
+import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBManager;
@@ -54,7 +55,7 @@ class DragManager
 		//Guess the properties if null
 		if (_xProp == null || _yProp == null) {
 			//Maybe coordinates?
-			if (comp.owner.lookupComponent(com.pblabs.components.base.Coordinates2D) != null) {
+			if (comp.owner.lookupComponent(SpatialComponent) != null) {
 				_xProp = Constants.DEFAULT_X_PROP;
 				_yProp = Constants.DEFAULT_Y_PROP;
 			}

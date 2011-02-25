@@ -22,18 +22,21 @@ class Demo extends flash.display.Sprite
 	{
 		super();
 		
+		com.pblabs.engine.debug.Log.setupPBGameLog();
 		this.name = "Demo";
 		var game = new PBGame();
+		
 		
 		var context = game.allocate(PBContext);
 		game.pushContext(context);
 		var scene2D = context.addSingletonComponent(Scene2DManager);
-		var layer = scene2D.addLayer(SceneLayer, "defaultLayer");
+		var layer = scene2D.addLayer("defaultLayer");
 		
 		var so = context.createBaseSceneEntity();
 		var blob  = context.allocate(CircleShape);
 		blob.parentProperty = layer.entityProp();
-		blob.scale = new Vector2(1, 2.4);
+		blob.scaleX = 1;
+		blob.scaleY = 2.4;
 		so.addComponent(blob);
 		so.initialize("SomeSceneObj");
 		

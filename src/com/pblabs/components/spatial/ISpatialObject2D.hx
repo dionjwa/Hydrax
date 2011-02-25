@@ -8,7 +8,7 @@
 ******************************************************************************/
 package com.pblabs.components.spatial;
 
-import com.pblabs.components.manager.INode;
+import com.pblabs.components.manager.INodeChild;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.ObjectType;
 

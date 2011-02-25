@@ -6,6 +6,7 @@ import com.bit101.components.Label;
 import com.bit101.components.VBox;
 
 import com.pblabs.components.scene.SceneUtil;
+import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBObject;
 import com.pblabs.engine.core.NameManager;
@@ -117,7 +118,7 @@ class CreationPanel extends VBox
 		
 		var e = context.allocate(IEntity);
 		e.deferring = true;
-		e.addComponent(context.allocate(com.pblabs.components.base.Coordinates2D));
+		e.addComponent(context.allocate(SpatialComponent));
 		var image = context.allocate(com.pblabs.components.scene.ImageComponent);
 		
 		var scene = context.getManager(SceneUtil.MANAGER_CLASS);

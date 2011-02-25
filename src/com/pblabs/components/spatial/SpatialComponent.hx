@@ -8,13 +8,14 @@
 ******************************************************************************/
 package com.pblabs.components.spatial;
 
-import com.pblabs.components.base.Coordinates2D;
-import com.pblabs.components.manager.NodeComponent;
+import com.pblabs.components.manager.INodeChild;
 import com.pblabs.components.scene.BaseScene2DComponent;
 import com.pblabs.components.scene.BaseScene2DLayer;
+import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PropertyReference;
+import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.geom.Vector2;
 
 import de.polygonal.motor2.geom.math.XY;
@@ -23,26 +24,30 @@ import de.polygonal.motor2.geom.primitive.AABB2;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
+using com.pblabs.geom.VectorTools;
+using com.pblabs.util.XMLUtil;
+
 /**
  * Very basic spatial component that exists at a position. 
  */ 
-class SpatialComponent extends NodeComponent<BasicSpatialManager2D, Dynamic>, 
-	implements ISpatialObject2D 
+class SpatialComponent extends EntityComponent,
+	implements ISpatialObject2D, implements INodeChild<ISpatialManager2D>
 {
 	inline public static var NAME :String = "ISpatialObject2D";
 	public static var P_X :PropertyReference<Float> = new PropertyReference("@" + NAME + ".x");
 	public static var P_Y :PropertyReference<Float> = new PropertyReference("@" + NAME + ".y");
 	public static var P_POINT :PropertyReference<XY> = new PropertyReference("@" + NAME + ".position");
 	public static var P_ANGLE :PropertyReference<Float> = new PropertyReference("@" + NAME + ".angle");
-	public static var P_COORDINATES :PropertyReference<Coordinates2D> = new PropertyReference("@ISpatialObject2D");
+	public static var P_SPATIAL :PropertyReference<SpatialComponent> = new PropertyReference("@" + NAME);
 	
 	public static function getLocation (c :IEntity) :XY	
 	{
-	    return c.lookupComponent(ISpatialObject2D).point;
+	    return c.lookupComponent(SpatialComponent).position;
 	}
 	
-	public var position (get_position, set_position) :XY;
-	
+	public var position (get_point, set_point) :XY;
+	public var point (get_point, set_point) :XY;
+	public var parent :ISpatialManager2D;
 	public var x (get_x, set_x) : Float;
 	public var y (get_y, set_y) : Float;
 	public var angle (get_angle, set_angle) : Float;
@@ -164,6 +169,8 @@ class SpatialComponent extends NodeComponent<BasicSpatialManager2D, Dynamic>,
 	override function onReset () :Void
 	{
 		super.onReset();
+		com.pblabs.util.Assert.isTrue(name == NAME, com.pblabs.util.Log.getStackTrace());
+		spriteForPointChecks = cast owner.lookupComponent(BaseScene2DComponent);
 		dispatchAll();
 	}
 	
@@ -211,20 +218,26 @@ class SpatialComponent extends NodeComponent<BasicSpatialManager2D, Dynamic>,
 	function set_objectMask (val :ObjectType) :ObjectType
 	{
 		_objectMask = val;
-		return value;
+		return val;
 	}
 	
 	function get_worldExtents() :AABB2
 	{
 		if (_worldAABB != null) {
 			return _worldAABB;
-		} 
-		// return new AABB2(position.x - (size.x * 0.5), position.y - (size.y * 0.5), size.x, size.y);		 
+		} else if (spriteForPointChecks != null) {
+			return new AABB2(x - (spriteForPointChecks.width * 0.5), y - (spriteForPointChecks.height * 0.5), 
+				x + (spriteForPointChecks.width * 0.5), y + (spriteForPointChecks.height * 0.5));
+		} else {
+			// throw "Cannot get bounds without display object";
+			return new AABB2(0, 0, 1, 1);
+		}
 	}
 	
 	function set_worldExtents(val :AABB2) :AABB2
 	{
 		_worldAABB = val;
+		return val;
 	}
 	
 	/**
@@ -238,7 +251,7 @@ class SpatialComponent extends NodeComponent<BasicSpatialManager2D, Dynamic>,
 	/**
 	 * All points in our bounding box are occupied.
 	 */
-	public function containsWorldPoint (pos :XY, ?mask :ObjectType = null):Bool
+	public function containsWorldPoint (pos :XY, mask :ObjectType):Bool
 	{
 		//False if masks say so
 		if (_objectMask != null && mask != null && !_objectMask.and(mask)) {
@@ -251,7 +264,7 @@ class SpatialComponent extends NodeComponent<BasicSpatialManager2D, Dynamic>,
 		
 		com.pblabs.util.Assert.isNotNull(worldExtents, "No worldExtends for point checking");
 		// If no sprite then we just test our bounds.
-		return worldExtents.containsWorldPoint(pos);
-		
+		var b = worldExtents;
+		return pos.x <= b.xmax && pos.x >= b.xmin && pos.y <= b.ymax && pos.y >= b.ymin;
 	}
 }

@@ -8,7 +8,6 @@
  ******************************************************************************/
 package com.pblabs.components.tasks;
 
-import com.pblabs.components.base.Coordinates2D;
 import com.pblabs.components.tasks.AnimatePropertyTask;
 import com.pblabs.components.tasks.IEntityTask;
 import com.pblabs.engine.core.PropertyReference;
@@ -46,7 +45,7 @@ class AngleTask extends AnimatePropertyTask
 	public function new (angle :Float, ?time :Float = 0,
 							   ?easingFn :Float->Float->Float->Float->Float = null, ?ref :PropertyReference<Float>)
 	{
-		super(ref == null ? Coordinates2D.P_ANGLE : ref, angle, time, easingFn);
+		super(ref == null ? SpatialComponent.P_ANGLE : ref, angle, time, easingFn);
 	}
 
 	public override function clone () :IEntityTask

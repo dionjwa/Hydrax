@@ -469,7 +469,6 @@ class Entity extends PBObject,
 		
 		var sets = context.getManager(SetManager);
 		
-		// var bonds :Array<Bond> = null;
 		com.pblabs.util.Log.debug(name + " started reseting");
 		for (component in _components)
 		{

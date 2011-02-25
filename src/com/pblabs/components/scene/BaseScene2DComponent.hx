@@ -8,9 +8,9 @@
  ******************************************************************************/
 package com.pblabs.components.scene;
 
-import com.pblabs.components.base.Coordinates2D;
 import com.pblabs.components.input.IInteractiveComponent;
 import com.pblabs.components.manager.NodeComponent;
+import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.geom.RectangleTools;
@@ -54,7 +54,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	public var registrationPoint (get_registrationPoint, set_registrationPoint) :XY;
 	
 	/** We will listen to the signals of this coordinates component. */
-	public var coordinatesProperty :PropertyReference<Coordinates2D>;
+	public var spatialProperty :PropertyReference<SpatialComponent>;
 	
 	var _x :Float;
 	var _y :Float;
@@ -99,17 +99,19 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 		_zIndexDirty = true;
 		_registrationPoint = new Vector2(0, 0);
 		//Sensible default
-		coordinatesProperty = Coordinates2D.classToComponentProp();
+		spatialProperty = SpatialComponent.P_SPATIAL;
 		objectMask = ObjectType.ALL;
 	}
 	
 	public function containsScreenPoint (pos :XY, mask :ObjectType) :Bool
 	{
 		com.pblabs.util.Assert.isNotNull(mask);
+		com.pblabs.util.Assert.isNotNull(objectMask);
 		if (!objectMask.and(mask)) {
 			return false;
 		}
 		var scene :BaseScene2DManager<Dynamic> = cast parent.scene;
+		com.pblabs.util.Assert.isNotNull(scene);
 		return containsWorldPoint(scene.translateScreenToWorld(pos), mask);
 	}
 	
@@ -132,32 +134,31 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	
 	public function setLocation (loc :XY) :Void
 	{
+		// trace(owner.name + " loc=" + loc);
 		set_x(loc.x);
 		set_y(loc.y);
 	}
 	
 	override function onReset () :Void
 	{
-		com.pblabs.util.Log.debug("");
 		super.onReset();
 		Preconditions.checkNotNull(parentProperty, "parentProperty is null");
 		com.pblabs.util.Assert.isNotNull(parent, com.pblabs.util.ReflectUtil.tinyClassName(Type.getClass(this)) + ".parent is null, prop=" + parentProperty);
 		
-		var coords = coordinatesProperty != null ? owner.getProperty(coordinatesProperty) : null;
+		var coords = spatialProperty != null ? owner.getProperty(spatialProperty) : null;
 		
 		if (coords != null) {
-			this.bindSignal(coords.signalerLocation, setLocation);
-			this.bindSignal(coords.signalerAngle, set_angle);
+			bindSignal(coords.signalerLocation, setLocation);
+			bindSignal(coords.signalerAngle, set_angle);
 			//Manually set the location on reseting: there may be discrepencies in timing
 			//such that the listeners and values are inconsistant.  So manually reset location.
-			setLocation(coords.point);
+			setLocation(coords.position);
 			angle = coords.angle;
 		} else {
 			com.pblabs.util.Log.warn("No coords component found, you are on your own regarding updating Scene components " + com.pblabs.util.Log.getStackTrace());
 		}
 			
 		//TODO: Bind scale component, not yet implemented
-		com.pblabs.util.Log.debug("finished");
 	}
 	
 	override function onRemove () :Void

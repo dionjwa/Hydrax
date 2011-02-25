@@ -81,7 +81,7 @@ using de.polygonal.gl.DisplayListIterator;
 class Editor extends Sprite
 {
 	public static var ENTITY_WINDOW_NAME :String = "EntityPanel";
-	public static var EDITING :Bool = true;
+	public static var EDITING :Bool = false;
 	
 	public var templatePanel :TemplatePanel;
 	public var entityPanel :EntityPanel;

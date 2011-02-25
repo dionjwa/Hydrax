@@ -13,6 +13,7 @@ import com.pblabs.components.scene.BaseScene2DLayer;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.SceneView;
 import com.pblabs.engine.core.IEntityComponent;
+import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.util.PBUtil;
 import com.pblabs.geom.Rectangle;
@@ -22,9 +23,10 @@ import com.pblabs.util.Preconditions;
 
 import de.polygonal.motor2.geom.math.XY;
 
+using com.pblabs.engine.core.SignalBondManager;
+using com.pblabs.engine.util.PBUtil;
 using com.pblabs.util.IterUtil;
 using com.pblabs.util.StringUtil;
-using com.pblabs.engine.util.PBUtil;
 
 /**
   * Layers are arranged: smaller index is behind.
@@ -219,6 +221,12 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 		super.onAdd();	  
 		sceneView = context.getManager(SceneView);
 		com.pblabs.util.Assert.isNotNull(sceneView, "No SceneView");
+	}
+	
+	override function onReset () :Void
+	{
+		super.onReset();
+		bindVoidSignal(cast(context, PBContext).signalEnter, update);
 	}
 
 	override function onRemove () :Void
