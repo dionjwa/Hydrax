@@ -129,7 +129,7 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
 		if (_displayObject == null) {
 			return;
 		}
-		
+		trace(owner.name);
 		// if(updateProps)
 		//     updateProperties();
 		
