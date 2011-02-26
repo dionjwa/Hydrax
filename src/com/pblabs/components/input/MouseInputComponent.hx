@@ -25,7 +25,57 @@ class MouseInputComponent extends EntityComponent
 {
 	public static function makeReactiveButton (mouse :MouseInputComponent) :Void
 	{
-	    
+		var spatial = mouse.owner.lookupComponent(com.pblabs.components.spatial.SpatialComponent);
+		var input = mouse.context.getManager(com.pblabs.components.input.InputManager);
+		com.pblabs.util.Assert.isNotNull(spatial);
+		com.pblabs.util.Assert.isNotNull(input);
+		var downOnThisButton = false;
+		var move :com.pblabs.components.input.IInputData->Void = null;
+		var bond :hsl.haxe.Bond = null;
+		var down = function () :Void {
+			if (!mouse.isRegistered) {
+				return;
+			}
+			spatial.y += 5;
+			if (bond != null) {
+				bond.destroy();
+			}
+			bond = input.deviceMove.bind(move);
+			downOnThisButton = true;
+		}
+		var up = function () :Void {
+			if (!mouse.isRegistered) {
+				return;
+			}
+			if (downOnThisButton) {
+				spatial.y -= 5;
+				if (bond != null) {
+					bond.destroy();
+				}
+				bond = null;
+				downOnThisButton = false;
+				// mouse.clicked();
+			}
+		}
+		move = function (data :com.pblabs.components.input.IInputData) :Void {
+			if (!mouse.isRegistered) {
+				return;
+			}
+			//Check if the mouse moves out
+			if (data.firstObjectUnderPoint(mouse.bounds.objectMask) != mouse.bounds) {
+				spatial.y -= 5;
+				input.deviceMove.unbind(move);
+				downOnThisButton = false;
+			}
+		}
+		mouse.bindDeviceDown(down);
+		mouse.bindDeviceUp(up);
+		
+		mouse.owner.destroyedSignal.bind(function (ignored :Dynamic) :Void {
+			if (bond != null) {
+				bond.destroy();
+			}
+		}, true);
 	}
 	
 	
@@ -66,6 +116,13 @@ class MouseInputComponent extends EntityComponent
 		return _deviceClickSignaler;
 	}
 	
+	function clicked () :Void
+	{
+		if (_deviceClickSignaler != null) {
+			_deviceClickSignaler.dispatch();
+		}
+	}
+	
 	// public var deviceMoveSignaler (get_deviceUpSignaler, null) :Signaler<Void>;
 	
 	public var isScalable :Bool;
@@ -74,6 +131,7 @@ class MouseInputComponent extends EntityComponent
 	public var isTranslatable :Bool;
 	
 	var _bonds :Array<hsl.haxe.Bond>;
+	var _mouseDownThis :Bool;
 	
 	public function new ()
 	{
@@ -81,6 +139,7 @@ class MouseInputComponent extends EntityComponent
 		//The default is not movable, rotatable, or scalable.
 		isScalable = isRotatable = isTranslatable = false;
 		_bonds = [];
+		_mouseDownThis = false;
 	}
 	
 	public function bindDeviceDown (callBack :Void->Void) :Void
@@ -129,7 +188,6 @@ class MouseInputComponent extends EntityComponent
 
 		SignalBondManager.bindSignal(this, input.deviceDown, onMouseDownInternal);
 		SignalBondManager.bindSignal(this, input.deviceUp, onMouseUpInternal);
-		SignalBondManager.bindSignal(this, input.deviceClick, onClickInternal);
 	}
 	
 	override function onRemove () :Void
@@ -138,6 +196,7 @@ class MouseInputComponent extends EntityComponent
 		isScalable = isRotatable = isTranslatable = false;
 		boundsProperty = null;
 		_bounds = null;
+		_mouseDownThis = false;
 		clearListeners();
 	}
 	
@@ -154,9 +213,11 @@ class MouseInputComponent extends EntityComponent
 	
 	function onMouseDownInternal (data :IInputData) :Void
 	{
-		if (isTranslatable || _deviceDownSignaler != null) {
+		_mouseDownThis = false;
+		if (isTranslatable || (_deviceDownSignaler != null || _deviceClickSignaler != null)) {
 			if (data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
 				
+				_mouseDownThis = true;
 				if (_deviceDownSignaler != null) {
 					_deviceDownSignaler.dispatch();
 				}
@@ -173,10 +234,15 @@ class MouseInputComponent extends EntityComponent
 	
 	function onMouseUpInternal (data :IInputData) :Void
 	{
-		
-		if (_deviceUpSignaler != null && data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
-			_deviceUpSignaler.dispatch();
-		}
+		if (data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
+			if (_deviceUpSignaler != null) {
+				_deviceUpSignaler.dispatch();
+			}
+			if (_mouseDownThis) {
+				onClickInternal(data);
+			}
+		} 
+		_mouseDownThis = false;
 	}
 	
 	function onClickInternal (data :IInputData) :Void
