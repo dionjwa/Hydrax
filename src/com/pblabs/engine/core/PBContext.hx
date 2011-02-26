@@ -274,14 +274,16 @@ class PBContext
 	}		
 	
 	//Returns manager for convenience
-	public function registerManager <T>(clazz:Class<Dynamic>, ?instance:T = null, ?optionalName:String="", ?suppressInject:Bool = false):T
+	public function registerManager <T>(clazz:Class<Dynamic>, ?instance:T = null, ?optionalName:String = null, ?suppressInject:Bool = false):T
 	{
 		if (instance == null) {
 			instance = allocate(clazz);
 		}
-
-		com.pblabs.util.Assert.isFalse(_managers.exists(PBUtil.getManagerName(clazz, optionalName)), "A manager already exists " + PBUtil.getManagerName(clazz, optionalName));
-		_managers.set(PBUtil.getManagerName(clazz, optionalName), instance);
+		
+		var managerName = PBUtil.getManagerName(clazz, optionalName);
+		
+		com.pblabs.util.Assert.isFalse(_managers.exists(managerName), "A manager already exists " + managerName);
+		_managers.set(managerName, instance);
 		
 		if(!suppressInject) {
 			injector.injectInto(instance);

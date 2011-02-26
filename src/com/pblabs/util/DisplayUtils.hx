@@ -164,18 +164,18 @@ class DisplayUtils
 			return null;
 		}
 
-		var bounds:Rectangle = d.getBounds(d);
-		if (bounds.width == 0 && bounds.height == 0) {
+		var bounds = d.getBounds(d);
+		if (bounds.width <= 0 && bounds.height <= 0) {
 			Log.error(["d", d, "d.name", d.name, "bounds", bounds]);
 			return null;
 		}
 
-		if (cast(bounds.width, Int) == 0 || cast(bounds.height, Int) == 0) {
-			Log.error(["int(bounds.width)", cast(bounds.width),
-				"int(bounds.height)", cast(bounds.height)]);
+		if (Std.int(bounds.width) <= 0 || Std.int(bounds.height) <= 0) {
+			Log.error(["int(bounds.width)", Std.int(bounds.width),
+				"int(bounds.height)", Std.int(bounds.height)]);
 			return null;
 		}
-		var bd = new BitmapData(cast(bounds.width * scale), cast(bounds.height * scale),
+		var bd = new BitmapData(Std.int(bounds.width * scale), Std.int(bounds.height * scale),
 			true, 0xffffff);
 
 		bd.draw(d, new Matrix(scale, 0, 0, scale, -bounds.left * scale, -bounds.top * scale));

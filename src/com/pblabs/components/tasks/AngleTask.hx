@@ -8,6 +8,7 @@
  ******************************************************************************/
 package com.pblabs.components.tasks;
 
+import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.components.tasks.AnimatePropertyTask;
 import com.pblabs.components.tasks.IEntityTask;
 import com.pblabs.engine.core.PropertyReference;

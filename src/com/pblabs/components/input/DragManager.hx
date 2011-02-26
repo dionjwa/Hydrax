@@ -18,6 +18,7 @@ import hsl.haxe.Signaler;
 using com.pblabs.engine.util.PBUtil;
 using com.pblabs.geom.VectorTools;
 
+//Obsolete, use PanManager
 class DragManager
 	implements IPBManager, implements haxe.rtti.Infos
 {

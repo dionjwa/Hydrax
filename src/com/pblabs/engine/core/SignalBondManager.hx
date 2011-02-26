@@ -30,7 +30,6 @@ using com.pblabs.util.StringUtil;
 class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	implements IPBManager, implements haxe.rtti.Infos
 {
-	// public static var OBJECT_DESTROYED_KEY :String = SignalBondManager.getClassName() + ".entityDestroyed";
 	public static var OBJECT_DESTROYED_KEY :Int = -1;
 	
 	@inject
@@ -143,7 +142,6 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 			//Signals bound to component signalers
 			for (c in cast(obj, IEntity)) {
 				com.pblabs.util.Assert.isNotNull(c, "??EntityComponent is null??");
-				// destroyBonds(c.entityPropString());
 				destroyBondsOnComponent(cast(c, EntityComponent));
 			}
 		}
@@ -152,7 +150,6 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	inline public function destroyBondsOnComponent (c :EntityComponent) :Void
 	{
 		com.pblabs.util.Assert.isNotNull(c, "??EntityComponent is null??");
-		// destroyBonds(c.entityPropString());
 		destroyBonds(c.key);
 	}
 	

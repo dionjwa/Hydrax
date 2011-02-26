@@ -130,27 +130,27 @@ class InputManager extends BaseInputManager,
 	{
 		//Dispatch a deviceHeldDown signal, but only if there's something under the device.
 		//NB: this doesn't recheck what's under the device, it's the same from the deviceDown.
-		return;
-		if (_isDeviceDown) {
-			if (_deviceDownComponent != null) {
+		// return;
+		// if (_isDeviceDown) {
+		// 	if (_deviceDownComponent != null) {
 				
-				if (_deviceDownComponent.isRegistered) {
-					var mouseInput = _deviceDownComponent.owner.lookupComponentByType(MouseInputComponent);
+		// 		if (_deviceDownComponent.isRegistered) {
+		// 			var mouseInput = _deviceDownComponent.owner.lookupComponentByType(MouseInputComponent);
 			
-					if (mouseInput != null && mouseInput.onDeviceHeldDown != null) {
-						mouseInput.onDeviceHeldDown();
-					}
-				} else {
-					_deviceDownComponent = null;
-				}
+		// 			if (mouseInput != null && mouseInput.onDeviceHeldDown != null) {
+		// 				mouseInput.onDeviceHeldDown();
+		// 			}
+		// 		} else {
+		// 			_deviceDownComponent = null;
+		// 		}
 				
-				_inputCache.inputComponent = _deviceDownComponent;
-				_inputCache.inputLocation = _deviceLoc.clone();
-				_inputCache.touchCount = _fingersTouching;
-				_inputCache.isMouseDown = true;
-				deviceHeldDown.dispatch(_inputCache);
-			}
-		}
+		// 		_inputCache.inputComponent = _deviceDownComponent;
+		// 		_inputCache.inputLocation = _deviceLoc.clone();
+		// 		_inputCache.touchCount = _fingersTouching;
+		// 		_inputCache.isMouseDown = true;
+		// 		deviceHeldDown.dispatch(_inputCache);
+		// 	}
+		// }
 	}
 	
 	override public function startup () :Void

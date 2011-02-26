@@ -188,6 +188,7 @@ class Editor extends Sprite
 		});
 		toggleButton.toggle = true;
 		toggleButton.label = EDITING ? "Editing enabled" : "Editing disabled";
+		toggleButton.selected = !EDITING;
 		
 		var timePanel = new TimePanel(root, _game);
 		

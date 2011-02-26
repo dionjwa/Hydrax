@@ -49,28 +49,6 @@ class ShapeComponent
     }
     #end
     
-    #if flash
-    // override function addedToParent () :Void
-	// {
-	// 	com.pblabs.util.Log.debug("");
-	// 	super.addedToParent();
-	// 	parent.parent.zoomSignal.bind(onZoomChange);
-	// 	redraw();
-	// 	com.pblabs.util.Log.debug("finished");
-	// }
-	
-	// override function removingFromParent () :Void
-	// {
-	// 	super.removingFromParent();
-	// 	parent.parent.zoomSignal.unbind(onZoomChange);
-	// }
-	
-	// function onZoomChange (zoom :Float) :Void
-	// {
-	// 	 redraw();
-	// }
-    #end
-    
     override function onReset () :Void
     {
     	com.pblabs.util.Log.debug("");

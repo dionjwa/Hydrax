@@ -80,8 +80,28 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
 		super.onAdd();
 		com.pblabs.util.Assert.isNotNull(_displayObject);
 		_displayObject.name = name;
+		_transformMatrix.identity();
+		_displayObject.transform.matrix = _transformMatrix;
 		_width = _displayObject.width;
 		_height = _displayObject.height;
+		_scaleX = 1;
+		_scaleY = 1;
+	}
+	
+	override function set_width (val :Float) :Float
+	{
+		super.set_width(val);
+		var localDimensions = displayObject.getBounds(displayObject);
+		scaleX = val / localDimensions.width;
+		return val;
+	}
+	
+	override function set_height (val :Float) :Float
+	{
+		super.set_height(val);
+		var localDimensions = displayObject.getBounds(displayObject);
+		scaleY = val / localDimensions.height;
+		return val;
 	}
 	
 	function get_displayObject () :DisplayObject

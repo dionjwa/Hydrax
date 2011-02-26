@@ -79,6 +79,10 @@ extends com.pblabs.components.scene.flash.Scene2DComponent
 		#elseif (flash || cpp)
 		var image :flash.display.DisplayObject = resource.create(context);//context.getManager(IResourceManager).create(resourceToken.v1, resourceToken.v2);
 		_displayObject = image;
+		if (Std.is(_displayObject, flash.display.Bitmap)) {
+			_registrationPoint.x = _displayObject.width / 2;
+			_registrationPoint.y = _displayObject.height / 2;
+		}
 		super.onAdd();
 		#end
 		

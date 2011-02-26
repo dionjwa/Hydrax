@@ -11,6 +11,10 @@ package com.pblabs.components.input;
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.core.SignalBondManager;
+
+import hsl.haxe.DirectSignaler;
+import hsl.haxe.Signaler;
+
 using com.pblabs.geom.PolygonTools;
 
 /**
@@ -19,27 +23,93 @@ using com.pblabs.geom.PolygonTools;
  */
 class MouseInputComponent extends EntityComponent
 {
+	public static function makeReactiveButton (mouse :MouseInputComponent) :Void
+	{
+	    
+	}
+	
+	
 	/**
 	  * If there is an IInteractiveComponent in the Entity, you don't have to explicity set the properties.
 	  */
 	public var boundsProperty :PropertyReference<IInteractiveComponent>;
 	public var bounds (get_bounds, set_bounds) :IInteractiveComponent;
+	var _bounds :IInteractiveComponent;
 	
-	public var onClick :Void->Void;
-	public var onDeviceDown :Void->Void;
-	public var onDeviceHeldDown :Void->Void;
+	var deviceDownSignaler (get_deviceDownSignaler, null) :Signaler<Void>;
+	var _deviceDownSignaler :Signaler<Void>;
+	function get_deviceDownSignaler () :Signaler<Void>
+	{
+		if (_deviceDownSignaler == null) {
+			_deviceDownSignaler = new DirectSignaler(this);
+		}
+		return _deviceDownSignaler;
+	}
 	
+	var deviceUpSignaler (get_deviceUpSignaler, null) :Signaler<Void>;
+	var _deviceUpSignaler :Signaler<Void>;
+	function get_deviceUpSignaler () :Signaler<Void>
+	{
+		if (_deviceUpSignaler == null) {
+			_deviceUpSignaler = new DirectSignaler(this);
+		}
+		return _deviceUpSignaler;
+	}
+	
+	var deviceClickSignaler (get_deviceClickSignaler, null) :Signaler<Void>;
+	var _deviceClickSignaler :Signaler<Void>;
+	function get_deviceClickSignaler () :Signaler<Void>
+	{
+		if (_deviceClickSignaler == null) {
+			_deviceClickSignaler = new DirectSignaler(this);
+		}
+		return _deviceClickSignaler;
+	}
+	
+	// public var deviceMoveSignaler (get_deviceUpSignaler, null) :Signaler<Void>;
 	
 	public var isScalable :Bool;
 	public var isRotatable :Bool;
 	/** Moveable in the x/y? */
 	public var isTranslatable :Bool;
 	
+	var _bonds :Array<hsl.haxe.Bond>;
+	
 	public function new ()
 	{
 		super();
 		//The default is not movable, rotatable, or scalable.
 		isScalable = isRotatable = isTranslatable = false;
+		_bonds = [];
+	}
+	
+	public function bindDeviceDown (callBack :Void->Void) :Void
+	{
+		com.pblabs.util.Assert.isNotNull(callBack);
+		com.pblabs.util.Assert.isNotNull(deviceDownSignaler);
+	    _bonds.push(deviceDownSignaler.bindVoid(callBack));
+	}
+	
+	public function bindDeviceUp (callBack :Void->Void) :Void
+	{
+		com.pblabs.util.Assert.isNotNull(callBack);
+		com.pblabs.util.Assert.isNotNull(deviceUpSignaler);
+	    _bonds.push(deviceUpSignaler.bindVoid(callBack));
+	}
+	
+	public function bindDeviceClick (callBack :Void->Void) :Void
+	{
+		com.pblabs.util.Assert.isNotNull(callBack);
+		com.pblabs.util.Assert.isNotNull(deviceClickSignaler);
+	    _bonds.push(deviceClickSignaler.bindVoid(callBack));
+	}
+	
+	public function clearListeners () :Void
+	{
+		for (bond in _bonds) {
+			bond.destroy();
+		}
+		_bonds = [];
 	}
 	
 	override function onReset () :Void
@@ -58,6 +128,7 @@ class MouseInputComponent extends EntityComponent
 		com.pblabs.util.Assert.isNotNull(input, "No InputManager?");
 
 		SignalBondManager.bindSignal(this, input.deviceDown, onMouseDownInternal);
+		SignalBondManager.bindSignal(this, input.deviceUp, onMouseUpInternal);
 		SignalBondManager.bindSignal(this, input.deviceClick, onClickInternal);
 	}
 	
@@ -67,9 +138,7 @@ class MouseInputComponent extends EntityComponent
 		isScalable = isRotatable = isTranslatable = false;
 		boundsProperty = null;
 		_bounds = null;
-		onClick = null;
-		onDeviceDown = null;
-		onDeviceHeldDown = null;
+		clearListeners();
 	}
 	
 	function get_bounds () :IInteractiveComponent
@@ -85,32 +154,57 @@ class MouseInputComponent extends EntityComponent
 	
 	function onMouseDownInternal (data :IInputData) :Void
 	{
-		if ((onDeviceDown != null || isTranslatable) && data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
-			if (onDeviceDown != null) {
-				onDeviceDown();
-			}
-			if (isTranslatable) {
-				var dragger = context.getManager(com.pblabs.components.input.DragManager);
-				if (dragger != null) {
-					dragger.startDragging(cast _bounds);
+		if (isTranslatable || _deviceDownSignaler != null) {
+			if (data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
+				
+				if (_deviceDownSignaler != null) {
+					_deviceDownSignaler.dispatch();
+				}
+				
+				if (isTranslatable) {
+					var dragger = context.getManager(com.pblabs.components.input.PanManager);
+					if (dragger != null) {
+						dragger.panComponent(cast _bounds);
+					}
 				}
 			}
 		}
 	}
 	
-	function onClickInternal (data :IInputData) :Void
+	function onMouseUpInternal (data :IInputData) :Void
 	{
-		if (onClick != null && data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
-			onClick();
+		
+		if (_deviceUpSignaler != null && data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
+			_deviceUpSignaler.dispatch();
 		}
 	}
 	
-	var _bounds :IInteractiveComponent;
+	function onClickInternal (data :IInputData) :Void
+	{
+		if (_deviceClickSignaler != null && data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
+			_deviceClickSignaler.dispatch();
+		}
+	}
 	
 	#if debug
 	public function toString () :String
 	{
 		return cast(owner, com.pblabs.engine.core.Entity).toString();
+	}
+	
+	override public function postDestructionCheck () :Void
+	{
+		super.postDestructionCheck();
+		if (_deviceDownSignaler != null) {
+			com.pblabs.util.Assert.isFalse(deviceDownSignaler.isListenedTo);
+		}
+		if (_deviceUpSignaler != null) {
+			com.pblabs.util.Assert.isFalse(_deviceUpSignaler.isListenedTo);
+		}
+		
+		if (_deviceClickSignaler != null) {
+			com.pblabs.util.Assert.isFalse(_deviceClickSignaler.isListenedTo);
+		}
 	}
 	#end
 }

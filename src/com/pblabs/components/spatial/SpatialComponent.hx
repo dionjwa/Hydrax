@@ -160,6 +160,9 @@ class SpatialComponent extends EntityComponent,
 	
 	override function onRemove () :Void
 	{
+		#if debug
+		debugOwnerName = owner.name;
+		#end
 		_vec.x = 0;
 		_vec.y = 0;
 		_angle = 0;
@@ -205,9 +208,10 @@ class SpatialComponent extends EntityComponent,
 	override public function postDestructionCheck () :Void
 	{
 		super.postDestructionCheck();
-		com.pblabs.util.Assert.isFalse(signalerLocation.isListenedTo);
-		com.pblabs.util.Assert.isFalse(signalerAngle.isListenedTo);
+		com.pblabs.util.Assert.isFalse(signalerLocation.isListenedTo, debugOwnerName);
+		com.pblabs.util.Assert.isFalse(signalerAngle.isListenedTo, debugOwnerName);
 	}
+	var debugOwnerName :String;
 	#end
 	
 	function get_objectMask() :ObjectType

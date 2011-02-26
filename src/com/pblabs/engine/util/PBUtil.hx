@@ -29,9 +29,9 @@ class PBUtil
 {
 	public static var KEY_COUNT :Int = 1;
 	
-	public static function getManagerName (cls :Class<Dynamic>, ?name :String) :String
+	public static function getManagerName (cls :Class<Dynamic>, ?name :String = null) :String
 	{
-		return StringUtil.getStringKey(cls) + if (name == null) "" else "|" + name;
+		return StringUtil.isBlank(name) ? StringUtil.getStringKey(cls) :  StringUtil.getStringKey(cls) + "|" + name;
 	}
 	
 	public static function addSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null) :T
