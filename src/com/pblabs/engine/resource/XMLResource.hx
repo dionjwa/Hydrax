@@ -23,7 +23,7 @@ using com.pblabs.util.EventDispatcherUtil;
   * Represents an XML blob loaded from somewhere.
   * Most, but not all, targets/Source types are implemented.  
   */
-class XMLResource extends ResourceBase<XML>
+class XMLResource extends ResourceBase<Xml>
 {
 	public function new (name :String, source :Source)
 	{
@@ -51,7 +51,7 @@ class XMLResource extends ResourceBase<XML>
 		_source = null;
 	}
 	
-	override public function create (?name :String) :XML
+	override public function create (?name :String) :Xml
 	{
 		if (name != null) {
 			com.pblabs.util.Log.error("create(name): name argument is ignored");
@@ -153,7 +153,7 @@ class XMLResource extends ResourceBase<XML>
 		_onError(e);
 	}
 	
-	var _xml :XML;
+	var _xml :Xml;
 	var _data :Dynamic;
 	var _source :Source;
 }

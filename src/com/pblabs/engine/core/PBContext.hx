@@ -110,6 +110,7 @@ class PBContext
 			untyped type = Type.resolveClass("com.pblabs.engine.core.Entity");
 		}
 		#if disable_object_pooling
+		trace(Type.getClassName(type));
 		var i = Type.createInstance(type, EMPTY_ARRAY);
 		#else
 		var i = com.pblabs.engine.pooling.ObjectPoolMgr.SINGLETON.get(type);

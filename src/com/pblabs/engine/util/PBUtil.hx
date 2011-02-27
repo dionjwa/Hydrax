@@ -34,7 +34,8 @@ class PBUtil
 		return StringUtil.isBlank(name) ? StringUtil.getStringKey(cls) :  StringUtil.getStringKey(cls) + "|" + name;
 	}
 	
-	public static function addSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null) :T
+	public static function addSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null, 
+		?deferring :Bool = false) :T
 	{
 		Preconditions.checkNotNull(context, "Null context");
 		Preconditions.checkNotNull(compClass, "Null compClass");
@@ -49,9 +50,9 @@ class PBUtil
 		var e = context.allocate(IEntity);
 		Assert.isNotNull(e.context, "How can the entity context be null? e.name=" +e.name + ", compClass=" + Type.getClassName(compClass));
 		e.initialize(compName);
+		e.deferring = deferring;
 		e.addComponent(cast(component, IEntityComponent), compName);
-		e.deferring = false;
-		Assert.isTrue(cast(component, IEntityComponent).isRegistered, "addsingle, not registered");
+		Assert.isTrue(deferring || cast(component, IEntityComponent).isRegistered, "addsingle, not registered");
 		return component;
 	}
 	

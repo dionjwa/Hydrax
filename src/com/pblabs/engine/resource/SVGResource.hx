@@ -77,10 +77,10 @@ class SVGResource extends ResourceBase<js.Dom.Image>
 	}
 	
 	#if debug
-	override public function toString () :String
-	{
-		return StringUtil.objectToString(this, ["_name", "_image", "_source"]);
-	}
+	// override public function toString () :String
+	// {
+	// 	return StringUtil.objectToString(this, ["_name", "_image", "_source"]);
+	// }
 	#end
 	
 	function loadFromEmbedded (embeddedName :String) :Void

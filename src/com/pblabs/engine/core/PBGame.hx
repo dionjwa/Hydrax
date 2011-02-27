@@ -12,7 +12,6 @@
  ******************************************************************************/
 package com.pblabs.engine.core;
 
-import com.pblabs.components.scene.SceneView;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceManager;
 import com.pblabs.engine.serialization.Serializer;
@@ -46,7 +45,7 @@ class PBGame extends PBGameBase
 		registerManager(IProcessManager, new ProcessManager());
 		registerManager(SignalBondManager, new SignalBondManager());
 		registerManager(SetManager, new SetManager());
-		registerManager(SceneView, new SceneView());
+		registerManager(com.pblabs.components.scene.SceneView, new com.pblabs.components.scene.SceneView());
 		registerManager(IResourceManager, new ResourceManager());
 		registerManager(Serializer, new Serializer());
 		registerManager(TemplateManager, new TemplateManager());

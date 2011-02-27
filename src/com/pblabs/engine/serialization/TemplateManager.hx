@@ -280,7 +280,7 @@ class TemplateManager
 	/**
 	 * Given an XML literal, construct a valid entity from it.
 	 */
-	public function instantiateEntityFromXML (xml :XML, context :IPBContext) :IEntity
+	public function instantiateEntityFromXML (xml :Xml, context :IPBContext) :IEntity
 	{
 		com.pblabs.util.Log.debug("");
 		Preconditions.checkNotNull(xml);
@@ -413,7 +413,7 @@ class TemplateManager
 	 * name of the object. It is used so the xml can be removed by a call to RemoveXML.
 	 * @param version The version of the format of the added xml.
 	 */
-	public function addXML(xml :XML, identifier :String, version :Int) :Void
+	public function addXML(xml :Xml, identifier :String, version :Int) :Void
 	{
 		// var name :String=xml.get("name");
 		var name = xml.get("name");
@@ -466,7 +466,7 @@ class TemplateManager
 	 * @return The xml description with the specified name, or null if it wasn't
 	 * found.
 	 */
-	public function getXML(name :String, ?xmlType1 :String, ?xmlType2 :String) :XML
+	public function getXML(name :String, ?xmlType1 :String, ?xmlType2 :String) :Xml
 	{
 		var thing = doGetXML(name, xmlType1, xmlType2);
 		return thing != null ? thing.xmlData :null;
@@ -653,7 +653,7 @@ class TemplateManager
 		return actualGroup;
 	}
 	
-	public function loadInMemoryFile(data :XML, sourceName :String) :Void
+	public function loadInMemoryFile(data :Xml, sourceName :String) :Void
 	{
 		var version = Std.parseInt(data.get("version"));
 		var thingCount :Int = 0;
@@ -703,7 +703,7 @@ class ThingReference
 {
 	public var type (default, null) :RefType;
 	public var version :Int;
-	public var xmlData :XML;
+	public var xmlData :Xml;
 	// public var entityCallback :Void->IEntity;
 	// public var groupCallback :Void->IPBGroup;
 	public var identifier :String;

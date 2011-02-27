@@ -94,7 +94,7 @@ interface IEntity implements IPropertyBag, implements IPBObject
 	* included in this variable when the function is called, so only child tags
 	* need to be created.
 	*/
-	function serialize(xml :XML):Void;
+	function serialize(xml :Xml):Void;
 	
 	/**
 	* Sets up this entity from an xml description.
@@ -104,7 +104,7 @@ interface IEntity implements IPropertyBag, implements IPBObject
 	* without registering them. This is used by the level manager to facilitate
 	* creating entities from templates. 
 	*/
-	function deserialize(xml :XML, ?registerComponents:Bool = true):Void;
+	function deserialize(xml :Xml, ?registerComponents:Bool = true):Void;
 	
 	/**
 	* <p>Gets a component of a specific type from this entity. If more than one

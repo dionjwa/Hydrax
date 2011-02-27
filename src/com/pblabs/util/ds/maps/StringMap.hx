@@ -25,6 +25,6 @@ import com.pblabs.util.StringUtil;
 {
 	public function new ()
 	{
-		super(Std.string, new HashMap<String, V>()); 
+		super(StringUtil.getStringKey, new HashMap<String, V>()); 
 	}
 }

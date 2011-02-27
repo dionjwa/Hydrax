@@ -104,12 +104,12 @@ class Enumerable<T>
 	/**
 	  * Serializes all Enumerables of the class
 	  */
-	public static  function serializeEnumerable (xml :XML, cls :Class<Dynamic>) :Void
+	public static  function serializeEnumerable (xml :Xml, cls :Class<Dynamic>) :Void
 	{
 		xml.set("class", Type.getClassName(cls));
 		com.pblabs.util.Assert.isNotNull(_enums.get(cls), "No Enumerable of type " + cls);
 		for (e in _enums.get(cls)) {
-			var child = XML.createElement(e.name);
+			var child = Xml.createElement(e.name);
 			xml.addChild(child);
 			e.serialize(child);
 		}
@@ -118,7 +118,7 @@ class Enumerable<T>
 	/**
 	  * Deserializes all Enumerables of the class
 	  */
-	public static function deserializeEnumerable (xml :XML) :Dynamic
+	public static function deserializeEnumerable (xml :Xml) :Dynamic
 	{
 		com.pblabs.util.Assert.isNotNull(xml);
 		com.pblabs.util.Assert.isNotNull(xml.get("class"));
@@ -164,6 +164,7 @@ class Enumerable<T>
 		}
 		
 		var map = _enums.get(cls);
+		Preconditions.checkNotNull(map, "No map for " + name + " of type " + cls + ", but _enums.exists(cls)=" + _enums.exists(cls));
 		var arr =_enumsSorted.get(cls);
 		
 		Preconditions.checkArgument(!map.exists(name), "Enum already exists! " + this);
@@ -184,7 +185,7 @@ class Enumerable<T>
 		return _hashCode;
 	}
 
-	public function serialize (xml :XML) :Void
+	public function serialize (xml :Xml) :Void
 	{
 		//Get the serializable fields by parsing the original xml
 		var root = Xml.parse(haxe.Resource.getString(ReflectUtil.getClassName(this)).trim()).firstChild();
@@ -210,7 +211,7 @@ class Enumerable<T>
 		}
 	}
 	
-	public function deserialize (xml :XML) :Dynamic
+	public function deserialize (xml :Xml) :Dynamic
 	{
 		var cls = Type.getClass(this);
 		for (fieldElement in xml) {

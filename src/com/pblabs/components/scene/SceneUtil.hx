@@ -57,13 +57,16 @@ class SceneUtil
 		#end
 
 		
-	public static function createBaseScene (context :IPBContext, ?addDefaultLayer :Bool = true) :BaseScene2DManager<Dynamic>
+	public static function createBaseScene (context :IPBContext, ?name :String = null, ?addDefaultLayer :Bool = false) :BaseScene2DManager<Dynamic>
 	{
 		com.pblabs.util.Assert.isNotNull(context);
 		
-		var scene = context.addSingletonComponent(MANAGER_CLASS);
-		context.registerManager(IScene2D, scene, null, true);
-		context.registerManager(MANAGER_CLASS, scene, null, true);
+		var scene = context.addSingletonComponent(MANAGER_CLASS, name, true);
+		//The spatial component is for panning control
+		scene.owner.addComponent(context.allocate(SpatialComponent), SpatialComponent.NAME);
+		scene.owner.deferring = false;
+		context.registerManager(IScene2D, scene, name, true);
+		context.registerManager(MANAGER_CLASS, scene, name, true);
 	    com.pblabs.util.Assert.isNotNull(scene);
 	    if (addDefaultLayer) {
 	    	scene.addLayer(SceneUtil.DEFAULT_LAYER_NAME);

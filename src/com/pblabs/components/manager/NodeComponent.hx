@@ -140,12 +140,12 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 		return children.iterator();
 	}
 	
-	public function serialize (xml :XML) :Void
+	public function serialize (xml :Xml) :Void
 	{
 		xml.createChild("parent", parent != null ? PBUtil.entityProp(cast(parent)) :parentProperty);
 	}
 	
-	public function deserialize (xml :XML) :Dynamic
+	public function deserialize (xml :Xml) :Dynamic
 	{
 		parentProperty = cast(xml.parsePropertyReference("parent"));
 	}

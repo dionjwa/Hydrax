@@ -27,10 +27,12 @@ class ValueComponent<T> extends EntityComponent
 		value = val;
 	}
 	
-	public function toString () :String
-	{
-		return "[value=" + value + "]";
-	}
+	// #if (!neko && (editor || debug)) 	
+	// public function toString () :String
+	// {
+	// 	return "[value=" + value + "]";
+	// }
+	// #end
 
 	public function globalValueProperty () :PropertyReference<T>
 	{

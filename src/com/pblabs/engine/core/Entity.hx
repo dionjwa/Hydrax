@@ -81,6 +81,7 @@ class Entity extends PBObject,
 		if(_deferring == true && value == false) {
 			// Resolve everything, and everything that that resolution triggers.
 			var needReset:Bool = _deferredComponents.length > 0;
+			var sets = context.getManager(SetManager);
 			while(_deferredComponents.length > 0) {
 				var pc = _deferredComponents.shift();
 				
@@ -92,6 +93,8 @@ class Entity extends PBObject,
 				if (Std.is(pc.item, IAnimatedObject)) {
 					_context.processManager.addAnimatedObject(cast(pc.item));
 				}
+				
+				injectComponent(pc.item, sets);
 				pc.item.register(this, pc.name);
 			}
 			
@@ -181,7 +184,7 @@ class Entity extends PBObject,
 	 * adds itself to it.
 	 * @param	xml the <things> XML stream.
 	 */
-	public function serialize(xml :XML):Void
+	public function serialize(xml :Xml):Void
 	{
 		var entityXML = Xml.createElement("entity");
 		entityXML.set("name", name);
@@ -198,7 +201,7 @@ class Entity extends PBObject,
 		xml.addChild(entityXML);			
 	}
 	
-	public function deserialize(xml :XML, ?registerComponents:Bool = true):Void
+	public function deserialize(xml :Xml, ?registerComponents:Bool = true):Void
 	{
 		// Note what entity we're deserializing to the Serializer.
 		context.getManager(Serializer).setCurrentEntity(this);
@@ -307,6 +310,8 @@ class Entity extends PBObject,
 			return true;
 		}
 
+		injectComponent(component);
+		
 		if (Std.is(component, ITickedObject)) {
 			_context.processManager.addTickedObject(cast(component));
 		}
@@ -477,10 +482,7 @@ class Entity extends PBObject,
 				continue;
 			}
 			
-			//Inject the component fields
-			 _context.injectInto(component);
-			 //Inject the sets (components annotated with @sets("set1", "set2") at the constructor
-			 sets.injectSets(component);
+			// injectComponent(component, sets);
 			 
 			 //Inject the signal listeners
 			 // bonds = cast(_context.injector, ComponentInjector).injectComponentListeners(component , bonds);
@@ -497,6 +499,15 @@ class Entity extends PBObject,
 		// }
 		com.pblabs.engine.debug.Profiler.exit("doResetComponents");
 		deferring = false;
+	}
+	
+	function injectComponent (c :IEntityComponent, ?sets :SetManager = null) :Void
+	{
+		sets = sets == null ? context.getManager(SetManager) : sets;
+		//Inject the component fields
+		 _context.injectInto(c);
+		 //Inject the sets (components annotated with @sets("set1", "set2") at the constructor
+		 sets.injectSets(c);
 	}
 	
 	var _deferring :Bool;

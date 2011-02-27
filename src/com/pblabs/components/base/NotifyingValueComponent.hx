@@ -30,12 +30,12 @@ class NotifyingValueComponent extends EntityComponent,
 		signaler = new DirectSignaler(this);
 	}
 	
-	public function serialize (xml :XML) :Void
+	public function serialize (xml :Xml) :Void
 	{
 		xml.createChild("value", _value);
 	}
 	
-	public function deserialize (xml :XML) :Dynamic
+	public function deserialize (xml :Xml) :Dynamic
 	{
 		_value = xml.parseFloat("value");
 	}

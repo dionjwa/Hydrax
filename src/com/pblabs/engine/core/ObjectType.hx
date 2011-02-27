@@ -145,7 +145,7 @@ class ObjectType
 	/**
 	 * @inheritDoc
 	 */
-	public function serialize(xml :XML) :Void
+	public function serialize(xml :Xml) :Void
 	{
 		// var typeNames :Array<String> = typeNames;
 		// if (typeNames.length == 1)
@@ -166,7 +166,7 @@ class ObjectType
 	 * 
 	 * @inheritDoc
 	 */
-	public function deserialize(xml :XML) :Dynamic
+	public function deserialize(xml :Xml) :Dynamic
 	{
 		// manager = _context.getManager(ObjectTypeManager);
 		

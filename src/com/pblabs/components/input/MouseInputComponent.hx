@@ -15,14 +15,25 @@ import com.pblabs.engine.core.SignalBondManager;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
-using com.pblabs.geom.PolygonTools;
-
 /**
  * Convenient class for interacting with input pointers, as an alternative to 
  * interacting with the InputManager.
  */
 class MouseInputComponent extends EntityComponent
 {
+	
+	//For MouseInputComponent
+	// public static function compareMouseComponents (a :com.pblabs.components.input.MouseInputComponent, b :com.pblabs.components.input.MouseInputComponent) :Int
+	// {
+	//     if (a.owner.isSquad() && b.owner.isUnit()) {
+	//     	return 1;
+	//     } else if (b.owner.isSquad() && a.owner.isUnit()) {
+	//     	return -1;
+	//     } else {
+	//     	return 1;
+	//     }
+	// }
+	
 	public static function makeReactiveButton (mouse :MouseInputComponent) :Void
 	{
 		var spatial = mouse.owner.lookupComponent(com.pblabs.components.spatial.SpatialComponent);

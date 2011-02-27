@@ -7,7 +7,7 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package haxe.remoting;
-#if js
+
 import haxe.remoting.Context;
 
 import js.Node;
@@ -25,7 +25,7 @@ class NodeJSHTMLConnection
 		context = ctx;
 	}
 	
-	public static function handleRequest (req :Request, res :Response) :Bool 
+	public static function handleRequest (req :ServerRequest, res :ServerResponse) :Bool 
 	{
 		if (req.headers == null || Reflect.field(req.headers, "x-haxe-remoting") == null) {
 			return false;
@@ -83,6 +83,3 @@ class NodeJSHTMLConnection
 		}
 	}	
 }
-#else
-class NodeJSHTMLConnection {}
-#end

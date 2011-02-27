@@ -149,7 +149,7 @@ class MouseInputManager extends BaseInputManager
         mouseMove = new hsl.avm2.translating.AVM2Signaler(this, layer, flash.events.MouseEvent.MOUSE_MOVE, new hsl.avm2.translation.mouse.MouseLocationTranslator());
         mouseClick = new hsl.avm2.translating.AVM2Signaler(this, layer, flash.events.MouseEvent.CLICK, new hsl.avm2.translation.mouse.MouseLocationTranslator());
         #else
-        Log.error("Platform mouse input not yet implemented.  Currently Flash/c++/JS only.");
+        com.pblabs.util.Log.error("Platform mouse input not yet implemented.  Currently Flash/c++/JS only.");
         #end
     }
     

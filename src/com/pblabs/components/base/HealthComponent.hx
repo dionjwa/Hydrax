@@ -60,13 +60,13 @@ class HealthComponent extends EntityComponent,
 		_timeOfLastDamage = -1000;
 	}
 	
-	public function serialize (xml :XML) :Void
+	public function serialize (xml :Xml) :Void
 	{
 		xml.createChild("health", _health);
 		xml.createChild("healthMax", healthMax);
 	}
 	
-	public function deserialize (xml :XML) :Dynamic
+	public function deserialize (xml :Xml) :Dynamic
 	{
 		_health = xml.parseFloat("health");
 		healthMax = xml.parseFloat("healthMax");

@@ -118,7 +118,7 @@ class Serializer
 	 * 
 	 * @see ISerializable
 	 */
-	public function serialize(object :Dynamic, xml :XML) :Void
+	public function serialize(object :Dynamic, xml :Xml) :Void
 	{
 		if (Std.is(object, ISerializable)) {
 			cast(object, ISerializable).serialize(xml);
@@ -190,7 +190,7 @@ class Serializer
 	 * Code that calls this method should always use the return value rather than
 	 * the passed in value for this reason.
 	 */
-	public function deserialize(context :IPBContext, object :Dynamic, xml :XML, ?typeHint :String=null) :Dynamic
+	public function deserialize(context :IPBContext, object :Dynamic, xml :Xml, ?typeHint :String=null) :Dynamic
 	{
 		com.pblabs.util.Log.debug("object=" + object + ", typeHint=" + typeHint);
 		Preconditions.checkNotNull(context, "context is null");
@@ -286,7 +286,7 @@ class Serializer
 		}
 	}
 	
-	function isSimple(xml :XML, typeName :String) :Bool
+	function isSimple(xml :Xml, typeName :String) :Bool
 	{
 		// Complex content is assumed if there are child nodes in the xml, or the xml text is
 		// an empty string, unless the type is a string. This is because any simple type that
@@ -325,12 +325,12 @@ class Serializer
 	//	 return xml.toString();
 	// }
 	
-	function serializeSimple(value :Dynamic, xml :XML) :Void
+	function serializeSimple(value :Dynamic, xml :Xml) :Void
 	{
-		xml.addChild(XML.createPCData(Std.string(value)));
+		xml.addChild(Xml.createPCData(Std.string(value)));
 	}
 	
-	function deserializeComplex(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
+	function deserializeComplex(context :IPBContext, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
 	{
 		//Haxe cannot determine  at runtime if an object implements Dynamic 
 		var isDynamic = false;//Std.is(object, Array);// || (TypeUtility.isDynamic(object));// || Std.is(object, Dictionary)
@@ -407,7 +407,7 @@ class Serializer
 	}
 	
 	//TODO:broken
-	public static function deserializeEnumerable (context :Dynamic, object :Dynamic, xml :XML, typeHint :String) :Dynamic
+	public static function deserializeEnumerable (context :Dynamic, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
 	{
 		com.pblabs.util.Assert.isNotNull(xml);
 		typeHint = typeHint == null ? xml.get("type") : typeHint;
@@ -424,16 +424,16 @@ class Serializer
 		}
 	}
 	
-	public static  function serializeEnumerable (object :Dynamic, xml :XML) :Void
+	public static  function serializeEnumerable (object :Dynamic, xml :Xml) :Void
 	{
 		var e :Enumerable<Dynamic> = object;
 		// trace("serializeEnumerable");
 		// trace("xml.nodeType=" + xml.nodeType);
-		xml.addChild(XML.createPCData(e.name));
+		xml.addChild(Xml.createPCData(e.name));
 	}
 	
 	/**
-	 * Given an XML element, walk up its parent references and show the path
+	 * Given an Xml element, walk up its parent references and show the path
 	 * in the document, including any name attributes.
 	 */
 	public function reportXMLPath(item :Dynamic) :String
@@ -469,7 +469,7 @@ class Serializer
 		return path;
 	}
 	
-	public function serializeComplex(object :Dynamic, xml :XML) :Void
+	public function serializeComplex(object :Dynamic, xml :Xml) :Void
 	{
 		if (object == null) { 
 			return;
@@ -603,64 +603,64 @@ class Serializer
 		}
 	}
 	
-	public static function serializeProperty (object :Dynamic, xml :XML) :Void
+	public static function serializeProperty (object :Dynamic, xml :Xml) :Void
 	{
-		xml.addChild(XML.createPCData(Std.string(object)));
+		xml.addChild(Xml.createPCData(Std.string(object)));
 	}
 	
-	public static function deserializeBool(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
+	public static function deserializeBool(context :IPBContext, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
 	{
 		com.pblabs.util.Assert.isNotNull(xml);
 		return (xml.firstChild().toString() == "true");
 	}
 	
-	public static function serializeBool(val :Dynamic, xml :XML) :Void
+	public static function serializeBool(val :Dynamic, xml :Xml) :Void
 	{
-		xml.addChild(XML.createPCData(val ? "true" : "false"));
+		xml.addChild(Xml.createPCData(val ? "true" : "false"));
 	}
 	
-	public static function deserializeInt(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
+	public static function deserializeInt(context :IPBContext, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
 	{
 		com.pblabs.util.Assert.isNotNull(xml);
 		return Std.parseInt(xml.firstChild().nodeValue.trim());
 	}
 	
-	public static function serializeInt(val :Dynamic, xml :XML) :Void
+	public static function serializeInt(val :Dynamic, xml :Xml) :Void
 	{
-		xml.addChild(XML.createPCData(Std.string(val)));
+		xml.addChild(Xml.createPCData(Std.string(val)));
 	}
 	
-	public static function deserializeFloat(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
+	public static function deserializeFloat(context :IPBContext, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
 	{
 		com.pblabs.util.Assert.isNotNull(xml);
 		return Std.parseFloat(xml.firstChild().nodeValue);
 	}
 	
-	public static function serializeFloat(val :Dynamic, xml :XML) :Void
+	public static function serializeFloat(val :Dynamic, xml :Xml) :Void
 	{
-		xml.addChild(XML.createPCData(Std.string(val)));
+		xml.addChild(Xml.createPCData(Std.string(val)));
 	}
 	
-	public static function deserializeEnum(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
+	public static function deserializeEnum(context :IPBContext, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
 	{
 		throw "Not implemented";
 		com.pblabs.util.Assert.isNotNull(xml);
 		return Type.createEnum(Type.resolveEnum(typeHint.isBlank() ? xml.get("type") :typeHint), xml.nodeValue , []);
 	}
 	
-	public static function serializeEnum(val :Dynamic, xml :XML) :Void
+	public static function serializeEnum(val :Dynamic, xml :Xml) :Void
 	{
 		xml.nodeValue = Type.enumConstructor(val);
 	}
 	
-	public static function serializeVector2 (val :Dynamic, xml :XML) :Void
+	public static function serializeVector2 (val :Dynamic, xml :Xml) :Void
 	{
 		var v :Vector2 = cast val;
 		xml.createChild("x", v.x);
 		xml.createChild("y", v.y);
 	}
 	
-	public function deserializeVector2 (context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
+	public function deserializeVector2 (context :IPBContext, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
 	{
 		var v = new Vector2();
 		v.x = xml.parseFloat("x");
@@ -669,12 +669,12 @@ class Serializer
 	}
 	
 	
-	public function serializeSerializable(val :Dynamic, xml :XML) :Void
+	public function serializeSerializable(val :Dynamic, xml :Xml) :Void
 	{
 		cast(val, ISerializable).serialize(xml);
 	}
 	
-	public function deserializeIterable(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
+	public function deserializeIterable(context :IPBContext, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
 	{
 		for (childXML in xml.elements())
 		{
@@ -727,7 +727,7 @@ class Serializer
 		return object;
 	}
 	
-	public function serializeIterable (object :Iterable<Dynamic>, xml :XML) :Void
+	public function serializeIterable (object :Iterable<Dynamic>, xml :Xml) :Void
 	{
 		if (object == null) {
 			return;
@@ -761,7 +761,7 @@ class Serializer
 			// var propertyName :String = (Std.is(object, Dictionary)) ? element :"_";
 			var propertyName :String = isMap ? Std.string(iteratable[ii]) : "_";
 			var propertyValue :Dynamic = isMap ? cast(object, Map<Dynamic, Dynamic>).get(iteratable[ii]) : iteratable[ii];
-			var propertyXML :XML = Xml.createElement(propertyName);
+			var propertyXML :Xml = Xml.createElement(propertyName);
 			
 			// Write type
 			if (!hasType)
@@ -781,7 +781,7 @@ class Serializer
 		}
 	}
 	
-	public function deserializeClass(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
+	public function deserializeClass(context :IPBContext, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
 	{
 		com.pblabs.util.Assert.isNotNull(xml);
 		return Type.resolveClass(xml.firstChild().nodeValue);
@@ -791,7 +791,7 @@ class Serializer
 	 * A tag can have attributes which encode references of various types. This method
 	 * parses them and resolves the references.
 	 */ 
-	function getChildReference(context :IPBContext, object :Dynamic, fieldName :String, xml :XML) :Bool
+	function getChildReference(context :IPBContext, object :Dynamic, fieldName :String, xml :Xml) :Bool
 	{
 		var nameReference :String = xml.get("nameReference");
 		var componentReference :String = xml.get("componentReference");
@@ -829,7 +829,7 @@ class Serializer
 	 * A tag can have attributes which encode references of various types. This method
 	 * parses them and resolves the references.
 	 */ 
-	function setChildReference(object :Dynamic, reference :Dynamic, xml :XML) :Bool
+	function setChildReference(object :Dynamic, reference :Dynamic, xml :Xml) :Bool
 	{
 		// Write entity reference
 		if (Std.is(reference, IEntity)) {
@@ -857,7 +857,7 @@ class Serializer
 	 * @param typeName The desired type; if different than what is there we replace
 	 *				 the existing interface.
 	 */
-	function getChildObject(context :IPBContext, object :Dynamic, fieldName :String, typeName :String, fieldXml :XML) :Dynamic
+	function getChildObject(context :IPBContext, object :Dynamic, fieldName :String, typeName :String, fieldXml :Xml) :Dynamic
 	{
 		// Get the child object, if it is present.
 		var childObject :Dynamic = null;
@@ -883,7 +883,7 @@ class Serializer
 		return childObject;
 	}
 	
-	function getResourceObject(context :IPBContext, object :Dynamic, fieldName :String, xml :XML, ?typeHint :String = null) :Bool
+	function getResourceObject(context :IPBContext, object :Dynamic, fieldName :String, xml :Xml, ?typeHint :String = null) :Bool
 	{
 		var filename :String = xml.get("filename");
 		
@@ -944,8 +944,8 @@ class Serializer
 	}
 	
 	var _currentEntity :IEntity;
-	var _serializers :Map<String, Dynamic->XML->Void>;
-	var _deserializers :Map<String, IPBContext->Dynamic->XML->String->Dynamic>;
+	var _serializers :Map<String, Dynamic->Xml->Void>;
+	var _deserializers :Map<String, IPBContext->Dynamic->Xml->String->Dynamic>;
 	var _deferredReferences :Array<ReferenceNote>;
 	var _resources :Map<String, ResourceNote>;
 	var _typeInfo :TypeInfo;

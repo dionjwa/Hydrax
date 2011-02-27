@@ -117,7 +117,7 @@ class HashMap<K, V> implements Map<K, V>  #if php ,implements php.IteratorAggreg
 		#elseif js
 		return untyped h["$"+key];
 		#elseif neko
-		return untyped __dollar__hget(h,key.__s,null);
+		return untyped __dollar__hget(h,key == null ? null : key.__s,null);
 		#elseif cpp
 		return untyped h.__Field(key);
 		#elseif php
@@ -150,7 +150,7 @@ class HashMap<K, V> implements Map<K, V>  #if php ,implements php.IteratorAggreg
 			return false;
 		}
 		#elseif neko
-		return untyped __dollar__hmem(h,key.__s,null);
+		return untyped __dollar__hmem(h,key == null ? null :key.__s,null);
 		#elseif cpp
 		return untyped h.__Field(key)!=null;
 		#elseif php

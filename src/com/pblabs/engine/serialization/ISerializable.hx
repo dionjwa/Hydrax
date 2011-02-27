@@ -18,7 +18,7 @@ import com.pblabs.engine.core.IPBContext;
   * Not yet moved from flash XML processing
   * Hopefully the performance of Xml is on par with flash.xml.XML
   */
-typedef XML = Xml;
+// typedef XML = Xml;
 
 /**
 * Provides an interface for objects to override the default serialization
@@ -43,7 +43,7 @@ interface ISerializable
 	* 
 	* @see ../../../../../Examples/SerializingObjects.html Serializing Objects
 	*/
-	function serialize (xml :XML) :Void;
+	function serialize (xml :Xml) :Void;
 	
 	/**
 	* deserializes the object from xml. The format of the xml passed is custom,
@@ -57,7 +57,7 @@ interface ISerializable
 	* 
 	* @see ../../../../../Examples/DeserializingObjects.html Deserializing Objects
 	*/
-	function deserialize (xml :XML) :Dynamic;
+	function deserialize (xml :Xml) :Dynamic;
 }
 
 

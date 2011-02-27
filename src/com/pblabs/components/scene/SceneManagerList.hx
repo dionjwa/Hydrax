@@ -13,5 +13,4 @@ class SceneManagerList extends NodeComponent<Dynamic, BaseScene2DManager<Dynamic
 	{
 		super();
 	}
-
 }

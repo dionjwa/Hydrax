@@ -46,6 +46,8 @@ class Vector2 extends XY,
 	{
 		this.x = x;
 		this.y = y;
+		com.pblabs.util.Assert.isFalse(Math.isNaN(this.x));
+		com.pblabs.util.Assert.isFalse(Math.isNaN(this.y));
 	}
 
 	/**
@@ -296,7 +298,7 @@ class Vector2 extends XY,
 		return Math.acos(dot / (len1 * len2));
 	}
 
-	#if debug
+	#if (!neko && debug)
 	/** Returns a string representation of the Vector2. */
 	public function toString () :String
 	{

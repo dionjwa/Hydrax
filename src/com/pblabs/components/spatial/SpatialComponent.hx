@@ -9,8 +9,6 @@
 package com.pblabs.components.spatial;
 
 import com.pblabs.components.manager.INodeChild;
-import com.pblabs.components.scene.BaseScene2DComponent;
-import com.pblabs.components.scene.BaseScene2DLayer;
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.ObjectType;
@@ -61,7 +59,9 @@ class SpatialComponent extends EntityComponent,
 	 * If set, a SpriteRenderComponent we can use to fulfill point occupied
 	 * tests.
 	 */
-	public var spriteForPointChecks :BaseScene2DComponent<BaseScene2DLayer<Dynamic, Dynamic>>;
+	#if (flash || js)
+	public var spriteForPointChecks :com.pblabs.components.scene.BaseScene2DComponent<com.pblabs.components.scene.BaseScene2DLayer<Dynamic, Dynamic>>;
+	#end
 	var _objectMask :ObjectType;
 	var _vec :XY;
 	var _vecForSignalling :XY;
@@ -113,6 +113,7 @@ class SpatialComponent extends EntityComponent,
 		// com.pblabs.util.Assert.isFalse(Math.isNaN(val), com.pblabs.util.Log.getStackTrace());
 		if (_vec.x != val) {
 			_vec.x = val;
+			updateWorldAABB();			
 			dispatchLocation();
 		}
 		return val;
@@ -128,6 +129,7 @@ class SpatialComponent extends EntityComponent,
 		// com.pblabs.util.Assert.isFalse(Math.isNaN(val), com.pblabs.util.Log.getStackTrace());
 		if (_vec.y != val) {
 			_vec.y = val;
+			updateWorldAABB();
 			dispatchLocation();
 		}
 		return val;
@@ -140,18 +142,19 @@ class SpatialComponent extends EntityComponent,
 		if (_vec.x != xLoc || _vec.y != yLoc) {
 			_vec.x = xLoc;
 			_vec.y = yLoc;
+			updateWorldAABB();
 			dispatchLocation();
 		}
 	}
 	
-	public function serialize (xml :XML) :Void
+	public function serialize (xml :Xml) :Void
 	{
 		xml.createChild("x", _vec.x);
 		xml.createChild("y", _vec.y);
 		xml.createChild("angle", _angle);
 	}
 	
-	public function deserialize (xml :XML) :Dynamic
+	public function deserialize (xml :Xml) :Dynamic
 	{
 		_vec.x = xml.parseFloat("x");
 		_vec.y = xml.parseFloat("y");
@@ -166,6 +169,8 @@ class SpatialComponent extends EntityComponent,
 		_vec.x = 0;
 		_vec.y = 0;
 		_angle = 0;
+		_worldAABB = null;
+		_objectMask = ObjectType.ALL;
 		super.onRemove();
 	}
 	
@@ -173,7 +178,9 @@ class SpatialComponent extends EntityComponent,
 	{
 		super.onReset();
 		com.pblabs.util.Assert.isTrue(name == NAME, com.pblabs.util.Log.getStackTrace());
-		spriteForPointChecks = cast owner.lookupComponent(BaseScene2DComponent);
+		#if (flash || js)
+		spriteForPointChecks = cast owner.lookupComponent(com.pblabs.components.scene.BaseScene2DComponent);
+		#end
 		dispatchAll();
 	}
 	
@@ -200,10 +207,12 @@ class SpatialComponent extends EntityComponent,
 	}
 	
 	#if debug
+	#if !neko
 	public function toString () :String
 	{
 		return "[x=" + x + ", y=" + y + ", angle=" + angle + "]";
 	}
+	#end
 	
 	override public function postDestructionCheck () :Void
 	{
@@ -229,11 +238,15 @@ class SpatialComponent extends EntityComponent,
 	{
 		if (_worldAABB != null) {
 			return _worldAABB;
-		} else if (spriteForPointChecks != null) {
+		}
+		#if (flash || js)
+		else if (spriteForPointChecks != null) {
 			return new AABB2(x - (spriteForPointChecks.width * 0.5), y - (spriteForPointChecks.height * 0.5), 
 				x + (spriteForPointChecks.width * 0.5), y + (spriteForPointChecks.height * 0.5));
-		} else {
-			// throw "Cannot get bounds without display object";
+		}
+		#end
+		else {
+			throw "No bounds or display object";
 			return new AABB2(0, 0, 1, 1);
 		}
 	}
@@ -261,14 +274,30 @@ class SpatialComponent extends EntityComponent,
 		if (_objectMask != null && mask != null && !_objectMask.and(mask)) {
 			return false;
 		}
+		
+		if (_worldAABB != null) {
+			return pos.x <= _worldAABB.xmax && pos.x >= _worldAABB.xmin && pos.y <= _worldAABB.ymax && pos.y >= _worldAABB.ymin;
+		}
 		// OK, so pass it over to the sprite.
+		#if (flash || js)
 		if(spriteForPointChecks != null) {
 			return spriteForPointChecks.containsWorldPoint(pos, mask);
 		}
+		#end
 		
-		com.pblabs.util.Assert.isNotNull(worldExtents, "No worldExtends for point checking");
-		// If no sprite then we just test our bounds.
-		var b = worldExtents;
-		return pos.x <= b.xmax && pos.x >= b.xmin && pos.y <= b.ymax && pos.y >= b.ymin;
+		throw "No AABB2";
+		
+		// com.pblabs.util.Assert.isNotNull(worldExtents, "No worldExtends for point checking");
+		// // If no sprite then we just test our bounds.
+		// var b = worldExtents;
+		// return pos.x <= b.xmax && pos.x >= b.xmin && pos.y <= b.ymax && pos.y >= b.ymin;
+	}
+	
+	inline function updateWorldAABB () :Void
+	{
+		if (_worldAABB != null) {
+			_worldAABB.centerX = _vec.x;
+			_worldAABB.centerY = _vec.y;
+		}
 	}
 }

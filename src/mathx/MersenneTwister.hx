@@ -84,8 +84,13 @@ class MersenneTwister implements RandomGenerator
 			mt[i] = Int32.xor( mt[(i+_M) % _N], Int32.ushr( y, 1 ) );
 			
 			// ^ mag01[ y & 0x1 ]
+			#if cpp
+			if( Int32.toInt( Int32.and( y, Int32.ofInt( 0x1 ) ) ) == 1 ) // y is odd
+				mt[i] = Int32.xor( mt[i], MATRIX_A );
+			#else
 			if( Int32.toNativeInt( Int32.and( y, Int32.ofInt( 0x1 ) ) ) == 1 ) // y is odd
 				mt[i] = Int32.xor( mt[i], MATRIX_A );
+			#end
 		}
 	}	
 	

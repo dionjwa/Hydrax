@@ -67,7 +67,7 @@ class ProcessManager implements IProcessManager
 	/**
 	 * Process managers can be under external control.
 	 */
-	public var isUsingInternalTimer :Bool;
+	var _isUsingInternalTimer :Bool;
 	
 	/**
 	 * If true, disables warnings about losing ticks.
@@ -126,7 +126,10 @@ class ProcessManager implements IProcessManager
 		_frameCounter = 0;
 		_duringAdvance = false;
 		_isRunning = false;
-		isUsingInternalTimer = useInternalTimer;
+		_isUsingInternalTimer = useInternalTimer;
+		#if neko
+		_isUsingInternalTimer = false;
+		#end
 	}
 	
 	public function startup():Void
@@ -168,7 +171,8 @@ class ProcessManager implements IProcessManager
 		_lastTime = -1.0;
 		_elapsed = 0;
 		
-		if (isUsingInternalTimer) {
+		#if !neko
+		if (_isUsingInternalTimer) {
 			if (_timer == null) {
 				#if flash
 				_timer = new flash.utils.Timer(untyped flash.Lib.current.stage["frameRate"]);
@@ -183,6 +187,7 @@ class ProcessManager implements IProcessManager
 			#end
 			_timer.start();
 		}
+		#end
 		
 		_isRunning = true;
 		#if flash
@@ -205,8 +210,10 @@ class ProcessManager implements IProcessManager
 		
 		com.pblabs.util.Log.info("Stopping ProcessManager");
 		
-		if (isUsingInternalTimer) {
+		if (_isUsingInternalTimer) {
+			#if !neko
 			_timer.stop();
+			#end
 			#if flash
 			_timer.removeEventListener(flash.events.TimerEvent.TIMER, onFrame);
 			#end
@@ -414,7 +421,9 @@ class ProcessManager implements IProcessManager
 			return;
 		}
 		
+		#if !neko
 		_timer.stop();
+		#end
 		
 		// Bump the frame counter.
 		_frameCounter++;
@@ -427,7 +436,10 @@ class ProcessManager implements IProcessManager
 		_lastTime = currentTime;
 		
 		// Rejigger our events so we get called back soon.
+		#if !neko
 		_timer.start();
+		#end
+		
 		#if flash
 		event.updateAfterEvent();
 		untyped flash.Lib.current.stage.invalidate();
@@ -661,8 +673,9 @@ class ProcessManager implements IProcessManager
 		return val;
 	}
 	
-	
+	#if !neko
 	var _timer :#if flash flash.utils.Timer; #else com.pblabs.engine.time.Timer; #end
+	#end
 	var _virtualTime :Int;
 	var _platformTime :Int;
 	var _timeScale :Float;

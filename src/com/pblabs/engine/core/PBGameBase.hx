@@ -47,7 +47,6 @@ typedef PBContextFriend = {
   */
 class PBGameBase
 {
-	
 	public var currentContext (get_currentContext, null) :IPBContext;
 	var _currentContext :IPBContext;
 	public var newActiveContextSignaler (default, null) :Signaler<IPBContext>;

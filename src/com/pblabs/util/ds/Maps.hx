@@ -58,19 +58,19 @@ class Maps
 		}
 		
 		if (classname == "Class") {
-			#if (js || php)
+			#if (js || php || neko)
 			return new StringMap<K, V>();
 			#else
 			return new HashMap<K, V>();
 			#end
 		}
-		else if (classname == "TInt") {
+		else if (classname == "TInt" || classname == "Int") {
 			return new IntHashMap<K, V>();
 		}
 		else if (classname == "String") {
 			return new HashMap<K, V>();
 		} 
-		else if (classname == "TFloat") {
+		else if (classname == "TFloat" || classname == "Float") {
 			//TODO: Hmm, is this a good idea?  Can dictionaries store floats correctly across all platforms.
 			return new StringMap<K, V>();
 		} else {
@@ -107,11 +107,3 @@ class Maps
 		}
 	}
 }
-
-// class StringMap<K, V> extends TransformKeyMap<K, String, V>
-// {
-// 	public function new ()
-// 	{
-// 		super(Std.string, new HashMap<String, V>()); 
-// 	}
-// }

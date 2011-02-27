@@ -19,8 +19,6 @@ import com.pblabs.util.Preconditions;
 
 import de.polygonal.motor2.geom.math.XY;
 
-import flash.display.Scene;
-
 using com.pblabs.components.scene.SceneUtil;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;

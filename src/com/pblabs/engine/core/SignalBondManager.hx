@@ -61,7 +61,8 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	
 	public function new ()
 	{
-		super();
+		super(Int);
+		com.pblabs.util.Assert.isTrue(Std.is(_map, com.pblabs.util.ds.maps.IntHashMap), "? No IntHashMap?");
 	}
 
 	public function bind <T>(component :EntityComponent, signaler :Signaler<T>, listener :T->Dynamic) :Void

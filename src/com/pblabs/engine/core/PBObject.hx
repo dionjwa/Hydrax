@@ -112,8 +112,7 @@ class PBObject
 		_context.unregister(this);
 		
 		// Remove from our owning group.
-		if(_owningGroup != null)
-		{
+		if(_owningGroup != null) {
 			_owningGroup.removeFromGroup(this);
 			_owningGroup = null;				
 		}

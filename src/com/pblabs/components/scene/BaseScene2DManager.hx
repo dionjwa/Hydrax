@@ -12,6 +12,7 @@ import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene.BaseScene2DLayer;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.SceneView;
+import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.time.IAnimatedObject;
@@ -176,6 +177,12 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 		children.remove(layer);
 		children.insert(index, layer);
 	}
+	
+	public function setLocation (loc :XY) :Void
+	{
+	    set_x(loc.x);
+	    set_y(loc.y);
+	}
 
 	override function childAdded (c :Layer) :Void
 	{
@@ -213,8 +220,10 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 	{
 		// Check for SceneManagerList, add and register if there is none.
 		if (context.getManager(SceneManagerList) == null) {
-			var scenelist = com.pblabs.engine.util.PBUtil.addSingletonComponent(context, SceneManagerList, SceneManagerList.NAME);
-			context.registerManager(com.pblabs.components.scene.SceneManagerList, scenelist, com.pblabs.components.scene.SceneManagerList.NAME, true);
+			var scenelist = com.pblabs.engine.util.PBUtil.addSingletonComponent(context, SceneManagerList, 
+				SceneManagerList.NAME + ":" + context.name);
+			context.registerManager(SceneManagerList, scenelist, null, true);
+			com.pblabs.util.Assert.isNotNull(context.getManager(SceneManagerList), "No SceneManagerList after adding one???");
 		}
 		
 		parentProperty = context.getManager(com.pblabs.components.scene.SceneManagerList).entityProp(); 
@@ -226,7 +235,13 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 	override function onReset () :Void
 	{
 		super.onReset();
-		bindVoidSignal(cast(context, PBContext).signalEnter, update);
+		var spatial = owner.lookupComponent(SpatialComponent);
+		if (spatial != null) {
+			bindSignal(spatial.signalerLocation, setLocation);
+		} else {
+			com.pblabs.util.Log.warn("SceneManager " + owner.name + " does not have a SpatialComponent");
+		}
+		// bindVoidSignal(cast(context, PBContext).signalEnter, update);
 	}
 
 	override function onRemove () :Void

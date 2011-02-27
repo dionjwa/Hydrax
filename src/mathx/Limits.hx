@@ -64,7 +64,11 @@ class Limits
 	
 	static public inline function wrapPosInt32( a : Int32 ) : Int
 	{
+		#if cpp
+		return Int32.toInt( a );
+		#else
 		return Int32.toNativeInt( a );
+		#end
 	}
 #end
 }

@@ -38,7 +38,7 @@ class SceneView
 	public var height(get_height, set_height) : Float;
 	public var width(get_width, set_width) : Float;
 
-	#if (flash || cpp)	
+	#if flash	
 	public var layer (get_layer, null) :flash.display.Sprite;
 	var _layer :flash.display.Sprite;
 	#elseif js
@@ -142,7 +142,7 @@ class SceneView
 		return value;
 	}
 
-	#if (flash || cpp)
+	#if flash
 	function get_layer() :flash.display.Sprite
 	{
 		return _layer;
