@@ -4,7 +4,6 @@
  * </license> 
  */
 package mathx;import haxe.Int32;
-
 class Limits
 {
 	public static inline var int32Min = Int32.make( 0x8000, 0x0000 );

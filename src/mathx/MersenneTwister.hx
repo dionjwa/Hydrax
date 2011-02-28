@@ -4,7 +4,6 @@
  * </license> 
  */
 package mathx;import haxe.Int32;
-
 /**
  * Based on the MT19937 as described at:
  * 	http://en.wikipedia.org/wiki/Mersenne_twister

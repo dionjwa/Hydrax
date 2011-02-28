@@ -3,8 +3,7 @@
  * For full copyright and license information please refer to doc/license.txt.
  * </license> 
  */
-package mathx;interface RandomGenerator
-{
+package mathx;interface RandomGenerator{
 	public function nextBool() :Bool;
 	
 	/**
