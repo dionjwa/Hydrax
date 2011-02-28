@@ -3,9 +3,7 @@
  * For full copyright and license information please refer to doc/license.txt.
  * </license> 
  */
-package mathx;
-
-import haxe.Int32;
+package mathx;import haxe.Int32;
 
 class Limits
 {

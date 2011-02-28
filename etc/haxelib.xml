@@ -1,0 +1,16 @@
+<project name="hydrax" url="https://github.com/dionjwa/Hydrax" license="BSD">
+        <user name="dionjwa"/>
+        <description>A port of the Pushbutton Engine (a game engine).</description>
+        <version name="1.0">Initial release. All demos working</version>
+        <depends name="polygonal"/>
+        <depends name="feffects"/>
+        <depends name="ArrayTools"/>
+        <depends name="IterTools"/>
+        <depends name="ListTools"/>
+        <tag v="flash"/>
+        <tag v="canvas"/>
+        <tag v="html5"/>
+        <tag v="js"/>
+        <tag v="pbe"/>
+        <tag v="game engine"/>
+</project>

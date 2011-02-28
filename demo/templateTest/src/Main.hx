@@ -1,6 +1,5 @@
 package;
 
-import com.pblabs.components.base.LocationComponent;
 import com.pblabs.engine.core.Entity;
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntity;
