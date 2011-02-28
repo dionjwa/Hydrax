@@ -239,9 +239,8 @@ class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 		if (spatial != null) {
 			bindSignal(spatial.signalerLocation, setLocation);
 		} else {
-			com.pblabs.util.Log.warn("SceneManager " + owner.name + " does not have a SpatialComponent");
+			com.pblabs.util.Log.warn("SceneManager " + owner.name + " does not have a SpatialComponent. This mean no panning the Scene");
 		}
-		// bindVoidSignal(cast(context, PBContext).signalEnter, update);
 	}
 
 	override function onRemove () :Void

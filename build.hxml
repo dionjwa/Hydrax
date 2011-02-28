@@ -1,13 +1,8 @@
 #Builds the flash swc
--lib polygonal
--lib feffects
--lib ArrayTools
--lib IterTools
--lib ListTools
--lib xmltest:0.0.15
+-lib hydrax
 
--cp lib/hsl-pico
--cp lib/hsl
+# -cp lib/hsl-pico
+# -cp lib/hsl
 -cp src
 
 -swf9 build/hydrax.swc

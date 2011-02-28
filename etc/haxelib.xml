@@ -2,7 +2,6 @@
         <user name="dionjwa"/>
         <description>A port of the Pushbutton Engine (a game engine).</description>
         <version name="1.0">Initial release. All demos working</version>
-        <depends name="polygonal"/>
         <depends name="feffects"/>
         <depends name="ArrayTools"/>
         <depends name="IterTools"/>
