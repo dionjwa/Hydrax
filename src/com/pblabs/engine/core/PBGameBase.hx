@@ -12,18 +12,10 @@
  ******************************************************************************/
 package com.pblabs.engine.core;
 
-import com.pblabs.engine.core.IPBContext;
-import com.pblabs.engine.core.IPBGroup;
-import com.pblabs.engine.core.IPBManager;
-import com.pblabs.engine.core.NameManager;
-import com.pblabs.engine.core.PBContext;
-import com.pblabs.engine.core.PBGroup;
 import com.pblabs.engine.injection.Injector;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ProcessManager;
 import com.pblabs.engine.util.PBUtil;
-import com.pblabs.util.Preconditions;
-import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
@@ -34,13 +26,6 @@ using Lambda;
 
 using com.pblabs.util.ArrayUtil;
 
-typedef PBContextFriend = {
-	function setupInternal () :Void;
-	function shutdownInternal () :Void;
-	function enter () :Void;
-	function exit () :Void;
-}
-
 /**
   * The base game manager.
   * This class inits all the managers, and managers the IPBContexts.
@@ -49,6 +34,11 @@ class PBGameBase
 {
 	public var currentContext (get_currentContext, null) :IPBContext;
 	var _currentContext :IPBContext;
+	function get_currentContext() :IPBContext
+	{
+		return _currentContext;
+	}
+	
 	public var newActiveContextSignaler (default, null) :Signaler<IPBContext>;
 	var injector :Injector;
 
@@ -61,8 +51,11 @@ class PBGameBase
 	{
 		_contextTransitions = [];
 		_isUpdatingContextTransition = false;
+		
+		#if profiler
 		//Start profiling.  This is disabled if the "profiler" compiler key command is not set
 		com.pblabs.engine.debug.Profiler.bindToKey();
+		#end
 	}
 	
 	public function startup () :Void
@@ -73,7 +66,6 @@ class PBGameBase
 
 		injector = createInjector();
 		_contexts = new Array();
-		// _contextsDirty = false;
 		initializeManagers();
 	}
 	
@@ -266,47 +258,6 @@ class PBGameBase
 			_currentContext.enter();
 			_currentContext.getManager(IProcessManager).isRunning = true;
 		}
-		
-		
-		
-		// Preconditions.checkNotNull(ctx, "Cannot add a null context");
-		// Preconditions.checkArgument(!_contexts.has(ctx), "Context already added");
-		// Preconditions.checkArgument(!Std.is(ctx, PBContext) || cast(ctx, PBContext).injector.parent == injector, "PBContext injector has no parent.  Use allocate() to create the PBContext, not new PBContext");
-		// stopContexts();
-		// _contexts.push(ctx);
-		// ctx.getManager(IProcessManager).isRunning = true;
-		// startTopContext();
-	}
-	
-	
-	// function stopContexts () :Void
-	// {
-	// 	for (c in _contexts) {
-	// 		c.getManager(IProcessManager).isRunning = false;
-	// 	}
-	// 	if (_contexts.length > 0) {
-	// 		_contexts[_contexts.length].exit();
-	// 	}
-	// }
-	
-	// function startTopContext () :Void
-	// {
-	// 	if (currentContext != null) {
-	// 		#if debug
-	// 		com.pblabs.util.Assert.isNotNull(currentContext, "How is the top context null?");
-	// 		com.pblabs.util.Assert.isNotNull(currentContext.getManager(IProcessManager), "Where is the IProcessManager?");
-	// 		#end
-	// 		cast(currentContext.getManager(IProcessManager), ProcessManager).isRunning = true;
-	// 		//Dispatch the signaller first, so that managers are notified.
-	// 		newActiveContextSignaler.dispatch(currentContext);
-	// 		currentContext.enter();
-	// 	} 
-	// }
-	
-	function get_currentContext() :IPBContext
-	{
-		return _currentContext;
-		// return _contexts[_contexts.length - 1];
 	}
 	
 	function createInjector () :Injector
