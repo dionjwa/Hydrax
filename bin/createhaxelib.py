@@ -25,18 +25,20 @@ for f in os.listdir(src):
 		shutil.copytree(srcfolder, os.path.join(haxelibroot, f), ignore=shutil.ignore_patterns(".DS_Store", ".git", ".svn", "*.xml"))
 	
 #Copy the modified signaling code
-lib = os.path.join(hydraxroot, "lib")
-hsl = os.path.join(lib, "hsl")
-hslpico = os.path.join(lib, "hsl-pico")
-# print "cp -rRL " + hsl + "/* " + haxelibroot
-command = "rsync -r --exclude=*.svn " + hsl + "/ " + haxelibroot
+lib = os.path.join(hydraxroot, "..", "hxhsl")
+hsl = os.path.join(lib, "hsl source")
+hslpico = os.path.join(lib, "hsl-pico source")
+command = "rsync -r --exclude=*.svn --exclude=*.xml '" + hsl + "/' " + haxelibroot
 os.system(command)
-command = "rsync -r --exclude=*.svn " + hslpico + "/ " + haxelibroot
+command = "rsync -r --exclude=*.svn --exclude=*.xml  '" + hslpico + "/' " + haxelibroot
 os.system(command)
-# shutil.copytree(hsl, os.path.join(haxelibroot, "hsl"), ignore=shutil.ignore_patterns(".DS_Store", ".git", ".svn", "*.xml"))
 
 #Copy the haxelib.xml file
 etc = os.path.join(hydraxroot, "etc")
 shutil.copy(os.path.join(etc, "haxelib.xml"), haxelibroot)
+
+#Go to the folder
+os.chdir(tmp)
+os.system("zip -r hydrax.zip hydrax")
 	
 

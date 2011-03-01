@@ -1,11 +1,8 @@
 #Builds the flash swc
 -lib hydrax
-
-# -cp lib/hsl-pico
-# -cp lib/hsl
 -cp src
 
--swf9 build/hydrax.swc
+-swf10 build/hydrax.swc
 -swf-version 10
 -D network-sandbox
 -main AllClasses

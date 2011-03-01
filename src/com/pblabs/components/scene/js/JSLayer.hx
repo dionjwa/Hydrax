@@ -7,10 +7,10 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.scene.js;
-import com.pblabs.components.scene.BaseScene2DComponent;
+import com.pblabs.components.scene.BaseSceneComponent;
 import com.pblabs.components.scene.BaseScene2DLayer;
 
-class JSLayer <Scene :JSSceneManager<Dynamic>, Component :BaseScene2DComponent<Dynamic>> extends BaseScene2DLayer<Scene, Component>
+class JSLayer <Scene :JSSceneManager<Dynamic>, Component :BaseSceneComponent<Dynamic>> extends BaseScene2DLayer<Scene, Component>
 {
 	public var div (default, null) :js.Dom.HtmlDom;
 	

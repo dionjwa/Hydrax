@@ -26,7 +26,7 @@ using com.pblabs.engine.util.PBUtil;
 using com.pblabs.geom.VectorTools;
 using com.pblabs.util.StringUtil;
 
-class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends NodeComponent<Layer, Dynamic>,
+class BaseSceneComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends NodeComponent<Layer, Dynamic>,
 		implements IInteractiveComponent, implements haxe.rtti.Infos
 {
 	public var objectMask (get_objectMask, set_objectMask) :ObjectType;
@@ -116,7 +116,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 		if (!objectMask.and(mask)) {
 			return false;
 		}
-		var scene :BaseScene2DManager<Dynamic> = cast parent.scene;
+		var scene :BaseSceneManager<Dynamic> = cast parent.scene;
 		com.pblabs.util.Assert.isNotNull(scene);
 		return containsWorldPoint(scene.translateScreenToWorld(pos), mask);
 	}

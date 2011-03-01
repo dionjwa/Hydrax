@@ -32,8 +32,8 @@ using com.pblabs.util.StringUtil;
 /**
   * Layers are arranged: smaller index is behind.
   */
-@sets("Scene2DManager")
-class BaseScene2DManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends NodeComponent<SceneManagerList, Layer>,
+@sets("SceneManager")
+class BaseSceneManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends NodeComponent<SceneManagerList, Layer>,
 	implements haxe.rtti.Infos, implements IScene2D
 {
 	@inject

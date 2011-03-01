@@ -2,7 +2,7 @@ package com.pblabs.components.ui;
 
 import com.pblabs.components.input.MouseInputComponent;
 import com.pblabs.components.scene.BaseScene2DLayer;
-import com.pblabs.components.scene.BaseScene2DManager;
+import com.pblabs.components.scene.BaseSceneManager;
 import com.pblabs.components.scene.CircleShape;
 import com.pblabs.components.scene.ImageComponent;
 import com.pblabs.components.scene.SVGComponent;
@@ -81,7 +81,7 @@ class UIUtil
     }
     
     /** We can add more args here when the UI bits become more sophisticated */
-    public static function createZoomWidget (layer :BaseScene2DLayer<Dynamic, Dynamic>, target :BaseScene2DManager<Dynamic>, loc :Vector2, ?size :Float = 200) :Void
+    public static function createZoomWidget (layer :BaseScene2DLayer<Dynamic, Dynamic>, target :BaseSceneManager<Dynamic>, loc :Vector2, ?size :Float = 200) :Void
     {
         Preconditions.checkNotNull(layer);
         Preconditions.checkNotNull(target);
@@ -110,7 +110,7 @@ class UIUtil
     }
     
     /** We can add more args here when the UI bits become more sophisticated */
-    public static function createRotateWidget (layer :BaseScene2DLayer<Dynamic, Dynamic>, target :BaseScene2DManager<Dynamic>, loc :Vector2, ?size :Float = 200) :Void
+    public static function createRotateWidget (layer :BaseScene2DLayer<Dynamic, Dynamic>, target :BaseSceneManager<Dynamic>, loc :Vector2, ?size :Float = 200) :Void
     {
         Preconditions.checkNotNull(layer);
         Preconditions.checkNotNull(target);
@@ -137,7 +137,7 @@ class UIUtil
         mouse.isRotatable = mouse.isScalable = mouse.isTranslatable = false;
     }
     
-    public static function createScrollWidget (layer :BaseScene2DLayer<Dynamic, Dynamic>, target :BaseScene2DManager<Dynamic>, loc :Vector2, ?size :Float = 200) :Void
+    public static function createScrollWidget (layer :BaseScene2DLayer<Dynamic, Dynamic>, target :BaseSceneManager<Dynamic>, loc :Vector2, ?size :Float = 200) :Void
     {
         Preconditions.checkNotNull(layer);
         Preconditions.checkNotNull(target);

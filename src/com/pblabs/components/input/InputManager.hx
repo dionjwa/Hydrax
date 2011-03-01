@@ -8,9 +8,9 @@
  ******************************************************************************/
 package com.pblabs.components.input;
 
-import com.pblabs.components.scene.BaseScene2DComponent;
+import com.pblabs.components.scene.BaseSceneComponent;
 import com.pblabs.components.scene.BaseScene2DLayer;
-import com.pblabs.components.scene.BaseScene2DManager;
+import com.pblabs.components.scene.BaseSceneManager;
 import com.pblabs.components.scene.SceneManagerList;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
@@ -80,9 +80,9 @@ class InputManager extends BaseInputManager,
     var _game :PBGameBase;
 	
 	//Variables to make queries more efficient
-	var _sceneManagers :Array<BaseScene2DManager<Dynamic>>;
-	var _displayObjectsUnderPoint :Map<Int, Array<BaseScene2DComponent<Dynamic>>>;
-	var _displayObjectFirstUnderPoint :Map<Int, BaseScene2DComponent<Dynamic>>;
+	var _sceneManagers :Array<BaseSceneManager<Dynamic>>;
+	var _displayObjectsUnderPoint :Map<Int, Array<BaseSceneComponent<Dynamic>>>;
+	var _displayObjectFirstUnderPoint :Map<Int, BaseSceneComponent<Dynamic>>;
 
 	
 	// var _components :Array<MouseInputComponent>;
@@ -185,7 +185,7 @@ class InputManager extends BaseInputManager,
 		clearInputDataCache();
 	}
 	
-	function getSceneManagers () :Array<BaseScene2DManager<Dynamic>>
+	function getSceneManagers () :Array<BaseSceneManager<Dynamic>>
 	{
 		if (_sceneManagers == null) {
 			com.pblabs.util.Assert.isNotNull(_game);
@@ -396,7 +396,7 @@ class InputManager extends BaseInputManager,
 	}
 	
 	/** Methods from IInputData */
-	public function allObjectsUnderPoint (?mask :ObjectType) :Array<BaseScene2DComponent<Dynamic>>
+	public function allObjectsUnderPoint (?mask :ObjectType) :Array<BaseSceneComponent<Dynamic>>
 	{
 		mask = mask == null ? ObjectType.ALL : mask;
 		
@@ -404,7 +404,7 @@ class InputManager extends BaseInputManager,
 			return _displayObjectsUnderPoint.get(mask.hashCode());
 		}
 		
-		var underPoint = new Array<BaseScene2DComponent<Dynamic>>();
+		var underPoint = new Array<BaseSceneComponent<Dynamic>>();
 		if (getSceneManagers() == null) {
 			return underPoint;
 		}
@@ -420,7 +420,7 @@ class InputManager extends BaseInputManager,
 				}
 				var childIndex = layer.children.length -1;
 				while (childIndex >= 0) {
-					var so :BaseScene2DComponent<Dynamic> = layer.children[childIndex];
+					var so :BaseSceneComponent<Dynamic> = layer.children[childIndex];
 					childIndex--;
 					if (so.containsScreenPoint(inputLocation, mask)) {
 						underPoint.push(so);
@@ -433,7 +433,7 @@ class InputManager extends BaseInputManager,
 		return underPoint;
 	}
 	
-	public function firstObjectUnderPoint (?mask :ObjectType) :BaseScene2DComponent<Dynamic>
+	public function firstObjectUnderPoint (?mask :ObjectType) :BaseSceneComponent<Dynamic>
 	{
 		mask = mask == null ? ObjectType.ALL : mask;
 		
@@ -457,7 +457,7 @@ class InputManager extends BaseInputManager,
 				}
 				var childIndex = layer.children.length -1;
 				while (childIndex >= 0) {
-					var so :BaseScene2DComponent<Dynamic> = layer.children[childIndex];
+					var so :BaseSceneComponent<Dynamic> = layer.children[childIndex];
 					childIndex--;
 					if (so.containsScreenPoint(inputLocation, mask)) {
 						_displayObjectFirstUnderPoint.set(mask.hashCode(), so);

@@ -18,9 +18,9 @@ using com.pblabs.components.scene.SceneUtil;
   */
 class SVGComponent 
 #if js
-extends com.pblabs.components.scene.js.css.Base2DComponent
+extends com.pblabs.components.scene.js.css.SceneComponent
 #elseif (flash || cpp)
-extends com.pblabs.components.scene.flash.Scene2DComponent 
+extends com.pblabs.components.scene.flash.SceneComponent 
 #end
 {
     /** The IResource name and item id */

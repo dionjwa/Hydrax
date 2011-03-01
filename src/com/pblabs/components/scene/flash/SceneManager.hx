@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.components.scene.flash;
 
-import com.pblabs.components.scene.BaseScene2DManager;
+import com.pblabs.components.scene.BaseSceneManager;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.SceneView;
 import com.pblabs.components.scene.flash.SceneLayer;
@@ -32,7 +32,7 @@ using de.polygonal.gl.DisplayListIterator;
  * DisplayObjectRenderers, and makes sure that they are drawn. Extensible
  * for more complex rendering scenarios. Enforces sorting order, too.
  */
-class Scene2DManager extends BaseScene2DManager<SceneLayer>, 
+class SceneManager extends BaseSceneManager<SceneLayer>, 
 	implements IAnimatedObject
 {
 	

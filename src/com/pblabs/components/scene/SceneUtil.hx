@@ -33,13 +33,13 @@ enum SceneAlignment {
 class SceneUtil
 {
 	public static var DEFAULT_LAYER_NAME :String = "defaultLayer";
-	public static var MANAGER_CLASS :Class<BaseScene2DManager<Dynamic>> = 
+	public static var MANAGER_CLASS :Class<BaseSceneManager<Dynamic>> = 
 		#if (flash || cpp)
-		com.pblabs.components.scene.flash.Scene2DManager;
+		com.pblabs.components.scene.flash.SceneManager;
 		#elseif css
 		com.pblabs.components.scene.js.css.SceneManager;
 		#elseif js
-		com.pblabs.components.scene.js.canvas.CanvasScene2D;
+		com.pblabs.components.scene.js.canvas.SceneManager;
 		#else
 		null;
 		#end
@@ -51,13 +51,13 @@ class SceneUtil
 		#elseif css
 		com.pblabs.components.scene.js.css.SceneLayer;
 		#elseif js
-		com.pblabs.components.scene.js.canvas.CanvasLayer;
+		com.pblabs.components.scene.js.canvas.SceneLayer;
 		#else
 		null;
 		#end
 
 		
-	public static function createBaseScene (context :IPBContext, ?name :String = null, ?addDefaultLayer :Bool = false) :BaseScene2DManager<Dynamic>
+	public static function createBaseScene (context :IPBContext, ?name :String = null, ?addDefaultLayer :Bool = false) :BaseSceneManager<Dynamic>
 	{
 		com.pblabs.util.Assert.isNotNull(context);
 		
@@ -105,14 +105,14 @@ class SceneUtil
 	
 	public static function getWidth (e :IEntity) :Float
 	{
-	    // com.pblabs.util.Assert.isNotNull(e.lookupComponentByType(BaseScene2DComponent));
+	    // com.pblabs.util.Assert.isNotNull(e.lookupComponentByType(BaseSceneComponent));
 	    return e.lookupComponentByType(SpatialComponent).worldExtents.intervalX;
 	}
 	
 	public static function getHeight (e :IEntity) :Float
 	{
-	    // com.pblabs.util.Assert.isNotNull(e.lookupComponentByType(BaseScene2DComponent));
-	    // return e.lookupComponentByType(BaseScene2DComponent).height;
+	    // com.pblabs.util.Assert.isNotNull(e.lookupComponentByType(BaseSceneComponent));
+	    // return e.lookupComponentByType(BaseSceneComponent).height;
 	    return e.lookupComponentByType(SpatialComponent).worldExtents.intervalY;
 	}
 	
@@ -146,7 +146,7 @@ class SceneUtil
 		return outPoint;
 	}
 	
-	public static function getAlignedPoint (scene :BaseScene2DManager<Dynamic>, borderAlignment :SceneAlignment) :XY
+	public static function getAlignedPoint (scene :BaseSceneManager<Dynamic>, borderAlignment :SceneAlignment) :XY
 	{
 		var alignment = scene.sceneAlignment;
 		var sceneWidth = scene.sceneView.width;
@@ -199,7 +199,7 @@ class SceneUtil
 		return borderPoint;
 	}
 	
-	public static function translateScreenToWorld (sceneManager :BaseScene2DManager<Dynamic>, screen :XY) :XY
+	public static function translateScreenToWorld (sceneManager :BaseSceneManager<Dynamic>, screen :XY) :XY
 	{
 		var viewOffset = new Vector2();
 		calculateOutPoint(viewOffset, sceneManager.sceneAlignment, sceneManager.sceneView.width, sceneManager.sceneView.height);
@@ -207,7 +207,7 @@ class SceneUtil
 		return p;
 	}
 	
-	public static function translateWorldToScreen (sceneManager :BaseScene2DManager<Dynamic>, world :XY) :XY
+	public static function translateWorldToScreen (sceneManager :BaseSceneManager<Dynamic>, world :XY) :XY
 	{
 		var viewOffset = new Vector2();
 		calculateOutPoint(viewOffset, sceneManager.sceneAlignment, sceneManager.sceneView.width, sceneManager.sceneView.height);
@@ -215,11 +215,11 @@ class SceneUtil
 		return p;
 	}
 	
-	public static function getDisplayComponentUnderPoint (scene :BaseScene2DManager<Dynamic>, screenPoint :XY, mask :ObjectType) :BaseScene2DComponent<Dynamic>
+	public static function getDisplayComponentUnderPoint (scene :BaseSceneManager<Dynamic>, screenPoint :XY, mask :ObjectType) :BaseSceneComponent<Dynamic>
 	{
 		var layerIndex :Int = scene.layerCount - 1;
 		while (layerIndex >= 0) {
-			var layer :BaseScene2DLayer<Dynamic, BaseScene2DComponent<Dynamic>> = scene.getLayerAt(layerIndex);
+			var layer :BaseScene2DLayer<Dynamic, BaseSceneComponent<Dynamic>> = scene.getLayerAt(layerIndex);
 			layerIndex--;
 			#if !editor
 			if (layer.ignoreInput) {

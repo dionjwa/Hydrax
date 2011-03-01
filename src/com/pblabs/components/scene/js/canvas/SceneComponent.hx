@@ -9,9 +9,9 @@
 package com.pblabs.components.scene.js.canvas;
 
 import com.pblabs.components.manager.NodeComponent;
-import com.pblabs.components.scene.BaseScene2DComponent;
-import com.pblabs.components.scene.js.canvas.CanvasLayer;
-import com.pblabs.components.scene.js.canvas.CanvasScene2D;
+import com.pblabs.components.scene.BaseSceneComponent;
+import com.pblabs.components.scene.js.canvas.SceneLayer;
+import com.pblabs.components.scene.js.canvas.SceneManager;
 import com.pblabs.engine.util.PBUtil;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Assert;
@@ -23,7 +23,7 @@ import easel.display.Context2d;
 typedef Matrix = Array<Float>;
 typedef Rect = Array<Float>;
 
-class Canvas2DComponent extends BaseScene2DComponent<CanvasLayer>
+class SceneComponent extends BaseSceneComponent<SceneLayer>
 {
 	// public var sprite :Sprite;
 	
@@ -83,7 +83,7 @@ class Canvas2DComponent extends BaseScene2DComponent<CanvasLayer>
 	{
 		super.onRemove();
 		if (layer != null) {
-			cast(layer, CanvasLayer).isTransformDirty = true;
+			cast(layer, SceneLayer).isTransformDirty = true;
 		}
 	}
 	
@@ -91,7 +91,7 @@ class Canvas2DComponent extends BaseScene2DComponent<CanvasLayer>
 	override function set_isTransformDirty (val :Bool) :Bool
 	{
 		if (val && layer != null) {
-			cast(layer, CanvasLayer).isTransformDirty = true;
+			cast(layer, SceneLayer).isTransformDirty = true;
 		}
 		return super.set_isTransformDirty(val);
 	}

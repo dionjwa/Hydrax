@@ -1,6 +1,6 @@
 package ;
 
-import com.pblabs.components.scene.BaseScene2DComponent;
+import com.pblabs.components.scene.BaseSceneComponent;
 import com.pblabs.components.scene.BaseScene2DLayer;
 import com.pblabs.components.scene.ImageComponent;
 import com.pblabs.components.scene.RectangleShape;
@@ -75,7 +75,7 @@ class Demo #if flash extends flash.display.Sprite #end
 		var parallel = new ParallelTask();
 		var time = Math.random() * 5;
 		time = Math.max(time, 2);
-		var sceneComp = e.lookupComponent(BaseScene2DComponent);
+		var sceneComp = e.lookupComponent(BaseSceneComponent);
 		com.pblabs.util.Assert.isNotNull(sceneComp);
 		
 		var minX = sceneComp.layer.scene.getAlignedPoint(SceneAlignment.TOP_LEFT).x;

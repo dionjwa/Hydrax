@@ -10,10 +10,10 @@ package com.pblabs.components.scene;
 import com.pblabs.engine.core.IEntityComponent;
 
 /**
-  * This is a marker interface, used for getting the Scene2DManager
+  * This is a marker interface, used for getting the SceneManager
   * without knowing the implementation.
   *
-  * This interface doesn't need any methods as the Scene2DComponent
+  * This interface doesn't need any methods as the SceneComponent
   * implemetations are typed.
   *
   * It extends IEntityComponent so the PropertyReference can be 

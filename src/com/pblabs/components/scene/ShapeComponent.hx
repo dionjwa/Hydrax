@@ -9,12 +9,12 @@
 package com.pblabs.components.scene;
 class ShapeComponent
 #if flash
- extends com.pblabs.components.scene.flash.Scene2DComponent
+ extends com.pblabs.components.scene.flash.SceneComponent
 #elseif js
     #if css
- extends com.pblabs.components.scene.js.css.Base2DComponent
+ extends com.pblabs.components.scene.js.css.SceneComponent
     #else
- extends com.pblabs.components.scene.js.canvas.Canvas2DComponent   
+ extends com.pblabs.components.scene.js.canvas.SceneComponent   
     #end
 #end
 {

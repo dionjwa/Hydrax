@@ -27,11 +27,11 @@ using com.pblabs.components.scene.SceneUtil;
   */
 class ImageComponent 
 #if css
-extends com.pblabs.components.scene.js.css.Base2DComponent
+extends com.pblabs.components.scene.js.css.SceneComponent
 #elseif js
-extends com.pblabs.components.scene.js.canvas.Canvas2DComponent
+extends com.pblabs.components.scene.js.canvas.SceneComponent
 #elseif (flash || cpp)
-extends com.pblabs.components.scene.flash.Scene2DComponent  
+extends com.pblabs.components.scene.flash.SceneComponent  
 #end
  {
 	/** The IResource name and item id.  Id can be null */

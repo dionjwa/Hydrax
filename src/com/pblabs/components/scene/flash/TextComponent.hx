@@ -9,7 +9,7 @@
 package com.pblabs.components.scene.flash;
 import flash.text.TextField;
 
-class TextComponent extends Scene2DComponent
+class TextComponent extends SceneComponent
 {
 	public var text (get_text, set_text) :String;
 	var _text :TextField;

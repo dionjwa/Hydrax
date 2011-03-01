@@ -17,7 +17,7 @@ import js.Dom;
 using com.pblabs.components.scene.SceneUtil;
 using com.pblabs.geom.CircleUtil;
 
-class ImageComponent extends Base2DComponent
+class ImageComponent extends SceneComponent
 {
     public var resourceKey  :Tuple<String, String>;
     public var image (default, null) :Image;

@@ -16,7 +16,7 @@ import js.Dom;
 
 import js.Lib;
 
-class SceneLayer extends JSLayer<SceneManager, Base2DComponent>
+class SceneLayer extends JSLayer<SceneManager, SceneComponent>
 {
     public var xOffset (get_xOffset, never) :Float;
     public var yOffset (get_yOffset, never) :Float;

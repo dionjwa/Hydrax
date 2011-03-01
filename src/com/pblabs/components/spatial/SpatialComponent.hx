@@ -71,7 +71,7 @@ class SpatialComponent extends EntityComponent,
 	 * tests.
 	 */
 	#if (flash || js)
-	public var spriteForPointChecks :com.pblabs.components.scene.BaseScene2DComponent<com.pblabs.components.scene.BaseScene2DLayer<Dynamic, Dynamic>>;
+	public var spriteForPointChecks :com.pblabs.components.scene.BaseSceneComponent<com.pblabs.components.scene.BaseScene2DLayer<Dynamic, Dynamic>>;
 	#end
 	var _objectMask :ObjectType;
 	var _vec :XY;
@@ -190,7 +190,7 @@ class SpatialComponent extends EntityComponent,
 		super.onReset();
 		com.pblabs.util.Assert.isTrue(name == NAME, com.pblabs.util.Log.getStackTrace());
 		#if (flash || js)
-		spriteForPointChecks = cast owner.lookupComponent(com.pblabs.components.scene.BaseScene2DComponent);
+		spriteForPointChecks = cast owner.lookupComponent(com.pblabs.components.scene.BaseSceneComponent);
 		#end
 		dispatchAll();
 	}

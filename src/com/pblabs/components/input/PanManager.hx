@@ -2,8 +2,8 @@ package com.pblabs.components.input;
 
 import com.pblabs.components.Constants;
 import com.pblabs.components.input.InputManager;
-import com.pblabs.components.scene.BaseScene2DComponent;
-import com.pblabs.components.scene.BaseScene2DManager;
+import com.pblabs.components.scene.BaseSceneComponent;
+import com.pblabs.components.scene.BaseSceneManager;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.components.tasks.AnimatePropertyTask;
@@ -47,7 +47,7 @@ typedef Translatable = {
 class PanManager extends EntityComponent, 
 	implements IPBManager, implements haxe.rtti.Infos
 {
-	public var dragSignaler :Signaler<BaseScene2DComponent<Dynamic>>;
+	public var dragSignaler :Signaler<BaseSceneComponent<Dynamic>>;
 	
 	/** When panning stops, does the scene ease out? */
 	// public var defaultEasing (get_defaultEasing, set_defaultEasing) :Bool;
@@ -61,8 +61,8 @@ class PanManager extends EntityComponent,
 	public var timeToHalt :Float;
  
 	var isPanning (get_isPanning, set_isPanning) :Bool;
-	var _scene :BaseScene2DManager<Dynamic>;
-	var _sceneComponent :BaseScene2DComponent<Dynamic>;
+	var _scene :BaseSceneManager<Dynamic>;
+	var _sceneComponent :BaseSceneComponent<Dynamic>;
 	var _panVectors :Array<XY>;
 	var _lastMouseMove :XY;
 	var _isPanning :Bool;
@@ -117,7 +117,7 @@ class PanManager extends EntityComponent,
 		}
 	}
 	
-	public function panScene (scene :BaseScene2DManager<Dynamic>, ?easing :Bool = true, ?pauseScene :Bool = false) :Void
+	public function panScene (scene :BaseSceneManager<Dynamic>, ?easing :Bool = true, ?pauseScene :Bool = false) :Void
 	{
 		endPanning();
 		_isEasing = easing;
@@ -131,7 +131,7 @@ class PanManager extends EntityComponent,
 		beginPanning();
 	}
 	
-	public function panComponent (c :BaseScene2DComponent<Dynamic>, ?easing :Bool = false, ?pauseScene :Bool = false, 
+	public function panComponent (c :BaseSceneComponent<Dynamic>, ?easing :Bool = false, ?pauseScene :Bool = false, 
 		?xProp :PropertyReference<Float> = null, ?yProp :PropertyReference<Float> = null) :Void
 	{
 		endPanning();

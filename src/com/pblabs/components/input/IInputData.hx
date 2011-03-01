@@ -7,7 +7,7 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.input;
-import com.pblabs.components.scene.BaseScene2DComponent;
+import com.pblabs.components.scene.BaseSceneComponent;
 import com.pblabs.engine.core.ObjectType;
 
 import de.polygonal.motor2.geom.math.XY;
@@ -17,9 +17,9 @@ import de.polygonal.motor2.geom.math.XY;
   */
 interface IInputData
 {
-	function allObjectsUnderPoint (?mask :ObjectType) :Array<BaseScene2DComponent<Dynamic>>;
+	function allObjectsUnderPoint (?mask :ObjectType) :Array<BaseSceneComponent<Dynamic>>;
 	
-	function firstObjectUnderPoint (?mask :ObjectType) :BaseScene2DComponent<Dynamic>;
+	function firstObjectUnderPoint (?mask :ObjectType) :BaseSceneComponent<Dynamic>;
 	
 	var inputLocation (get_inputLocation, null) :XY;
 	

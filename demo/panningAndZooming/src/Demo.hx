@@ -5,9 +5,9 @@ import com.pblabs.components.input.InputManager;
 import com.pblabs.components.input.MouseInputComponent;
 import com.pblabs.components.input.MouseInputManager;
 import com.pblabs.components.input.PanManager;
-import com.pblabs.components.scene.BaseScene2DComponent;
+import com.pblabs.components.scene.BaseSceneComponent;
 import com.pblabs.components.scene.BaseScene2DLayer;
-import com.pblabs.components.scene.BaseScene2DManager;
+import com.pblabs.components.scene.BaseSceneManager;
 import com.pblabs.components.scene.CircleShape;
 import com.pblabs.components.scene.ImageComponent;
 import com.pblabs.components.scene.RectangleShape;
@@ -141,7 +141,7 @@ class Demo #if flash extends flash.display.Sprite #end
 	function randMove (e :IEntity, continuous :Bool) :Void 
 	{
 		var sceneView = e.context.getManager(SceneView);
-		var scene = e.lookupComponent(BaseScene2DComponent).parent.parent;
+		var scene = e.lookupComponent(BaseSceneComponent).parent.parent;
 		var serial = new SerialTask();
 		var parallel = new ParallelTask();
 		var time = Math.random() * 5;

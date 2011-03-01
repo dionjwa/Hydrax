@@ -10,7 +10,7 @@ package com.pblabs.components.scene.js.canvas;
 
 import com.pblabs.components.scene.js.JSSceneManager;
 
-class CanvasScene2D extends JSSceneManager<CanvasLayer>
+class SceneManager extends JSSceneManager<SceneLayer>
 {
 	public function new ()
 	{

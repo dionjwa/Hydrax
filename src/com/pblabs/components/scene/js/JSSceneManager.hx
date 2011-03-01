@@ -7,14 +7,14 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.scene.js;
-import com.pblabs.components.scene.BaseScene2DManager;
+import com.pblabs.components.scene.BaseSceneManager;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.util.Preconditions;
 
 using Lambda;
 
-class JSSceneManager<Layer :JSLayer<Dynamic, Dynamic>> extends BaseScene2DManager<Layer>,
+class JSSceneManager<Layer :JSLayer<Dynamic, Dynamic>> extends BaseSceneManager<Layer>,
 	implements IAnimatedObject
 {
 	public var container (get_container, null) :js.Dom.HtmlDom;

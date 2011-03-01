@@ -11,7 +11,7 @@ package com.pblabs.components.scene.js.canvas;
 import com.pblabs.components.scene.BaseScene2DLayer;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.js.JSLayer;
-import com.pblabs.components.scene.js.canvas.Canvas2DComponent;
+import com.pblabs.components.scene.js.canvas.SceneComponent;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.ReflectUtil;
@@ -19,7 +19,7 @@ import com.pblabs.util.ReflectUtil;
 import easel.display.Canvas;
 import easel.display.Context2d;
 
-class CanvasLayer extends JSLayer<CanvasScene2D, Canvas2DComponent>,
+class SceneLayer extends JSLayer<SceneManager, SceneComponent>,
 	implements IAnimatedObject
 {
 	/** Children mark this when they're modified*/
@@ -95,13 +95,13 @@ class CanvasLayer extends JSLayer<CanvasScene2D, Canvas2DComponent>,
 		ctx = null;
 	}
 	
-	override function childAdded (c :Canvas2DComponent) :Void
+	override function childAdded (c :SceneComponent) :Void
 	{
 		super.childAdded(c);
 		isDirty = true;
 	}
 	
-	override function childRemoved (c :Canvas2DComponent) :Void
+	override function childRemoved (c :SceneComponent) :Void
 	{
 		super.childRemoved(c);
 		isDirty = true;

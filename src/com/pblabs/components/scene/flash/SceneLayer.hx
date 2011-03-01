@@ -10,8 +10,8 @@ package com.pblabs.components.scene.flash;
 
 import com.pblabs.components.scene.BaseScene2DLayer;
 import com.pblabs.components.scene.SceneUtil;
-import com.pblabs.components.scene.flash.Scene2DComponent;
-import com.pblabs.components.scene.flash.Scene2DManager;
+import com.pblabs.components.scene.flash.SceneComponent;
+import com.pblabs.components.scene.flash.SceneManager;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ds.Map;
@@ -23,7 +23,7 @@ import flash.display.Sprite;
 
 import flash.geom.Matrix;
 
-class SceneLayer extends BaseScene2DLayer<Scene2DManager, Scene2DComponent>
+class SceneLayer extends BaseScene2DLayer<SceneManager, SceneComponent>
 {
 	
 	public var dirty :Bool;
@@ -38,12 +38,12 @@ class SceneLayer extends BaseScene2DLayer<Scene2DManager, Scene2DComponent>
 		_tempPoint = new Vector2();
 	}
 	
-	public function getChildIndex (c :Scene2DComponent) :Int
+	public function getChildIndex (c :SceneComponent) :Int
 	{
 	    return _displayContainer.getChildIndex(c.displayObject);
 	}
 	
-	override function childAdded (c :Scene2DComponent) :Void
+	override function childAdded (c :SceneComponent) :Void
 	{
 		super.childAdded(c);
 		// trace("c=" + c.owner.name + "." + c.name);
@@ -51,7 +51,7 @@ class SceneLayer extends BaseScene2DLayer<Scene2DManager, Scene2DComponent>
 		_displayContainer.addChild(c.displayObject);
 	}
 	
-	override function childRemoved (c :Scene2DComponent) :Void
+	override function childRemoved (c :SceneComponent) :Void
 	{
 		super.childRemoved(c);
 		_displayContainer.removeChild(c.displayObject);

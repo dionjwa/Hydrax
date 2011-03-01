@@ -7,14 +7,14 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.scene.js.css;
-import com.pblabs.components.scene.BaseScene2DComponent;
+import com.pblabs.components.scene.BaseSceneComponent;
 import com.pblabs.components.scene.BaseScene2DLayer;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.util.ReflectUtil;
 
 import js.Dom;
 
-class Base2DComponent extends BaseScene2DComponent<SceneLayer>,
+class SceneComponent extends BaseSceneComponent<SceneLayer>,
     implements IAnimatedObject
 {
     public var div (default, null) :HtmlDom;

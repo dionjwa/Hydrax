@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.components.scene.flash;
 
-import com.pblabs.components.scene.BaseScene2DComponent;
+import com.pblabs.components.scene.BaseSceneComponent;
 import com.pblabs.util.Preconditions;
 
 import flash.display.DisplayObject;
@@ -18,7 +18,7 @@ import flash.geom.Matrix;
 using com.pblabs.engine.util.PBUtil;
 using com.pblabs.util.MathUtil;
 
-class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
+class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	implements com.pblabs.engine.time.IAnimatedObject
 {
 	public var displayObject(get_displayObject, set_displayObject) :DisplayObject;

@@ -15,13 +15,13 @@ import com.pblabs.util.Preconditions;
 /**
   * A 2D layer holding 2DSceneComponents.
   */
-class BaseScene2DLayer<Scene :BaseScene2DManager<Dynamic>, Component :BaseScene2DComponent<Dynamic>> extends NodeComponent<Scene, Component>,
+class BaseScene2DLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneComponent<Dynamic>> extends NodeComponent<Scene, Component>,
 	implements haxe.rtti.Infos
 {
 	/** For ignoring all objects in a layer */
 	public var objectMask :ObjectType;
 	@editor({ui:"UpdatingLabel"})
-	public var scene (get_scene, never) :BaseScene2DManager<Dynamic>;
+	public var scene (get_scene, never) :BaseSceneManager<Dynamic>;
 	@editor({ui:"NumericStepper", min:0})
 	public var index (get_index, set_index) :Int;
 	@editor({ui:"HUISlider", min:0.0, max:3.0})
@@ -53,7 +53,7 @@ class BaseScene2DLayer<Scene :BaseScene2DManager<Dynamic>, Component :BaseScene2
 		return 0;
 	}
 
-	function get_scene () :BaseScene2DManager<Dynamic>
+	function get_scene () :BaseSceneManager<Dynamic>
 	{
 		return cast parent;
 	}
