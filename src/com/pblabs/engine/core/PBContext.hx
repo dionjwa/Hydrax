@@ -176,14 +176,11 @@ class PBContext
 	
 	public function enter () :Void
 	{
-		trace(name + " dispatching enter signal");
 		signalEnter.dispatch();
 	}
 	
-	/** Subclasses override */
 	public function exit () :Void
 	{
-		trace(name + " dispatching exit signal");
 		signalExit.dispatch();
 	}
 

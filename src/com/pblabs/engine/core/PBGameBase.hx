@@ -221,7 +221,6 @@ class PBGameBase
 			hasShutdown.push(c);
 		}
 		
-		
 		_isUpdatingContextTransition = true;
 		
 		//Do the transitions, then set the _currentContext at the end
