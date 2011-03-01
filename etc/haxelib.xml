@@ -6,6 +6,7 @@
         <depends name="ArrayTools"/>
         <depends name="IterTools"/>
         <depends name="ListTools"/>
+        <depends name="polygonal"/>
         <tag v="flash"/>
         <tag v="canvas"/>
         <tag v="html5"/>

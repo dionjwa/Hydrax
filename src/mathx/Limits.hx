@@ -1,9 +1,15 @@
 /* <license>
- * This file is part of the dis-Emi-A HaXe Library. Copyright © edA-qa mort-ora-y
+ * This file is part of the dis-Emi-A HaXe Library. Copyright ¬© edA-qa mort-ora-y
  * For full copyright and license information please refer to doc/license.txt.
  * </license> 
  */
-package mathx;import haxe.Int32;class Limits{	public static inline var int32Min = Int32.make( 0x8000, 0x0000 );	public static inline var int32Max = Int32.make( 0x7fff, 0xffff );	#if neko
+package mathx;import haxe.Int32;
+class Limits
+{
+	public static inline var int32Min = Int32.make( 0x8000, 0x0000 );
+	public static inline var int32Max = Int32.make( 0x7fff, 0xffff );
+	
+#if neko
 	public static inline var intBits = 31;
 	public static inline var intMax = 1073741823;
 	public static inline var intMin = -1073741824;
@@ -63,3 +69,4 @@ package mathx;import haxe.Int32;class Limits{	public static inline var int32Min 
 	}
 #end
 }
+

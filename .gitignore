@@ -6,3 +6,4 @@ build/*
 *.js
 lib/polygonal/build/
 tmp
+demo/panningAndZooming/upload.sh

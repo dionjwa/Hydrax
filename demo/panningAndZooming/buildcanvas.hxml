@@ -1,0 +1,16 @@
+-D use_rtti_doc
+-D debug
+
+-lib hydrax
+-cp src
+
+
+-js canvas/haxe.js
+
+-main Demo
+
+-cmd cp indexcanvas.xhtml canvas/index.xhtml
+-cmd open canvas/index.xhtml
+
+
+

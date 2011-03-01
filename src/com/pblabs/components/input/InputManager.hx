@@ -243,15 +243,15 @@ class InputManager extends BaseInputManager,
 				//Check for component specific rotation/scaling
 				if (self._deviceDownComponent != null) {
 					var inputComp = self._deviceDownComponent.owner.lookupComponent(MouseInputComponent);
-					if (inputComp != null) {
-						if (inputComp.isRotatable) {
-							inputComp.angle = self._startingAngle + eventAngle;
-						}
+					// if (inputComp != null) {
+					// 	if (inputComp.isRotatable) {
+					// 		inputComp.angle = self._startingAngle + eventAngle;
+					// 	}
 						
-						if (inputComp.isScalable) {
-							inputComp.scale = self._startingScale + cache.scale;
-						}
-					}
+					// 	if (inputComp.isScalable) {
+					// 		inputComp.scale = self._startingScale + cache.scale;
+					// 	}
+					// }
 				}
 			});
 			gestures.gestureStart.bind(function (e :hsl.js.data.Touch.GestureEvent) :Void {
@@ -260,17 +260,17 @@ class InputManager extends BaseInputManager,
 				if (self._deviceDownComponent == null) {
 				}
 				
-				if (self._deviceDownComponent != null) {
-					var inputComp = self._deviceDownComponent.owner.lookupComponent(MouseInputComponent);
-					if (inputComp != null) {
-						if (inputComp.isRotatable) {
-							self._startingAngle = inputComp.angle;
-						}
-						if (inputComp.isScalable) {
-							self._startingScale = inputComp.scale;
-						}
-					}
-				}
+				// if (self._deviceDownComponent != null) {
+				// 	var inputComp = self._deviceDownComponent.owner.lookupComponent(MouseInputComponent);
+				// 	if (inputComp != null) {
+				// 		if (inputComp.isRotatable) {
+				// 			self._startingAngle = inputComp.angle;
+				// 		}
+				// 		if (inputComp.isScalable) {
+				// 			self._startingScale = inputComp.scale;
+				// 		}
+				// 	}
+				// }
 			});
 			gestures.gestureEnd.bind(function (e :hsl.js.data.Touch.GestureEvent) :Void {
 				self._isGesturing = false;
@@ -292,11 +292,7 @@ class InputManager extends BaseInputManager,
 		}
 	}                                                                                                                                                              
 
-	#if js
 	function adjustDeviceLocation (m :MouseLocation) :Vector2
-	#else
-	function adjustDeviceLocation (m :MouseLocation) :Vector2
-	#end
 	{
 		#if flash
 		return new Vector2(m.globalLocation.x, m.globalLocation.y);//m.translateToScope(sceneView.layer);//.layer);
@@ -309,11 +305,7 @@ class InputManager extends BaseInputManager,
 		#end
 	}
 	
-	#if js
 	function onMouseDown (m :MouseLocation) :Void
-	#else
-	function onMouseDown (m :MouseLocation) :Void
-	#end
 	{
 		//Reset markers
 		_isGesturing =  _isZooming = false;
@@ -330,11 +322,7 @@ class InputManager extends BaseInputManager,
 		deviceDown.dispatch(this);
 	} 
 	
-	#if js
 	function onMouseUp (m :MouseLocation) :Void
-	#else
-	function onMouseUp (m :MouseLocation) :Void
-	#end
 	{
 		_isDeviceDown = false;
 		
@@ -350,11 +338,7 @@ class InputManager extends BaseInputManager,
 		deviceUp.dispatch(this);
 	}
 	
-	#if js
 	function onMouseMove (m :MouseLocation) :Void
-	#else
-	function onMouseMove (m :MouseLocation) :Void
-	#end
 	{
 		//While gesturing, ignore mouse/touch moves
 		if (_isGesturing) {
@@ -378,11 +362,7 @@ class InputManager extends BaseInputManager,
 	    return !(mouse.x < 0 || mouse.x > sceneView.width || mouse.y < 0 || mouse.y > sceneView.height);
 	}
 	
-	#if js
 	function onMouseClick (m :MouseLocation) :Void
-	#else
-	function onMouseClick (m :MouseLocation) :Void
-	#end
 	{
 		if (!deviceClick.isListenedTo) {
 			return;
@@ -503,17 +483,19 @@ class InputManager extends BaseInputManager,
 	}
 	
 	#if js
+	//TODO:
+	public var inputAngle (get_inputAngle, null) :Float;
 	function get_inputAngle () :Float
 	{
 		return 0;
 	}
 	
+	public var inputScale (get_inputScale, null) :Float;
 	function get_inputScale () :Float
 	{
 		return 0;
 	}
 	#end
-	
 	/** End Methods from IInputData */
 	
 }

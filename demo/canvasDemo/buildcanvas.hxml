@@ -1,0 +1,10 @@
+-D debug
+
+-lib hydrax
+-cp src
+
+-js build/demo.js
+-main CanvasDemo
+
+
+

@@ -1,0 +1,7 @@
+-D debug
+
+-lib hydrax
+-cp src
+
+-js build/haxe.js
+-main Demo

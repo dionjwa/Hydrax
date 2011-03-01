@@ -16,6 +16,7 @@ import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.geom.Vector2;
 
+import de.polygonal.motor2.geom.inside.PointInsideAABB;
 import de.polygonal.motor2.geom.math.XY;
 import de.polygonal.motor2.geom.primitive.AABB2;
 
@@ -42,6 +43,16 @@ class SpatialComponent extends EntityComponent,
 	{
 	    return c.lookupComponent(SpatialComponent).position;
 	}
+	
+	public static function addToEntity (e :IEntity) :SpatialComponent
+	{
+		com.pblabs.util.Assert.isNotNull(e);
+		com.pblabs.util.Assert.isNotNull(e.context);
+		var s = e.context.allocate(SpatialComponent);
+		e.addComponent(s, NAME);
+		return s;
+	}
+	
 	
 	public var position (get_point, set_point) :XY;
 	public var point (get_point, set_point) :XY;
@@ -241,13 +252,11 @@ class SpatialComponent extends EntityComponent,
 		}
 		#if (flash || js)
 		else if (spriteForPointChecks != null) {
-			return new AABB2(x - (spriteForPointChecks.width * 0.5), y - (spriteForPointChecks.height * 0.5), 
-				x + (spriteForPointChecks.width * 0.5), y + (spriteForPointChecks.height * 0.5));
+			return spriteForPointChecks.bounds;
 		}
 		#end
 		else {
-			throw "No bounds or display object";
-			return new AABB2(0, 0, 1, 1);
+			return new AABB2(x, y, x + 1, y + 1);
 		}
 	}
 	
@@ -276,7 +285,8 @@ class SpatialComponent extends EntityComponent,
 		}
 		
 		if (_worldAABB != null) {
-			return pos.x <= _worldAABB.xmax && pos.x >= _worldAABB.xmin && pos.y <= _worldAABB.ymax && pos.y >= _worldAABB.ymin;
+			return PointInsideAABB.test2(pos, _worldAABB);
+			// return pos.x <= _worldAABB.xmax && pos.x >= _worldAABB.xmin && pos.y <= _worldAABB.ymax && pos.y >= _worldAABB.ymin;
 		}
 		// OK, so pass it over to the sprite.
 		#if (flash || js)

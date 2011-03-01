@@ -14,10 +14,8 @@ import com.pblabs.util.Preconditions;
 
 using Lambda;
 
-@:require(js)
-class JSSceneManager<Layer :JSLayer<Dynamic, Dynamic>> extends BaseScene2DManager<Layer>
-#if js
-	,implements IAnimatedObject
+class JSSceneManager<Layer :JSLayer<Dynamic, Dynamic>> extends BaseScene2DManager<Layer>,
+	implements IAnimatedObject
 {
 	public var container (get_container, null) :js.Dom.HtmlDom;
 	
@@ -34,7 +32,6 @@ class JSSceneManager<Layer :JSLayer<Dynamic, Dynamic>> extends BaseScene2DManage
 			_rootContainer.removeChild(layer.div);
 		}
 		_rootContainer.appendChild(layer.div);
-		layer.fixPosition();
 		
 	}
 	
@@ -62,16 +59,7 @@ class JSSceneManager<Layer :JSLayer<Dynamic, Dynamic>> extends BaseScene2DManage
 		
 		_rootContainer = cast js.Lib.document.createElement("div");
 		sceneView.layer.appendChild(_rootContainer);
-		// trace("added border to JSSceneManager");
-		// _rootContainer.style.borderColor = "#ff0000";
-		// _rootContainer.style.borderWidth = "5px";
-		// _rootContainer.setAttribute("disabled", "true");
-		// div.style.cssText = "position:fixed";
 		_rootContainer.style.cssText = "position:absolute";
-		
-		// if (_rootContainer == null) {
-		//	 _rootContainer = sceneView.layer;
-		// }
 		#if debug
 		com.pblabs.util.Assert.isNotNull(_rootContainer);
 		com.pblabs.util.Assert.isNotNull(_rootContainer.parentNode);
@@ -91,6 +79,3 @@ class JSSceneManager<Layer :JSLayer<Dynamic, Dynamic>> extends BaseScene2DManage
 	
 	var _rootContainer :js.Dom.HtmlDom;
 }
-#else
-{}
-#end

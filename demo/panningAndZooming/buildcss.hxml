@@ -1,0 +1,13 @@
+-D use_rtti_doc
+-D debug
+-D css
+
+-lib hydrax
+-cp src
+
+-js css/haxe.js
+
+-main Demo
+
+-cmd cp indexcss.xhtml css/index.xhtml
+-cmd open css/index.xhtml

@@ -8,19 +8,16 @@
 <head>
 <title>Title</title>
 <!-- http://matt.might.net/articles/how-to-native-iphone-ipad-apps-in-javascript/ -->
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black" /> <!--white, black or translucent-->
 </head>
 
-<img src="../rsrc/face.png"/>
+<img src="rsrc/face.png"/>
 
-<!--  overflow: hidden hides the horizontal scroll bars -->
-<body bgcolor="Silver" scroll="no" style=" overflow: hidden">
+<!--  overflow: hidden hides the horizontal scroll bars scroll="no" style=" overflow: hidden"-->
+<body bgcolor="Silver" >
 <div id="screen" style="border: 1px coral solid; width:800px; height: 300px; " />
 
 <div id="haxe:trace" />
-<div id="test" />
-<script type="text/javascript" src="./haxe.js" />
+<script type="text/javascript" src="./build/haxe.js" />
 
 <!-- The xhtml generator inserts inline svg elements here, hidden by default -->
 <div id="resources" style="opacity:0 ">

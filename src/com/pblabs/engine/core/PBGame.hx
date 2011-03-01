@@ -82,10 +82,12 @@ class PBGame extends PBGameBase
 		registerManager(IProcessManager, new ProcessManager());
 		registerManager(SetManager, new SetManager());
 		registerManager(IResourceManager, new ResourceManager());
-		registerManager(SceneView, new SceneView());
+		registerManager(com.pblabs.components.scene.SceneView, new com.pblabs.components.scene.SceneView());
 		registerManager(ObjectTypeManager, new ObjectTypeManager());
+		registerManager(Serializer, new Serializer());
+		registerManager(TemplateManager, new TemplateManager());
 		//Sensible default
-		getManager(SceneView).layerId = "screen";
+		getManager(com.pblabs.components.scene.SceneView).layerId = "screen";
 	}
 }
 #end

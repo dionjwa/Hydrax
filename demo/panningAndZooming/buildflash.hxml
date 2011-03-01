@@ -1,0 +1,15 @@
+#build file
+-D use_rtti_doc
+-D debug
+
+-lib hydrax
+-cp src
+
+-swf-lib rsrc/resources.swf
+-swf flash/demo.swf
+-swf-version 10
+-swf-header 800:400:30:FFFFFF
+
+-main Demo
+
+-cmd cp indexflash.xhtml flash/index.xhtml

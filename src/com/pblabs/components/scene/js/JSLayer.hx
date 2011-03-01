@@ -11,44 +11,14 @@ import com.pblabs.components.scene.BaseScene2DComponent;
 import com.pblabs.components.scene.BaseScene2DLayer;
 
 class JSLayer <Scene :JSSceneManager<Dynamic>, Component :BaseScene2DComponent<Dynamic>> extends BaseScene2DLayer<Scene, Component>
-#if js
 {
 	public var div (default, null) :js.Dom.HtmlDom;
 	
 	public function new ()
 	{
 		super();
+		div = cast js.Lib.document.createElement("DIV");
 	}
-	
-	// public function updateTransform () :Void
-	// {
-		
-	// 	_transformDirty = false;
-		
-	// 	// Center it appropriately.
-	// 	Preconditions.checkNotNull(_tempPoint);
-	// 	Preconditions.checkNotNull(sceneAlignment);
-	// 	Preconditions.checkNotNull(sceneView);
-	// 	SceneUtil.calculateOutPoint(_tempPoint, sceneAlignment, sceneView.width, sceneView.height);
-	// 	// _rootTransform.translate(_tempPoint.x, _tempPoint.y);
-
-	// 	// Apply the transform.
-	// 	// _rootSprite.transform.matrix = _rootTransform;
-		
-		
-		
-	// 	// var xOffset = parent.xOffset;
-	// 	// var yOffset = parent.yOffset;
-	// 	// var _position :Vector2;
-	// // var _zoom :Float;
-	// // var _rotation :Float;
-	// // var _transformDirty :Bool;
-	
-	// // untyped _rootContainer.style.webkitTransform = "translate(" + (_position.x) + "px, " + (_position.y) + "px) scale(" + zoom + ") rotate(" + _rotation + "rad) translate(" + (_tempPoint.x) + "px, " + (_tempPoint.y) + "px)  ";
-	// //Revsered
-	// untyped _rootContainer.style.webkitTransform = "translate(" + (_tempPoint.x) + "px, " + (_tempPoint.y) + "px) rotate(" + _rotation + "rad) scale(" + zoom + ") translate(" + (_position.x) + "px, " + (_position.y) + "px)";
-	// // untyped _rootContainer.style.webkitTransform = "translate(" + (_position.x) + "px, " + (_position.y) + "px) rotate(" + _rotation + "rad), scale(" + zoom + ")";
-	// }
 	
 	public function fixPosition () :Void
 	{
@@ -58,7 +28,7 @@ class JSLayer <Scene :JSSceneManager<Dynamic>, Component :BaseScene2DComponent<D
 		var offsetHeight = 0;
 		var offsetWidth = 0;
 		var sib = div.previousSibling;
-		while (sib != null || sib == div) {
+		while (sib != null && sib != div) {
 			offsetHeight += sib.offsetHeight;
 			offsetWidth += sib.offsetWidth;
 			sib = sib.previousSibling;
@@ -71,7 +41,6 @@ class JSLayer <Scene :JSSceneManager<Dynamic>, Component :BaseScene2DComponent<D
 		super.addedToParent();
 		//Add to the HtmlDom container
 		parent.setLayerIndex(this, parent.getLayerIndex(this));
-		fixPosition();
 	}
 	
 	override function removingFromParent () :Void
@@ -91,10 +60,6 @@ class JSLayer <Scene :JSSceneManager<Dynamic>, Component :BaseScene2DComponent<D
 	override function onAdd () :Void
 	{
 		super.onAdd();
-		div = cast js.Lib.document.createElement("div");
-		div.style.cssText = "position:relative;left:0px;top:0px;";
+		div.style.cssText = "position:absolute;left:0px;top:0px;";
 	}
 }
-#else
-{}
-#end

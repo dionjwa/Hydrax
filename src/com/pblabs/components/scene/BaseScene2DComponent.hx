@@ -18,6 +18,7 @@ import com.pblabs.geom.Vector2;
 import com.pblabs.util.Preconditions;
 
 import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor2.geom.primitive.AABB2;
 
 using com.pblabs.components.scene.SceneUtil;
 using com.pblabs.engine.core.SignalBondManager;
@@ -50,6 +51,10 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	public var locationOffset (get_locationOffset, set_locationOffset) :XY;
 	public var angleOffset (get_angleOffset, set_angleOffset) :Float;
 	public var registrationPoint (get_registrationPoint, set_registrationPoint) :XY;
+	public var bounds (get_bounds, never) :AABB2;
+	
+	/** Sometimes you need to control when the display object is added to the scene */
+	public var autoAddToScene :Bool;
 	
 	/** We will listen to the signals of this coordinates component. */
 	public var spatialProperty :PropertyReference<SpatialComponent>;
@@ -71,6 +76,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	var _zIndexDirty :Bool;
 	var _registrationPoint :XY;
 	var _objectMask :ObjectType;
+	var _bounds :AABB2;
 	
 	public function new ()
 	{
@@ -99,6 +105,8 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 		//Sensible default
 		spatialProperty = SpatialComponent.P_SPATIAL;
 		objectMask = ObjectType.ALL;
+		_bounds = new AABB2(0, 0, 1, 1);
+		autoAddToScene = true;
 	}
 	
 	public function containsScreenPoint (pos :XY, mask :ObjectType) :Bool
@@ -132,7 +140,6 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	
 	public function setLocation (loc :XY) :Void
 	{
-		// trace(owner.name + " loc=" + loc);
 		set_x(loc.x);
 		set_y(loc.y);
 	}
@@ -154,6 +161,10 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 			angle = coords.angle;
 		} else {
 			com.pblabs.util.Log.warn("No coords component found, you are on your own regarding updating Scene components " + com.pblabs.util.Log.getStackTrace());
+		}
+		
+		if (!autoAddToScene) {
+			removeFromParent();
 		}
 			
 		//TODO: Bind scale component, not yet implemented
@@ -180,6 +191,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	{
 		_x = val;
 		isTransformDirty = true;
+		_bounds.centerX = _x;
 		return val;
 	}
 	
@@ -192,6 +204,7 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	{
 		_y = val;
 		isTransformDirty = true;
+		_bounds.centerY = _y;
 		return val;
 	}
 	
@@ -273,8 +286,11 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	
 	function set_width (val :Float) :Float
 	{
+		// com.pblabs.util.Assert.isTrue(val >= 0, "val=" + val);
 		_width = val;
 		isTransformDirty = true;
+		_bounds.xmin = _x - _width / 2;
+		_bounds.xmax = _x + _width / 2;
 		return val;
 	}
 	
@@ -285,8 +301,11 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	
 	function set_height (val :Float) :Float
 	{
+		// com.pblabs.util.Assert.isTrue(val >= 0, "val=" + val);
 		_height = val;
 		isTransformDirty = true;
+		_bounds.ymin = _y - _height / 2;
+		_bounds.ymax = _y + _height / 2;
 		return val;
 	}
 	
@@ -383,5 +402,10 @@ class BaseScene2DComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends No
 	{
 		_objectMask = val;
 		return val;
+	}
+	
+	function get_bounds () :AABB2
+	{
+		return _bounds;
 	}
 }

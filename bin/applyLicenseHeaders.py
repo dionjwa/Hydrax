@@ -31,7 +31,7 @@ licensedFiles["easel"] = ["com.pblabs.components.scene.js.Sprite", "easel.displa
 licensedFiles["sprintf"] = ["com.pblabs.util.Sprintf"]
 licensedFiles["haxe"] = ["com.pblabs.util.ds.maps.IntHashMap",  "com.pblabs.util.ds.maps.HashMap"]
 licensedFiles["polygonal"] = ["com.pblabs.util.MathUtil"]
-licensedFiles["mathx"] = ["mathx.Limits", "mathx.MersenneTwister", "mathx.RandomGenerator"]
+# licensedFiles["mathx"] = ["mathx.Limits", "mathx.MersenneTwister", "mathx.RandomGenerator"]
 
 hydrax_preamble = """/*******************************************************************************
  * Hydrax: haXe port of the PushButton Engine

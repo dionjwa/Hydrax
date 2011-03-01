@@ -19,9 +19,8 @@ import com.pblabs.util.ReflectUtil;
 import easel.display.Canvas;
 import easel.display.Context2d;
 
-class CanvasLayer extends JSLayer<CanvasScene2D, Canvas2DComponent>
-#if js
-	,implements IAnimatedObject
+class CanvasLayer extends JSLayer<CanvasScene2D, Canvas2DComponent>,
+	implements IAnimatedObject
 {
 	/** Children mark this when they're modified*/
 	public var isDirty :Bool;
@@ -33,7 +32,7 @@ class CanvasLayer extends JSLayer<CanvasScene2D, Canvas2DComponent>
 	{
 		super();
 		canvas = createCanvas();
-		div = canvas;
+		div.appendChild(canvas);
 		isTransformDirty = true;
 		isDirty = true;
 		_tempPoint = new Vector2();
@@ -83,13 +82,9 @@ class CanvasLayer extends JSLayer<CanvasScene2D, Canvas2DComponent>
 	
 	override function addedToParent () :Void
 	{
-		if (canvas == null) {
-			canvas = createCanvas();
-		}
 		canvas.width = Std.int(parent.sceneView.width);
 		canvas.height = Std.int(parent.sceneView.height);
 		ctx = canvas.getContext("2d");
-		div.appendChild(canvas);
 		isDirty = true;
 		super.addedToParent();
 	}
@@ -123,6 +118,3 @@ class CanvasLayer extends JSLayer<CanvasScene2D, Canvas2DComponent>
 	
 	var _tempPoint :Vector2;
 }
-#else
-{}
-#end

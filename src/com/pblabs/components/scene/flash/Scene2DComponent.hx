@@ -82,14 +82,13 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
 		_displayObject.name = name;
 		_transformMatrix.identity();
 		_displayObject.transform.matrix = _transformMatrix;
-		_width = _displayObject.width;
-		_height = _displayObject.height;
-		_scaleX = 1;
-		_scaleY = 1;
+		width = _displayObject.width;
+		height = _displayObject.height;
 	}
 	
 	override function set_width (val :Float) :Float
 	{
+		com.pblabs.util.Assert.isTrue(val >= 0);
 		super.set_width(val);
 		var localDimensions = displayObject.getBounds(displayObject);
 		scaleX = val / localDimensions.width;
@@ -98,6 +97,7 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
 	
 	override function set_height (val :Float) :Float
 	{
+		com.pblabs.util.Assert.isTrue(val >= 0);
 		super.set_height(val);
 		var localDimensions = displayObject.getBounds(displayObject);
 		scaleY = val / localDimensions.height;
@@ -155,6 +155,8 @@ class Scene2DComponent extends BaseScene2DComponent<SceneLayer>,
 		_displayObject.visible = (alpha > 0);
 		
 		isTransformDirty = false;
+		
+		
     }
 	
 	var _displayObject :DisplayObject;

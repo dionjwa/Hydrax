@@ -1,0 +1,10 @@
+#build file
+-D debug
+#Use css rather than canvas rendering
+-D css
+-lib hydrax
+-cp src
+-js build/demo.js
+-main Demo
+
+

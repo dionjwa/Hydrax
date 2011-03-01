@@ -4,19 +4,14 @@ import com.pblabs.components.scene.CircleShape;
 import com.pblabs.components.scene.ImageComponent;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.SceneView;
-import com.pblabs.components.scene.js.canvas.Canvas2DComponent;
-import com.pblabs.components.scene.js.canvas.CanvasLayer;
-import com.pblabs.components.scene.js.canvas.CanvasScene2D;
 import com.pblabs.components.tasks.AngleTask;
 import com.pblabs.components.tasks.LocationTask;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ImageResource;
-import com.pblabs.engine.resource.ResourceManager;
+import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.Source;
-import com.pblabs.engine.resource.js.ImageResources;
-import com.pblabs.engine.util.PBUtil;
 import com.pblabs.util.Assert;
 using com.pblabs.components.scene.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
@@ -43,34 +38,29 @@ class CanvasDemo
 		Assert.isNotNull(ctx, "WTF, ctx is null");
 		Assert.isNotNull(ctx.injector.parent, "Parent injector null");
 		app.pushContext(ctx);
-		var canvas = ctx.addSingletonComponent(CanvasScene2D);
+		var canvas = ctx.createBaseScene();
 		
-		var backLayer = ctx.allocate(CanvasLayer);
-		backLayer.parentProperty = canvas.componentProp();
-		canvas.owner.addComponent(backLayer, "backlayer");
+		var backLayer = canvas.addLayer("backlayer");
+		var manLayer = canvas.addLayer("manlayer");
 		
-		var manLayer = ctx.allocate(CanvasLayer);
-		manLayer.parentProperty = canvas.componentProp();
-		canvas.owner.addComponent(manLayer, "manlayer"); 
-		
-		
-		var black = SceneUtil.createBaseSceneEntity(ctx); 
+		var black = SceneUtil.createBaseSceneEntity(ctx);
 		var blackDisplay = ctx.allocate(CircleShape);
 		blackDisplay.parentProperty = backLayer.entityProp();
 		black.addComponent(blackDisplay);
 		black.initialize("background object");
+		black.addTask(LocationTask.CreateEaseIn(100,  -100,  3));
 		
 		
 		var man  = SceneUtil.createBaseSceneEntity(ctx);
 		var image = ctx.allocate(ImageComponent);
-		image.resource = cast ctx.getManager(IResourceManager).getResource("man");
+		image.resource = cast new ResourceToken("man");
 		image.parentProperty = manLayer.entityProp();
 		man.addComponent(image);
 		man.initialize("man object");
 		
 		man.setLocation(50, 50);
 		
-		man.addTask(LocationTask.CreateEaseIn(200,  200,  3));
+		man.addTask(LocationTask.CreateEaseIn(180,  180,  3));
 		man.addTask(AngleTask.CreateLinear(4,  1));
 	}
 	
@@ -81,5 +71,4 @@ class CanvasDemo
 	}
 	
 	var app :PBGame;
-	var images :ImageResources;
 }

@@ -23,8 +23,6 @@ class Base2DComponent extends BaseScene2DComponent<SceneLayer>,
     public function new () :Void
     {
         super();
-        _height = 0;
-        _width = 0;
     }
     
     public function onFrame (dt :Float) :Void
@@ -127,8 +125,8 @@ class Base2DComponent extends BaseScene2DComponent<SceneLayer>,
 			} else {
 				set_height(_height);
 			}
-			trace("x=" + Std.parseFloat(displayObject.getAttribute("x")));
-			trace("y=" + Std.parseFloat(displayObject.getAttribute("y")));
+			// trace("x=" + Std.parseFloat(displayObject.getAttribute("x")));
+			// trace("y=" + Std.parseFloat(displayObject.getAttribute("y")));
         }
         isTransformDirty = true;
         return val;

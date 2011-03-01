@@ -83,7 +83,7 @@ class Canvas2DComponent extends BaseScene2DComponent<CanvasLayer>
 	{
 		super.onRemove();
 		if (layer != null) {
-			layer.isTransformDirty = true;
+			cast(layer, CanvasLayer).isTransformDirty = true;
 		}
 	}
 	
@@ -91,7 +91,7 @@ class Canvas2DComponent extends BaseScene2DComponent<CanvasLayer>
 	override function set_isTransformDirty (val :Bool) :Bool
 	{
 		if (val && layer != null) {
-			layer.isTransformDirty = true;
+			cast(layer, CanvasLayer).isTransformDirty = true;
 		}
 		return super.set_isTransformDirty(val);
 	}

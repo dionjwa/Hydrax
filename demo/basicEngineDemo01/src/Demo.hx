@@ -8,15 +8,16 @@ using com.pblabs.components.scene.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
 
-class Demo extends flash.display.Sprite 
+class Demo #if flash extends flash.display.Sprite #end 
 {
 	public function new() 
 	{
+		#if flash
 		super();
+		#end
 	
 		//Setup logging.
 		com.pblabs.engine.debug.Log.setupPBGameLog();
-		this.name = "Demo";
 		var game = new PBGame();
 		
 		//The main "context".  This is equivalent to a level, or a menu screen.
@@ -39,6 +40,10 @@ class Demo extends flash.display.Sprite
 
 	public static function main() 
 	{
+		#if flash
 		flash.Lib.current.addChild(new Demo());
+		#elseif js
+		new Demo();
+		#end
 	}
 }

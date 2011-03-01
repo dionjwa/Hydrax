@@ -205,7 +205,6 @@ class PBGameBase
 	
 	function updateContextTransitions () :Void
 	{
-		trace("_isUpdatingContextTransition=" + _isUpdatingContextTransition);
 		if (_isUpdatingContextTransition) {
 			return;
 		}
@@ -243,7 +242,6 @@ class PBGameBase
 		//Do the transitions, then set the _currentContext at the end
 		while (_contextTransitions.length > 0) {
 			var nextTransition = _contextTransitions.shift();
-			trace("nextTransition=" + nextTransition);
 			switch (nextTransition) {
 				case PUSH(c):
 					if (_currentContext != null) {

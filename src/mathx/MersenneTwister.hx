@@ -1,9 +1,15 @@
 /* <license>
- * This file is part of the dis-Emi-A HaXe Library. Copyright © edA-qa mort-ora-y
+ * This file is part of the dis-Emi-A HaXe Library. Copyright ¬© edA-qa mort-ora-y
  * For full copyright and license information please refer to doc/license.txt.
  * </license> 
  */
-package mathx;import haxe.Int32;/** * Based on the MT19937 as described at: * 	http://en.wikipedia.org/wiki/Mersenne_twister * And in the original paper. */ class MersenneTwister implements RandomGenerator
+package mathx;import haxe.Int32;
+/**
+ * Based on the MT19937 as described at:
+ * 	http://en.wikipedia.org/wiki/Mersenne_twister
+ * And in the original paper.
+ */ 
+class MersenneTwister implements RandomGenerator
 {
 	// Create a length 624 array to store the state of the generator
 	var mt : Array<Int32>;	//int[0..623] MT
@@ -139,3 +145,4 @@ package mathx;import haxe.Int32;/** * Based on the MT19937 as described at: * 	h
 		setSeed( seed );
 	}
 }
+
