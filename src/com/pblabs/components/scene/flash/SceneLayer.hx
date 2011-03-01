@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.components.scene.flash;
 
-import com.pblabs.components.scene.BaseScene2DLayer;
+import com.pblabs.components.scene.BaseSceneLayer;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.flash.SceneComponent;
 import com.pblabs.components.scene.flash.SceneManager;
@@ -23,7 +23,7 @@ import flash.display.Sprite;
 
 import flash.geom.Matrix;
 
-class SceneLayer extends BaseScene2DLayer<SceneManager, SceneComponent>
+class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 {
 	
 	public var dirty :Bool;

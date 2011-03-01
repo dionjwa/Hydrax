@@ -331,9 +331,8 @@ class TemplateManager
 				}				
 			}
 			
-			entity.initialize(name);//entity.deferring = true;
+			entity.initialize(name);
 			entity.deferring = true;
-			
 			
 			var serializer = context.getManager(Serializer);
 			com.pblabs.util.Assert.isNotNull(serializer);

@@ -1,7 +1,7 @@
 package ;
 
 import com.pblabs.components.scene.BaseSceneComponent;
-import com.pblabs.components.scene.BaseScene2DLayer;
+import com.pblabs.components.scene.BaseSceneLayer;
 import com.pblabs.components.scene.ImageComponent;
 import com.pblabs.components.scene.RectangleShape;
 import com.pblabs.components.scene.SceneUtil;
@@ -96,7 +96,7 @@ class Demo #if flash extends flash.display.Sprite #end
 		e.addTask(serial);
 	}
 	
-	function createRect (name :String, layer :BaseScene2DLayer<Dynamic, Dynamic>) :IEntity
+	function createRect (name :String, layer :BaseSceneLayer<Dynamic, Dynamic>) :IEntity
 	{
 		var context = layer.context;
 		var e = context.createBaseSceneEntity();
@@ -107,7 +107,7 @@ class Demo #if flash extends flash.display.Sprite #end
 		return e;
 	}
 	
-	function createImage (name :String, layer :BaseScene2DLayer<Dynamic, Dynamic>) :IEntity
+	function createImage (name :String, layer :BaseSceneLayer<Dynamic, Dynamic>) :IEntity
 	{
 		var context = layer.context;
 		var e = context.createBaseSceneEntity();

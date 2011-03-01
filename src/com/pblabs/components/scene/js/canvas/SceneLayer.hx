@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.components.scene.js.canvas;
 
-import com.pblabs.components.scene.BaseScene2DLayer;
+import com.pblabs.components.scene.BaseSceneLayer;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.js.JSLayer;
 import com.pblabs.components.scene.js.canvas.SceneComponent;

@@ -45,7 +45,7 @@ class SceneUtil
 		#end
 		
 		
-	public static var LAYER_CLASS :Class<BaseScene2DLayer<Dynamic, Dynamic>> = 
+	public static var LAYER_CLASS :Class<BaseSceneLayer<Dynamic, Dynamic>> = 
 		#if (flash || cpp)
 		com.pblabs.components.scene.flash.SceneLayer;
 		#elseif css
@@ -57,7 +57,8 @@ class SceneUtil
 		#end
 
 		
-	public static function createBaseScene (context :IPBContext, ?name :String = null, ?addDefaultLayer :Bool = false) :BaseSceneManager<Dynamic>
+	public static function createBaseScene (context :IPBContext, ?name :String = null, ?addDefaultLayer :Bool = false, 
+		?registerAsManager :Bool = true) :BaseSceneManager<Dynamic>
 	{
 		com.pblabs.util.Assert.isNotNull(context);
 		
@@ -65,8 +66,10 @@ class SceneUtil
 		//The spatial component is for panning control
 		scene.owner.addComponent(context.allocate(SpatialComponent), SpatialComponent.NAME);
 		scene.owner.deferring = false;
-		context.registerManager(IScene2D, scene, name, true);
-		context.registerManager(MANAGER_CLASS, scene, name, true);
+		if (registerAsManager) {
+			context.registerManager(IScene2D, scene, name, true);
+			context.registerManager(MANAGER_CLASS, scene, name, true);
+		}
 	    com.pblabs.util.Assert.isNotNull(scene);
 	    if (addDefaultLayer) {
 	    	scene.addLayer(SceneUtil.DEFAULT_LAYER_NAME);
@@ -219,7 +222,7 @@ class SceneUtil
 	{
 		var layerIndex :Int = scene.layerCount - 1;
 		while (layerIndex >= 0) {
-			var layer :BaseScene2DLayer<Dynamic, BaseSceneComponent<Dynamic>> = scene.getLayerAt(layerIndex);
+			var layer :BaseSceneLayer<Dynamic, BaseSceneComponent<Dynamic>> = scene.getLayerAt(layerIndex);
 			layerIndex--;
 			#if !editor
 			if (layer.ignoreInput) {

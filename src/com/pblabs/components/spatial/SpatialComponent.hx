@@ -71,7 +71,7 @@ class SpatialComponent extends EntityComponent,
 	 * tests.
 	 */
 	#if (flash || js)
-	public var spriteForPointChecks :com.pblabs.components.scene.BaseSceneComponent<com.pblabs.components.scene.BaseScene2DLayer<Dynamic, Dynamic>>;
+	public var spriteForPointChecks :com.pblabs.components.scene.BaseSceneComponent<com.pblabs.components.scene.BaseSceneLayer<Dynamic, Dynamic>>;
 	#end
 	var _objectMask :ObjectType;
 	var _vec :XY;

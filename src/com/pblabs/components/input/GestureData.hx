@@ -7,7 +7,7 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.input;
-class GestureData extends InputData
+class GestureData //extends InputData
 {
     public var scale :Float;
     public var rotation :Float;

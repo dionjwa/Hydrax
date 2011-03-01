@@ -8,9 +8,9 @@
  ******************************************************************************/
 package com.pblabs.components.scene.js;
 import com.pblabs.components.scene.BaseSceneComponent;
-import com.pblabs.components.scene.BaseScene2DLayer;
+import com.pblabs.components.scene.BaseSceneLayer;
 
-class JSLayer <Scene :JSSceneManager<Dynamic>, Component :BaseSceneComponent<Dynamic>> extends BaseScene2DLayer<Scene, Component>
+class JSLayer <Scene :JSSceneManager<Dynamic>, Component :BaseSceneComponent<Dynamic>> extends BaseSceneLayer<Scene, Component>
 {
 	public var div (default, null) :js.Dom.HtmlDom;
 	

@@ -9,7 +9,7 @@
 package com.pblabs.components.input;
 
 import com.pblabs.components.scene.BaseSceneComponent;
-import com.pblabs.components.scene.BaseScene2DLayer;
+import com.pblabs.components.scene.BaseSceneLayer;
 import com.pblabs.components.scene.BaseSceneManager;
 import com.pblabs.components.scene.SceneManagerList;
 import com.pblabs.engine.core.IEntity;
@@ -56,8 +56,8 @@ class InputManager extends BaseInputManager,
 	// public var drag(default, null) :Signaler<IInputData>;
 	public var doubleClick(default, null) :Signaler<IInputData>;
 	
-	public var rotate (default, null) :Signaler<GestureData>;
-	public var scale (default, null) :Signaler<GestureData>;
+	public var rotate (default, null) :Signaler<IInputData>;
+	public var scale (default, null) :Signaler<IInputData>;
 	
 	public var isDeviceDown (get_isDeviceDown, null) :Bool;
 	
@@ -90,8 +90,7 @@ class InputManager extends BaseInputManager,
 	var _deviceDownComponentLoc :Vector2;
 	var _deviceDownLoc :Vector2;
 	var _checked :Set<String>;
-	var _inputCache :InputData;
-	var _gestureCache :GestureData;
+	// var _gestureCache :IInputData;
 	var _fingersTouching :Int;
 	var _deviceLoc :Vector2;
 	var _isGesturing :Bool;
@@ -111,8 +110,7 @@ class InputManager extends BaseInputManager,
 		rotate = new DirectSignaler(this);
 		scale = new DirectSignaler(this);
 		
-		_inputCache = new InputData();
-		_gestureCache = new GestureData();
+		// _gestureCache = new IInputData();
 		_checked = Sets.newSetOf(String);
 		_deviceLoc = new Vector2();
 		_isDeviceDown = false;
@@ -218,63 +216,63 @@ class InputManager extends BaseInputManager,
 		#if js
 		if (gestures != null) {
 			var self = this;
-			gestures.gestureChange.bind(function (e :hsl.js.data.Touch.GestureEvent) :Void {
-				// trace("gesture changed");
-				// trace(e.rotation);
-				#if testing
-				js.Lib.document.getElementById("haxe:gestureRotation").innerHTML = "gestureRotation: " + e.rotation;
-				js.Lib.document.getElementById("haxe:gestureScale").innerHTML = "gestureScale: " + e.scale;
-				#end
+			// gestures.gestureChange.bind(function (e :hsl.js.data.Touch.GestureEvent) :Void {
+			// 	// trace("gesture changed");
+			// 	// trace(e.rotation);
+			// 	#if testing
+			// 	js.Lib.document.getElementById("haxe:gestureRotation").innerHTML = "gestureRotation: " + e.rotation;
+			// 	js.Lib.document.getElementById("haxe:gestureScale").innerHTML = "gestureScale: " + e.scale;
+			// 	#end
 				
-				var eventAngle = e.rotation.toRad();
-				// var eventScale = e.scale;
+			// 	var eventAngle = e.rotation.toRad();
+			// 	// var eventScale = e.scale;
 				
-				//Dispatch the signals
-				var cache = self._gestureCache;
-				cache.inputComponent = self._deviceDownComponent;
-				cache.rotation = eventAngle;
-				cache.scale = e.scale;
+			// 	//Dispatch the signals
+			// 	var cache = self._gestureCache;
+			// 	cache.inputComponent = self._deviceDownComponent;
+			// 	cache.rotation = eventAngle;
+			// 	cache.scale = e.scale;
 				
-				self.rotate.dispatch(cache);
-				self.scale.dispatch(cache);
-				// cache.set(self._deviceDownComponent, eventAngle);
-				// cache.set(self._deviceDownComponent, eventScale);
+			// 	self.rotate.dispatch(cache);
+			// 	self.scale.dispatch(cache);
+			// 	// cache.set(self._deviceDownComponent, eventAngle);
+			// 	// cache.set(self._deviceDownComponent, eventScale);
 					
-				//Check for component specific rotation/scaling
-				if (self._deviceDownComponent != null) {
-					var inputComp = self._deviceDownComponent.owner.lookupComponent(MouseInputComponent);
-					// if (inputComp != null) {
-					// 	if (inputComp.isRotatable) {
-					// 		inputComp.angle = self._startingAngle + eventAngle;
-					// 	}
+			// 	//Check for component specific rotation/scaling
+			// 	if (self._deviceDownComponent != null) {
+			// 		var inputComp = self._deviceDownComponent.owner.lookupComponent(MouseInputComponent);
+			// 		// if (inputComp != null) {
+			// 		// 	if (inputComp.isRotatable) {
+			// 		// 		inputComp.angle = self._startingAngle + eventAngle;
+			// 		// 	}
 						
-					// 	if (inputComp.isScalable) {
-					// 		inputComp.scale = self._startingScale + cache.scale;
-					// 	}
-					// }
-				}
-			});
-			gestures.gestureStart.bind(function (e :hsl.js.data.Touch.GestureEvent) :Void {
-				self._isGesturing = true;
-				//No selected component when gesturing.  Could it be that the use put two fingers down at the same time?
-				if (self._deviceDownComponent == null) {
-				}
+			// 		// 	if (inputComp.isScalable) {
+			// 		// 		inputComp.scale = self._startingScale + cache.scale;
+			// 		// 	}
+			// 		// }
+			// 	}
+			// });
+			// gestures.gestureStart.bind(function (e :hsl.js.data.Touch.GestureEvent) :Void {
+			// 	self._isGesturing = true;
+			// 	//No selected component when gesturing.  Could it be that the use put two fingers down at the same time?
+			// 	if (self._deviceDownComponent == null) {
+			// 	}
 				
-				// if (self._deviceDownComponent != null) {
-				// 	var inputComp = self._deviceDownComponent.owner.lookupComponent(MouseInputComponent);
-				// 	if (inputComp != null) {
-				// 		if (inputComp.isRotatable) {
-				// 			self._startingAngle = inputComp.angle;
-				// 		}
-				// 		if (inputComp.isScalable) {
-				// 			self._startingScale = inputComp.scale;
-				// 		}
-				// 	}
-				// }
-			});
-			gestures.gestureEnd.bind(function (e :hsl.js.data.Touch.GestureEvent) :Void {
-				self._isGesturing = false;
-			});
+			// 	// if (self._deviceDownComponent != null) {
+			// 	// 	var inputComp = self._deviceDownComponent.owner.lookupComponent(MouseInputComponent);
+			// 	// 	if (inputComp != null) {
+			// 	// 		if (inputComp.isRotatable) {
+			// 	// 			self._startingAngle = inputComp.angle;
+			// 	// 		}
+			// 	// 		if (inputComp.isScalable) {
+			// 	// 			self._startingScale = inputComp.scale;
+			// 	// 		}
+			// 	// 	}
+			// 	// }
+			// });
+			// gestures.gestureEnd.bind(function (e :hsl.js.data.Touch.GestureEvent) :Void {
+			// 	self._isGesturing = false;
+			// });
 			
 		}
 		#end
@@ -412,7 +410,7 @@ class InputManager extends BaseInputManager,
 		for (sceneManager in getSceneManagers()) {
 			var layerIndex =  sceneManager.children.length - 1;
 			while (layerIndex >= 0) {
-				var layer :BaseScene2DLayer<Dynamic, Dynamic> = sceneManager.children[layerIndex];
+				var layer :BaseSceneLayer<Dynamic, Dynamic> = sceneManager.children[layerIndex];
 				layerIndex--;
 				//If the layer doesn't match the mask, ignore all the children.  Saves iterations
 				if (!layer.objectMask.and(mask)) {
@@ -449,7 +447,7 @@ class InputManager extends BaseInputManager,
 		for (sceneManager in getSceneManagers()) {
 			var layerIndex =  sceneManager.children.length - 1;
 			while (layerIndex >= 0) {
-				var layer :BaseScene2DLayer<Dynamic, Dynamic> = sceneManager.children[layerIndex];
+				var layer :BaseSceneLayer<Dynamic, Dynamic> = sceneManager.children[layerIndex];
 				layerIndex--;
 				//If the layer doesn't match the mask, ignore all the children.  Saves iterations
 				if (!layer.objectMask.and(mask)) {

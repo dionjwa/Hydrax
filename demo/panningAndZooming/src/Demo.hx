@@ -6,7 +6,7 @@ import com.pblabs.components.input.MouseInputComponent;
 import com.pblabs.components.input.MouseInputManager;
 import com.pblabs.components.input.PanManager;
 import com.pblabs.components.scene.BaseSceneComponent;
-import com.pblabs.components.scene.BaseScene2DLayer;
+import com.pblabs.components.scene.BaseSceneLayer;
 import com.pblabs.components.scene.BaseSceneManager;
 import com.pblabs.components.scene.CircleShape;
 import com.pblabs.components.scene.ImageComponent;
@@ -163,7 +163,7 @@ class Demo #if flash extends flash.display.Sprite #end
 		e.addTask(serial);
 	}
 
-	function createBlob (name :String, layer :BaseScene2DLayer<Dynamic, Dynamic>) :IEntity
+	function createBlob (name :String, layer :BaseSceneLayer<Dynamic, Dynamic>) :IEntity
 	{
 		var context = layer.context;
 		var man  = SceneUtil.createBaseSceneEntity(context);

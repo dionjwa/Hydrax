@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.components.scene.js.css;
 import com.pblabs.components.scene.BaseSceneComponent;
-import com.pblabs.components.scene.BaseScene2DLayer;
+import com.pblabs.components.scene.BaseSceneLayer;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.util.ReflectUtil;
 

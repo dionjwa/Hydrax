@@ -164,6 +164,11 @@ class PBUtil
 		return new PropertyReference(entityPropString(c, fieldName));
 	}
 	
+	public static function nameToSingletonProp <T> (name :String) :PropertyReference<T>
+	{
+		return new PropertyReference("#" + name + "." + name);
+	}
+	
 	public static function singletonProp <T> (componentClass :Class<Dynamic>, ?fieldName :String) :PropertyReference<T>
 	{
 		var compName = ReflectUtil.tinyClassName(componentClass);

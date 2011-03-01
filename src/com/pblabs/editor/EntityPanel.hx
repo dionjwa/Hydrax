@@ -21,7 +21,6 @@ import com.bit101.components.UpdatingList;
 import com.bit101.components.VBox;
 import com.bit101.components.Window;
 
-import com.pblabs.components.input.InputData;
 import com.pblabs.components.input.InputManager;
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.editor.CustomEditorPanelComponent;

@@ -15,7 +15,7 @@ import com.pblabs.util.Preconditions;
 /**
   * A 2D layer holding 2DSceneComponents.
   */
-class BaseScene2DLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneComponent<Dynamic>> extends NodeComponent<Scene, Component>,
+class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneComponent<Dynamic>> extends NodeComponent<Scene, Component>,
 	implements haxe.rtti.Infos
 {
 	/** For ignoring all objects in a layer */

@@ -31,7 +31,7 @@ class SerialTask extends TaskContainer
 {
 
 	//Just three optional tasks for now.  No varargs.	
-	public function new (?subtask1:IEntityTask, ?subtask2:IEntityTask, ?subtask3:IEntityTask)
+	public function new (?subtask1:IEntityTask, ?subtask2:IEntityTask, ?subtask3:IEntityTask, ?subtask4:IEntityTask)
 	{
 		var subtasks = new Array<IEntityTask>();
 		if (subtask1 != null) {
@@ -42,6 +42,9 @@ class SerialTask extends TaskContainer
 		}
 		if (subtask3 != null) {
 			subtasks.push(subtask3);
+		}
+		if (subtask4 != null) {
+			subtasks.push(subtask4);
 		}
 		super(TaskContainer.TYPE_SERIAL, subtasks);
 	}

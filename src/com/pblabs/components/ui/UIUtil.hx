@@ -1,7 +1,7 @@
 package com.pblabs.components.ui;
 
 import com.pblabs.components.input.MouseInputComponent;
-import com.pblabs.components.scene.BaseScene2DLayer;
+import com.pblabs.components.scene.BaseSceneLayer;
 import com.pblabs.components.scene.BaseSceneManager;
 import com.pblabs.components.scene.CircleShape;
 import com.pblabs.components.scene.ImageComponent;
@@ -24,7 +24,7 @@ using com.pblabs.geom.VectorTools;
 
 class UIUtil
 {
-    // public static function createSimpleButton (layer :BaseScene2DLayer<Dynamic, Dynamic>, name :String, text :String, loc :XY, onInputDown:Void->Void) :IEntity
+    // public static function createSimpleButton (layer :BaseSceneLayer<Dynamic, Dynamic>, name :String, text :String, loc :XY, onInputDown:Void->Void) :IEntity
     // {
     //     var so = layer.context.createBaseSceneEntity();
     //     var blob  = layer.context.allocate(CircleShape);
@@ -40,7 +40,7 @@ class UIUtil
     //     return so;
     // }
     
-    public static function createSVGButton (layer :BaseScene2DLayer<Dynamic, Dynamic>, name :String, svgId :String, loc :XY, onInputDown:Void->Void) :IEntity
+    public static function createSVGButton (layer :BaseSceneLayer<Dynamic, Dynamic>, name :String, svgId :String, loc :XY, onInputDown:Void->Void) :IEntity
     {
         var so = layer.context.createBaseSceneEntity();
         
@@ -57,7 +57,7 @@ class UIUtil
         return so;
     }
     
-    public static function createButton (layer :BaseScene2DLayer<Dynamic, Dynamic>, name :String, imageClass :Class<Dynamic>,
+    public static function createButton (layer :BaseSceneLayer<Dynamic, Dynamic>, name :String, imageClass :Class<Dynamic>,
     	resource :ResourceToken<Dynamic>, ?loc :XY = null, ?onInputDown:Void->Void = null) :IEntity
     {
         var so = layer.context.createBaseSceneEntity();
@@ -81,7 +81,7 @@ class UIUtil
     }
     
     /** We can add more args here when the UI bits become more sophisticated */
-    public static function createZoomWidget (layer :BaseScene2DLayer<Dynamic, Dynamic>, target :BaseSceneManager<Dynamic>, loc :Vector2, ?size :Float = 200) :Void
+    public static function createZoomWidget (layer :BaseSceneLayer<Dynamic, Dynamic>, target :BaseSceneManager<Dynamic>, loc :Vector2, ?size :Float = 200) :Void
     {
         Preconditions.checkNotNull(layer);
         Preconditions.checkNotNull(target);
@@ -110,7 +110,7 @@ class UIUtil
     }
     
     /** We can add more args here when the UI bits become more sophisticated */
-    public static function createRotateWidget (layer :BaseScene2DLayer<Dynamic, Dynamic>, target :BaseSceneManager<Dynamic>, loc :Vector2, ?size :Float = 200) :Void
+    public static function createRotateWidget (layer :BaseSceneLayer<Dynamic, Dynamic>, target :BaseSceneManager<Dynamic>, loc :Vector2, ?size :Float = 200) :Void
     {
         Preconditions.checkNotNull(layer);
         Preconditions.checkNotNull(target);
@@ -137,7 +137,7 @@ class UIUtil
         mouse.isRotatable = mouse.isScalable = mouse.isTranslatable = false;
     }
     
-    public static function createScrollWidget (layer :BaseScene2DLayer<Dynamic, Dynamic>, target :BaseSceneManager<Dynamic>, loc :Vector2, ?size :Float = 200) :Void
+    public static function createScrollWidget (layer :BaseSceneLayer<Dynamic, Dynamic>, target :BaseSceneManager<Dynamic>, loc :Vector2, ?size :Float = 200) :Void
     {
         Preconditions.checkNotNull(layer);
         Preconditions.checkNotNull(target);

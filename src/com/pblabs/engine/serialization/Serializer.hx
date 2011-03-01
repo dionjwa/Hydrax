@@ -681,12 +681,12 @@ class Serializer
 			// Where are we assigning this item?
 			var key = childXML.nodeName;
 			// Deal with escaping numbers and the "add to end" behavior.
-			if (key.charAt(0) == "_")
-			key = key.substr(1);
+			if (key.charAt(0) == "_") {
+				key = key.substr(1);
+			}
 			
 			// Might be invalid...
-			if (key.isBlank() && Std.is(object, Map))
-			{
+			if (key.isBlank() && Std.is(object, Map)) {
 				var xmlPath = reportXMLPath(childXML);
 				com.pblabs.util.Log.error([object, "deserialize", "Cannot add a value to a Map without a key. " + xmlPath]);
 				continue;

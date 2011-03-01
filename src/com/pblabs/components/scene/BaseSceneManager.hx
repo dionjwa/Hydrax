@@ -9,7 +9,7 @@
 package com.pblabs.components.scene;
 
 import com.pblabs.components.manager.NodeComponent;
-import com.pblabs.components.scene.BaseScene2DLayer;
+import com.pblabs.components.scene.BaseSceneLayer;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.SceneView;
 import com.pblabs.components.spatial.SpatialComponent;
@@ -33,7 +33,7 @@ using com.pblabs.util.StringUtil;
   * Layers are arranged: smaller index is behind.
   */
 @sets("SceneManager")
-class BaseSceneManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends NodeComponent<SceneManagerList, Layer>,
+class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComponent<SceneManagerList, Layer>,
 	implements haxe.rtti.Infos, implements IScene2D
 {
 	@inject
@@ -87,7 +87,7 @@ class BaseSceneManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends NodeCo
 		parentProperty = SceneManagerList.PROP;
 	}
 	
-	public function addLayer (?layerName :String = null, ?cls :Class<Dynamic> = null, ?registerAsManager :Bool = false) :BaseScene2DLayer<Dynamic, Dynamic>
+	public function addLayer (?layerName :String = null, ?cls :Class<Dynamic> = null, ?registerAsManager :Bool = false) :BaseSceneLayer<Dynamic, Dynamic>
 	{
 		com.pblabs.util.Assert.isNotNull(context);
 		
@@ -198,7 +198,7 @@ class BaseSceneManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends NodeCo
 		_transformDirty = true;
 	}
 
-	public function getTopLayer () :BaseScene2DLayer<Dynamic, Dynamic>
+	public function getTopLayer () :BaseSceneLayer<Dynamic, Dynamic>
 	{
 		if (children.length > 0) {
 			return children[children.length - 1];
@@ -241,6 +241,10 @@ class BaseSceneManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends NodeCo
 		} else {
 			com.pblabs.util.Log.warn("SceneManager " + owner.name + " does not have a SpatialComponent. This mean no panning the Scene");
 		}
+		
+		var pb :com.pblabs.engine.core.PBContext = cast context;
+		bindVoidSignal(pb.signalEnter, attach);
+		bindVoidSignal(pb.signalExit, detach);		
 	}
 
 	override function onRemove () :Void
@@ -336,6 +340,17 @@ class BaseSceneManager<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends NodeCo
 		_rotation = val;
 		_transformDirty = true;
 		return val;
+	}
+	
+	//Override
+	function attach () :Void
+	{
+		
+	}
+	
+	function detach () :Void
+	{
+		
 	}
 	
 	var _position :XY;

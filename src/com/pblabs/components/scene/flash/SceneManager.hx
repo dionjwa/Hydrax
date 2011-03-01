@@ -90,7 +90,7 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 	override function onRemove () :Void
 	{
 		super.onRemove();
-		context.getManager(SceneView).removeDisplayObject(displayContainer);
+		_rootSprite.detach();
 		com.pblabs.util.Assert.isFalse(zoomSignal.isListenedTo, "Still has listeners");
 		zoomSignal = null;
 		
@@ -156,6 +156,22 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 	{
 		super.childRemoved(layer);
 		_rootSprite.removeChild(layer.displayContainer);
+	}
+	
+	override function attach () :Void
+	{
+		super.attach();
+		if (_rootSprite.parent == null) {
+			context.getManager(SceneView).addDisplayObject(displayContainer);
+		}
+	}
+	
+	override function detach () :Void
+	{
+		super.detach();
+		if (_rootSprite.parent != null) {
+			_rootSprite.detach();
+		}
 	}
 	
 	function get_displayContainer () :DisplayObjectContainer

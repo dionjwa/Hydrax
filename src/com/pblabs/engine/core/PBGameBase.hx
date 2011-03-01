@@ -144,14 +144,6 @@ class PBGameBase
 	{
 		_contextTransitions.push(ContextTransition.PUSH(ctx));
 		updateContextTransitions();
-		
-		// Preconditions.checkNotNull(ctx, "Cannot add a null context");
-		// Preconditions.checkArgument(!_contexts.has(ctx), "Context already added");
-		// Preconditions.checkArgument(!Std.is(ctx, PBContext) || cast(ctx, PBContext).injector.parent == injector, "PBContext injector has no parent.  Use allocate() to create the PBContext, not new PBContext");
-		// stopContexts();
-		// _contexts.push(ctx);
-		// ctx.getManager(IProcessManager).isRunning = true;
-		// startTopContext();
 	}
 	
 	public function popContext () :Void
@@ -170,13 +162,6 @@ class PBGameBase
 	{
 		_contextTransitions.push(ContextTransition.REMOVE(c));
 		updateContextTransitions();
-		
-	    // com.pblabs.util.Assert.isNotNull(c);
-	    // if (c != currentContext && currentContext != null) {
-	    // 	currentContext.exit();
-	    // }
-	    // _contexts.remove(c);
-	    
 	}
 	
 	public function shutdown () :Void
@@ -273,8 +258,7 @@ class PBGameBase
 			}
 		}
 		
-		
-		_currentContext = _contexts[0];
+		_currentContext = _contexts[_contexts.length - 1];
 		_isUpdatingContextTransition = false;
 		
 		if (_currentContext != null) {

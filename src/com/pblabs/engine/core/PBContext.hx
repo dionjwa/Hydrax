@@ -147,7 +147,9 @@ class PBContext
 		com.pblabs.util.Assert.isFalse(_isSetup, "Only call setup once");
 		_isSetup = true;
 		Preconditions.checkNotNull(injector, "WTF is the injector null?");
-		_nameManager = getManager(NameManager);
+		
+		// _nameManager = getManager(NameManager);
+		_nameManager = registerManager(NameManager, new NameManager(), null, true);
 		
 		Preconditions.checkNotNull(_nameManager, "WTF is the nameManager null?");
 		
@@ -174,12 +176,14 @@ class PBContext
 	
 	public function enter () :Void
 	{
+		trace(name + " dispatching enter signal");
 		signalEnter.dispatch();
 	}
 	
 	/** Subclasses override */
 	public function exit () :Void
 	{
+		trace(name + " dispatching exit signal");
 		signalExit.dispatch();
 	}
 

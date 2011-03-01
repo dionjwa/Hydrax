@@ -26,11 +26,11 @@ using com.pblabs.engine.util.PBUtil;
 using com.pblabs.geom.VectorTools;
 using com.pblabs.util.StringUtil;
 
-class BaseSceneComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends NodeComponent<Layer, Dynamic>,
+class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComponent<Layer, Dynamic>,
 		implements IInteractiveComponent, implements haxe.rtti.Infos
 {
 	public var objectMask (get_objectMask, set_objectMask) :ObjectType;
-	public var layer (get_layer, null) :BaseScene2DLayer<Dynamic, Dynamic>;
+	public var layer (get_layer, null) :BaseSceneLayer<Dynamic, Dynamic>;
 	public var x (get_x, set_x) :Float;
 	public var y (get_y, set_y) :Float;
 	public var width (get_width, set_width) :Float;
@@ -177,7 +177,7 @@ class BaseSceneComponent<Layer :BaseScene2DLayer<Dynamic, Dynamic>> extends Node
 		setDefaultVars();
 	}
 	
-	function get_layer () :BaseScene2DLayer<Dynamic, Dynamic>
+	function get_layer () :BaseSceneLayer<Dynamic, Dynamic>
 	{
 		return cast parent;
 	}
