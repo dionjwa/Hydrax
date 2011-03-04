@@ -362,6 +362,8 @@ class ProcessManager implements IProcessManager
 				list.insert(position, processObject);
 		}
 		
+		
+		
 	}
 	
 	/**
@@ -373,8 +375,8 @@ class ProcessManager implements IProcessManager
 	{
 		com.pblabs.util.Assert.isNotNull(object, com.pblabs.util.Log.getStackTrace());
 		
-		if (listenerCount == 1) {
-			com.pblabs.util.Log.debug("Stopping because listener count == 1");	
+		if (listenerCount == 1 && _deferredCallbacks.length == 0) {
+			com.pblabs.util.Log.debug("Stopping because listener count == 1 and no _deferredCallbacks");	
 			stop();
 		}
 		

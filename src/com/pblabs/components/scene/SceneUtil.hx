@@ -77,9 +77,11 @@ class SceneUtil
 	    return scene;
 	}
 	
-	public static function createBaseSceneEntity (context :IPBContext, ?addTasks :Bool = true) :IEntity
+	public static function createBaseSceneEntity (context :IPBContext, ?addTasks :Bool = true, ?e :IEntity = null) :IEntity
 	{
-		var e :IEntity = context.allocate(IEntity);
+		if (e == null) {
+			e = context.allocate(IEntity);
+		}
 		e.deferring = true;
 		e.addComponent(context.allocate(SpatialComponent), SpatialComponent.NAME);
 		e.addComponent(context.allocate(AlphaComponent));
@@ -242,10 +244,7 @@ class SceneUtil
 
 	public static function updateIfUpdatable (obj :Dynamic) :Void
 	{
-		// if (Std.is(obj, ITickedObject)) {
-		// 	cast(obj, ITickedObject).onTick(0);
-		// }
-		if (Std.is(obj, IAnimatedObject)) {
+		if (obj != null && Std.is(obj, IAnimatedObject)) {
 			cast(obj, IAnimatedObject).onFrame(0);
 		}
 	}

@@ -13,6 +13,9 @@ import com.pblabs.util.Enumerable;
 
 using StringTools;
 
+using com.pblabs.util.XMLUtil;
+using com.pblabs.util.StringUtil;
+
 class XMLUtil
 {
 	/**
@@ -45,7 +48,7 @@ class XMLUtil
 			case Xml.Document: return false;
 			case Xml.Element:
 				return false;
-			case Xml.PCData: return false;//???Really???? I don't know
+			case Xml.PCData: return true;//???Really???? I don't know
 			case Xml.Prolog: return false;
 			
 		}
@@ -96,16 +99,17 @@ class XMLUtil
 	public static function parseArray <T>(xml :Xml, childName :String, parseElement :String->T) :Array<T>
 	{
 		var arr :Array<T> = [];
-		if (XMLUtil.child(xml, childName) != null) {
-			var s = XMLUtil.child(xml, childName).nodeValue;
-			for (sval in s.split(",")) {
-				var token = sval.trim();
-				arr.push(parseElement(token));
+		var namedChild = xml.child(childName);  
+		if (namedChild != null) {
+			var s = namedChild.firstChild().nodeValue;
+			if (!s.isBlank()) {
+				for (sval in s.split(",")) {
+					var token = sval.trim();
+					arr.push(parseElement(token));
+				}
 			}
 		}
 		return arr;
 	}
 	
 }
-
-

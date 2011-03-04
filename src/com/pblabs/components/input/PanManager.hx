@@ -21,12 +21,15 @@ import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.ds.Tuple;
 
+import de.polygonal.core.math.Mathematics;
 import de.polygonal.motor2.geom.math.XY;
 
 import haxe.Timer;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
+
+using Type;
 
 using com.pblabs.components.scene.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
@@ -41,6 +44,11 @@ typedef Translatable = {
 	public var y (get_y, set_y) :Float;
 }
 
+enum Constraint {
+	HORIZONTAL(min:Float, max :Float);/** No vertical movement */
+	VERTICAL(min:Float, max :Float);/** No horizontal movement */
+}
+
 /**
   * Handles panning of a Scene and components.
   */
@@ -48,6 +56,7 @@ class PanManager extends EntityComponent,
 	implements IPBManager, implements haxe.rtti.Infos
 {
 	public var dragSignaler :Signaler<BaseSceneComponent<Dynamic>>;
+	public var dragEndedSignaler :Signaler<Void>;
 	
 	/** When panning stops, does the scene ease out? */
 	// public var defaultEasing (get_defaultEasing, set_defaultEasing) :Bool;
@@ -78,11 +87,15 @@ class PanManager extends EntityComponent,
 	var _startObj :XY;
 	var _xProp :PropertyReference<Float>;
 	var _yProp :PropertyReference<Float>;
+	var _constraint :Constraint;
+	// var _constraintMin :Float;
+	// var _constraintMax :Float;
 	
 	public function new ()
 	{
 		super();
 		dragSignaler = new DirectSignaler(this);
+		dragEndedSignaler = new DirectSignaler(this);
 		_startMouse = new Vector2();
 		_startObj = new Vector2();
 		
@@ -132,10 +145,17 @@ class PanManager extends EntityComponent,
 	}
 	
 	public function panComponent (c :BaseSceneComponent<Dynamic>, ?easing :Bool = false, ?pauseScene :Bool = false, 
-		?xProp :PropertyReference<Float> = null, ?yProp :PropertyReference<Float> = null) :Void
+		?xProp :PropertyReference<Float> = null, 
+		?yProp :PropertyReference<Float> = null,
+		?constraint :Constraint = null) :Void
 	{
 		endPanning();
 		_isEasing = easing;
+		_constraint = constraint;
+		if (_constraint != null && _isEasing) {
+			com.pblabs.util.Log.warn("easing doesn't work with constraints yet");
+			_isEasing = false;
+		}
 		_pauseProcessManagerOnPan = pauseScene;
 		Preconditions.checkNotNull(c);
 		_sceneComponent = c;
@@ -187,12 +207,14 @@ class PanManager extends EntityComponent,
 		if (!isPanning) {
 			return;
 		}
+		dragEndedSignaler.dispatch();
 		_inputManager.deviceMove.unbind(onDeviceMove);
 		_inputManager.deviceUp.unbind(onDeviceUp);
 		isPanning = false;
 		_isEasing = false;
 		_scene = null;
 		_sceneComponent = null;
+		_constraint = null;
 	}
 	
 	override function onRemove () :Void
@@ -224,8 +246,29 @@ class PanManager extends EntityComponent,
 				var worldStart = SceneUtil.translateScreenToWorld(_sceneComponent.layer.parent, _startMouse);
 				var worldNow = SceneUtil.translateScreenToWorld(_sceneComponent.layer.parent, e.inputLocation);
 				var worldDiff = worldNow.subtract(worldStart);
-				_sceneComponent.owner.setProperty(_xProp, _startObj.x + worldDiff.x);
-				_sceneComponent.owner.setProperty(_yProp, _startObj.y + worldDiff.y);
+				
+				if (_constraint != null) {
+					
+					var max :Float = 0;
+					var min :Float = 0;
+					switch (_constraint) {
+						case HORIZONTAL(minX, maxX): min = minX; max = maxX;
+						case VERTICAL(minY, maxY): min = minY; max = maxY;
+					}
+					
+					if (_constraint.enumConstructor() == "HORIZONTAL") {
+						worldDiff.y = 0;
+						_sceneComponent.owner.setProperty(_xProp, Mathematics.fclamp(_startObj.x + worldDiff.x, min, max));
+					} else {
+						worldDiff.x = 0;
+						_sceneComponent.owner.setProperty(_yProp, Mathematics.fclamp(_startObj.y + worldDiff.y, min, max));
+					} 
+				} else {
+					_sceneComponent.owner.setProperty(_xProp, _startObj.x + worldDiff.x);
+					_sceneComponent.owner.setProperty(_yProp, _startObj.y + worldDiff.y);
+				}
+				
+				
 				
 				// var world = _scene.translateScreenToWorld(e.inputLocation);
 				// _sceneComponent.x = world.x;
@@ -323,4 +366,13 @@ class PanManager extends EntityComponent,
 	{
 		_framesWithoutMovement++;
 	}
+	
+	#if debug
+	override public function postDestructionCheck () :Void
+	{
+		super.postDestructionCheck();
+		com.pblabs.util.Assert.isFalse(dragSignaler.isListenedTo);
+		com.pblabs.util.Assert.isFalse(dragEndedSignaler.isListenedTo);
+	}
+	#end
 }

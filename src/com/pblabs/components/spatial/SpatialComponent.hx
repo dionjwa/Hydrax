@@ -172,6 +172,19 @@ class SpatialComponent extends EntityComponent,
 		_angle = xml.parseFloat("angle");
 	}
 	
+	override function onReset () :Void
+	{
+		super.onReset();
+		com.pblabs.util.Assert.isTrue(name == NAME, com.pblabs.util.Log.getStackTrace());
+		// spriteForPointChecks = null;
+		#if (flash || js)
+		if (spriteForPointChecks == null || !spriteForPointChecks.isRegistered) {
+			spriteForPointChecks = cast owner.lookupComponent(com.pblabs.components.scene.BaseSceneComponent);
+		}
+		#end
+		dispatchAll();
+	}
+	
 	override function onRemove () :Void
 	{
 		#if debug
@@ -182,17 +195,10 @@ class SpatialComponent extends EntityComponent,
 		_angle = 0;
 		_worldAABB = null;
 		_objectMask = ObjectType.ALL;
-		super.onRemove();
-	}
-	
-	override function onReset () :Void
-	{
-		super.onReset();
-		com.pblabs.util.Assert.isTrue(name == NAME, com.pblabs.util.Log.getStackTrace());
 		#if (flash || js)
-		spriteForPointChecks = cast owner.lookupComponent(com.pblabs.components.scene.BaseSceneComponent);
+		spriteForPointChecks = null;
 		#end
-		dispatchAll();
+		super.onRemove();
 	}
 	
 	public function dispatchAngle () :Void

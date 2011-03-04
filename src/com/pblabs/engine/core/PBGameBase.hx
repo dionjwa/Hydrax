@@ -180,6 +180,10 @@ class PBGameBase
 		_contexts = null;
 	}
 	
+	/**
+	  * Update contexts.  If more than one transition occurs, it will wait until
+	  * all transitions are complete before calling enter() on the top context.
+	  */
 	function updateContextTransitions () :Void
 	{
 		if (_isUpdatingContextTransition) {

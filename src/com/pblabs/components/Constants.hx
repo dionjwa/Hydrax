@@ -16,4 +16,7 @@ class Constants
 	public static var DEFAULT_Y_PROP :PropertyReference<Float> = com.pblabs.components.spatial.SpatialComponent.P_Y;
 	public static var DEFAULT_ANGLE_PROP :PropertyReference<Float> = com.pblabs.components.spatial.SpatialComponent.P_ANGLE;
 	public static var DEFAULT_SCALE_PROP :PropertyReference<Float> = new PropertyReference("@ScaleComponent.scale");
+	
+	/** For Type.createInstance args */
+	inline public static var EMPTY_ARRAY :Array<Dynamic> = [];
 }

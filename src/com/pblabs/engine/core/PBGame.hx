@@ -43,6 +43,7 @@ class PBGame extends PBGameBase
 		// Bring in the standard managers.
 		registerManager(NameManager, new NameManager());
 		registerManager(IProcessManager, new ProcessManager());
+		getManager(IProcessManager).isRunning = true;
 		registerManager(SignalBondManager, new SignalBondManager());
 		registerManager(SetManager, new SetManager());
 		registerManager(com.pblabs.components.scene.SceneView, new com.pblabs.components.scene.SceneView());
@@ -80,6 +81,7 @@ class PBGame extends PBGameBase
 		registerManager(NameManager, new NameManager());
 		registerManager(SignalBondManager, new SignalBondManager());
 		registerManager(IProcessManager, new ProcessManager());
+		getManager(IProcessManager).isRunning = true;
 		registerManager(SetManager, new SetManager());
 		registerManager(IResourceManager, new ResourceManager());
 		registerManager(com.pblabs.components.scene.SceneView, new com.pblabs.components.scene.SceneView());

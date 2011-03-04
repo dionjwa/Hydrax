@@ -178,7 +178,7 @@ class TemplateManager
 	 */
 	public function instantiateEntity(name :String, context :IPBContext) :IEntity
 	{
-		// com.pblabs.util.Log.debug("name=" + name);
+		com.pblabs.util.Log.debug("name=" + name);
 		Preconditions.checkNotNull(name, "name is null");
 		Preconditions.checkNotNull(context, "context is null");
 		Profiler.enter("instantiateEntity");
@@ -192,7 +192,7 @@ class TemplateManager
 				}
 				
 				if (_things.get(name).type == RefType.entity) {
-					// com.pblabs.util.Log.debug("creating entity from a callback");
+					com.pblabs.util.Log.debug("creating entity from a callback");
 					var thing :ThingReference = _things.get(name);
 					var instantiated = null;
 					// try {
@@ -372,8 +372,8 @@ class TemplateManager
 		com.pblabs.util.Log.debug("name=" + name);
 		// Check for a callback.
 		if (_things.exists(name) && _things.get(name).type == RefType.group) {
-			// com.pblabs.util.Log.debug("name exists, type=" + _things.get(name).type);
-			// Preconditions.checkArgument(_things.get(name).type != RefType.entity, "Thing '" + name + "' is an entity callback!"); 
+			com.pblabs.util.Log.debug("name exists, type=" + _things.get(name).type);
+			Preconditions.checkArgument(_things.get(name).type != RefType.entity, "Thing '" + name + "' is an entity callback!"); 
 			// We won't dispatch the GROUP_LOADED event here as it's the callback
 			// author's responsibility.
 			// if (null != _things.get(name).groupCallback)
@@ -577,6 +577,7 @@ class TemplateManager
 	
 	function doInstantiateTemplate (object :IEntity, templateName :String, tree :Map<String, Bool>) :Bool
 	{
+		com.pblabs.util.Log.debug("templateName=" + templateName);
 		if (templateName == null || templateName.length == 0) {
 			return true;
 		}
@@ -604,6 +605,7 @@ class TemplateManager
 	
 	function doInstantiateGroup(name :String, tree :Map<String, Bool>, context :IPBContext) :IPBGroup
 	{
+		com.pblabs.util.Log.debug("name=" + name);
 		var xml = getXML(name, "group");
 		Preconditions.checkNotNull(xml, "Could not find group '" + name + "'"); 
 		
@@ -654,11 +656,28 @@ class TemplateManager
 	
 	public function loadInMemoryFile(data :Xml, sourceName :String) :Void
 	{
+		com.pblabs.util.Assert.isNotNull(data);
+		com.pblabs.util.Assert.isTrue(data.nodeType == Xml.Element || data.nodeType == Xml.Document, "Incorrect node type=" + data.nodeType);
+		
+		//Issues with XML.  If we're handed a Document, set the data to the first child element
+		if (data.nodeType == Xml.Document) {
+			data = data.firstElement();
+		}
+		
 		var version = Std.parseInt(data.get("version"));
+		com.pblabs.util.Log.debug("version=" + version);
 		var thingCount :Int = 0;
+		
+		
 		for (xml in data.elements()) {
-			thingCount++;
-			addXML(xml, sourceName, version);
+			if (xml.nodeType == Xml.Element) {
+				com.pblabs.util.Log.info("adding child " + xml.nodeType + " " + xml.nodeName);
+				thingCount++;
+				addXML(xml, sourceName, version);
+			} 
+			else {
+				com.pblabs.util.Log.info(" not child adding " + xml.nodeType + " " + xml);
+			}
 		}
 		
 		com.pblabs.util.Log.info("Loaded " + thingCount + " from " + sourceName);			

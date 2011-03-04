@@ -7,9 +7,12 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.engine.resource;
+
 import com.pblabs.engine.core.IPBContext;
+import com.pblabs.util.Equalable;
 
 class ResourceToken<T>
+	implements Equalable<ResourceToken<Dynamic>>
 {
 	public var resourceId :String;
 	public var key :String;
@@ -18,6 +21,11 @@ class ResourceToken<T>
 	{
 		this.resourceId = resourceId;
 		this.key = key;
+	}
+	
+	public function equals (other :ResourceToken<Dynamic>) :Bool
+	{
+	    return resourceId == other.resourceId && key == other.key;
 	}
 	
 	public function create (context :IPBContext) :T

@@ -18,6 +18,7 @@ import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.core.SetManager;
+import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
@@ -46,22 +47,19 @@ using com.pblabs.util.MathUtil;
  * and provides the components that react to input.
  */
 class InputManager extends BaseInputManager,
-	implements IInputData
+	implements IInputData, implements com.pblabs.engine.time.IAnimatedObject
 {
 	public var deviceDown(default, null) :Signaler<IInputData>;
 	public var deviceUp(default, null) :Signaler<IInputData>;
 	public var deviceMove(default, null) :Signaler<IInputData>;
 	public var deviceClick(default, null) :Signaler<IInputData>;
 	public var deviceHeldDown(default, null) :Signaler<IInputData>;
-	// public var drag(default, null) :Signaler<IInputData>;
-	public var doubleClick(default, null) :Signaler<IInputData>;
+	// public var doubleClick(default, null) :Signaler<IInputData>;
 	
 	public var rotate (default, null) :Signaler<IInputData>;
 	public var scale (default, null) :Signaler<IInputData>;
 	
 	public var isDeviceDown (get_isDeviceDown, null) :Bool;
-	
-	// public var underMouse :Array<MouseInputComponent>;
 	
 	/** Is the mouse button down, or the device touched */
 	var _isDeviceDown :Bool;
@@ -84,18 +82,14 @@ class InputManager extends BaseInputManager,
 	var _displayObjectsUnderPoint :Map<Int, Array<BaseSceneComponent<Dynamic>>>;
 	var _displayObjectFirstUnderPoint :Map<Int, BaseSceneComponent<Dynamic>>;
 
-	
-	// var _components :Array<MouseInputComponent>;
 	var _deviceDownComponent :MouseInputComponent;
 	var _deviceDownComponentLoc :Vector2;
 	var _deviceDownLoc :Vector2;
 	var _checked :Set<String>;
-	// var _gestureCache :IInputData;
 	var _fingersTouching :Int;
 	var _deviceLoc :Vector2;
 	var _isGesturing :Bool;
 	var _tempVec :Vector2;
-	var _timer :haxe.Timer;
 	static var INPUT_SET :String = ReflectUtil.tinyClassName(IInteractiveComponent);
 	
 	public function new ()
@@ -106,73 +100,54 @@ class InputManager extends BaseInputManager,
 		deviceUp = new DirectSignaler(this);
 		deviceClick = new DirectSignaler(this);
 		deviceHeldDown = new DirectSignaler(this);
-		doubleClick = new DirectSignaler(this);
+		// doubleClick = new DirectSignaler(this);
 		rotate = new DirectSignaler(this);
 		scale = new DirectSignaler(this);
 		
-		// _gestureCache = new IInputData();
 		_checked = Sets.newSetOf(String);
 		_deviceLoc = new Vector2();
 		_isDeviceDown = false;
 		_isGesturing = false;
 		_tempVec = new Vector2();
 		_fingersTouching = 0;
-		// _components = [];
 		
 		_sceneManagers = [];
 		_displayObjectsUnderPoint = Maps.newHashMap(Int);
 		_displayObjectFirstUnderPoint = Maps.newHashMap(Int);
 	}
 	
-	public function onFrame () :Void
+	public function onFrame (dt :Float) :Void
 	{
 		//Dispatch a deviceHeldDown signal, but only if there's something under the device.
 		//NB: this doesn't recheck what's under the device, it's the same from the deviceDown.
-		// return;
-		// if (_isDeviceDown) {
-		// 	if (_deviceDownComponent != null) {
-				
-		// 		if (_deviceDownComponent.isRegistered) {
-		// 			var mouseInput = _deviceDownComponent.owner.lookupComponentByType(MouseInputComponent);
-			
-		// 			if (mouseInput != null && mouseInput.onDeviceHeldDown != null) {
-		// 				mouseInput.onDeviceHeldDown();
-		// 			}
-		// 		} else {
-		// 			_deviceDownComponent = null;
-		// 		}
-				
-		// 		_inputCache.inputComponent = _deviceDownComponent;
-		// 		_inputCache.inputLocation = _deviceLoc.clone();
-		// 		_inputCache.touchCount = _fingersTouching;
-		// 		_inputCache.isMouseDown = true;
-		// 		deviceHeldDown.dispatch(_inputCache);
-		// 	}
-		// }
+		if (_isDeviceDown && deviceHeldDown.isListenedTo) {
+			deviceHeldDown.dispatch(this);
+		}
 	}
 	
 	override public function startup () :Void
 	{
 		super.startup();
 		bindSignals();
-		_timer = new haxe.Timer(Std.int(1000.0 / 30));
-		_timer.run = onFrame;
+		_game.getManager(IProcessManager).addAnimatedObject(this);
 	}
 	
 	override public function shutdown () :Void
 	{
 		super.shutdown();
 		freeSignals();
+		if (_game.getManager(IProcessManager) != null) {
+			//If the ProcessManager is null, it's shut down.
+			_game.getManager(IProcessManager).removeAnimatedObject(this);
+		}
 		onNewContext(null);
-		_timer.stop();
-		_timer =  null;
 		
 		deviceDown = null;
 		deviceUp = null;
 		deviceMove = null;
 		deviceClick = null;
 		deviceHeldDown = null;
-		doubleClick = null;
+		// doubleClick = null;
 		rotate = null;
 		scale = null;
 	}

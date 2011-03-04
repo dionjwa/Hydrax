@@ -98,6 +98,14 @@ extends com.pblabs.components.scene.flash.SceneComponent
 		#end
 	}
 	
+	#if flash
+	override function onRemove () :Void
+	{
+		super.onRemove();
+		_displayObject = null;
+	}
+	#end
+	
 	#if css
 	override public function onFrame (dt :Float) :Void
 	{

@@ -86,6 +86,14 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		height = _displayObject.height;
 	}
 	
+	override function onRemove () :Void
+	{
+		super.onRemove();
+		if (_displayObject != null) {
+			com.pblabs.util.Assert.isNull(_displayObject.parent);
+		}
+	}
+	
 	override function set_width (val :Float) :Float
 	{
 		com.pblabs.util.Assert.isTrue(val >= 0);

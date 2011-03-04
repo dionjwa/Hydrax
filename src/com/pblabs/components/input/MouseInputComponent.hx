@@ -12,6 +12,7 @@ import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.core.SignalBondManager;
 
+import hsl.haxe.Bond;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
@@ -21,20 +22,7 @@ import hsl.haxe.Signaler;
  */
 class MouseInputComponent extends EntityComponent
 {
-	
-	//For MouseInputComponent
-	// public static function compareMouseComponents (a :com.pblabs.components.input.MouseInputComponent, b :com.pblabs.components.input.MouseInputComponent) :Int
-	// {
-	//     if (a.owner.isSquad() && b.owner.isUnit()) {
-	//     	return 1;
-	//     } else if (b.owner.isSquad() && a.owner.isUnit()) {
-	//     	return -1;
-	//     } else {
-	//     	return 1;
-	//     }
-	// }
-	
-	public static function makeReactiveButton (mouse :MouseInputComponent) :Void
+	public static function makeReactiveButton (mouse :MouseInputComponent) :MouseInputComponent
 	{
 		var spatial = mouse.owner.lookupComponent(com.pblabs.components.spatial.SpatialComponent);
 		var input = mouse.context.getManager(com.pblabs.components.input.InputManager);
@@ -87,6 +75,8 @@ class MouseInputComponent extends EntityComponent
 				bond.destroy();
 			}
 		}, true);
+		
+		return mouse;
 	}
 	
 	
@@ -127,12 +117,33 @@ class MouseInputComponent extends EntityComponent
 		return _deviceClickSignaler;
 	}
 	
-	function clicked () :Void
+	var deviceHeldDownSignaler (get_deviceHeldDownSignaler, null) :Signaler<Void>;
+	var _deviceHeldDownSignaler :Signaler<Void>;
+	var _deviceHeldDownBond :Bond;
+	function get_deviceHeldDownSignaler () :Signaler<Void>
 	{
-		if (_deviceClickSignaler != null) {
-			_deviceClickSignaler.dispatch();
+		if (_deviceHeldDownSignaler == null) {
+			_deviceHeldDownSignaler = new DirectSignaler(this);
 		}
+		return _deviceHeldDownSignaler;
 	}
+	
+	// var deviceHeldDownSignaler (get_deviceClickSignaler, null) :Signaler<Void>;
+	// var _deviceClickSignaler :Signaler<Void>;
+	// function get_deviceClickSignaler () :Signaler<Void>
+	// {
+	// 	if (_deviceClickSignaler == null) {
+	// 		_deviceClickSignaler = new DirectSignaler(this);
+	// 	}
+	// 	return _deviceClickSignaler;
+	// }
+	
+	// function clicked () :Void
+	// {
+	// 	if (_deviceClickSignaler != null) {
+	// 		_deviceClickSignaler.dispatch();
+	// 	}
+	// }
 	
 	// public var deviceMoveSignaler (get_deviceUpSignaler, null) :Signaler<Void>;
 	
@@ -140,6 +151,7 @@ class MouseInputComponent extends EntityComponent
 	public var isRotatable :Bool;
 	/** Moveable in the x/y? */
 	public var isTranslatable :Bool;
+	public var constraint :PanManager.Constraint;
 	
 	var _bonds :Array<hsl.haxe.Bond>;
 	var _mouseDownThis :Bool;
@@ -153,25 +165,36 @@ class MouseInputComponent extends EntityComponent
 		_mouseDownThis = false;
 	}
 	
-	public function bindDeviceDown (callBack :Void->Void) :Void
+	public function bindDeviceDown (callBack :Void->Void) :MouseInputComponent
 	{
 		com.pblabs.util.Assert.isNotNull(callBack);
 		com.pblabs.util.Assert.isNotNull(deviceDownSignaler);
-	    _bonds.push(deviceDownSignaler.bindVoid(callBack));
+		_bonds.push(deviceDownSignaler.bindVoid(callBack));
+		return this;
 	}
 	
-	public function bindDeviceUp (callBack :Void->Void) :Void
+	public function bindDeviceUp (callBack :Void->Void) :MouseInputComponent
 	{
 		com.pblabs.util.Assert.isNotNull(callBack);
 		com.pblabs.util.Assert.isNotNull(deviceUpSignaler);
-	    _bonds.push(deviceUpSignaler.bindVoid(callBack));
+		_bonds.push(deviceUpSignaler.bindVoid(callBack));
+		return this;
 	}
 	
-	public function bindDeviceClick (callBack :Void->Void) :Void
+	public function bindDeviceClick (callBack :Void->Void) :MouseInputComponent
 	{
 		com.pblabs.util.Assert.isNotNull(callBack);
 		com.pblabs.util.Assert.isNotNull(deviceClickSignaler);
-	    _bonds.push(deviceClickSignaler.bindVoid(callBack));
+		_bonds.push(deviceClickSignaler.bindVoid(callBack));
+		return this;
+	}
+	
+	public function bindDeviceHeldDown (callBack :Void->Void) :MouseInputComponent
+	{
+		com.pblabs.util.Assert.isNotNull(callBack);
+		com.pblabs.util.Assert.isNotNull(deviceHeldDownSignaler);
+		_bonds.push(deviceHeldDownSignaler.bindVoid(callBack));
+		return this;
 	}
 	
 	public function clearListeners () :Void
@@ -180,12 +203,13 @@ class MouseInputComponent extends EntityComponent
 			bond.destroy();
 		}
 		_bonds = [];
+		destroyDeviceHeldBond();
 	}
 	
 	override function onReset () :Void
 	{
 		super.onReset();
-		
+		_bounds = null;
 		if (boundsProperty != null) {
 			_bounds = owner.getProperty(boundsProperty);
 		}
@@ -225,7 +249,7 @@ class MouseInputComponent extends EntityComponent
 	function onMouseDownInternal (data :IInputData) :Void
 	{
 		_mouseDownThis = false;
-		if (isTranslatable || (_deviceDownSignaler != null || _deviceClickSignaler != null)) {
+		if (isTranslatable || (_deviceDownSignaler != null || _deviceClickSignaler != null || _deviceDownSignaler != null)) {
 			if (data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
 				
 				_mouseDownThis = true;
@@ -233,10 +257,12 @@ class MouseInputComponent extends EntityComponent
 					_deviceDownSignaler.dispatch();
 				}
 				
+				_deviceHeldDownBond = context.getManager(InputManager).deviceHeldDown.bind(onDeviceHeldDownInternal);
+				
 				if (isTranslatable) {
-					var dragger = context.getManager(com.pblabs.components.input.PanManager);
+					var dragger = context.getManager(PanManager);
 					if (dragger != null) {
-						dragger.panComponent(cast _bounds);
+						dragger.panComponent(cast _bounds, false, false, null, null, constraint);
 					}
 				}
 			}
@@ -245,6 +271,7 @@ class MouseInputComponent extends EntityComponent
 	
 	function onMouseUpInternal (data :IInputData) :Void
 	{
+		destroyDeviceHeldBond();
 		if (data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
 			if (_deviceUpSignaler != null) {
 				_deviceUpSignaler.dispatch();
@@ -258,8 +285,24 @@ class MouseInputComponent extends EntityComponent
 	
 	function onClickInternal (data :IInputData) :Void
 	{
+		destroyDeviceHeldBond();
 		if (_deviceClickSignaler != null && data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
 			_deviceClickSignaler.dispatch();
+		}
+	}
+	
+	function onDeviceHeldDownInternal (data :IInputData) :Void
+	{
+		if (_deviceHeldDownSignaler != null && data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
+			_deviceHeldDownSignaler.dispatch();
+		}
+	}
+	
+	function destroyDeviceHeldBond () :Void
+	{
+		if (_deviceHeldDownBond != null) {
+			_deviceHeldDownBond.destroy();
+			_deviceHeldDownBond = null;
 		}
 	}
 	
@@ -281,6 +324,9 @@ class MouseInputComponent extends EntityComponent
 		
 		if (_deviceClickSignaler != null) {
 			com.pblabs.util.Assert.isFalse(_deviceClickSignaler.isListenedTo);
+		}
+		if (_deviceHeldDownSignaler != null) {
+			com.pblabs.util.Assert.isFalse(_deviceHeldDownSignaler.isListenedTo);
 		}
 	}
 	#end
