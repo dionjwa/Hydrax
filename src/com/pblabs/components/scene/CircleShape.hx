@@ -64,8 +64,8 @@ class CircleShape extends ShapeComponent
 	#if css
 	override function onAdd () :Void
 	{
-		com.pblabs.util.Log.debug("");
 		super.onAdd();
+		com.pblabs.util.Log.debug("");
 		
 		//Put the element in the base div element
 		//Why put it in a div?
@@ -155,11 +155,4 @@ class CircleShape extends ShapeComponent
 	var _svgContainer :js.Dom.HtmlDom;
 	var _svg :js.Dom.HtmlDom;
 	#end
-	
-	// override function set_x (val :Float) :Float
-	// {
-	// 	trace("val=" + val + " " + com.pblabs.util.Log.getStackTrace());
-	// 	return super.set_x(val);
-	// }
-
 }

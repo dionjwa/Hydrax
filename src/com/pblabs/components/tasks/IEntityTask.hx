@@ -14,6 +14,9 @@ import com.pblabs.engine.core.IEntity;
 interface IEntityTask
 {
 
+	/**
+	  * Returns true if the task is finished.
+	  */
 	function update (dt :Float, obj :IEntity) :Bool;
 
 	function clone () :IEntityTask;

@@ -16,11 +16,11 @@ import com.pblabs.engine.resource.ImageResource;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.geom.RectangleTools;
 import com.pblabs.util.Preconditions;
-import com.pblabs.util.StringUtil;
 
 import de.polygonal.motor2.geom.math.XY;
 
 using com.pblabs.components.scene.SceneUtil;
+using com.pblabs.engine.resource.ResourceToken;
 
 /**
   * Cross platform Image using Scene2D component.
@@ -62,7 +62,7 @@ extends com.pblabs.components.scene.flash.SceneComponent
 	#if debug
 	public function toString () :String
 	{
-		return StringUtil.objectToString(this, ["x", "y", "_width", "_height"]);
+		return com.pblabs.util.StringUtil.objectToString(this, ["x", "y", "_width", "_height"]);
 	}
 	#end
 	
@@ -77,7 +77,7 @@ extends com.pblabs.components.scene.flash.SceneComponent
 		displayObject = image;
 		super.onAdd();
 		#elseif (flash || cpp)
-		var image :flash.display.DisplayObject = resource.create(context);//context.getManager(IResourceManager).create(resourceToken.v1, resourceToken.v2);
+		var image :flash.display.DisplayObject = context.create(resource);//context.getManager(IResourceManager).create(resourceToken.v1, resourceToken.v2);
 		_displayObject = image;
 		if (Std.is(_displayObject, flash.display.Bitmap)) {
 			_registrationPoint.x = _displayObject.width / 2;

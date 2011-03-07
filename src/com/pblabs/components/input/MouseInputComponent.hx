@@ -33,6 +33,7 @@ class MouseInputComponent extends EntityComponent
 		var bond :hsl.haxe.Bond = null;
 		var down = function () :Void {
 			if (!mouse.isRegistered) {
+				com.pblabs.util.Log.warn("Mouse not registered");
 				return;
 			}
 			spatial.y += 5;
@@ -127,25 +128,6 @@ class MouseInputComponent extends EntityComponent
 		}
 		return _deviceHeldDownSignaler;
 	}
-	
-	// var deviceHeldDownSignaler (get_deviceClickSignaler, null) :Signaler<Void>;
-	// var _deviceClickSignaler :Signaler<Void>;
-	// function get_deviceClickSignaler () :Signaler<Void>
-	// {
-	// 	if (_deviceClickSignaler == null) {
-	// 		_deviceClickSignaler = new DirectSignaler(this);
-	// 	}
-	// 	return _deviceClickSignaler;
-	// }
-	
-	// function clicked () :Void
-	// {
-	// 	if (_deviceClickSignaler != null) {
-	// 		_deviceClickSignaler.dispatch();
-	// 	}
-	// }
-	
-	// public var deviceMoveSignaler (get_deviceUpSignaler, null) :Signaler<Void>;
 	
 	public var isScalable :Bool;
 	public var isRotatable :Bool;

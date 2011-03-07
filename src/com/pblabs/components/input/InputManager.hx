@@ -263,15 +263,13 @@ class InputManager extends BaseInputManager,
 			_mouse.mouseUp.unbind(onMouseUp);
 			_mouse.mouseClick.unbind(onMouseClick);
 		}
-	}                                                                                                                                                              
+	}
 
-	function adjustDeviceLocation (m :MouseLocation) :Vector2
+	inline function adjustDeviceLocation (m :MouseLocation) :Vector2
 	{
 		#if flash
-		return new Vector2(m.globalLocation.x, m.globalLocation.y);//m.translateToScope(sceneView.layer);//.layer);
-		#end
-		
-		#if js
+		return new Vector2(m.globalLocation.x, m.globalLocation.y);
+		#elseif js
 		return new Vector2(m.globalLocation.x - sceneView.mouseOffsetX, m.globalLocation.y - sceneView.mouseOffsetY);
 		#else
 		return new Vector2(m.x, m.y);
@@ -383,6 +381,7 @@ class InputManager extends BaseInputManager,
 		}
 		
 		for (sceneManager in getSceneManagers()) {
+			var worldLoc = sceneManager.translateScreenToWorld(inputLocation);
 			var layerIndex =  sceneManager.children.length - 1;
 			while (layerIndex >= 0) {
 				var layer :BaseSceneLayer<Dynamic, Dynamic> = sceneManager.children[layerIndex];
@@ -395,7 +394,7 @@ class InputManager extends BaseInputManager,
 				while (childIndex >= 0) {
 					var so :BaseSceneComponent<Dynamic> = layer.children[childIndex];
 					childIndex--;
-					if (so.containsScreenPoint(inputLocation, mask)) {
+					if (so.containsWorldPoint(worldLoc, mask)) {
 						underPoint.push(so);
 					}
 				}
@@ -420,6 +419,7 @@ class InputManager extends BaseInputManager,
 		}
 		com.pblabs.util.Assert.isNotNull(getSceneManagers());
 		for (sceneManager in getSceneManagers()) {
+			var worldLoc = sceneManager.translateScreenToWorld(inputLocation);
 			var layerIndex =  sceneManager.children.length - 1;
 			while (layerIndex >= 0) {
 				var layer :BaseSceneLayer<Dynamic, Dynamic> = sceneManager.children[layerIndex];
@@ -432,7 +432,7 @@ class InputManager extends BaseInputManager,
 				while (childIndex >= 0) {
 					var so :BaseSceneComponent<Dynamic> = layer.children[childIndex];
 					childIndex--;
-					if (so.containsScreenPoint(inputLocation, mask)) {
+					if (so.containsWorldPoint(worldLoc, mask)) {
 						_displayObjectFirstUnderPoint.set(mask.hashCode(), so);
 						return so;
 					}

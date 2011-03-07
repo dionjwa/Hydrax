@@ -127,9 +127,10 @@ extends com.pblabs.components.scene.flash.SceneComponent
 		
         isTransformDirty = true;
         #elseif (flash || cpp)
-        var svg :flash.display.Sprite = resourceToken.create(context);
-        com.pblabs.util.Assert.isNotNull(svg);
-        _displayObject = svg;
+        throw "Not implemented";
+        // var svg :flash.display.Sprite = resourceToken.create(context);
+        // com.pblabs.util.Assert.isNotNull(svg);
+        // _displayObject = svg;
         super.onAdd();
         // registrationPoint = new com.pblabs.geom.Vector2(_displayObject.width / 2, _displayObject.height / 2); 
         #end

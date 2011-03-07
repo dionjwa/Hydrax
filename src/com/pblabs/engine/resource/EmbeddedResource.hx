@@ -23,6 +23,11 @@ import com.pblabs.util.Preconditions;
 class EmbeddedResource extends ResourceBase<Dynamic>
 {
 	public static var NAME :String = "embedded";
+
+	public static function token <T>(key :String) :ResourceToken<T>
+	{
+	    return new ResourceToken(NAME, key);
+	}
 	
 	public function new (?name :String = null)
 	{

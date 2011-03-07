@@ -273,15 +273,12 @@ class Editor extends Sprite
 		if (!isEditing()) { return; }
 		listener.stopImmediatePropagation();
 		
-		//Get displayobjects
-		var scene = _game.currentContext.getManager(SceneUtil.MANAGER_CLASS);
-		var underMouse = scene.getDisplayComponentUnderPoint(listener.data.inputLocation, ObjectType.ALL);
+		var underMouse = listener.data.firstObjectUnderPoint();
 		if (underMouse != null) {
 			objectSelected(underMouse.owner);
-			var dragger = _game.currentContext.getManager(com.pblabs.components.input.DragManager);
+			var dragger = _game.currentContext.getManager(com.pblabs.components.input.PanManager);
 			if (dragger != null) {
-				com.pblabs.util.Assert.isNotNull(dragger);
-				dragger.startDragging(underMouse);//, listener.data.inputLocation);
+				dragger.panComponent(underMouse);
 			} 
 		}
 	}

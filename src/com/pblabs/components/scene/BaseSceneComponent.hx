@@ -129,7 +129,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		
 		#if (flash || cpp)
 		return RectangleTools.contains(x - (_width / 2 * _scaleX) - _locationOffset.x, 
-			y -(_height / 2 * _scaleY) - _locationOffset.y, width * _scaleX, height * _scaleY, pos, angle);
+			y -(_height / 2 * _scaleY) - _locationOffset.y, _width * _scaleX, _height * _scaleY, pos, angle);
 		#elseif js
 		return RectangleTools.contains(x - _width / 2, y - _height / 2, _width, _height, pos, angle);
 		#else
@@ -161,6 +161,10 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 			angle = coords.angle;
 		} else {
 			com.pblabs.util.Log.warn("No coords component found, you are on your own regarding updating Scene components " + com.pblabs.util.Log.getStackTrace());
+		}
+		
+		if (owner.lookupComponent(com.pblabs.components.base.AlphaComponent) != null) {
+			bindSignal(owner.lookupComponent(com.pblabs.components.base.AlphaComponent).signaler, set_alpha);
 		}
 		
 		if (!autoAddToScene) {
@@ -233,8 +237,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		if (_scaleX == val && _scaleY == val) {
 			return val;
 		}
-		_scaleX = _scaleY = val;
-		_isTransformDirty = true;
+		scaleX = val; 
+		scaleY = val;
 		return val;
 	}
 	
@@ -250,6 +254,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		}
 		_scaleX = val;
 		_isTransformDirty = true;
+		_bounds.xmin = _x - width / 2;
+		_bounds.xmax = _x + width / 2;
 		return val;
 	}
 	
@@ -265,6 +271,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		}
 		_scaleY = val;
 		_isTransformDirty = true;
+		_bounds.ymin = _y - height / 2;
+		_bounds.ymax = _y + height / 2;
 		return val;
 	}
 	
@@ -286,7 +294,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	function set_width (val :Float) :Float
 	{
-		// com.pblabs.util.Assert.isTrue(val >= 0, "val=" + val);
+		com.pblabs.util.Assert.isTrue(val >= 0, "val=" + val);
 		_width = val;
 		isTransformDirty = true;
 		_bounds.xmin = _x - _width / 2;
@@ -301,11 +309,11 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	function set_height (val :Float) :Float
 	{
-		// com.pblabs.util.Assert.isTrue(val >= 0, "val=" + val);
+		com.pblabs.util.Assert.isTrue(val >= 0, "val=" + val);
 		_height = val;
 		isTransformDirty = true;
-		_bounds.ymin = _y - _height / 2;
-		_bounds.ymax = _y + _height / 2;
+		_bounds.ymin = _y - height / 2;
+		_bounds.ymax = _y + height / 2;
 		return val;
 	}
 	

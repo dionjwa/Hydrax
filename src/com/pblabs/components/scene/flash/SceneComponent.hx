@@ -82,8 +82,15 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		_displayObject.name = name;
 		_transformMatrix.identity();
 		_displayObject.transform.matrix = _transformMatrix;
-		width = _displayObject.width;
-		height = _displayObject.height;
+		var localDimensions = _displayObject.getBounds(displayObject);
+		_width = localDimensions.width;
+		_height = localDimensions.height;
+		
+		_bounds.xmin = _x - width / 2;
+		_bounds.xmax = _x + width / 2;
+		_bounds.ymin = _y - height / 2;
+		_bounds.ymax = _y + height / 2;
+		_isTransformDirty = true;
 	}
 	
 	override function onRemove () :Void
@@ -94,21 +101,27 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		}
 	}
 	
+	override function get_width () :Float
+	{
+		return _width * _scaleX;
+	}
+	
 	override function set_width (val :Float) :Float
 	{
 		com.pblabs.util.Assert.isTrue(val >= 0);
-		super.set_width(val);
-		var localDimensions = displayObject.getBounds(displayObject);
-		scaleX = val / localDimensions.width;
+		scaleX = val / _width;
 		return val;
+	}
+	
+	override function get_height () :Float
+	{
+		return _height * _scaleY;
 	}
 	
 	override function set_height (val :Float) :Float
 	{
 		com.pblabs.util.Assert.isTrue(val >= 0);
-		super.set_height(val);
-		var localDimensions = displayObject.getBounds(displayObject);
-		scaleY = val / localDimensions.height;
+		scaleY = val / _height;
 		return val;
 	}
 	
@@ -155,7 +168,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		_transformMatrix.scale(_scaleX, _scaleY);
 		_transformMatrix.translate(-registrationPoint.x * _scaleX, - registrationPoint.y * _scaleY);
 		_transformMatrix.rotate(_angle + _angleOffset);
-		_transformMatrix.translate(_x - _locationOffset.x, _y - _locationOffset.y);
+		_transformMatrix.translate(_x + _locationOffset.x, _y + _locationOffset.y);
 		
 		_displayObject.transform.matrix = _transformMatrix;
 		_displayObject.alpha = _alpha;

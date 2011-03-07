@@ -6,7 +6,7 @@
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
-package com.pblabs.engine.pooling;import flash.display.MovieClip;
+package com.pblabs.engine.pooling;
 import flash.display.Sprite;
 
 import com.pblabs.util.DisplayUtils;

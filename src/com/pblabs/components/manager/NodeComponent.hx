@@ -218,6 +218,9 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 	
 	public function addToParent (?newParent :P) :Void
 	{
+		if (hasParent()) {
+			removeFromParent();
+		}
 		Preconditions.checkArgument(isRegistered, "Component must first be registered");
 		Preconditions.checkArgument(newParent != null || parentProperty != null, "No parent or parent property provided");
 

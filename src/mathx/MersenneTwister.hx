@@ -3,7 +3,10 @@
  * For full copyright and license information please refer to doc/license.txt.
  * </license> 
  */
-package mathx;import haxe.Int32;
+package mathx;
+
+import haxe.Int32;
+
 /**
  * Based on the MT19937 as described at:
  * 	http://en.wikipedia.org/wiki/Mersenne_twister
@@ -145,4 +148,3 @@ class MersenneTwister implements RandomGenerator
 		setSeed( seed );
 	}
 }
-

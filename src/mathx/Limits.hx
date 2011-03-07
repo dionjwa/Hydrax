@@ -3,7 +3,10 @@
  * For full copyright and license information please refer to doc/license.txt.
  * </license> 
  */
-package mathx;import haxe.Int32;
+package mathx;
+
+import haxe.Int32;
+
 class Limits
 {
 	public static inline var int32Min = Int32.make( 0x8000, 0x0000 );
@@ -69,4 +72,3 @@ class Limits
 	}
 #end
 }
-
