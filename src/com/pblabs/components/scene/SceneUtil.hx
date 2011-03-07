@@ -94,31 +94,31 @@ class SceneUtil
 	public static function setLocation (e :IEntity, x :Float, y :Float) :Void
 	{
 		com.pblabs.util.Assert.isNotNull(e);
-		e.lookupComponent(SpatialComponent).setLocation(x, y);
+		e.getComponent(SpatialComponent).setLocation(x, y);
 	}
 	
 	public static function getLocation (e :IEntity) :XY
 	{
 		com.pblabs.util.Assert.isNotNull(e);
-		return e.lookupComponent(SpatialComponent).position;
+		return e.getComponent(SpatialComponent).position;
 	}
 	
 	public static function setAngle (e :IEntity, angle :Float) :Void
 	{
-		e.lookupComponent(SpatialComponent).angle = angle;
+		e.getComponent(SpatialComponent).angle = angle;
 	}
 	
 	public static function getWidth (e :IEntity) :Float
 	{
-	    // com.pblabs.util.Assert.isNotNull(e.lookupComponentByType(BaseSceneComponent));
-	    return e.lookupComponentByType(SpatialComponent).worldExtents.intervalX;
+	    // com.pblabs.util.Assert.isNotNull(e.getComponentByType(BaseSceneComponent));
+	    return e.getComponentByType(SpatialComponent).worldExtents.intervalX;
 	}
 	
 	public static function getHeight (e :IEntity) :Float
 	{
-	    // com.pblabs.util.Assert.isNotNull(e.lookupComponentByType(BaseSceneComponent));
-	    // return e.lookupComponentByType(BaseSceneComponent).height;
-	    return e.lookupComponentByType(SpatialComponent).worldExtents.intervalY;
+	    // com.pblabs.util.Assert.isNotNull(e.getComponentByType(BaseSceneComponent));
+	    // return e.getComponentByType(BaseSceneComponent).height;
+	    return e.getComponentByType(SpatialComponent).worldExtents.intervalY;
 	}
 	
 	

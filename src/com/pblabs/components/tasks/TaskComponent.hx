@@ -35,7 +35,7 @@ class TaskComponent extends EntityComponent
 	
 	public static function getFrom (e :IEntity) :TaskComponent
 	{
-		return cast(e.lookupComponentByName(NAME), TaskComponent);
+		return cast(e.getComponentByName(NAME), TaskComponent);
 	}
 	
 	public function new() 

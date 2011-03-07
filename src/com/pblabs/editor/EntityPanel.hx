@@ -148,7 +148,7 @@ class EntityPanel extends HBox
 		_componentList.addEventListener(Event.SELECT, function (e :Event) :Void {
 			if (Std.is(self.selectedObject, IEntity)) {
 				var e = cast(self.selectedObject, IEntity);
-				trace(Std.string(e.lookupComponentByName(self._componentList.selectedItem)));
+				trace(Std.string(e.getComponentByName(self._componentList.selectedItem)));
 			}
 		});
 		
@@ -206,7 +206,7 @@ class EntityPanel extends HBox
 			// componentList.setSize(250, 100);
 			//Show component.toString() when selected
 			componentList.addEventListener(Event.SELECT, function (d :Dynamic) :Void {
-				var c :IEntityComponent = e.lookupComponentByName(componentList.selectedItem); 
+				var c :IEntityComponent = e.getComponentByName(componentList.selectedItem); 
 				self.setTextGutter(Std.string(c));
 			});
 			
@@ -220,7 +220,7 @@ class EntityPanel extends HBox
 			//Add the custom panels, defined in the entity components itself
 			_customEntityPanelsBox = new VBox(_customePanelsWindow.content);
 			for (ent in NodeComponent.getEntityAndAllParents(e, null)) {
-				for (c in ent.lookupComponentsByType(CustomEditorPanelComponent)) {
+				for (c in ent.getComponentsByType(CustomEditorPanelComponent)) {
 					_customEntityPanelsBox.addChildAt(c.panel, _customEntityPanelsBox.numChildren); 
 				}
 			}

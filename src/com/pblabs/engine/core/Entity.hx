@@ -245,7 +245,7 @@ class Entity extends PBObject,
 				}
 			} else {
 				// Otherwise just get the existing one of that name.
-				component = lookupComponentByName(componentName);
+				component = getComponentByName(componentName);
 				if (null == component) {
 					com.pblabs.util.Log.error("No type specified for the component " + componentName + " and the component doesn't exist on a parent template for entity '" + name + "'.");
 					continue;
@@ -365,7 +365,7 @@ class Entity extends PBObject,
 		}
 	}
 	
-	public function lookupComponentByType <T>(componentType:Class<T>):T
+	public function getComponentByType <T>(componentType:Class<T>):T
 	{
 		for (component in _components)
 		{
@@ -376,12 +376,12 @@ class Entity extends PBObject,
 		return null;
 	}
 	
-	public function lookupComponent <T>(componentType:Class<T>):T
+	public function getComponent <T>(componentType:Class<T>):T
 	{
-		return lookupComponentByType(componentType);
+		return getComponentByType(componentType);
 	}
 	
-	public function lookupComponentsByType <T>(componentType:Class<T>):Array<T>
+	public function getComponentsByType <T>(componentType:Class<T>):Array<T>
 	{
 		var list = new Array();
 		
@@ -394,7 +394,7 @@ class Entity extends PBObject,
 		return cast(list);
 	}
 	
-	public function lookupComponentByName <T>(componentName:String):T
+	public function getComponentByName <T>(componentName:String):T
 	{
 		return cast(_components.get(componentName));
 	}

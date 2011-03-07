@@ -96,16 +96,16 @@ class UIUtil
         }
         
         var ein = layer.createSVGButton("zoomInWidget", "zoomin", loc, zoomIn);
-        var svg = ein.lookupComponent(SVGComponent);
+        var svg = ein.getComponent(SVGComponent);
         svg.width = svg.height = size;
         
-        var mouse = ein.lookupComponent(MouseInputComponent);
+        var mouse = ein.getComponent(MouseInputComponent);
         mouse.isRotatable = mouse.isScalable = mouse.isTranslatable = false;  
         
         var eout = layer.createSVGButton("zoomOutWidget", "zoomout", loc.add(new Vector2(0, size)), zoomOut);
-        svg = eout.lookupComponent(SVGComponent);
+        svg = eout.getComponent(SVGComponent);
         svg.width = svg.height = size;
-        mouse = eout.lookupComponent(MouseInputComponent);
+        mouse = eout.getComponent(MouseInputComponent);
         mouse.isRotatable = mouse.isScalable = mouse.isTranslatable = false;
     }
     
@@ -125,15 +125,15 @@ class UIUtil
         }
         
         var anticlock = layer.createSVGButton("anticlockwiseWidget", "counterclockwise", loc, antiClockwise);
-        var svg = anticlock.lookupComponent(SVGComponent);
+        var svg = anticlock.getComponent(SVGComponent);
         svg.width = svg.height = size;
-        var mouse = anticlock.lookupComponent(MouseInputComponent);
+        var mouse = anticlock.getComponent(MouseInputComponent);
         mouse.isRotatable = mouse.isScalable = mouse.isTranslatable = false;  
         
         var clock = layer.createSVGButton("clockwiseWidget", "clockwise", loc.add(new Vector2(0, size)), clockWise);
-        svg = clock.lookupComponent(SVGComponent);
+        svg = clock.getComponent(SVGComponent);
         svg.width = svg.height = size;
-        mouse = clock.lookupComponent(MouseInputComponent);
+        mouse = clock.getComponent(MouseInputComponent);
         mouse.isRotatable = mouse.isScalable = mouse.isTranslatable = false;
     }
     
@@ -161,9 +161,9 @@ class UIUtil
         var locs = [loc, loc.add(new Vector2(0, size)), loc.add(new Vector2(-size, size / 2)), loc.add(new Vector2(size, size / 2))];
         for(i in 0...labels.length) {
             var e = layer.createSVGButton(labels[i] + "Widget", labels[i], locs[i], fs[i]);
-            var svg = e.lookupComponent(SVGComponent);
+            var svg = e.getComponent(SVGComponent);
             svg.width = svg.height = size;
-            var mouse = e.lookupComponent(MouseInputComponent);
+            var mouse = e.getComponent(MouseInputComponent);
             mouse.isRotatable = mouse.isScalable = mouse.isTranslatable = false;      
         }
     }

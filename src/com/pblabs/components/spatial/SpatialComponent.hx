@@ -41,7 +41,7 @@ class SpatialComponent extends EntityComponent,
 	
 	public static function getLocation (c :IEntity) :XY	
 	{
-	    return c.lookupComponent(SpatialComponent).position;
+	    return c.getComponent(SpatialComponent).position;
 	}
 	
 	public static function addToEntity (e :IEntity) :SpatialComponent
@@ -179,7 +179,7 @@ class SpatialComponent extends EntityComponent,
 		// spriteForPointChecks = null;
 		#if (flash || js)
 		if (spriteForPointChecks == null || !spriteForPointChecks.isRegistered) {
-			spriteForPointChecks = cast owner.lookupComponent(com.pblabs.components.scene.BaseSceneComponent);
+			spriteForPointChecks = cast owner.getComponent(com.pblabs.components.scene.BaseSceneComponent);
 		}
 		#end
 		dispatchAll();

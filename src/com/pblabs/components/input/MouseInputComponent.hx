@@ -24,7 +24,7 @@ class MouseInputComponent extends EntityComponent
 {
 	public static function makeReactiveButton (mouse :MouseInputComponent) :MouseInputComponent
 	{
-		var spatial = mouse.owner.lookupComponent(com.pblabs.components.spatial.SpatialComponent);
+		var spatial = mouse.owner.getComponent(com.pblabs.components.spatial.SpatialComponent);
 		var input = mouse.context.getManager(com.pblabs.components.input.InputManager);
 		com.pblabs.util.Assert.isNotNull(spatial);
 		com.pblabs.util.Assert.isNotNull(input);
@@ -196,7 +196,7 @@ class MouseInputComponent extends EntityComponent
 			_bounds = owner.getProperty(boundsProperty);
 		}
 		
-		_bounds = _bounds == null ? owner.lookupComponentByType(IInteractiveComponent) : _bounds;
+		_bounds = _bounds == null ? owner.getComponentByType(IInteractiveComponent) : _bounds;
 		
 		com.pblabs.util.Assert.isNotNull(_bounds, "bounds is null, There's no IInteractiveComponent by type and the boundsProperty is null.  How are we supposed to work?");
 		

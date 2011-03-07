@@ -141,7 +141,7 @@ class Demo #if flash extends flash.display.Sprite #end
 	function randMove (e :IEntity, continuous :Bool) :Void 
 	{
 		var sceneView = e.context.getManager(SceneView);
-		var scene = e.lookupComponent(BaseSceneComponent).parent.parent;
+		var scene = e.getComponent(BaseSceneComponent).parent.parent;
 		var serial = new SerialTask();
 		var parallel = new ParallelTask();
 		var time = Math.random() * 5;

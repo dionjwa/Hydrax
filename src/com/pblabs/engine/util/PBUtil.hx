@@ -82,7 +82,7 @@ class PBUtil
 		
 		var nm = context.getManager(NameManager);
 		if (nm.get(compName) != null) {
-			return cast(nm.get(compName), IEntity).lookupComponentByName(compName);
+			return cast(nm.get(compName), IEntity).getComponentByName(compName);
 		}
 		return null;
 	}

@@ -270,7 +270,7 @@ class PBContext
 		return cast(_nameManager.get(name), IEntity);			
 	}
 	
-	public function lookupComponent(entityName:String, componentName:String):IEntityComponent
+	public function getComponent(entityName:String, componentName:String):IEntityComponent
 	{
 		return _nameManager.getComponentByName(entityName, componentName);
 	}		
@@ -334,7 +334,7 @@ class PBContext
 			}
 			
 			var cl:Array<String> = reference.cachedLookup;
-			var cachedWalk:Dynamic = entity.lookupComponentByName(cl[0]);
+			var cachedWalk:Dynamic = entity.getComponentByName(cl[0]);
 			if (!cachedWalk) {
 				handleMissingProperty(suppressErrors, reference, cl[0]);
 				return null;
@@ -373,7 +373,7 @@ class PBContext
 			}
 			
 			// Component reference, look up the component by name.
-			parentElem = entity.lookupComponentByName(curLookup);
+			parentElem = entity.getComponentByName(curLookup);
 			if (parentElem == null) {
 				handleMissingProperty(suppressErrors, reference, curLookup);
 				return null;
@@ -394,7 +394,7 @@ class PBContext
 			// Get the component on it.
 			curIdx++;
 			curLookup = path[1];
-			var comLookup :IEntityComponent = cast(parentElem, IEntity).lookupComponentByName(curLookup);
+			var comLookup :IEntityComponent = cast(parentElem, IEntity).getComponentByName(curLookup);
 			if (comLookup == null) {
 				handleMissingProperty(suppressErrors, reference, curLookup,
 					"Could not find component on named entity '" + (cast( parentElem, IEntity)).name +

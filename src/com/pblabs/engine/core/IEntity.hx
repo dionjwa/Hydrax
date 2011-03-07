@@ -67,7 +67,7 @@ interface IEntity implements IPropertyBag, implements IPBObject
 	* 
 	* @param component The component to add.
 	* @param componentName The name to set for the component. This is the value
-	*		to use in lookupComponentByName to get a reference to the component.
+	*		to use in getComponentByName to get a reference to the component.
 	*		The name must be unique across all components on this entity.
 	*/
 	function addComponent(component:IEntityComponent, ?componentName:String):Bool;
@@ -110,7 +110,7 @@ interface IEntity implements IPropertyBag, implements IPBObject
 	* <p>Gets a component of a specific type from this entity. If more than one
 	* component of a specific type exists, there is no guarantee which one
 	* will be returned. To retrieve all components of a specified type, use
-	* lookupComponentsByType.</p>
+	* getComponentsByType.</p>
 	* 
 	* <p>This check uses the is operator, so if you pass a parent type,
 	* subclasses will be considered to match, as will things implementing
@@ -120,11 +120,11 @@ interface IEntity implements IPropertyBag, implements IPBObject
 	* 
 	* @return The component, or null if none of the specified type were found.
 	* 
-	* @see #lookupComponentsByType()
+	* @see #getComponentsByType()
 	*/
-	function lookupComponentByType <T>(componentType:Class<T>):T;
+	function getComponentByType <T>(componentType:Class<T>):T;
 	
-	function lookupComponent <T>(componentType:Class<T>):T;
+	function getComponent <T>(componentType:Class<T>):T;
 	
 	/**
 	* Gets a list of all the components of a specific type that are on this
@@ -139,7 +139,7 @@ interface IEntity implements IPropertyBag, implements IPBObject
 	* @return An array containing all the components of the specified type on
 	* this entity.
 	*/
-	function lookupComponentsByType <T>(componentType:Class<T>):Array<T>;
+	function getComponentsByType <T>(componentType:Class<T>):Array<T>;
 	
 	/**
 	* Gets a component that was registered with a specific name on this entity.
@@ -151,7 +151,7 @@ interface IEntity implements IPropertyBag, implements IPBObject
 	* 
 	* @see #AddComponent()
 	*/
-	function lookupComponentByName <T>(componentName:String):T;
+	function getComponentByName <T>(componentName:String):T;
 	
 	/** Iterate over components*/
 	function iterator () :Iterator<IEntityComponent>;

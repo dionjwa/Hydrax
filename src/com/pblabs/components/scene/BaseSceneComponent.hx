@@ -163,8 +163,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 			com.pblabs.util.Log.warn("No coords component found, you are on your own regarding updating Scene components " + com.pblabs.util.Log.getStackTrace());
 		}
 		
-		if (owner.lookupComponent(com.pblabs.components.base.AlphaComponent) != null) {
-			bindSignal(owner.lookupComponent(com.pblabs.components.base.AlphaComponent).signaler, set_alpha);
+		if (owner.getComponent(com.pblabs.components.base.AlphaComponent) != null) {
+			bindSignal(owner.getComponent(com.pblabs.components.base.AlphaComponent).signaler, set_alpha);
 		}
 		
 		if (!autoAddToScene) {

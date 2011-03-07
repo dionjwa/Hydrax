@@ -75,7 +75,7 @@ class Demo #if flash extends flash.display.Sprite #end
 		var parallel = new ParallelTask();
 		var time = Math.random() * 5;
 		time = Math.max(time, 2);
-		var sceneComp = e.lookupComponent(BaseSceneComponent);
+		var sceneComp = e.getComponent(BaseSceneComponent);
 		com.pblabs.util.Assert.isNotNull(sceneComp);
 		
 		var minX = sceneComp.layer.scene.getAlignedPoint(SceneAlignment.TOP_LEFT).x;

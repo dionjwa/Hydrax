@@ -116,7 +116,7 @@ class NameManager
 			return null;
 		}
 		
-		return cast(entity.lookupComponentByType(componentType));
+		return cast(entity.getComponentByType(componentType));
 	}
 	
 	/**
@@ -135,7 +135,7 @@ class NameManager
 			return null;
 		}
 		
-		return entity.lookupComponentsByType(componentType);
+		return entity.getComponentsByType(componentType);
 	}	  
 	
 	/**
@@ -154,7 +154,7 @@ class NameManager
 			return null;
 		}
 		
-		return cast(entity.lookupComponentByName(componentName));
+		return cast(entity.getComponentByName(componentName));
 	}
 	
 	var _objects :Map<String, IPBObject>;

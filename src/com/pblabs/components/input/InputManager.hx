@@ -215,7 +215,7 @@ class InputManager extends BaseInputManager,
 					
 			// 	//Check for component specific rotation/scaling
 			// 	if (self._deviceDownComponent != null) {
-			// 		var inputComp = self._deviceDownComponent.owner.lookupComponent(MouseInputComponent);
+			// 		var inputComp = self._deviceDownComponent.owner.getComponent(MouseInputComponent);
 			// 		// if (inputComp != null) {
 			// 		// 	if (inputComp.isRotatable) {
 			// 		// 		inputComp.angle = self._startingAngle + eventAngle;
@@ -234,7 +234,7 @@ class InputManager extends BaseInputManager,
 			// 	}
 				
 			// 	// if (self._deviceDownComponent != null) {
-			// 	// 	var inputComp = self._deviceDownComponent.owner.lookupComponent(MouseInputComponent);
+			// 	// 	var inputComp = self._deviceDownComponent.owner.getComponent(MouseInputComponent);
 			// 	// 	if (inputComp != null) {
 			// 	// 		if (inputComp.isRotatable) {
 			// 	// 			self._startingAngle = inputComp.angle;

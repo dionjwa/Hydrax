@@ -70,7 +70,7 @@ class TaskUtil
 	
 	static function getTaskComponent (e :IEntity) :TaskComponent
 	{
-		return e.lookupComponentByName(TaskComponent.NAME);
+		return e.getComponentByName(TaskComponent.NAME);
 	}
 }
 

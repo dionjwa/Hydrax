@@ -235,7 +235,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	override function onReset () :Void
 	{
 		super.onReset();
-		var spatial = owner.lookupComponent(SpatialComponent);
+		var spatial = owner.getComponent(SpatialComponent);
 		if (spatial != null) {
 			bindSignal(spatial.signalerLocation, setLocation);
 		} else {

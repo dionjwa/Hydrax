@@ -167,7 +167,7 @@ class PanManager extends EntityComponent,
 		//Guess the properties if null
 		if (_xProp == null || _yProp == null) {
 			//Maybe coordinates?
-			if (_sceneComponent.owner.lookupComponent(SpatialComponent) != null) {
+			if (_sceneComponent.owner.getComponent(SpatialComponent) != null) {
 				_xProp = Constants.DEFAULT_X_PROP;
 				_yProp = Constants.DEFAULT_Y_PROP;
 			}

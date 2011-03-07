@@ -56,7 +56,7 @@ interface IPBContext
 	// Name lookups.
 	function lookup (name :String):Dynamic;
 	function lookupEntity (name :String):IEntity;
-	// function lookupComponent (entityName:String, componentName:String):IEntityComponent;
+	// function getComponent (entityName:String, componentName:String):IEntityComponent;
 }
 
 

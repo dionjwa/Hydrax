@@ -1023,13 +1023,13 @@ private class ReferenceNote
 			
 			var component :IEntityComponent = null;
 			if (!componentName.isBlank()) {
-				component = componentObject.lookupComponentByName(componentName);
+				component = componentObject.getComponentByName(componentName);
 				if (null == component)
 					return false;
 			}
 			else {
 				var componentType = ReflectUtil.getVarFieldType(ReflectUtil.getClass(owner), fieldName);//TypeUtility.getFieldType(owner, fieldName);
-				component = componentObject.lookupComponentByType(componentType);
+				component = componentObject.getComponentByType(componentType);
 				if (null == component)
 					return false;
 			}
@@ -1042,7 +1042,7 @@ private class ReferenceNote
 		// Component reference on the entity being deserialized when the reference was created.
 		if (!componentName.isBlank())
 		{
-			var localComponent :IEntityComponent = currentEntity.lookupComponentByName(componentName);
+			var localComponent :IEntityComponent = currentEntity.getComponentByName(componentName);
 			if (null == localComponent)
 				return false;
 			
