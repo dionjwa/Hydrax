@@ -20,7 +20,10 @@ import com.pblabs.util.Preconditions;
  * @see IPBObject
  */
 class PBObject 
-	implements IPBObject//, implements haxe.rtti.Infos 
+	implements IPBObject
+	#if cpp
+	,implements haxe.rtti.Infos
+	#end
 {
 	/** Key for hashing. */
 	public var key :Int;
@@ -109,7 +112,9 @@ class PBObject
 	
 	public function destroy() :Void
 	{
-		_context.unregister(this);
+		if (_context != null) {
+			_context.unregister(this);
+		}
 		
 		// Remove from our owning group.
 		if(_owningGroup != null) {

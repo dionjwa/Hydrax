@@ -114,19 +114,22 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
         	if (div != null) {
         		div.appendChild(_displayObject);
         	}
-        	
-        	if (_width == 0) {
+        	if (Reflect.hasField(displayObject, "width")) {
+        		_width = Std.parseInt(Reflect.field(displayObject, "width"));
+        	}
+        	if (Reflect.hasField(displayObject, "height")) {
+        		_height = Std.parseInt(Reflect.field(displayObject, "height"));
+        	}
+        	if (_width == 0 || Math.isNaN(_width)) {
 				_width = Std.parseFloat(displayObject.getAttribute("width"));
 			} else {
 				set_width(_width);
 			}
-			if (_height == 0) {
+			if (_height == 0 || Math.isNaN(_height)) {
 				_height = Std.parseFloat(displayObject.getAttribute("width"));
 			} else {
 				set_height(_height);
 			}
-			// trace("x=" + Std.parseFloat(displayObject.getAttribute("x")));
-			// trace("y=" + Std.parseFloat(displayObject.getAttribute("y")));
         }
         isTransformDirty = true;
         return val;

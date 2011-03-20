@@ -15,12 +15,8 @@ package com.pblabs.engine.serialization;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
-import com.pblabs.engine.serialization.ISerializable;
-import com.pblabs.engine.serialization.TemplateManager;
-import com.pblabs.engine.serialization.TypeUtility;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Enumerable;
-import com.pblabs.util.MetaUtil;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.StringUtil;
@@ -44,6 +40,9 @@ using com.pblabs.util.XMLUtil;
  * @see ISerializable
  */
 class Serializer
+#if cpp
+	implements haxe.rtti.Infos
+#end
 {
 	public var ignoredTypes (default, null) :Set<Class<Dynamic>>;
 	public function new()
@@ -58,7 +57,7 @@ class Serializer
 		// _deserializers.set("::DefaultSimple", deserializeSimple);
 		_deserializers.set("::DefaultComplex", deserializeComplex);
 		_deserializers.set("Bool", deserializeBool);
-		_deserializers.set("Int", deserializeInt);
+		_deserializers.set("Int", deserializeIntLocal);
 		_deserializers.set("Float", deserializeFloat);
 		_deserializers.set("Enum", deserializeEnum);
 		_deserializers.set("Array", deserializeIterable);
@@ -325,7 +324,7 @@ class Serializer
 	//	 return xml.toString();
 	// }
 	
-	function serializeSimple(value :Dynamic, xml :Xml) :Void
+	public static  function serializeSimple(value :Dynamic, xml :Xml) :Void
 	{
 		xml.addChild(Xml.createPCData(Std.string(value)));
 	}
@@ -619,7 +618,12 @@ class Serializer
 		xml.addChild(Xml.createPCData(val ? "true" : "false"));
 	}
 	
-	public static function deserializeInt(context :IPBContext, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
+	static function deserializeIntLocal (context :IPBContext, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
+	{
+		return deserializeInt(xml);
+	}
+	
+	public static function deserializeInt (xml :Xml) :Int
 	{
 		com.pblabs.util.Assert.isNotNull(xml);
 		return Std.parseInt(xml.firstChild().nodeValue.trim());
@@ -656,8 +660,8 @@ class Serializer
 	public static function serializeVector2 (val :Dynamic, xml :Xml) :Void
 	{
 		var v :Vector2 = cast val;
-		xml.createChild("x", v.x);
-		xml.createChild("y", v.y);
+		xml.createChild("x", v.x, serializeFloat);
+		xml.createChild("y", v.y, serializeFloat);
 	}
 	
 	public function deserializeVector2 (context :IPBContext, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
@@ -669,7 +673,7 @@ class Serializer
 	}
 	
 	
-	public function serializeSerializable(val :Dynamic, xml :Xml) :Void
+	public static function serializeSerializable(val :Dynamic, xml :Xml) :Void
 	{
 		cast(val, ISerializable).serialize(xml);
 	}
@@ -704,10 +708,11 @@ class Serializer
 			if (!getChildReference(context, object, key, childXML) 
 				|| !getResourceObject(context, object, key, childXML, typeHint))
 			{
-				// var value :Dynamic = getChildObject(context, object, key, typeName, childXML);
-				// if (value != null) {
-					var value :Dynamic = deserialize(context, null, childXML, typeName);
-				// }
+				var value :Dynamic = getChildObject(context, object, key, typeName, childXML);
+				if (value != null) {
+					// var value :Dynamic = 
+					deserialize(context, value, childXML, typeName);
+				}
 					
 				// Assign, either to key or to end of array.
 				if (!key.isBlank()) {
@@ -829,7 +834,7 @@ class Serializer
 	 * A tag can have attributes which encode references of various types. This method
 	 * parses them and resolves the references.
 	 */ 
-	function setChildReference(object :Dynamic, reference :Dynamic, xml :Xml) :Bool
+	static function setChildReference(object :Dynamic, reference :Dynamic, xml :Xml) :Bool
 	{
 		// Write entity reference
 		if (Std.is(reference, IEntity)) {

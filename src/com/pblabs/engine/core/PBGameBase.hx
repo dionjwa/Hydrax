@@ -26,11 +26,21 @@ using Lambda;
 
 using com.pblabs.util.ArrayUtil;
 
+enum	ContextTransition {
+	PUSH(c :IPBContext);
+	POP;
+	CHANGE(c :IPBContext);
+	REMOVE(c :IPBContext);
+}
+
 /**
   * The base game manager.
   * This class inits all the managers, and managers the IPBContexts.
   */
 class PBGameBase
+#if cpp
+	implements haxe.rtti.Infos
+#end
 {
 	public var currentContext (get_currentContext, null) :IPBContext;
 	var _currentContext :IPBContext;
@@ -56,9 +66,10 @@ class PBGameBase
 		//Start profiling.  This is disabled if the "profiler" compiler key command is not set
 		com.pblabs.engine.debug.Profiler.bindToKey();
 		#end
+		init();
 	}
 	
-	public function startup () :Void
+	function init () :Void
 	{
 		//Called by the constructor.
 		newActiveContextSignaler = new DirectSignaler(this);
@@ -66,6 +77,9 @@ class PBGameBase
 
 		injector = createInjector();
 		_contexts = new Array();
+		
+		registerManager(PBGameBase, this, null, true);
+		
 		initializeManagers();
 	}
 	
@@ -85,6 +99,8 @@ class PBGameBase
 		if (instance == null) {
 			instance = allocate(clazz);
 		}
+		
+		com.pblabs.util.Assert.isNotNull(instance);
 
 		_managers.set(PBUtil.getManagerName(clazz, optionalName), instance);
 		
@@ -97,24 +113,37 @@ class PBGameBase
 		//manager
 		injector.mapValue(clazz, instance, optionalName);
 		
-		if(Std.is(instance, IPBManager)) {
-			cast(instance, IPBManager).startup();
+		#if cpp
+		if (com.pblabs.util.ReflectUtil.is(instance, "com.pblabs.engine.core.IPBManager")) {
+		#else
+		if (Std.is(instance, IPBManager)) {
+		#end
+			try {
+				cast(instance, IPBManager).startup();
+			} catch (e :Dynamic) {
+				trace("Fuck, error casting " + instance + "::" + com.pblabs.util.ReflectUtil.getClassName(instance) +" to a IPBManager, even though it says it's one: " + Std.is(instance, IPBManager));  
+			}
 		}
 		return instance;
 	}
 	
 	public function allocate <T>(type :Class<T>) :T
 	{
+		com.pblabs.util.Assert.isNotNull(type, "type is null");
 		if (type == IPBContext) {
-			untyped type = PBContext;
+			type = cast Type.resolveClass("com.pblabs.engine.core.PBContext");
 		}
-		
+		com.pblabs.util.Assert.isNotNull(type, "type is null");
 		var i = Type.createInstance(type, EMPTY_ARRAY);
 		com.pblabs.util.Assert.isNotNull(i, "allocated'd instance is null, type=" + type);
 		
 		injector.injectInto(i);
 		
+		#if cpp
+		if (com.pblabs.util.ReflectUtil.is(i, "com.pblabs.engine.core.IPBContext") || com.pblabs.util.ReflectUtil.is(i, "com.pblabs.engine.core.PBContext")) {
+		#else
 		if (Std.is(i, IPBContext) || Std.is(i, PBContext)) {
+		#end
 			var ctx = cast(i, PBContext);
 			//On flash Reflect.hasField is sufficient, however on JS
 			//Type.getInstanceFields is needed 
@@ -124,7 +153,12 @@ class PBGameBase
 			ctx.setup();
 			
 			com.pblabs.util.Assert.isTrue(ctx.injector.getMapping(IPBContext) == ctx);
+			
+			#if cpp
+			if (ctx.getManager(IProcessManager) != null && com.pblabs.util.ReflectUtil.is(ctx.getManager(IProcessManager), "com.pblabs.engine.time.ProcessManager")) {
+			#else
 			if (ctx.getManager(IProcessManager) != null && Std.is(ctx.getManager(IProcessManager), ProcessManager)) {
+			#end	
 				//The IPBContext starts paused, we control the unpausing.
 				cast(ctx.getManager(IProcessManager), ProcessManager).isRunning = false;
 			}
@@ -132,10 +166,11 @@ class PBGameBase
 		return i;
 	}
 	
-	public function pushContext (ctx :IPBContext) :Void
+	public function pushContext (ctx :IPBContext) :IPBContext
 	{
 		_contextTransitions.push(ContextTransition.PUSH(ctx));
 		updateContextTransitions();
+		return ctx;
 	}
 	
 	public function popContext () :Void
@@ -171,7 +206,13 @@ class PBGameBase
 		}
 		
 		for (m in _managers) {
+			
+			
+			#if cpp
+			if (com.pblabs.util.ReflectUtil.is(m, "com.pblabs.engine.core.IPBManager")) {
+			#else
 			if (Std.is(m, IPBManager)) {
+			#end
 				cast(m, IPBManager).shutdown();
 			}
 		}
@@ -258,6 +299,7 @@ class PBGameBase
 		
 		if (_currentContext != null) {
 			//Dispatch the signaller first, so that managers are notified.
+			
 			newActiveContextSignaler.dispatch(_currentContext);
 			_currentContext.enter();
 			_currentContext.getManager(IProcessManager).isRunning = true;
@@ -277,9 +319,3 @@ class PBGameBase
 	 static var EMPTY_ARRAY :Array<Dynamic> = [];
 }
 
-enum	ContextTransition {
-	PUSH(c :IPBContext);
-	POP;
-	CHANGE(c :IPBContext);
-	REMOVE(c :IPBContext);
-}

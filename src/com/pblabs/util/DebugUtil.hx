@@ -37,7 +37,7 @@ class DebugUtil
 		}
 	}
 
-	#if flash
+	#if (flash || cpp)
 	public static function dictToString (h :Dictionary) :String
 	{
 		var sb:String = "";
@@ -158,14 +158,13 @@ class DebugUtil
 		}
 		trace(space + extendedDisplayObjectName(d));
 		if (Std.is( d, DisplayObjectContainer)) {
-			var parent:DisplayObjectContainer = cast(d, DisplayObjectContainer);
+			var parent = cast(d, DisplayObjectContainer);
 
 			for (ii in 0...parent.numChildren) {
-				if (Std.is( parent.getChildAt(ii), DisplayObjectContainer)) {
-					traceDisplayChildren(cast(parent.getChildAt(ii), DisplayObjectContainer), space + "  ");
+				if (Std.is(parent.getChildAt(ii), DisplayObject)) {
+					traceDisplayChildren(parent.getChildAt(ii), space + "  ");
 				}
 			}
-
 		}
 	}
 
@@ -192,7 +191,7 @@ class DebugUtil
 
 	static function extendedDisplayObjectName (d :DisplayObject) :String
 	{
-		return d + ".name=" + d.name + "  loc=" + d.x + " " + d.y;
+		return d + ".name=" + d.name + "  loc=" + d.x + " " + d.y + " size " + d.width + " " + d.height;
 	}
 }
 

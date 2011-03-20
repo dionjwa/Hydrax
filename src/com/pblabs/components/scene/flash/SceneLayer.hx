@@ -9,15 +9,12 @@
 package com.pblabs.components.scene.flash;
 
 import com.pblabs.components.scene.BaseSceneLayer;
+import com.pblabs.components.scene.SceneAlignment;
 import com.pblabs.components.scene.SceneUtil;
-import com.pblabs.components.scene.flash.SceneComponent;
-import com.pblabs.components.scene.flash.SceneManager;
+import com.pblabs.components.scene.SceneView;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Preconditions;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
 
-import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 
@@ -46,8 +43,6 @@ class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 	override function childAdded (c :SceneComponent) :Void
 	{
 		super.childAdded(c);
-		// trace("c=" + c.owner.name + "." + c.name);
-		// trace("    _displayContainer.name=" + _displayContainer.name);
 		_displayContainer.addChild(c.displayObject);
 	}
 	
@@ -56,15 +51,6 @@ class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 		super.childRemoved(c);
 		_displayContainer.removeChild(c.displayObject);
 	}
-	
-	// #if debug
-	// override function addedToParent () :Void
-	// {
-	// 	super.addedToParent();
-	// 	cast(_displayContainer, Sprite).graphics.clear();
-	// 	com.pblabs.util.GraphicsUtil.drawRect(cast(_displayContainer, Sprite).graphics, parent.sceneView.width - 1, parent.sceneView.height - 1, 0x000000, 1, 0);
-	// }
-	// #end
 	
 	override function onAdd () :Void
 	{
@@ -83,9 +69,9 @@ class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 		_rootTransform.rotate(parent.rotation);
 
 		// Center it appropriately.
-		Preconditions.checkNotNull(_tempPoint);
-		Preconditions.checkNotNull(parent.sceneAlignment);
-		Preconditions.checkNotNull(parent.sceneView);
+		Preconditions.checkNotNull(_tempPoint, "No temppoint");
+		Preconditions.checkNotNull(parent.sceneAlignment, "No SceneAlignment");
+		Preconditions.checkNotNull(parent.sceneView, "No SceneView");
 		SceneUtil.calculateOutPoint(_tempPoint, parent.sceneAlignment, parent.sceneView.width, parent.sceneView.height);
 		_rootTransform.translate(_tempPoint.x, _tempPoint.y);
 
@@ -101,4 +87,13 @@ class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 	var _displayContainer :DisplayObjectContainer;	
 	var _rootTransform :Matrix;
 	var _tempPoint :Vector2;
+	
+	#if (debug && sceneDebug) 
+	override function addedToParent () :Void
+	{
+		super.addedToParent();
+		cast(_displayContainer, Sprite).graphics.clear();
+		com.pblabs.util.GraphicsUtil.drawRect(cast(_displayContainer, Sprite).graphics, parent.sceneView.width - 1, parent.sceneView.height - 1, 0x000000, 1, 0);
+	}
+	#end
 }

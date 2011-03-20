@@ -12,7 +12,6 @@
  ******************************************************************************/
 package com.pblabs.engine.core;
 
-import com.pblabs.engine.injection.ComponentInjector;
 import com.pblabs.engine.injection.Injector;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ProcessManager;
@@ -27,7 +26,10 @@ import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
 class PBContext
-	implements IPBContext 
+	implements IPBContext
+	#if cpp
+	,implements haxe.rtti.Infos
+	#end
 {
 	public var name (default, null) :String;
 	public var started (default, null) :Bool;
@@ -49,7 +51,10 @@ class PBContext
 	var _currentGroup :IPBGroup;
 	var _nameManager :NameManager;
 	var _isSetup :Bool;
-	
+	#if !disable_object_pooling
+	var _objectPool :com.pblabs.engine.pooling.ObjectPoolMgr;
+	#end
+		
 	public function new (?name:String)
 	{
 		_isSetup = false;
@@ -58,10 +63,11 @@ class PBContext
 		} else {
 			this.name = name;
 		}
-			
+		
 		injector = createInjector();
 		_managers = Maps.newHashMap(String);
 		_processManager = registerManager(IProcessManager, createProcessManager(), true);
+		registerManager(IPBContext, this, true);
 		_tempPropertyInfo = new PropertyInfo();
 		signalObjectAdded = new DirectSignaler(this);
 		signalObjectRemoved = new DirectSignaler(this);
@@ -110,14 +116,17 @@ class PBContext
 			untyped type = Type.resolveClass("com.pblabs.engine.core.Entity");
 		}
 		#if disable_object_pooling
-		trace(Type.getClassName(type));
 		var i = Type.createInstance(type, EMPTY_ARRAY);
 		#else
-		var i = com.pblabs.engine.pooling.ObjectPoolMgr.SINGLETON.get(type);
+		var i = _objectPool != null ? _objectPool.get(type) : Type.createInstance(type, EMPTY_ARRAY);
 		#end
 		Assert.isNotNull(i, "allocated'd instance is null, type=" + type);
 		//Components get injected by the entity
+		#if cpp
+		if (!com.pblabs.util.ReflectUtil.is(i, "com.pblabs.engine.core.IEntityComponent")) {
+		#else
 		if (!Std.is(i, IEntityComponent)) {
+		#end
 			injector.injectInto(i);
 		} else {
 			cast(i, IEntityComponent).context = this;
@@ -197,7 +206,12 @@ class PBContext
 	public function unregisterManager (clazz :Class<Dynamic>, ?name :String = null) :Void
 	{
 		var mng = _managers.remove(PBUtil.getManagerName(clazz, name));
+		
+		#if cpp
+		if (com.pblabs.util.ReflectUtil.is(mng, "com.pblabs.engine.core.IPBManager")) {
+		#else
 		if (Std.is(mng, IPBManager)) {
+		#end
 			cast(mng, IPBManager).shutdown();
 		}
 		injector.unmap(clazz, name);
@@ -205,6 +219,7 @@ class PBContext
 	
 	public function inject (object :Dynamic) :Void
 	{
+		trace("object=" + object);
 		injector.injectInto(object);
 	}
 	
@@ -219,7 +234,12 @@ class PBContext
 			if (m == null) {
 				continue;
 			}
+			
+			#if cpp
+			if (com.pblabs.util.ReflectUtil.is(m, "com.pblabs.engine.core.IPBManager")) {
+			#else
 			if (Std.is(m, IPBManager)) {
+			#end
 				cast(m, IPBManager).shutdown();
 			}
 		}
@@ -296,7 +316,11 @@ class PBContext
 		//manager
 		injector.mapValue(clazz, instance, optionalName);
 		
-		if(Std.is(instance, IPBManager)) {
+		#if cpp
+		if (com.pblabs.util.ReflectUtil.is(instance, "com.pblabs.engine.core.IPBManager")) {
+		#else
+		if (Std.is(instance, IPBManager)) {
+		#end
 			cast(instance, IPBManager).startup();
 		}
 		return instance;
@@ -310,7 +334,10 @@ class PBContext
 
 	public function injectInto(instance:Dynamic):Void
 	{
-		injector.injectInto(instance);			
+		injector.injectInto(instance);
+		#if !disable_object_pooling
+		_objectPool = injector.getMapping(com.pblabs.engine.pooling.ObjectPoolMgr);
+		#end
 	}
 	
 	static function findProperty <T> (db :PBContext, entity :IEntity, reference :PropertyReference<T>, ?willSet :Bool = false, ?providedPi :PropertyInfo = null, ?suppressErrors :Bool = false) :PropertyInfo
@@ -542,7 +569,7 @@ class PBContext
 	
 	function createInjector () :Injector
 	{
-		return new ComponentInjector();
+		return new Injector();
 	}
 	
 	function createProcessManager () :IProcessManager

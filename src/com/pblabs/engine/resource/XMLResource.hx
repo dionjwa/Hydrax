@@ -37,7 +37,7 @@ class XMLResource extends ResourceBase<Xml>
 		try{
 			switch (_source) {
 				case url (u): loadFromUrl(u);
-				case bytes (b): loadFromBytes(b);
+				case bytes (b): loadFromBytes(b.getData());
 				case text (t): loadFromText(t);
 				case embedded (n): loadFromEmbedded(n);
 				default:
@@ -78,10 +78,12 @@ class XMLResource extends ResourceBase<Xml>
 	{
 		Preconditions.checkNotNull(url, "url is null");
 		#if flash
+		com.pblabs.util.Log.debug("url=" + url);
 		var self = this;
 		var urlLoader = new flash.net.URLLoader();
 		urlLoader.dataFormat = flash.net.URLLoaderDataFormat.TEXT;
 		var onComplete = function (e :flash.events.Event) :Void {
+			com.pblabs.util.Log.debug("xml downloaded");
 			urlLoader.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
 			urlLoader.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
 			self.createXMLFromData(urlLoader.data);

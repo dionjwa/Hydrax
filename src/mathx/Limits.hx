@@ -54,12 +54,12 @@ class Limits
 	
 	static public inline function constrainInt32( a : Int32 ) : Int
 	{
-		return Int32.toNativeInt( a );
+		return wrapPosInt32( a );
 	}
 	
 	static public inline function wrapInt32( a : Int32 ) : Int
 	{
-		return Int32.toNativeInt( a );
+		return wrapPosInt32( a );
 	}
 	
 	static public inline function wrapPosInt32( a : Int32 ) : Int

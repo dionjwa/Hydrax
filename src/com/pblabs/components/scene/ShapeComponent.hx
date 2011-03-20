@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.components.scene;
 class ShapeComponent
-#if flash
+#if (flash || cpp)
  extends com.pblabs.components.scene.flash.SceneComponent
 #elseif js
 	#if css
@@ -28,7 +28,7 @@ class ShapeComponent
 		_fillColor = 0xff0000;
 		_borderColor = 0x000000;
 		_borderWidth = 1;
-		#if flash
+		#if (flash || cpp)
 		_displayObject = new flash.display.Sprite();
 		_width = 10;
 		_height = 10;

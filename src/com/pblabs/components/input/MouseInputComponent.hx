@@ -129,6 +129,17 @@ class MouseInputComponent extends EntityComponent
 		return _deviceHeldDownSignaler;
 	}
 	
+	// var deviceMoveSignaler (get_deviceMoveSignaler, null) :Signaler<Void>;
+	// var _deviceMoveSignaler :Signaler<Void>;
+	// var _deviceMoveBond :Bond;
+	// function get_deviceMoveSignaler () :Signaler<Void>
+	// {
+	// 	if (_deviceMoveSignaler == null) {
+	// 		_deviceMoveSignaler = new DirectSignaler(this);
+	// 	}
+	// 	return _deviceMoveSignaler;
+	// }
+	
 	public var isScalable :Bool;
 	public var isRotatable :Bool;
 	/** Moveable in the x/y? */
@@ -186,6 +197,7 @@ class MouseInputComponent extends EntityComponent
 		}
 		_bonds = [];
 		destroyDeviceHeldBond();
+		// destroyDeviceMoveBond();
 	}
 	
 	override function onReset () :Void
@@ -287,6 +299,14 @@ class MouseInputComponent extends EntityComponent
 			_deviceHeldDownBond = null;
 		}
 	}
+	
+	// function destroyDeviceMoveBond () :Void
+	// {
+	// 	if (_deviceMoveBond != null) {
+	// 		_deviceMoveBond.destroy();
+	// 		_deviceMoveBond = null;
+	// 	}
+	// }
 	
 	#if debug
 	public function toString () :String

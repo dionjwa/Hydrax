@@ -33,7 +33,10 @@ using com.pblabs.util.NumberUtil;
  * @see ITickedObject
  * @see IAnimatedObject
  */
-class ProcessManager implements IProcessManager 
+class ProcessManager implements IProcessManager
+#if cpp
+	,implements haxe.rtti.Infos
+#end
 {
 	/**
 	 * Integer identifying this frame. Incremented by one for every frame.
@@ -171,23 +174,21 @@ class ProcessManager implements IProcessManager
 		_lastTime = -1.0;
 		_elapsed = 0;
 		
-		#if !neko
 		if (_isUsingInternalTimer) {
-			if (_timer == null) {
-				#if flash
-				_timer = new flash.utils.Timer(untyped flash.Lib.current.stage["frameRate"]);
-				#else
-				com.pblabs.util.Log.info("Assuming a frame rate of 30fps");
-				_timer = new com.pblabs.engine.time.Timer(Std.int(1000/30));
-				_timer.run = onFrame;
-				#end
-			}
 			#if flash
+			if (_timer == null) {
+				_timer = new flash.utils.Timer(untyped flash.Lib.current.stage["frameRate"]);
+			}
 			_timer.addEventListener(flash.events.TimerEvent.TIMER, onFrame);
-			#end
 			_timer.start();
+			#elseif !neko
+			if (_timer == null) {
+				com.pblabs.util.Log.info("Assuming a frame rate of 30fps");
+				_timer = new haxe.Timer(Std.int(1000/30));
+				_timer.run = onFrame;
+			}
+			#end
 		}
-		#end
 		
 		_isRunning = true;
 		#if flash
@@ -211,11 +212,13 @@ class ProcessManager implements IProcessManager
 		com.pblabs.util.Log.info("Stopping ProcessManager");
 		
 		if (_isUsingInternalTimer) {
-			#if !neko
-			_timer.stop();
-			#end
 			#if flash
 			_timer.removeEventListener(flash.events.TimerEvent.TIMER, onFrame);
+			_timer.stop();
+			#elseif !neko
+			_timer.stop();
+			_timer.run = null;
+			_timer = null;
 			#end
 		}
 	}
@@ -423,9 +426,9 @@ class ProcessManager implements IProcessManager
 			return;
 		}
 		
-		#if !neko
-		_timer.stop();
-		#end
+		// #if !neko
+		// _timer.stop();
+		// #end
 		
 		// Bump the frame counter.
 		_frameCounter++;
@@ -438,9 +441,9 @@ class ProcessManager implements IProcessManager
 		_lastTime = currentTime;
 		
 		// Rejigger our events so we get called back soon.
-		#if !neko
-		_timer.start();
-		#end
+		// #if !neko
+		// _timer.start();
+		// #end
 		
 		#if flash
 		event.updateAfterEvent();
@@ -555,7 +558,13 @@ class ProcessManager implements IProcessManager
 		//Add the deferred objects
 		while(_deferredObjects.length > 0) {
 			var deferredObject = _deferredObjects.pop();
+			
+			
+			#if cpp
+			if (com.pblabs.util.ReflectUtil.is(deferredObject.v1, "com.pblabs.engine.time.ITickedObject")) {
+			#else
 			if (Std.is(deferredObject.v1, ITickedObject)) {
+			#end
 				addTickedObject(cast deferredObject.v1, deferredObject.v2); 
 			} else {
 				addAnimatedObject(cast deferredObject.v1, deferredObject.v2);
@@ -676,7 +685,8 @@ class ProcessManager implements IProcessManager
 	}
 	
 	#if !neko
-	var _timer :#if flash flash.utils.Timer; #else com.pblabs.engine.time.Timer; #end
+	// var _timer :#if flash flash.utils.Timer; #else com.pblabs.engine.time.Timer; #end
+	var _timer :#if flash flash.utils.Timer; #else haxe.Timer; #end
 	#end
 	var _virtualTime :Int;
 	var _platformTime :Int;

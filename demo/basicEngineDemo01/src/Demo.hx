@@ -8,18 +8,26 @@ using com.pblabs.components.scene.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
 
-class Demo #if flash extends flash.display.Sprite #end 
+class Demo #if (flash || cpp) extends flash.display.Sprite #end 
 {
 	public function new() 
 	{
-		#if flash
+		#if (flash || cpp)
 		super();
 		#end
-	
-		//Setup logging.
-		com.pblabs.engine.debug.Log.setupPBGameLog();
-		var game = new PBGame();
 		
+		#if (flash || cpp)
+		flash.Lib.current.addChild(this);
+		#end
+	
+		
+		
+		
+		//Setup logging.
+		com.pblabs.engine.debug.Log.setup();
+		// com.pblabs.engine.debug.Log.setLevel(com.pblabs.engine.injection.Injector, com.pblabs.engine.debug.Log.DEBUG);
+		
+		var game = new PBGame();
 		//The main "context".  This is equivalent to a level, or a menu screen.
 		var context = game.allocate(PBContext);
 		game.pushContext(context);
@@ -40,10 +48,10 @@ class Demo #if flash extends flash.display.Sprite #end
 
 	public static function main() 
 	{
-		#if flash
-		flash.Lib.current.addChild(new Demo());
-		#elseif js
+		#if (flash || js)
 		new Demo();
+		#elseif cpp
+		nme.Lib.create(function(){new Demo();},640,480,60,0xccccff,(1*nme.Lib.HARDWARE) | nme.Lib.RESIZABLE);
 		#end
 	}
 }

@@ -36,10 +36,20 @@ import com.pblabs.util.ds.Map;
 	A copy of IntMap but paramaterized for keys and values.
 	Don't instatiate directly, use Maps.createNewHashMap().
 **/
-class IntHashMap<K, V> implements Map<K, V> #if php , implements php.IteratorAggregate<V> #end {
-
-	private var h : #if flash9 flash.utils.Dictionary #elseif php ArrayAccess<K> #else Dynamic #end;
-	private var _size :Int;
+#if flash
+class IntHashMap<V> extends  HashMap<Int, V>
+{
+	public function new ()
+	{
+		super();
+	}
+			
+}
+#else
+class IntHashMap<V> implements Map<Int, V>
+{
+	var _hash :IntHash<V>;
+	var _size :Int;
 
 	/**
 		Creates a new empty hashtable.
@@ -51,23 +61,7 @@ class IntHashMap<K, V> implements Map<K, V> #if php , implements php.IteratorAgg
 	
 	function createDictionary () :Void
 	{
-		#if flash9
-		h = new flash.utils.Dictionary();
-		#elseif flash
-		h = untyped __new__(_global["Object"]);
-		#elseif neko
-		h = untyped __dollar__hnew(0);
-		#elseif js
-		h = untyped __js__("{}");
-		untyped if( h.__proto__ != null ) {
-			h.__proto__ = null;
-			__js__("delete")(h.__proto__);
-		};
-		#elseif php
-		h = untyped __call__('array');
-		#elseif cpp
-		h = untyped __global__.__int_hash_create();
-		#end
+		_hash = new IntHash();
 		_size = 0;
 	}
 	
@@ -76,43 +70,25 @@ class IntHashMap<K, V> implements Map<K, V> #if php , implements php.IteratorAgg
 		createDictionary();
 	}
 
-	public function set( key : K, value : V ) : V
+	/**
+		Set a value for the given key.
+	**/
+	public function set( key : Int, value : V ) : V 
 	{
-		var previous = get(key);
 		if (!exists(key)) {
 			_size++;
 		}
-		#if (flash || php)
-		untyped h[key] = value;
-		#elseif js
-		untyped h[key] = value;
-		#elseif neko
-		untyped __dollar__hset(h,key,value,null);
-		#elseif cpp
-		untyped __global__.__int_hash_set(h,key,value);
-		#end
-		return previous;
+		var prev = get(key);
+		_hash.set(key, value);
+		return prev;
 	}
 
 	/**
 		Get a value for the given key.
 	**/
-	public function get( key : K ) : Null<V> 
+	public function get( key : Int ) : Null<V> 
 	{
-		#if flash
-		return untyped h[key];
-		#elseif js
-		return untyped h[key];
-		#elseif neko
-		return untyped __dollar__hget(h,key,null);
-		#elseif php
-		untyped __php__("if(!isset($this->h[$key])) return null");
-		return untyped h[key];
-		#elseif cpp
-		return untyped __global__.__int_hash_get(h,key);
-		#else
-		return null;
-		#end
+		return _hash.get(key);	
 	}
 
 	/**
@@ -120,170 +96,52 @@ class IntHashMap<K, V> implements Map<K, V> #if php , implements php.IteratorAgg
 		In particular, it's useful to tells if a key has
 		a [null] value versus no value.
 	**/
-	public function exists( key : K ) : Bool {
-		#if flash9
-		return untyped h.hasOwnProperty(key);
-		#elseif flash
-		return untyped h["hasOwnProperty"](key);
-		#elseif js
-		return untyped h[key] != null;
-		#elseif neko
-		return untyped __dollar__hmem(h,key,null);
-		#elseif php
-		return untyped __call__("isset", h[key]);
-		#elseif cpp
-		return untyped __global__.__int_hash_exists(h,key);
-		#else
-		return false;
-		#end
+	public function exists( key : Int ) : Bool 
+	{
+		return _hash.exists(key);
 	}
 
 	/**
 		Removes a hashtable entry. Returns [true] if
 		there was such entry.
 	**/
-	public function remove( key : K ) : V {
-		#if flash9
-		if( untyped !h.hasOwnProperty(key) ) return null;
-		var previous = get(key);
-		_size--;
-		untyped __delete__(h,key);
-		return previous;
-		#elseif flash
-		if( untyped !h["hasOwnProperty"](key) ) return null;
-		var previous = get(key);
-		_size--;
-		untyped __delete__(h,key);
-		return previous;
-		#elseif js
-		if( untyped h[key] == null ) return null;
-		_size--;
-		var previous = get(key);
-		untyped  __js__("delete")(h[key]);
-		return previous;
-		#elseif neko
-		var previous = get(key);
-		if (untyped __dollar__hremove(h,key,null)) {
+	public function remove( key : Int ) : V
+	{
+		if (exists(key)) {
 			_size--;
-			return previous;
-		} else {
-			return null;
 		}
-		#elseif php
-		if(!untyped __call__("isset", h[key])) return null;
-		var previous = get(key);
-		untyped __call__("unset", h[key]);
-		_size--;
-		return previous;
-		#elseif cpp
-		var previous = get(key);
-		if (untyped __global__.__int_hash_remove(h,key)) {
-			_size--;
-			return previous;
-		} else {
-			return null;
-		}
-		#else
-		throw "Unsupported platform";
-		return false;
-		#end
+		var prev = get(key);
+		_hash.remove(key);
+		return prev;
 	}
 
 	/**
 		Returns an iterator of all keys in the hashtable.
 	**/
-	public function keys() : Iterator<K> {
-		#if flash9
-		return untyped (__keys__(h)).iterator();
-		#elseif flash
-		var l : Array<K> = untyped __keys__(h);
-		for( x in 0...l.length )
-			l[x] = Std.int(l[x]);
-		return l.iterator();
-		#elseif js
-		var a = new Array();
-		untyped __js__("
-			for( x in this.h )
-				a.push(x);
-		");
-		return a.iterator();
-		#elseif neko
-		var l = new List<K>();
-		untyped __dollar__hiter(h,function(k,_) { l.push(k); });
-		return l.iterator();
-		#elseif php
-		return untyped __call__("new _hx_array_iterator", __call__("array_keys", h));
-		#elseif cpp
-		var a:Array<K> = untyped __global__.__int_hash_keys(h);
-		return a.iterator();
-		#else
-		return null;
-		#end
+	public function keys() : Iterator<Int>
+	{
+		return _hash.keys();
 	}
 
 	/**
 		Returns an iterator of all values in the hashtable.
 	**/
-	public function iterator() : Iterator<V> {
-		#if flash9
-		return untyped {
-			ref : h,
-			it : keys(),
-			hasNext : function() { return this.it.hasNext(); },
-			next : function() { var i = this.it.next(); return this.ref[i]; }
-		};
-		#elseif flash
-		return untyped {
-			ref : h,
-			it : keys(),
-			hasNext : function() { return this.it[__unprotect__("hasNext")](); },
-			next : function() { var i = this.it[__unprotect__("next")](); return this.ref[i]; }
-		};
-		#elseif js
-		return untyped {
-			ref : h,
-			it : keys(),
-			hasNext : function() { return this.it.hasNext(); },
-			next : function() { var i = this.it.next(); return this.ref[i]; }
-		};
-		#elseif neko
-		var l = new List<V>();
-		untyped __dollar__hiter(h,function(_,v) { l.push(v); });
-		return l.iterator();
-		#elseif php
-		return untyped __call__("new _hx_array_iterator", __call__("array_values", h));
-		#elseif cpp
-		var a:Array<Dynamic> = untyped __global__.__int_hash_values(h);
-		return a.iterator();
-		#else
-		return null;
-		#end
+	public function iterator() : Iterator<V> 
+	{
+		return _hash.iterator();
 	}
 
-	public function forEach (fn :K->V->Dynamic) :Void
-	{
-	    for (k in keys()) {
-	    	fn(k, get(k));
-	    }
-	}
-	
-	#if debug
-	public function toString () :String
-	{
-	    return com.pblabs.util.ds.MapUtil.toString(this);
-	}
-	#end
-	
 	public function size () :Int
 	{
-	    return _size;
+		return _size;
 	}
-	/**
-		Implement IteratorAggregate for native php iteration
-	**/
-	#if php
-	function getIterator() {
-		return iterator();
+	
+	public function forEach (fn :Int->V->Dynamic) :Void
+	{
+		for (k in keys()) {
+			fn(k, get(k));
+		}
 	}
-	#end
+	
 }
+#end

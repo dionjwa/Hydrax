@@ -134,7 +134,12 @@ class PanManager extends EntityComponent,
 	{
 		endPanning();
 		_isEasing = easing;
+		
 		_pauseProcessManagerOnPan = pauseScene;
+		if (_pauseProcessManagerOnPan && !context.getManager(IProcessManager).isRunning) {
+			_pauseProcessManagerOnPan = false;
+		}
+		
 		Preconditions.checkNotNull(scene);
 		_scene = scene;
 		_sceneComponent = null;
@@ -156,7 +161,12 @@ class PanManager extends EntityComponent,
 			com.pblabs.util.Log.warn("easing doesn't work with constraints yet");
 			_isEasing = false;
 		}
+		
 		_pauseProcessManagerOnPan = pauseScene;
+		if (_pauseProcessManagerOnPan && !context.getManager(IProcessManager).isRunning) {
+			_pauseProcessManagerOnPan = false;
+		}
+		
 		Preconditions.checkNotNull(c);
 		_sceneComponent = c;
 		_scene = null;//c.layer.scene;
@@ -215,6 +225,7 @@ class PanManager extends EntityComponent,
 		_scene = null;
 		_sceneComponent = null;
 		_constraint = null;
+		_pauseProcessManagerOnPan = false;
 	}
 	
 	override function onRemove () :Void
@@ -235,7 +246,6 @@ class PanManager extends EntityComponent,
 				var diff = e.inputLocation.subtract(_panVectors[_panVectors.length - 1]);
 				diff.scaleLocal(1 / _scene.zoom);
 				diff.rotateLocal(-_scene.rotation);
-				// _panAngles.push(diff.angle());
 				_scene.x += diff.x;
 				_scene.y += diff.y;
 				if (dragSignaler.isListenedTo) {
@@ -268,24 +278,20 @@ class PanManager extends EntityComponent,
 					_sceneComponent.owner.setProperty(_yProp, _startObj.y + worldDiff.y);
 				}
 				
-				
-				
-				// var world = _scene.translateScreenToWorld(e.inputLocation);
-				// _sceneComponent.x = world.x;
-				// _sceneComponent.y = world.y;
 				if (dragSignaler.isListenedTo) {
 					dragSignaler.dispatch(_sceneComponent);
 				}
 			}
 			if (_pauseProcessManagerOnPan && _scene != null) {
+				#if cpp
+				if (com.pblabs.util.ReflectUtil.is(_scene, "com.pblabs.engine.time.IAnimatedObject")) {
+				#else
 				if (Std.is(_scene, IAnimatedObject)) {
+				#end
 					cast(_scene, IAnimatedObject).onFrame(0);
 				}
 			}
-			if (_isEasing) {
-				_panVectors.push(e.inputLocation.clone());
-			}
-			
+			_panVectors.push(e.inputLocation.clone());
 		}
 	}
 	
@@ -345,11 +351,16 @@ class PanManager extends EntityComponent,
 			return val;
 		}
 		_isPanning = val;
-		if (_isPanning) {
-			context.getManager(IProcessManager).isRunning = !(_pauseProcessManagerOnPan && _scene != null); 
-		} else {
-			context.getManager(IProcessManager).isRunning = true;
+		
+		if (_pauseProcessManagerOnPan) {
+			context.getManager(IProcessManager).isRunning = !_isPanning;
 		}
+		
+		// if (_isPanning) {
+		// 	context.getManager(IProcessManager).isRunning = !(_pauseProcessManagerOnPan && _scene != null); 
+		// } else {
+		// 	context.getManager(IProcessManager).isRunning = true;
+		// }
 		if (_isPanning) {
 			_timer = new Timer(Std.int(1000/30));
 			_timer.run = notMoving;

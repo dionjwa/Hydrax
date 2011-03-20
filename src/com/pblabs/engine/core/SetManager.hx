@@ -34,6 +34,14 @@ class SetManager extends PBManagerBase,
 {
 	var _bonds :Array<Bond>;
 	
+	/** Maps set names to objects */
+	var _sets :MultiMap<String, IPBObject>;
+	/** Maps objects to sets */
+	var _objects :MultiMap<IPBObject, String>;
+	
+	static var EMPTY_STRING_ARRAY :Array<String> = [];
+	static var EMPTY_OBJECT_ARRAY :Array<IPBObject> = [];
+	
 	//The static functions are for "using" 
 	public static function getAllInSet(context :IPBContext, set :String) :Iterable<IPBObject>
 	{
@@ -44,8 +52,19 @@ class SetManager extends PBManagerBase,
 		return getSetManager(context).getObjectsInSet(set).filter(com.pblabs.util.Predicates.notNull);
 	}
 	
+	public static function getAllEntitiesInSet(context :IPBContext, set :String) :Iterable<IEntity>
+	{
+		com.pblabs.util.Assert.isNotNull(context);
+		com.pblabs.util.Assert.isNotNull(getSetManager(context));
+		com.pblabs.util.Assert.isNotNull(getSetManager(context).getObjectsInSet(set));
+		com.pblabs.util.Assert.isFalse(set.isBlank());
+		return getSetManager(context).getEntitiesInSet(set).filter(com.pblabs.util.Predicates.notNull);
+	}
+	
 	public static function addToSet (obj :IPBObject, set :String) :Void
 	{
+		trace("\nobj=" + obj);
+		trace("set=" + set);
 		getSetManager(obj.context).addObjectToSet(obj , set);
 	}
 	
@@ -162,14 +181,24 @@ class SetManager extends PBManagerBase,
 	
 	public function injectSets (obj :IEntityComponent, ?cls :Class<Dynamic>) :Void
 	{
+		// trace("obj=" + obj);
 		cls = cls == null ? obj.getClass() : cls;
+		// trace("cls=" + cls);
 		
 		var m = haxe.rtti.Meta.getType(cls);
 		
+		// if (haxe.rtti.Meta.getType(cls)
+		
+		// trace("m=" + Std.string(m));
+		
 		if (m != null) {
+			// trace(" delving into m " + Std.string(m));
+			// trace("Reflect.fields(m)=" + Reflect.fields(m));
 			for (field in Reflect.fields(m)) {
+				// trace("  field=" + field);
 				if (field == "sets") {
 					for (s in cast(Reflect.field(m, field), Array<Dynamic>)) {
+						// trace("   adding to " + s);
 						addObjectToSet(obj.owner, s);				
 					}
 				}
@@ -190,8 +219,10 @@ class SetManager extends PBManagerBase,
 	
 	function removeBonds () :Void
 	{
-		for (bond in _bonds) {
-			bond.destroy();
+		if (_bonds != null) {
+			for (bond in _bonds) {
+				bond.destroy();
+			}
 		}
 		_bonds = [];
 	}
@@ -204,14 +235,6 @@ class SetManager extends PBManagerBase,
 		return sm;
 	}
 
-	/** Maps set names to objects */
-	var _sets :MultiMap<String, IPBObject>;
-	/** Maps objects to sets */
-	var _objects :MultiMap<IPBObject, String>;
-	
-	static var EMPTY_STRING_ARRAY :Array<String> = [];
-	static var EMPTY_OBJECT_ARRAY :Array<IPBObject> = [];
-	
 	#if debug
 	public function toString () :String
 	{

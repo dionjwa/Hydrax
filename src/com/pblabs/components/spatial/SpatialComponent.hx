@@ -14,6 +14,7 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.serialization.ISerializable;
+import com.pblabs.engine.serialization.Serializer;
 import com.pblabs.geom.Vector2;
 
 import de.polygonal.motor2.geom.inside.PointInsideAABB;
@@ -39,7 +40,7 @@ class SpatialComponent extends EntityComponent,
 	public static var P_ANGLE :PropertyReference<Float> = new PropertyReference("@" + NAME + ".angle");
 	public static var P_SPATIAL :PropertyReference<SpatialComponent> = new PropertyReference("@" + NAME);
 	
-	public static function getLocation (c :IEntity) :XY	
+	public static function getLocation (c :IEntity) :XY
 	{
 	    return c.getComponent(SpatialComponent).position;
 	}
@@ -71,7 +72,7 @@ class SpatialComponent extends EntityComponent,
 	 * tests.
 	 */
 	#if (flash || js)
-	public var spriteForPointChecks :com.pblabs.components.scene.BaseSceneComponent<com.pblabs.components.scene.BaseSceneLayer<Dynamic, Dynamic>>;
+	public var spriteForPointChecks :IBounded;
 	#end
 	var _objectMask :ObjectType;
 	var _vec :XY;
@@ -160,9 +161,9 @@ class SpatialComponent extends EntityComponent,
 	
 	public function serialize (xml :Xml) :Void
 	{
-		xml.createChild("x", _vec.x);
-		xml.createChild("y", _vec.y);
-		xml.createChild("angle", _angle);
+		xml.createChild("x", _vec.x, Serializer.serializeFloat);
+		xml.createChild("y", _vec.y, Serializer.serializeFloat);
+		xml.createChild("angle", _angle, Serializer.serializeFloat);
 	}
 	
 	public function deserialize (xml :Xml) :Dynamic
@@ -179,7 +180,7 @@ class SpatialComponent extends EntityComponent,
 		// spriteForPointChecks = null;
 		#if (flash || js)
 		if (spriteForPointChecks == null || !spriteForPointChecks.isRegistered) {
-			spriteForPointChecks = cast owner.getComponent(com.pblabs.components.scene.BaseSceneComponent);
+			spriteForPointChecks = cast owner.getComponent(IBounded);
 		}
 		#end
 		dispatchAll();

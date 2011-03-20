@@ -65,7 +65,7 @@ class RectangleShape extends ShapeComponent
 	
 	override function redraw () :Void
 	{
-		#if flash
+		#if (flash || cpp)
 		var zoom = parent != null && parent.parent != null ? parent.parent.zoom : 1.0;
 		var g = cast(_displayObject, flash.display.Sprite).graphics;
 		g.clear();

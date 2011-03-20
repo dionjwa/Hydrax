@@ -35,17 +35,28 @@ class Tuple <V1, V2>
 	//TODO: make better.  This is a rather crappy hash function.  
 	public static function computeHashCode (v1 :Dynamic, v2 :Dynamic) :Int
 	{
+		
+		#if cpp
+		if (com.pblabs.util.ReflectUtil.is(v1, "com.pblabs.util.ds.Hashable") && com.pblabs.util.ReflectUtil.is(v2, "com.pblabs.util.ds.Hashable")) {
+			return HashUtil.computeHashCodeFromHashables(cast v1, cast v2);
+		}
+		#else
 		if (Std.is(v1, Hashable) && Std.is(v2, Hashable)) {
 			return HashUtil.computeHashCodeFromHashables(cast v1, cast v2);
 		}
+		#end
 		
 		var value :Int = 17;
 		value = value * 31 + 
 			if (v1 == null) {
 				StringUtil.hashCode("" + v1);
-			} else 
-			if (Std.is(v1, Hashable)) {
+			#if cpp
+			} else if (com.pblabs.util.ReflectUtil.is(v1, "com.pblabs.util.ds.Hashable")) {
 				cast(v1, Hashable).hashCode();
+			#else
+			} else if (Std.is(v1, Hashable)) {
+				cast(v1, Hashable).hashCode();
+				#end
 			} else if (Std.is(v1, Int)) {
 				v1;
 			} else {
@@ -54,7 +65,11 @@ class Tuple <V1, V2>
 		value = value * 31 + 
 			if (v2 == null) {
 				StringUtil.hashCode("" + v2);
+			#if cpp
+			} else if (com.pblabs.util.ReflectUtil.is(v2, "com.pblabs.util.ds.Hashable")) {
+			#else
 			} else if (Std.is(v2, Hashable)) {
+			#end
 				cast(v2, Hashable).hashCode();
 			} else if (Std.is(v2, Int)) {
 				v2;

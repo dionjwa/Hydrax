@@ -53,8 +53,7 @@ class Demo #if flash extends flash.display.Sprite #end
 		this.name = "Demo";
 		#end
 		
-		com.pblabs.engine.debug.Log.setupPBGameLog();
-		// com.pblabs.util.Log.setLevel(Injector, com.pblabs.util.Log.DEBUG);
+		com.pblabs.engine.debug.Log.setup();
 		game = new PBGame();
 		
 		#if css
@@ -168,9 +167,6 @@ class Demo #if flash extends flash.display.Sprite #end
 		var context = layer.context;
 		var man  = SceneUtil.createBaseSceneEntity(context);
 		
-		// var c = context.allocate(CircleShape);
-		// var c = context.allocate(RectangleShape);
-		// c.fillColor = Std.int(Rand.nextFloat() * 0xffffff);
 		var c = context.allocate(ImageComponent);
 		c.resource = cast new ResourceToken("face");
 		

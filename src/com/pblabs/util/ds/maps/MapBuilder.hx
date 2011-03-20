@@ -176,7 +176,8 @@ class MapBuilder<K, V>
 		var map :Map<K, V> = Maps.newHashMap(_keyClazz);
 		if (isLR) {
 			map = new LRMap<K, V>(map, _maxSizeLR, _accessOrderLR);
-		} else if (isExpiring) {
+		} 
+		else if (isExpiring) {
 			map = _createExpiringMap(map);
 		}
 		if (_sorted) {

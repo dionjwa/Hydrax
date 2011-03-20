@@ -1,0 +1,67 @@
+# Flash 9+
+-main TestMain
+-cp src
+-lib utest
+-swf9 build/main_test.swf
+
+-debug
+-cp ../src
+-lib hydrax
+-cmd open build/main_test.swf
+
+--next
+
+# JavaScript/browser
+-main TestMain
+-cp src
+-lib utest
+-js build/main_test.js
+
+-debug
+-cp ../src
+-lib hydrax
+-cmd open index.xhtml
+
+
+--next
+-main TestMain
+-cp src
+-lib utest
+-lib nme
+-lib hxcpp
+-cpp build/cpp
+--remap neko:cpp
+--remap flash:nme
+
+-debug
+-cp ../src
+-lib hydrax
+-cmd ./build/cpp/TestMain-debug
+
+
+
+#Neko doesn't work with Hydrax, due to reflection issues
+# -main TestMain
+# -main tests.BattleDataTest
+# -cp src
+# -lib utest
+# -neko build/main_test.n
+
+# -debug
+# -cp ../src
+# # -lib hydrax
+# -cmd neko build/main_test.n
+
+
+# -lib IterTools
+# -lib ArrayTools
+# -lib ListTools
+# -lib feffects
+# -lib physaxe
+
+# #Game libraries
+# -cp ../../hydrax/src
+# -cp ../../hxhsl/hsl source
+# -cp ../../hxhsl/hsl-pico source
+# -cp ../../libdamago/src
+# -cp ../../libdamago/lib/polygonal/src/lib

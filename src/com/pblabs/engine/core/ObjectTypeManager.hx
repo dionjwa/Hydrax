@@ -24,6 +24,9 @@ import com.pblabs.util.ds.Maps;
  * @see ObjectType
  */
 class ObjectTypeManager
+#if cpp
+	implements haxe.rtti.Infos
+#end
 {
 	/**
 	* The number of object types that have been registered.
@@ -62,8 +65,8 @@ class ObjectTypeManager
 	public function getType(typeName :String) :Int
 	{
 		if (!_typeList.exists(typeName)) {
-			if (_typeCount == 64) {
-				com.pblabs.util.Log.warn("Only 64 unique object types can be created.");
+			if (_typeCount == 32) {
+				com.pblabs.util.Log.warn("Only 32 unique object types can be created.");
 				return 0;
 			}
 			

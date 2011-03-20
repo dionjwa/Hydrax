@@ -1,0 +1,11 @@
+# JavaScript/node.js
+-main TestMain
+-cp src
+-lib utest
+-js build/main_test_node.js
+
+-debug
+-D nodejs
+-cp ../src
+-lib hydrax
+-cmd node build/main_test_node.js

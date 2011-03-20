@@ -5,9 +5,22 @@
 
 -cp src
 
--swf build/out.swf
+-swf build/demo.swf
 -swf-version 10
--swf-header 800:600:30:FFFFFF
+-swf-header 1000:600:30:FFFFFF
 
 -main Demo
+
+#For local testing
+# -lib IterTools
+# -lib ArrayTools
+# -lib ListTools
+# -lib feffects
+
+#Game libraries
+# -cp ../../../hydrax/src
+# -cp ../../../hxhsl/hsl source
+# -cp ../../../hxhsl/hsl-pico source
+# -cp ../../../libdamago/lib/polygonal/src/lib
+
 

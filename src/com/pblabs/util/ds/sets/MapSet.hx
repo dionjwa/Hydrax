@@ -52,7 +52,7 @@ class MapSet<T> implements Set<T>
 
 	public function clear () :Void
 	{
-		return _source.clear();
+		_source.clear();
 	}
 	public function iterator() : Iterator<T>
 	{

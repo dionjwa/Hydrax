@@ -25,7 +25,11 @@ class EqualableUtil
 		// catch various common cases (both primitive or null)
 		if (obj1 == obj2 || (obj1 == null && obj2 == null)) {
 			return true;
+		#if cpp
+		} else if (com.pblabs.util.ReflectUtil.is(obj1, "com.pblabs.util.Equalable")) {
+		#else
 		} else if (Std.is(obj1, Equalable)) {
+		#end
 			// if obj1 is Equalable, then that decides it
 			return (cast(obj1, Equalable<Dynamic>)).equals(obj2);
 		} else if ((Std.is(obj1, Array)) || (Std.is(obj2, Array))) {

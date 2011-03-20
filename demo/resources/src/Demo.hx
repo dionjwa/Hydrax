@@ -4,6 +4,7 @@ import com.pblabs.components.scene.BaseSceneComponent;
 import com.pblabs.components.scene.BaseSceneLayer;
 import com.pblabs.components.scene.ImageComponent;
 import com.pblabs.components.scene.RectangleShape;
+import com.pblabs.components.scene.SceneAlignment;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.SceneView;
 import com.pblabs.components.tasks.AngleTask;
@@ -41,7 +42,7 @@ class Demo #if flash extends flash.display.Sprite #end
 		this.name = "Demo Template";
 		#end
 		
-		com.pblabs.engine.debug.Log.setupPBGameLog();
+		com.pblabs.engine.debug.Log.setup();
 		// com.pblabs.engine.debug.Log.setLevel(ResourceManager, com.pblabs.engine.debug.Log.DEBUG);
 		// com.pblabs.engine.debug.Log.setLevel(ImageResource, com.pblabs.engine.debug.Log.DEBUG);
 		

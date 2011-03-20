@@ -1,9 +1,16 @@
-build/*
+*build/*
 .DS_Store
 .svn
 .hg
 *.swf
 *.js
+*cpp*
 lib/polygonal/build/
 tmp
 demo/panningAndZooming/upload.sh
+tests/build
+demo/panningAndZooming/build
+demo/basicEngineDemo01/build
+demo/canvasDemo/build
+demo/panningAndZooming/build
+demo/resources/build

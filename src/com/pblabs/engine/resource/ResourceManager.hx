@@ -27,6 +27,9 @@ using com.pblabs.util.IterUtil;
   */
 class ResourceManager 
 	implements IResourceManager, implements IPBManager
+	#if cpp
+	,implements haxe.rtti.Infos
+	#end
 {
 	public function new ()
 	{
@@ -74,6 +77,7 @@ class ResourceManager
 			_pendingResources.remove(key);
 			_loadingResources.set(key, rsrc);
 			var loaded = function () :Void {
+				com.pblabs.util.Log.debug("Loaded callback for resource=" + key);
 				self.resourceLoaded(rsrc);
 			}
 			com.pblabs.util.Log.debug("Loading resource=" + rsrc);
@@ -99,14 +103,6 @@ class ResourceManager
 	public function getResource (resourceName :String) :IResource<Dynamic>
 	{
 		Preconditions.checkArgument(resourceName != null , "You must give a resource name");
-		
-		// if (resourceType != null) {
-		// 	for (rsrc in _loadedResources) {
-		// 		if (Std.is(rsrc, resourceType)) {
-		// 			return cast rsrc;
-		// 		}
-		// 	}
-		// }
 		return cast _loadedResources.get(resourceName);
 	}
 	
@@ -180,17 +176,22 @@ class ResourceManager
 	function allResourcesLoaded () :Void
 	{
 		com.pblabs.util.Log.info("");
-		while (_onLoadCallbacks.length > 0) {
-			_onLoadCallbacks.pop()();
-		}
+		
+		//Copy and clear the current arrays to avoid change conflicts during callbacks
+		var onloadcallbacks = _onLoadCallbacks.copy();
 		//Clear the error callbacks too
 		_onErrorCallbacks = [];
+		_onLoadCallbacks = [];
+		
+		while (onloadcallbacks.length > 0) {
+			onloadcallbacks.shift()();
+		}
 	}
 	
 	function handleLoadingError (e :Dynamic) :Void
 	{
 		while (_onErrorCallbacks.length > 0) {
-			_onErrorCallbacks.pop()(e);
+			_onErrorCallbacks.shift()(e);
 		}
 	}
 	

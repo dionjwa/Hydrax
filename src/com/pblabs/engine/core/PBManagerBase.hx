@@ -14,9 +14,9 @@ package com.pblabs.engine.core;
 class PBManagerBase
 	implements IPBManager, implements haxe.rtti.Infos
 {
-	// @inject
 	var context :IPBContext;
-	@inject
+	
+	@inject("com.pblabs.engine.core.PBGameBase")
 	var game :PBGameBase;
 	
 	public function new ()
@@ -26,16 +26,16 @@ class PBManagerBase
 	
 	public function startup () :Void
 	{
-	    com.pblabs.util.Assert.isNotNull(game, "No PBGameBase?");
+		com.pblabs.util.Assert.isNotNull(game, "No PBGameBase?");
 		game.newActiveContextSignaler.bind(contextSwitched);
 	}
 	
 	public function shutdown () :Void
 	{
 		onContextRemoval();
-	    game.newActiveContextSignaler.unbind(contextSwitched);
-	    game = null;
-	    context = null;
+		game.newActiveContextSignaler.unbind(contextSwitched);
+		game = null;
+		context = null;
 	}
 	
 	function contextSwitched (c :IPBContext) :Void

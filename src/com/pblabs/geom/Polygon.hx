@@ -196,7 +196,7 @@ class Polygon
 	// }
 
 	//TODO: move this to another class to remove the graphics depency
-	#if flash
+	#if (flash || cpp)
 	public function fill (g :flash.display.Graphics, ?color :Int = 0) :Void
 	{
 		g.beginFill(color);

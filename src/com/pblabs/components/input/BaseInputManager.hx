@@ -8,7 +8,6 @@
  ******************************************************************************/
 package com.pblabs.components.input;
 import com.pblabs.components.scene.SceneView;
-import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBManager;
 import com.pblabs.util.Preconditions;
 
@@ -35,7 +34,7 @@ class BaseInputManager
     @inject
     var sceneView :SceneView;
     
-    #if flash
+    #if (flash || cpp)
     public var layer (get_layer, set_layer) :LayerClass;
     #end
     
@@ -43,7 +42,7 @@ class BaseInputManager
     
     public function startup () :Void
     {
-        #if flash
+        #if (flash || cpp)
         // Preconditions.checkNotNull(context, "Context is null");
         
         if (_layer == null) {
@@ -55,7 +54,7 @@ class BaseInputManager
         #end
     }
     
-    #if flash
+    #if (flash || cpp)
     public function shutdown () :Void
     {
         _layer = null;

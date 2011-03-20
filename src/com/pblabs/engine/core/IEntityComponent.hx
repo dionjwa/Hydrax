@@ -102,6 +102,9 @@ interface IEntityComponent
   function reset():Void;
   
   #if debug
+  /**
+    * Used for checking if signals are still being listened to, among other things.
+    */
   function postDestructionCheck () :Void;
   #end
 }

@@ -233,7 +233,7 @@ class Enumerable<T>
 	
 	public function compareTo (other :Enumerable<T>) :Int
 	{
-		com.pblabs.util.Assert.isTrue(Std.is(other, Type.getClass(this)), "Not same Enumerable type");
+		// com.pblabs.util.Assert.isTrue(Std.is(other, Type.getClass(this)), "Not same Enumerable type");
 		return Comparators.compareInts(this.ordinal, other.ordinal);
 	}
 	

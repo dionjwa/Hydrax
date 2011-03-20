@@ -46,7 +46,7 @@ class PBUtil
 		var component = context.allocate(compClass);
 		com.pblabs.util.Assert.isNotNull(component, "allocate returned null for compClass=" + compClass);
 		
-		Preconditions.checkArgument(Std.is(component, IEntityComponent), "Singleton " + compClass + " is not an IEntityComponent");
+		// Preconditions.checkArgument(Std.is(component, IEntityComponent), "Singleton " + compClass + " is not an IEntityComponent");
 		var e = context.allocate(IEntity);
 		Assert.isNotNull(e.context, "How can the entity context be null? e.name=" +e.name + ", compClass=" + Type.getClassName(compClass));
 		e.initialize(compName);
@@ -98,7 +98,7 @@ class PBUtil
 		var component = context.allocate(compClass);
 		com.pblabs.util.Assert.isNotNull(component, "allocate returned null for compClass=" + compClass);
 		
-		Preconditions.checkArgument(Std.is(component, IEntityComponent), "Singleton " + compClass + " is not an IEntityComponent");
+		// Preconditions.checkArgument(Std.is(component, IEntityComponent), "Singleton " + compClass + " is not an IEntityComponent");
 		var e = context.allocate(IEntity);
 		Assert.isNotNull(e.context, "How can the entity context be null? e.name=" +e.name + ", compClass=" + Type.getClassName(compClass));
 		e.initialize(entityName);
@@ -214,12 +214,12 @@ class PBUtil
 	  */
 	public static function getEntity (c :IEntityComponent) :IEntity
 	{
-	    return c == null ? null : c.owner;
+		return c == null ? null : c.owner;
 	}
 	
 	inline public static function classToEntityName (cls :Class<IEntityComponent>) :String
 	{
-	    return ReflectUtil.tinyClassName(cls);
+		return ReflectUtil.tinyClassName(cls);
 	}
 	
 	inline static function fieldToken (fieldName :String) :String

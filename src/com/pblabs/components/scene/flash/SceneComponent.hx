@@ -82,7 +82,13 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		_displayObject.name = name;
 		_transformMatrix.identity();
 		_displayObject.transform.matrix = _transformMatrix;
+		
+		#if flash
 		var localDimensions = _displayObject.getBounds(displayObject);
+		#elseif cpp
+		var localDimensions = _displayObject.nmeGetPixelBounds();
+		#end
+		
 		_width = localDimensions.width;
 		_height = localDimensions.height;
 		
@@ -148,10 +154,12 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	public function updateTransform (?updateProps:Bool = false) :Void
 	{
 		if (_displayObject == null) {
+			com.pblabs.util.Log.error("No _displayObject");
 			return;
 		}
+		
 		// if(updateProps)
-		//     updateProperties();
+		//	 updateProperties();
 		
 		// If size is active, it always takes precedence over scale.
 		// var tmpScaleX:Float = _scale.x;
@@ -176,9 +184,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		_displayObject.visible = (alpha > 0);
 		
 		isTransformDirty = false;
-		
-		
-    }
+	}
 	
 	var _displayObject :DisplayObject;
 }

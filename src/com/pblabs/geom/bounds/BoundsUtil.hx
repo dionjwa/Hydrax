@@ -96,7 +96,7 @@ class BoundsUtil
 		return distancePolygonPolygon(b1, b2) <= d;
 	}
 	
-	#if flash
+	#if (flash || cpp)
 	public static function drawBounds (b :IBounds<Dynamic>, g :flash.display.Graphics, ?color :Int = 0x000000, ?alpha :Float = 1, ?lineWidth :Float = 1) :Void
 	{
 		if (Std.is(b, BoundsPolygon)) {

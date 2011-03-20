@@ -12,12 +12,10 @@ import com.pblabs.engine.resource.ResourceBase;
 import com.pblabs.engine.resource.Source;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.StringUtil;
-#if (flash || cpp)
-using com.pblabs.util.EventDispatcherUtil;
-
 /**
-  * Represents a single image resource.
-  */
+* Represents a single image resource.
+*/
+#if (flash || cpp)
 class ImageResource extends ResourceBase<flash.display.Bitmap>
 #elseif js
 class ImageResource extends ResourceBase<js.Dom.Image>
@@ -25,7 +23,9 @@ class ImageResource extends ResourceBase<js.Dom.Image>
 {
 	#if (flash || cpp)
 	var _image :flash.display.Bitmap;
+	#if flash
 	var _loader :flash.display.Loader;
+	#end
 	#elseif js
 	var _image :js.Dom.Image;
 	#end
@@ -45,10 +45,10 @@ class ImageResource extends ResourceBase<js.Dom.Image>
 			loader.contentLoaderInfo.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
 			loader.contentLoaderInfo.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
 			self._image = cast loader.content;
-			self.loaded();			
+			self.loaded();
 		}
 		
-		loader.contentLoaderInfo.addOnceListener(flash.events.Event.COMPLETE, onComplete);
+		com.pblabs.util.EventDispatcherUtil.addOnceListener(loader.contentLoaderInfo, flash.events.Event.COMPLETE, onComplete);
 		loader.contentLoaderInfo.addEventListener(flash.events.IOErrorEvent.IO_ERROR, onLoadError);
 		loader.contentLoaderInfo.addEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, onLoadError);
 		#end
@@ -143,18 +143,30 @@ class ImageResource extends ResourceBase<js.Dom.Image>
 	
 	function loadFromEmbedded (embeddedName :String) :Void
 	{
+		var bytes = haxe.Resource.getBytes(embeddedName);
+		
 		com.pblabs.util.Log.debug("loadFromEmbedded");
-		#if js
-		onLoadError("Don't use Source.embedded for JS, use Source.url instead");
-		#elseif flash
-		var cls :Class<Dynamic> = Type.resolveClass("SWFResources_" + embeddedName);
-		if (cls == null) {
-			cls = Type.resolveClass(embeddedName);
+		#if flash
+		if (bytes == null) {
+			var cls :Class<Dynamic> = Type.resolveClass("SWFResources_" + embeddedName);
+			if (cls == null) {
+				cls = Type.resolveClass(embeddedName);
+			}
+			Preconditions.checkNotNull(cls, "No embedded resource class SWFResources_" + embeddedName + " or " + embeddedName + ", or haxe embedded bytes");
+			// com.pblabs.util.Assert.isTrue(Std.is(Type.createInstance(cls, []), flash.utils.ByteArray)); 
+			var bytearray = cast Type.createInstance(cls, []);
+			_loader.loadBytes(bytearray);
+		} else {
+			_loader.loadBytes(bytes.getData());
 		}
-		Preconditions.checkNotNull(cls, "No embedded resource class SWFResources_" + embeddedName + " or " + embeddedName);
-		com.pblabs.util.Assert.isTrue(Std.is(Type.createInstance(cls, []), flash.utils.ByteArray)); 
-		var bytes :flash.utils.ByteArray = cast Type.createInstance(cls, []);
-		_loader.loadBytes(bytes);
+		#elseif cpp
+		Preconditions.checkNotNull(bytes, "Embedded bytes null, name=" + embeddedName);
+		var nmeBitmapData = nme.display.BitmapData.loadFromHaxeBytes(bytes);
+		com.pblabs.util.Assert.isNotNull(nmeBitmapData, "nmeBitmapData is null");
+		_image = new nme.display.Bitmap(nmeBitmapData);
+		loaded();
+		#elseif js
+		onLoadError("Don't use Source.embedded for JS, use Source.url instead");
 		#end
 	}
 	

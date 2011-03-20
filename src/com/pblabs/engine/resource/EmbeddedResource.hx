@@ -76,7 +76,7 @@ class EmbeddedResource extends ResourceBase<Dynamic>
 		#end
 	}
 	
-	#if flash
+	#if (flash || cpp)
 	static var EMPTY_ARRAY :Array<Dynamic> = [];
 	#end
 }

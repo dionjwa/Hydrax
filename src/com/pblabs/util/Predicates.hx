@@ -78,6 +78,9 @@ class Predicates
 	 */
 	public static function createIs (clazz :Class<Dynamic>) :Dynamic->Bool
 	{
+		#if cpp
+		com.pblabs.util.Assert.isTrue(Type.getClassName(clazz) != "Dynamic");
+		#end
 		return function (item :Dynamic) :Bool {
 			return Std.is(item, clazz);
 		};

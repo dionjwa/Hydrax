@@ -42,7 +42,7 @@ class TimedTask
 	public function update (dt :Float, obj :IEntity) :Bool
 	{
 		_elapsedTime += dt;
-		return (_elapsedTime >= _time);
+		return (_elapsedTime >= _time);//Finished
 	}
 
 	public function clone () :IEntityTask

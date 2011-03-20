@@ -276,10 +276,10 @@ class Editor extends Sprite
 		var underMouse = listener.data.firstObjectUnderPoint();
 		if (underMouse != null) {
 			objectSelected(underMouse.owner);
-			var dragger = _game.currentContext.getManager(com.pblabs.components.input.PanManager);
-			if (dragger != null) {
-				dragger.panComponent(underMouse);
-			} 
+			// var dragger = _game.currentContext.getManager(com.pblabs.components.input.PanManager);
+			// if (dragger != null) {
+			// 	dragger.panComponent(underMouse);
+			// }
 		}
 	}
 	

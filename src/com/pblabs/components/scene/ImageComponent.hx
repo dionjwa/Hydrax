@@ -33,9 +33,9 @@ extends com.pblabs.components.scene.js.canvas.SceneComponent
 #elseif (flash || cpp)
 extends com.pblabs.components.scene.flash.SceneComponent  
 #end
- {
+{
 	/** The IResource name and item id.  Id can be null */
-	#if flash
+	#if (flash || cpp)
 	public var resource :ResourceToken<flash.display.DisplayObject>;
 	#elseif js
 	public var resource :ResourceToken<js.Dom.Image>;
@@ -72,13 +72,14 @@ extends com.pblabs.components.scene.flash.SceneComponent
 		
 		#if js
 		//Get the DomResource, this makes sure the inline image is loaded
-		var image :js.Dom.Image = resource.create(context);//context.getManager(IResourceManager).create(resourceToken.v1, resourceToken.v2);
+		var image :js.Dom.Image = context.create(resource);
 		Preconditions.checkNotNull(image, "image from resource is null " +resource);
 		displayObject = image;
 		super.onAdd();
 		#elseif (flash || cpp)
-		var image :flash.display.DisplayObject = context.create(resource);//context.getManager(IResourceManager).create(resourceToken.v1, resourceToken.v2);
+		var image :flash.display.DisplayObject = context.create(resource);
 		_displayObject = image;
+		
 		if (Std.is(_displayObject, flash.display.Bitmap)) {
 			_registrationPoint.x = _displayObject.width / 2;
 			_registrationPoint.y = _displayObject.height / 2;
@@ -98,7 +99,7 @@ extends com.pblabs.components.scene.flash.SceneComponent
 		#end
 	}
 	
-	#if flash
+	#if (flash || cpp)
 	override function onRemove () :Void
 	{
 		super.onRemove();

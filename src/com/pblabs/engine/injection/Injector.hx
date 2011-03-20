@@ -43,9 +43,18 @@ class Injector
 	public var parent (get_parent, set_parent) :Injector;
 	public var isParentInjector (get_isParentInjector, never) :Bool;
 	
+	var _injectionValues :Map<String, Dynamic>;
+	
+	var _parentInjector :Injector;
+	
+	/** Maps class names to <fieldname, injection member key> */
+	public static var instanceFieldInjections :MultiMap<Class<Dynamic>, Tuple<String, Array<String>>> = ArrayMultiMap.create(Class);
+	public static var NULL_INJECTION :Tuple<String, Array<String>> = new Tuple(null, null);
+	static var SINGLE_VALUE_ARRAY :Array<Dynamic> = [null];
+	
 	public function new () 
 	{
-		_injectionValues = Maps.newHashMap(Dynamic);
+		_injectionValues = new com.pblabs.util.ds.maps.HashMap();
 	}
 	
 	public function mapValue (type :Class<Dynamic>, value :Dynamic, ?optionalName :String) :Void
@@ -62,7 +71,7 @@ class Injector
 	{
 		Preconditions.checkArgument(key != null || name != null, "Both args are null");
 		
-		if (_injectionValues.get(name) != null) {
+		if (name != null && _injectionValues.get(name) != null) {
 			return _injectionValues.get(name);
 		}
 		
@@ -104,7 +113,6 @@ class Injector
 	
 	function injectFields (obj :Dynamic, cls :Class<Dynamic>) :Void
 	{
-		// trace("injectFields " +cls.getClassName());
 		Preconditions.checkNotNull(cls, "obj class is null");
 		updateRuntimeCache(cls);
 		for (injectionTuple in instanceFieldInjections.get(cls)) {
@@ -112,7 +120,6 @@ class Injector
 				break;
 			}
 			
-			// trace("injectionTuple=" + injectionTuple);
 			var field = injectionTuple.v1;
 			
 			if (Type.typeof(Reflect.field(obj, field)) == ValueType.TFunction) {
@@ -170,17 +177,14 @@ class Injector
 	 */
 	function updateRuntimeCache (cls :Class<Dynamic>) :Void
 	{
-		if (instanceFieldInjections.get(cls) != null) {
+		if (instanceFieldInjections.exists(cls)) {
 			com.pblabs.util.Log.debug(cls.getClassName() + " already registered:" + instanceFieldInjections.get(cls));
-			// trace("instanceFieldInjections=" + instanceFieldInjections);
 			return;
 		}
-		// trace("updateRuntimeCache for " + cls.getClassName() );
 		var m = haxe.rtti.Meta.getFields(cls);
 		if (m != null) {
 			var tup :Tuple<String, Array<String>>;
 			for (field in Reflect.fields(m)) {
-				// trace("field=" + field);
 				var injectString :String = null;
 				//Only cache @inject tags 
 				if (!Reflect.hasField(Reflect.field(m, field), INJECT)) {
@@ -191,14 +195,17 @@ class Injector
 				//TODO: injectMeta will also be null for @editor annotations.
 				//Is there extra inject annotation data?
 				if (injectMeta == null) {
-					if (untyped cls.__rtti != null) {
-						switch (cls.getFieldType(field)) {
-							case CClass(name, params):
-								tup = new Tuple(field, [name]);
-								instanceFieldInjections.set(cls, tup);
-								com.pblabs.util.Log.debug("Binding field injection " + cls.getClassName() + "." + field + " <- " + name);
-							default:
-							com.pblabs.util.Log.error("@inject on " + cls.getClassName() + "." + field + ", not a class type: " + cls.getFieldType(field));
+					if (Type.getClassFields(cls).has("__rtti")) {
+						var fieldType = cls.getFieldType(field);
+						if (fieldType != null) {
+							switch (fieldType) {
+								case CClass(name, params):
+									tup = new Tuple(field, [name]);
+									instanceFieldInjections.set(cls, tup);
+									com.pblabs.util.Log.debug("Binding field injection " + cls.getClassName() + "." + field + " <- " + name);
+								default:
+								com.pblabs.util.Log.error("@inject on " + cls.getClassName() + "." + field + ", not a class type: " + cls.getFieldType(field));
+							}
 						}
 					} else {
 						com.pblabs.util.Log.error("@inject on " + cls.getClassName() + "." + field + ", but there is no inject annotation, and the class does not implement haxe.rtti.Infos, so we cannot get the class field types at runtime.");
@@ -239,15 +246,6 @@ class Injector
 		_parentInjector = val;
 		return val;
 	}
-	
-	var _injectionValues :Map<String, Dynamic>;
-	
-	var _parentInjector :Injector;
-	
-	/** Maps class names to <fieldname, injection member key> */
-	public static var instanceFieldInjections :MultiMap<Dynamic, Tuple<String, Array<String>>> = ArrayMultiMap.create(Class);
-	public static var NULL_INJECTION :Tuple<String, Array<String>> = new Tuple(null, null);
-	static var SINGLE_VALUE_ARRAY :Array<Dynamic> = [null];
 }
 
 

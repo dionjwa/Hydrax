@@ -27,13 +27,16 @@ import com.pblabs.util.ReflectUtil;
 * @see IEntity
 */
 class EntityComponent 
-	implements IEntityComponent, implements haxe.rtti.Infos 
+	implements IEntityComponent//, implements haxe.rtti.Infos
+	#if cpp
+	,implements haxe.rtti.Infos
+	#end
 {
 	/** Key for hashing. */
 	public var key :Int;
 	
-	@inject
 	@editorData({ignore :"true"})
+	@inject("com.pblabs.engine.core.IPBContext")
 	public var context (get_context, set_context) :IPBContext;
  
 	@editorData({ignore :"true"})

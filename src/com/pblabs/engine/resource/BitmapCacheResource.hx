@@ -18,7 +18,7 @@ import com.pblabs.util.ds.Maps;
   * complex MovieClips in Flash.
   */
 class BitmapCacheResource extends ResourceBase<flash.display.Bitmap>
-#elseif js
+#else
 class BitmapCacheResource extends ResourceBase<js.Dom.Image>
 #end
 {
@@ -55,7 +55,7 @@ class BitmapCacheResource extends ResourceBase<js.Dom.Image>
 	
 #if (flash || cpp)
 	override public function create (?name :String) :flash.display.Bitmap
-#elseif js
+#else
 	override public function create (?name :String) :js.Dom.Image
 #end
 	{

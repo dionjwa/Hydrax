@@ -4,7 +4,6 @@
 -lib hydrax
 -cp src
 
-
 -js canvas/haxe.js
 
 -main Demo

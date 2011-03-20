@@ -11,8 +11,10 @@ import com.pblabs.util.ds.Tuple;
 import de.polygonal.motor2.geom.math.XY;
 
 using com.pblabs.components.scene.SceneUtil;
+using com.pblabs.engine.resource.ResourceToken;
 
 /**
+  * !!Still experimental!
   * Cross platform SVG based Scene2D component.
   * Currently only tested in Flash, CSS coming soon, Canvas maybe
   */
@@ -24,7 +26,7 @@ extends com.pblabs.components.scene.flash.SceneComponent
 #end
 {
     /** The IResource name and item id */
-    #if flash
+    #if (flash || cpp)
     public var resourceToken :ResourceToken<flash.display.Sprite>;
     #else
     public var resourceToken :ResourceToken<Dynamic>;
@@ -33,24 +35,6 @@ extends com.pblabs.components.scene.flash.SceneComponent
     public function new () :Void
     {
         super();
-    }
-    
-    override public function containsScreenPoint (pos :XY, type :ObjectType) :Bool
-    {
-        #if (flash || cpp)
-        //The flash pos argument is already transformed to the 
-        //SceneManager coords.
-        return RectangleTools.contains(x - displayObject.width / 2, y - displayObject.height / 2, displayObject.width, displayObject.height, pos);
-        #elseif js
-        // trace(pos + "==>" + parent.scene.translateScreenToWorld(pos));
-        // trace(this + ".....hit? " + RectangleTools.contains(x - _width / 2, y - _height / 2, _width, _height, parent.scene.translateScreenToWorld(pos)));
-        com.pblabs.util.Assert.isNotNull(parent);
-        com.pblabs.util.Assert.isNotNull(parent.scene);
-        return RectangleTools.contains(x - _width / 2, y - _height / 2, _width, _height, parent.scene.translateScreenToWorld(pos));
-        //Translate coords
-        #else
-        return false;
-        #end
     }
     
     #if debug
@@ -62,7 +46,7 @@ extends com.pblabs.components.scene.flash.SceneComponent
     
     override function onAdd () :Void
     {
-        #if flash
+        #if (flash || cpp)
         //An extra layer so the SVG can be offset so that the origin is the image center
         // var s = context.allocate(flash.display.Sprite);
         // s.mouseEnabled = s.mouseChildren = false;
@@ -76,8 +60,7 @@ extends com.pblabs.components.scene.flash.SceneComponent
         super.onAdd();
         if (displayObject == null) {
         	if (resourceToken != null) {
-        		var svg :js.Dom.HtmlDom = resourceToken.create(context);
-        		trace("creating svg from embedded " + resourceToken);
+        		var svg :js.Dom.HtmlDom = context.create(resourceToken);
 				com.pblabs.util.Assert.isNotNull(svg, "SVG loaded from " + resourceToken + " is null");
 				displayObject = svg;
         	}
@@ -154,29 +137,19 @@ extends com.pblabs.components.scene.flash.SceneComponent
     {
         if (isTransformDirty && parent != null) {
             isTransformDirty = false;
-            // var xOffset = parent.xOffset - width / 2;
-            // var yOffset = parent.yOffset - height / 2;
             var xOffset = parent.xOffset;
             var yOffset = parent.yOffset;
-            trace("yOffset=" + yOffset);
-            trace("parent.yOffset=" + parent.yOffset);
             untyped div.style.webkitTransform = "translate(" + (_x + xOffset) + "px, " + (_y + yOffset) + "px) rotate(" + _angle + "rad)";
         }
     }
     
     override function set_width (val :Float) :Float
     {
-        // if (displayObject != null) { 
-        //     displayObject.setAttribute("width", val + "px");
-        // }
         return super.set_width(val);
     }
     
     override function set_height (val :Float) :Float
     {
-        // if (displayObject != null) {
-        //     displayObject.setAttribute("height", val + "px");
-        // }
         return super.set_height(val);
     }
     #end

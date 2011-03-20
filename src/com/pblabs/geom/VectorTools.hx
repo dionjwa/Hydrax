@@ -304,7 +304,7 @@ class VectorTools
 		return new Vector2(q * a.x + p * b.x, q * a.y + p * b.y);
 	}
 	
-	#if flash
+	#if (flash || cpp)
 	/**
 	 * Converts Point p to a Vector2.
 	 */

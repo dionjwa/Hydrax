@@ -11,7 +11,6 @@ package com.pblabs.util.ds.multimaps;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 import com.pblabs.util.ds.MultiMap;
-import com.pblabs.util.ds.multimaps.AbstractMultiMap;
 
 using com.pblabs.util.ArrayUtil;
 
@@ -20,13 +19,15 @@ class ArrayMultiMap<K, V> extends AbstractMultiMap<K, V>,
 {
 	public static function create <K, V>(keyClass :Class<Dynamic>) :ArrayMultiMap<K, V>
 	{
+		com.pblabs.util.Assert.isNotNull(keyClass);
 		return new ArrayMultiMap<K, V>(keyClass);
 	}
 	
-	public function new (?keyClass :Class<Dynamic>)
+	public function new (keyClass :Class<Dynamic>)
 	{
 		super();
 		_map = Maps.newHashMap(keyClass);
+		com.pblabs.util.Assert.isNotNull(_map);
 	}
 	
 	override public function set (key :K, value :V) :Void

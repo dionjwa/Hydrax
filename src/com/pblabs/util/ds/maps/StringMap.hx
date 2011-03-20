@@ -21,10 +21,14 @@ import com.pblabs.util.StringUtil;
  * is not stored, only String created from the non-String key.
  */
 
- class StringMap<K, V> extends TransformKeyMap<K, String, V>
+class StringMap<K, V> extends TransformKeyMap<K, String, V>
 {
 	public function new ()
 	{
-		super(StringUtil.getStringKey, new HashMap<String, V>()); 
+		#if flash
+		super(StringUtil.getStringKey, new HashMap<String, V>());
+		#else
+		super(StringUtil.getStringKey, new HashMap<V>()); 
+		#end
 	}
 }

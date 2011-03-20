@@ -17,7 +17,7 @@ import de.polygonal.motor2.geom.math.XY;
 
 class CircleUtil
 {
-	#if flash
+	#if (flash || cpp)
 	public static function draw (c1 :Circle, g :flash.display.Graphics, ?color :Int = 0x000000, ?alpha :Float = 1, ?lineWidth :Float = 1) :Void
 	{
 		g.lineStyle(lineWidth, color, alpha);

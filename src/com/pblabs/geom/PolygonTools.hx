@@ -53,7 +53,7 @@ class PolygonTools
 		return new Polygon(arg);
 	}
 	
-	#if flash
+	#if (flash || cpp)
 	public static function convertToPolygon (rect :flash.geom.Rectangle) :Polygon
 	{
 		var arg = new Array<XY>();
@@ -66,7 +66,7 @@ class PolygonTools
 	}
 	#end
 	
-	#if flash
+	#if (flash || cpp)
 	public static function draw (p :Polygon, g :flash.display.Graphics, ?color :Int = 0x000000, ?alpha :Float = 1, ?lineWidth :Float = 1.0) :Void
 	{
 		g.beginFill(color, alpha);

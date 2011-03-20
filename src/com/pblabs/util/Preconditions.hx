@@ -23,8 +23,6 @@ class Preconditions
 			fail(if (message != null) message else "Argument is null in file " + info.fileName + ", line " + info.lineNumber + ", " + info.className + "::" + info.methodName);
 		}
 		return ref;
-		
-		
 	}
 	
 	/**

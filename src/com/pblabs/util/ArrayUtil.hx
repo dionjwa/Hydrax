@@ -97,4 +97,17 @@ class ArrayUtil
 		}
 		return removed;
 	}
+	
+	#if debug
+	public static function join (arr :Array<Dynamic>) :String
+	{
+		var sb = new StringBuf();
+		sb.add("[");
+		for (obj in arr) {
+			sb.add(obj + "::" + com.pblabs.util.ReflectUtil.getClassName(obj) + ", ");
+		}
+		sb.add("]");
+		return sb.toString();
+	}
+	#end
 }

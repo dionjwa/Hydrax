@@ -10,6 +10,7 @@ package com.pblabs.components.scene;
 
 import com.pblabs.components.input.IInteractiveComponent;
 import com.pblabs.components.manager.NodeComponent;
+import com.pblabs.components.spatial.IBounded;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PropertyReference;
@@ -27,7 +28,7 @@ using com.pblabs.geom.VectorTools;
 using com.pblabs.util.StringUtil;
 
 class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComponent<Layer, Dynamic>,
-		implements IInteractiveComponent, implements haxe.rtti.Infos
+		implements IInteractiveComponent, implements haxe.rtti.Infos, implements IBounded
 {
 	public var objectMask (get_objectMask, set_objectMask) :ObjectType;
 	public var layer (get_layer, null) :BaseSceneLayer<Dynamic, Dynamic>;
@@ -36,7 +37,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	public var width (get_width, set_width) :Float;
 	public var height (get_height, set_height) :Float;
 	public var angle (get_angle, set_angle) :Float;
-	@editor({ui:"HUISlider", min:0})
+	// @editor({ui:"HUISlider", min:0})
 	public var scale (get_scale, set_scale) :Float;
 	public var scaleX (get_scaleX, set_scaleX) :Float;
 	public var scaleY (get_scaleY, set_scaleY) :Float;
@@ -44,14 +45,14 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	public var alpha (get_alpha, set_alpha) :Float;
 	public var isTransformDirty (get_isTransformDirty, set_isTransformDirty) :Bool;
 	
-	@editor({ui:"NumericStepper", min:0})
+	// @editor({ui:"NumericStepper", min:0})
 	public var zIndex (get_zIndex, set_zIndex) :Int;
-	@editor({ui:"NumericStepper", min:0})
+	// @editor({ui:"NumericStepper", min:0})
 	public var layerIndex (get_layerIndex, set_layerIndex) :Int;
 	public var locationOffset (get_locationOffset, set_locationOffset) :XY;
 	public var angleOffset (get_angleOffset, set_angleOffset) :Float;
 	public var registrationPoint (get_registrationPoint, set_registrationPoint) :XY;
-	public var bounds (get_bounds, never) :AABB2;
+	public var bounds (get_bounds, set_bounds) :AABB2;
 	
 	/** Sometimes you need to control when the display object is added to the scene */
 	public var autoAddToScene :Bool;
@@ -294,7 +295,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	function set_width (val :Float) :Float
 	{
-		com.pblabs.util.Assert.isTrue(val >= 0, "val=" + val);
+		com.pblabs.util.Assert.isTrue(val >= 0, "val=" + val + " " + com.pblabs.util.Log.getStackTrace());
 		_width = val;
 		isTransformDirty = true;
 		_bounds.xmin = _x - _width / 2;
@@ -415,5 +416,11 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	function get_bounds () :AABB2
 	{
 		return _bounds;
+	}
+	
+	function set_bounds (val :AABB2) :AABB2
+	{
+		throw "Cannot set bounds";
+		return null;
 	}
 }

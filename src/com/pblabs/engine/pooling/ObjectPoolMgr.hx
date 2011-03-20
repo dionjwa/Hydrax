@@ -13,6 +13,23 @@ import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
+/**
+  * Usage:
+  *
+  * In PBGame or a subclass:
+  *
+  *  override function init () :Void
+  *	{
+  *		super.init();
+  *		
+  *   //Make sure you have created one in initializeManagers().
+  *		var pool = getManager(com.pblabs.engine.pooling.ObjectPoolMgr);
+  *		com.pblabs.util.Assert.isNotNull(pool);
+  *		//Register pooled classes
+  *		pool.register(com.pblabs.components.spatial.SpatialComponent);
+  *		pool.register(com.pblabs.components.base.AlphaComponent);
+  *		pool.register(com.pblabs.components.tasks.TaskComponent);
+  */
 class ObjectPoolMgr
 {
 	public static var SINGLETON :ObjectPoolMgr = new ObjectPoolMgr();	 

@@ -12,7 +12,7 @@ package com.pblabs.util;
 /**
  * Assertion checks.
  */
-#if !debug extern #end 
+#if (!debug && !cpp) extern #end 
 class Assert 
 {
 	/**

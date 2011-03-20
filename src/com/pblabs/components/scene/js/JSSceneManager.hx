@@ -6,6 +6,7 @@
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
+#if !nodejs
 package com.pblabs.components.scene.js;
 import com.pblabs.components.scene.BaseSceneManager;
 import com.pblabs.components.scene.SceneUtil;
@@ -79,3 +80,4 @@ class JSSceneManager<Layer :JSLayer<Dynamic, Dynamic>> extends BaseSceneManager<
 	
 	var _rootContainer :js.Dom.HtmlDom;
 }
+#end

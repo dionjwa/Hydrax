@@ -80,13 +80,15 @@ class CircleShape extends ShapeComponent
 	{
 		com.pblabs.engine.debug.Profiler.enter("redraw");
 		var r = radius;
-		#if flash
+		#if (flash || cpp)
 		var zoom = parent != null && parent.parent != null ? parent.parent.zoom : 1.0;
 		var g = cast(_displayObject, flash.display.Sprite).graphics;
 		g.clear();
-		g.beginFill(fillColor);
-		g.drawCircle(0, 0, r);
-		g.endFill();
+		if (fillColor >= 0) {
+			g.beginFill(fillColor);
+			g.drawCircle(0, 0, r);
+			g.endFill();
+		}
 		g.lineStyle(0.0, borderColor);
 		g.drawCircle(0, 0, r);
 		if (showAngleLine) {

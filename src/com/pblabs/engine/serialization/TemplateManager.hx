@@ -62,7 +62,10 @@ using com.pblabs.util.StringUtil;
  *
  * @see com.pblabs.engine.serialization.Serializer.
  */
-class TemplateManager 
+class TemplateManager
+#if cpp
+	implements haxe.rtti.Infos
+#end
 {
 	public var signalLoaded :Signaler<XMLResource>;
 	public var signalFailed :Signaler<XMLResource>;
@@ -302,7 +305,7 @@ class TemplateManager
 					entity = instantiateEntity(xml.get("template"), context);
 					entity.deferring = true;
 				// } catch (e :Dynamic) {
-				// 	#if flash
+				// 	#if (flash || cpp)
 				// 	com.pblabs.util.Log.error("Failed instantiating '" + name + "' from an entity callback due to :" + e + "\n" + cast(e, flash.errors.Error).getStackTrace());
 				// 	#else
 				// 	com.pblabs.util.Log.error("Failed instantiating '" + name + "' from an entity callback due to :" + e + "\n" + com.pblabs.util.Log.getStackTrace());

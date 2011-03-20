@@ -58,7 +58,7 @@ class Log
 
 	public static var showDateTime :Bool = true;
 	
-	#if flash
+	#if (flash || cpp)
 		static var lines : Array<String> = new Array();
 		public static var useHTML : Bool = true;
 	#end
@@ -139,6 +139,7 @@ class Log
 	 */
 	public static function setLevel (module :Dynamic, level :Int) :Void
 	{
+		
 		if (Std.is(module, String)) {
 			_setLevels.set(cast(module), level);
 		} else {
@@ -284,7 +285,7 @@ class Log
 		}
 		
 		var logMessage:String = formatMessage(level, msg, args, infos);
-		#if flash
+		#if (flash || cpp)
 		logTraceFlash(logMessage);
 		#else
 		trace(logMessage);
@@ -398,7 +399,7 @@ class Log
 		}
 	}
 	
-	#if flash
+	#if (flash || cpp)
 	public static function traceWithMethod( v : Dynamic, ?pos : haxe.PosInfos ) {
 		var tf = flash.Boot.getTrace();
 		var pstr = if( pos == null ) "(null)" else pos.fileName+":"+pos.lineNumber + "." +pos.methodName +"()";
@@ -444,7 +445,7 @@ class Log
 	{
 		_setLevels = new Hash<Int>();
 		_targets = new List<LogTarget>();
-		#if flash
+		#if (flash || cpp)
 			_setLevels.set("", if (flash.system.Capabilities.isDebugger) 0 else 4);//Debug or Off (0 or 4)
 			haxe.Log.trace = traceWithMethod;
 			_targets.add(new FlashLogTarget());
@@ -477,9 +478,9 @@ class Log
 		log.error(msg, null, infos);
 	}
 	
-	public static function setupPBGameLog () :Void
+	public static function setup () :Void
 	{
-		#if flash
+		#if (flash || cpp)
 		//Show the method names
 		haxe.Log.trace = traceWithMethod;
 		#end
@@ -515,6 +516,7 @@ class Log
 	static var LEVEL_NAMES :Array<Dynamic> = [ "debug", "INFO", "WARN", "ERROR", false ];
 }
 
+#if (flash || cpp)
 class FlashLogTarget implements LogTarget
 {
 	public function new () {}
@@ -523,5 +525,6 @@ class FlashLogTarget implements LogTarget
 		untyped __global__["trace"](msg);
 	}
 }
+#end
 
 

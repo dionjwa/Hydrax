@@ -12,11 +12,6 @@
  ******************************************************************************/
 package com.pblabs.engine.core;
 
-import com.pblabs.engine.core.IEntity;
-import com.pblabs.engine.core.IEntityComponent;
-import com.pblabs.engine.core.PBObject;
-import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.serialization.Serializer;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.time.ITickedObject;
@@ -26,7 +21,6 @@ import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
-import hsl.haxe.Bond;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
@@ -87,10 +81,21 @@ class Entity extends PBObject,
 				
 				//Add the timed components here rather than forcing
 				//each implementing class to add itself.
+				
+				#if cpp
+				if (com.pblabs.util.ReflectUtil.is(pc.item, "com.pblabs.engine.time.ITickedObject")) {
+				#else
 				if (Std.is(pc.item, ITickedObject)) {
+				#end
 					_context.processManager.addTickedObject(cast(pc.item));
 				}
+				
+				
+				#if cpp
+				if (com.pblabs.util.ReflectUtil.is(pc.item, "com.pblabs.engine.time.IAnimatedObject")) {
+				#else
 				if (Std.is(pc.item, IAnimatedObject)) {
+				#end
 					_context.processManager.addAnimatedObject(cast(pc.item));
 				}
 				
@@ -132,10 +137,21 @@ class Entity extends PBObject,
 			if(c.isRegistered) {
 				c.unregister();
 			}
+			
+			#if cpp
+			if (com.pblabs.util.ReflectUtil.is(c, "com.pblabs.engine.time.ITickedObject")) {
+			#else
 			if (Std.is(c, ITickedObject)) {
+			#end
 				_context.processManager.removeTickedObject(cast(c));
 			}
+			
+			
+			#if cpp
+			if (com.pblabs.util.ReflectUtil.is(c, "com.pblabs.engine.time.IAnimatedObject")) {
+			#else
 			if (Std.is(c, IAnimatedObject)) {
+			#end
 				_context.processManager.removeAnimatedObject(cast(c));
 			}
 		}
@@ -201,7 +217,7 @@ class Entity extends PBObject,
 		xml.addChild(entityXML);			
 	}
 	
-	public function deserialize(xml :Xml, ?registerComponents:Bool = true):Void
+	public function deserialize(xml :Xml, ?registerComponents:Bool = true) :Void
 	{
 		// Note what entity we're deserializing to the Serializer.
 		context.getManager(Serializer).setCurrentEntity(this);
@@ -218,7 +234,7 @@ class Entity extends PBObject,
 		{
 			// Error if it's an unexpected tag.
 			if(componentXML.nodeName.toLowerCase() != "component") {
-				com.pblabs.util.Log.error("Found unexpected tag '" + componentXML.nodeName.toString() + "', only <component/> is valid, ignoring tag. Error in entity '" + name + "'.");
+				com.pblabs.util.Log.error("Found unexpected tag '" + componentXML.nodeName + "', only <component/> is valid, ignoring tag, error in entity '" + name + "'.");
 				continue;
 			}
 			
@@ -286,41 +302,53 @@ class Entity extends PBObject,
 		deferring = oldDefer;
 	}
 	
-	public function addComponent (component:IEntityComponent, ?componentName :String) :Bool
+	public function addComponent (c:IEntityComponent, ?componentName :String) :Bool
 	{
-		Preconditions.checkNotNull(component, "Cannot add a null component");
+		Preconditions.checkNotNull(c, "Cannot add a null component");
 		
-		componentName = componentName == null ? PBUtil.getDefaultComponentName(Type.getClass(component)) : componentName; 
+		componentName = componentName == null ? PBUtil.getDefaultComponentName(Type.getClass(c)) : componentName; 
 		// Check the context.
 		// Preconditions.checkArgument(component.context != null, "Component has a null context!");
 		// Preconditions.checkArgument(context != null, "Entity has a null context!");
-		Preconditions.checkArgument(component.context == context, "Component and entity are not from same context!");
+		Preconditions.checkArgument(c.context == context, "Component and entity are not from same context!");
 		
 		// Add it to the dictionary.
-		if (!doAddComponent(component, componentName)) {
+		if (!doAddComponent(c, componentName)) {
 			return false;
 		}
 
 		// If we are deferring registration, put it on the list.
 		if (deferring) {
 			var p = new PendingComponent();
-			p.item = component;
+			p.item = c;
 			p.name = componentName;
 			_deferredComponents.push(p);
 			return true;
 		}
 
-		injectComponent(component);
+		injectComponent(c);
 		
-		if (Std.is(component, ITickedObject)) {
-			_context.processManager.addTickedObject(cast(component));
+		
+		
+		
+		#if cpp
+		if (com.pblabs.util.ReflectUtil.is(c, "com.pblabs.engine.time.ITickedObject")) {
+		#else
+		if (Std.is(c, ITickedObject)) {
+		#end
+			_context.processManager.addTickedObject(cast(c));
 		}
-		if (Std.is(component, IAnimatedObject)) {
-			_context.processManager.addAnimatedObject(cast(component));
+		
+		#if cpp
+		if (com.pblabs.util.ReflectUtil.is(c, "com.pblabs.engine.time.IAnimatedObject")) {
+		#else
+		if (Std.is(c, IAnimatedObject)) {
+		#end
+			_context.processManager.addAnimatedObject(cast(c));
 		}
 		
 		// We have to be careful w.r.t. adding components from another component.
-		component.register(this, componentName);
+		c.register(this, componentName);
 		
 		// Fire off the reset.
 		doResetComponents();
@@ -367,10 +395,13 @@ class Entity extends PBObject,
 	
 	public function getComponentByType <T>(componentType:Class<T>):T
 	{
-		for (component in _components)
+		for (c in _components)
 		{
-			if (Std.is(component, componentType))
-				return cast(component);
+			#if cpp
+			com.pblabs.util.Assert.isTrue(Type.getClassName(componentType) != "Dynamic");
+			#end
+			if (Std.is(c, componentType))
+				return cast(c);
 		}
 		
 		return null;
@@ -385,6 +416,10 @@ class Entity extends PBObject,
 	{
 		var list = new Array();
 		
+		#if cpp
+		com.pblabs.util.Assert.isTrue(Type.getClassName(componentType) != "Dynamic");
+		#end
+			
 		for (component in _components)
 		{
 			if (Std.is(component, componentType))
@@ -414,13 +449,13 @@ class Entity extends PBObject,
 		_context.setProperty(property, value, this);
 	}
 	
-	function doAddComponent(component:IEntityComponent, componentName:String):Bool
+	function doAddComponent(c:IEntityComponent, componentName:String):Bool
 	{
 		if (componentName == "") {
 			com.pblabs.util.Log.warn(["AddComponent", "A component name was not specified. This might cause problems later."]);
 		}
 		
-		if (component.owner != null) {
+		if (c.owner != null) {
 			com.pblabs.util.Log.error(["AddComponent", "The component " + componentName + " already has an owner. (" + name + ")"]);
 			return false;
 		}
@@ -430,32 +465,42 @@ class Entity extends PBObject,
 			return false;
 		}
 		
-		component.owner = this;
-		component.name = componentName;
-		_components.set(componentName, component);
+		c.owner = this;
+		c.name = componentName;
+		_components.set(componentName, c);
 		return true;
 	}
 	
-	function doRemoveComponent(component:IEntityComponent):Bool
+	function doRemoveComponent(c:IEntityComponent):Bool
 	{
-		if (component.owner != this)
+		if (c.owner != this)
 		{
-			com.pblabs.util.Log.error(["doRemoveComponent", "The component " + component.name + " is not owned by this entity. (" + name + ")"]);
+			com.pblabs.util.Log.error(["doRemoveComponent", "The component " + c.name + " is not owned by this entity. (" + name + ")"]);
 			return false;
 		}
 		
-		if (_components.get(component.name) == null)
+		if (_components.get(c.name) == null)
 		{
-			com.pblabs.util.Log.error(["doRemoveComponent", "The component " + component.name + " was not found on this entity. (" + name + ")"]);
+			com.pblabs.util.Log.error(["doRemoveComponent", "The component " + c.name + " was not found on this entity. (" + name + ")"]);
 			return false;
 		}
 		
-		_components.remove(component.name);
-		if (Std.is(component, ITickedObject)) {
-			_context.processManager.removeTickedObject(cast(component));
+		_components.remove(c.name);
+		#if cpp
+		if (com.pblabs.util.ReflectUtil.is(c, "com.pblabs.engine.time.ITickedObject")) {
+		#else
+		if (Std.is(c, ITickedObject)) {
+		#end
+			_context.processManager.removeTickedObject(cast(c));
 		}
-		if (Std.is(component, IAnimatedObject)) {
-			_context.processManager.removeAnimatedObject(cast(component));
+		
+		
+		#if cpp
+		if (com.pblabs.util.ReflectUtil.is(c, "com.pblabs.engine.time.IAnimatedObject")) {
+		#else
+		if (Std.is(c, IAnimatedObject)) {
+		#end
+			_context.processManager.removeAnimatedObject(cast(c));
 		}
 		return true;
 	}

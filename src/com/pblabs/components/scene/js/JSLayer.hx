@@ -6,6 +6,7 @@
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
+#if !nodejs
 package com.pblabs.components.scene.js;
 import com.pblabs.components.scene.BaseSceneComponent;
 import com.pblabs.components.scene.BaseSceneLayer;
@@ -63,3 +64,4 @@ class JSLayer <Scene :JSSceneManager<Dynamic>, Component :BaseSceneComponent<Dyn
 		div.style.cssText = "position:absolute;left:0px;top:0px;";
 	}
 }
+#end

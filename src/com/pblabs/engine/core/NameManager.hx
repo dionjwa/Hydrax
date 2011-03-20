@@ -12,8 +12,6 @@
  ******************************************************************************/
 package com.pblabs.engine.core;
 
-import com.pblabs.engine.core.IEntity;
-import com.pblabs.engine.core.IPBObject;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
@@ -24,7 +22,10 @@ using com.pblabs.util.StringUtil;
  * names. These IPBObjects can be looked up by name.
  */
 class NameManager
- {
+#if cpp
+	implements haxe.rtti.Infos
+#end
+{
 	public function new() 
 	{ 
 		_objects = Maps.newHashMap(String);

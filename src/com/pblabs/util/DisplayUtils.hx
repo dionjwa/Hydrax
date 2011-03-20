@@ -24,8 +24,6 @@ import flash.geom.Rectangle;
 
 import flash.net.URLRequest;
 
-import flash.system.LoaderContext;
-
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
@@ -135,7 +133,11 @@ class DisplayUtils
 	{
 		var bounds:Rectangle;
 		if (d.parent != null) {
+			#if flash
 			bounds = d.getBounds(d.parent != null ? d.parent : d);
+			#elseif cpp
+			bounds = d.nmeGetPixelBounds();
+			#end
 			var boundsCenterX = bounds.left + bounds.width / 2;
 			var xDiff = d.x - boundsCenterX;
 			d.x = x + xDiff;
@@ -147,7 +149,11 @@ class DisplayUtils
 			//the displayObject is scaled
 			d.x = x;
 			d.y = y;
+			#if flash
 			bounds = d.getBounds(d);
+			#elseif cpp
+			bounds = d.nmeGetPixelBounds();
+			#end
 			d.x -= (bounds.width / 2) + bounds.left;
 			d.y -= (bounds.height / 2) + bounds.top;
 		}
@@ -164,7 +170,11 @@ class DisplayUtils
 			return null;
 		}
 
+		#if flash
 		var bounds = d.getBounds(d);
+		#elseif cpp
+		var bounds = d.nmeGetPixelBounds();
+		#end
 		if (bounds.width <= 0 && bounds.height <= 0) {
 			Log.error(["d", d, "d.name", d.name, "bounds", bounds]);
 			return null;
@@ -230,7 +240,11 @@ class DisplayUtils
 		if (disp.parent == null) {
 			throw "Cannot place a DisplayObject without a parent";
 		}
+		#if flash
 		var bounds = disp.getBounds(disp.parent);
+		#elseif cpp
+		var bounds = disp.nmeGetPixelBounds();
+		#end
 		disp.x = x - bounds.left;
 		disp.y = y - bounds.top;
 	}
@@ -249,14 +263,22 @@ class DisplayUtils
 
 	public static function getBoundsCenter (d :DisplayObject) :Point
 	{
-		var bounds:Rectangle = d.getBounds(d);
+		#if flash
+		var bounds = d.getBounds(d);
+		#elseif cpp
+		var bounds = d.nmeGetPixelBounds();
+		#end
 		return new Point(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
 	}
 
 	public static function getBoundsCenterRelativeTo (d :DisplayObject,
 		relativeTo :DisplayObject) :Point
 	{
-		var bounds:Rectangle = d.getBounds(relativeTo);
+		#if flash
+		var bounds = d.getBounds(relativeTo);
+		#elseif cpp
+		var bounds = d.nmeGetPixelBounds();
+		#end
 		return new Point(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
 	}
 
@@ -268,7 +290,11 @@ class DisplayUtils
 	public static function getCenterOffsetRelativeTo (d :DisplayObject,
 		relativeTo :DisplayObject) :Point
 	{
-		var bounds:Rectangle = d.getBounds(relativeTo);
+		#if flash
+		var bounds = d.getBounds(relativeTo);
+		#elseif cpp
+		var bounds = d.nmeGetPixelBounds();
+		#end
 		var centerX:Float = bounds.left + bounds.width / 2;
 		var centerY:Float = bounds.top + bounds.height / 2;
 
@@ -324,8 +350,8 @@ class DisplayUtils
 
 		var bm:Bitmap = new Bitmap();
 		try {
-			var imageLoader:Loader = new Loader();
-			var loaderContext:LoaderContext = new LoaderContext();
+			var imageLoader = new Loader();
+			var loaderContext = new flash.system.LoaderContext();
 			loaderContext.checkPolicyFile = true;
 
 			function () :Void {
@@ -462,28 +488,32 @@ class DisplayUtils
 	 * Creates a bitmap from the given DisplayObject, and positions the bitmap so that it is
 	 * visually in the same position as the argument.
 	 */
-	public static function screenShot (disp :DisplayObject) :Bitmap
-	{
+	 #if flash
+	 public static function screenShot (disp :DisplayObject) :Bitmap
+	 {
 		if (disp == null || disp.stage == null) {
 			Log.error(["d", disp, "d.stage", disp == null ? null : disp.stage]);
 			return null;
 		}
-
+		
 		var scale:Float = getGlobalScale(disp, 1);
-		var bd:BitmapData = new BitmapData(disp.stage.stageWidth, disp.stage.stageHeight, true,
-			0xffffff);
-		var stageBounds:Rectangle = disp.getBounds(disp.stage);
+		var bd:BitmapData = new BitmapData(Std.int(disp.stage.stageWidth), Std.int(disp.stage.stageHeight), true,
+		0xffffff);
+		
+		var stageBounds = disp.getBounds(disp.stage);
+		
 		var origin:Point = new Point(stageBounds.left, stageBounds.top);
 		var localBounds:Rectangle = disp.getBounds(disp);
 		var topLeft:Point = new Point(0, 0);
 		bd.draw(disp, new Matrix(scale, 0, 0, scale,
-			scale * (-localBounds.left + (origin.x - topLeft.x)),
-			scale * (-localBounds.top + (origin.y - topLeft.y))));
-
+		scale * (-localBounds.left + (origin.x - topLeft.x)),
+		scale * (-localBounds.top + (origin.y - topLeft.y))));
+		
 		var bm:Bitmap = new Bitmap(bd);
 		return bm;
-	}
-
+	 }
+	 #end
+	 
 	public static function shrinkAndCenterOn (disp :DisplayObject, ?maxSize :Float = 20) :DisplayObject
 	{
 		if (maxSize > 0) {
@@ -503,6 +533,7 @@ class DisplayUtils
 	 * visually in the same position as the argument.  Optionally supply a resolution scale
 	 * factor, so if parent container is scaled, the Bitmap won't be pixellated.
 	 */
+	#if flash 
 	public static function substituteBitmap (d :DisplayObject, ?resolutionFactor :Float = 1) :Bitmap
 	{
 		if (d == null) {
@@ -524,7 +555,9 @@ class DisplayUtils
 
 		return bm;
 	}
+	#end
 
+	#if flash
 	static function createBitmapData (disp :DisplayObject, ?width :Float = -1, ?height :Float =
 		-1, ?uniformScale :Bool = true) :BitmapData
 	{
@@ -547,6 +580,7 @@ class DisplayUtils
 		bd.draw(disp, new Matrix(scaleX, 0, 0, scaleY, -bounds.x * scaleX, -bounds.y * scaleY));
 		return bd;
 	}
+	#end
 }
 
 

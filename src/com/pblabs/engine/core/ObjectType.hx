@@ -15,7 +15,6 @@ package com.pblabs.engine.core;
 import com.pblabs.engine.serialization.ISerializable;
 
 /**
-* * WARNING: this code does not currently work, conversion is still a work in progress.
  * An ObjectType is an abstraction of a bitmask that can be used to associate
  * objects with type names.
  * 
@@ -46,7 +45,7 @@ class ObjectType
 	 * @see com.pblabs.engine.core.ObjectTypeManager.doTypesOverlap()
 	 */
 	public var bits(get_bits, null) :Int;
-	function get_bits() :Int
+	inline function get_bits() :Int
 	{
 		return _bits;
 	}
@@ -188,7 +187,7 @@ class ObjectType
 		// return this;
 	}
 	
-	public function hashCode () :Int
+	inline public function hashCode () :Int
 	{
 	    return _bits;
 	}

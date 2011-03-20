@@ -23,8 +23,15 @@ class Sets
 	 */
 	public static function newSetOf <T>(valueClazz :Class<Dynamic>) :Set<T>
 	{
+		#if js
+		if (valueClazz == String || valueClazz == Int) {
+			return new MapSet<T>(Maps.newHashMap(valueClazz));
+		} else {
+			//js doesn't have Object sets
+			return new com.pblabs.util.ds.sets.ArraySet<T>();
+		}
+		#else
 		return new MapSet<T>(Maps.newHashMap(valueClazz));
+		#end
 	}
 }
-
-

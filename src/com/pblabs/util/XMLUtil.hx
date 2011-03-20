@@ -70,15 +70,29 @@ class XMLUtil
 		return xml;
 	}
 	
-	public static function createChild (xml :Xml, name :String, ?value :Dynamic) :Xml
+	public static function createChild (xml :Xml, name :String, ?value :Dynamic, ?serializeFunc :Dynamic->Xml->Void) :Xml
 	{
 		var child = Xml.createElement(name);
 		if (value != null) {
-			child.addChild(Xml.createPCData(Std.string(value)));
+			if (serializeFunc != null) {
+				serializeFunc(value, child);		
+			} else {
+				child.addChild(Xml.createPCData(Std.string(value)));
+			}
 		}
 		xml.addChild(child);
 		return child;
 	}
+	
+	public static function deserializeChild <T>(xml :Xml, childName :String, deserializeFunc :Xml->T) :T
+	{
+		var child = child(xml, childName);
+		if (child == null) {
+			return null;
+		}
+		return deserializeFunc(child);
+	}
+	
 	
 	public static function parseFloat (xml :Xml, childName :String) :Float
 	{

@@ -10,7 +10,7 @@ package com.pblabs.engine.resource;
 
 enum Source {
 	url (u :String);
-	bytes (b :haxe.io.BytesData);
+	bytes (b :haxe.io.Bytes);
 	text (t :String);
 	embedded (name :String);
 }

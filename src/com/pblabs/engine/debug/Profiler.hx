@@ -94,7 +94,7 @@ class Profiler
 		_currentNode = newNode;
 
 		// Start timing the child node. Too bad you can't QPC from Flash. ;)
-		_currentNode.startTime = Std.int(com.pblabs.engine.time.Timer.stamp() * 1000);//flash.Lib.getTimer();
+		_currentNode.startTime = Std.int(haxe.Timer.stamp() * 1000);//flash.Lib.getTimer();
 	}
 
 	/**
@@ -110,7 +110,7 @@ class Profiler
 		}
 
 		// Update stats for this node.
-		var elapsedTime :Int = Std.int(com.pblabs.engine.time.Timer.stamp() * 1000) - _currentNode.startTime;
+		var elapsedTime :Int = Std.int(haxe.Timer.stamp() * 1000) - _currentNode.startTime;
 		_currentNode.activations++;
 		_currentNode.totalTime += elapsedTime;
 		if (elapsedTime > _currentNode.maxTime) {
@@ -233,7 +233,7 @@ class Profiler
 
 	public static function bindToKey () :Void
 	{
-		#if flash
+		#if (flash || cpp)
 		if (!_bound) {
 			_bound = true;
 			flash.Lib.current.stage.addEventListener(flash.events.KeyboardEvent.KEY_DOWN, function (keyEvent :flash.events.KeyboardEvent) :Void {
@@ -297,7 +297,8 @@ class ProfileInfo
 }
 
 #else
-extern class Profiler
+#if !cpp extern #end 
+class Profiler
 {
 	public static var indentAmount :Int = 3;
 	public static var nameFieldWidth :Int = 70;

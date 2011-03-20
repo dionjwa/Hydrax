@@ -29,17 +29,14 @@
 package com.pblabs.components.tasks;
 
 import com.pblabs.engine.core.IEntity;
+import com.pblabs.util.Preconditions;
 
 class FunctionTask
 	implements IEntityTask {
 	
 	public function new (fn :Dynamic, ?args:Array<Dynamic> = null)
 	{
-		if (null == fn) {
-			throw "fn must be non-null";
-		}
-		
-		_fn = fn;
+		_fn = Preconditions.checkNotNull(fn, "fn must be non-null");
 		_args = if (args != null) args else EMPTY_ARRAY;
 	}
 	
@@ -51,7 +48,7 @@ class FunctionTask
 	
 	public function clone () :IEntityTask
 	{
-		var task:FunctionTask = new FunctionTask(_fn, _args);
+		var task = new FunctionTask(_fn, _args);
 		return task;
 	}
 	
@@ -59,4 +56,3 @@ class FunctionTask
 	var _args:Array<Dynamic>;
 	static var EMPTY_ARRAY :Array<Dynamic> = [];
 }
-

@@ -21,6 +21,7 @@ class CanvasDemo
 {
 	public function new ()
 	{
+		com.pblabs.engine.debug.Log.setup();
 		app = new PBGame();
 		Assert.isNotNull(app.getManager(SceneView));
 		app.getManager(SceneView).layerId = "screen";
@@ -66,7 +67,7 @@ class CanvasDemo
 	
 	public static function main ()
 	{
-		com.pblabs.engine.debug.Log.setupPBGameLog();
+		com.pblabs.engine.debug.Log.setup();
 		new CanvasDemo();
 	}
 	

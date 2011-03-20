@@ -60,7 +60,7 @@ class BoundsPoint extends AbstractBounds<BoundsPoint>
 		return v.equals(_center);
 	}
 
-	// #if flash
+	// #if (flash || cpp)
 	// public function debugDraw (s :flash.display.Sprite) :Void
 	// {
 	//	 com.pblabs.util.DebugUtil.drawDot(s, 0xff0000, 4, _center.x, _center.y);

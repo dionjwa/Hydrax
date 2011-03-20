@@ -267,7 +267,7 @@ class InputManager extends BaseInputManager,
 
 	inline function adjustDeviceLocation (m :MouseLocation) :Vector2
 	{
-		#if flash
+		#if (flash || cpp)
 		return new Vector2(m.globalLocation.x, m.globalLocation.y);
 		#elseif js
 		return new Vector2(m.globalLocation.x - sceneView.mouseOffsetX, m.globalLocation.y - sceneView.mouseOffsetY);
@@ -349,7 +349,7 @@ class InputManager extends BaseInputManager,
 	
 	function getMouseLoc () :Vector2
 	{
-		#if flash
+		#if (flash || cpp)
 		_deviceLoc.x = flash.Lib.current.stage.mouseX;
 		_deviceLoc.y = flash.Lib.current.stage.mouseY;
 		#elseif js
@@ -410,8 +410,8 @@ class InputManager extends BaseInputManager,
 		mask = mask == null ? ObjectType.ALL : mask;
 		
 		com.pblabs.util.Assert.isNotNull(_displayObjectFirstUnderPoint);
-		if (_displayObjectFirstUnderPoint.exists(mask.hashCode())) {
-			return _displayObjectFirstUnderPoint.get(mask.hashCode());
+		if (_displayObjectFirstUnderPoint.exists(mask.bits)) {
+			return _displayObjectFirstUnderPoint.get(mask.bits);
 		}
 		
 		if (getSceneManagers() == null) {
@@ -433,13 +433,13 @@ class InputManager extends BaseInputManager,
 					var so :BaseSceneComponent<Dynamic> = layer.children[childIndex];
 					childIndex--;
 					if (so.containsWorldPoint(worldLoc, mask)) {
-						_displayObjectFirstUnderPoint.set(mask.hashCode(), so);
+						_displayObjectFirstUnderPoint.set(mask.bits, so);
 						return so;
 					}
 				}
 			}
 		}
-		_displayObjectFirstUnderPoint.set(mask.hashCode(), null);
+		_displayObjectFirstUnderPoint.set(mask.bits, null);
 		return null;
 	}
 	

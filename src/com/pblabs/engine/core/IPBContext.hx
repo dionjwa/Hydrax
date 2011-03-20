@@ -38,7 +38,7 @@ interface IPBContext
 	var currentGroup (get_currentGroup, set_currentGroup) :IPBGroup;
 	var started (default, null):Bool;
 	
-	/** Called once to initialize  */
+	/** Called by the PBGameBase once to initialize  */
 	function setup () :Void;
 	/** Called when destroyed */
 	function shutdown():Void;
@@ -56,7 +56,6 @@ interface IPBContext
 	// Name lookups.
 	function lookup (name :String):Dynamic;
 	function lookupEntity (name :String):IEntity;
-	// function getComponent (entityName:String, componentName:String):IEntityComponent;
 }
 
 

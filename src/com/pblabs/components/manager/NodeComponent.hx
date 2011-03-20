@@ -13,6 +13,7 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.serialization.ISerializable;
+import com.pblabs.engine.serialization.Serializer;
 import com.pblabs.engine.util.PBUtil;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
@@ -142,12 +143,13 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 	
 	public function serialize (xml :Xml) :Void
 	{
-		xml.createChild("parent", parent != null ? PBUtil.entityProp(cast(parent)) :parentProperty);
+		xml.createChild("parent", parent != null ? PBUtil.entityProp(cast(parent)) :parentProperty, Serializer.serializeSimple);
 	}
 	
 	public function deserialize (xml :Xml) :Dynamic
 	{
 		parentProperty = cast(xml.parsePropertyReference("parent"));
+		addToParent();
 	}
 	
 	public function addChild (c :C) :Void

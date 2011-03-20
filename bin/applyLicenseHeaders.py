@@ -7,8 +7,8 @@ Adds the correct license headers to hydrax source files.
 import os
 import sys
 
-root = "/Users/dion/Dropbox/storage/projects/hydrax"
-fileList = []#"/Users/dion/Dropbox/storage/projects/hydrax/src/test.hx"]
+root = "/Users/dion/storage/projects/hydrax"
+fileList = []#"/Users/dion/storage/projects/hydrax/src/test.hx"]
 
 filesAccountedFor = []
 

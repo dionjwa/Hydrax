@@ -6,8 +6,8 @@
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
+ #if !nodejs
 package com.pblabs.components.scene;
-
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene.BaseSceneLayer;
 import com.pblabs.components.scene.SceneUtil;
@@ -71,7 +71,13 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	 * @see SceneAlignment
 	 * @see position
 	 */
-	public var sceneAlignment :SceneAlignment;
+	public var sceneAlignment (default, set_sceneAlignment):SceneAlignment;
+	function set_sceneAlignment (val :SceneAlignment) :SceneAlignment
+	{
+		this.sceneAlignment = val;
+		_transformDirty = true;
+		return val;
+	}
 
 	public function new ()
 	{
@@ -135,17 +141,29 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	/** Calls onFrame on this and all children to make sure they're in the right place on the first frame */
 	public function update () :Void
 	{
+		#if cpp
+		if (com.pblabs.util.ReflectUtil.is(this, "com.pblabs.engine.time.IAnimatedObject")) {
+		#else
 		if (Std.is(this, IAnimatedObject)) {
+		#end
 			cast(this, IAnimatedObject).onFrame(0);
 		}
 		if (children != null) {
 			for (layer in children) {
+				#if cpp
+				if (com.pblabs.util.ReflectUtil.is(layer, "com.pblabs.engine.time.IAnimatedObject")) {
+				#else
 				if (Std.is(layer, IAnimatedObject)) {
+				#end
 					cast(layer, IAnimatedObject).onFrame(0);
 				}
 				if (layer.children != null) {
 					for (c in layer.children) {
+						#if cpp
+						if (com.pblabs.util.ReflectUtil.is(c, "com.pblabs.engine.time.IAnimatedObject")) {
+						#else
 						if (Std.is(c, IAnimatedObject)) {
+						#end
 							cast(c, IAnimatedObject).onFrame(0);
 						}
 					}
@@ -250,6 +268,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	override function onRemove () :Void
 	{
 		super.onRemove();
+		detach();
 		_sceneView == null;
 	}
 	
@@ -307,6 +326,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	function set_sceneView (value :SceneView) :SceneView
 	{
 		_sceneView = value;
+		_transformDirty = true;
 		return value;
 	}
 
@@ -374,3 +394,4 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	}
 	#end
 }
+#end

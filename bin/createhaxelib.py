@@ -3,7 +3,7 @@
 #Creates the haxelib package
 import os, os.path, string, sys, shutil
 
-hydraxroot = "/Users/dion/Dropbox/storage/projects/hydrax"
+hydraxroot = "/Users/dion/storage/projects/hydrax"
 
 #Apply license headers
 execfile(os.path.join(hydraxroot, "bin", "applyLicenseHeaders.py"))
@@ -40,5 +40,6 @@ shutil.copy(os.path.join(etc, "haxelib.xml"), haxelibroot)
 #Go to the folder
 os.chdir(tmp)
 os.system("zip -r hydrax.zip hydrax")
+os.system("haxelib test hydrax.zip")
 	
 

@@ -6,8 +6,8 @@
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
+ #if !nodejs
 package com.pblabs.components.scene.js.canvas;
-
 import com.pblabs.components.scene.BaseSceneLayer;
 import com.pblabs.components.scene.SceneUtil;
 import com.pblabs.components.scene.js.JSLayer;
@@ -118,3 +118,4 @@ class SceneLayer extends JSLayer<SceneManager, SceneComponent>,
 	
 	var _tempPoint :Vector2;
 }
+#end

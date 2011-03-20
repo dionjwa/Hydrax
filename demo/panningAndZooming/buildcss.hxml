@@ -2,18 +2,9 @@
 -D debug
 -D css
 
--lib hydrax
 -cp src
 
-
-# -cp ../../src
-# -lib feffects
-# -lib ArrayTools
-# -lib IterTools
-# -lib ListTools
-# -lib polygonal
-# -lib hsl-1
-        
+-lib hydrax
         
 -js css/haxe.js
 

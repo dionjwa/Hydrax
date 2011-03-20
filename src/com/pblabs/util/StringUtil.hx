@@ -93,14 +93,21 @@ class StringUtil
 	  */
 	 public static function getStringKey (obj :Dynamic) :String
 	 {
-		 if (Std.is(obj, String)) {
+	 	 if (obj == null) {
+	 	 	 return "";
+		 } else if (Std.is(obj, String)) {
 			 return cast(obj, String);
 		 } else {
-		 return switch (Type.typeof(obj)) {
-				case TObject://We assume it's a class or interface
-				Type.getClassName(obj);
-				default :
-				Std.string(obj);
+		 	 var typ = Type.typeof(obj);
+		 	 if (typ != null) {
+				 return switch (typ) {
+					case TObject://We assume it's a class or interface
+						Type.getClassName(obj);
+					default :
+						Std.string(obj);
+				 }
+			 } else {
+			 	 return Std.string(obj);
 			 }
 		 }
 	 }

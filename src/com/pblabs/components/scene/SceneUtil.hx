@@ -7,7 +7,7 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.scene;
-
+ 
 import com.pblabs.components.base.AlphaComponent;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.components.tasks.TaskComponentTicked;
@@ -21,14 +21,6 @@ import de.polygonal.motor2.geom.math.XY;
 
 using com.pblabs.engine.util.PBUtil;
 using com.pblabs.geom.VectorTools;
-
-enum SceneAlignment {
-	BOTTOM_LEFT;
-	BOTTOM_RIGHT;
-	CENTER;
-	TOP_LEFT;
-	TOP_RIGHT;
-}
 
 class SceneUtil
 {
@@ -244,7 +236,11 @@ class SceneUtil
 
 	public static function updateIfUpdatable (obj :Dynamic) :Void
 	{
-		if (obj != null && Std.is(obj, IAnimatedObject)) {
+		#if cpp
+		if (obj != null && com.pblabs.util.ReflectUtil.is(obj, "com.pblabs.engine.time.IAnimatedObject")) {
+		#else
+		if (Std.is(obj, IAnimatedObject)) {
+		#end
 			cast(obj, IAnimatedObject).onFrame(0);
 		}
 	}

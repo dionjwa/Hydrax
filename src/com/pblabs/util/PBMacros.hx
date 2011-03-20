@@ -133,4 +133,48 @@ class PBMacros
 		
 		return p(EBlock(carr));
 	}
+	
+	@:macro 
+	public static function embedBinaryDataResource(args :Array<Expr>)
+	{
+		var pos = haxe.macro.Context.currentPos();
+		var pathToBinaryExpr :Expr = args[0];
+		var resourceIdExpr :Expr = args[1];
+		var xorEncryptionExpr :Expr = args[2];
+		
+		var binPath = switch (pathToBinaryExpr.expr) {
+			case EConst(c):
+				switch( c ) {
+					case CString(s): s;
+					default: haxe.macro.Context.warning("Path to binary data not a CString", pos); null;
+				}
+			default: haxe.macro.Context.warning("No path to binary data given " + pathToBinaryExpr.expr, pos); null;
+		}
+		
+		var resourceId = switch (resourceIdExpr.expr) {
+			case EConst(c):
+				switch( c ) {
+					case CString(s): s;
+					default: haxe.macro.Context.warning("No resourceId given", pos); null;
+				}
+			default: haxe.macro.Context.warning("No resourceId given", pos); null;
+		}
+		
+		var xorKey :Int = xorEncryptionExpr == null ? -1 : switch (xorEncryptionExpr.expr) {
+			case EConst(c):
+				switch( c ) {
+					case CInt(s): Std.parseInt(s);
+					default: haxe.macro.Context.warning("No xorEncryptionExpr is not a EConst.CInt", pos); -1;
+				}
+			default: haxe.macro.Context.warning("xorEncryptionExpr is not an EConst", pos); -1;
+		}
+		
+		var bytes = neko.io.File.getBytes(binPath);
+		if (xorKey > 0) {
+			bytes = com.pblabs.util.BytesUtil.xorBytes(bytes, xorKey);
+		}
+		
+		haxe.macro.Context.addResource(resourceId, bytes);
+		return { expr : EConst(CString("null")), pos : pos };
+	}
 }

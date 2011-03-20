@@ -139,6 +139,7 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 		Preconditions.checkNotNull(_tempPoint);
 		Preconditions.checkNotNull(sceneAlignment);
 		Preconditions.checkNotNull(sceneView);
+		trace("sceneView.width=" + sceneView.width);
 		SceneUtil.calculateOutPoint(_tempPoint, sceneAlignment, sceneView.width, sceneView.height);
 		_rootTransform.translate(_tempPoint.x, _tempPoint.y);
 

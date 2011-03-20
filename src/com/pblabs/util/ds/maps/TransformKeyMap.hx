@@ -23,13 +23,13 @@ using Lambda;
  * Keys are stored in a separate list (for iteration of key values) as 
  * the given keys are not used by the underlying map.
  */
-class TransformKeyMap<K, K2, V>
-	implements Map<K, V>
+class TransformKeyMap<K, TransformedKey, V>
+	implements Map<K, V> , implements haxe.rtti.Infos
 {
-	var _convertKey :K->K2;
+	var _convertKey :K->TransformedKey;
 	var _keys :FastList<K>;
 	
-	public function new(convertKeyFn :K->K2, source :Map<K2, V>)
+	public function new(convertKeyFn :K->TransformedKey, source :Map<TransformedKey, V>)
 	{ 
 		_source = Preconditions.checkNotNull(source);
 		_convertKey = convertKeyFn;
@@ -38,11 +38,11 @@ class TransformKeyMap<K, K2, V>
 
 	public function set (key :K, value :V) :V
 	{
-		var k2 = _convertKey(key);
-		if (!_source.exists(k2)) {
+		var transformedKey = _convertKey(key);
+		if (!_source.exists(transformedKey)) {
 			_keys.add(key);
 		}
-		return _source.set(k2, value);
+		return _source.set(transformedKey, value);
 	}
 
 	public function get (key :K) :V
@@ -57,11 +57,11 @@ class TransformKeyMap<K, K2, V>
 
 	public function remove (key :K) :V
 	{
-		var k2 = _convertKey(key);
-		if (_source.exists(k2)) {
+		var transformedKey = _convertKey(key);
+		if (_source.exists(transformedKey)) {
 			_keys.remove(key);
 		}
-		return _source.remove(k2);
+		return _source.remove(transformedKey);
 	}
 
 	public function size () :Int
@@ -94,10 +94,10 @@ class TransformKeyMap<K, K2, V>
 	
 	public function forEach (fn :K->V->Dynamic) :Void
     {
-        for (k2 in _keys) {
-        	fn(k2, get(k2));
+        for (transformedKey in _keys) {
+        	fn(transformedKey, get(transformedKey));
         }
     }
 
-	var _source:Map<K2, V>;
+	var _source:Map<TransformedKey, V>;
 }

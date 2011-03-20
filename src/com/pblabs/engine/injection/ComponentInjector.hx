@@ -33,6 +33,8 @@ using com.pblabs.util.ReflectUtil;
 
 class ComponentInjector extends Injector
 {
+	var _propertyRefCache :Map<String, PropertyReference<Dynamic>>;
+	
 	public function new ()
 	{
 		super();
@@ -113,8 +115,4 @@ class ComponentInjector extends Injector
 		}
 		return _propertyRefCache.get(s);
 	}
-	
-	var _propertyRefCache :Map<String, PropertyReference<Dynamic>>;
 }
-
-

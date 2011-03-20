@@ -17,8 +17,6 @@ import com.pblabs.util.ds.multimaps.AbstractMultiMap;
 
 using Lambda;
 
-// using com.pblabs.util.ArrayUtil;
-
 class SetMultiMap<K, V> extends AbstractMultiMap<K, V>,
 	implements MultiMap<K, V>
 {
@@ -26,6 +24,10 @@ class SetMultiMap<K, V> extends AbstractMultiMap<K, V>,
 	{
 		return new SetMultiMap<K, V>(keyClass);
 	}
+	
+	var _map :Map<K, Set<V>>;
+	var _keyClass :Class<Dynamic>;
+	var _valueClass :Class<Dynamic>;
 	
 	public function new (keyClass :Class<Dynamic>)
 	{
@@ -36,10 +38,17 @@ class SetMultiMap<K, V> extends AbstractMultiMap<K, V>,
 	
 	override public function set (key :K, value :V) :Void
 	{
+		
+		if (_valueClass == null) {
+			_valueClass = Type.getClass(value);
+			if (_valueClass == null) {
+				_valueClass = Dynamic;
+			}
+		}
 		super.set(key, value);
 		var set :Set<V> = _map.get(key);
 		if (set == null) {
-			set = Sets.newSetOf(_keyClass);
+			set = Sets.newSetOf(_valueClass);
 			_map.set(key, set);
 		}
 		set.add(value);
@@ -113,8 +122,4 @@ class SetMultiMap<K, V> extends AbstractMultiMap<K, V>,
 			_map.remove(k);
 		}
 	}
-	
-	var _map :Map<K, Set<V>>;
-	var _keyClass :Class<Dynamic>;
 }
-

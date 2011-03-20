@@ -28,11 +28,11 @@ using com.pblabs.util.StringUtil;
   *   -use SignalBondManager.bindSignal to bind the signals.
   */
 class SignalBondManager extends ArrayMultiMap<Int, Bond>,
-	implements IPBManager, implements haxe.rtti.Infos
+	implements IPBManager//, implements haxe.rtti.Infos
 {
 	public static var OBJECT_DESTROYED_KEY :Int = -1;
 	
-	@inject
+	@inject("com.pblabs.engine.core.PBGameBase")
 	var game :PBGameBase;
 	
 	public static function bindSignal <T>(component :EntityComponent, signaler :Signaler<T>, listener :T->Dynamic) :Void
@@ -62,7 +62,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	public function new ()
 	{
 		super(Int);
-		com.pblabs.util.Assert.isTrue(Std.is(_map, com.pblabs.util.ds.maps.IntHashMap), "? No IntHashMap?");
+		// com.pblabs.util.Assert.isTrue(Std.is(_map, com.pblabs.util.ds.maps.IntHashMap), "? No IntHashMap?");
 	}
 
 	public function bind <T>(component :EntityComponent, signaler :Signaler<T>, listener :T->Dynamic) :Void
@@ -139,7 +139,12 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	public function destroyBondOnEntity (obj :IPBObject) :Void
 	{
 		destroyBonds(cast(obj, Entity).key);
+		
+		#if cpp
+		if (com.pblabs.util.ReflectUtil.is(obj, "com.pblabs.engine.core.IEntity")) {
+		#else
 		if (Std.is(obj, IEntity)) {
+		#end
 			//Signals bound to component signalers
 			for (c in cast(obj, IEntity)) {
 				com.pblabs.util.Assert.isNotNull(c, "??EntityComponent is null??");

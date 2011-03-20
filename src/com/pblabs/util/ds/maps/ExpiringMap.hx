@@ -26,8 +26,10 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.pblabs.util.ds.maps;
-import com.pblabs.engine.time.Timer;
+
 import com.pblabs.util.ds.Map;
+
+import haxe.Timer;
 
 /**
  * A map that will automatically expire elements.
@@ -47,16 +49,15 @@ class ExpiringMap<K, V> extends LinkedMap<K, V>
 		Preconditions.checkArgument(ttl > 0, "expire interval must be > 0");
 		_ttl = ttl;
 		_expireHandler = expireHandler;
-		_timer = new Timer(_ttl, false);
-		_timer.run = handleTimer;
 	}
 
 	/** @private */
 	override function newEntry (key :K, value :V) :LinkedEntry<K, V>
 	{
 		var ee = new ExpiringEntry<K, V>(key, value, Std.int(haxe.Timer.stamp() * 1000) + _ttl);
-		if (!_timer.isRunning) {
-			_timer.start();
+		if (_timer == null) {
+			_timer = new Timer(_ttl);
+			_timer.run = handleTimer;
 		}
 		return ee;
 	}
@@ -65,7 +66,7 @@ class ExpiringMap<K, V> extends LinkedMap<K, V>
 	function handleTimer () :Void
 	{
 		// _timer.reset();
-		_timer.stop();
+		// _timer.stop();
 		var now :Int = Std.int(haxe.Timer.stamp() * 1000);
 		// go through the entries, removing some as necessary
 		while (_anchor.after != _anchor) {
@@ -83,14 +84,15 @@ class ExpiringMap<K, V> extends LinkedMap<K, V>
 				}
 
 			} else {
-				_timer.delay = untilExpire;
-				_timer.start();
+				// _timer.delay = untilExpire;
+				// _timer.start();
 				return;
 			}
 		}
 		
 		if (_anchor.after == _anchor) {
 			_timer.stop();
+			_timer = null;
 		} 
 	}
 

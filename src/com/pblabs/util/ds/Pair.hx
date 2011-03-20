@@ -68,7 +68,9 @@ class Pair<T:Hashable>
 		} else if (v2 == null){
 			_hashCode = v1.hashCode();
 		}else {
-			_hashCode = v1.hashCode() ^ v2.hashCode();
+			//Collisions when the values are close together
+			// _hashCode = v1.hashCode() ^ v2.hashCode();
+			_hashCode = StringUtil.hashCode(haxe.SHA1.encode(v1.hashCode() + ":" + v2.hashCode()));
 		}
 		return this;
 	}

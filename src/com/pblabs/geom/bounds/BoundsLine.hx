@@ -84,7 +84,7 @@ class BoundsLine extends AbstractBounds<BoundsLine>
 	// }
 
 	//TODO: move this to a util class
-	#if flash
+	#if (flash || cpp)
 	public function debugDraw (s :flash.display.Sprite) :Void
 	{
 		s.graphics.lineStyle(2, 0xff0000);

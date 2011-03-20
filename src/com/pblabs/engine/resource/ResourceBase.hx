@@ -23,6 +23,7 @@ class ResourceBase<T>
 	public function new (name :String)
 	{
 		_name = name;
+		_isLoaded = false;
 	}
 	
 	public function create (?name :String) :T
@@ -42,6 +43,7 @@ class ResourceBase<T>
 	{
 		_onLoad = null;
 		_onError = null;
+		_isLoaded = false;
 	}
 	
 	public function isLoaded () :Bool

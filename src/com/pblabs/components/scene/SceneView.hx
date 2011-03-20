@@ -6,9 +6,8 @@
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
+#if !nodejs
 package com.pblabs.components.scene;
-
-import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.PBObject;
 import com.pblabs.util.Preconditions;
@@ -38,10 +37,10 @@ class SceneView
 	public var height(get_height, set_height) : Float;
 	public var width(get_width, set_width) : Float;
 
-	#if flash	
+	#if (flash || cpp)	
 	public var layer (get_layer, null) :flash.display.Sprite;
 	var _layer :flash.display.Sprite;
-	#elseif js
+	#elseif (js && !nodejs)
 	public var layer (get_layer, set_layer) :HtmlDom;
 	var _layer :HtmlDom;
 	public var layerId (get_layerId, set_layerId) :String;
@@ -50,7 +49,7 @@ class SceneView
 	public var mouseOffsetY (get_mouseOffsetY, never) :Float;
 	#end
 	
-	// #if flash
+	// #if (flash || cpp)
 	// @inject("flash.display.Sprite")
 	// public var displayContainer :flash.display.DisplayObjectContainer;
 	// #end
@@ -142,7 +141,7 @@ class SceneView
 		return value;
 	}
 
-	#if flash
+	#if (flash || cpp)
 	function get_layer() :flash.display.Sprite
 	{
 		return _layer;
@@ -189,7 +188,7 @@ class SceneView
 	}
 	#end
 	
-	#if js
+	#if (js && !nodejs)
 	function get_layer () :js.HtmlDom
 	{
 		Preconditions.checkArgument(_layer != null || _layerId != null, "Attempting to access the root layer, but no layerId was provided. _layerId=" + _layerId);
@@ -237,4 +236,4 @@ class SceneView
 	#end
 }
 
-
+#end
