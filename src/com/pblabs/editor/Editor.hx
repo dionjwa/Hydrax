@@ -167,7 +167,7 @@ class Editor extends Sprite
 			com.pblabs.engine.debug.Profiler.report();
 			#end
 		} else if (e.charCode == InputKey.BACKSPACE.keyCode || e.charCode == InputKey.DELETE.keyCode) {
-			if (entityPanel.selectedObject != null) {
+			if (_active && entityPanel.selectedObject != null) {
 				entityPanel.selectedObject.destroy();
 				entityPanel.selectedObject = null;
 			}
