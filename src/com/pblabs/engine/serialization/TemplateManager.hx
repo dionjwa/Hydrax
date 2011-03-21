@@ -198,13 +198,14 @@ class TemplateManager
 					com.pblabs.util.Log.debug("creating entity from a callback");
 					var thing :ThingReference = _things.get(name);
 					var instantiated = null;
-					// try {
+					try {
 						instantiated = thing.createEntity();
 						com.pblabs.util.Log.debug("entity created from callback");
-					// }
-					// catch (e :Dynamic) {
-					// 	com.pblabs.util.Log.error("createEntity callback error: " + e + "\n" + com.pblabs.util.Log.getStackTrace());
-					// }
+					}
+					catch (e :Dynamic) {
+						com.pblabs.util.Log.error("createEntity callback failed,  name=" + name + ", error: " + e + "\n" + com.pblabs.util.Log.getStackTrace());
+						throw e;
+					}
 					
 					if(instantiated == null) {
 						throw "entityCallback returned NULL!";
@@ -292,7 +293,7 @@ class TemplateManager
 		
 		var entity :IEntity;
 		var name = null;
-		// try {
+		try {
 			// Get at the name...
 			name = xml.get("name");
 			if (xml.nodeName == "template") {
@@ -351,12 +352,13 @@ class TemplateManager
 			// }
 			
 			Profiler.exit("instantiateEntityFromXML");
-		// }
-		// catch (e :Dynamic) {
-		// 	com.pblabs.util.Log.error("Failed instantiating '" + name + "' from XML due to :" + e + "\n" + com.pblabs.util.Log.getStackTrace());
-		// 	entity = null;
-		// 	Profiler.exit("instantiateEntityFromXML");
-		// }
+		}
+		catch (e :Dynamic) {
+			com.pblabs.util.Log.error("Failed instantiating xml due to "  + e + " xml=" + xml.toString());//'" + name + "' from XML due to :" + e + "\n" + com.pblabs.util.Log.getStackTrace());
+			entity = null;
+			Profiler.exit("instantiateEntityFromXML");
+			throw e;
+		}
 		
 		return entity;
 	}
@@ -741,7 +743,6 @@ class ThingReference
 	
 	dynamic public function createEntity () :IEntity
 	{
-		// return new Entity();
 		throw "Not implemented";
 		return null;
 	}
