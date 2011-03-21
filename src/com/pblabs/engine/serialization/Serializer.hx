@@ -66,8 +66,6 @@ class Serializer
 		_deserializers.set("Class", deserializeClass);
 		_deserializers.set("com.pblabs.util.Enumerable", deserializeEnumerable);
 		_deserializers.set("com.pblabs.util.EnumWrappedEnumerable", deserializeEnumerable);
-		
-		// _deserializers.set("com.pblabs.util.SignalVar", deserializeSignalVar);
 		_deserializers.set("com.pblabs.geom.Vector2", deserializeVector2);
 		
 		_serializers.set("::DefaultSimple", serializeSimple);
@@ -82,7 +80,6 @@ class Serializer
 		_serializers.set("com.pblabs.util.ds.Map", serializeIterable);
 		_serializers.set("com.pblabs.util.Enumerable", serializeEnumerable);
 		_serializers.set("com.pblabs.util.EnumWrappedEnumerable", serializeEnumerable);
-		// _serializers.set("com.pblabs.util.SignalVar", serializeSignalVar);
 		_serializers.set("ISerializable", serializeSerializable);
 		_serializers.set("com.pblabs.geom.Vector2", serializeVector2);
 		
@@ -324,7 +321,7 @@ class Serializer
 	//	 return xml.toString();
 	// }
 	
-	public static  function serializeSimple(value :Dynamic, xml :Xml) :Void
+	public static function serializeSimple(value :Dynamic, xml :Xml) :Void
 	{
 		xml.addChild(Xml.createPCData(Std.string(value)));
 	}
@@ -423,7 +420,7 @@ class Serializer
 		}
 	}
 	
-	public static  function serializeEnumerable (object :Dynamic, xml :Xml) :Void
+	public static function serializeEnumerable (object :Dynamic, xml :Xml) :Void
 	{
 		var e :Enumerable<Dynamic> = object;
 		// trace("serializeEnumerable");
@@ -873,9 +870,12 @@ class Serializer
 		
 		// If requested type isn't the same as what we found, reset the object.
 		var desiredType = Type.resolveClass(typeName);
+		
+		
 		if (childObject == null || !(Std.is(childObject, desiredType))) {
 			// childObject = Type.createInstance(Type.resolveClass(typeName), EMPTY_ARRAY);
-			childObject = context.allocate(Type.resolveClass(typeName));
+			childObject = deserialize(context, null, fieldXml, typeName); 
+			// childObject = context.allocate(Type.resolveClass(typeName));
 		}
 		
 		// Note we want to check for null here; null is distinct from coerce-to-false.
