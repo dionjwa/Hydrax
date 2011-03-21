@@ -104,8 +104,12 @@ class XMLUtil
 	
 	public static function parsePropertyReference <T>(xml :Xml, childName :String) :PropertyReference<T>
 	{
-		if (XMLUtil.child(xml, childName) != null) {
-			return new PropertyReference(XMLUtil.child(xml, childName).nodeValue);
+		try {
+			if (XMLUtil.child(xml, childName) != null) {
+				return new PropertyReference(parseString(XMLUtil.child(xml, childName)));
+			}
+		} catch (e :Dynamic) {
+			com.pblabs.util.Log.error("Cannot parse PropertyReference from " + XMLUtil.child(xml, childName).toString()); 
 		}
 		return null;
 	}
@@ -124,6 +128,12 @@ class XMLUtil
 			}
 		}
 		return arr;
+	}
+	
+	public static function parseString(xml :Xml) :String
+	{
+		com.pblabs.util.Assert.isNotNull(xml);
+		return xml.firstChild().nodeValue.trim();
 	}
 	
 }
