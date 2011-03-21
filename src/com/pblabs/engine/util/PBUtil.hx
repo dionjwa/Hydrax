@@ -108,30 +108,6 @@ class PBUtil
 	}
 	
 	/**
-	 * Converts IPBObject and IEntityComponent objects 
-	 * to the IGameObject/IEntity name.
-	 */
-	public static function objectNameMapping (obj :Dynamic) :String
-	{
-		if (Std.is(obj, IPBObject)) {
-			return cast(obj, IPBObject).name;
-		} else if (Std.is(obj, IEntityComponent)) {
-			return cast(obj, IEntityComponent).owner.name;
-		} else {
-			throw "Unrecogized object";
-			return "Unrecogized object";
-		}
-	}
-	
-	/**
-	 * As it says.
-	 */
-	public static function componentNameMapping (c :IEntityComponent) :String
-	{
-		return c.name;
-	}
-	
-	/**
 	 * Creates a PropertyReference for a field from a component.
 	 * Assumes component name is the short class name.
 	 * @param c
