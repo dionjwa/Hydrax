@@ -7,6 +7,7 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.editor;
+
 import com.bit101.components.AccordionExtended;
 import com.bit101.components.ComboBox;
 import com.bit101.components.HBox;
@@ -15,6 +16,7 @@ import com.bit101.components.Label;
 import com.bit101.components.NumericStepper;
 import com.bit101.components.Panel;
 import com.bit101.components.ScrollPane;
+import com.bit101.components.Text;
 import com.bit101.components.TextArea;
 import com.bit101.components.UpdatingLabel;
 import com.bit101.components.UpdatingList;
@@ -31,6 +33,7 @@ import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.core.SetManager;
+import com.pblabs.engine.util.Predicates;
 import com.pblabs.engine.util.PBUtil;
 import com.pblabs.util.Comparators;
 import com.pblabs.util.DisplayUtils;
@@ -38,6 +41,7 @@ import com.pblabs.util.Enumerable;
 import com.pblabs.util.Log;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.SignalVar;
+import com.pblabs.util.ds.Maps;
 
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
@@ -71,6 +75,7 @@ using de.polygonal.gl.DisplayListIterator;
 class EntityPanel extends HBox
 {
 	public var selectedObject :IPBObject;
+	public var createCustomComboBox :String->IEntityComponent->DisplayObjectContainer->ComboBox;
 	var game :PBGameBase;
 	var _accordion :AccordionExtended;
 	var _groupComboBox :ComboBox;
@@ -200,7 +205,7 @@ class EntityPanel extends HBox
 		if (Std.is(selectedObject, IEntity)) {
 			var e :IEntity = cast(selectedObject);
 			com.pblabs.util.Assert.isNotNull(e);
-			var items = e.array().map(PBUtil.componentNameMapping).toArray();
+			var items = e.array().map(Predicates.componentToName).toArray();
 			items.sort(Comparators.compareStrings);
 			var componentList = new com.bit101.components.List(_componentsWindowBox, componentLabel.x, componentLabel.y + componentLabel.height, items);
 			// componentList.setSize(250, 100);
@@ -243,7 +248,7 @@ class EntityPanel extends HBox
 	function groupSelected (name :String) :Void
 	{
 		_entityList.removeAll();
-		var names = name == NONE_GROUP ? getUngroupedObjectNames() :  _sets.getObjectsInSet(name).map(PBUtil.objectNameMapping).toArray();
+		var names = name == NONE_GROUP ? getUngroupedObjectNames() :  _sets.getObjectsInSet(name).map(objectToName).toArray();
 		names.sort(Comparators.compareStrings);
 		for (name in names) {
 			_entityList.addItem(name);
@@ -376,7 +381,7 @@ class EntityPanel extends HBox
 								var list = new UpdatingList(root, 0, 0, PBUtil.createPropertyCallback(component.owner, valueprop));
 								list.setSize(_editorFieldsWindow.width, 75);
 								components.push(list);
-							case "ComboBox":
+							case "ComboBoxEnum":
 								
 								components.push(new com.bit101.components.Label(root, 0, 0, label + ": "));
 								var enumClass = ReflectUtil.getClass(component.owner.getProperty(valueprop));
@@ -392,6 +397,12 @@ class EntityPanel extends HBox
 								combo.addEventListener(Event.SELECT, function (e :Event) :Void {
 									component.owner.setProperty(valueprop, Enumerable.valueOf(enumClass, combo.selectedItem));
 								});
+								components.push(combo);
+							case "ComboBoxCustom":
+								components.push(new com.bit101.components.Label(root, 0, 0, label + ": "));
+								com.pblabs.util.Assert.isNotNull(createCustomComboBox, "Missing createCustomComboBox");
+								var comboBoxHandlerId = Reflect.field(editable, "id");
+								var combo :ComboBox = createCustomComboBox(comboBoxHandlerId, component, root);
 								components.push(combo);
 							case "TextArea":
 								components.push(new com.bit101.components.Label(root, 0, 0, label + ": "));
@@ -416,6 +427,44 @@ class EntityPanel extends HBox
 								stepper.labelPrecision = 0;
 								stepper.value = ReflectUtil.field(component, f);
 								components.push(stepper);
+							case "EditableInt":
+								components.push(new com.bit101.components.Label(root, 0, 0, label + ": "));
+								var text = new Text(root, 0, 0, "" + ReflectUtil.field(component, f));
+								text.height = 30;
+								text.width = 80;
+								text.editable = true;
+								text.selectable = true;
+								var fieldText :String = null;
+								text.addEventListener(flash.events.TextEvent.TEXT_INPUT, function (e :flash.events.TextEvent) :Void {
+									try {
+										fieldText = text.text + e.text;
+										var val = Std.parseInt(fieldText);
+										if (!Math.isNaN(val)) {
+											ReflectUtil.setField(component, f, val);
+										}
+									} catch (ignored :Dynamic) {
+										trace("Error parsin as Int:" + fieldText);
+										com.pblabs.util.Log.error("Error parsin as Int:" + fieldText);
+									}
+								}); 
+								components.push(text);
+							case "Text":
+								components.push(new com.bit101.components.Label(root, 0, 0, label + ": "));
+								var text = new Text(root, 0, 0, "" + ReflectUtil.field(component, f));
+								text.height = 30;
+								text.width = 80;
+								text.editable = true;
+								text.selectable = true;
+								var fieldText :String = null;
+								text.addEventListener(flash.events.TextEvent.TEXT_INPUT, function (e :flash.events.TextEvent) :Void {
+									try {
+										fieldText = text.text + e.text;
+										ReflectUtil.setField(component, f, fieldText);
+									} catch (e :Dynamic) {
+										com.pblabs.util.Log.error("Error setting field " + f + "=" + fieldText + ", e=" + e);
+									}
+								}); 
+								components.push(text);
 							default:
 								Log.error("editable class field not handled: " + Type.getClassName(cls) + "." + f + ", " + Reflect.field(editable, "ui"));
 						}
@@ -432,6 +481,22 @@ class EntityPanel extends HBox
 		DisplayUtils.removeAllChildren(_textGutterPanel.content);
 		var textArea = new TextArea(_textGutterPanel.content, 0, 0, t);
 		textArea.setSize(_textGutterPanel.width, _textGutterPanel.height);
+	}
+	
+	/**
+	 * Converts IPBObject and IEntityComponent objects 
+	 * to the IGameObject/IEntity name.
+	 */
+	static function objectToName (obj :Dynamic) :String
+	{
+		if (Std.is(obj, IPBObject)) {
+			return cast(obj, IPBObject).name;
+		} else if (Std.is(obj, IEntityComponent)) {
+			return cast(obj, IEntityComponent).owner.name;
+		} else {
+			throw "Unrecogized object";
+			return "Unrecogized object";
+		}
 	}
 	
 	static var NONE_GROUP :String = "none";
