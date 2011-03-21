@@ -17,15 +17,21 @@ import js.Node;
   */
 class NodeJSHTMLConnection
 {
-	static var context :Context;
+	var _context :Context;
 	
-	public static function connect (ctx :Context) :Void
+	public function new (ctx :Context)
 	{
-		if (context != null) throw "Context is already set";
-		context = ctx;
+	    _context = ctx;
 	}
 	
-	public static function handleRequest (req :ServerRequest, res :ServerResponse) :Bool 
+	
+	public function connect (ctx :Context) :Void
+	{
+		if (_context != null) throw "Context is already set";
+		_context = ctx;
+	}
+	
+	public function handleRequest (req :ServerRequest, res :ServerResponse) :Bool 
 	{
 		if (req.headers == null || Reflect.field(req.headers, "x-haxe-remoting") == null) {
 			return false;
@@ -39,6 +45,7 @@ class NodeJSHTMLConnection
 			content += chunk;
 		});
 
+		var context = _context;
 		req.addListener("end", function() {
 			req.removeAllListeners("data");
 			req.removeAllListeners("end");
