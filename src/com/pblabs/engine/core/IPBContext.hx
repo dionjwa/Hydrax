@@ -38,6 +38,8 @@ interface IPBContext
 	var currentGroup (get_currentGroup, set_currentGroup) :IPBGroup;
 	var started (default, null):Bool;
 	
+	var isActive (get_isActive, never) :Bool;
+	
 	/** Called by the PBGameBase once to initialize  */
 	function setup () :Void;
 	/** Called when destroyed */

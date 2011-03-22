@@ -8,6 +8,10 @@
  ******************************************************************************/
 package com.pblabs.engine.pooling;
 
+import com.pblabs.engine.core.IEntity;
+import com.pblabs.engine.core.IPBObject;
+import com.pblabs.engine.core.PBContext;
+import com.pblabs.engine.core.PBManagerBase;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.ds.Map;
@@ -30,12 +34,13 @@ import com.pblabs.util.ds.Maps;
   *		pool.register(com.pblabs.components.base.AlphaComponent);
   *		pool.register(com.pblabs.components.tasks.TaskComponent);
   */
-class ObjectPoolMgr
+class ObjectPoolMgr extends PBManagerBase
 {
-	public static var SINGLETON :ObjectPoolMgr = new ObjectPoolMgr();	 
+	// public static var SINGLETON :ObjectPoolMgr = new ObjectPoolMgr();	 
  	
 	public function new() 
-	{ 
+	{
+		super();
 		_classes = [];
 		_pools = Maps.newHashMap(String);
 	}
@@ -87,13 +92,37 @@ class ObjectPoolMgr
 		_classes.push(clazz);
 	}
 
-	public function shutdown () :Void
+	override public function shutdown () :Void
 	{
+		super.shutdown();
 		for (p in _pools) {
 			p.shutdown();
 		}
 		_pools.clear();
 		_classes = null;
+	}
+	
+	override function onContextRemoval () :Void
+	{
+		super.onContextRemoval();
+		cast(context, PBContext).signalObjectRemoved.unbind(onObjectDestroyed);
+	}
+	
+	override function onNewContext () :Void
+	{
+		super.onNewContext();
+		cast(context, PBContext).signalObjectRemoved.bind(onObjectDestroyed);
+	}
+	
+	function onObjectDestroyed (obj :IPBObject) :Void
+	{
+		if (Std.is(obj, IEntity)) {
+			var e :IEntity = cast obj;
+			for (c in e) {
+				add(c);
+			}
+		}
+		add(obj);
 	}
 
 	var _classes:Array<Class<Dynamic>> ;

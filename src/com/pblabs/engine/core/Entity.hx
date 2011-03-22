@@ -161,13 +161,7 @@ class Entity extends PBObject,
 			com.pblabs.util.Assert.isNotNull(c, "How can the component be null?");
 			_components.remove(c.name);
 			#if debug
-			// context.getManager(com.pblabs.engine.time.IProcessManager).callLater(createDestructionCheckCallback(c));
 			c.postDestructionCheck();
-			// c.postDestructionCheck();
-			#end
-			
-			#if !disable_object_pooling
-			com.pblabs.engine.pooling.ObjectPoolMgr.SINGLETON.add(c);
 			#end
 		}
 		
@@ -180,9 +174,9 @@ class Entity extends PBObject,
 		// Get out of the NameManager and other general cleanup stuff.
 		super.destroy();
 		com.pblabs.util.Assert.isFalse(destroyedSignal.isListenedTo);
-		_components = null;
-		destroyedSignal = null;
-		_deferredComponents = null;
+		_deferring = false;
+		_components.clear();
+		_deferredComponents = [];
 	}
 	
 	#if debug

@@ -138,7 +138,7 @@ class Enumerable<T>
 	/**
 	  * Deserialize all Enumerables with embedded XML data.
 	  */
-	public static function deserializeAllFromEmbeddedXML () :Void
+	static function deserializeAllFromEmbeddedXML () :Void
 	{
 		for (enumCls in _enums.keys()) {
 			if (haxe.Resource.listNames().has(Type.getClassName(enumCls))) {
@@ -148,6 +148,12 @@ class Enumerable<T>
 			}
 		}
 	}
+	
+	public static function setup () :Void
+	{
+	    deserializeAllFromEmbeddedXML();
+	}
+	
 	
 	/**
 	  * Keep the constructor private

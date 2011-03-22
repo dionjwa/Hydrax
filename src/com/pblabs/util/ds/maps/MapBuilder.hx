@@ -193,10 +193,10 @@ class MapBuilder<K, V>
 			map = new DefaultValueMap<K, V>(map, _defaultValue);
 		}
 		var ii:Int = 0;
-		   while (ii < _keyVals.length) {
+	   while (ii < _keyVals.length) {
 			map.set(_keyVals[ii], _keyVals[ii + 1]);
 			ii += 2;
-		   }
+	   }
 		if (_immutable) {
 			map = new ImmutableMap<K, V>(map);
 		}

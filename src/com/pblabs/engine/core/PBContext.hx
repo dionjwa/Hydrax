@@ -43,6 +43,8 @@ class PBContext
 	public var signalEnter (default, null) :Signaler<Void>;
 	public var signalExit (default, null) :Signaler<Void>;
 	
+	public var isActive (get_isActive, never) :Bool;
+	
 	public var injector :Injector;
 	var _managers :Map<String, Dynamic>;
 	
@@ -118,6 +120,7 @@ class PBContext
 		#if disable_object_pooling
 		var i = Type.createInstance(type, EMPTY_ARRAY);
 		#else
+		// if (_objectPool == null) trace("no _objectPool");
 		var i = _objectPool != null ? _objectPool.get(type) : Type.createInstance(type, EMPTY_ARRAY);
 		#end
 		Assert.isNotNull(i, "allocated'd instance is null, type=" + type);
@@ -181,6 +184,11 @@ class PBContext
 		
 		// Do manager startup.
 		initializeManagers();
+		
+		#if !disable_object_pooling
+		_objectPool = injector.getMapping(com.pblabs.engine.pooling.ObjectPoolMgr);
+		if (_objectPool == null) com.pblabs.util.Log.error("No _objectPool in setup");
+		#end
 	}
 	
 	public function enter () :Void
@@ -335,9 +343,6 @@ class PBContext
 	public function injectInto(instance:Dynamic):Void
 	{
 		injector.injectInto(instance);
-		#if !disable_object_pooling
-		_objectPool = injector.getMapping(com.pblabs.engine.pooling.ObjectPoolMgr);
-		#end
 	}
 	
 	static function findProperty <T> (db :PBContext, entity :IEntity, reference :PropertyReference<T>, ?willSet :Bool = false, ?providedPi :PropertyInfo = null, ?suppressErrors :Bool = false) :PropertyInfo
@@ -577,6 +582,11 @@ class PBContext
 		return new ProcessManager();	
 	}
 
+	function get_isActive () :Bool
+	{
+		return getManager(PBGameBase).currentContext == this;
+	}
+	
 	#if debug
 	public function toString () :String
 	{

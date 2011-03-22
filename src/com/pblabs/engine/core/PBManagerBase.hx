@@ -32,10 +32,9 @@ class PBManagerBase
 	
 	public function shutdown () :Void
 	{
-		onContextRemoval();
+		contextSwitched(null);
 		game.newActiveContextSignaler.unbind(contextSwitched);
 		game = null;
-		context = null;
 	}
 	
 	function contextSwitched (c :IPBContext) :Void

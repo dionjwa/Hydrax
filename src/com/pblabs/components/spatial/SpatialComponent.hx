@@ -92,7 +92,9 @@ class SpatialComponent extends EntityComponent,
 
 	function get_point ():XY
 	{
-		return _vec.clone();
+		_vecForSignalling.x = _vec.x;
+		_vecForSignalling.y = _vec.y;
+		return _vecForSignalling;
 	}
 
 	function set_point (p :XY):XY
