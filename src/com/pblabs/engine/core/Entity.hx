@@ -262,18 +262,10 @@ class Entity extends PBObject,
 				}
 			}
 			
-			// try {
-				com.pblabs.util.Log.debug("deserializing component " + componentName);
-				// Deserialize the XML into the component.
-				serializer.deserialize(context, component, componentXML);
-				com.pblabs.util.Log.debug("deserialized component " + componentName);
-			// } catch (e :Dynamic) {
-			// 	com.pblabs.util.Log.error("Failed deserializing component " + componentName + "'  due to :" + e + "\n" + com.pblabs.util.Log.getStackTrace());
-			// 	#if debug
-			// 	// com.pblabs.engine.debug.com.pblabs.util.Log.setLevel(Type.getClass(component), com.pblabs.engine.debug.com.pblabs.util.Log.DEBUG);
-			// 	com.pblabs.engine.debug.Log.setLevel("", com.pblabs.engine.debug.Log.DEBUG);
-			// 	#end
-			// }
+			com.pblabs.util.Log.debug("deserializing component " + componentName);
+			// Deserialize the XML into the component.
+			serializer.deserialize(context, component, componentXML);
+			com.pblabs.util.Log.debug("deserialized component " + componentName);
 		}
 		
 		// Deal with set membership.
@@ -321,9 +313,6 @@ class Entity extends PBObject,
 		}
 
 		injectComponent(c);
-		
-		
-		
 		
 		#if cpp
 		if (com.pblabs.util.ReflectUtil.is(c, "com.pblabs.engine.time.ITickedObject")) {
@@ -521,10 +510,6 @@ class Entity extends PBObject,
 				continue;
 			}
 			
-			// injectComponent(component, sets);
-			 
-			 //Inject the signal listeners
-			 // bonds = cast(_context.injector, ComponentInjector).injectComponentListeners(component , bonds);
 			//Reset it!
 			com.pblabs.util.Log.debug("    reseting " + component.name);
 			com.pblabs.engine.debug.Profiler.enter("reseting " + component.name);
@@ -533,9 +518,6 @@ class Entity extends PBObject,
 			com.pblabs.util.Log.debug("    done reseting " + component.name);
 		}
 		com.pblabs.util.Log.debug("  finished reseting");
-		// if (bonds != null) {
-		// 	sm.setAll(this.name, bonds);
-		// }
 		com.pblabs.engine.debug.Profiler.exit("doResetComponents");
 		deferring = false;
 	}
