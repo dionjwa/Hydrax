@@ -9,6 +9,11 @@
 package com.pblabs.components.util;
 
 import com.pblabs.engine.core.EntityComponent;
+import com.pblabs.engine.serialization.ISerializable;
+
+import haxe.Serializer;
+
+import haxe.Unserializer;
 
 /**
 * Container for arbitrary data. As it is dynamic, you can set whatever
@@ -16,10 +21,30 @@ import com.pblabs.engine.core.EntityComponent;
 */
 
 class DataComponent<T> extends EntityComponent, 
-	implements Dynamic<T> 
+	implements Dynamic<T>, implements ISerializable
 {
 	public function new() 
 	{
 		super();
+	}
+	
+	public function serialize (xml :Xml) :Void
+	{
+		var s = new Serializer();
+		var map = new Hash<Dynamic>();
+		for (f in Reflect.fields(this)) {
+			map.set(f, Reflect.field(this, f));
+		}
+		s.serialize(map);
+		xml.set("data", s.toString());
+	}
+	
+	public function deserialize (xml :Xml) :Dynamic
+	{
+		var d = new Unserializer(xml.get("data"));
+		var map :Hash<Dynamic> = d.unserialize();
+		for (key in map.keys()) {
+			Reflect.setField(this, key, map.get(key));
+		}
 	}
 }

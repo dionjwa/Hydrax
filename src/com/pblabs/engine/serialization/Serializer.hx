@@ -20,6 +20,7 @@ import com.pblabs.util.Enumerable;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.StringUtil;
+import com.pblabs.util.XMLUtil;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 import com.pblabs.util.ds.Set;
@@ -125,21 +126,23 @@ class Serializer
 		}
 		else {
 			var typeHint :String = null;
-			// var cls :Class<Dynamic> = null;
 			var typeName :String = null;
-			// trace("f=" + f);
-			// trace("   Type.typeof(Reflect.field(object, f))=" + Type.typeof(Reflect.field(object, f)));
-			var valueKey :String = switch (Type.typeof(object)) {
-				case TUnknown: null;
+			var valueKey :String = null; 
+			
+			switch (Type.typeof(object)) {
+				case TUnknown:
 				//TODO: Assume it's a class or interface
-				case TObject: null;
-				case TNull: "unknown";
-				case TInt: "Int";
-				case TFunction: null;
-				case TFloat: "Float";
-				case TEnum(e): "Enum";
-				case TClass(c): typeName = Type.getClassName(c); typeName == "String" ? "::DefaultSimple" : "::DefaultComplex";
-				case TBool: "Bool";
+				case TObject:
+				case TNull: valueKey = "unknown";
+				case TInt: valueKey = typeHint = "Int";
+				case TFunction:
+				case TFloat: valueKey = typeHint = "Float";
+				case TEnum(e): valueKey = "Enum";
+				case TClass(c): 
+					typeHint = Type.getClassName(c);
+					typeHint = typeHint == "String" ? null : typeHint;
+					typeName = Type.getClassName(c); valueKey = typeName == "String" ? "::DefaultSimple" : "::DefaultComplex";
+				case TBool: valueKey = typeHint = "Bool";
 			}
 			
 			if (Std.is(object, Map) || Std.is(object, Array) || Std.is(object, List)) {
@@ -154,7 +157,9 @@ class Serializer
 				com.pblabs.util.Log.error("No serializer for " + typeName);
 			}
 				
-			
+			if (typeHint != null) {
+				xml.set("type", typeHint);
+			}
 			
 			// throw "Currently all serializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object);
 			// com.pblabs.util.Log.warn("Currently all serializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object));
@@ -228,18 +233,11 @@ class Serializer
 		com.pblabs.util.Log.error("No deserializer found for " + xml + ", typeHint=" + typeHint);
 		//Fall back to deserializing complex
 		// deserializeComplex(context, object, xml, typeHint);
-		
-		
-		
-		
-		
-		
-		
-		
+		return XMLUtil.parseString(xml);
 		
 		
 		// com.pblabs.util.Log.warn("Currently all deserializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object));
-		return object;
+		// return object;
 		// throw "Currently all deserializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object);
 		// // Normal case - determine type and call the right Serializer.
 		// var typeName = ReflectUtil.getClassName(object);
