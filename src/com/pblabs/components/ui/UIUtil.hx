@@ -1,11 +1,11 @@
 package com.pblabs.components.ui;
 
 import com.pblabs.components.input.MouseInputComponent;
-import com.pblabs.components.scene.BaseSceneLayer;
-import com.pblabs.components.scene.BaseSceneManager;
-import com.pblabs.components.scene.CircleShape;
-import com.pblabs.components.scene.ImageComponent;
-import com.pblabs.components.scene.SVGComponent;
+import com.pblabs.components.scene2D.BaseSceneLayer;
+import com.pblabs.components.scene2D.BaseSceneManager;
+import com.pblabs.components.scene2D.CircleShape;
+import com.pblabs.components.scene2D.ImageComponent;
+import com.pblabs.components.scene2D.SVGComponent;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.resource.EmbeddedResource;
 import com.pblabs.engine.resource.ResourceToken;
@@ -16,7 +16,7 @@ import com.pblabs.util.ds.Tuple;
 import de.polygonal.motor2.geom.math.XY;
 
 using com.pblabs.components.input.InputUtil;
-using com.pblabs.components.scene.SceneUtil;
+using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.ui.UIUtil;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
@@ -44,7 +44,7 @@ class UIUtil
     {
         var so = layer.context.createBaseSceneEntity();
         
-        var c = layer.context.allocate(com.pblabs.components.scene.SVGComponent);
+        var c = layer.context.allocate(com.pblabs.components.scene2D.SVGComponent);
         c.resourceToken = new ResourceToken(EmbeddedResource.NAME, svgId);
         c.parentProperty = layer.entityProp();
         so.addComponent(c);

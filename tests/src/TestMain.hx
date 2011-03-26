@@ -14,6 +14,7 @@ class TestMain
 		
 		var runner = new Runner();
 		runner.addCase(new tests.DataStructuresTest());
+		runner.addCase(new tests.ComponentsTest());
 		Report.create(runner);
 		runner.run();
 	}

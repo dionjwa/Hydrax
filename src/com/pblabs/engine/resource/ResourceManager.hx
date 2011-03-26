@@ -41,19 +41,19 @@ class ResourceManager
 		_onErrorCallbacks = new Array();
 	}
 	
-	public function create <T>(resourceToken :ResourceToken<T>) :T
+	public function get <T>(resourceToken :ResourceToken<T>) :T
 	{
 		com.pblabs.util.Assert.isNotNull(resourceToken);
-		return createFromName(resourceToken.resourceId, resourceToken.key);
+		return getFromName(resourceToken.resourceId, resourceToken.key);
 	}
 	
-	public function createFromName <T>(resourceName :String, itemName :String) :T
+	public function getFromName <T>(resourceName :String, itemName :String) :T
 	{
 		Preconditions.checkArgument(isResource(resourceName), "No IResource with id=" + resourceName); 
 		// var rs :IResource<T> = getResource(resourceName);
 		var rs = getResource(resourceName);
 		com.pblabs.util.Assert.isNotNull(rs, "No resource " + resourceName);
-		return rs.create(itemName);
+		return rs.get(itemName);
 	}
 
 	public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void

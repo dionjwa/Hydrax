@@ -104,7 +104,7 @@ class PBObject
 	public function initialize(name :String = null) :Void
 	{		   
 		// Note the names.
-		com.pblabs.util.Assert.isNull(_name);
+		com.pblabs.util.Assert.isNull(_name, "_name is not null=" + _name);
 		_name = name;
 		Preconditions.checkNotNull(_context, "Context null on init :" + this);
 		_context.register(this);

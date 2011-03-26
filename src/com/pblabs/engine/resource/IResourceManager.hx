@@ -15,8 +15,8 @@ import com.pblabs.engine.core.IPBManager;
   */
 interface IResourceManager implements IPBManager
 {
-	function createFromName <T>(resourceName :String, itemName :String) :T;
-	function create <T>(resourceToken :ResourceToken<T>) :T;
+	function getFromName <T>(resourceName :String, itemName :String) :T;
+	function get <T>(resourceToken :ResourceToken<T>) :T;
 	
 	function addResource (rsrc :IResource<Dynamic>) :Void;
 	

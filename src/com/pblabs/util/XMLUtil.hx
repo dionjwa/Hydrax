@@ -132,8 +132,13 @@ class XMLUtil
 	
 	public static function parseString(xml :Xml) :String
 	{
-		com.pblabs.util.Assert.isNotNull(xml);
-		return xml.firstChild().nodeValue.trim();
+		try {
+			com.pblabs.util.Assert.isNotNull(xml);
+			return xml.firstChild() != null && xml.firstChild().nodeValue != null ? xml.firstChild().nodeValue.trim() : "";
+		} catch (e :Dynamic) {
+			com.pblabs.util.Log.error(e);
+			return null;
+		}
 	}
 	
 }

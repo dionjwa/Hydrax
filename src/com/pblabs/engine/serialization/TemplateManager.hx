@@ -329,6 +329,7 @@ class TemplateManager
 				
 				com.pblabs.util.Log.debug("doInstantiateTemplate");
 				if (!doInstantiateTemplate(entity, xml.get("template"), new DynamicMap<Bool>())) {
+					trace("destroying created entity " + name);
 					entity.destroy();
 					Profiler.exit("instantiateEntityFromXML");
 					return null;
@@ -341,7 +342,7 @@ class TemplateManager
 			var serializer = context.getManager(Serializer);
 			com.pblabs.util.Assert.isNotNull(serializer);
 			
-			serializer.deserialize(context, entity, xml);
+			serializer.deserialize(entity, xml);
 			serializer.clearCurrentEntity();
 			
 			// // Don't forget to disable deferring.
@@ -690,7 +691,7 @@ class TemplateManager
 	
 	function onLoaded(resource :XMLResource) :Void
 	{
-		var xml = resource.create();
+		var xml = resource.get();
 		var version = Std.parseInt(xml.get("version"));
 		var thingCount :Int=0;
 		for (childxml in xml.elements()) {

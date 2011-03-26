@@ -34,6 +34,14 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	
 	@inject("com.pblabs.engine.core.PBGameBase")
 	var game :PBGameBase;
+
+	public static function destroyBond (bond :Bond) :Bond
+	{
+		if (bond != null) {
+			bond.destroy();
+		}
+		return null;
+	}
 	
 	public static function bindSignal <T>(component :EntityComponent, signaler :Signaler<T>, listener :T->Dynamic) :Void
 	{

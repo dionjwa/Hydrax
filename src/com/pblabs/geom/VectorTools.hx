@@ -8,6 +8,7 @@
  ******************************************************************************/
 package com.pblabs.geom;
 
+import com.pblabs.engine.serialization.Serializer;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
@@ -18,6 +19,8 @@ using Lambda;
 
 using com.pblabs.geom.Geometry;
 using com.pblabs.geom.VectorTools;
+using com.pblabs.util.XMLUtil;
+
 /**
  * Use "using com.pblabs.geom.VectorTools" for code 
  * completion access to these functions.
@@ -198,7 +201,7 @@ class VectorTools
 	/**
 	 * Returns the dot product of this vector with vector v.
 	 */
-	public static function dot (v1 :XY, v2 :XY) :Float
+	inline public static function dot (v1 :XY, v2 :XY) :Float
 	{
 		return v1.x * v2.x + v1.y * v2.y;
 	}
@@ -206,7 +209,7 @@ class VectorTools
 	/**
 	 * Returns this vector's length.
 	 */
-	public static function getLength (v :XY) :Float
+	inline public static function getLength (v :XY) :Float
 	{
 		return Math.sqrt(v.x * v.x + v.y * v.y);
 	}
@@ -215,7 +218,7 @@ class VectorTools
 	 * Adds another Vector2 to this, in place.
 	 * Returns a reference to 'this', for chaining.
 	 */
-	public static function addLocal (v1 :XY, v2 :XY) :XY
+	inline public static function addLocal (v1 :XY, v2 :XY) :XY
 	{
 		v1.x += v2.x;
 		v1.y += v2.y;
@@ -288,7 +291,7 @@ class VectorTools
 		return v.clone().rotateLocal(radians);
 	}
 	
-	public static function angle (v :XY) :Float
+	inline public static function angle (v :XY) :Float
 	{
 		return Math.atan2(v.y, v.x);
 	}
@@ -302,6 +305,34 @@ class VectorTools
 	{
 		var q:Float = 1 - p;
 		return new Vector2(q * a.x + p * b.x, q * a.y + p * b.y);
+	}
+	
+	/**
+	 * Returns the smaller of the two angles between v1 and v2, in radians.
+	 * Result will be in range [0, pi].
+	 */
+	public static function smallerAngleBetween (v1 :XY, v2 :XY) :Float
+	{
+		var dot = dot(v1, v2);
+		var len1= getLength(v1);
+		var len2 = getLength(v2);
+
+		return Math.acos(dot / (len1 * len2));
+	}
+	
+	
+	public static function serializeXY (val :XY, xml :Xml) :Void
+	{
+		xml.createChild("x", val.x, Serializer.serializeFloat);
+		xml.createChild("y", val.y, Serializer.serializeFloat);
+	}
+	
+	public static function deserializeXY (xml :Xml) :XY
+	{
+		var v = new Vector2();
+		v.x = xml.parseFloat("x");
+		v.y = xml.parseFloat("y");
+		return v;
 	}
 	
 	#if (flash || cpp)

@@ -1,8 +1,15 @@
 #Builds the flash swc
--lib hydrax
+-cp lib/hsl
+-cp lib/hsl-pico
 -cp src
 
--swf10 build/hydrax.swc
+-lib IterTools
+-lib ArrayTools
+-lib ListTools
+-lib feffects
+-lib polygonal
+
+-swf build/hydrax.swf
 -swf-version 10
 -D network-sandbox
 -main AllClasses

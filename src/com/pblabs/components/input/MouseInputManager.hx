@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.components.input;
 
-import com.pblabs.components.scene.SceneView;
+import com.pblabs.components.scene2D.SceneView;
 import com.pblabs.util.Preconditions;
 
 import hsl.haxe.DirectSignaler;

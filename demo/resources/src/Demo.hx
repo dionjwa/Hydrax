@@ -1,12 +1,12 @@
 package ;
 
-import com.pblabs.components.scene.BaseSceneComponent;
-import com.pblabs.components.scene.BaseSceneLayer;
-import com.pblabs.components.scene.ImageComponent;
-import com.pblabs.components.scene.RectangleShape;
-import com.pblabs.components.scene.SceneAlignment;
-import com.pblabs.components.scene.SceneUtil;
-import com.pblabs.components.scene.SceneView;
+import com.pblabs.components.scene2D.BaseSceneComponent;
+import com.pblabs.components.scene2D.BaseSceneLayer;
+import com.pblabs.components.scene2D.ImageComponent;
+import com.pblabs.components.scene2D.RectangleShape;
+import com.pblabs.components.scene2D.SceneAlignment;
+import com.pblabs.components.scene2D.SceneUtil;
+import com.pblabs.components.scene2D.SceneView;
 import com.pblabs.components.tasks.AngleTask;
 import com.pblabs.components.tasks.FunctionTask;
 import com.pblabs.components.tasks.LocationTask;
@@ -29,7 +29,7 @@ import com.pblabs.engine.time.ProcessManager;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Rand;
 import com.pblabs.util.ds.Tuple;
-using com.pblabs.components.scene.SceneUtil;
+using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
 

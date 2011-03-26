@@ -51,10 +51,10 @@ class XMLResource extends ResourceBase<Xml>
 		_source = null;
 	}
 	
-	override public function create (?name :String) :Xml
+	override public function get (?name :String) :Xml
 	{
 		if (name != null) {
-			com.pblabs.util.Log.error("create(name): name argument is ignored");
+			com.pblabs.util.Log.error("get(name): name argument is ignored");
 		}
 		return _xml.firstElement();
 	}

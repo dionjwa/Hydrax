@@ -13,3 +13,13 @@
 -main Demo
 
 -cmd cp indexflash.xhtml flash/index.xhtml
+
+# #For local testing
+# -lib IterTools
+# -lib ArrayTools
+# -lib ListTools
+# -lib feffects
+# -cp ../../../hydrax/src
+# -cp ../../../hxhsl/hsl source
+# -cp ../../../hxhsl/hsl-pico source
+# -cp ../../../libdamago/lib/polygonal/src/lib

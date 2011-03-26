@@ -26,7 +26,7 @@ class ResourceBase<T>
 		_isLoaded = false;
 	}
 	
-	public function create (?name :String) :T
+	public function get (?name :String) :T
 	{
 		//Subclasses must override this to be useful.
 		throw "Override";

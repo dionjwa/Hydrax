@@ -14,6 +14,11 @@ class Predicates
 		return c.name;
 	}
 	
+	public static function componentToEntity (c :IEntityComponent) :IEntity
+	{
+		return c.owner;
+	}
+	
 	/**
 	 * As it says.
 	 */

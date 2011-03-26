@@ -14,9 +14,9 @@ import com.pblabs.util.Equalable;
 class ResourceToken<T>
 	implements Equalable<ResourceToken<Dynamic>>, implements com.pblabs.util.ds.Hashable
 {
-	public static function create <T>(context :IPBContext, token :ResourceToken<T>) :T
+	public static function get <T>(context :IPBContext, token :ResourceToken<T>) :T
 	{
-	    return context.getManager(IResourceManager).create(token);
+	    return context.getManager(IResourceManager).get(token);
 	}
 	
 	
@@ -42,11 +42,11 @@ class ResourceToken<T>
 	    return _hashCode;
 	}
 	
-	// public function create (context :IPBContext) :T
+	// public function get (context :IPBContext) :T
 	// {
 	//     var rm = context.getManager(IResourceManager);
 	//     com.pblabs.util.Assert.isNotNull(rm);
-	//     return rm.create(this);
+	//     return rm.get(this);
 	// }
 	
 	public function toString () :String

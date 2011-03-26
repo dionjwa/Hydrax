@@ -197,9 +197,18 @@ class SetManager extends PBManagerBase,
 			for (field in Reflect.fields(m)) {
 				// trace("  field=" + field);
 				if (field == "sets") {
+					// trace("type=" + Type.getClassName(Type.getClass(Reflect.field(m, field))));
 					for (s in cast(Reflect.field(m, field), Array<Dynamic>)) {
-						// trace("   adding to " + s);
-						addObjectToSet(obj.owner, s);				
+						if (Std.is(s, Array)) {
+							for (ss in cast(s, Array<Dynamic>)) {
+								// trace("   adding to " + ss);
+								addObjectToSet(obj.owner, ss);
+							}
+						} else {
+							// trace("   adding to " + s);
+							addObjectToSet(obj.owner, s);
+						}
+										
 					}
 				}
 			}

@@ -8,10 +8,10 @@
  ******************************************************************************/
 package com.pblabs.components.input;
 
-import com.pblabs.components.scene.BaseSceneComponent;
-import com.pblabs.components.scene.BaseSceneLayer;
-import com.pblabs.components.scene.BaseSceneManager;
-import com.pblabs.components.scene.SceneManagerList;
+import com.pblabs.components.scene2D.BaseSceneComponent;
+import com.pblabs.components.scene2D.BaseSceneLayer;
+import com.pblabs.components.scene2D.BaseSceneManager;
+import com.pblabs.components.scene2D.SceneManagerList;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.ObjectType;
@@ -39,7 +39,7 @@ using IterTools;
 
 using Lambda;
 
-using com.pblabs.components.scene.SceneUtil;
+using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.util.MathUtil;
 
 /**
@@ -164,11 +164,11 @@ class InputManager extends BaseInputManager,
 			com.pblabs.util.Assert.isNotNull(_game);
 			com.pblabs.util.Assert.isNotNull(_game.currentContext);
 			
-			var scenelist = _game.currentContext.getManager(SceneManagerList);
-			if (scenelist == null) {
+			var sceneList = _game.currentContext.getManager(SceneManagerList);
+			if (sceneList == null) {
 				return null;
 			}
-			_sceneManagers = scenelist.children.copy();
+			_sceneManagers = sceneList.children.copy();
 			_sceneManagers.reverse();
 			if (_sceneManagers.length == 0) {
 				_sceneManagers = null;
@@ -382,7 +382,7 @@ class InputManager extends BaseInputManager,
 		
 		for (sceneManager in getSceneManagers()) {
 			var worldLoc = sceneManager.translateScreenToWorld(inputLocation);
-			var layerIndex =  sceneManager.children.length - 1;
+			var layerIndex = sceneManager.children.length - 1;
 			while (layerIndex >= 0) {
 				var layer :BaseSceneLayer<Dynamic, Dynamic> = sceneManager.children[layerIndex];
 				layerIndex--;
@@ -420,7 +420,7 @@ class InputManager extends BaseInputManager,
 		com.pblabs.util.Assert.isNotNull(getSceneManagers());
 		for (sceneManager in getSceneManagers()) {
 			var worldLoc = sceneManager.translateScreenToWorld(inputLocation);
-			var layerIndex =  sceneManager.children.length - 1;
+			var layerIndex = sceneManager.children.length - 1;
 			while (layerIndex >= 0) {
 				var layer :BaseSceneLayer<Dynamic, Dynamic> = sceneManager.children[layerIndex];
 				layerIndex--;

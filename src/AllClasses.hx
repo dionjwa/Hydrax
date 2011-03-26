@@ -1,43 +1,52 @@
-/*******************************************************************************
- * Hydrax: haXe port of the PushButton Engine
- * Copyright (C) 2010 Dion Amago
- * For more information see http://github.com/dionjwa/Hydrax
- *
- * This file is licensed under the terms of the MIT license, which is included
- * in the License.html file at the root directory of this SDK.
- ******************************************************************************/
+
 package;
+
 import flash.display.Sprite;
 
+import com.pblabs.components.Constants;
 import com.pblabs.components.base.AlphaComponent;
-import com.pblabs.components.base.AngleComponent;
 import com.pblabs.components.base.BoundedComponent;
 import com.pblabs.components.base.HealthComponent;
 import com.pblabs.components.base.NotifyingValueComponent;
 import com.pblabs.components.base.ScaleComponent;
 import com.pblabs.components.debug.ValueComponent;
 import com.pblabs.components.input.BaseInputManager;
+import com.pblabs.components.input.GestureData;
 import com.pblabs.components.input.GestureInputManager;
+import com.pblabs.components.input.IInputData;
 import com.pblabs.components.input.IInteractiveComponent;
 import com.pblabs.components.input.InputManager;
 import com.pblabs.components.input.InputUtil;
 import com.pblabs.components.input.MouseInputComponent;
 import com.pblabs.components.input.MouseInputManager;
+import com.pblabs.components.input.PanManager;
 import com.pblabs.components.input.TouchInputManager;
+import com.pblabs.components.manager.INode;
+import com.pblabs.components.manager.INodeChild;
 import com.pblabs.components.manager.NodeComponent;
-import com.pblabs.components.scene.BaseSceneComponent;
-import com.pblabs.components.scene.BaseSceneLayer;
-import com.pblabs.components.scene.BaseSceneManager;
-import com.pblabs.components.scene.CircleShape;
-import com.pblabs.components.scene.ImageComponent;
-import com.pblabs.components.scene.IScene2D;
-import com.pblabs.components.scene.RectangleShape;
-import com.pblabs.components.scene.SceneUtil;
-import com.pblabs.components.scene.SceneView;
-import com.pblabs.components.scene.ShapeComponent;
-import com.pblabs.components.scene.flash.SceneComponent;
-import com.pblabs.components.scene.flash.SceneManager;
-import com.pblabs.components.scene.flash.SceneLayer;
+import com.pblabs.components.scene2D.BaseSceneComponent;
+import com.pblabs.components.scene2D.BaseSceneLayer;
+import com.pblabs.components.scene2D.BaseSceneManager;
+import com.pblabs.components.scene2D.CircleShape;
+import com.pblabs.components.scene2D.ImageComponent;
+import com.pblabs.components.scene2D.IScene2D;
+import com.pblabs.components.scene2D.RectangleShape;
+import com.pblabs.components.scene2D.SceneAlignment;
+import com.pblabs.components.scene2D.SceneManagerList;
+import com.pblabs.components.scene2D.SceneUtil;
+import com.pblabs.components.scene2D.SceneView;
+import com.pblabs.components.scene2D.ShapeComponent;
+import com.pblabs.components.scene2D.SVGComponent;
+import com.pblabs.components.scene2D.flash.SceneComponent;
+import com.pblabs.components.scene2D.flash.SceneLayer;
+import com.pblabs.components.scene2D.flash.SceneManager;
+import com.pblabs.components.scene2D.flash.TextComponent;
+import com.pblabs.components.spatial.BasicSpatialManager2D;
+import com.pblabs.components.spatial.IBounded;
+import com.pblabs.components.spatial.ISpatialManager2D;
+import com.pblabs.components.spatial.ISpatialObject2D;
+import com.pblabs.components.spatial.RayHitInfo;
+import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.components.tasks.AngleTask;
 import com.pblabs.components.tasks.AnimatePropertyTask;
 import com.pblabs.components.tasks.AnimateValueTask;
@@ -51,11 +60,15 @@ import com.pblabs.components.tasks.ParallelTask;
 import com.pblabs.components.tasks.RepeatingTask;
 import com.pblabs.components.tasks.SelfDestructTask;
 import com.pblabs.components.tasks.SerialTask;
+import com.pblabs.components.tasks.SetFieldTask;
 import com.pblabs.components.tasks.TaskComponent;
+import com.pblabs.components.tasks.TaskComponentTicked;
 import com.pblabs.components.tasks.TaskContainer;
+import com.pblabs.components.tasks.Tasks;
 import com.pblabs.components.tasks.TaskUtil;
 import com.pblabs.components.tasks.TimedTask;
 import com.pblabs.components.tasks.VisibleTask;
+import com.pblabs.components.ui.UIUtil;
 import com.pblabs.components.util.DataComponent;
 import com.pblabs.engine.core.Entity;
 import com.pblabs.engine.core.EntityComponent;
@@ -67,10 +80,13 @@ import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.IPBObject;
 import com.pblabs.engine.core.IPropertyBag;
 import com.pblabs.engine.core.NameManager;
+import com.pblabs.engine.core.ObjectType;
+import com.pblabs.engine.core.ObjectTypeManager;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.core.PBGroup;
+import com.pblabs.engine.core.PBManagerBase;
 import com.pblabs.engine.core.PBObject;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.core.SetManager;
@@ -82,28 +98,31 @@ import com.pblabs.engine.injection.Attributes;
 import com.pblabs.engine.injection.ComponentInjector;
 import com.pblabs.engine.injection.Injector;
 import com.pblabs.engine.input.InputKey;
+import com.pblabs.engine.pooling.IObjectPool;
+import com.pblabs.engine.pooling.ObjectPool;
+import com.pblabs.engine.pooling.ObjectPoolMgr;
+import com.pblabs.engine.resource.BitmapCacheResource;
 import com.pblabs.engine.resource.EmbeddedResource;
 import com.pblabs.engine.resource.ImageResource;
 import com.pblabs.engine.resource.IResource;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceBase;
 import com.pblabs.engine.resource.ResourceManager;
+import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.Source;
+import com.pblabs.engine.resource.SVGResource;
 import com.pblabs.engine.resource.XMLResource;
+import com.pblabs.engine.resource.flash.SwfResource;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.serialization.Serializer;
 import com.pblabs.engine.serialization.TemplateEvent;
 import com.pblabs.engine.serialization.TemplateManager;
-import com.pblabs.engine.serialization.TypeUtility;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.time.IProcessManager;
-import com.pblabs.engine.time.IQueuedObject;
 import com.pblabs.engine.time.ITickedObject;
 import com.pblabs.engine.time.ProcessManager;
-import com.pblabs.engine.time.ScheduleObject;
-import com.pblabs.engine.time.Timer;
-import com.pblabs.engine.util.IPrioritizable;
 import com.pblabs.engine.util.PBUtil;
+import com.pblabs.engine.util.Predicates;
 import com.pblabs.geom.Circle;
 import com.pblabs.geom.CircleUtil;
 import com.pblabs.geom.Geometry;
@@ -129,6 +148,7 @@ import com.pblabs.geom.bounds.IBounds;
 import com.pblabs.geom.debug.GeometryTests;
 import com.pblabs.util.ArrayUtil;
 import com.pblabs.util.Assert;
+import com.pblabs.util.BytesUtil;
 import com.pblabs.util.Cloneable;
 import com.pblabs.util.Comparable;
 import com.pblabs.util.Comparators;
@@ -138,18 +158,23 @@ import com.pblabs.util.Enumerable;
 import com.pblabs.util.Equalable;
 import com.pblabs.util.EqualableUtil;
 import com.pblabs.util.EventDispatcherUtil;
+import com.pblabs.util.F;
 import com.pblabs.util.GraphicsUtil;
+import com.pblabs.util.HashUtil;
 import com.pblabs.util.IterUtil;
+import com.pblabs.util.Log;
 import com.pblabs.util.MathUtil;
 import com.pblabs.util.MetaUtil;
 import com.pblabs.util.NumberUtil;
 import com.pblabs.util.PBMacros;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.Predicates;
+import com.pblabs.util.Rand;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.SignalVar;
 import com.pblabs.util.SignalVarAdvanced;
 import com.pblabs.util.Sprintf;
+import com.pblabs.util.StateChange;
 import com.pblabs.util.StringUtil;
 import com.pblabs.util.XMLUtil;
 import com.pblabs.util.ds.Collection;
@@ -159,6 +184,7 @@ import com.pblabs.util.ds.Maps;
 import com.pblabs.util.ds.MapUtil;
 import com.pblabs.util.ds.MultiMap;
 import com.pblabs.util.ds.MultiSet;
+import com.pblabs.util.ds.Pair;
 import com.pblabs.util.ds.Set;
 import com.pblabs.util.ds.Sets;
 import com.pblabs.util.ds.Triple;
@@ -166,7 +192,6 @@ import com.pblabs.util.ds.Tuple;
 import com.pblabs.util.ds.maps.BiMap;
 import com.pblabs.util.ds.maps.DefaultValueMap;
 import com.pblabs.util.ds.maps.DynamicMap;
-import com.pblabs.util.ds.maps.ExpiringEntry;
 import com.pblabs.util.ds.maps.ExpiringMap;
 import com.pblabs.util.ds.maps.ForeachingMap;
 import com.pblabs.util.ds.maps.ForwardingMap;
@@ -174,6 +199,7 @@ import com.pblabs.util.ds.maps.HashableMap;
 import com.pblabs.util.ds.maps.HashMap;
 import com.pblabs.util.ds.maps.ImmutableMap;
 import com.pblabs.util.ds.maps.IntHashMap;
+import com.pblabs.util.ds.maps.KeyedObjectMap;
 import com.pblabs.util.ds.maps.LinkedEntry;
 import com.pblabs.util.ds.maps.LinkedMap;
 import com.pblabs.util.ds.maps.LRMap;
@@ -187,6 +213,7 @@ import com.pblabs.util.ds.multimaps.AbstractMultiMap;
 import com.pblabs.util.ds.multimaps.ArrayMultiMap;
 import com.pblabs.util.ds.multimaps.ListMultiMap;
 import com.pblabs.util.ds.multimaps.SetMultiMap;
+import com.pblabs.util.ds.sets.ArraySet;
 import com.pblabs.util.ds.sets.MapSet;
 import com.pblabs.util.ds.sets.MultiMapSet;
 import easel.display.Canvas;
@@ -201,11 +228,11 @@ class AllClasses extends Sprite
 {
 
 
-    public function new()
-    {
-        super();
-    }
-    public static function main() 
+	public function new()
+	{
+		super();
+	}
+	public static function main() 
 	{
 		new AllClasses();
 	}

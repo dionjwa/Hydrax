@@ -116,7 +116,7 @@ class Entity extends PBObject,
    }
 	
 	public override function initialize (?name :String = null) :Void
-	{			
+	{
 		// Pass control up.
 		super.initialize(name);
 
@@ -264,7 +264,7 @@ class Entity extends PBObject,
 			
 			com.pblabs.util.Log.debug("deserializing component " + componentName);
 			// Deserialize the XML into the component.
-			serializer.deserialize(context, component, componentXML);
+			serializer.deserialize(component, componentXML);
 			com.pblabs.util.Log.debug("deserialized component " + componentName);
 		}
 		

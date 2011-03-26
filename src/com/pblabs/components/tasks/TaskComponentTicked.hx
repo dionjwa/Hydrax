@@ -29,12 +29,12 @@ class TaskComponentTicked extends TaskComponent,
 	
 	override public function onTick (dt :Float) :Void
 	{
-		_updatingTasks = true;
-		_tasksFinished = _anonymousTasks.update(dt, owner);
-		for (namedTask in _namedTasks) {
+		_tasks._updatingTasks = true;
+		_tasksFinished = _tasks._anonymousTasks.update(dt, owner);
+		for (namedTask in _tasks._namedTasks) {
 			_tasksFinished = namedTask.update(dt, owner) && _tasksFinished;
 		}
-		_updatingTasks = false;
+		_tasks._updatingTasks = false;
 		if (!_tasksFinished) {//If we're updating, assume we're added to the process manager
 			updatingCheck();
 		}

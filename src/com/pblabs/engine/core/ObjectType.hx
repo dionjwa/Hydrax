@@ -119,19 +119,23 @@ class ObjectType
 	
 	
 	/**
-	 * Add typeName to current ObjectType
+	 * Add typeName to current ObjectType.
+	 * Returns self for chaining.
 	 */
-	public function add (typeName :String) :Void
+	public function add (typeName :String) :ObjectType
 	{
-		_bits |= manager.getType(typeName);		  
+		_bits |= manager.getType(typeName);	
+		return this;
 	}	  
 	
 	/**
-	 * Remove typeName from current ObjectType
+	 * Remove typeName from current ObjectType.
+ 	 * Returns self for chaining.
 	 */
-	public function remove(typeName :String) :Void
+	public function remove(typeName :String) :ObjectType
 	{		 
-		_bits &= (ALL.bits - manager.getType(typeName));					
+		_bits &= (ALL.bits - manager.getType(typeName));
+		return this;
 	}
 	
 	/**

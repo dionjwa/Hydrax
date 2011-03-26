@@ -43,7 +43,7 @@ class InterpolatingTask implements IEntityTask
 		return interp(a, b, _elapsedTime, _totalTime, _easingFn);
 	}
 
-	static function interp (a :Float, b :Float, t :Float, duration :Float,
+	public static function interp (a :Float, b :Float, t :Float, duration :Float,
 		easingFn :Float->Float->Float->Float->Float) :Float
 	{
 		if (duration <= 0) {

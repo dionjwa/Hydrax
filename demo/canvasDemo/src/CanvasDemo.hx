@@ -1,9 +1,9 @@
 package;
 
-import com.pblabs.components.scene.CircleShape;
-import com.pblabs.components.scene.ImageComponent;
-import com.pblabs.components.scene.SceneUtil;
-import com.pblabs.components.scene.SceneView;
+import com.pblabs.components.scene2D.CircleShape;
+import com.pblabs.components.scene2D.ImageComponent;
+import com.pblabs.components.scene2D.SceneUtil;
+import com.pblabs.components.scene2D.SceneView;
 import com.pblabs.components.tasks.AngleTask;
 import com.pblabs.components.tasks.LocationTask;
 import com.pblabs.engine.core.PBContext;
@@ -13,7 +13,7 @@ import com.pblabs.engine.resource.ImageResource;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.Source;
 import com.pblabs.util.Assert;
-using com.pblabs.components.scene.SceneUtil;
+using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
 

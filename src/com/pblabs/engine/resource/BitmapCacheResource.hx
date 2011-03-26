@@ -17,7 +17,7 @@ import com.pblabs.util.ds.Maps;
   * Caches bitmap representations of other display types, e.g. Bitmaps of 
   * complex MovieClips in Flash.
   */
-class BitmapCacheResource extends ResourceBase<flash.display.Bitmap>
+class BitmapCacheResource extends ResourceBase<flash.display.BitmapData>
 #else
 class BitmapCacheResource extends ResourceBase<js.Dom.Image>
 #end
@@ -26,9 +26,8 @@ class BitmapCacheResource extends ResourceBase<js.Dom.Image>
 	
 	public static function createCachedToken <T>(resourceId :String, key :String) :ResourceToken<T>
 	{
-	    return new ResourceToken(NAME, resourceId + "." + key);
+		return new ResourceToken(NAME, resourceId + "." + key);
 	}
-	
 	
 	#if (flash || cpp)
 	var _cache :Map<String, flash.display.BitmapData>;
@@ -54,13 +53,13 @@ class BitmapCacheResource extends ResourceBase<js.Dom.Image>
 	}
 	
 #if (flash || cpp)
-	override public function create (?name :String) :flash.display.Bitmap
+	override public function get (?name :String) :flash.display.BitmapData
 #else
-	override public function create (?name :String) :js.Dom.Image
+	override public function get (?name :String) :js.Dom.Image
 #end
 	{
 		if (name == null) {
-			com.pblabs.util.Log.error("create(name): name cannot be null");
+			com.pblabs.util.Log.error("get(name) :name cannot be null");
 			return null;
 		}
 		
@@ -69,25 +68,57 @@ class BitmapCacheResource extends ResourceBase<js.Dom.Image>
 			var tokens = name.split(".");
 			com.pblabs.util.Assert.isTrue(tokens.length == 2);
 			#if (flash || cpp)
-			var image :flash.display.DisplayObject = _manager.createFromName(tokens[0], tokens[1]);
-			com.pblabs.util.Assert.isNotNull(image);
-			var bm = com.pblabs.util.DisplayUtils.convertToBitmap(image); 
-			var bd = bm.bitmapData;
-			bm.bitmapData = null;
-			_cache.set(name, bd);
+			try {
+				var imageData = _manager.getFromName(tokens[0], tokens[1]);
+				if (Std.is(imageData, flash.display.Bitmap)) {
+					_cache.set(name, cast(imageData, flash.display.Bitmap).bitmapData);
+					cast(imageData, flash.display.Bitmap).bitmapData = null;
+				} else if (Std.is(imageData, flash.utils.ByteArray)) {
+					com.pblabs.util.Log.error("ByteArray, etf?");
+				} else {
+					com.pblabs.util.Assert.isNotNull(imageData);
+					var bm = com.pblabs.util.DisplayUtils.convertToBitmap(imageData); 
+					var bd = bm.bitmapData;
+					bm.bitmapData = null;
+					_cache.set(name, bd);
+				}
+			} catch (e :Dynamic) {//Fail gracefully, ie return a defualt DisplayObject
+				com.pblabs.util.Log.info("No resource from " + name + ", subsituting red blob");
+				var bd = new flash.display.BitmapData(120, 30, true);
+				bd.floodFill(0, 0, com.pblabs.util.GraphicsUtil.toARGB(0xff0000, 0));
+				//Draw dot
+				var dot = new flash.display.Shape();
+				dot.graphics.beginFill(0xff0000);
+				dot.graphics.drawCircle(10, 10, 20);
+				dot.graphics.endFill();
+				bd.draw(dot);
+				
+				//Draw text of missing resource
+				var tf = new flash.text.TextField();
+				tf.text = "missing " + StringTools.replace(name, '.', '\n');
+				bd.draw(tf);
+				
+				_cache.set(name, bd);
+				return bd;
+			}
 			#elseif js
-			var newImage :js.Dom.Image = _manager.createFromName(tokens[0], tokens[1]);
+			var newImage :js.Dom.Image = _manager.getFromName(tokens[0], tokens[1]);
 			newImage.src = _image.src;
 			return newImage;
 			#end
 		}
 		com.pblabs.util.Log.debug("Getting cached bitmap data for key=" + name);
-       return new flash.display.Bitmap(_cache.get(name));
+	   return _cache.get(name);
 	}
 	
 	override public function unload () :Void
 	{
 		super.unload();
+		#if (flash || cpp)
+		for (bd in _cache) {
+			bd.dispose();
+		}
+		#end
 		_cache.clear();
 		_cache = null;
 	}

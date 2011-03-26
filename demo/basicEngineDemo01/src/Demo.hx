@@ -1,10 +1,10 @@
-package;
+package ;
 
-import com.pblabs.components.scene.CircleShape;
+import com.pblabs.components.scene2D.CircleShape;
 import com.pblabs.components.tasks.LocationTask;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
-using com.pblabs.components.scene.SceneUtil;
+using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
 

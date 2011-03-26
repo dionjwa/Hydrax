@@ -6,5 +6,15 @@
 -js build/demo.js
 -main CanvasDemo
 
+#For local testing
+# -lib IterTools
+# -lib ArrayTools
+# -lib ListTools
+# -lib feffects
+# -cp ../../../hydrax/src
+# -cp ../../../hxhsl/hsl source
+# -cp ../../../hxhsl/hsl-pico source
+# -cp ../../../libdamago/lib/polygonal/src/lib
+
 
 

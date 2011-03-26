@@ -15,7 +15,9 @@ package com.pblabs.engine.serialization;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
+import com.pblabs.engine.core.PBManagerBase;
 import com.pblabs.geom.Vector2;
+import com.pblabs.geom.VectorTools;
 import com.pblabs.util.Enumerable;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
@@ -25,6 +27,8 @@ import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 import com.pblabs.util.ds.Set;
 import com.pblabs.util.ds.Sets;
+
+using Lambda;
 
 using StringTools;
 
@@ -40,14 +44,22 @@ using com.pblabs.util.XMLUtil;
  * 
  * @see ISerializable
  */
-class Serializer
+class Serializer extends PBManagerBase
 #if cpp
 	implements haxe.rtti.Infos
 #end
 {
+	var _currentEntity :IEntity;
+	var _serializers :Map<String, Dynamic->Xml->Void>;
+	var _deserializers :Map<String, Dynamic->Xml->String->Dynamic>;
+	var _deferredReferences :Array<ReferenceNote>;
+	var _resources :Map<String, ResourceNote>;
+	var _typeInfo :TypeInfo;
+	
 	public var ignoredTypes (default, null) :Set<Class<Dynamic>>;
 	public function new()
 	{
+		super();
 		_deserializers = Maps.newHashMap(String);
 		_serializers = Maps.newHashMap(String);
 		_deferredReferences = [];
@@ -59,8 +71,8 @@ class Serializer
 		_deserializers.set("::DefaultComplex", deserializeComplex);
 		_deserializers.set("Bool", deserializeBool);
 		_deserializers.set("Int", deserializeIntLocal);
-		_deserializers.set("Float", deserializeFloat);
-		_deserializers.set("Enum", deserializeEnum);
+		_deserializers.set("Float", deserializeFloatLocal);
+		_deserializers.set("Enum", deserializeEnumLocal);
 		_deserializers.set("Array", deserializeIterable);
 		_deserializers.set("List", deserializeIterable);
 		_deserializers.set("com.pblabs.util.ds.Map", deserializeIterable);
@@ -191,10 +203,10 @@ class Serializer
 	 * Code that calls this method should always use the return value rather than
 	 * the passed in value for this reason.
 	 */
-	public function deserialize(context :IPBContext, object :Dynamic, xml :Xml, ?typeHint :String=null) :Dynamic
+	public function deserialize(object :Dynamic, xml :Xml, ?typeHint :String=null) :Dynamic
 	{
 		com.pblabs.util.Log.debug("object=" + object + ", typeHint=" + typeHint);
-		Preconditions.checkNotNull(context, "context is null");
+		// Preconditions.checkNotNull(context, "context is null");
 		// Preconditions.checkNotNull(object, "object is null");
 		Preconditions.checkNotNull(xml, "xml is null");
 		
@@ -211,13 +223,13 @@ class Serializer
 				resolveReferences();
 				return cast(object, IEntity);
 			} else if (Std.is(object, IEntityComponent)) {
-				return deserializeComplex(context, object, xml, typeHint);
+				return deserializeComplex(object, xml, typeHint);
 			} 
 		}
 		
 		typeHint = typeHint == null ? xml.get("type") : typeHint;
 		if (_deserializers.exists(typeHint)) {
-			return _deserializers.get(typeHint)(context, object, xml, typeHint);
+			return _deserializers.get(typeHint)(object, xml, typeHint);
 		}
 		
 		//Check for Enumerables
@@ -225,7 +237,18 @@ class Serializer
 			var cls = Type.resolveClass(typeHint);
 			if (cls != null) {
 				if (ReflectUtil.hasSuperClass(cls, Enumerable)) {
-					return deserializeEnumerable (context, object, xml, typeHint);
+					return deserializeEnumerable (object, xml, typeHint);
+				} else {
+					if (Type.getInstanceFields(cls).has("deserialize")) {
+						com.pblabs.util.Log.warn("Adding " + Type.getClassName(cls) + " to mapped (de)serializers");
+						var des = function (obj :Dynamic, xml :Xml, typeHint :String) :Dynamic {
+							var inst = Type.createInstance(cls, EMPTY_ARRAY);
+							Reflect.callMethod(inst, Reflect.field(inst, "deserialize"), [xml]);
+							return inst;
+						}
+						_deserializers.set(Type.getClassName(cls), des);
+						return des(null, xml, null);
+					}
 				}
 			}
 		}
@@ -309,7 +332,7 @@ class Serializer
 		return false;
 	}
 	
-	// function deserializeSimple(context :IPBContext, object :Dynamic, xml :XML, typeHint :String) :Dynamic
+	// function deserializeSimple(object :Dynamic, xml :XML, typeHint :String) :Dynamic
 	// {
 	//	 // If the tag is empty and we're not a string where """ is a valid value,
 	//	 // just return that value.
@@ -324,7 +347,7 @@ class Serializer
 		xml.addChild(Xml.createPCData(Std.string(value)));
 	}
 	
-	function deserializeComplex(context :IPBContext, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
+	function deserializeComplex(object :Dynamic, xml :Xml, typeHint :String) :Dynamic
 	{
 		//Haxe cannot determine  at runtime if an object implements Dynamic 
 		var isDynamic = false;//Std.is(object, Array);// || (TypeUtility.isDynamic(object));// || Std.is(object, Dictionary)
@@ -374,14 +397,14 @@ class Serializer
 			//	 typeName = "String";
 			
 			// deserialize into the child.
-			if (!getChildReference(context, object, fieldName, fieldXML) 
-				&& !getResourceObject(context, object, fieldName, fieldXML))
+			if (!getChildReference(object, fieldName, fieldXML) 
+				&& !getResourceObject(object, fieldName, fieldXML))
 			{
-				var child :Dynamic = getChildObject(context, object, fieldName, typeName, fieldXML);
+				var child :Dynamic = getChildObject(object, fieldName, typeName, fieldXML);
 				if (child != null) {
 					// Deal with typehints.
 					// var childTypeHint :String = null;//TypeUtility.getTypeHint(object, fieldName);
-					// child = deserialize(context, child, fieldXML, childTypeHint);
+					// child = deserialize(child, fieldXML, childTypeHint);
 					com.pblabs.util.Log.error("The field " + fieldName + " of type " + typeName + " could not be instantiated");
 					continue;
 				}
@@ -401,7 +424,7 @@ class Serializer
 	}
 	
 	//TODO:broken
-	public static function deserializeEnumerable (context :Dynamic, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
+	public static function deserializeEnumerable (object :Dynamic, xml :Xml, typeHint :String) :Dynamic
 	{
 		com.pblabs.util.Assert.isNotNull(xml);
 		typeHint = typeHint == null ? xml.get("type") : typeHint;
@@ -597,12 +620,12 @@ class Serializer
 		}
 	}
 	
-	public static function serializeProperty (object :Dynamic, xml :Xml) :Void
+	public static function serializeProperty (xml :Xml, object :Dynamic) :Void
 	{
 		xml.addChild(Xml.createPCData(Std.string(object)));
 	}
 	
-	public static function deserializeBool(context :IPBContext, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
+	public static function deserializeBool(xml :Xml, object :Dynamic, typeHint :String) :Dynamic
 	{
 		com.pblabs.util.Assert.isNotNull(xml);
 		return (xml.firstChild().toString() == "true");
@@ -613,7 +636,7 @@ class Serializer
 		xml.addChild(Xml.createPCData(val ? "true" : "false"));
 	}
 	
-	static function deserializeIntLocal (context :IPBContext, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
+	static function deserializeIntLocal (object :Dynamic, xml :Xml, ignored :String) :Dynamic
 	{
 		return deserializeInt(xml);
 	}
@@ -629,22 +652,33 @@ class Serializer
 		xml.addChild(Xml.createPCData(Std.string(val)));
 	}
 	
-	public static function deserializeFloat(context :IPBContext, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
+	public static function deserializeFloat(xml :Xml) :Float
 	{
 		com.pblabs.util.Assert.isNotNull(xml);
 		return Std.parseFloat(xml.firstChild().nodeValue);
 	}
 	
-	public static function serializeFloat(val :Dynamic, xml :Xml) :Void
+	static function deserializeFloatLocal(ignored :Dynamic, xml :Xml, ignored :String) :Dynamic
+	{
+		return deserializeFloat(xml);
+	}
+	
+	public static function serializeFloat(val :Float, xml :Xml) :Void
 	{
 		xml.addChild(Xml.createPCData(Std.string(val)));
 	}
 	
-	public static function deserializeEnum(context :IPBContext, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
+	public static function deserializeEnum(xml :Xml, ?typeHint :String) :Dynamic
 	{
-		throw "Not implemented";
 		com.pblabs.util.Assert.isNotNull(xml);
-		return Type.createEnum(Type.resolveEnum(typeHint.isBlank() ? xml.get("type") :typeHint), xml.nodeValue , []);
+		typeHint = typeHint.isBlank() ? xml.get("type") :typeHint;
+		com.pblabs.util.Assert.isNotNull(typeHint);
+		return Type.createEnum(Type.resolveEnum(typeHint), xml.firstChild().nodeValue, []);
+	}
+	
+	static function deserializeEnumLocal(obj :Dynamic, xml :Xml, typeHint :String) :Dynamic
+	{
+		return deserializeEnum(xml, typeHint);
 	}
 	
 	public static function serializeEnum(val :Dynamic, xml :Xml) :Void
@@ -654,26 +688,26 @@ class Serializer
 	
 	public static function serializeVector2 (val :Dynamic, xml :Xml) :Void
 	{
-		var v :Vector2 = cast val;
-		xml.createChild("x", v.x, serializeFloat);
-		xml.createChild("y", v.y, serializeFloat);
+		VectorTools.serializeXY(cast val, xml);
 	}
 	
-	public function deserializeVector2 (context :IPBContext, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
+	public static function deserializeVector2 (object :Dynamic, xml :Xml, typeHint :String) :Dynamic
 	{
-		var v = new Vector2();
-		v.x = xml.parseFloat("x");
-		v.y = xml.parseFloat("y");
-		return v;
+		return VectorTools.deserializeXY(xml);
 	}
-	
 	
 	public static function serializeSerializable(val :Dynamic, xml :Xml) :Void
 	{
 		cast(val, ISerializable).serialize(xml);
 	}
 	
-	public function deserializeIterable(context :IPBContext, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
+	public static function deserializeSerializable(val :Dynamic, xml :Xml) :Dynamic
+	{
+		cast(val, ISerializable).deserialize(xml);
+		return val;
+	}
+	
+	public function deserializeIterable(object :Dynamic, xml :Xml, typeHint :String) :Dynamic
 	{
 		for (childXML in xml.elements())
 		{
@@ -700,13 +734,13 @@ class Serializer
 				typeName = typeHint != null ? typeHint :"String";
 				
 			// deserialize the value.
-			if (!getChildReference(context, object, key, childXML) 
-				|| !getResourceObject(context, object, key, childXML, typeHint))
+			if (!getChildReference(object, key, childXML) 
+				|| !getResourceObject(object, key, childXML, typeHint))
 			{
-				var value :Dynamic = getChildObject(context, object, key, typeName, childXML);
+				var value :Dynamic = getChildObject(object, key, typeName, childXML);
 				if (value != null) {
 					// var value :Dynamic = 
-					deserialize(context, value, childXML, typeName);
+					deserialize(value, childXML, typeName);
 				}
 					
 				// Assign, either to key or to end of array.
@@ -781,7 +815,7 @@ class Serializer
 		}
 	}
 	
-	public function deserializeClass(context :IPBContext, object :Dynamic, xml :Xml, typeHint :String) :Dynamic
+	public function deserializeClass(object :Dynamic, xml :Xml, typeHint :String) :Dynamic
 	{
 		com.pblabs.util.Assert.isNotNull(xml);
 		return Type.resolveClass(xml.firstChild().nodeValue);
@@ -791,7 +825,7 @@ class Serializer
 	 * A tag can have attributes which encode references of various types. This method
 	 * parses them and resolves the references.
 	 */ 
-	function getChildReference(context :IPBContext, object :Dynamic, fieldName :String, xml :Xml) :Bool
+	function getChildReference(object :Dynamic, fieldName :String, xml :Xml) :Bool
 	{
 		var nameReference :String = xml.get("nameReference");
 		var componentReference :String = xml.get("componentReference");
@@ -857,7 +891,7 @@ class Serializer
 	 * @param typeName The desired type; if different than what is there we replace
 	 *				 the existing interface.
 	 */
-	function getChildObject(context :IPBContext, object :Dynamic, fieldName :String, typeName :String, fieldXml :Xml) :Dynamic
+	function getChildObject(object :Dynamic, fieldName :String, typeName :String, fieldXml :Xml) :Dynamic
 	{
 		// Get the child object, if it is present.
 		var childObject :Dynamic = null;
@@ -872,7 +906,7 @@ class Serializer
 		
 		if (childObject == null || !(Std.is(childObject, desiredType))) {
 			// childObject = Type.createInstance(Type.resolveClass(typeName), EMPTY_ARRAY);
-			childObject = deserialize(context, null, fieldXml, typeName); 
+			childObject = deserialize(null, fieldXml, typeName); 
 			// childObject = context.allocate(Type.resolveClass(typeName));
 		}
 		
@@ -886,7 +920,7 @@ class Serializer
 		return childObject;
 	}
 	
-	function getResourceObject(context :IPBContext, object :Dynamic, fieldName :String, xml :Xml, ?typeHint :String = null) :Bool
+	function getResourceObject(object :Dynamic, fieldName :String, xml :Xml, ?typeHint :String = null) :Bool
 	{
 		var filename :String = xml.get("filename");
 		
@@ -945,13 +979,6 @@ class Serializer
 		//	 i--;
 		// }
 	}
-	
-	var _currentEntity :IEntity;
-	var _serializers :Map<String, Dynamic->Xml->Void>;
-	var _deserializers :Map<String, IPBContext->Dynamic->Xml->String->Dynamic>;
-	var _deferredReferences :Array<ReferenceNote>;
-	var _resources :Map<String, ResourceNote>;
-	var _typeInfo :TypeInfo;
 	
 	static var EMPTY_ARRAY :Array<Dynamic> = [];
 }

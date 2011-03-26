@@ -45,7 +45,7 @@ class PBGame extends PBGameBase
 		registerManager(SetManager, new SetManager());
 		registerManager(com.pblabs.engine.pooling.ObjectPoolMgr, new com.pblabs.engine.pooling.ObjectPoolMgr());
 		#if (!nodejs && (flash || js || cpp)) 
-		registerManager(com.pblabs.components.scene.SceneView, new com.pblabs.components.scene.SceneView());
+		registerManager(com.pblabs.components.scene2D.SceneView, new com.pblabs.components.scene2D.SceneView());
 		#end
 		registerManager(IResourceManager, new ResourceManager());
 		registerManager(Serializer, new Serializer());
@@ -54,7 +54,7 @@ class PBGame extends PBGameBase
 		
 		#if (js && !nodejs)
 		//Sensible default
-		getManager(com.pblabs.components.scene.SceneView).layerId = "screen";
+		getManager(com.pblabs.components.scene2D.SceneView).layerId = "screen";
 		#end
 	}
 }

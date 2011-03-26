@@ -53,7 +53,7 @@ class EmbeddedResource extends ResourceBase<Dynamic>
 		#end
 	}
 	
-	override public function create (?elementName :String) :Dynamic
+	override public function get (?elementName :String) :Dynamic
 	{
 		Preconditions.checkNotNull(elementName, "element name cannot be null");
 		#if js
@@ -61,17 +61,27 @@ class EmbeddedResource extends ResourceBase<Dynamic>
 		Preconditions.checkNotNull(element, "No element with id=\"" + elementName + "\"");
 		return element.cloneNode(true);
 		#elseif flash
-		var cls :Class<Dynamic> = Type.resolveClass("SWFResources_" + elementName);
+		var cls :Class<Dynamic> = Type.resolveClass(elementName.toUpperCase());
+		
+		if (cls == null) {
+			cls = Type.resolveClass("SWFResources_" + elementName);
+		}
 		if (cls == null) {
 			cls = Type.resolveClass(elementName);
 		}
 		if (cls == null) {
 			cls = Type.resolveClass("SWFResources_" + elementName.toUpperCase());
 		}
-		if (cls == null) {
-			cls = Type.resolveClass(elementName.toUpperCase());
-		}
+		
 		Preconditions.checkNotNull(cls, "No embedded resource class SWFResources_" + elementName + " or " + elementName);
+		// trace("Creating " + cls);
+		// var test = Type.createInstance(cls, EMPTY_ARRAY);
+		// var testcls = cls;
+		// while(testcls != null) {
+		// 	trace(Type.getClassName(testcls));
+		// 	testcls = Type.getSuperClass(testcls);
+		// }
+		// trace("is bitmap? " + Std.is(test, flash.display.Bitmap));
 		return Type.createInstance(cls, EMPTY_ARRAY);
 		#end
 	}

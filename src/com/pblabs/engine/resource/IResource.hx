@@ -20,7 +20,7 @@ interface IResource<T>
 	/**
 	  * Create/get the resource mapped to the name.
 	  */
-	function create (?resourceName :String) :T;
+	function get (?resourceName :String) :T;
 	
 	/**
 	  * Loads resources managed by this instance.

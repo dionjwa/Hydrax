@@ -50,9 +50,9 @@ class SVGResource extends ResourceBase<js.Dom.Image>
 	}
 	
 #if (flash || cpp)
-	override public function create (?name :String) :flash.display.Sprite
+	override public function get (?name :String) :flash.display.Sprite
 #elseif js
-	override public function create (?name :String) :js.Dom.Image
+	override public function get (?name :String) :js.Dom.Image
 #end
 	{
 		if (name != null) {

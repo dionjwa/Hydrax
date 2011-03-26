@@ -2,9 +2,9 @@ package com.pblabs.components.input;
 
 import com.pblabs.components.Constants;
 import com.pblabs.components.input.InputManager;
-import com.pblabs.components.scene.BaseSceneComponent;
-import com.pblabs.components.scene.BaseSceneManager;
-import com.pblabs.components.scene.SceneUtil;
+import com.pblabs.components.scene2D.BaseSceneComponent;
+import com.pblabs.components.scene2D.BaseSceneManager;
+import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.components.tasks.AnimatePropertyTask;
 import com.pblabs.components.tasks.TaskComponent;
@@ -31,7 +31,7 @@ import hsl.haxe.Signaler;
 
 using Type;
 
-using com.pblabs.components.scene.SceneUtil;
+using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
 using com.pblabs.geom.VectorTools;
@@ -141,7 +141,7 @@ class PanManager extends EntityComponent,
 		}
 		
 		Preconditions.checkNotNull(scene);
-		_scene = scene;
+		_scene = scene; 
 		_sceneComponent = null;
 		
 		_xProp = null;
@@ -169,7 +169,7 @@ class PanManager extends EntityComponent,
 		
 		Preconditions.checkNotNull(c);
 		_sceneComponent = c;
-		_scene = null;//c.layer.scene;
+		_scene = null;//c.layer.scene2D.
 		
 		_xProp = xProp;
 		_yProp = yProp;
@@ -252,7 +252,7 @@ class PanManager extends EntityComponent,
 					dragSignaler.dispatch(null);
 				}
 				
-			} else {//Pan the scene component
+			} else {//Pan the _sceneComponent
 				var worldStart = SceneUtil.translateScreenToWorld(_sceneComponent.layer.parent, _startMouse);
 				var worldNow = SceneUtil.translateScreenToWorld(_sceneComponent.layer.parent, e.inputLocation);
 				var worldDiff = worldNow.subtract(worldStart);
@@ -357,7 +357,7 @@ class PanManager extends EntityComponent,
 		}
 		
 		// if (_isPanning) {
-		// 	context.getManager(IProcessManager).isRunning = !(_pauseProcessManagerOnPan && _scene != null); 
+		// 	context.getManager(IProcessManager).isRunning = !(_pauseProcessManagerOnPan && _scene;!= null); 
 		// } else {
 		// 	context.getManager(IProcessManager).isRunning = true;
 		// }

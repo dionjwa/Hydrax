@@ -7,7 +7,7 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.input;
-import com.pblabs.components.scene.BaseSceneComponent;
+import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.engine.core.ObjectType;
 
 import de.polygonal.motor2.geom.math.XY;

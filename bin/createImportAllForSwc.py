@@ -4,11 +4,15 @@
 import os, os.path, string, sys, shutil
 
 if len(sys.argv) <= 1:
-    print "Usage: createImportAllForSwc.py <src folders> output.hx"
-    sys.exit()
+	print "Usage: createImportAllForSwc.py <src folders> output.hx"
+	sys.exit()
 
-hxoutput = sys.argv[-1]
-srcfolders = sys.argv[1:-1]
+args = sys.argv[1:]
+hxoutput = args[-1]
+srcfolders = args[0:-1]
+
+print "srcfolders: ", srcfolders
+print "hxoutput: ", hxoutput
 
 fileList =[]
 filetypes = ["hx"]
@@ -33,7 +37,7 @@ for srcfolder in srcfolders:
 						fileList.append(f)
 					# fileList.append(file)
 					break
-        
+		
 swffile = open(hxoutput, 'w')
 classname = hxoutput[:-3]
 classname = classname[classname.rfind("/") + 1:]
@@ -57,11 +61,11 @@ class """ + classname + """ extends Sprite
 
 
 swffile.write("""
-    public function new()
-    {
-        super();
-    }
-    public static function main() 
+	public function new()
+	{
+		super();
+	}
+	public static function main() 
 	{
 		new """ + classname + """();
 	}

@@ -134,7 +134,7 @@ class BasicSpatialManager2D extends NodeComponent<Dynamic, ISpatialObject2D>,
 		// for (tmp in tmpResults)
 		// {
 			// TODO: Bring me back.
-			//if (!tmp.pointOccupied(worldPosition, mask, context.scene))
+			//if (!tmp.pointOccupied(worldPosition, mask, context.scene2D.)
 			//   continue;
 			
 			// results.push(tmp);
@@ -143,8 +143,8 @@ class BasicSpatialManager2D extends NodeComponent<Dynamic, ISpatialObject2D>,
 		
 		// TODO: Bring me back.
 		// Sort the results.
-		//if(context.scene)
-		//   context.scene.sortSpatials(results);
+		//if(context.scene2D.
+		//   context.scene2D.sortSpatials(results);
 		
 		return hitAny;
 	}

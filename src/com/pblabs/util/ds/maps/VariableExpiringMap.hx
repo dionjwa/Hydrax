@@ -1,16 +1,18 @@
 /*******************************************************************************
- * Hydrax: haXe port of the PushButton Engine
+ * Hydrax :haXe port of the PushButton Engine
  * Copyright (C) 2010 Dion Amago
- * For more information see http://github.com/dionjwa/Hydrax
+ * For more information see http ://github.com/dionjwa/Hydrax
  *
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.util.ds.maps;
-import com.pblabs.engine.time.Timer;
+
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ds.maps.ExpiringEntry;
 import com.pblabs.util.ds.maps.LinkedMap;
+
+import haxe.Timer;
 
 /**
   * A map where keys expire at times given by a supplied function. 
@@ -19,7 +21,7 @@ class VariableExpiringMap<K, V> extends LinkedMap<K, V>
 {
 	var _computeExpireTime :K->V->Int;
 	var _expireHandler :K->V->Void;
-	var _timer:Timer;
+	var _timer :Timer;
 
 	public static function createVariableExpiringMapFunction <K, V> (computeExpireTime :K->V->Int, ?expireHandler :K->V->Void = null) :Map<K, V>->Map<K, V>
 	{

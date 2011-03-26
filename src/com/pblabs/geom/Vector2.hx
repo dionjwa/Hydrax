@@ -23,8 +23,6 @@ class Vector2 extends XY,
 	public var angle(get_angle, null) : Float;
 	public var length(get_length, set_length) : Float;
 	public var lengthSquared(getLengthSquared, null) : Float;
-	// public var x:Float;
-	// public var y:Float;
 
 	/**
 	 * Infinite vector - often the result of normalizing a zero vector.
@@ -58,14 +56,6 @@ class Vector2 extends XY,
 		this.x = x;
 		this.y = y;
 	}
-
-	// /**
-	//  * Returns the dot product of this vector with vector v.
-	//  */
-	// public function dot (v :Vector2) :Float
-	// {
-	// 	return x * v.x + y * v.y;
-	// }
 
 	/**
 	 * Returns a copy of this Vector2.
@@ -114,33 +104,6 @@ class Vector2 extends XY,
 	}
 
 	/**
-	 * Rotates the vector in place by 'radians'.
-	 * Returns a reference to 'this', for chaining.
-	 */
-	// public function rotateLocal (radians :Float) :Vector2
-	// {
-	// 	// if (radians == 0) {
-	// 	//	 return this;
-	// 	// }
-	// 	var cosTheta = Math.cos(radians);
-	// 	var sinTheta = Math.sin(radians);
-
-	// 	var oldX = x;
-	// 	x = (cosTheta * oldX) - (sinTheta * y);
-	// 	y = (sinTheta * oldX) + (cosTheta * y);
-
-	// 	return this;
-	// }
-
-	// /**
-	//  * Returns a rotated copy of this vector.
-	//  */
-	// public function rotate (radians :Float) :Vector2
-	// {
-	// 	return clone().rotateLocal(radians);
-	// }
-
-	/**
 	 * Normalizes the vector in place and returns its original length.
 	 */
 	public function normalizeLocalAndGetLength () :Float
@@ -175,46 +138,6 @@ class Vector2 extends XY,
 		return clone().normalizeLocal();
 	}
 
-	// /**
-	//  * Adds another Vector2 to this, in place.
-	//  * Returns a reference to 'this', for chaining.
-	//  */
-	// public function addLocal (v :Vector2) :Vector2
-	// {
-	// 	x += v.x;
-	// 	y += v.y;
-
-	// 	return this;
-	// }
-
-	// /**
-	//  * Returns a copy of this vector added to 'v'.
-	//  */
-	// public function add (v :Vector2) :Vector2
-	// {
-	// 	return clone().addLocal(v);
-	// }
-
-	/**
-	 * Subtracts another vector from this one, in place.
-	 * Returns a reference to 'this', for chaining.
-	 */
-	// public function subtractLocal (v :Vector2) :Vector2
-	// {
-	// 	x -= v.x;
-	// 	y -= v.y;
-
-	// 	return this;
-	// }
-
-	// /**
-	//  * Returns (this - v).
-	//  */
-	// public function subtract (v :Vector2) :Vector2
-	// {
-	//    return clone().subtractLocal(v);
-	// }
-
 	/**
 	 * Returns a vector that is perpendicular to this one.
 	 * If ccw = true, the perpendicular vector is rotated 90 degrees counter-clockwise from this
@@ -228,23 +151,6 @@ class Vector2 extends XY,
 			return new Vector2(y, -x);
 		}
 	}
-
-	/**
-	 * Scales this vector by value.
-	 */
-	// public function scaleLocal (value :Float) :Vector2
-	// {
-	// 	x *= value;
-	// 	y *= value;
-
-	// 	return this;
-	// }
-
-	// /** Returns (this * value). */
-	// public function scale (value :Float) :Vector2
-	// {
-	// 	return clone().scaleLocal(value);
-	// }
 
 	/**
 	 * Inverts the vector.
@@ -280,22 +186,6 @@ class Vector2 extends XY,
 	public function similar (v :Vector2, epsilon :Float) :Bool
 	{
 		return ((Math.abs(x - v.x) <= epsilon) && (Math.abs(y - v.y) <= epsilon));
-	}
-
-	/**
-	 * Returns the smaller of the two angles between v1 and v2, in radians.
-	 * Result will be in range [0, pi].
-	 */
-	public static function smallerAngleBetween (v1 :Vector2, v2 :Vector2) :Float
-	{
-		// v1 dot v2 == |v1||v2|cos(theta)
-		// theta = acos ((v1 dot v2) / (|v1||v2|))
-
-		var dot:Float = com.pblabs.geom.VectorTools.dot(v1, v2);
-		var len1:Float = v1.length;
-		var len2:Float = v2.length;
-
-		return Math.acos(dot / (len1 * len2));
 	}
 
 	#if (!neko && debug)
