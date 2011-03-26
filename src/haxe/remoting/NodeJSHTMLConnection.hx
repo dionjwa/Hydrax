@@ -7,7 +7,8 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package haxe.remoting;
-
+#if nodejs
+ 
 import haxe.remoting.Context;
 
 import js.Node;
@@ -92,3 +93,4 @@ class NodeJSHTMLConnection
 		}
 	}	
 }
+#end

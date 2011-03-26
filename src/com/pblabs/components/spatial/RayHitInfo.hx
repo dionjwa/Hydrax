@@ -14,6 +14,8 @@ package com.pblabs.components.spatial;
 
 import de.polygonal.motor2.geom.math.XY;
 
+using com.pblabs.geom.VectorTools;
+
 /**
 * Information about the results of a ray cast. Used with 
 * ISpatialManager2D.CastRay().
@@ -51,12 +53,12 @@ class RayHitInfo
 	{
 		time = other.time;
 		
-		if(other.position)
+		if(other.position != null)
 			position = other.position.clone();
 		else
 			position = null;
 		
-		if(other.normal)
+		if(other.normal != null)
 			normal = other.normal.clone();
 		else
 			normal = null;

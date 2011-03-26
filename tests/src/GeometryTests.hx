@@ -14,6 +14,9 @@ import com.pblabs.geom.Vector2;
 import flash.display.Graphics;
 import flash.display.Sprite;
 
+/**
+  * Currently doesn't work, needs to be fixed for the updated code and testing framework.
+  */
 class GeometryTests extends Sprite {
 	
 	public function new()

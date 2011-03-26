@@ -12,6 +12,8 @@ import com.pblabs.geom.Rectangle;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.ReflectUtil;
 
+import de.polygonal.motor2.geom.math.XY;
+
 class BoundsNone extends AbstractBounds<BoundsNone> 
 {
 	public function new()
@@ -19,7 +21,7 @@ class BoundsNone extends AbstractBounds<BoundsNone>
 		super();
 	}
 
-	override function get_center ():Vector2
+	override function get_center ():XY
 	{
 		throw "Abstract method";
 		return null;
@@ -35,10 +37,8 @@ class BoundsNone extends AbstractBounds<BoundsNone>
 		return 0;
 	}
 
-	public override function distanceToPoint (p :Vector2) :Float
+	public override function distanceToPoint (p :XY) :Float
 	{
 		return 0;
 	}
 }
-
-
