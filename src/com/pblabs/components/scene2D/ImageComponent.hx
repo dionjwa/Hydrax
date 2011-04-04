@@ -22,6 +22,13 @@ import de.polygonal.motor2.geom.math.XY;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.resource.ResourceToken;
 
+typedef ImageData = 
+#if (flash || cpp)
+flash.display.BitmapData;
+#else
+js.Dom.Image;
+#end
+
 /**
   * Cross platform Image using Scene2D component.
   */
@@ -35,11 +42,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 #end
 {
 	/** The IResource name and item id.  Id can be null */
-	#if (flash || cpp)
-	public var resource :ResourceToken<flash.display.DisplayObject>;
-	#elseif js
-	public var resource :ResourceToken<js.Dom.Image>;
-	#end
+	public var resource :ResourceToken<Dynamic>;
 	
 	#if (js && !css)
 	public var displayObject (default, set_displayObject) :js.Dom.Image;
@@ -69,25 +72,28 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	override function onAdd () :Void
 	{
 		com.pblabs.util.Assert.isNotNull(resource, "resource is null for #" + owner.name + "." + name);
-		
 		#if js
 		//Get the DomResource, this makes sure the inline image is loaded
 		var image :js.Dom.Image = context.create(resource);
+		com.pblabs.util.Assert.isNotNull(image, "Image loaded from " + resource + " is null");
 		Preconditions.checkNotNull(image, "image from resource is null " +resource);
 		displayObject = image;
 		super.onAdd();
 		#elseif (flash || cpp)
-		var image :flash.display.DisplayObject = context.get(resource);
-		_displayObject = image;
-		
-		if (Std.is(_displayObject, flash.display.Bitmap)) {
+		var image :Dynamic = context.get(resource);
+		com.pblabs.util.Assert.isNotNull(image, "Image loaded from " + resource + " is null");
+		com.pblabs.util.Assert.isNotNull(image, "null image for " + resource);
+		if (Std.is(image, flash.display.BitmapData)) {
+			_displayObject = new flash.display.Bitmap(cast(image, flash.display.BitmapData));
 			_registrationPoint.x = _displayObject.width / 2;
 			_registrationPoint.y = _displayObject.height / 2;
+		} else if (Std.is(image, flash.display.DisplayObject)) {
+			_displayObject = cast image;
+		} else {
+			com.pblabs.util.Log.error("Unrecognized image type=" + com.pblabs.util.ReflectUtil.getClassName(image)); 
 		}
 		super.onAdd();
 		#end
-		
-		com.pblabs.util.Assert.isNotNull(image, "Image loaded from " + resource + " is null");
 		
 		#if css
 		_width = image.width;
