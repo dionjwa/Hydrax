@@ -37,7 +37,6 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	public var width (get_width, set_width) :Float;
 	public var height (get_height, set_height) :Float;
 	public var angle (get_angle, set_angle) :Float;
-	// @editor({ui:"HUISlider", min:0})
 	public var scale (get_scale, set_scale) :Float;
 	public var scaleX (get_scaleX, set_scaleX) :Float;
 	public var scaleY (get_scaleY, set_scaleY) :Float;
@@ -45,9 +44,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	public var alpha (get_alpha, set_alpha) :Float;
 	public var isTransformDirty (get_isTransformDirty, set_isTransformDirty) :Bool;
 	
-	// @editor({ui:"NumericStepper", min:0})
 	public var zIndex (get_zIndex, set_zIndex) :Int;
-	// @editor({ui:"NumericStepper", min:0})
 	public var layerIndex (get_layerIndex, set_layerIndex) :Int;
 	public var locationOffset (get_locationOffset, set_locationOffset) :XY;
 	public var angleOffset (get_angleOffset, set_angleOffset) :Float;
@@ -100,8 +97,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		isTransformDirty = true;
 		_locationOffset = new Vector2();
 		_angleOffset = 0;
-		_layerIndexDirty = true;
-		_zIndexDirty = true;
+		_layerIndexDirty = false;
+		_zIndexDirty = false;
 		_registrationPoint = new Vector2(0, 0);
 		//Sensible default
 		spatialProperty = SpatialComponent.P_SPATIAL;
@@ -161,7 +158,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 			setLocation(coords.position);
 			angle = coords.angle;
 		} else {
-			com.pblabs.util.Log.warn("No coords component found, you are on your own regarding updating Scene components " + com.pblabs.util.Log.getStackTrace());
+			com.pblabs.util.Log.info("No coords component found, you are on your own regarding updating Scene components " + com.pblabs.util.Log.getStackTrace());
 		}
 		
 		if (owner.getComponent(com.pblabs.components.base.AlphaComponent) != null) {
@@ -220,9 +217,6 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	function set_angle (val :Float) :Float
 	{
-		if (_angle == val) {
-			return val;
-		}
 		_angle = val;
 		isTransformDirty = true;
 		return val;
@@ -267,9 +261,6 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	function set_scaleY (val :Float) :Float
 	{
-		if (_scaleY == val) {
-			return val;
-		}
 		_scaleY = val;
 		_isTransformDirty = true;
 		_bounds.ymin = _y - height / 2;
@@ -325,9 +316,6 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	function set_alpha (val :Float) :Float
 	{
-		// if (_alpha == val) {
-		// 	return val;
-		// }
 		_alpha = val;
 		isTransformDirty = true;
 		return val;
@@ -340,9 +328,6 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	function set_zIndex (val :Int) :Int
 	{
-		// if (_zIndex == val) {
-		// 	return val;
-		// }
 		_zIndex = val;
 		_zIndexDirty = true;
 		return val;
@@ -355,9 +340,6 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	function set_layerIndex (val :Int) :Int
 	{
-		// if (_layerIndex == val) {
-		// 	return val;
-		// }
 		_layerIndex = val;
 		_layerIndexDirty = true;
 		return val;
