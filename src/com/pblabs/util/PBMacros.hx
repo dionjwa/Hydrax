@@ -79,6 +79,9 @@ class PBMacros
 				//Instance fields
 				if (!doneInstanceFields) {
 					for (fieldChild in childXML) {
+						if (fieldChild.nodeType != Xml.Element) {
+							continue;
+						}
 						//If there is a type specified as an attribute of the parent, use that, otherwise default to float
 						var type = tFloat;
 						if (root.exists(fieldChild.nodeName)) {
@@ -97,7 +100,6 @@ class PBMacros
 		
 		return { expr : EBlock(fields), pos : pos };
 	}
-	
 	
 	/**
 	  * Builds the corresponding enum for Enumerables that use enums
@@ -134,40 +136,31 @@ class PBMacros
 		return p(EBlock(carr));
 	}
 	
-	@:macro 
-	public static function embedBinaryDataResource(args :Array<Expr>)
+	/**
+	  * Embed a binary resource at compile time, but specified in code rather than in the *hxml file.
+	  *
+	  * Returns the haxe.Resource key.
+	  *
+	  * Example:
+	  * var embed = com.pblabs.util.PBMacros.embedBinaryDataResource("build/server.swf", "battlecomputer", 1234);
+	  * var bytes = haxe.Resource.getBytes("battlecomputer");
+	  * trace("bytes.length=" + (bytes == null ? -1 :bytes.length));
+	  * 
+	  * var swf = new com.pblabs.engine.resource.flash.SwfResource("swf", com.pblabs.engine.resource.Source.bytes(bytes), 1234);
+	  * swf.load(function () :Void {
+	  * 	trace("loaded as swf");
+	  * 	trace(swf.hasSymbol("net.amago.turngame.server.compute.BattleComputer"));
+	  * 
+	  * }, function (e :Dynamic) :Void {
+	  * 	trace("error loading  swf " + Std.string(e));
+	  * });
+	  */
+	@:macro
+	public static function embedBinaryDataResource(binPath :String, ?resourceId :String = null, ?xorKey :Int = -1)
 	{
+		resourceId = resourceId != null ? resourceId : binPath;
+		
 		var pos = haxe.macro.Context.currentPos();
-		var pathToBinaryExpr :Expr = args[0];
-		var resourceIdExpr :Expr = args[1];
-		var xorEncryptionExpr :Expr = args[2];
-		
-		var binPath = switch (pathToBinaryExpr.expr) {
-			case EConst(c):
-				switch( c ) {
-					case CString(s): s;
-					default: haxe.macro.Context.warning("Path to binary data not a CString", pos); null;
-				}
-			default: haxe.macro.Context.warning("No path to binary data given " + pathToBinaryExpr.expr, pos); null;
-		}
-		
-		var resourceId = switch (resourceIdExpr.expr) {
-			case EConst(c):
-				switch( c ) {
-					case CString(s): s;
-					default: haxe.macro.Context.warning("No resourceId given", pos); null;
-				}
-			default: haxe.macro.Context.warning("No resourceId given", pos); null;
-		}
-		
-		var xorKey :Int = xorEncryptionExpr == null ? -1 : switch (xorEncryptionExpr.expr) {
-			case EConst(c):
-				switch( c ) {
-					case CInt(s): Std.parseInt(s);
-					default: haxe.macro.Context.warning("No xorEncryptionExpr is not a EConst.CInt", pos); -1;
-				}
-			default: haxe.macro.Context.warning("xorEncryptionExpr is not an EConst", pos); -1;
-		}
 		
 		var bytes = neko.io.File.getBytes(binPath);
 		if (xorKey > 0) {
@@ -175,6 +168,6 @@ class PBMacros
 		}
 		
 		haxe.macro.Context.addResource(resourceId, bytes);
-		return { expr : EConst(CString("null")), pos : pos };
+		return { expr : EConst(CString(resourceId)), pos : pos };
 	}
 }
