@@ -22,7 +22,6 @@ import flash.geom.Matrix;
 
 class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 {
-	
 	public var dirty :Bool;
 	public var displayContainer (get_displayContainer, never) :DisplayObjectContainer;
 
@@ -37,25 +36,7 @@ class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 	
 	public function getChildIndex (c :SceneComponent) :Int
 	{
-	    return _displayContainer.getChildIndex(c.displayObject);
-	}
-	
-	override function childAdded (c :SceneComponent) :Void
-	{
-		super.childAdded(c);
-		_displayContainer.addChild(c.displayObject);
-	}
-	
-	override function childRemoved (c :SceneComponent) :Void
-	{
-		super.childRemoved(c);
-		_displayContainer.removeChild(c.displayObject);
-	}
-	
-	override function onAdd () :Void
-	{
-		super.onAdd();	  
-		_displayContainer.name = name;
+		return _displayContainer.getChildIndex(c.displayObject);
 	}
 	
 	public function updateTransform () :Void
@@ -77,6 +58,39 @@ class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 
 		// Apply the transform.
 		displayContainer.transform.matrix = _rootTransform;
+	}
+	
+	public function updateZOrder () :Void
+	{
+		var ok = false;
+		while (!ok) {
+			ok = true;
+			for (i in 0...children.length) {
+				if (_displayContainer.getChildIndex(children[i].displayObject) != i) {
+					_displayContainer.setChildIndex(children[i].displayObject, i);
+					ok = false;
+					break;
+				}
+			}
+		}
+	}
+	
+	override function childAdded (c :SceneComponent) :Void
+	{
+		super.childAdded(c);
+		_displayContainer.addChild(c.displayObject);
+	}
+	
+	override function childRemoved (c :SceneComponent) :Void
+	{
+		super.childRemoved(c);
+		_displayContainer.removeChild(c.displayObject);
+	}
+	
+	override function onAdd () :Void
+	{
+		super.onAdd();	  
+		_displayContainer.name = name;
 	}
 
 	function get_displayContainer () :DisplayObjectContainer

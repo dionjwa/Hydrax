@@ -11,11 +11,14 @@ package com.pblabs.components.scene2D.flash;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.util.Preconditions;
 
+import de.polygonal.core.math.Mathematics;
+
 import flash.display.DisplayObject;
 
 import flash.geom.Matrix;
 
 using com.pblabs.engine.util.PBUtil;
+using com.pblabs.util.ArrayUtil;
 using com.pblabs.util.MathUtil;
 
 class SceneComponent extends BaseSceneComponent<SceneLayer>,
@@ -36,14 +39,13 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 			return;
 		}
 		if (_layerIndexDirty) {
-			com.pblabs.util.Assert.isNotNull(parent, "Cannot change layer index if not attached to ascenesince which layer?");
+			com.pblabs.util.Assert.isNotNull(parent, "Cannot change layer index if not attached to a scene since which layer?");
 			var scene = parent.parent;
 			var newlayer = scene.getLayerAt(layerIndex);
 			if (newlayer != null) {
 				this.removeFromParent();
 				parentProperty = newlayer.entityProp();
 				addToParent(newlayer);
-				_zIndex = parent.children.length - 1;
 				_zIndexDirty = true;
 			}
 			_layerIndexDirty = false;
@@ -51,8 +53,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		}
 		if (_zIndexDirty) {
 			com.pblabs.util.Assert.isNotNull(parent);
-			_zIndex = _zIndex.clamp(0, parent.displayContainer.numChildren - 1);
-			parent.displayContainer.setChildIndex(displayObject, _zIndex);
+			parent.updateZOrder();
 			_zIndexDirty = false;
 			_isTransformDirty = true;
 		}
@@ -64,9 +65,12 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	override function addedToParent () :Void
 	{
 		super.addedToParent();
-		zIndex = parent.getChildIndex(this);
-		com.pblabs.util.Assert.isNotNull(parent.parent);
-		layerIndex = parent.parent.getLayerIndex(parent); 
+		if (parent.parent != null) {
+			com.pblabs.util.Assert.isNotNull(parent.parent);
+			_layerIndex = parent.parent.getLayerIndex(parent);
+		} else {
+			com.pblabs.util.Log.warn("Layer " + parent.name + " has no scene parent");
+		}
 	}
 	
 	override function setDefaultVars () :Void
@@ -171,7 +175,6 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		// 	tmpScaleY = _scale.y * (_size.y / localDimensions.height);
 		// }
 		
-		
 		_transformMatrix.identity();
 		_transformMatrix.scale(_scaleX, _scaleY);
 		_transformMatrix.translate(-registrationPoint.x * _scaleX, - registrationPoint.y * _scaleY);
@@ -184,6 +187,28 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		_displayObject.visible = (alpha > 0);
 		
 		isTransformDirty = false;
+	}
+	
+	override function get_zIndex () :Int
+	{
+		return layer == null ? _zIndex : layer.children.indexOf(this);
+	}
+	
+	override function set_zIndex (val :Int) :Int
+	{
+		if (layer == null) {
+			_zIndex = val;
+			_zIndexDirty = true;
+		} else {
+			val = Mathematics.clamp(val, 0, layer.children.length - 1);
+			var curIndex = layer.children.indexOf(this);
+			if (curIndex != val) {
+				layer.children.remove(this);
+				layer.children.insert(val, this);
+				_zIndexDirty = true;
+			}
+		}
+		return val;
 	}
 	
 	var _displayObject :DisplayObject;
