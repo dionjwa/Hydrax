@@ -12,28 +12,32 @@ import com.pblabs.util.Preconditions;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
+typedef ImageData = 
 #if (flash || cpp)
+flash.display.BitmapData;
+#else
+js.Dom.Image;
+#end
+	
+// #if (flash || cpp)
 /**
   * Caches bitmap representations of other display types, e.g. Bitmaps of 
   * complex MovieClips in Flash.
   */
-class BitmapCacheResource extends ResourceBase<flash.display.BitmapData>
-#else
-class BitmapCacheResource extends ResourceBase<js.Dom.Image>
-#end
+class BitmapCacheResource extends ResourceBase<ImageData>
 {
 	inline public static var NAME :String = "BitmapCacheResource";
 	
-	public static function createCachedToken <T>(resourceId :String, key :String) :ResourceToken<T>
+	public static function createCachedToken (resourceId :String, key :String) :ResourceToken<ImageData>
 	{
 		return new ResourceToken(NAME, resourceId + "." + key);
 	}
 	
-	#if (flash || cpp)
-	var _cache :Map<String, flash.display.BitmapData>;
-	#elseif js
-	var _cache :Map<String, js.Dom.Image>;
-	#end
+	// #if (flash || cpp)
+	// var _cache :Map<String, flash.display.BitmapData>;
+	// #elseif js
+	var _cache :Map<String, ImageData>;
+	// #end
 	
 	var _manager :IResourceManager;
 	
@@ -52,11 +56,12 @@ class BitmapCacheResource extends ResourceBase<js.Dom.Image>
 		loaded();
 	}
 	
-#if (flash || cpp)
-	override public function get (?name :String) :flash.display.BitmapData
-#else
-	override public function get (?name :String) :js.Dom.Image
-#end
+// #if (flash || cpp)
+// 	override public function get (?name :String) :flash.display.BitmapData
+// #else
+// 	override public function get (?name :String) :js.Dom.Image
+// #end
+	override public function get (?name :String) :ImageData
 	{
 		if (name == null) {
 			com.pblabs.util.Log.error("get(name) :name cannot be null");
