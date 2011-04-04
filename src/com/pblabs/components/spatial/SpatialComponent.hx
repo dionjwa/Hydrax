@@ -124,7 +124,6 @@ class SpatialComponent extends EntityComponent,
 
 	function set_x (val :Float):Float
 	{
-		// com.pblabs.util.Assert.isFalse(Math.isNaN(val), com.pblabs.util.Log.getStackTrace());
 		if (_vec.x != val) {
 			_vec.x = val;
 			updateWorldAABB();			
@@ -140,7 +139,6 @@ class SpatialComponent extends EntityComponent,
 
 	function set_y (val :Float):Float
 	{
-		// com.pblabs.util.Assert.isFalse(Math.isNaN(val), com.pblabs.util.Log.getStackTrace());
 		if (_vec.y != val) {
 			_vec.y = val;
 			updateWorldAABB();
@@ -178,8 +176,6 @@ class SpatialComponent extends EntityComponent,
 	override function onReset () :Void
 	{
 		super.onReset();
-		com.pblabs.util.Assert.isTrue(name == NAME, com.pblabs.util.Log.getStackTrace());
-		// spriteForPointChecks = null;
 		#if (flash || js)
 		if (spriteForPointChecks == null || !spriteForPointChecks.isRegistered) {
 			spriteForPointChecks = cast owner.getComponent(IBounded);
@@ -295,7 +291,6 @@ class SpatialComponent extends EntityComponent,
 		
 		if (_worldAABB != null) {
 			return PointInsideAABB.test2(pos, _worldAABB);
-			// return pos.x <= _worldAABB.xmax && pos.x >= _worldAABB.xmin && pos.y <= _worldAABB.ymax && pos.y >= _worldAABB.ymin;
 		}
 		// OK, so pass it over to the sprite.
 		#if (flash || js)

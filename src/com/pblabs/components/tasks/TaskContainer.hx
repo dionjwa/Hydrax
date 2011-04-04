@@ -32,15 +32,20 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.util.Assert;
 
 class TaskContainer
-	implements IEntityTask {
-
-	
-
+	implements IEntityTask 
+{
 	public static var TYPE__LIMIT:Int = 3;
 	public static var TYPE_PARALLEL:Int = 0;
 	public static var TYPE_REPEATING:Int = 2;
 	public static var TYPE_SERIAL:Int = 1;
 
+	var _activeTaskCount :Int;
+	var _completedTasks :Array<IEntityTask> ;
+	var _invalidated :Bool;
+	var _tasks :Array<IEntityTask> ;
+
+	var _type :Int;
+	
 	public function new (type :Int, ?subtasks :Array<IEntityTask> = null)
 	{
 		if (type >= TYPE__LIMIT) {
@@ -132,7 +137,7 @@ class TaskContainer
 				continue;
 			}
 			
-			var task:IEntityTask = (cast( _tasks[i], IEntityTask));
+			var task = _tasks[i];
 
 			if (null == task) {
 				continue;
@@ -191,11 +196,5 @@ class TaskContainer
 
 		return out;
 	}
-	var _activeTaskCount:Int;
-	var _completedTasks:Array<IEntityTask> ;
-	var _invalidated:Bool;
-	var _tasks:Array<IEntityTask> ;
-
-	var _type:Int;
 }
 

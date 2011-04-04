@@ -41,6 +41,7 @@ class TaskUtil
 	/** Adds an unnamed task to this IEntity. */
 	public static function addTask (e :IEntity, task :IEntityTask) :Void
 	{
+		com.pblabs.util.Assert.isNotNull(e, "null entity");
 		getTaskComponent(e).addTask(task);
 	}
 
@@ -70,6 +71,7 @@ class TaskUtil
 	
 	static function getTaskComponent (e :IEntity) :TaskComponent
 	{
+		com.pblabs.util.Assert.isNotNull(e, "null entity");
 		return e.getComponentByName(TaskComponent.NAME);
 	}
 }
