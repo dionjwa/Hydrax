@@ -23,12 +23,13 @@ using com.pblabs.util.EventDispatcherUtil;
 
 class SwfResource extends ResourceBase<Dynamic> 
 {
-	public var applicationDomain(getApplicationDomain, null) :ApplicationDomain;
-	public var displayRoot(getDisplayRoot, null) :DisplayObject;
+	public var applicationDomain (get_applicationDomain, never) :ApplicationDomain; function get_applicationDomain () :ApplicationDomain { return _loader.contentLoaderInfo.applicationDomain; }
+	public var displayRoot (get_displayRoot, never) :DisplayObject; function get_displayRoot () :DisplayObject { return _loader.content; }
+
 	var _source :Source;
 	var _loader :Loader;
 	var _xorKey :Int;
-
+	
 	public function new (name :String, source :Source, ?xorkey :Int = -1)
 	{
 		super(name);
@@ -72,8 +73,14 @@ class SwfResource extends ResourceBase<Dynamic>
 	
 	function loadFromUrl (url :String) :Void
 	{
+		var context = new LoaderContext();
+		// default to loading symbols into a subdomain
+		// context.applicationDomain = new ApplicationDomain(ApplicationDomain.currentDomain);
+		context.applicationDomain = ApplicationDomain.currentDomain;
+		// context.checkPolicyFile = true;
+		
 		Preconditions.checkNotNull(url, "url is null");
-		_loader.load(new flash.net.URLRequest(url));
+		_loader.load(new flash.net.URLRequest(url), context);
 	}
 	
 	function loadFromBytes (bytes :haxe.io.Bytes) :Void
@@ -134,15 +141,5 @@ class SwfResource extends ResourceBase<Dynamic>
 	public function getClass (name :String) :Class<Dynamic>
 	{
 		return cast(getSymbol(name), Class<Dynamic>);
-	}
-
-	public function getApplicationDomain () :ApplicationDomain
-	{
-		return _loader.contentLoaderInfo.applicationDomain;
-	}
-
-	public function getDisplayRoot () :DisplayObject
-	{
-		return _loader.content;
 	}
 }
