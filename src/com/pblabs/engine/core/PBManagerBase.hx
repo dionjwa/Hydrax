@@ -28,6 +28,7 @@ class PBManagerBase
 	{
 		com.pblabs.util.Assert.isNotNull(game, "No PBGameBase?");
 		game.newActiveContextSignaler.bind(contextSwitched);
+		context = game.currentContext;
 	}
 	
 	public function shutdown () :Void
