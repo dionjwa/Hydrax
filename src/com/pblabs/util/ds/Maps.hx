@@ -43,24 +43,15 @@ class Maps
 			return new StringMap<K, V>();
 		} else {
 			classname = switch (Type.typeof(keyClazz)) {
-				case TUnknown:
-				throw "Unknown map key type";
-				case TObject:
-				Type.getClassName(keyClazz);
-				case TNull:
-				throw "TNull not allowed for map key type";
-				case TInt:
-				"TInt";
-				case TFunction:
-				throw "TFunction not allowed for map key type";
-				case TFloat:
-				"TFloat";
-				case TEnum(e):
-				throw "TEnum not allowed for map key type";
-				case TClass(c):
-				Type.getClassName(c);
-				case TBool:
-				throw "TBool not allowed for map key type";
+				case TUnknown: throw "Unknown map key type";
+				case TObject: Type.getClassName(keyClazz);
+				case TNull: throw "TNull not allowed for map key type";
+				case TInt: "TInt";
+				case TFunction: throw "TFunction not allowed for map key type";
+				case TFloat: "TFloat";
+				case TEnum(e): "TEnum";
+				case TClass(c): Type.getClassName(c);
+				case TBool: throw "TBool not allowed for map key type";
 			}
 		}
 		
@@ -84,9 +75,13 @@ class Maps
 			#else
 			return cast new HashMap<V>();
 			#end
-		} 
+		}
+		else if (classname == "TEnum") {
+			//Convert enums to Strings.  Doesn't work on enums with parameters, or rather, they are treated as the same key.
+			return new StringMap<K, V>();
+		}
 		else if (classname == "TFloat" || classname == "Float") {
-			//TODO: Hmm, is this a good idea?  Can dictionaries store floats correctly across all platforms.
+			//TODO: Hmm, is this a good idea?  Can dictionaries store floats correctly across all platforms?
 			return new StringMap<K, V>();
 		} else {
 			
