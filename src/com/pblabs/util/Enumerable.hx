@@ -220,7 +220,6 @@ class Enumerable<T>
 	
 	public function deserialize (xml :Xml) :Dynamic
 	{
-		var cls = Type.getClass(this);
 		for (fieldElement in xml) {
 			if (fieldElement.nodeType != Xml.Element) {
 				continue;

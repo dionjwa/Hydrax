@@ -20,9 +20,6 @@ class Demo #if (flash || cpp) extends flash.display.Sprite #end
 		flash.Lib.current.addChild(this);
 		#end
 	
-		
-		
-		
 		//Setup logging.
 		com.pblabs.engine.debug.Log.setup();
 		// com.pblabs.engine.debug.Log.setLevel(com.pblabs.engine.injection.Injector, com.pblabs.engine.debug.Log.DEBUG);
