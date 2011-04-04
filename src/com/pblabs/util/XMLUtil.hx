@@ -54,6 +54,11 @@ class XMLUtil
 		}
 		return !hasComplexContent(xml);
 	}
+
+	public static function ensureNotDocument (xml :Xml) :Xml
+	{
+		return xml.nodeType == Xml.Document ? xml.firstElement() : xml;
+	}
 	
 	public static function child (xml :Xml, childName :String) :Xml
 	{
@@ -61,6 +66,14 @@ class XMLUtil
 			return x;
 		}
 		return null;
+	}
+	
+	public static function isChild (xml :Xml, childName :String) :Bool
+	{
+		for (x in xml.elementsNamed(childName)) {
+			return true;
+		}
+		return false;
 	}
 	
 	public static function createElementWithValue (name :String, value :Dynamic) :Xml
