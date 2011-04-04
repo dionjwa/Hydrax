@@ -169,6 +169,19 @@ class DisplayUtils
 		if (d == null) {
 			return null;
 		}
+		var bd = convertToBitmapData(d, scale);
+		return bd != null ? new Bitmap(bd) : null;
+	}
+	
+	/**
+	 * Converts any DisplayObject into a Bitmap.  This can increase the graphical
+	 * performance of complex MovieClips.
+	 */
+	public static function convertToBitmapData (d :DisplayObject, ?scale :Float = 1) :BitmapData
+	{
+		if (d == null) {
+			return null;
+		}
 
 		#if flash
 		var bounds = d.getBounds(d);
@@ -189,9 +202,7 @@ class DisplayUtils
 			true, 0xffffff);
 
 		bd.draw(d, new Matrix(scale, 0, 0, scale, -bounds.left * scale, -bounds.top * scale));
-
-		var bm:Bitmap = new Bitmap(bd);
-		return bm;
+		return bd;
 	}
 
 	public static function detach (d :DisplayObject) :Void
@@ -558,16 +569,16 @@ class DisplayUtils
 	#end
 
 	#if flash
-	static function createBitmapData (disp :DisplayObject, ?width :Float = -1, ?height :Float =
-		-1, ?uniformScale :Bool = true) :BitmapData
+	public static function createBitmapData (disp :DisplayObject, ?width :Int = -1, ?height :Int =
+		-1, ?uniformScale :Bool = true, ?center :Point) :BitmapData
 	{
 		var bounds:Rectangle = disp.getBounds(disp);
 
 		if (width < 0) {
-			width = bounds.width;
+			width = Std.int(bounds.width);
 		}
 		if (height < 0) {
-			height = bounds.height;
+			height = Std.int(bounds.height);
 		}
 
 		var scaleX:Float = width / bounds.width;
@@ -576,7 +587,12 @@ class DisplayUtils
 			scaleX = scaleY = Math.min(scaleX, scaleY);
 		}
 
-		var bd:BitmapData = new BitmapData(cast(width), cast(height), true, 0);
+		if (center != null) {
+			center.x = -bounds.x * scaleX;
+			center.y = -bounds.y * scaleY;
+		}
+		
+		var bd = new BitmapData(cast width, cast height, true, 0);
 		bd.draw(disp, new Matrix(scaleX, 0, 0, scaleY, -bounds.x * scaleX, -bounds.y * scaleY));
 		return bd;
 	}
