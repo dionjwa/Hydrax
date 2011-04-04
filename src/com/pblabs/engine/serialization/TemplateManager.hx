@@ -595,7 +595,7 @@ class TemplateManager
 		
 		var templateXML = getXML(templateName, "template");
 		if (null == templateXML) {
-			com.pblabs.util.Log.warn("Unable to find the template " + templateName + ".");
+			com.pblabs.util.Log.error("Unable to find the template " + templateName + ".");
 			return false;
 		}
 		
