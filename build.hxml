@@ -9,7 +9,6 @@
 -lib feffects
 -lib polygonal
 
--swf build/hydrax.swf
--swf-version 10
+-swf9 build/hydrax.swf
 -D network-sandbox
 -main AllClasses
