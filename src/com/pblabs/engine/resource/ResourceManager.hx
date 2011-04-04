@@ -43,6 +43,7 @@ class ResourceManager
 	
 	public function get <T>(resourceToken :ResourceToken<T>) :T
 	{
+		com.pblabs.util.Log.debug(resourceToken);
 		com.pblabs.util.Assert.isNotNull(resourceToken);
 		return getFromName(resourceToken.resourceId, resourceToken.key);
 	}
