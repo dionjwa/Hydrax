@@ -257,7 +257,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		if (spatial != null) {
 			bindSignal(spatial.signalerLocation, setLocation);
 		} else {
-			com.pblabs.util.Log.warn("SceneManager " + owner.name + " does not have a SpatialComponent. This mean no panning the Scene");
+			// com.pblabs.util.Log.warn("SceneManager " + owner.name + " does not have a SpatialComponent. This mean no panning the Scene");
 		}
 		
 		var pb :com.pblabs.engine.core.PBContext = cast context;

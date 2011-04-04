@@ -88,7 +88,7 @@ class AnimateValueTask extends InterpolatingTask {
 		super.update(dt, obj);
 		ReflectUtil.setField(_obj, _fieldName, interpolate(_from, _to)); 
 
-		return (_elapsedTime >= _totalTime);
+		return _elapsedTime >= _totalTime;
 	}
 
 	public override function clone () :IEntityTask
