@@ -44,6 +44,17 @@ class ReflectUtil
 		return getClass(obj1) == getClass(obj2);
 	}
 	
+	public static function hasStaticMetadata (cls :Class<Dynamic>, field :String, metaId :String) :Bool
+	{
+		var m = haxe.rtti.Meta.getStatics(cls);
+		if (m != null) {
+			if (Reflect.hasField(m, field)) {
+				return Reflect.hasField(Reflect.field(m, field), metaId);
+			}
+		} 
+		return false;
+	}
+	
 	/** Alt Std.is implementation for cpp while Std.is bug exists */
 	public static function is (instance :Dynamic, type :String) :Bool
 	{
