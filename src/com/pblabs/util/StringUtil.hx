@@ -103,6 +103,8 @@ class StringUtil
 				 return switch (typ) {
 					case TObject://We assume it's a class or interface
 						Type.getClassName(obj);
+					case TEnum (e)://We assume it's a class or interface
+						Type.getEnumName(e) + "." + Type.enumConstructor(obj);
 					default :
 						Std.string(obj);
 				 }
