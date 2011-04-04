@@ -7,6 +7,7 @@ build*
 *cpp*
 lib/polygonal/build/
 tmp
+*AllClasses.hx
 demo/panningAndZooming/upload.sh
 tests/build
 demo/panningAndZooming/build
