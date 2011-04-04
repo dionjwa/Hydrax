@@ -4,8 +4,7 @@
 -lib hydrax
 -cp src
 
--swf demo.swf
--swf-version 10
+-swf9 build/demo.swf
 -swf-header 1400:600:30:FFFFFF
 
 -main Demo

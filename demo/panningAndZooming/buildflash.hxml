@@ -6,8 +6,7 @@
 -cp src
 
 -swf-lib rsrc/resources.swf
--swf flash/demo.swf
--swf-version 10
+-swf9 flash/demo.swf
 -swf-header 800:400:30:FFFFFF
 
 -main Demo
