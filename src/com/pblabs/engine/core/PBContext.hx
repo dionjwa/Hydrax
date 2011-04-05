@@ -288,7 +288,7 @@ class PBContext
 	
 	static var contextNameCounter :Int = 0;
 	
-	public function lookup(name:String):Dynamic
+	public function lookup(name:String):IPBObject
 	{
 		return _nameManager.get(name);			
 	}

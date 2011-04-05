@@ -56,7 +56,7 @@ interface IPBContext
 	function injectInto (instance:Dynamic):Void;
 	
 	// Name lookups.
-	function lookup (name :String):Dynamic;
+	function lookup (name :String):IPBObject;
 	function lookupEntity (name :String):IEntity;
 }
 
