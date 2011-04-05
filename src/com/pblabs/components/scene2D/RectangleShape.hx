@@ -72,11 +72,11 @@ class RectangleShape extends ShapeComponent
 		g.beginFill(this.fillColor, 1);
 		g.drawRect(-width / 2, -height / 2, width, height);
 		g.endFill();
-		var lineThickness = .0;
-		g.lineStyle(lineThickness, borderColor, 1.0);
-		g.drawRect(-width / 2, -height / 2, width - borderWidth, height - borderWidth);
+		// var lineThickness = .0;
+		g.lineStyle(borderStroke, borderColor, 1.0);
+		g.drawRect(-width / 2, -height / 2, width - borderStroke, height - borderStroke);
 		#elseif css
-		_rect.style.cssText = " width:" + width + "px; height:" + height + "px; background-color:" + StringUtil.toColorString(fillColor, "#") + "; border-color:" + StringUtil.toColorString(borderColor, "#") + "; border-style:solid; border-width:" + borderWidth + "px;";
+		_rect.style.cssText = " width:" + width + "px; height:" + height + "px; background-color:" + StringUtil.toColorString(fillColor, "#") + "; border-color:" + StringUtil.toColorString(borderColor, "#") + "; border-style:solid; border-width:" + borderStroke + "px;";
 		#elseif js
 		// sprite.dirtyContents();		
 		#end
@@ -88,7 +88,7 @@ class RectangleShape extends ShapeComponent
 		ctx.fillStyle = StringUtil.toColorString(fillColor, "#");
 		ctx.fillRect(-width / 2, - height / 2, width, height);
 		ctx.strokeStyle = StringUtil.toColorString(borderColor, "#");
-		ctx.lineWidth = borderWidth;
+		ctx.lineWidth = borderStroke;
 		ctx.beginPath();
 		ctx.rect(-width / 2, - height / 2, width, height);
 		ctx.stroke();

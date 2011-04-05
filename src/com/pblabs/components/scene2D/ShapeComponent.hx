@@ -20,14 +20,14 @@ class ShapeComponent
 {
 	public var fillColor (get_fillColor, set_fillColor) :Int;
 	public var borderColor (get_borderColor, set_borderColor) :Int;
-	public var borderWidth (get_borderWidth, set_borderWidth) :Float;
+	public var borderStroke (get_borderStroke, set_borderStroke) :Float;
 	
 	public function new ()
 	{
 		super();
 		_fillColor = 0xff0000;
 		_borderColor = 0x000000;
-		_borderWidth = 1;
+		_borderStroke = 1;
 		#if (flash || cpp)
 		_displayObject = new flash.display.Sprite();
 		_width = 10;
@@ -117,14 +117,14 @@ class ShapeComponent
 		return val;
 	}
 	
-	function get_borderWidth () :Float
+	function get_borderStroke () :Float
 	{
-		return _borderWidth;
+		return _borderStroke;
 	}
 	
-	function set_borderWidth (val :Float) :Float
+	function set_borderStroke (val :Float) :Float
 	{
-		_borderWidth = val;
+		_borderStroke = val;
 		redraw();
 		return val;
 	}
@@ -138,6 +138,6 @@ class ShapeComponent
 	
 	var _fillColor :Int;
 	var _borderColor :Int;
-	var _borderWidth :Float;
+	var _borderStroke :Float;
 
 }
