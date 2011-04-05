@@ -48,7 +48,6 @@ class SceneUtil
 		null;
 		#end
 
-		
 	public static function createBaseScene (context :IPBContext, ?name :String = null, ?addDefaultLayer :Bool = false, 
 		?registerAsManager :Bool = true) :BaseSceneManager<Dynamic>
 	{
