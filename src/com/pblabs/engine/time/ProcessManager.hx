@@ -711,6 +711,18 @@ class ProcessManager implements IProcessManager
 	    	// "\n_tickedObjects=" + _tickedObjects;
 	}
 	#end
+	
+	#if debug
+	public function hasTickedObject (obj :ITickedObject) :Bool
+	{
+		for (i in _tickedObjects) {
+			if (i.listener == obj) {
+				return true;
+			}
+		}
+	    return false;
+	}
+	#end
 }
 
 class ProcessObjectTicked
