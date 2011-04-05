@@ -24,6 +24,7 @@ class TaskComponentTicked extends TaskComponent,
 	override public function addNamedTask (name :String, task :IEntityTask, ?removeExistingTasks :Bool = false) :Void
 	{
 		super.addNamedTask(name, task, removeExistingTasks);
+		_tasksFinished = false;
 		updatingCheck();
 	}
 	
@@ -69,8 +70,8 @@ class TaskComponentTicked extends TaskComponent,
 	override function onAdd () :Void
 	{
 		super.onAdd();
-		_addedToProcessManager = false;
 		context.getManager(IProcessManager).removeTickedObject(this);
+		_addedToProcessManager = false;
 	}
 	
 	override function onRemove () :Void
