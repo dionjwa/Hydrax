@@ -11,8 +11,16 @@ package com.pblabs.components.tasks;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ITickedObject;
 
+/**
+  * TaskComponent that implements ITickedObject, so 
+  * is automatically added to the IProcessManager.
+  *
+  * If there are no active tasks, this class will remove itself
+  * from the IProcessManager, and re-add when there are 
+  * tasks, saving onTick calls.
+  */
 class TaskComponentTicked extends TaskComponent, 
-	implements ITickedObject 
+	implements ITickedObject
 {
 	public function new() 
 	{ 
