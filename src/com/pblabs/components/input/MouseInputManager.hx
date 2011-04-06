@@ -142,7 +142,7 @@ class MouseInputManager extends BaseInputManager
         mouseMove = new hsl.js.translating.JSSignaler(this, js.Lib.document, hsl.js.translating.JSEventType.MOUSEMOVE, new hsl.js.translation.mouse.MouseLocationTranslator());
         mouseClick = new hsl.js.translating.JSSignaler(this, js.Lib.document, hsl.js.translating.JSEventType.CLICK, new hsl.js.translation.mouse.MouseLocationTranslator());
         #elseif (flash || cpp)
-        //Only listen to the context root layer, not the global layer.  This means that mouse events are automatically translated to local coords.
+        //Only listen to the context root layer, not the global layer.  This means that mouse events are automatically translated to scene local coords.
         var layer = sceneView.layer;//context.getManager(SceneView).layer;//context.displayContainer;
         mouseDown = new hsl.avm2.translating.AVM2Signaler(this, layer, flash.events.MouseEvent.MOUSE_DOWN, new hsl.avm2.translation.mouse.MouseLocationTranslator());
         mouseUp = new hsl.avm2.translating.AVM2Signaler(this, layer, flash.events.MouseEvent.MOUSE_UP, new hsl.avm2.translation.mouse.MouseLocationTranslator());
