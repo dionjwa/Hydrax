@@ -278,6 +278,7 @@ class InputManager extends BaseInputManager,
 	
 	function onMouseDown (m :MouseLocation) :Void
 	{
+		com.pblabs.util.Log.info(m);
 		//Reset markers
 		_isGesturing =  _isZooming = false;
 		_isDeviceDown = true;
@@ -295,6 +296,7 @@ class InputManager extends BaseInputManager,
 	
 	function onMouseUp (m :MouseLocation) :Void
 	{
+		com.pblabs.util.Log.info(m);
 		_isDeviceDown = false;
 		
 		if (!deviceUp.isListenedTo) {
