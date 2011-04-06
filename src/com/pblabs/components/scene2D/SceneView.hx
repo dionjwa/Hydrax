@@ -74,6 +74,7 @@ class SceneView
 		}
 		#elseif (flash || cpp)
 		_layer = new flash.display.Sprite();
+		_layer.mouseChildren = false;
 		_layer.name = "SceneView";
 		if (width <= 0 || height <= 0) {
 			_layer.addEventListener(flash.events.Event.ADDED_TO_STAGE, handleAddedToStage);

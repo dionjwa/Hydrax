@@ -28,7 +28,7 @@ using com.pblabs.util.DisplayUtils;
 using de.polygonal.gl.DisplayListIterator;
 
 /**
- * Basic Rendering2Dsceneit is given a SceneView and some
+ * Basic Rendering 2D scene. It is given a SceneView and some
  * DisplayObjectRenderers, and makes sure that they are drawn. Extensible
  * for more complex rendering scenarios. Enforces sorting order, too.
  */
@@ -44,7 +44,8 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 	{
 		super();
 		_rootSprite = new Sprite();
-		_rootSprite.mouseEnabled = _rootSprite.mouseChildren = false;
+		_rootSprite.mouseEnabled = false;
+		_rootSprite.mouseChildren = false;
 		_rootTransform = new Matrix();
 		_tempPoint = new Vector2();
 	}

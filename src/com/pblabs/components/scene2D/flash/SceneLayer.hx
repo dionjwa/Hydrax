@@ -29,7 +29,8 @@ class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 	{
 		super();
 		_displayContainer = new Sprite();
-		_displayContainer.mouseEnabled = _displayContainer.mouseChildren = false;
+		_displayContainer.mouseEnabled = false;
+		_displayContainer.mouseChildren = false;
 		_rootTransform = new Matrix();
 		_tempPoint = new Vector2();
 	}
