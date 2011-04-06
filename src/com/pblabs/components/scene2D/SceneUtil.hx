@@ -154,13 +154,13 @@ class SceneUtil
 						borderPoint.x = 0;
 						borderPoint.y = 0;
 					case TOP_LEFT :
-						borderPoint.x = sceneWidth / 2;
-						borderPoint.y = sceneHeight / 2;
+						borderPoint.x = -sceneWidth / 2;
+						borderPoint.y = -sceneHeight / 2;
 					case TOP_RIGHT :
 						borderPoint.x = sceneWidth / 2;
-						borderPoint.y = sceneHeight / 2;
+						borderPoint.y = -sceneHeight / 2;
 					case BOTTOM_LEFT :
-						borderPoint.x = sceneWidth / 2;
+						borderPoint.x = -sceneWidth / 2;
 						borderPoint.y = sceneHeight / 2;
 					case BOTTOM_RIGHT :
 						borderPoint.x = sceneWidth / 2;
@@ -235,13 +235,11 @@ class SceneUtil
 	public static function updateIfUpdatable (obj :Dynamic) :Void
 	{
 		#if cpp
-		if (obj != null && com.pblabs.util.ReflectUtil.is(obj, "com.pblabs.engine.time.IAnimatedObject")) {
+		if (com.pblabs.util.ReflectUtil.is(obj, "com.pblabs.engine.time.IAnimatedObject")) {
 		#else
 		if (Std.is(obj, IAnimatedObject)) {
 		#end
 			cast(obj, IAnimatedObject).onFrame(0);
 		}
 	}
-			
-	
 }
