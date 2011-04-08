@@ -1,5 +1,12 @@
+/*******************************************************************************
+ * Hydrax: haXe port of the PushButton Engine
+ * Copyright (C) 2010 Dion Amago
+ * For more information see http://github.com/dionjwa/Hydrax
+ *
+ * This file is licensed under the terms of the MIT license, which is included
+ * in the License.html file at the root directory of this SDK.
+ ******************************************************************************/
 package com.pblabs.components.input;
-
 import com.pblabs.components.Constants;
 import com.pblabs.components.input.InputManager;
 import com.pblabs.components.scene2D.BaseSceneComponent;
@@ -68,7 +75,7 @@ class PanManager extends EntityComponent,
 	public var frameWindowSize :Int;
 	/** The time (in seconds) for scene easing */
 	public var timeToHalt :Float;
- 
+
 	var isPanning (get_isPanning, set_isPanning) :Bool;
 	var _scene :BaseSceneManager<Dynamic>;
 	var _sceneComponent :BaseSceneComponent<Dynamic>;
@@ -88,8 +95,6 @@ class PanManager extends EntityComponent,
 	var _xProp :PropertyReference<Float>;
 	var _yProp :PropertyReference<Float>;
 	var _constraint :Constraint;
-	// var _constraintMin :Float;
-	// var _constraintMax :Float;
 	
 	public function new ()
 	{
@@ -155,6 +160,7 @@ class PanManager extends EntityComponent,
 		?constraint :Constraint = null) :Void
 	{
 		endPanning();
+		Preconditions.checkNotNull(c);
 		_isEasing = easing;
 		_constraint = constraint;
 		if (_constraint != null && _isEasing) {
@@ -167,7 +173,6 @@ class PanManager extends EntityComponent,
 			_pauseProcessManagerOnPan = false;
 		}
 		
-		Preconditions.checkNotNull(c);
 		_sceneComponent = c;
 		_scene = null;//c.layer.scene2D.
 		
@@ -291,7 +296,9 @@ class PanManager extends EntityComponent,
 					cast(_scene, IAnimatedObject).onFrame(0);
 				}
 			}
-			_panVectors.push(e.inputLocation.clone());
+			if (isPanning) {//The dragSignaler may stop panning, so we have to check again.
+				_panVectors.push(e.inputLocation.clone());
+			}
 		}
 	}
 	
