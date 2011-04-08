@@ -102,7 +102,7 @@ class CircleShape extends ShapeComponent
 		_svg.setAttribute( "r",  r + "px");
 		_svg.setAttribute("fill", StringUtil.toColorString(fillColor, "#"));
 		_svg.setAttribute( "stroke",  StringUtil.toColorString(borderColor, "#"));
-		_svg.setAttribute( "stroke-width",  "" + borderWidth);
+		_svg.setAttribute( "stroke-width",  "" + borderStroke);
 		
 		_svgContainer.setAttribute("width", (r * 2) + "px");
 		_svgContainer.setAttribute("height", (r * 2) + "px");
@@ -119,7 +119,7 @@ class CircleShape extends ShapeComponent
 		ctx.fill();
 		ctx.closePath();
 		ctx.strokeStyle = StringUtil.toColorString(borderColor, "#");
-		ctx.lineWidth = borderWidth;
+		ctx.lineWidth = borderStroke;
 		ctx.beginPath();
 		ctx.arc(0, 0, radius, 0, Math.PI*2, true);
 		ctx.stroke();

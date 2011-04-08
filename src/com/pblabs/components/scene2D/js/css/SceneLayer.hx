@@ -29,13 +29,13 @@ class SceneLayer extends JSLayer<SceneManager, SceneComponent>
     
 	public function updateTransform () :Void
 	{
-		scene iew = parentsceneView;
-		scene lignment = parent.sceneAlignment;
+		var sceneView = parent.sceneView;
+		var sceneAlignment = parent.sceneAlignment;
 		// Center it appropriately.
 		Preconditions.checkNotNull(_tempPoint);
-		Preconditions.checkNotNull.sceneAlignment);
-		Preconditions.checkNotNullsceneView);
-		SceneUtil.calculateOutPoint(_tempPoint,.sceneAlignment,.sceneView.width,.sceneView.height);
+		Preconditions.checkNotNull(sceneAlignment);
+		Preconditions.checkNotNull(sceneView);
+		SceneUtil.calculateOutPoint(_tempPoint, sceneAlignment, sceneView.width, sceneView.height);
 		untyped div.style.webkitTransform = "translate(" + (_tempPoint.x) + "px, " + (_tempPoint.y) + "px) rotate(" + parent.rotation + "rad) scale(" + parent.zoom + ") translate(" + (parent.x * parallaxFactor) + "px, " + (parent.y * parallaxFactor) + "px)";
 	}
 	

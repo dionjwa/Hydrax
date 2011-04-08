@@ -74,7 +74,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		com.pblabs.util.Assert.isNotNull(resource, "resource is null for #" + owner.name + "." + name);
 		#if js
 		//Get the DomResource, this makes sure the inline image is loaded
-		var image :js.Dom.Image = context.create(resource);
+		var image :js.Dom.Image = context.get(resource);
 		com.pblabs.util.Assert.isNotNull(image, "Image loaded from " + resource + " is null");
 		Preconditions.checkNotNull(image, "image from resource is null " +resource);
 		displayObject = image;

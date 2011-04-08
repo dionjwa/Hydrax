@@ -67,7 +67,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
         super.onAdd();
         if (displayObject == null) {
         	if (resourceToken != null) {
-        		var svg :js.Dom.HtmlDom = context.create(resourceToken);
+        		var svg :js.Dom.HtmlDom = context.get(resourceToken);
 				com.pblabs.util.Assert.isNotNull(svg, "SVG loaded from " + resourceToken + " is null");
 				displayObject = svg;
         	}
