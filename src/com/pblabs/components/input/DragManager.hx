@@ -59,7 +59,7 @@ enum Constraint {
 /**
   * Handles panning of a Scene and components.
   */
-class PanManager extends EntityComponent, 
+class DragManager extends EntityComponent, 
 	implements IPBManager, implements haxe.rtti.Infos
 {
 	public var dragSignaler :Signaler<BaseSceneComponent<Dynamic>>;

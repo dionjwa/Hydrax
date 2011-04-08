@@ -4,7 +4,7 @@ import com.pblabs.components.input.IInputData;
 import com.pblabs.components.input.InputManager;
 import com.pblabs.components.input.MouseInputComponent;
 import com.pblabs.components.input.MouseInputManager;
-import com.pblabs.components.input.PanManager;
+import com.pblabs.components.input.DragManager;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.scene2D.BaseSceneLayer;
 import com.pblabs.components.scene2D.BaseSceneManager;
@@ -127,7 +127,7 @@ class Demo #if flash extends flash.display.Sprite #end
 			randMove(createBlob("man lower" + i, lowerLayer), Rand.nextBoolean());	
 		}
 		
-		var panner = context.registerManager(PanManager);
+		var panner = context.registerManager(DragManager);
 		
 		//Start scene panning on mouse down
 		var input = context.getManager(InputManager);
