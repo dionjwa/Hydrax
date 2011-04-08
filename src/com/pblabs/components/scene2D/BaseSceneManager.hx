@@ -30,7 +30,7 @@ using com.pblabs.util.IterUtil;
 using com.pblabs.util.StringUtil;
 
 /**
-  * Layers are arranged: smaller index is behind.
+  * Layers are arranged :smaller index is behind.
   */
 @sets("SceneManager")
 class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComponent<SceneManagerList, Layer>,
@@ -39,15 +39,15 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	@inject
 	public var sceneView(get_sceneView, set_sceneView) :SceneView;
 	
-	@editor({ui:"UpdatingLabel"})
+	@editor({ui :"UpdatingLabel"})
 	public var zoom(get_zoom, set_zoom) :Float;
 	public var sceneBounds(get_sceneBounds, set_sceneBounds) :Rectangle;
 	public var layerCount(get_layerCount, never) :Int;
-	@editor({ui:"UpdatingLabel"})
+	@editor({ui :"UpdatingLabel"})
 	public var x (get_x, set_x) :Float;
-	@editor({ui:"UpdatingLabel"})
+	@editor({ui :"UpdatingLabel"})
 	public var y (get_y, set_y) :Float;
-	@editor({ui:"UpdatingLabel"})
+	@editor({ui :"UpdatingLabel"})
 	public var rotation (get_rotation, set_rotation) :Float;
 	
 	public var index :Int;
@@ -78,10 +78,27 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		_transformDirty = true;
 		return val;
 	}
+	
+	var _position :XY;
+	var _zoom :Float;
+	var _rotation :Float;
+	var _transformDirty :Bool;
+	
+	/** The view of the.scene2D.is always enclosed in the bounds */
+	var _sceneBounds :Rectangle;
+	var _sceneView :SceneView;
+	var _currentViewRect :Rectangle;
+
+	
 
 	public function new ()
 	{
 		super();
+		initVars();
+	}
+	
+	function initVars () :Void
+	{
 		zoomMax = 300;
 		zoomMin = 0.001;
 		sceneAlignment = SceneAlignment.CENTER;
@@ -91,6 +108,8 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		_position = new Vector2();
 		_transformDirty = false;
 		parentProperty = SceneManagerList.PROP;
+		_sceneView = null;
+		_sceneBounds = null;
 	}
 	
 	public function addLayer (?layerName :String = null, ?cls :Class<Dynamic> = null, ?registerAsManager :Bool = false) :BaseSceneLayer<Dynamic, Dynamic>
@@ -198,8 +217,8 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	
 	public function setLocation (loc :XY) :Void
 	{
-	    set_x(loc.x);
-	    set_y(loc.y);
+		set_x(loc.x);
+		set_y(loc.y);
 	}
 
 	override function childAdded (c :Layer) :Void
@@ -256,25 +275,26 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		var spatial = owner.getComponent(SpatialComponent);
 		if (spatial != null) {
 			bindSignal(spatial.signalerLocation, setLocation);
-		} else {
-			// com.pblabs.util.Log.warn("SceneManager " + owner.name + " does not have a SpatialComponent. This mean no panning the Scene");
-		}
+		} //No spatial component means no panning 
 		
 		var pb :com.pblabs.engine.core.PBContext = cast context;
-		bindVoidSignal(pb.signalEnter, attach);
-		bindVoidSignal(pb.signalExit, detach);		
+		#if debug
+		_debugcontext = pb;
+		#end
+		this.bindVoidSignal(pb.signalEnter, attach);
+		this.bindVoidSignal(pb.signalExit, detach);		
 	}
 
 	override function onRemove () :Void
 	{
 		super.onRemove();
 		detach();
-		sceneView == null;
+		initVars();
 	}
 	
 	function get_layerCount () :Int
 	{
-		return children != null ? children.length : 0;
+		return children != null ? children.length :0;
 	}
 	
 	function get_x () :Float
@@ -337,11 +357,8 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 
 	function set_zoom (value :Float) :Float
 	{
-		com.pblabs.util.Assert.isFalse(Math.isNaN(_zoom));
-		com.pblabs.util.Assert.isFalse(Math.isNaN(value));
 		// Make sure our zoom level stays within the desired bounds
 		value = MathUtil.fclamp(value, zoomMin, zoomMax);
-		com.pblabs.util.Assert.isFalse(Math.isNaN(value));
 		if (_zoom == value) {
 			return _zoom;
 		}
@@ -373,25 +390,16 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		
 	}
 	
-	var _position :XY;
-	var _zoom :Float;
-	var _rotation :Float;
-	var _transformDirty :Bool;
-	
-	/** The view of the.scene2D.is always enclosed in the bounds */
-	var _sceneBounds :Rectangle;
-	var _sceneView :SceneView;
-	var _currentViewRect :Rectangle;
-
-	
 	public static var DEFAULT_LAYER_NAME :String = "defaultLayer";
 	static var EMPTY_ARRAY :Array<Dynamic> = [];
 	
 	#if (debug || editor)
 	public function toString () :String
 	{
-	    return owner != null ? owner.name : name;
+		return owner != null ? owner.name :name;
 	}
+	
+	var _debugcontext :com.pblabs.engine.core.IPBContext;
 	#end
 }
 #end
