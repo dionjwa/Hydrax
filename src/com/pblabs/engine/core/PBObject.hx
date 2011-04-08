@@ -25,7 +25,7 @@ class PBObject
 	,implements haxe.rtti.Infos
 	#end
 {
-	/** Key for hashing. */
+	/** Key for hashing. Don't modify. */
 	public var key :Int;
 	
 	public function new () 
