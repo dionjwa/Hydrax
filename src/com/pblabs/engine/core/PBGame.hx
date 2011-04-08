@@ -16,8 +16,6 @@ import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceManager;
 import com.pblabs.engine.serialization.Serializer;
 import com.pblabs.engine.serialization.TemplateManager;
-import com.pblabs.engine.time.IProcessManager;
-import com.pblabs.engine.time.ProcessManager;
 
 /**
   * Standard game.  Starts up the most commonly used
@@ -39,10 +37,8 @@ class PBGame extends PBGameBase
 		
 		// Bring in the standard managers.
 		registerManager(NameManager, new NameManager());
-		registerManager(IProcessManager, new ProcessManager());
-		getManager(IProcessManager).isRunning = true;
 		registerManager(SignalBondManager, new SignalBondManager());
-		registerManager(SetManager, new SetManager());
+		
 		registerManager(com.pblabs.engine.pooling.ObjectPoolMgr, new com.pblabs.engine.pooling.ObjectPoolMgr());
 		#if (!nodejs && (flash || js || cpp)) 
 		registerManager(com.pblabs.components.scene2D.SceneView, new com.pblabs.components.scene2D.SceneView());
