@@ -42,6 +42,16 @@ class DirectSignaler<Datatype> implements Signaler<Datatype> {
 	 * The fully qualified class names of the subject.
 	 */
 	private var subjectClassNames:List<String>;
+	
+	#if debug
+	public function getBonds () :Iterable<Bond>
+	{
+		if (!sentinel.isConnected) 
+			return [];
+		return sentinel.getBonds();
+	}
+	#end
+
 	/**
 	 * Creates a new direct signaler.
 	 * 
@@ -51,8 +61,9 @@ class DirectSignaler<Datatype> implements Signaler<Datatype> {
 	 * If the reject null data flag is set, the signaler will throw an exception if the subject attempts to dispatch a signal
 	 * with null as data, or the the signaler is about to bubble a signal that contains null as data.
 	 */
-	public function new(subject:Subject, ?rejectNullData:Bool):Void {
-		// If the passed subject is null, throw an exception. Having null for a subject might produce null object reference errors
+	 public function new(subject:Subject, ?rejectNullData:Bool):Void {
+	 	 
+	 	 // If the passed subject is null, throw an exception. Having null for a subject might produce null object reference errors
 		// later on: when the listeners use the produced signals.
 		if (null == subject) {
 			throw new ArgumentNullException("subject", 1);
@@ -322,6 +333,20 @@ private class SentinelBond<Datatype> extends LinkedBond<Datatype> {
            next.destroy();
 		}
 	}
+	
+	#if debug
+	public function getBonds () :Iterable<Bond> {
+		if (!isConnected) 
+			return [];
+		var bonds = new Array<Bond>();
+		var b = next;
+		while (b != null && b != this) {
+			bonds.push(b);
+			b = b.next;
+		}
+		return bonds;
+	}
+	#end
 }
 /**
  * A regular bond is a bond that is created in result of a call to the bind method.

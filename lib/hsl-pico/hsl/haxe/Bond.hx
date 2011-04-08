@@ -69,7 +69,10 @@ class Bond {
 	}
 	#if debug
 	private function toString():String {
-		return "[Bond]";
+		return "[Bond]" + (infos == null ? "null" :  "className=" + infos.className + ", lineNumber=" + infos.lineNumber + ", customParams=" + infos.customParams);
 	}
+	
+	public var infos :haxe.PosInfos;
+	
 	#end
 }

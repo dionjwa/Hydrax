@@ -65,6 +65,11 @@ interface Signaler<Datatype> {
 	 * </pre>
 	 */
 	public var isListenedTo(getIsListenedTo, null):Bool;
+	
+	#if debug
+	public function getBonds () :Iterable<Bond>;
+	#end
+	
 	/**
 	 * The subject this signaler belongs to.
 	 */
