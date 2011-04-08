@@ -163,7 +163,11 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 	override function attach () :Void
 	{
 		super.attach();
+		com.pblabs.util.Assert.isNotNull(_rootSprite);
+		com.pblabs.util.Assert.isNotNull(displayContainer);
+		com.pblabs.util.Assert.isNotNull(context, "How can the context be null??, name=" + name + ", isRegistered=" +isRegistered);
 		if (_rootSprite.parent == null) {
+			com.pblabs.util.Assert.isNotNull(context.getManager(SceneView), "No SceneView??");
 			context.getManager(SceneView).addDisplayObject(displayContainer);
 		}
 	}
