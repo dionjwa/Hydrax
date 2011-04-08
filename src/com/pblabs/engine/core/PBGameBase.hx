@@ -51,6 +51,7 @@ class PBGameBase
 	}
 	
 	public var newActiveContextSignaler (default, null) :Signaler<IPBContext>;
+	public var activeContextRemovedSignaler (default, null) :Signaler<IPBContext>;
 	var injector :Injector;
 
 	var _contexts :Array<IPBContext>;
@@ -120,8 +121,12 @@ class PBGameBase
 		#end
 			try {
 				cast(instance, IPBManager).startup();
+			#if flash
+			} catch (e :flash.errors.TypeError) {
+			#else
+			#end
 			} catch (e :Dynamic) {
-				trace("Fuck, error casting " + instance + "::" + com.pblabs.util.ReflectUtil.getClassName(instance) +" to a IPBManager, even though it says it's one: " + Std.is(instance, IPBManager));  
+				trace("Fuck, error casting " + instance + "::" + com.pblabs.util.ReflectUtil.getClassName(instance) +" to a IPBManager, even though it says it's one: " + Std.is(instance, IPBManager) + "\n" + e);  
 			}
 		}
 		return instance;
@@ -217,6 +222,12 @@ class PBGameBase
 				cast(m, IPBManager).shutdown();
 			}
 		}
+		
+		#if debug
+		com.pblabs.util.Assert.isFalse(newActiveContextSignaler.isListenedTo);
+		com.pblabs.util.Assert.isFalse(activeContextRemovedSignaler.isListenedTo);
+		#end
+		
 		_managers = null;
 		injector = null;
 		_contexts = null;
@@ -244,6 +255,7 @@ class PBGameBase
 			c.getManager(IProcessManager).isRunning = false;
 			self._contexts.remove(c);
 			c.exit();
+			self.activeContextRemovedSignaler.dispatch(c);
 			c.shutdown();
 		}
 		
@@ -256,6 +268,7 @@ class PBGameBase
 				case PUSH(c):
 					if (_currentContext != null) {
 						_currentContext.exit();
+						activeContextRemovedSignaler.dispatch(_currentContext);
 						_currentContext = null;
 					}
 					_contexts.push(c);
@@ -298,6 +311,7 @@ class PBGameBase
 	{
 		//Called by the constructor.
 		newActiveContextSignaler = new DirectSignaler(this);
+		activeContextRemovedSignaler = new DirectSignaler(this);
 		_managers = Maps.newHashMap(String);
 
 		injector = createInjector();
@@ -310,18 +324,25 @@ class PBGameBase
 		startTimer();
 	}
 	
-	function onFrame (#if flash event:flash.events.Event #end):Void
+	function onFrame (#if flash event:flash.events.TimerEvent #end):Void
 	{
 		if (_contextProcessManager != null) {
 			_contextProcessManager.onFrame(#if flash event #end);
 		}
 		if (_contextTransitions.length > 0) {
 			updateContextTransitions();
+			// if (_contextProcessManager != null) {
+			// 	_contextProcessManager.onFrame(#if flash event #end);
+			// }
 		}
 		
 		while (_callLater.length > 0) {
 			_callLater.pop()();
 		}
+		#if flash
+		event.updateAfterEvent();
+		untyped flash.Lib.current.stage.invalidate();
+		#end
 	}
 	
 	function startTimer ():Void
