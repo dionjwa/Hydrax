@@ -19,40 +19,47 @@ class PBManagerBase
 	@inject("com.pblabs.engine.core.PBGameBase")
 	var game :PBGameBase;
 	
-	public function new ()
-	{
-		
-	}
+	public function new () {}
 	
 	public function startup () :Void
 	{
 		com.pblabs.util.Assert.isNotNull(game, "No PBGameBase?");
-		game.newActiveContextSignaler.bind(contextSwitched);
-		context = game.currentContext;
+		game.newActiveContextSignaler.bind(onNewContextInternal);
+		game.activeContextRemovedSignaler.bind(onContextRemovedInternal);
+		
+		if (game.currentContext != null) {
+			onNewContextInternal(game.currentContext);
+		}
 	}
 	
 	public function shutdown () :Void
 	{
-		contextSwitched(null);
-		game.newActiveContextSignaler.unbind(contextSwitched);
+		game.newActiveContextSignaler.unbind(onNewContextInternal);
+		game.activeContextRemovedSignaler.unbind(onContextRemovedInternal);
 		game = null;
 	}
 	
-	function contextSwitched (c :IPBContext) :Void
+	function onNewContextInternal (c :IPBContext) :Void
 	{
-		if (context != null && context != c) {
-			onContextRemoval();
-		}
+		com.pblabs.util.Assert.isNull(context, "onNewContextInternal, our current context should be null");
 		context = c;
-		if (context != null) {
-			onNewContext();
-		}
+		onNewContext();
 	}
 	
+	function onContextRemovedInternal (c :IPBContext) :Void
+	{
+		com.pblabs.util.Assert.isNotNull(context, "onContextRemovedInternal, our current context should NOT be null");
+		com.pblabs.util.Assert.isTrue(context == c, "Our local context var should match the removed context");
+		onContextRemoval();
+		context = null;
+	}
+	
+	/** Subclasses override */
 	function onContextRemoval () :Void
 	{
 	}
 	
+	/** Subclasses override */
 	function onNewContext () :Void
 	{
 	}
