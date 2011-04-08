@@ -101,6 +101,7 @@ class ObjectPoolMgr extends PBManagerBase
 			p.shutdown();
 		}
 		_pools.clear();
+		_pools = null;
 		_classes = null;
 		_tempPool = null;
 	}
