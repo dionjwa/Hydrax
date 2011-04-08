@@ -36,13 +36,18 @@ import com.pblabs.util.ds.Maps;
   */
 class ObjectPoolMgr extends PBManagerBase
 {
-	// public static var SINGLETON :ObjectPoolMgr = new ObjectPoolMgr();	 
- 	
+ 	var _classes:Array<Class<Dynamic>> ;
+	var _pools:Map<String, ObjectPool<Dynamic>>;
+	var _tempPool :Array<Dynamic>;
+	var _isCallingLater :Bool;
+	
 	public function new() 
 	{
 		super();
 		_classes = [];
 		_pools = Maps.newHashMap(String);
+		_tempPool = [];
+		_isCallingLater = false;
 	}
 	
 	public var registeredClasses(getRegisteredClasses, null) : Array<Dynamic>;
@@ -57,12 +62,8 @@ class ObjectPoolMgr extends PBManagerBase
 			com.pblabs.util.Log.warn(["addObject", "object", null]);
 			return;
 		}
-		var pool :ObjectPool<T> = cast( _pools.get(ReflectUtil.getClassName(o)));
-		if (pool == null) {
-			com.pblabs.util.Log.debug(["addObject", "class not registered", o]);
-			return;
-		}
-		pool.addObject(o);
+		_tempPool.push(o);
+		checkPostponedAddObects();
 	}
 
 	/**
@@ -70,6 +71,7 @@ class ObjectPoolMgr extends PBManagerBase
 	 */
 	public function get <T> (clazz :Class<T>) :T
 	{
+		checkPostponedAddObects();
 		Preconditions.checkNotNull(clazz);
 		var pool :ObjectPool<T> = cast( _pools.get(ReflectUtil.getClassName(clazz)));
 		if (pool != null) {
@@ -100,6 +102,7 @@ class ObjectPoolMgr extends PBManagerBase
 		}
 		_pools.clear();
 		_classes = null;
+		_tempPool = null;
 	}
 	
 	override function onContextRemoval () :Void
@@ -124,8 +127,40 @@ class ObjectPoolMgr extends PBManagerBase
 		}
 		add(obj);
 	}
+	
+	/**
+	  * Adding objects to pools must be done at the end of the update loop, since 
+	  * destruction of complex data structures may result in components added to 
+	  * the pool with listeners still connected to signals, and these components 
+	  * may then be reused even though they will only be clean at the end of the 
+	  * update loop.
+	  */
+	function addObjectsInTempPool () :Void
+	{
+		_isCallingLater = false;
+		
+		var i = 0;
+		//No more than 50 objects per frame to avoid big lags when destroying 
+		//entire scenes.
+		while (_tempPool.length > 0 && i < 50) {
+			i++;
+			var o = _tempPool.pop();
+			var pool :ObjectPool<Dynamic> = cast( _pools.get(ReflectUtil.getClassName(o)));
+			if (pool == null) {
+				com.pblabs.util.Log.debug(["addObject", "class not registered", o]);
+				return;
+			}
+			pool.addObject(o);
+		}
+	}
+	
+	inline function checkPostponedAddObects () :Void
+	{
+		if (!_isCallingLater && _tempPool.length > 0) {
+			game.callLater(addObjectsInTempPool);
+			_isCallingLater = true;
+		}
+	}
 
-	var _classes:Array<Class<Dynamic>> ;
-	var _pools:Map<String, ObjectPool<Dynamic>>;
 	public static var EMPTY_ARRAY :Array<Dynamic> = [];
 }
