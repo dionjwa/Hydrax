@@ -242,11 +242,10 @@ class PBContext
 	
 	public function shutdown () :Void
 	{
-		_processManager.shutdown();
 		rootGroup.destroy();
 		
-		rootGroup = null;
-		_currentGroup = null;
+		signalDestroyed.dispatch(this);
+		
 		for (m in _managers) {
 			if (m == null) {
 				continue;
@@ -261,13 +260,16 @@ class PBContext
 			}
 		}
 		
+		_processManager.shutdown();
+		
+		
+		rootGroup = null;
+		_currentGroup = null;
 		_processManager = null;
 		_managers = null;
 		injector.shutdown();
 		injector = null;
 		_tempPropertyInfo = null;
-		
-		signalDestroyed.dispatch(this);
 		
 		#if debug
 		var sigs :Array<Signaler<Dynamic>> = cast [signalEnter, signalExit, signalDestroyed]; 
