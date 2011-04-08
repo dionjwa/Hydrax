@@ -31,6 +31,9 @@ class PBContext
 	,implements haxe.rtti.Infos
 	#end
 {
+	/** Key for hashing. Don't modify. */
+	public var key :Int;
+	
 	public var name (default, null) :String;
 	public var started (default, null) :Bool;
 	public var rootGroup (default, null) :IPBGroup;
@@ -42,8 +45,10 @@ class PBContext
 	
 	public var signalEnter (default, null) :Signaler<Void>;
 	public var signalExit (default, null) :Signaler<Void>;
+	public var signalDestroyed (default, null) :Signaler<IPBContext>;
 	
 	public var isActive (get_isActive, never) :Bool;
+	public var isLive (get_isLive, never) :Bool;
 	
 	public var injector :Injector;
 	var _managers :Map<String, Dynamic>;
@@ -59,6 +64,8 @@ class PBContext
 		
 	public function new (?name:String)
 	{
+		key = com.pblabs.engine.util.PBUtil.KEY_COUNT++;
+		
 		_isSetup = false;
 		if (name == null) {
 			initializeName();
@@ -73,6 +80,7 @@ class PBContext
 		_tempPropertyInfo = new PropertyInfo();
 		signalObjectAdded = new DirectSignaler(this);
 		signalObjectRemoved = new DirectSignaler(this);
+		signalDestroyed = new DirectSignaler(this);
 		signalEnter = new DirectSignaler(this);
 		signalExit = new DirectSignaler(this);
 	}
@@ -236,6 +244,7 @@ class PBContext
 	{
 		_processManager.shutdown();
 		rootGroup.destroy();
+		
 		rootGroup = null;
 		_currentGroup = null;
 		for (m in _managers) {
@@ -252,18 +261,24 @@ class PBContext
 			}
 		}
 		
-		var game = getManager(PBGameBase);
-		com.pblabs.util.Assert.isNotNull(game);
-		
-		_managers.clear();
+		_processManager = null;
 		_managers = null;
 		injector.shutdown();
 		injector = null;
 		_tempPropertyInfo = null;
 		
+		signalDestroyed.dispatch(this);
+		
 		#if debug
-		com.pblabs.util.Assert.isFalse(signalEnter.isListenedTo);
-		com.pblabs.util.Assert.isFalse(signalExit.isListenedTo);
+		var sigs :Array<Signaler<Dynamic>> = cast [signalEnter, signalExit, signalDestroyed]; 
+		for (sig in sigs) {
+			if (sig.isListenedTo) {
+				for (b in sig.getBonds()) {
+					trace("Stuck bond on " + name + "=" + b);
+				}
+			}
+			com.pblabs.util.Assert.isFalse(sig.isListenedTo, name);
+		}
 		#end
 	}
 	
@@ -579,13 +594,19 @@ class PBContext
 	
 	function createProcessManager () :IProcessManager
 	{
-		return new ProcessManager();	
+		return new ProcessManager(30, false);	
 	}
 
 	function get_isActive () :Bool
 	{
 		return getManager(PBGameBase).currentContext == this;
 	}
+	
+	function get_isLive () :Bool
+	{
+		return _managers != null;
+	}
+	
 	
 	#if debug
 	public function toString () :String

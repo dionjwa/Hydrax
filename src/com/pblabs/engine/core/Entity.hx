@@ -284,13 +284,13 @@ class Entity extends PBObject,
 		deferring = oldDefer;
 	}
 	
-	public function addComponent (c:IEntityComponent, ?componentName :String) :Bool
+	public function addComponent (c :IEntityComponent, ?componentName :String) :Bool
 	{
 		Preconditions.checkNotNull(c, "Cannot add a null component");
 		
 		componentName = componentName == null ? PBUtil.getDefaultComponentName(Type.getClass(c)) : componentName; 
 		// Check the context.
-		com.pblabs.util.Assert.isTrue(component.context != null, "Component has a null context!");
+		com.pblabs.util.Assert.isTrue(c.context != null, "Component has a null context!");
 		com.pblabs.util.Assert.isTrue(context != null, "Entity has a null context!");
 		com.pblabs.util.Assert.isTrue(c.context == context, "Component and entity are not from same context!");
 		

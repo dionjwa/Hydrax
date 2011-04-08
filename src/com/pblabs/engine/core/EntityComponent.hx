@@ -32,7 +32,7 @@ class EntityComponent
 	,implements haxe.rtti.Infos
 	#end
 {
-	/** Key for hashing. */
+	/** Key for hashing. Don't modify. */
 	public var key :Int;
 	
 	@editorData({ignore :"true"})
@@ -151,6 +151,9 @@ class EntityComponent
    */
   function onRemove():Void
   {
+	#if debug
+	debugOwnerName = owner.name + "." + name;
+	#end
 	  _sanityCheck = true;
   }
   
@@ -171,6 +174,7 @@ class EntityComponent
   {
   	  //Subclasses override
   }
+  var debugOwnerName :String;
   #end
   
   @editorData({ignore :"true"})

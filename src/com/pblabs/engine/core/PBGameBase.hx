@@ -16,6 +16,7 @@ import com.pblabs.engine.injection.Injector;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ProcessManager;
 import com.pblabs.engine.util.PBUtil;
+import com.pblabs.util.Preconditions;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
@@ -56,31 +57,30 @@ class PBGameBase
 	var _contextTransitions :Array<ContextTransition>;
 	var _isUpdatingContextTransition :Bool;
 	var _managers :Map<String, Dynamic>;
+	var _contextProcessManager :com.pblabs.engine.time.ProcessManager;
+	/** Functions to call after the main update loop is finished. */
+	var _callLater :Array<Void->Dynamic>;
+	
+	#if !neko
+	var _timer :#if flash flash.utils.Timer; #else haxe.Timer; #end
+	#end
 	
 	public function new()
 	{
 		_contextTransitions = [];
 		_isUpdatingContextTransition = false;
-		
 		#if profiler
 		//Start profiling.  This is disabled if the "profiler" compiler key command is not set
 		com.pblabs.engine.debug.Profiler.bindToKey();
 		#end
+		
+		_callLater = [];
 		init();
 	}
 	
-	function init () :Void
+	public function initializeManagers():Void
 	{
-		//Called by the constructor.
-		newActiveContextSignaler = new DirectSignaler(this);
-		_managers = Maps.newHashMap(String);
-
-		injector = createInjector();
-		_contexts = new Array();
-		
-		registerManager(PBGameBase, this, null, true);
-		
-		initializeManagers();
+		// Mostly will come from subclasses.
 	}
 	
 	public function injectInto(instance:Dynamic):Void
@@ -169,56 +169,61 @@ class PBGameBase
 	public function pushContext (ctx :IPBContext) :IPBContext
 	{
 		_contextTransitions.push(ContextTransition.PUSH(ctx));
-		updateContextTransitions();
 		return ctx;
 	}
 	
 	public function popContext () :Void
 	{
 	    _contextTransitions.push(ContextTransition.POP);
-		updateContextTransitions();
 	}
 	
 	public function changeContext (c :IPBContext) :Void
 	{
 	    _contextTransitions.push(ContextTransition.CHANGE(c));
-		updateContextTransitions();
 	}
 	
 	public function removeContext (c :IPBContext) :Void
 	{
 		_contextTransitions.push(ContextTransition.REMOVE(c));
-		updateContextTransitions();
+	}
+	
+	public function callLater (f :Void->Dynamic) :Void
+	{
+		com.pblabs.util.Assert.isNotNull(f);
+	    _callLater.push(f);
 	}
 	
 	public function shutdown () :Void
 	{
-		getManager(IProcessManager).isRunning = false;
-		if (currentContext != null) {
-			currentContext.getManager(IProcessManager).isRunning = false;
-			currentContext.rootGroup.destroy();
-		}
+		com.pblabs.util.Log.debug("Stopping timer");
+		stopTimer();
+		com.pblabs.util.Log.debug("Destroying currentContext");
 		
+		com.pblabs.util.Log.debug("Sutting down contexts");
 		for (context in _contexts) {
 			if (context != null) {
+				com.pblabs.util.Log.debug("Shutting down " + com.pblabs.util.ReflectUtil.getClassName(context));
 				context.shutdown();
 			}
 		}
-		
+		com.pblabs.util.Log.debug("Shutting down managers");
 		for (m in _managers) {
-			
-			
 			#if cpp
 			if (com.pblabs.util.ReflectUtil.is(m, "com.pblabs.engine.core.IPBManager")) {
 			#else
 			if (Std.is(m, IPBManager)) {
 			#end
+				com.pblabs.util.Log.debug("Shutting down " + com.pblabs.util.ReflectUtil.getClassName(m));
 				cast(m, IPBManager).shutdown();
 			}
 		}
 		_managers = null;
 		injector = null;
 		_contexts = null;
+		_currentContext = null;
+		_contextTransitions = null;
+		_isUpdatingContextTransition = false;
+		_contextProcessManager = null;
 	}
 	
 	/**
@@ -227,67 +232,49 @@ class PBGameBase
 	  */
 	function updateContextTransitions () :Void
 	{
-		if (_isUpdatingContextTransition) {
+		if (_isUpdatingContextTransition || _contextTransitions.length == 0) {
 			return;
 		}
 		
 		var self = this;
-		//Update transitions in between updates
-		if (_currentContext != null && _currentContext.getManager(IProcessManager).isRunning) {
-			//Local access
-			var ctx = _currentContext; 
-			ctx.getManager(IProcessManager).callLater(function () :Void {
-				if (ctx.getManager(IProcessManager).isRunning) {
-					ctx.getManager(IProcessManager).isRunning = false;
-				}
-				self.updateContextTransitions();
-			});
-			return;
-		}
-	
-		var hasShutdown = [];
-		
-		var curCtx = _currentContext;
-		
-		var removeContext = function (c :IPBContext) :Void {
+		var removeCurrentContext = function () :Void {
+			var c = self._currentContext;
+			self._currentContext = null;
 			com.pblabs.util.Assert.isNotNull(c);
 			c.getManager(IProcessManager).isRunning = false;
 			self._contexts.remove(c);
 			c.exit();
 			c.shutdown();
-			hasShutdown.push(c);
 		}
 		
 		_isUpdatingContextTransition = true;
 		
 		//Do the transitions, then set the _currentContext at the end
 		while (_contextTransitions.length > 0) {
-			var nextTransition = _contextTransitions.shift();
+			var nextTransition = _contextTransitions.shift();//Removes the first element and returns it.
 			switch (nextTransition) {
 				case PUSH(c):
 					if (_currentContext != null) {
 						_currentContext.exit();
 						_currentContext = null;
 					}
-				_contexts.push(c);
+					_contexts.push(c);
 				case POP:
 					if (_currentContext != null) {
-						removeContext(_currentContext);
-						_currentContext = null;
+						removeCurrentContext();
 					} else {
 						_contexts.pop();
 					}
 				case CHANGE(c):
 					if (_currentContext != null) {
-						removeContext(_currentContext);
-						_currentContext = null;
+						removeCurrentContext();
 					} else {
 						_contexts.pop();
 					}
 					_contexts.push(c);
 				case REMOVE(c):
 					if (c == _currentContext) {
-						removeContext(_currentContext);
+						removeCurrentContext();
 					} else {
 						_contexts.remove(c);	
 					}
@@ -296,26 +283,82 @@ class PBGameBase
 		
 		_currentContext = _contexts[_contexts.length - 1];
 		_isUpdatingContextTransition = false;
+		_contextProcessManager = null;
 		
 		if (_currentContext != null) {
 			//Dispatch the signaller first, so that managers are notified.
-			
 			newActiveContextSignaler.dispatch(_currentContext);
 			_currentContext.enter();
-			_currentContext.getManager(IProcessManager).isRunning = true;
+			_contextProcessManager = cast _currentContext.getManager(IProcessManager);
+			_contextProcessManager.isRunning = true;
 		}
 	}
 	
+	function init () :Void
+	{
+		//Called by the constructor.
+		newActiveContextSignaler = new DirectSignaler(this);
+		_managers = Maps.newHashMap(String);
+
+		injector = createInjector();
+		_contexts = new Array();
+		
+		registerManager(PBGameBase, this, null, true);
+		
+		initializeManagers();
+		
+		startTimer();
+	}
+	
+	function onFrame (#if flash event:flash.events.Event #end):Void
+	{
+		if (_contextProcessManager != null) {
+			_contextProcessManager.onFrame(#if flash event #end);
+		}
+		if (_contextTransitions.length > 0) {
+			updateContextTransitions();
+		}
+		
+		while (_callLater.length > 0) {
+			_callLater.pop()();
+		}
+	}
+	
+	function startTimer ():Void
+	{
+		Preconditions.checkArgument(_timer == null, "Timer is not null, have we already started the timer?");
+		#if flash
+		_timer = new flash.utils.Timer(untyped flash.Lib.current.stage["frameRate"]);
+		_timer.addEventListener(flash.events.TimerEvent.TIMER, onFrame);
+		_timer.start();
+		#elseif !neko
+		if (_timer == null) {
+			com.pblabs.util.Log.debug("Creating haxe.Timer"); 
+			com.pblabs.util.Log.info("Assuming a frame rate of 30fps");
+			_timer = new haxe.Timer(Std.int(1000/30));
+			_timer.run = onFrame;
+		}
+		#end
+	}
+	
+	function stopTimer ():Void
+	{
+		Preconditions.checkArgument(_timer != null, "Timer is null, have we called stopTimer already?");
+		#if flash
+		_timer.removeEventListener(flash.events.TimerEvent.TIMER, onFrame);
+		_timer.stop();
+		_timer = null;
+		#elseif !neko
+		_timer.stop();
+		_timer.run = null;
+		_timer = null;
+		#end
+	}
+
 	function createInjector () :Injector
 	{
 		return new Injector();
 	}
 	
-	public function initializeManagers():Void
-	{
-		// Mostly will come from subclasses.
-	}
-	
-	 static var EMPTY_ARRAY :Array<Dynamic> = [];
+	static var EMPTY_ARRAY :Array<Dynamic> = [];
 }
-

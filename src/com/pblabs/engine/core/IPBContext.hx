@@ -38,7 +38,10 @@ interface IPBContext
 	var currentGroup (get_currentGroup, set_currentGroup) :IPBGroup;
 	var started (default, null):Bool;
 	
+	/** Is this context the top context (thus updating)? */
 	var isActive (get_isActive, never) :Bool;
+	/** Is this context not destroyed? */
+	var isLive (get_isLive, never) :Bool;
 	
 	/** Called by the PBGameBase once to initialize  */
 	function setup () :Void;
