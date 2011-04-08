@@ -32,8 +32,6 @@ using com.pblabs.util.StringUtil;
 class SetManager extends PBManagerBase,
 	implements haxe.rtti.Infos
 {
-	var _bonds :Array<Bond>;
-	
 	/** Maps set names to objects */
 	var _sets :MultiMap<String, IPBObject>;
 	/** Maps objects to sets */
@@ -63,8 +61,6 @@ class SetManager extends PBManagerBase,
 	
 	public static function addToSet (obj :IPBObject, set :String) :Void
 	{
-		trace("\nobj=" + obj);
-		trace("set=" + set);
 		getSetManager(obj.context).addObjectToSet(obj , set);
 	}
 	
@@ -82,7 +78,6 @@ class SetManager extends PBManagerBase,
 	public function new ()
 	{
 		super();
-		_bonds = [];
 		_sets = SetMultiMap.create(String);
 		_objects = SetMultiMap.create(PBObject);
 	}
@@ -170,44 +165,28 @@ class SetManager extends PBManagerBase,
 	
 	override public function shutdown():Void
 	{
-		removeBonds();
 		_sets.clear();
 		_objects.clear();
-		_sets = null;
-		_objects = null;
 		super.shutdown();
 	}
 	
 	public function injectSets (obj :IEntityComponent, ?cls :Class<Dynamic>) :Void
 	{
-		// trace("obj=" + obj);
 		cls = cls == null ? obj.getClass() : cls;
-		// trace("cls=" + cls);
 		
 		var m = haxe.rtti.Meta.getType(cls);
 		
-		// if (haxe.rtti.Meta.getType(cls)
-		
-		// trace("m=" + Std.string(m));
-		
 		if (m != null) {
-			// trace(" delving into m " + Std.string(m));
-			// trace("Reflect.fields(m)=" + Reflect.fields(m));
 			for (field in Reflect.fields(m)) {
-				// trace("  field=" + field);
 				if (field == "sets") {
-					// trace("type=" + Type.getClassName(Type.getClass(Reflect.field(m, field))));
 					for (s in cast(Reflect.field(m, field), Array<Dynamic>)) {
 						if (Std.is(s, Array)) {
 							for (ss in cast(s, Array<Dynamic>)) {
-								// trace("   adding to " + ss);
 								addObjectToSet(obj.owner, ss);
 							}
 						} else {
-							// trace("   adding to " + s);
 							addObjectToSet(obj.owner, s);
 						}
-										
 					}
 				}
 			}
@@ -217,19 +196,11 @@ class SetManager extends PBManagerBase,
 	override function onNewContext () :Void
 	{
 		com.pblabs.util.Assert.isNotNull(context);
-	    _bonds.push(cast(context, PBContext).signalObjectRemoved.bind(onObjectDestroyed));		
-	}
-	
-	override function onContextRemoval () :Void
-	{
-		removeBonds();
-	}
-	
-	function removeBonds () :Void
-	{
-		while (_bonds.length > 0) {
-			_bonds.pop().destroy();
-		}
+		
+		var bond = cast(context, PBContext).signalObjectRemoved.bind(onObjectDestroyed);
+		cast(context, PBContext).signalDestroyed.bind(function (ctx :IPBContext) :Void {
+			bond.destroy();
+		}, true);
 	}
 	
 	static function getSetManager (context :IPBContext) :SetManager
