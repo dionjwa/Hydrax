@@ -171,7 +171,6 @@ class SetManager extends PBManagerBase,
 	override public function shutdown():Void
 	{
 		removeBonds();
-		_bonds = null;
 		_sets.clear();
 		_objects.clear();
 		_sets = null;
@@ -228,12 +227,9 @@ class SetManager extends PBManagerBase,
 	
 	function removeBonds () :Void
 	{
-		if (_bonds != null) {
-			for (bond in _bonds) {
-				bond.destroy();
-			}
+		while (_bonds.length > 0) {
+			_bonds.pop().destroy();
 		}
-		_bonds = [];
 	}
 	
 	static function getSetManager (context :IPBContext) :SetManager
