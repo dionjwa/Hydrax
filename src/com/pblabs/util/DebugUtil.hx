@@ -7,6 +7,9 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.util;
+
+import com.pblabs.util.ds.Map;
+
 import flash.display.DisplayObject;
 import flash.display.DisplayObjectContainer;
 import flash.display.Graphics;
@@ -20,18 +23,21 @@ import hsl.avm2.translating.AVM2Signaler;
 
 import hsl.haxe.Signaler;
 
-import com.pblabs.util.ds.Map;
-
 class DebugUtil
 {
 
+	public static function traceClassName (obj :Dynamic) :Void
+	{
+		trace(ReflectUtil.getClassName(obj));
+	}
+	
 	public static function applyAllChildren (d :DisplayObjectContainer, f :DisplayObject->Void) :Void
 	{
 		f(d);
 		for (ii in 0...d.numChildren) {
-			var child:DisplayObject = d.getChildAt(ii);
+			var child :DisplayObject = d.getChildAt(ii);
 			f(child);
-			if (Std.is( child, DisplayObjectContainer)) {
+			if (Std.is(child, DisplayObjectContainer)) {
 				applyAllChildren(cast(child,DisplayObjectContainer), f);
 			}
 		}
@@ -40,7 +46,7 @@ class DebugUtil
 	#if (flash || cpp)
 	public static function dictToString (h :Dictionary) :String
 	{
-		var sb:String = "";
+		var sb :String = "";
 
 		if (h == null) {
 			return sb;
@@ -52,7 +58,7 @@ class DebugUtil
 	public static function createDebugLayer (debugcall :Dynamic, args :Array<Dynamic>) :Sprite
 	{
 		trace("createDebugLayer args=" + args.join(", "));
-		var layer:Sprite = new Sprite();
+		var layer :Sprite = new Sprite();
 		args.unshift(layer);
 		trace("after adding sprite args=" + args.join(", "));
 		debugcall.apply(null, args);
@@ -62,8 +68,8 @@ class DebugUtil
 	public static function drawBoundingRect (disp :DisplayObject, drawLayer :Sprite, ?color :Int =
 		0x000000, ?alpha :Float = 1, lineThickness :Float = 1) :Void
 	{
-		var bounds:Rectangle = disp.getBounds(drawLayer);
-		var g:Graphics = drawLayer.graphics;
+		var bounds :Rectangle = disp.getBounds(drawLayer);
+		var g :Graphics = drawLayer.graphics;
 		g.lineStyle(lineThickness, color, alpha);
 		g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);
 	}
@@ -78,7 +84,7 @@ class DebugUtil
 	public static function drawLine (s :Sprite, x1 :Float, y1 :Float, x2 :Float, y2 :Float,
 		?color :Int = 0x000000, ?linethickness :Float = 1, ?alpha :Float = 1) :Void
 	{
-		var g:Graphics = s.graphics;
+		var g :Graphics = s.graphics;
 		g.lineStyle(linethickness, color, alpha);
 		g.moveTo(x1, y1);
 		g.lineTo(x2, y2);
@@ -88,7 +94,7 @@ class DebugUtil
 	public static function drawRect (layer :Sprite, width :Float, height :Float, ?color :Int = 0x000000,
 		?alpha :Float = 1) :Void
 	{
-		var g:Graphics = layer.graphics;
+		var g :Graphics = layer.graphics;
 		g.lineStyle(1, color, alpha);
 		g.drawRect(0, 0, width, height);
 	}
@@ -96,7 +102,7 @@ class DebugUtil
 	public static function drawRectangle (layer :Sprite, rect :Rectangle, ?color :Int = 0x000000,
 		?alpha :Float = 1) :Void
 	{
-		var g:Graphics = layer.graphics;
+		var g :Graphics = layer.graphics;
 		g.lineStyle(1, color, alpha);
 		g.drawRect(rect.left, rect.top, rect.width, rect.height);
 	}
@@ -104,8 +110,8 @@ class DebugUtil
 	public static function fillBoundingRect (layer :Sprite, rootContainer :DisplayObjectContainer,
 		?color :Int = 0xffffff, ?alpha :Float = 0) :Void
 	{
-		var bounds:Rectangle = rootContainer.getBounds(rootContainer);
-		var g:Graphics = layer.graphics;
+		var bounds :Rectangle = rootContainer.getBounds(rootContainer);
+		var g :Graphics = layer.graphics;
 		g.clear();
 		g.beginFill(color, alpha);
 		g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height);
@@ -123,7 +129,7 @@ class DebugUtil
 	public static function fillRect (layer :Sprite, width :Float, height :Float, ?color :Int = 0x000000,
 		?alpha :Float = 1) :Void
 	{
-		var g:Graphics = layer.graphics;
+		var g :Graphics = layer.graphics;
 		g.lineStyle(0, 0, 0);
 		g.beginFill(color, alpha);
 		g.drawRect(0, 0, width, height);
@@ -133,7 +139,7 @@ class DebugUtil
 	public static function fillRectangle (layer :Sprite, rect :Rectangle, ?color :Int = 0x000000,
 		?alpha :Float = 1) :Void
 	{
-		var g:Graphics = layer.graphics;
+		var g :Graphics = layer.graphics;
 		g.beginFill(color, alpha);
 		g.drawRect(rect.left, rect.top, rect.width, rect.height);
 		g.endFill();
@@ -157,7 +163,7 @@ class DebugUtil
 			return;
 		}
 		trace(space + extendedDisplayObjectName(d));
-		if (Std.is( d, DisplayObjectContainer)) {
+		if (Std.is(d, DisplayObjectContainer)) {
 			var parent = cast(d, DisplayObjectContainer);
 
 			for (ii in 0...parent.numChildren) {
@@ -174,8 +180,8 @@ class DebugUtil
 			return "";
 		}
 
-		var lineage:Array<Dynamic> = [ extendedDisplayObjectName(d)];
-		var current:DisplayObject = d.parent;
+		var lineage :Array<Dynamic> = [ extendedDisplayObjectName(d)];
+		var current :DisplayObject = d.parent;
 		while (current != null) {
 			lineage.unshift(extendedDisplayObjectName(current));
 			current = current.parent;
@@ -186,7 +192,7 @@ class DebugUtil
 			space = space + "  ";
 		}
 
-		return "Lineage:\n" + lineage.join("\n");
+		return "Lineage :\n" + lineage.join("\n");
 	}
 
 	static function extendedDisplayObjectName (d :DisplayObject) :String
@@ -194,5 +200,3 @@ class DebugUtil
 		return d + ".name=" + d.name + "  loc=" + d.x + " " + d.y + " size " + d.width + " " + d.height;
 	}
 }
-
-
