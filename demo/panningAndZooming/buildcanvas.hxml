@@ -2,6 +2,7 @@
 -D debug
 
 -lib hydrax
+
 -cp src
 
 -js canvas/haxe.js
@@ -11,5 +12,15 @@
 -cmd cp indexcanvas.xhtml canvas/index.xhtml
 -cmd open canvas/index.xhtml
 
+
+#For local testing
+# -lib IterTools
+# -lib ArrayTools
+# -lib ListTools
+# -lib feffects
+# -cp ../../../hydrax/src
+# -cp ../../../hydrax/lib/hsl
+# -cp ../../../hydrax/lib/hsl-pico
+# -cp ../../../libdamago/lib/polygonal/src/lib
 
 

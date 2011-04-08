@@ -16,7 +16,6 @@
 # -lib ListTools
 # -lib feffects
 
-# #Game libraries
 # -cp ../../../hydrax/src
 # -cp ../../../hydrax/lib/hsl
 # -cp ../../../hydrax/lib/hsl-pico

@@ -12,6 +12,7 @@
 # -lib ListTools
 # -lib feffects
 # -cp ../../../hydrax/src
-# -cp ../../../hxhsl/hsl source
-# -cp ../../../hxhsl/hsl-pico source
+# -cp ../../../hydrax/lib/hsl
+# -cp ../../../hydrax/lib/hsl-pico
 # -cp ../../../libdamago/lib/polygonal/src/lib
+
