@@ -114,7 +114,7 @@ class ProcessManager implements IProcessManager
 		TICKS_PER_SECOND = ticksPerSecond;
 		SECONDS_PER_TICK = 1.0 / TICKS_PER_SECOND;
 		MS_PER_TICK = Std.int(SECONDS_PER_TICK * 1000);
-		MAX_TICKS_PER_FRAME = 2;
+		MAX_TICKS_PER_FRAME = 5;
 		virtualTime = 0;
 		_interpolationFactor = 0;
 		timeScale = 1.0;
@@ -177,13 +177,11 @@ class ProcessManager implements IProcessManager
 		
 		if (_isUsingInternalTimer) {
 			#if flash
-			
-			flash.Lib.current.stage.addEventListener(flash.events.Event.ENTER_FRAME, onFrame);
-			// if (_timer == null) {
-			// 	_timer = new flash.utils.Timer(untyped flash.Lib.current.stage["frameRate"]);
-			// }
-			// _timer.addEventListener(flash.events.TimerEvent.TIMER, onFrame);
-			// _timer.start();
+			if (_timer == null) {
+				_timer = new flash.utils.Timer(untyped flash.Lib.current.stage["frameRate"]);
+			}
+			_timer.addEventListener(flash.events.TimerEvent.TIMER, onFrame);
+			_timer.start();
 			#elseif !neko
 			if (_timer == null) {
 				com.pblabs.util.Log.debug("Creating haxe.Timer");
@@ -217,9 +215,8 @@ class ProcessManager implements IProcessManager
 		
 		if (_isUsingInternalTimer) {
 			#if flash
-			flash.Lib.current.stage.removeEventListener(flash.events.Event.ENTER_FRAME, onFrame);
-			// _timer.removeEventListener(flash.events.TimerEvent.TIMER, onFrame);
-			// _timer.stop();
+			_timer.removeEventListener(flash.events.TimerEvent.TIMER, onFrame);
+			_timer.stop();
 			#elseif !neko
 			_timer.stop();
 			_timer.run = null;
@@ -410,8 +407,7 @@ class ProcessManager implements IProcessManager
 	/**
 	 * Main callback; this is called every frame and allows game Logic to run. 
 	 */
-	// public function onFrame (#if flash event:flash.events.TimerEvent #end):Void
-	public function onFrame (#if flash event:flash.events.Event #end):Void
+	public function onFrame (#if flash event:flash.events.TimerEvent #end):Void
 	{
 		// This is called from a system event, so it had better be at the 
 		// root of the profiler stack!
@@ -450,15 +446,6 @@ class ProcessManager implements IProcessManager
 		// #if !neko
 		// _timer.start();
 		// #end
-		
-		#if flash
-		// trace("deltaTime=" + deltaTime);
-		// if (deltaTime < SECONDS_PER_TICK * 1.5) {
-		// 	trace('invalidating' + deltaTime);
-		// 	event.updateAfterEvent();
-		// 	untyped flash.Lib.current.stage.invalidate();
-		// }
-		#end
 	}
 	
 	/**
