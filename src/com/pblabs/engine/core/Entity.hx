@@ -40,21 +40,26 @@ class Entity extends PBObject,
 	implements IEntity
 {
 	public var destroyedSignal (get_destroyedSignal, null):Signaler<IEntity>;
+	var _destroyedSignal :Signaler<IEntity>;
 	function get_destroyedSignal () :Signaler<IEntity>
 	{
 		//Lazily create
-		if (this.destroyedSignal == null) {
-			this.destroyedSignal = new DirectSignaler(this);
+		if (_destroyedSignal == null) {
+			_destroyedSignal = new DirectSignaler(this);
 		}
-		return this.destroyedSignal;
+		return _destroyedSignal;
 	}
+	
+	var _deferring :Bool;
+	var _components :Map<String, IEntityComponent>;
+	var _deferredComponents :Array<PendingComponent>;
 	
 	public function new() 
 	{
 		super();
 		_deferring = false;
 		_components = Maps.newHashMap(String);
-		_deferredComponents = new Array();
+		_deferredComponents = [];
 	}
 	
 	/** Iterate over components */
@@ -138,6 +143,10 @@ class Entity extends PBObject,
 				c.unregister();
 			}
 			
+			#if debug
+			_context.getManager(com.pblabs.engine.core.PBGameBase).callLater(c.postDestructionCheck);
+			#end
+			
 			#if cpp
 			if (com.pblabs.util.ReflectUtil.is(c, "com.pblabs.engine.time.ITickedObject")) {
 			#else
@@ -160,9 +169,6 @@ class Entity extends PBObject,
 		for (c in _components.array()) {
 			com.pblabs.util.Assert.isNotNull(c, "How can the component be null?");
 			_components.remove(c.name);
-			#if debug
-			c.postDestructionCheck();
-			#end
 		}
 		
 		if (_deferredComponents != null && _deferredComponents.length > 0) {
@@ -178,16 +184,6 @@ class Entity extends PBObject,
 		_components.clear();
 		_deferredComponents = [];
 	}
-	
-	#if debug
-	//Check the references, etc, etc at the end of the update loop.
-	function createDestructionCheckCallback (c :IEntityComponent) :Void->Void
-	{
-		return function () :Void {
-			c.postDestructionCheck();
-		}
-	}
-	#end
 	
 	/**
 	 * Serializes an entity. Pass in the current XML stream, and it automatically
@@ -294,9 +290,9 @@ class Entity extends PBObject,
 		
 		componentName = componentName == null ? PBUtil.getDefaultComponentName(Type.getClass(c)) : componentName; 
 		// Check the context.
-		// Preconditions.checkArgument(component.context != null, "Component has a null context!");
-		// Preconditions.checkArgument(context != null, "Entity has a null context!");
-		Preconditions.checkArgument(c.context == context, "Component and entity are not from same context!");
+		com.pblabs.util.Assert.isTrue(component.context != null, "Component has a null context!");
+		com.pblabs.util.Assert.isTrue(context != null, "Entity has a null context!");
+		com.pblabs.util.Assert.isTrue(c.context == context, "Component and entity are not from same context!");
 		
 		// Add it to the dictionary.
 		if (!doAddComponent(c, componentName)) {
@@ -342,6 +338,11 @@ class Entity extends PBObject,
 	public function removeComponent(component:IEntityComponent):Void
 	{
 		com.pblabs.util.Assert.isNotNull(component, "Why is the component null?");
+		
+		#if debug
+		_context.getManager(com.pblabs.engine.core.PBGameBase).callLater(component.postDestructionCheck);
+		#end
+		
 		// Update the dictionary.
 		if (component.isRegistered && !doRemoveComponent(component))
 			return;
@@ -530,10 +531,6 @@ class Entity extends PBObject,
 		 //Inject the sets (components annotated with @sets("set1", "set2") at the constructor
 		 sets.injectSets(c);
 	}
-	
-	var _deferring :Bool;
-	var _components :Map<String, IEntityComponent>;
-	var _deferredComponents :Array<PendingComponent>;
 }
 
 class PendingComponent

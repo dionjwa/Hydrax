@@ -85,9 +85,19 @@ class SpatialComponent extends EntityComponent,
 		super();
 		signalerAngle = new DirectSignaler(this);
 		signalerLocation = new DirectSignaler(this);
+		initVars();
+	}
+	
+	function initVars() :Void
+	{
 		_vec = new Vector2();
 		_vecForSignalling = new Vector2();
 		_angle = 0;
+		_worldAABB = null;
+		_objectMask = ObjectType.ALL;
+		#if (flash || js)
+		spriteForPointChecks = null;
+		#end
 	}
 
 	function get_point ():XY
@@ -186,17 +196,7 @@ class SpatialComponent extends EntityComponent,
 	
 	override function onRemove () :Void
 	{
-		#if debug
-		debugOwnerName = owner.name;
-		#end
-		_vec.x = 0;
-		_vec.y = 0;
-		_angle = 0;
-		_worldAABB = null;
-		_objectMask = ObjectType.ALL;
-		#if (flash || js)
-		spriteForPointChecks = null;
-		#end
+		initVars();
 		super.onRemove();
 	}
 	
@@ -233,10 +233,18 @@ class SpatialComponent extends EntityComponent,
 	override public function postDestructionCheck () :Void
 	{
 		super.postDestructionCheck();
-		com.pblabs.util.Assert.isFalse(signalerLocation.isListenedTo, debugOwnerName);
-		com.pblabs.util.Assert.isFalse(signalerAngle.isListenedTo, debugOwnerName);
+		var sigs :Array<Signaler<Dynamic>> = cast [signalerLocation, signalerAngle]; 
+		for (sig in sigs) {
+			if (sig.isListenedTo) {
+				for (b in sig.getBonds()) {
+					trace("Stuck bond on " + debugOwnerName + "=" + b);
+				}
+			}
+			com.pblabs.util.Assert.isFalse(sig.isListenedTo, debugOwnerName);
+		}
+		// com.pblabs.util.Assert.isFalse(signalerLocation.isListenedTo, debugOwnerName);
+		// com.pblabs.util.Assert.isFalse(signalerAngle.isListenedTo, debugOwnerName);
 	}
-	var debugOwnerName :String;
 	#end
 	
 	function get_objectMask() :ObjectType

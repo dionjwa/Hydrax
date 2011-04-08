@@ -203,11 +203,15 @@ class HealthComponent extends EntityComponent,
 	override public function postDestructionCheck () :Void
 	{
 		super.postDestructionCheck();
-		com.pblabs.util.Assert.isFalse(signalDamaged.isListenedTo);
-		com.pblabs.util.Assert.isFalse(signalDied.isListenedTo);
-		com.pblabs.util.Assert.isFalse(signalHealed.isListenedTo);
-		com.pblabs.util.Assert.isFalse(signalResurrected.isListenedTo);
-		
+		var sigs :Array<Signaler<Dynamic>> = cast [signalDamaged, signalDied, signalHealed, signalResurrected]; 
+		for (sig in sigs) {
+			if (sig.isListenedTo) {
+				for (b in sig.getBonds()) {
+					trace("Stuck bond on " + debugOwnerName + "=" + b);
+				}
+			}
+			com.pblabs.util.Assert.isFalse(sig.isListenedTo, debugOwnerName);
+		}
 	}
 	#end
 	#if (debug || editor)
