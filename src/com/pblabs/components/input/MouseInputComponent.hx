@@ -8,8 +8,6 @@
  ******************************************************************************/
 package com.pblabs.components.input;
 
-import com.pblabs.components.input.DragManager;
-
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.core.SignalBondManager;
@@ -146,7 +144,7 @@ class MouseInputComponent extends EntityComponent
 	public var isRotatable :Bool;
 	/** Moveable in the x/y? */
 	public var isTranslatable :Bool;
-	public var constraint :com.pblabs.components.input.DragManager.Constraint;
+	public var constraint :DragManager.Constraint;
 	
 	var _bonds :Array<hsl.haxe.Bond>;
 	var _mouseDownThis :Bool;
@@ -247,7 +245,6 @@ class MouseInputComponent extends EntityComponent
 		_mouseDownThis = false;
 		if (isTranslatable || (_deviceDownSignaler != null || _deviceClickSignaler != null || _deviceDownSignaler != null)) {
 			if (data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
-				
 				_mouseDownThis = true;
 				if (_deviceDownSignaler != null) {
 					_deviceDownSignaler.dispatch();

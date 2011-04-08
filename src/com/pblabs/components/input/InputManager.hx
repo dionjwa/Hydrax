@@ -54,7 +54,6 @@ class InputManager extends BaseInputManager,
 	public var deviceMove(default, null) :Signaler<IInputData>;
 	public var deviceClick(default, null) :Signaler<IInputData>;
 	public var deviceHeldDown(default, null) :Signaler<IInputData>;
-	// public var doubleClick(default, null) :Signaler<IInputData>;
 	
 	public var rotate (default, null) :Signaler<IInputData>;
 	public var scale (default, null) :Signaler<IInputData>;
@@ -74,14 +73,10 @@ class InputManager extends BaseInputManager,
 	var gestures :com.pblabs.components.input.GestureInputManager;
 	#end
 
-	@inject
-    var _game :PBGameBase;
-	
 	//Variables to make queries more efficient
 	var _sceneManagers :Array<BaseSceneManager<Dynamic>>;
 	var _displayObjectsUnderPoint :Map<Int, Array<BaseSceneComponent<Dynamic>>>;
 	var _displayObjectFirstUnderPoint :Map<Int, BaseSceneComponent<Dynamic>>;
-
 	var _deviceDownComponent :MouseInputComponent;
 	var _deviceDownComponentLoc :Vector2;
 	var _deviceDownLoc :Vector2;
@@ -100,7 +95,6 @@ class InputManager extends BaseInputManager,
 		deviceUp = new DirectSignaler(this);
 		deviceClick = new DirectSignaler(this);
 		deviceHeldDown = new DirectSignaler(this);
-		// doubleClick = new DirectSignaler(this);
 		rotate = new DirectSignaler(this);
 		scale = new DirectSignaler(this);
 		
@@ -111,7 +105,7 @@ class InputManager extends BaseInputManager,
 		_tempVec = new Vector2();
 		_fingersTouching = 0;
 		
-		_sceneManagers = [];
+		_sceneManagers = null;
 		_displayObjectsUnderPoint = Maps.newHashMap(Int);
 		_displayObjectFirstUnderPoint = Maps.newHashMap(Int);
 	}
@@ -129,42 +123,45 @@ class InputManager extends BaseInputManager,
 	{
 		super.startup();
 		bindSignals();
-		_game.getManager(IProcessManager).addAnimatedObject(this);
 	}
 	
 	override public function shutdown () :Void
 	{
 		super.shutdown();
 		freeSignals();
-		if (_game.getManager(IProcessManager) != null) {
-			//If the ProcessManager is null, it's shut down.
-			_game.getManager(IProcessManager).removeAnimatedObject(this);
-		}
-		onNewContext(null);
 		
 		deviceDown = null;
 		deviceUp = null;
 		deviceMove = null;
 		deviceClick = null;
 		deviceHeldDown = null;
-		// doubleClick = null;
 		rotate = null;
 		scale = null;
 	}
 	
-	function onNewContext (context :IPBContext) :Void
+	override function onContextRemoval () :Void
 	{
+		super.onContextRemoval();
+		//There may be no IProcessManager because the IPBContext is destroyed
+		if (context.isLive && context.getManager(IProcessManager) != null) {
+			context.getManager(IProcessManager).removeAnimatedObject(this);
+		}
 		_sceneManagers = null;
 		clearInputDataCache();
+	}
+	
+	override function onNewContext () :Void
+	{
+		super.onNewContext();
+		context.getManager(IProcessManager).addAnimatedObject(this);
 	}
 	
 	function getSceneManagers () :Array<BaseSceneManager<Dynamic>>
 	{
 		if (_sceneManagers == null) {
-			com.pblabs.util.Assert.isNotNull(_game);
-			com.pblabs.util.Assert.isNotNull(_game.currentContext);
+			com.pblabs.util.Assert.isNotNull(context);
 			
-			var sceneList = _game.currentContext.getManager(SceneManagerList);
+			var sceneList = context.getManager(SceneManagerList);
 			if (sceneList == null) {
 				return null;
 			}
@@ -181,8 +178,6 @@ class InputManager extends BaseInputManager,
 	{
 		com.pblabs.util.Assert.isNotNull(_mouse, "MouseInputManager is null, did you register one?");
 
-		_game.newActiveContextSignaler.bind(onNewContext);		
-		
 		_mouse.mouseDown.bind(onMouseDown);
 		_mouse.mouseMove.bind(onMouseMove);
 		_mouse.mouseUp.bind(onMouseUp);
@@ -256,7 +251,6 @@ class InputManager extends BaseInputManager,
 	
 	function freeSignals () :Void
 	{
-		_game.newActiveContextSignaler.unbind(onNewContext);
 		if (_mouse != null) {
 			_mouse.mouseDown.unbind(onMouseDown);
 			_mouse.mouseMove.unbind(onMouseMove);
@@ -417,6 +411,7 @@ class InputManager extends BaseInputManager,
 		}
 		
 		if (getSceneManagers() == null) {
+			com.pblabs.util.Log.warn("No object under point because getSceneManagers() == null"); 
 			return null;
 		}
 		com.pblabs.util.Assert.isNotNull(getSceneManagers());

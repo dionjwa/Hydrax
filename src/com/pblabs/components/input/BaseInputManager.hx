@@ -7,10 +7,11 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.input;
+
 import com.pblabs.components.scene2D.SceneView;
 import com.pblabs.engine.core.IPBManager;
+import com.pblabs.engine.core.PBManagerBase;
 import com.pblabs.util.Preconditions;
-
 #if js
 import js.Dom;
 #end
@@ -18,18 +19,13 @@ import js.Dom;
 #if (flash || cpp) 
 typedef LayerClass = flash.display.DisplayObjectContainer;
 #end
-// #elseif js
-// HtmlDom;
-// #else
-// Dynamic;//Placeholder
 
 /**
   * Base class for grabbing input events such as mouse and touch
   * events from a layer such as a flash Sprite or a HTML DIV element,
   * and funnelling them into signals.
   */
-class BaseInputManager 
-	implements IPBManager, implements haxe.rtti.Infos
+class BaseInputManager extends PBManagerBase
 {
 	@inject
 	var sceneView :SceneView;
@@ -38,15 +34,17 @@ class BaseInputManager
 	public var layer (get_layer, set_layer) :LayerClass;
 	#end
 	
-	public function new () {}
-	
-	public function startup () :Void
+	public function new () 
 	{
+		super();
+	}
+	
+	override public function startup () :Void
+	{
+		super.startup();
 		#if (flash || cpp)
-		// Preconditions.checkNotNull(context, "Context is null");
 		
 		if (_layer == null) {
-			// sceneView = context.getManager(SceneView);
 			com.pblabs.util.Assert.isNotNull(sceneView, "Could not find SceneView");
 			_layer = sceneView.layer;
 			com.pblabs.util.Assert.isNotNull(_layer, "Could not find root container");
@@ -55,8 +53,9 @@ class BaseInputManager
 	}
 	
 	#if (flash || cpp)
-	public function shutdown () :Void
+	override public function shutdown () :Void
 	{
+		super.shutdown();
 		_layer = null;
 	}
 	
@@ -72,11 +71,5 @@ class BaseInputManager
 	}
 	
 	var _layer :LayerClass;
-	#else
-	public function shutdown () :Void
-	{
-	}
 	#end
 }
-
-
