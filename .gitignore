@@ -16,3 +16,4 @@ demo/canvasDemo/build
 demo/panningAndZooming/build
 demo/resources/build
 \#*#
+src/AllClasses.hx
