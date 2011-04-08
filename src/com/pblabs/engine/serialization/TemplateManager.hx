@@ -18,6 +18,7 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBGroup;
+import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBGroup;
 import com.pblabs.engine.core.PropertyReference;
@@ -63,8 +64,9 @@ using com.pblabs.util.StringUtil;
  * @see com.pblabs.engine.serialization.Serializer.
  */
 class TemplateManager
+	implements IPBManager
 #if cpp
-	implements haxe.rtti.Infos
+	,implements haxe.rtti.Infos
 #end
 {
 	public var signalLoaded :Signaler<XMLResource>;
@@ -96,6 +98,10 @@ class TemplateManager
 	 */
 	public static var VERBOSE_LOGGING :Bool=false;
 	
+	var _inGroup :Bool;
+	var _entityType :Class<Dynamic>;
+	var _things :Map<String, ThingReference>;
+	
 	public function new() 
 	{
 		_inGroup = false;
@@ -104,9 +110,31 @@ class TemplateManager
 		signalLoaded = new DirectSignaler(this);
 		signalFailed = new DirectSignaler(this);
 		signalGroupLoaded = new DirectSignaler(this); 
-		
+	}
+	
+	public function startup () :Void
+	{
 		signalLoaded.bind(onLoaded);
-		signalFailed.bind(onFailed);
+		signalFailed.bind(onFailed);	
+	}
+	
+	public function shutdown () :Void
+	{
+		signalLoaded.unbind(onLoaded);
+		signalFailed.unbind(onFailed);
+		
+		_inGroup = false;
+		_entityType = null;
+		if (_things.size() > 0) {
+			com.pblabs.util.Log.warn("_things still had elements");
+		}
+		_things.clear();
+		
+		#if debug
+		com.pblabs.util.Assert.isFalse(signalLoaded.isListenedTo);
+		com.pblabs.util.Assert.isFalse(signalFailed.isListenedTo);
+		com.pblabs.util.Assert.isFalse(signalGroupLoaded.isListenedTo);
+		#end
 	}
 	
 	/**
@@ -203,7 +231,7 @@ class TemplateManager
 						com.pblabs.util.Log.debug("entity created from callback");
 					}
 					catch (e :Dynamic) {
-						com.pblabs.util.Log.error("createEntity callback failed,  name=" + name + ", error: " + e + "\n" + com.pblabs.util.Log.getStackTrace());
+						com.pblabs.util.Log.error("createEntity callback failed,  name=" + name + ", error :" + e + "\n" + com.pblabs.util.Log.getStackTrace());
 						throw e;
 					}
 					
@@ -420,7 +448,6 @@ class TemplateManager
 	 */
 	public function addXML(xml :Xml, identifier :String, version :Int) :Void
 	{
-		// var name :String=xml.get("name");
 		var name = xml.get("name");
 		
 		if (name.length == 0) {
@@ -458,6 +485,19 @@ class TemplateManager
 			}
 		}
 	}
+	
+	#if debug
+	public function hasXml (identifier :String) :Bool
+	{
+		for (key in _things.keys().toArray()) {
+			var thing = _things.get(key);
+			if (thing.identifier == identifier) {
+				return true;
+			}
+		}
+		return false;
+	}
+	#end
 	
 	/**
 	 * Gets a previously added xml description that has the specified name.
@@ -708,10 +748,6 @@ class TemplateManager
 	{
 		signalFailed.dispatch(resource);
 	}
-	
-	var _inGroup :Bool;
-	var _entityType :Class<Dynamic>;
-	var _things :Map<String, ThingReference>;
 }
 
 enum RefType {
@@ -757,7 +793,7 @@ class ThingReference
 	#if debug
 	public function toString () :String
 	{
-	    return com.pblabs.util.StringUtil.objectToString(this, ["type", "version", "identifier"]);
+		return com.pblabs.util.StringUtil.objectToString(this, ["type", "version", "identifier"]);
 	}
 	#end
 }
