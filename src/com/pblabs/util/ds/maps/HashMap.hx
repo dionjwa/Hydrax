@@ -189,7 +189,7 @@ class HashMap<V> implements Map<String, V>
 	**/
 	public function get( key : String ) : Null<V> 
 	{
-		com.pblabs.util.Assert.isNotNull(key);
+		// com.pblabs.util.Assert.isNotNull(key);
 		return _hash.get(key);	
 	}
 
