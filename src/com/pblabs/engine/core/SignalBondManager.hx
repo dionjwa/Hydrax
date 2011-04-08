@@ -28,13 +28,14 @@ using com.pblabs.util.StringUtil;
   *   -use SignalBondManager.bindSignal to bind the signals.
   */
 class SignalBondManager extends ArrayMultiMap<Int, Bond>,
-	implements IPBManager//, implements haxe.rtti.Infos
+	implements IPBManager
 {
-	public static var OBJECT_DESTROYED_KEY :Int = -1;
+	/** Key for our own signal listening to changin contexts. */
+	var key :Int;
 	
 	@inject("com.pblabs.engine.core.PBGameBase")
 	var game :PBGameBase;
-
+	
 	public static function destroyBond (bond :Bond) :Bond
 	{
 		if (bond != null) {
@@ -43,7 +44,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		return null;
 	}
 	
-	public static function bindSignal <T>(component :EntityComponent, signaler :Signaler<T>, listener :T->Dynamic) :Void
+	public static function bindSignal <T>(component :EntityComponent, signaler :Signaler<T>, listener :T->Dynamic#if debug ,?infos :haxe.PosInfos #end ) :Bond
 	{
 		com.pblabs.util.Assert.isNotNull(component, "component is null");
 		com.pblabs.util.Assert.isNotNull(component.context, "component.context is null");
@@ -52,10 +53,15 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		com.pblabs.engine.debug.Profiler.exit("SignalBondManager lookup");
 		com.pblabs.util.Assert.isNotNull(bonds, "SignalBondManager is null");
 		
-		bonds.bind(component, signaler, listener);
+		#if debug
+		return bonds.bind(component, signaler, listener, infos);
+		#else
+		return bonds.bind(component, signaler, listener);
+		#end
+		
 	}
 	
-	public static function bindVoidSignal (component :EntityComponent, signaler :Signaler<Void>, listener :Void->Dynamic) :Void
+	public static function bindVoidSignal (component :EntityComponent, signaler :Signaler<Void>, listener :Void->Dynamic#if debug ,?infos :haxe.PosInfos #end ) :Bond
 	{
 		com.pblabs.util.Assert.isNotNull(component, "component is null");
 		com.pblabs.util.Assert.isNotNull(component.context, "component.context is null");
@@ -64,16 +70,20 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		com.pblabs.engine.debug.Profiler.exit("SignalBondManager lookup");
 		com.pblabs.util.Assert.isNotNull(bonds, "SignalBondManager is null");
 		
-		bonds.bindVoid(component, signaler, listener);
+		#if debug
+		return bonds.bindVoid(component, signaler, listener, infos);
+		#else
+		return bonds.bindVoid(component, signaler, listener);
+		#end
 	}
 	
 	public function new ()
 	{
 		super(Int);
-		// com.pblabs.util.Assert.isTrue(Std.is(_map, com.pblabs.util.ds.maps.IntHashMap), "? No IntHashMap?");
+		key = com.pblabs.engine.util.PBUtil.KEY_COUNT++;
 	}
 
-	public function bind <T>(component :EntityComponent, signaler :Signaler<T>, listener :T->Dynamic) :Void
+	public function bind <T>(component :EntityComponent, signaler :Signaler<T>, listener :T->Dynamic#if debug ,?infos :haxe.PosInfos #end ) :Bond
 	{
 		com.pblabs.engine.debug.Profiler.enter("bind");
 		com.pblabs.util.Assert.isNotNull(component, "component is null");
@@ -93,9 +103,16 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		set(key, bond);
 		com.pblabs.engine.debug.Profiler.exit("set");
 		com.pblabs.engine.debug.Profiler.exit("bind");
+		
+		#if debug
+		bond.infos = infos;
+		com.pblabs.util.Log.debug("New " + bond);
+		#end
+		
+		return bond;
 	}
 	
-	public function bindVoid (component :EntityComponent, signaler :Signaler<Void>, listener :Void->Dynamic) :Void
+	public function bindVoid (component :EntityComponent, signaler :Signaler<Void>, listener :Void->Dynamic#if debug ,?infos :haxe.PosInfos #end ) :Bond
 	{
 		com.pblabs.engine.debug.Profiler.enter("bind");
 		com.pblabs.util.Assert.isNotNull(component, "component is null");
@@ -110,27 +127,50 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		com.pblabs.engine.debug.Profiler.exit("prop");
 		com.pblabs.engine.debug.Profiler.enter("bind actual");
 		var bond = signaler.bindVoid(listener);
+		com.pblabs.util.Assert.isNotNull(bond, "bond is null");
 		com.pblabs.engine.debug.Profiler.exit("bind actual");
 		com.pblabs.engine.debug.Profiler.enter("set");
 		set(key, bond);
 		com.pblabs.engine.debug.Profiler.exit("set");
 		com.pblabs.engine.debug.Profiler.exit("bind");
+		
+		#if debug
+		bond.infos = infos;
+		com.pblabs.util.Log.debug("New " + bond);
+		#end
+		
+		return bond;
 	}
 	
-	public function destroyBonds (key :Int) :Void
+	#if debug public function destroyBonds (key :Int) :Int #else
+	public function destroyBonds (key :Int) :Void #end
 	{
+		#if debug
+		var count :Int = 0;
+		#end
 		if (exists(key)) {
 			for (bond in get(key)) {
+				#if debug
+				count++;
+				#end
 				bond.destroy();
 			}
 			remove(key);
 		}
+		
+		#if debug
+		return count;
+		#end
 	}
 	
 	public function startup():Void
 	{
 		com.pblabs.util.Assert.isNotNull(game);
-		game.newActiveContextSignaler.bind(onNewContext);
+		//Listen to new contexts so we can listen to object removal
+		set(key, game.newActiveContextSignaler.bind(onNewContext));
+		if (game.currentContext != null) {
+			onNewContext(game.currentContext);
+		}
 	}
 	
 	public function shutdown():Void
@@ -146,6 +186,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	
 	public function destroyBondOnEntity (obj :IPBObject) :Void
 	{
+		com.pblabs.util.Log.debug("Destroying on " + obj.name);
 		destroyBonds(cast(obj, Entity).key);
 		
 		#if cpp
@@ -164,12 +205,25 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	inline public function destroyBondsOnComponent (c :EntityComponent) :Void
 	{
 		com.pblabs.util.Assert.isNotNull(c, "??EntityComponent is null??");
+		#if debug
+		var count = destroyBonds(c.key);
+		com.pblabs.util.Log.debug(count + " bonds broken on " + c.name);
+		#else
 		destroyBonds(c.key);
+		#end
 	}
 	
 	function onNewContext (c :IPBContext) :Void
 	{
-		destroyBonds(OBJECT_DESTROYED_KEY);
-		set(OBJECT_DESTROYED_KEY, cast(c, PBContext).signalObjectRemoved.bind(destroyBondOnEntity));
+		com.pblabs.util.Log.debug("onNewContext " + c.name);
+		var ctx = cast(c, PBContext);
+		var self = this;
+		//Listen to destroyed entities
+		set(ctx.key, ctx.signalObjectRemoved.bind(destroyBondOnEntity));
+		//And remove the context specific listeners when the context goes pop
+		set(ctx.key, ctx.signalDestroyed.bind(function (c :IPBContext) {
+			com.pblabs.util.Log.debug("Destroying bonds on PBContext");
+			self.destroyBonds(ctx.key);
+		}));
 	}
 }
