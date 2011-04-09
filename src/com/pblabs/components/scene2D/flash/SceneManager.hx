@@ -70,14 +70,6 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 		zoomSignal = new DirectSignaler(this);
 	}
 	
-	// #if (flash && debug)
-	// override function onReset () :Void
-	// {
-	// 	super.onReset();
-	// 	com.pblabs.engine.core.SignalBondManager.bindSignal(this, cast(context, com.pblabs.engine.core.PBContext).signalEnter, unDim);
-	// 	com.pblabs.engine.core.SignalBondManager.bindSignal(this, cast(context, com.pblabs.engine.core.PBContext).signalExit, dim);
-	// }
-	
 	// function dim (?ignored :Dynamic) :Void
 	// {
 	// 	trace("");
@@ -126,7 +118,6 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 		for (layer in children) {
 		    layer.updateTransform();
 		}
-		return;
 		
 		// Update our transform, if required
 		_rootTransform.identity();
@@ -140,7 +131,6 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 		Preconditions.checkNotNull(_tempPoint);
 		Preconditions.checkNotNull(sceneAlignment);
 		Preconditions.checkNotNull(sceneView);
-		trace("sceneView.width=" + sceneView.width);
 		SceneUtil.calculateOutPoint(_tempPoint, sceneAlignment, sceneView.width, sceneView.height);
 		_rootTransform.translate(_tempPoint.x, _tempPoint.y);
 
@@ -162,7 +152,6 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 	
 	override function attach () :Void
 	{
-		super.attach();
 		com.pblabs.util.Assert.isNotNull(_rootSprite);
 		com.pblabs.util.Assert.isNotNull(displayContainer);
 		com.pblabs.util.Assert.isNotNull(context, "How can the context be null??, name=" + name + ", isRegistered=" +isRegistered);
@@ -174,7 +163,6 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 	
 	override function detach () :Void
 	{
-		super.detach();
 		if (_rootSprite.parent != null) {
 			_rootSprite.detach();
 		}

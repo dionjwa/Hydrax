@@ -42,21 +42,10 @@ class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 	
 	public function updateTransform () :Void
 	{
-		// Update our transform, if required
+		// Update our transform, if required.
+		//Currently only parallax scrolling is supported.
 		_rootTransform.identity();
 		_rootTransform.translate(parent.x * parallaxFactor, parent.y * parallaxFactor);
-		_rootTransform.scale(parent.zoom, parent.zoom);
-		
-		// Apply rotation.
-		_rootTransform.rotate(parent.rotation);
-
-		// Center it appropriately.
-		Preconditions.checkNotNull(_tempPoint, "No temppoint");
-		Preconditions.checkNotNull(parent.sceneAlignment, "No SceneAlignment");
-		Preconditions.checkNotNull(parent.sceneView, "No SceneView");
-		SceneUtil.calculateOutPoint(_tempPoint, parent.sceneAlignment, parent.sceneView.width, parent.sceneView.height);
-		_rootTransform.translate(_tempPoint.x, _tempPoint.y);
-
 		// Apply the transform.
 		displayContainer.transform.matrix = _rootTransform;
 	}

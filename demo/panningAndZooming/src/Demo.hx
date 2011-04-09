@@ -1,16 +1,17 @@
 package ;
 
+import com.pblabs.components.input.DragManager;
 import com.pblabs.components.input.IInputData;
 import com.pblabs.components.input.InputManager;
 import com.pblabs.components.input.MouseInputComponent;
 import com.pblabs.components.input.MouseInputManager;
-import com.pblabs.components.input.DragManager;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.scene2D.BaseSceneLayer;
 import com.pblabs.components.scene2D.BaseSceneManager;
 import com.pblabs.components.scene2D.CircleShape;
 import com.pblabs.components.scene2D.ImageComponent;
 import com.pblabs.components.scene2D.RectangleShape;
+import com.pblabs.components.scene2D.SceneAlignment;
 import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.scene2D.SceneView;
 import com.pblabs.components.tasks.AngleTask;
@@ -44,15 +45,10 @@ using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.components.ui.UIUtil;
 using com.pblabs.engine.util.PBUtil;
 
-class Demo #if flash extends flash.display.Sprite #end 
+class Demo  
 {
 	public function new() 
 	{
-		#if (flash || cpp)
-		super();
-		this.name = "Demo";
-		#end
-		
 		com.pblabs.engine.debug.Log.setup();
 		game = new PBGame();
 		
@@ -83,10 +79,27 @@ class Demo #if flash extends flash.display.Sprite #end
 		var context = game.allocate(PBContext);
 		game.pushContext(context);
 		
+		#if flash
+		//Lets use the Bitmap renderer for flash.
+		// var gamescene = context.createBaseScene(null, false, true, com.pblabs.components.scene2D.flash.BitmapDataScene);
 		var gamescene = context.createBaseScene();
+		#else
+		var gamescene = context.createBaseScene();
+		#end
 		var lowerLayer = gamescene.addLayer("lowerLayer");
 		lowerLayer.parallaxFactor = 0.5;
 		var layer = gamescene.addLayer("defaultLayer");
+		
+		//Scene for the UI
+		var uiscene = context.createBaseScene("UIScene");
+		uiscene.sceneAlignment = SceneAlignment.TOP_LEFT;
+		var uilayer = uiscene.addLayer("uilayer");
+		
+		//FPS
+		#if flash
+		new com.bit101.components.FPSMeter(flash.Lib.current, 10, 10);
+		#end
+		
 		
 		var man  = SceneUtil.createBaseSceneEntity(context);
 		var c = context.allocate(ImageComponent);
@@ -106,7 +119,6 @@ class Demo #if flash extends flash.display.Sprite #end
 		#if debug
 		com.pblabs.util.Assert.isNotNull(sceneView, "??");
 		#end
-		
 		SceneUtil.calculateOutPoint(outpoint, gamescene.sceneAlignment, sceneView.width, sceneView.height);
 		var rect = new Rectangle(-outpoint.x, -outpoint.y, sceneView.width, sceneView.height);
 		serial.addTask(LocationTask.CreateEaseOut(rect.left, rect.top, 3));
@@ -135,12 +147,24 @@ class Demo #if flash extends flash.display.Sprite #end
 			panner.panScene(gamescene);
 		});
 		
+		#if flash
+		//Keyboard input, flash only ATM
+		hsl.avm2.plugins.KeyboardShortcuts.getKeyPressedDownSignaler(flash.Lib.current.stage).bind(
+		function (k :hsl.haxe.data.keyboard.KeyCombination) :Void {
+			if (k.keyCode == 90) {//z
+				gamescene.zoom *= 1.1;
+			} else if (k.keyCode == 88) {//x
+				gamescene.zoom *= 0.9;
+			}  
+		});
+		#end
+		
 	}
 	
 	function randMove (e :IEntity, continuous :Bool) :Void 
 	{
 		var sceneView = e.context.getManager(SceneView);
-		var scene = e.getComponent(BaseSceneComponent).parent.parent;
+		var scene = e.getComponent(BaseSceneComponent).layer.scene;
 		var serial = new SerialTask();
 		var parallel = new ParallelTask();
 		var time = Math.random() * 5;
@@ -179,11 +203,7 @@ class Demo #if flash extends flash.display.Sprite #end
 	
 	public static function main() 
 	{
-		#if flash
-		flash.Lib.current.addChild(new Demo());
-		#else
 		new Demo();
-		#end
 	}
 	
 	var game :PBGameBase;

@@ -71,10 +71,14 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	 * @see SceneAlignment
 	 * @see position
 	 */
-	public var sceneAlignment (default, set_sceneAlignment) :SceneAlignment;
+	public var sceneAlignment (get_sceneAlignment, set_sceneAlignment) :SceneAlignment;
+	function get_sceneAlignment () :SceneAlignment
+	{
+		return _sceneAlignment;
+	}
 	function set_sceneAlignment (val :SceneAlignment) :SceneAlignment
 	{
-		this.sceneAlignment = val;
+		_sceneAlignment = val;
 		_transformDirty = true;
 		return val;
 	}
@@ -86,6 +90,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	
 	/** The view of the.scene2D.is always enclosed in the bounds */
 	var _sceneBounds :Rectangle;
+	var _sceneAlignment :SceneAlignment;
 	var _sceneView :SceneView;
 	var _currentViewRect :Rectangle;
 
@@ -101,12 +106,12 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	{
 		zoomMax = 300;
 		zoomMin = 0.001;
-		sceneAlignment = SceneAlignment.CENTER;
+		_sceneAlignment = SceneAlignment.CENTER;
 		_currentViewRect = new Rectangle();
 		_zoom = 1.0;
 		_rotation = 0;
 		_position = new Vector2();
-		_transformDirty = false;
+		// _transformDirty = false;
 		parentProperty = SceneManagerList.PROP;
 		_sceneView = null;
 		_sceneBounds = null;
@@ -282,7 +287,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		_debugcontext = pb;
 		#end
 		this.bindVoidSignal(pb.signalEnter, attach);
-		this.bindVoidSignal(pb.signalExit, detach);		
+		this.bindVoidSignal(pb.signalExit, detach);
 	}
 
 	override function onRemove () :Void

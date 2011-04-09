@@ -34,8 +34,8 @@ using StringTools;
 class SceneView 
 	implements IPBManager, implements haxe.rtti.Infos
 {
-	public var height(get_height, set_height) : Float;
-	public var width(get_width, set_width) : Float;
+	public var height(get_height, set_height) : Int;
+	public var width(get_width, set_width) : Int;
 
 	#if (flash || cpp)	
 	public var layer (get_layer, null) :flash.display.Sprite;
@@ -49,13 +49,8 @@ class SceneView
 	public var mouseOffsetY (get_mouseOffsetY, never) :Float;
 	#end
 	
-	// #if (flash || cpp)
-	// @inject("flash.display.Sprite")
-	// public var displayContainer :flash.display.DisplayObjectContainer;
-	// #end
-	
-	var _height:Float;
-	var _width:Float;
+	var _height :Int;
+	var _width :Int;
 	
 	#if js
 	public function new (?layerId :String, ?width :Int = 0, ?height :Int = 0)
@@ -121,22 +116,22 @@ class SceneView
 		#end
 	}
 	
-	function get_height ():Float{
+	function get_height ():Int{
 		return _height;
 	}
 
-	function set_height (value :Float):Float
+	function set_height (value :Int):Int
 	{
 		_height = value;
 		return value;
 	}
 
-	function get_width ():Float
+	function get_width ():Int
 	{
 		return _width;
 	}
 
-	function set_width (value :Float):Float
+	function set_width (value :Int):Int
 	{
 		_width = value;
 		return value;
@@ -177,10 +172,10 @@ class SceneView
 		_layer.graphics.beginFill(0, 0);
 		_layer.graphics.drawRect(0, 0, flash.Lib.current.stage.stageWidth, flash.Lib.current.stage.stageHeight);
 		_layer.graphics.endFill();
-		#if debug
-		_layer.graphics.lineStyle(2, 0x0000ff, 1);
-		_layer.graphics.drawRect(0, 0, flash.Lib.current.stage.stageWidth-2, flash.Lib.current.stage.stageHeight-2);
-		#end
+		// #if debug
+		// _layer.graphics.lineStyle(2, 0x0000ff, 1);
+		// _layer.graphics.drawRect(0, 0, flash.Lib.current.stage.stageWidth-2, flash.Lib.current.stage.stageHeight-2);
+		// #end
 		// Intelligent default size.
 		_width = flash.Lib.current.stage.stageWidth;
 		_height = flash.Lib.current.stage.stageHeight;
@@ -196,8 +191,8 @@ class SceneView
 		if (_layer == null) {
 			Preconditions.checkNotNull(_layerId, "no layer, and layerId is null");
 			_layer = cast js.Lib.document.getElementById(_layerId);
-			_width = Std.parseFloat(_layer.style.width.replace("px",""));
-			_height = Std.parseFloat(_layer.style.height.replace("px",""));
+			_width = Std.parseInt(_layer.style.width.replace("px",""));
+			_height = Std.parseInt(_layer.style.height.replace("px",""));
 			#if debug
 			_layer.style.borderColor = "#0000ff";
 			_layer.style.borderWidth = "1px";

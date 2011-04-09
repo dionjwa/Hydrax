@@ -49,10 +49,11 @@ class SceneUtil
 		#end
 
 	public static function createBaseScene (context :IPBContext, ?name :String = null, ?addDefaultLayer :Bool = false, 
-		?registerAsManager :Bool = true) :BaseSceneManager<Dynamic>
+		?registerAsManager :Bool = true, ?cls :Class<Dynamic>) :BaseSceneManager<Dynamic>
 	{
 		com.pblabs.util.Assert.isNotNull(context);
-		var scene = context.addSingletonComponent(MANAGER_CLASS, name, true);
+		var cls = cls == null ? MANAGER_CLASS : cls;
+		var scene = cast(context.addSingletonComponent(cls, name, true), BaseSceneManager<Dynamic>);
 		//The spatial component is for panning control
 		scene.owner.addComponent(context.allocate(SpatialComponent), SpatialComponent.NAME);
 		scene.owner.deferring = false;
@@ -122,6 +123,8 @@ class SceneUtil
 	 */
 	public static function calculateOutPoint (outPoint :XY, alignment :SceneAlignment, sceneWidth :Float, sceneHeight :Float) :XY
 	{
+		com.pblabs.util.Assert.isNotNull(outPoint);
+		com.pblabs.util.Assert.isNotNull(alignment);
 		switch (alignment) {
 			case CENTER :
 				outPoint.x = sceneWidth * 0.5;

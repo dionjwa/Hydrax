@@ -2,10 +2,11 @@
 -D use_rtti_doc
 -D debug
 
--lib hydrax
+# -lib hydrax
 -cp src
 
 -swf-lib rsrc/resources.swf
+-swf-lib ../../../hydrax/lib/MinimalComps.swf
 -swf9 flash/demo.swf
 -swf-header 800:400:30:FFFFFF
 
@@ -14,12 +15,12 @@
 -cmd cp indexflash.xhtml flash/index.xhtml
 
 #For local testing
-# -lib IterTools
-# -lib ArrayTools
-# -lib ListTools
-# -lib feffects
-# -cp ../../../hydrax/src
-# -cp ../../../hydrax/lib/hsl
-# -cp ../../../hydrax/lib/hsl-pico
-# -cp ../../../libdamago/lib/polygonal/src/lib
+-lib IterTools
+-lib ArrayTools
+-lib ListTools
+-lib feffects
+-cp ../../../hydrax/src
+-cp ../../../hydrax/lib/hsl
+-cp ../../../hydrax/lib/hsl-pico
+-cp ../../../libdamago/lib/polygonal/src/lib
 
