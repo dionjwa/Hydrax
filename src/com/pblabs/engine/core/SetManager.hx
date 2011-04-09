@@ -29,9 +29,12 @@ using com.pblabs.util.StringUtil;
   * sets do not automatically destroy the set member objects,
   * however, destruction of Entity objects triggers set removal
   */
-class SetManager extends PBManagerBase,
-	implements haxe.rtti.Infos
+class SetManager
+	implements haxe.rtti.Infos, implements IPBManager
 {
+	@inject
+	var context :IPBContext;
+	
 	/** Maps set names to objects */
 	var _sets :MultiMap<String, IPBObject>;
 	/** Maps objects to sets */
@@ -77,7 +80,6 @@ class SetManager extends PBManagerBase,
 	
 	public function new ()
 	{
-		super();
 		_sets = SetMultiMap.create(String);
 		_objects = SetMultiMap.create(PBObject);
 	}
@@ -163,11 +165,16 @@ class SetManager extends PBManagerBase,
 	    removeObjectFromAll(obj);
 	}
 	
-	override public function shutdown():Void
+	public function startup () :Void
+	{
+	    onNewContext();
+	}
+	
+	public function shutdown():Void
 	{
 		_sets.clear();
 		_objects.clear();
-		super.shutdown();
+		context = null;
 	}
 	
 	public function injectSets (obj :IEntityComponent, ?cls :Class<Dynamic>) :Void
@@ -193,7 +200,7 @@ class SetManager extends PBManagerBase,
 		}
 	}
 	
-	override function onNewContext () :Void
+	function onNewContext () :Void
 	{
 		com.pblabs.util.Assert.isNotNull(context);
 		

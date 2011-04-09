@@ -132,7 +132,10 @@ class PBContext
 		var i = _objectPool != null ? _objectPool.get(type) : Type.createInstance(type, EMPTY_ARRAY);
 		#end
 		Assert.isNotNull(i, "allocated'd instance is null, type=" + type);
-		//Components get injected by the entity
+		//Components get injected by the entity.  The reason is that a component may get
+		//added, but removed before properly initializing. This means that the component
+		//will not get unregister called, and thus may not clear the inject fields, resulting
+		//in hanging references.  This is not allowed for proper object pooling/reuse.
 		#if cpp
 		if (!com.pblabs.util.ReflectUtil.is(i, "com.pblabs.engine.core.IEntityComponent")) {
 		#else
@@ -212,6 +215,7 @@ class PBContext
 	public function initializeManagers():Void
 	{
 		// Mostly will come from subclasses.
+		registerManager(SetManager, new SetManager());
 	}
 
 	public function getManager <T>(cls :Class<T>, ?name :String = null):T

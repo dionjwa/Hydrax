@@ -529,7 +529,11 @@ class Entity extends PBObject,
 		//Inject the component fields
 		 _context.injectInto(c);
 		 //Inject the sets (components annotated with @sets("set1", "set2") at the constructor
-		 sets.injectSets(c);
+		 if (sets != null) {
+		 	 sets.injectSets(c);
+		 } else {
+		 	 com.pblabs.util.Log.warn("No SetManager, cannot inject IEntityComponents into sets");
+		 }
 	}
 }
 
