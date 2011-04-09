@@ -17,7 +17,7 @@ import com.pblabs.util.EqualableUtil;
   * Order dependent pair
   */
 class Tuple <V1, V2> 
-	implements Hashable, implements Equalable<Dynamic>
+	implements Hashable, implements Equalable<Tuple<Dynamic, Dynamic>>
 {
 	public static var temp :Tuple<Dynamic, Dynamic> = new Tuple(null, null);
 	
@@ -79,39 +79,36 @@ class Tuple <V1, V2>
 		return value;
 	}
 	
-	
-	
-	/**
-	  * Clear references.
-	  */
-	public static function shutdown () :Void
-	{
-		temp.set(null, null);
-	}
-	
 	public function new (v1 :V1, v2 :V2)
 	{
-		set(v1, v2);
+		_hashCode = 0;
+		this.v1 = v1;
+		this.v2 = v2;
 	}
 	
 	public function hashCode () :Int
 	{
+		if (_hashCode == 0) {
+			if (v1 == null && v2 == null) {
+				_hashCode = 0;
+			} else {
+				_hashCode = computeHashCode(v1, v2);
+			}
+		}
 		return _hashCode;
 	}
 	
-	public function equals (other :Dynamic) :Bool
+	public function equals (other :Tuple<Dynamic, Dynamic>) :Bool
 	{
-		if (!Std.is(other, Tuple)) {
-			return false;
-		}
-		var v :Tuple <V1, V2> = cast(other);
-		return EqualableUtil.equals(v1, v.v1) && EqualableUtil.equals(v2, v.v2);
+		return EqualableUtil.equals(v1, other.v1) && EqualableUtil.equals(v2, other.v2);
 	}
 	
+	#if debug
 	public function toString () :String
 	{
 		return "[" + v1 + ", " + v2 + "]";
 	}
+	#end
 	
 	//Bad idea?
 	public function clear () :Void
@@ -124,13 +121,9 @@ class Tuple <V1, V2>
 	//Bad idea?  It would fuck up Tuple map keys
 	public function set (v1 :V1, v2 :V2) :Tuple <V1, V2>
 	{
+		_hashCode = 0;
 		this.v1 = v1;
 		this.v2 = v2;
-		if (v1 == null && v2 == null) {
-			_hashCode = 0;
-		} else {
-			_hashCode = computeHashCode(v1, v2);
-		}
 		return this;
 	}
 
