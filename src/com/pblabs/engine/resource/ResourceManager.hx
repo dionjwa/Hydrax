@@ -63,14 +63,16 @@ class ResourceManager
 		Preconditions.checkNotNull(onLoad);
 		Preconditions.checkNotNull(onError);
 		
-		_onLoadCallbacks.push(onLoad);
-		_onErrorCallbacks.push(onError);
-		
 		if (_pendingResources.size() == 0 && _loadingResources.size() == 0) {
 			com.pblabs.util.Log.info("No resources to load, calling onLoad");
-			allResourcesLoaded();
+			com.pblabs.util.Assert.isTrue(_onLoadCallbacks.length == 0);
+			onLoad();
+			// allResourcesLoaded();
 			return;
 		}
+		
+		_onLoadCallbacks.push(onLoad);
+		_onErrorCallbacks.push(onError);
 		
 		var self = this;
 		for (key in _pendingResources.keys().toArray()) {//Keys copied to avoid since the map is modified in the loop
@@ -191,8 +193,12 @@ class ResourceManager
 	
 	function handleLoadingError (e :Dynamic) :Void
 	{
-		while (_onErrorCallbacks.length > 0) {
-			_onErrorCallbacks.shift()(e);
+		if (_onErrorCallbacks.length == 0) {
+			throw "Loading error, but no callbacks e=" + e;
+		} else {
+			while (_onErrorCallbacks.length > 0) {
+				_onErrorCallbacks.shift()(e);
+			}
 		}
 	}
 	
