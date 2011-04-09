@@ -19,6 +19,8 @@ interface IResource<T>
 	
 	/**
 	  * Create/get the resource mapped to the name.
+	  * The returned object may be generated or it may 
+	  * an unchanging object, such as Xml.
 	  */
 	function get (?resourceName :String) :T;
 	
@@ -30,6 +32,5 @@ interface IResource<T>
 	function unload () :Void;
 	
 	function isLoaded () :Bool;
-	
 }
 
