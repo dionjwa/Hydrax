@@ -22,6 +22,9 @@ import flash.display.Sprite;
 import flash.geom.Matrix;
 import flash.geom.Point;
 
+import hsl.haxe.DirectSignaler;
+import hsl.haxe.Signaler;
+
 using com.pblabs.util.ArrayUtil;
 using com.pblabs.util.DisplayUtils;
 
@@ -36,7 +39,7 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 	implements IAnimatedObject
 {
 	
-	public var zoomSignal (default, null):hsl.haxe.Signaler<Float>;
+	public var zoomSignal (default, null):Signaler<Float>;
 	public var displayContainer (get_displayContainer, null) :DisplayObjectContainer;
 	public var dirty :Bool;
 
@@ -64,7 +67,7 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 		super.onAdd();
 		_rootSprite.name = name;
 		context.getManager(SceneView).addDisplayObject(displayContainer);
-		zoomSignal = new hsl.haxe.DirectSignaler(this);
+		zoomSignal = new DirectSignaler(this);
 	}
 	
 	// #if (flash && debug)
@@ -92,9 +95,6 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 	{
 		super.onRemove();
 		_rootSprite.detach();
-		com.pblabs.util.Assert.isFalse(zoomSignal.isListenedTo, "Still has listeners");
-		zoomSignal = null;
-		
 		com.pblabs.util.Assert.isTrue(_rootSprite.numChildren == 0);
 		com.pblabs.util.Assert.isTrue(_rootSprite.parent == null);
 	}
@@ -200,6 +200,22 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 	    	i++;
 	    }
 	    return sb.toString();
+	}
+	#end
+	
+	#if debug
+	override public function postDestructionCheck () :Void
+	{
+		super.postDestructionCheck();
+		var sigs :Array<Signaler<Dynamic>> = cast [zoomSignal]; 
+		for (sig in sigs) {
+			if (sig.isListenedTo) {
+				for (b in sig.getBonds()) {
+					trace("Stuck bond on " + debugOwnerName + "=" + b);
+				}
+			}
+			com.pblabs.util.Assert.isFalse(sig.isListenedTo, debugOwnerName);
+		}
 	}
 	#end
 }
