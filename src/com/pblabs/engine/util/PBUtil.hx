@@ -63,6 +63,7 @@ class PBUtil
 		if (compName == null) {
 			compName = ReflectUtil.tinyClassName(Type.getClass(component));
 		}
+		compName = context.getManager(NameManager).validateName(compName);
 		
 		var e = context.allocate(IEntity);
 		Assert.isNotNull(e.context, "How can the entity context be null? e.name=" +e.name + ", compClass=" + ReflectUtil.getClassName(component));
