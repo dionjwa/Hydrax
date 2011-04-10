@@ -138,13 +138,8 @@ class BitmapDataScene extends com.pblabs.components.scene2D.flash.SceneManager
 		// 		backbuffer = (cast(modifiers[mo], Modifier)).modify(backbuffer);				
 		// }
 		
-		// backbuffer.noise(Std.int(haxe.Timer.stamp() * 1000));
 		backbuffer.unlock();
-		_tempBackBuffer = bitmap.bitmapData; 
 		bitmap.bitmapData = backbuffer;
-		backbuffer = _tempBackBuffer; 
-		
-		// com.pblabs.util.DebugUtil.traceDisplayChildren(flash.Lib.current.stage);
 	}
 	
 	override function onAdd () :Void
@@ -171,8 +166,6 @@ class BitmapDataScene extends com.pblabs.components.scene2D.flash.SceneManager
 			bitmap.detach();
 		}
 	}
-	
-	var _tempBackBuffer :BitmapData;
 	
 	// var _modifiers :Array<Dynamic>;
 }
