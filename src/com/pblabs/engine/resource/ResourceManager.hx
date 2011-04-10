@@ -57,11 +57,11 @@ class ResourceManager
 		return rs.get(itemName);
 	}
 
-	public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
+	public function load (onLoad :Void->Void, ?onError :Dynamic->Void) :Void
 	{
 		com.pblabs.util.Log.info("");
 		Preconditions.checkNotNull(onLoad);
-		Preconditions.checkNotNull(onError);
+		// Preconditions.checkNotNull(onError);
 		
 		if (_pendingResources.size() == 0 && _loadingResources.size() == 0) {
 			com.pblabs.util.Log.info("No resources to load, calling onLoad");
@@ -72,7 +72,9 @@ class ResourceManager
 		}
 		
 		_onLoadCallbacks.push(onLoad);
-		_onErrorCallbacks.push(onError);
+		if (onError != null) {
+			_onErrorCallbacks.push(onError);
+		}
 		
 		var self = this;
 		for (key in _pendingResources.keys().toArray()) {//Keys copied to avoid since the map is modified in the loop

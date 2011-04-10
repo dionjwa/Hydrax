@@ -20,7 +20,7 @@ interface IResourceManager implements IPBManager
 	
 	function addResource (rsrc :IResource<Dynamic>) :Void;
 	
-	function load (onLoad :Void->Void, onError :Dynamic->Void) :Void;
+	function load (onLoad :Void->Void, ?onError :Dynamic->Void) :Void;
 	
 	function unload (resourceName :String) :Void;
 	
