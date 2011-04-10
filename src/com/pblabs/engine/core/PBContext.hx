@@ -333,7 +333,7 @@ class PBContext
 		
 		var managerName = PBUtil.getManagerName(clazz, optionalName);
 		
-		com.pblabs.util.Assert.isFalse(_managers.exists(managerName), "A manager already exists " + managerName);
+		com.pblabs.util.Assert.isFalse(_managers.exists(managerName), "A manager already exists " + managerName + " in " + com.pblabs.util.ReflectUtil.getClassName(this));
 		_managers.set(managerName, instance);
 		
 		if(!suppressInject) {
