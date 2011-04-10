@@ -385,12 +385,12 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	}
 	
 	//Override
-	function attach () :Void
+	public function attach () :Void
 	{
 		
 	}
 	
-	function detach () :Void
+	public function detach () :Void
 	{
 		
 	}
