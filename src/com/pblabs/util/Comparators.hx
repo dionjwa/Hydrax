@@ -30,6 +30,8 @@ package com.pblabs.util;
 
 import com.pblabs.util.ReflectUtil;
 
+import Type;
+
 /* Contains sorting Comparators.
  * These functions take any parameters but require only the first to, so they are suitable
  * for passing to Array.sort(), or with a flex Sort object. Note that returning values other
@@ -121,29 +123,29 @@ class Comparators
 	/**
 	 * A standard Comparator for comparing Comparable values.
 	 */
-	public static function compareComparables (c1 :Comparable<Dynamic>, c2 :Comparable<Dynamic> = null) :Int
+	inline public static function compareComparables (c1 :Comparable<Dynamic>, c2 :Comparable<Dynamic> = null) :Int
 	{
 		return c1.compareTo(c2);
 	}
 
 	/**
 	 * Compare two objects by their toString() values, case sensitively.
-	 * Yes, you can pass any objects to this function, and actionscript will coerce them
-	 * to Strings, calling toString() if not a simple type.
+	 * Yes, you can pass any objects to this function, and HaXe will coerce them
+	 * to Strings, calling Std.string() if not a simple type.
 	 */
-	public static function compareStrings (s1 :String, s2 :String) :Int
+	inline public static function compareStrings (s1 :Dynamic, s2 :Dynamic) :Int
 	{
-		return (s1 == s2) ? 0 : ((s1 > s2) ? 1 : -1);
+		return (s1 == s2) ? 0 : ((Std.string(s1) > Std.string(s2)) ? 1 : -1);
 	}
 
 	/**
 	 * Compare two objects by their toString().toLowerCase() values, case insensitively.
-	 * Yes, you can pass any objects to this function, and actionscript will coerce them
-	 * to Strings, calling toString() if not a simple type.
+	 * Yes, you can pass any objects to this function, and HaXe will coerce them
+	 * to Strings, calling Std.string() if not a simple type.
 	 */
-	public static function compareStringsInsensitively (s1 :String, s2 :String) :Int
+	inline public static function compareStringsInsensitively (s1 :Dynamic, s2 :Dynamic) :Int
 	{
-		return compareStrings(s1.toLowerCase(), s2.toLowerCase());
+		return compareStrings(Std.string(s1).toLowerCase(), Std.string(s2).toLowerCase());
 	}
 
 	/**
@@ -167,9 +169,11 @@ class Comparators
 			return 1;
 		} else if (Std.is(o1, Comparable)) {
 			return cast(o1, Comparable<Dynamic>).compareTo(o2); // it doesn't matter if o2 is Comparable
-		} else if (Std.is( o1, Float) && Std.is( o2, Float)) { // ints are Numbers
+		} else if (StdTools.is(o1, TFloat) && (StdTools.is(o2, TInt) || StdTools.is(o2, TFloat))) {
 			return compareFloats(cast(o1, Float), cast(o2, Float));
-		} else if ((Std.is( o1, Bool)) && (Std.is( o2, Bool))) {
+		} else if (StdTools.is(o1, TInt) && StdTools.is(o2, TInt)) {
+			return compareInts(cast(o1, Int), cast(o2, Int));
+		} else if (StdTools.is(o1, TBool) && StdTools.is(o2, TBool)) {
 			return compareBooleans(cast(o1, Bool), cast(o2, Bool));
 		} else {
 			// fuck it, coerce them both to String
@@ -180,7 +184,7 @@ class Comparators
 	/**
 	 * Compares two Boolean values.
 	 */
-	public static function compareBooleans (v1 :Bool, v2 :Bool) :Int
+	inline public static function compareBooleans (v1 :Bool, v2 :Bool) :Int
 	{
 		return if (v1 == v2) 0 else if (v1) 1 else -1;
 	}
@@ -188,7 +192,7 @@ class Comparators
 	/**
 	 * Compares two int values in an overflow safe manner.
 	 */
-	public static function compareInts (v1 :Int, v2 :Int) :Int
+	inline public static function compareInts (v1 :Int, v2 :Int) :Int
 	{
 		if (v1 > v2) {
 			return 1;
@@ -203,27 +207,25 @@ class Comparators
 	 * WARNING: this is untested in haxe.
 	 * Compares two Float values, taking into account the intricacies of dealing with NaN.
 	 */
-	public static function compareFloats (v1 :Float, v2 :Float) :Int
+	inline public static function compareFloats (v1 :Float, v2 :Float) :Int
 	{
-		// com.pblabs.util.Assert.isFalse(Math.isNaN(v1));
-		// com.pblabs.util.Assert.isFalse(Math.isNaN(v2));
 		if (v1 > v2) {
 			return 1;
 		} else if (v1 < v2) {
 			return -1;
 		} else if (v1 == v2) {
 			return 0;
+		} else {
+			// at this point, we know that at least one value is NaN. Luckily, there doesn't seem
+			// to be a -0 in actionscript, even though it's supposedly IEEE-754. TODO: test more?
+			return compareBooleans(Math.isNaN(v1), Math.isNaN(v2));
 		}
-		// at this point, we know that at least one value is NaN. Luckily, there doesn't seem
-		// to be a -0 in actionscript, even though it's supposedly IEEE-754. TODO: test more?
-		return compareBooleans(Math.isNaN(v1), Math.isNaN(v2));
 	}
 	
-	public static function compareHashables (v1 :com.pblabs.util.ds.Hashable, v2 :com.pblabs.util.ds.Hashable) :Int
+	inline public static function compareHashables (v1 :com.pblabs.util.ds.Hashable, v2 :com.pblabs.util.ds.Hashable) :Int
 	{
 		com.pblabs.util.Assert.isNotNull(v1);
 		com.pblabs.util.Assert.isNotNull(v2);
 		return compareInts(v1.hashCode(), v2.hashCode());
 	}
 }
-
