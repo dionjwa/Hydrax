@@ -126,8 +126,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		}
 		
 		#if (flash || cpp)
-		return RectangleTools.contains(x - (_width / 2 * _scaleX) - _locationOffset.x, 
-			y -(_height / 2 * _scaleY) - _locationOffset.y, _width * _scaleX, _height * _scaleY, pos, angle);
+		return RectangleTools.contains(x - (_width / 2 * _scaleX) + _locationOffset.x, 
+			y -(_height / 2 * _scaleY) + _locationOffset.y, _width * _scaleX, _height * _scaleY, pos, angle);
 		#elseif js
 		return RectangleTools.contains(x - _width / 2, y - _height / 2, _width, _height, pos, angle);
 		#else
@@ -145,13 +145,18 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	override function onReset () :Void
 	{
 		super.onReset();
-		Preconditions.checkNotNull(parentProperty, "parentProperty is null");
+		Preconditions.checkNotNull(parentProperty, "parentProperty is null in " + com.pblabs.util.ReflectUtil.getClassName(this));
 		com.pblabs.util.Assert.isNotNull(parent, com.pblabs.util.ReflectUtil.tinyClassName(Type.getClass(this)) + ".parent is null, prop=" + parentProperty);
 		
 		var coords = spatialProperty != null ? owner.getProperty(spatialProperty) : null;
 		
 		if (coords != null) {
+			#if debug
+			var bond = bindSignal(coords.signalerLocation, setLocation);
+			bond.debugInfo = com.pblabs.util.ReflectUtil.tinyClassName(Type.getClass(this));
+			#else
 			bindSignal(coords.signalerLocation, setLocation);
+			#end
 			bindSignal(coords.signalerAngle, set_angle);
 			//Manually set the location on reseting: there may be discrepencies in timing
 			//such that the listeners and values are inconsistant.  So manually reset location.
@@ -229,9 +234,6 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	function set_scale (val :Float) :Float
 	{
-		if (_scaleX == val && _scaleY == val) {
-			return val;
-		}
 		scaleX = val; 
 		scaleY = val;
 		return val;
@@ -244,9 +246,6 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	function set_scaleX (val :Float) :Float
 	{
-		if (_scaleX == val) {
-			return val;
-		}
 		_scaleX = val;
 		_isTransformDirty = true;
 		_bounds.xmin = _x - width / 2;
