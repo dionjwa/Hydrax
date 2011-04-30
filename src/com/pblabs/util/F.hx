@@ -16,4 +16,10 @@ class F
 		}
 	}
 	
+	public static function adapt (func :Dynamic, ?args :Array<Dynamic>, ?owner :Dynamic) :Dynamic->Void
+	{
+		return function (?ignored :Dynamic) :Void {
+			Reflect.callMethod(owner, func, args == null ? com.pblabs.util.Constants.EMPTY_ARRAY : args);
+		}
+	}
 }
