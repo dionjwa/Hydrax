@@ -286,8 +286,8 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		#if debug
 		_debugcontext = pb;
 		#end
-		this.bindVoidSignal(pb.signalEnter, attach);
-		this.bindVoidSignal(pb.signalExit, detach);
+		bindVoidSignal(pb.signalEnter, attach);
+		bindVoidSignal(pb.signalExit, detach);
 	}
 
 	override function onRemove () :Void
