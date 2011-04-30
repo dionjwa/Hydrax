@@ -29,7 +29,11 @@ import com.pblabs.engine.core.IPBGroup;
  * @see PBSet, PBGroup, IEntity
  */
 interface IPBObject
+	implements de.polygonal.ds.Hashable
 {
+	/** Key for hashing. Don't modify. */
+	var key :Int;
+	
 	/**
 	 * The context that allocated and which owns this object. You can get at
 	 * the various managers and services in your game from here.

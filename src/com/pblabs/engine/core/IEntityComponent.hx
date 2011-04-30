@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Hydrax: haXe port of the PushButton Engine
+ * Hydrax :haXe port of the PushButton Engine
  * Copyright (C) 2010 Dion Amago
- * For more information see http://github.com/dionjwa/Hydrax
+ * For more information see http ://github.com/dionjwa/Hydrax
  *
  * This file was derived from the equivalent actionscript PushButton Engine 
- * source file:
- * http://code.google.com/p/pushbuttonengine/
+ * source file :
+ * http ://code.google.com/p/pushbuttonengine/
  *
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
@@ -13,7 +13,7 @@
 /*******************************************************************************
  * PushButton Engine
  * Copyright (C) 2009 PushButton Labs, LLC
- * For more information see http://www.pushbuttonengine.com
+ * For more information see http ://www.pushbuttonengine.com
  * 
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
@@ -33,7 +33,7 @@ import com.pblabs.engine.core.IPBContext;
 * It should be adequate for almost every situation, and therefore, custom components
 * should derive from it rather than implementing this interface directly.</p>
 * 
-* <p>There are several reasons why PBE is set up this way:
+* <p>There are several reasons why PBE is set up this way :
 * <bl>
 *	<li>Entities have only the data they need and nothing more.</li>
 *	<li>Components can be reused on several different types of entities.</li>
@@ -43,10 +43,14 @@ import com.pblabs.engine.core.IPBContext;
 * 
 * @see IEntity
 * @see EntityComponent
-* @see http://pushbuttonengine.com/docs/04-Components.html Components chapter in manual.
+* @see http ://pushbuttonengine.com/docs/04-Components.html Components chapter in manual.
 */
-interface IEntityComponent
+interface IEntityComponent 
+	implements de.polygonal.ds.Hashable
 {
+	/** Key for hashing. Don't modify. */
+	var key :Int;
+	
    var context (get_context, set_context) :IPBContext;
    
   /**
@@ -72,12 +76,12 @@ interface IEntityComponent
    * 
    * @see #register() 
    */
-  var name (get_name, set_name):String;
+  var name (get_name, set_name) :String;
   
   /**
    * Whether or not the component is currently registered with an entity.
    */
-  var isRegistered (get_isRegistered, never):Bool;
+  var isRegistered (get_isRegistered, never) :Bool;
 
   /**
    * Registers the component with an entity. This should only ever be called by
@@ -86,25 +90,25 @@ interface IEntityComponent
    * @param owner The entity to register the component with.
    * @param name The name to assign to the component.
    */
-  function register(owner:IEntity, ?name:String):Void;
+  function register(owner :IEntity, ?name :String) :Void;
   
   /**
    * Unregisters the component from an entity. This should only ever be called by
    * an entity class from the removeComponent method.
    */
-  function unregister():Void;
+  function unregister() :Void;
   
   /**
    * This is called by an entity on all of its components any time a component
    * is added or removed. In this method, any references to properties on the
    * owner entity should be purged and re-looked up.
    */
-  function reset():Void;
+  function reset() :Void;
   
   #if debug
   /**
-    * Used for checking if signals are still being listened to, among other things.
-    */
+	* Used for checking if signals are still being listened to, among other things.
+	*/
   function postDestructionCheck () :Void;
   #end
 }
