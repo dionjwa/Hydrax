@@ -34,4 +34,14 @@ class Sets
 		return new MapSet<T>(Maps.newHashMap(valueClazz));
 		#end
 	}
+	
+	public static function fromArray (set :Set<Dynamic>, arr :Array<Dynamic>) :Set<Dynamic>
+	{
+	    set.clear();
+	    for (i in arr) {
+	    	set.add(i);
+	    }
+	    return set;
+	}
+	
 }
