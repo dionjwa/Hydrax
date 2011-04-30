@@ -69,6 +69,15 @@ class Enumerable<T>
 		return cast(_enums.get(cls).get(name));
 	}
 	
+	public static function createParser <T> (cls :Class<T>) :Xml->T
+	{
+		return function (xml :Xml) :T {
+			com.pblabs.util.Assert.isTrue(xml.firstChild() != null && xml.firstChild().nodeValue != null);
+			return valueOf(cls, xml.firstChild().nodeValue);
+		}
+	}
+	
+	
 	public static function serializedValueOf <T>(clsName :String, name :String) :T
 	{
 		return valueOf(Type.resolveClass(clsName), name);
@@ -152,7 +161,7 @@ class Enumerable<T>
 	
 	public static function setup () :Void
 	{
-	    deserializeAllFromEmbeddedXML();
+		deserializeAllFromEmbeddedXML();
 	}
 	
 	
