@@ -32,7 +32,11 @@ import com.pblabs.engine.core.IPBGroup;
   * are effectively paused.
   */
 interface IPBContext
+	implements de.polygonal.ds.Hashable
 {
+	/** Key for hashing. Don't modify. */
+	var key :Int;
+	
 	var name (default, null):String;
 	var rootGroup(default, null):IPBGroup;
 	var currentGroup (get_currentGroup, set_currentGroup) :IPBGroup;
