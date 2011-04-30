@@ -50,6 +50,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	public var angleOffset (get_angleOffset, set_angleOffset) :Float;
 	public var registrationPoint (get_registrationPoint, set_registrationPoint) :XY;
 	public var bounds (get_bounds, set_bounds) :AABB2;
+	public var visible (get_visible, set_visible) :Bool;
 	
 	/** Sometimes you need to control when the display object is added to the.scene2D.*/
 	public var autoAddToScene :Bool;
@@ -75,6 +76,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	var _registrationPoint :XY;
 	var _objectMask :ObjectType;
 	var _bounds :AABB2;
+	var _visible :Bool;
 	
 	public function new ()
 	{
@@ -94,6 +96,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		_height = 0;
 		_layerIndex = 0;
 		_zIndex = 0;
+		_visible = true;
 		isTransformDirty = true;
 		_locationOffset = new Vector2();
 		_angleOffset = 0;
@@ -400,5 +403,17 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	{
 		throw "Cannot set bounds";
 		return null;
+	}
+	
+	function get_visible () :Bool
+	{
+		return _visible;
+	}
+	
+	function set_visible (val :Bool) :Bool
+	{
+		_visible = val;
+		alpha = _visible ? 1 : 0;
+		return val;
 	}
 }
