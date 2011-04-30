@@ -29,12 +29,8 @@ using com.pblabs.util.StringUtil;
   * sets do not automatically destroy the set member objects,
   * however, destruction of Entity objects triggers set removal
   */
-class SetManager
-	implements haxe.rtti.Infos, implements IPBManager
+class SetManager extends PBManager
 {
-	@inject
-	var context :IPBContext;
-	
 	/** Maps set names to objects */
 	var _sets :MultiMap<String, IPBObject>;
 	/** Maps objects to sets */
@@ -80,6 +76,7 @@ class SetManager
 	
 	public function new ()
 	{
+		super();
 		_sets = SetMultiMap.create(String);
 		_objects = SetMultiMap.create(PBObject);
 	}
@@ -165,16 +162,18 @@ class SetManager
 	    removeObjectFromAll(obj);
 	}
 	
-	public function startup () :Void
+	override public function startup () :Void
 	{
-	    onNewContext();
-	}
+		super.startup();
+		com.pblabs.util.Assert.isNotNull(context.getManager(SignalBondManager), "SignalBondManager required");
+		context.getManager(SignalBondManager).bind(this, cast(context, PBContext).signalObjectRemoved, onObjectDestroyed);
+	}	
 	
-	public function shutdown():Void
+	override public function shutdown():Void
 	{
+		super.shutdown();
 		_sets.clear();
 		_objects.clear();
-		context = null;
 	}
 	
 	public function injectSets (obj :IEntityComponent, ?cls :Class<Dynamic>) :Void
@@ -198,16 +197,6 @@ class SetManager
 				}
 			}
 		}
-	}
-	
-	function onNewContext () :Void
-	{
-		com.pblabs.util.Assert.isNotNull(context);
-		
-		var bond = cast(context, PBContext).signalObjectRemoved.bind(onObjectDestroyed);
-		cast(context, PBContext).signalDestroyed.bind(function (ctx :IPBContext) :Void {
-			bond.destroy();
-		}, true);
 	}
 	
 	static function getSetManager (context :IPBContext) :SetManager
