@@ -239,11 +239,9 @@ class SpatialComponent extends EntityComponent,
 				for (b in sig.getBonds()) {
 					trace("Stuck bond on " + debugOwnerName + "=" + b);
 				}
+				com.pblabs.util.Assert.isFalse(sig.isListenedTo, debugOwnerName);
 			}
-			com.pblabs.util.Assert.isFalse(sig.isListenedTo, debugOwnerName);
 		}
-		// com.pblabs.util.Assert.isFalse(signalerLocation.isListenedTo, debugOwnerName);
-		// com.pblabs.util.Assert.isFalse(signalerAngle.isListenedTo, debugOwnerName);
 	}
 	#end
 	

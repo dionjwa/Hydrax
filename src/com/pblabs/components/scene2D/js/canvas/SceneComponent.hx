@@ -33,7 +33,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>
 //	public var mask :Sprite;
 //	public var shadow :Bool;
 
-	public var visible :Bool;
+	// public var visible :Bool;
 
 	public var composite :String;
 	// public var mask (default, setMask) :Sprite;

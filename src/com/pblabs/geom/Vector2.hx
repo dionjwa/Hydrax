@@ -188,7 +188,7 @@ class Vector2 extends XY,
 		return ((Math.abs(x - v.x) <= epsilon) && (Math.abs(y - v.y) <= epsilon));
 	}
 
-	#if (!neko && debug)
+	#if debug
 	/** Returns a string representation of the Vector2. */
 	public function toString () :String
 	{

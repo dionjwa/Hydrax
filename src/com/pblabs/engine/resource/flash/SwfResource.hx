@@ -1,12 +1,14 @@
 /*******************************************************************************
- * Hydrax: haXe port of the PushButton Engine
+ * Hydrax :haXe port of the PushButton Engine
  * Copyright (C) 2010 Dion Amago
- * For more information see http://github.com/dionjwa/Hydrax
+ * For more information see http ://github.com/dionjwa/Hydrax
  *
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.engine.resource.flash;
+
+import com.pblabs.components.Constants;
 import com.pblabs.engine.resource.ResourceBase;
 import com.pblabs.engine.resource.Source;
 import com.pblabs.util.Preconditions;
@@ -53,16 +55,23 @@ class SwfResource extends ResourceBase<Dynamic>
 		loader.contentLoaderInfo.addEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, onLoadError);
 	}
 	
+	/** Assume we want to instantiate a class */
+	override public function get (?name :String) :T
+	{
+		com.pblabs.util.Assert.isNotNull(name, "Must supply an argument for SwfResources.get");
+		return createInstance(name);
+	}
+	
 	override public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
 	{
 		com.pblabs.util.Log.debug("load " + _source);
 		super.load(onLoad, onError);
 		var self = this;
 		switch (_source) {
-			case url (u): loadFromUrl(u);
-			case bytes (b): loadFromBytes(b);
-			default:
-				com.pblabs.util.Log.error("Resource source type not handled: " + _source);
+			case url (u) :loadFromUrl(u);
+			case bytes (b) :loadFromBytes(b);
+			default :
+				com.pblabs.util.Log.error("Resource source type not handled :" + _source);
 		}
 	}
 	
@@ -141,5 +150,12 @@ class SwfResource extends ResourceBase<Dynamic>
 	public function getClass (name :String) :Class<Dynamic>
 	{
 		return cast(getSymbol(name), Class<Dynamic>);
+	}
+	
+	public function createInstance (name :String) :Dynamic
+	{
+		var cls = getClass(name);
+		com.pblabs.util.Assert.isNotNull(cls);
+		return Type.createInstance(cls, Constants.EMPTY_ARRAY);
 	}
 }

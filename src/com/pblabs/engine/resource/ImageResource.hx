@@ -15,10 +15,12 @@ import com.pblabs.util.StringUtil;
 /**
 * Represents a single image resource.
 */
+
+class ImageResource extends ResourceBase
 #if (flash || cpp)
-class ImageResource extends ResourceBase<flash.display.Bitmap>
+<flash.display.Bitmap>
 #elseif js
-class ImageResource extends ResourceBase<js.Dom.Image>
+<js.Dom.Image>
 #end
 {
 	#if (flash || cpp)
@@ -35,24 +37,6 @@ class ImageResource extends ResourceBase<js.Dom.Image>
 	{
 		super(name);
 		_source = source;
-		
-		#if flash
-		_loader = new flash.display.Loader();
-		var loader = _loader;
-		var self = this;
-		var onComplete = function (e :flash.events.Event) :Void {
-			com.pblabs.util.Log.debug("onComplete");
-			loader.contentLoaderInfo.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
-			loader.contentLoaderInfo.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
-			self._image = cast loader.content;
-			self.loaded();
-		}
-		
-		com.pblabs.util.EventDispatcherUtil.addOnceListener(loader.contentLoaderInfo, flash.events.Event.COMPLETE, onComplete);
-		loader.contentLoaderInfo.addEventListener(flash.events.IOErrorEvent.IO_ERROR, onLoadError);
-		loader.contentLoaderInfo.addEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, onLoadError);
-		#end
-		
 	}
 	
 	override public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
@@ -92,12 +76,14 @@ class ImageResource extends ResourceBase<js.Dom.Image>
 		super.unload();
 		
 		#if flash
-		try {
-			_loader.close();
-		} catch (e :Dynamic) {
-			// swallow the exception
+		if (_loader != null) {
+			try {
+				_loader.close();
+			} catch (e :Dynamic) {
+				// swallow the exception
+			}
+			_loader.unload();
 		}
-		_loader.unload();
 		#end
 		
 		_source = null;
@@ -123,6 +109,7 @@ class ImageResource extends ResourceBase<js.Dom.Image>
 	{
 		Preconditions.checkNotNull(url, "url is null");
 		#if flash
+		createLoader();
 		_loader.load(new flash.net.URLRequest(url));
 		#elseif js
 		var self = this;
@@ -153,10 +140,10 @@ class ImageResource extends ResourceBase<js.Dom.Image>
 				cls = Type.resolveClass(embeddedName);
 			}
 			Preconditions.checkNotNull(cls, "No embedded resource class SWFResources_" + embeddedName + " or " + embeddedName + ", or haxe embedded bytes");
-			// com.pblabs.util.Assert.isTrue(Std.is(Type.createInstance(cls, []), flash.utils.ByteArray)); 
-			var bytearray = cast Type.createInstance(cls, []);
-			_loader.loadBytes(bytearray);
+			_image = cast Type.createInstance(cls, []);
+			loaded();
 		} else {
+			createLoader();
 			_loader.loadBytes(bytes.getData());
 		}
 		#elseif cpp
@@ -174,4 +161,25 @@ class ImageResource extends ResourceBase<js.Dom.Image>
 	{
 		_onError(e);
 	}
+	
+	#if flash
+	function createLoader () :Void
+	{
+		com.pblabs.util.Assert.isNull(_loader);
+		_loader = new flash.display.Loader();
+		var loader = _loader;
+		var self = this;
+		var onComplete = function (e :flash.events.Event) :Void {
+			com.pblabs.util.Log.debug("onComplete");
+			loader.contentLoaderInfo.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
+			loader.contentLoaderInfo.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
+			self._image = cast loader.content;
+			self.loaded();
+		}
+		
+		com.pblabs.util.EventDispatcherUtil.addOnceListener(loader.contentLoaderInfo, flash.events.Event.COMPLETE, onComplete);
+		loader.contentLoaderInfo.addEventListener(flash.events.IOErrorEvent.IO_ERROR, onLoadError);
+		loader.contentLoaderInfo.addEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, onLoadError);
+	}
+	#end
 }

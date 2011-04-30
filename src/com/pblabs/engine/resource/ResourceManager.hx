@@ -11,12 +11,15 @@ package com.pblabs.engine.resource;
 import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.resource.IResource;
 import com.pblabs.engine.resource.IResourceManager;
-import com.pblabs.util.Preconditions;
-
 import com.pblabs.util.Assert;
-
+import com.pblabs.util.Preconditions;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
+
+import hsl.haxe.DirectSignaler;
+import hsl.haxe.Signaler;
+
+using Lambda;
 
 using com.pblabs.util.IterUtil;
 
@@ -31,6 +34,10 @@ class ResourceManager
 	,implements haxe.rtti.Infos
 	#end
 {
+	public var signalerFractionComplete :Signaler<Float>;
+	/** The number of resoruces in this load batch */
+	var _numResources :Int;
+	
 	public function new ()
 	{
 		_loadedResources = Maps.newHashMap(String);
@@ -39,6 +46,13 @@ class ResourceManager
 		
 		_onLoadCallbacks = new Array();
 		_onErrorCallbacks = new Array();
+		
+		signalerFractionComplete = new DirectSignaler(this);
+	}
+	
+	public function iterator () :Iterator<IResource<Dynamic>>
+	{
+	    return _loadedResources.array().iterator();
 	}
 	
 	public function get <T>(resourceToken :ResourceToken<T>) :T
@@ -48,9 +62,9 @@ class ResourceManager
 		return getFromName(resourceToken.resourceId, resourceToken.key);
 	}
 	
-	public function getFromName <T>(resourceName :String, itemName :String) :T
+	public function getFromName <T>(resourceName :String, ?itemName :String) :T
 	{
-		Preconditions.checkArgument(isResource(resourceName), "No IResource with id=" + resourceName); 
+		Preconditions.checkArgument(isResource(resourceName), "No IResource with id=" + resourceName + ", resourceIds=" + com.pblabs.util.IterUtil.toArray(_loadedResources.keys()).join(", ")); 
 		// var rs :IResource<T> = getResource(resourceName);
 		var rs = getResource(resourceName);
 		com.pblabs.util.Assert.isNotNull(rs, "No resource " + resourceName);
@@ -66,6 +80,7 @@ class ResourceManager
 		if (_pendingResources.size() == 0 && _loadingResources.size() == 0) {
 			com.pblabs.util.Log.info("No resources to load, calling onLoad");
 			com.pblabs.util.Assert.isTrue(_onLoadCallbacks.length == 0);
+			_numResources = 0;
 			onLoad();
 			// allResourcesLoaded();
 			return;
@@ -88,6 +103,7 @@ class ResourceManager
 			com.pblabs.util.Log.debug("Loading resource=" + rsrc);
 			rsrc.load(loaded, handleLoadingError);
 		}
+		_numResources = _pendingResources.size() + _loadingResources.size();
 	}
 	
 	public function unload (resourceName :String) :Void
@@ -97,6 +113,8 @@ class ResourceManager
 		if (rsrc != null) {
 			_loadedResources.remove(resourceName);
 			rsrc.unload();
+		} else {
+			com.pblabs.util.Log.warn("unload('" +resourceName + "') but does not exist.");
 		}
 	}
 	
@@ -175,6 +193,14 @@ class ResourceManager
 		_loadedResources.set(rsrc.name, rsrc);
 		if (_loadingResources.size() == 0 && _pendingResources.size() == 0) {
 			allResourcesLoaded();
+			signalerFractionComplete.dispatch(1);
+		} else {
+			if (_numResources == 0) {
+				signalerFractionComplete.dispatch(1);
+			} else {
+				var resourcesYetToLoadInBatch :Float = _pendingResources.size() + _loadingResources.size();
+				signalerFractionComplete.dispatch((_numResources - resourcesYetToLoadInBatch) / _numResources);
+			}
 		}
 	}
 	
@@ -191,6 +217,7 @@ class ResourceManager
 		while (onloadcallbacks.length > 0) {
 			onloadcallbacks.shift()();
 		}
+		_numResources = 0;
 	}
 	
 	function handleLoadingError (e :Dynamic) :Void
@@ -210,5 +237,3 @@ class ResourceManager
 	var _onLoadCallbacks :Array<Void->Void>;
 	var _onErrorCallbacks :Array<Dynamic->Void>;
 }
-
-

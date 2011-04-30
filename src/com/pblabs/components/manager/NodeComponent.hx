@@ -229,17 +229,12 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 		}
 		Preconditions.checkArgument(isRegistered, "Component must first be registered ::" + com.pblabs.util.ReflectUtil.getClassName(this));
 		Preconditions.checkArgument(newParent != null || parentProperty != null, "No parent or parent property provided ::" + com.pblabs.util.ReflectUtil.getClassName(this));
-
-		// trace(owner.name + "." + name + " being adding to " + parentProperty);
 		newParent = newParent == null ? owner.getProperty(parentProperty) : newParent;
-		// trace("      newParent=" + newParent);
-		
 		Preconditions.checkNotNull(newParent, "Parent cannot be null, parentProperty=" + parentProperty);
 		Preconditions.checkArgument(Std.is(newParent, NodeComponent), "Parent must be of type NodeComponent, parent is type=" + ReflectUtil.getClassName(newParent));
-		Preconditions.checkArgument(newParent.isRegistered, "Parent not registered: " + newParent + "::" + com.pblabs.util.ReflectUtil.getClassName(newParent));
-		
+		Preconditions.checkArgument(newParent.isRegistered, "Parent not registered: " + com.pblabs.util.ReflectUtil.getClassName(newParent));
 		if (hasParent()) {
-			com.pblabs.util.Log.warn(" but " + name + ".hasParent " + parent + " " + ReflectUtil.getClassName(parent) + " " + com.pblabs.util.Log.getStackTrace());
+			com.pblabs.util.Log.warn(" but " + name + ".hasParent " + ReflectUtil.getClassName(parent));
 			return;
 		}
 		newParent.addChild(this);
@@ -280,6 +275,7 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 				child.removeFromParent();
 			}
 		}
+		parentProperty = null;
 		_children = null;
 	}
 }

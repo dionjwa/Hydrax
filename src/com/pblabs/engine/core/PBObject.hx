@@ -1,18 +1,16 @@
 /*******************************************************************************
- * Hydrax: haXe port of the PushButton Engine
+ * Hydrax :haXe port of the PushButton Engine
  * Copyright (C) 2010 Dion Amago
- * For more information see http://github.com/dionjwa/Hydrax
+ * For more information see http ://github.com/dionjwa/Hydrax
  *
  * This file was derived from the equivalent actionscript PushButton Engine 
- * source file:
- * http://code.google.com/p/pushbuttonengine/
+ * source file :
+ * http ://code.google.com/p/pushbuttonengine/
  *
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.engine.core;
-
-import com.pblabs.util.Preconditions;
 
 /**
  * Base implementation of a named object that can exist in PBSets or PBGroups.
@@ -62,7 +60,7 @@ class PBObject
 	
 	function set_context (c :IPBContext) :IPBContext
 	{
-		Preconditions.checkArgument(_context == null, "Trying to set context on a PBObject that already has one!");
+		com.pblabs.util.Assert.isTrue(_context == null, "Trying to set context on a PBObject that already has one!");
 		_context = cast(c);
 		return c;
 	}
@@ -74,8 +72,8 @@ class PBObject
 	
 	function set_owningGroup (value :IPBGroup) :IPBGroup
 	{
-		Preconditions.checkNotNull(value, "Must always be in a group - cannot set owningGroup to null!");
-		Preconditions.checkArgument(_owningGroup == null || value.rootGroup == _owningGroup, "Attempting to set an illegal group");
+		com.pblabs.util.Assert.isNotNull(value, "Must always be in a group - cannot set owningGroup to null!");
+		com.pblabs.util.Assert.isTrue(_owningGroup == null || value.rootGroup == _owningGroup, "Attempting to set an illegal group");
 		if(value == _owningGroup) {
 			return value;
 		}
@@ -96,7 +94,7 @@ class PBObject
 	
 	function set_name(name :String) :String
 	{
-		Preconditions.checkArgument(_name == null, this + " already has a name");
+		com.pblabs.util.Assert.isTrue(_name == null, com.pblabs.util.ReflectUtil.getClassName(this) + " already has a name");
 		_name = name;
 		return name;
 	}
@@ -106,7 +104,7 @@ class PBObject
 		// Note the names.
 		com.pblabs.util.Assert.isNull(_name, "_name is not null=" + _name);
 		_name = name;
-		Preconditions.checkNotNull(_context, "Context null on init :" + this);
+		com.pblabs.util.Assert.isNotNull(_context, "Context null on init :" + com.pblabs.util.ReflectUtil.getClassName(this));
 		_context.register(this);
 	}
 	
@@ -128,7 +126,7 @@ class PBObject
 	#if debug
 	public function toString () :String
 	{
-		return name;//StringUtil.objectToString(this, ["name"]);
+		return name;
 	}
 	#end
 	

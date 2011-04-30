@@ -38,7 +38,6 @@ using de.polygonal.gl.DisplayListIterator;
 class SceneManager extends BaseSceneManager<SceneLayer>, 
 	implements IAnimatedObject
 {
-	
 	public var zoomSignal (default, null):Signaler<Float>;
 	public var displayContainer (get_displayContainer, null) :DisplayObjectContainer;
 	public var dirty :Bool;

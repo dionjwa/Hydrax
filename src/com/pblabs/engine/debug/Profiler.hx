@@ -12,13 +12,12 @@
  ******************************************************************************/
 package com.pblabs.engine.debug;
 
-#if profiler
-import com.pblabs.util.Assert;
-import com.pblabs.util.MathUtil;
-import com.pblabs.util.Sprintf;
-import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
-using com.pblabs.util.NumberUtil;
+import com.pblabs.util.ds.Map;
+
+import de.polygonal.core.math.Limits;
+
+#if profiler
 
 /**
  * Modified version of the PBE Profiler to fit OOO logging.
@@ -153,8 +152,8 @@ class Profiler
 	static function doReport () :Void
 	{
 		_wantReport = false;
-		Assert.isNotNull(_rootNode);
-		var header = "\n" + Sprintf.format("%-" + nameFieldWidth + "s%-8s%-8s%-8s%-8s%-8s%-8s", ["name",
+		com.pblabs.util.Assert.isNotNull(_rootNode);
+		var header = "\n" + com.pblabs.util.Sprintf.format("%-" + nameFieldWidth + "s%-8s%-8s%-8s%-8s%-8s%-8s", ["name",
 		"Calls", "Total%", "NonSub%", "AvgMs", "MinMs", "MaxMs"]);
 		
 		var report = header + report_R(_rootNode, 0);
@@ -178,7 +177,7 @@ class Profiler
 
 	static function report_R (pi :ProfileInfo, indent :Int) :String
 	{
-		Assert.isNotNull(pi);
+		com.pblabs.util.Assert.isNotNull(pi);
 		var s = "";
 		// Figure our display values.
 		var selfTime :Float = pi.totalTime;
@@ -208,7 +207,7 @@ class Profiler
 		if (indent == 0) {
 			"\n+Root";
 		} else {
-			"\n" + Sprintf.format("%-" + (indent * indentAmount) + "s%-" + (nameFieldWidth - indent *
+			"\n" + com.pblabs.util.Sprintf.format("%-" + (indent * indentAmount) + "s%-" + (nameFieldWidth - indent *
 				indentAmount) + "s%-8i%-8.2f%-8.2f%-8.2f%-8.2f%-8.2f", ["", (hasKids ? "+" : "-") + pi.name,
 				pi.activations, displayTime, displayNonSubTime,
 				pi.totalTime / pi.activations, pi.minTime, pi.maxTime]);
@@ -279,8 +278,8 @@ class ProfileInfo
 	public function wipe () :Void
 	{
 		startTime = totalTime = activations = 0;
-		maxTime = MathUtil.INT32_MIN;
-		minTime = MathUtil.INT32_MAX;
+		maxTime = Limits.INT32_MIN;
+		minTime = Limits.INT32_MAX;
 	}
 	
 	public function print (indent :Int) :Void

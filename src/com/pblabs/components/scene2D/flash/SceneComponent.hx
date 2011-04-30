@@ -20,6 +20,7 @@ import flash.geom.Matrix;
 using com.pblabs.engine.util.PBUtil;
 using com.pblabs.util.ArrayUtil;
 using com.pblabs.util.MathUtil;
+using com.pblabs.util.DisplayUtils;
 
 class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	implements com.pblabs.engine.time.IAnimatedObject
@@ -107,6 +108,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	{
 		super.onRemove();
 		if (_displayObject != null) {
+			_displayObject.detach();
 			com.pblabs.util.Assert.isNull(_displayObject.parent);
 		}
 	}
@@ -120,6 +122,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	{
 		com.pblabs.util.Assert.isTrue(val >= 0);
 		scaleX = val / _width;
+		_width = val;
 		return val;
 	}
 	
@@ -132,6 +135,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	{
 		com.pblabs.util.Assert.isTrue(val >= 0);
 		scaleY = val / _height;
+		_height = val;
 		return val;
 	}
 	

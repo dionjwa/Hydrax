@@ -8,10 +8,10 @@
  ******************************************************************************/
 package com.pblabs.util.ds;
 
+import com.pblabs.util.Constants;
 import com.pblabs.util.StringUtil;
 import com.pblabs.util.ds.Map;
 
-// #if debug
 typedef MapType = {
 	function keys () :Iterator<Dynamic>;
 	function get (key :Dynamic) :Dynamic;
@@ -38,7 +38,7 @@ class MapUtil
 		return map.size() == 0;
 	}
 	
-	public static function createFieldMapping <T> (fieldName :String) :Dynamic->T
+	public static function createToField <T> (fieldName :String) :Dynamic->T
 	{
 		return function (obj :Dynamic) :T {
 			return ReflectUtil.field(obj, fieldName);
@@ -48,7 +48,7 @@ class MapUtil
 	public static function createFunctionMapping <T> (fieldName :String) :Dynamic->T
 	{
 		return function (obj :Dynamic) :T {
-			return Reflect.callMethod(obj, fieldName, EMPTY_ARRAY);
+			return Reflect.callMethod(obj, fieldName, Constants.EMPTY_ARRAY);
 		}
 	}
 	
@@ -84,8 +84,4 @@ class MapUtil
 		return s.toString();
 	}
 	// #end
-	
-	static var EMPTY_ARRAY :Array<Dynamic> = [];
 }
-
-

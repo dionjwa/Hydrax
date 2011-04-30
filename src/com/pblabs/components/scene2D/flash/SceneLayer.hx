@@ -45,9 +45,10 @@ class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 		// Update our transform, if required.
 		//Currently only parallax scrolling is supported.
 		_rootTransform.identity();
-		_rootTransform.translate(parent.x * parallaxFactor, parent.y * parallaxFactor);
+		// _rootTransform.translate(parent.x * parallaxFactor, parent.y * parallaxFactor);
 		// Apply the transform.
-		displayContainer.transform.matrix = _rootTransform;
+		displayContainer.transform.matrix.identity();
+		// matrix = _rootTransform;
 	}
 	
 	public function updateZOrder () :Void

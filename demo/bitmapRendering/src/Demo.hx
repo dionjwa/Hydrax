@@ -62,6 +62,7 @@ class Demo
 		
 		//Scene for game elements
 		var gamescene = context.addSingletonComponent(BitmapDataScene, null, true);
+		// var gamescene = context.addSingletonComponent(com.pblabs.components.scene2D.flash.SceneManager, null, true);
 		context.registerManager(SceneUtil.MANAGER_CLASS, gamescene, null, true);
 		//The spatial component is for panning control
 		gamescene.owner.addComponent(context.allocate(SpatialComponent), SpatialComponent.NAME);
@@ -94,6 +95,8 @@ class Demo
 		c.parentProperty = layer.entityProp();
 		e.addComponent(c);
 		e.initialize(name);
+		c.scaleY = 2;
+		c.scaleX = 4;
 		return e;
 	}
 	

@@ -148,6 +148,8 @@ class DragManager extends EntityComponent,
 		Preconditions.checkNotNull(scene);
 		_scene = scene; 
 		_sceneComponent = null;
+		_startObj.x = _scene.x;
+		_startObj.y = _scene.y;
 		
 		_xProp = null;
 		_yProp = null;
@@ -248,11 +250,11 @@ class DragManager extends EntityComponent,
 				_framesWithoutMovement = Std.int(Math.max(_framesWithoutMovement - 1, 0));
 			}
 			if (_sceneComponent == null) {//Pan the scene
-				var diff = e.inputLocation.subtract(_panVectors[_panVectors.length - 1]);
+				var diff = e.inputLocation.subtract(_startMouse);
 				diff.scaleLocal(1 / _scene.zoom);
 				diff.rotateLocal(-_scene.rotation);
-				_scene.x += diff.x;
-				_scene.y += diff.y;
+				_scene.x =_startObj.x + diff.x;
+				_scene.y =_startObj.y + diff.y;
 				if (dragSignaler.isListenedTo) {
 					dragSignaler.dispatch(null);
 				}

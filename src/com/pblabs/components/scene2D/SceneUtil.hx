@@ -75,17 +75,18 @@ class SceneUtil
 		}
 		e.deferring = true;
 		e.addComponent(context.allocate(SpatialComponent), SpatialComponent.NAME);
-		e.addComponent(context.allocate(AlphaComponent));
+		// e.addComponent(context.allocate(AlphaComponent));
 		if (addTasks) {
 			e.addComponent(context.allocate(TaskComponentTicked), com.pblabs.components.tasks.TaskComponent.NAME);
 		}
 		return e;
 	}
 	
-	public static function setLocation (e :IEntity, x :Float, y :Float) :Void
+	public static function setLocation (e :IEntity, x :Float, y :Float) :IEntity
 	{
 		com.pblabs.util.Assert.isNotNull(e);
 		e.getComponent(SpatialComponent).setLocation(x, y);
+		return e;
 	}
 	
 	public static function getLocation (e :IEntity) :XY
@@ -94,9 +95,10 @@ class SceneUtil
 		return e.getComponent(SpatialComponent).position;
 	}
 	
-	public static function setAngle (e :IEntity, angle :Float) :Void
+	public static function setAngle (e :IEntity, angle :Float) :IEntity
 	{
 		e.getComponent(SpatialComponent).angle = angle;
+		return e;
 	}
 	
 	public static function getWidth (e :IEntity) :Float
@@ -201,16 +203,14 @@ class SceneUtil
 	{
 		var viewOffset = new Vector2();
 		calculateOutPoint(viewOffset, sceneManager.sceneAlignment, sceneManager.sceneView.width, sceneManager.sceneView.height);
-		var p = screen.subtract(viewOffset).scale(1.0 / sceneManager.zoom).rotate(sceneManager.rotation).subtract(new Vector2(sceneManager.x, sceneManager.y));
-		return p;
+		return screen.subtract(viewOffset).scale(1.0 / sceneManager.zoom).rotate(sceneManager.rotation).subtract(new Vector2(sceneManager.x, sceneManager.y));
 	}
 	
 	public static function translateWorldToScreen (sceneManager :BaseSceneManager<Dynamic>, world :XY) :XY
 	{
 		var viewOffset = new Vector2();
 		calculateOutPoint(viewOffset, sceneManager.sceneAlignment, sceneManager.sceneView.width, sceneManager.sceneView.height);
-		var p = world.add(new Vector2(sceneManager.x, sceneManager.y)).rotate(sceneManager.rotation).scale(sceneManager.zoom).add(viewOffset);
-		return p;
+		return world.add(new Vector2(sceneManager.x, sceneManager.y)).rotate(sceneManager.rotation).scale(sceneManager.zoom).add(viewOffset);
 	}
 	
 	public static function getDisplayComponentUnderPoint (scene :BaseSceneManager<Dynamic>, screenPoint :XY, mask :ObjectType) :BaseSceneComponent<Dynamic>

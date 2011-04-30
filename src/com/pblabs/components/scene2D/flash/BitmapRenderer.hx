@@ -77,6 +77,7 @@ class BitmapRenderer extends com.pblabs.components.scene2D.flash.SceneComponent,
 		sprite.mouseEnabled = sprite.mouseChildren = false;
 		_bitmap = new flash.display.Bitmap(new flash.display.BitmapData(width, height, true, 0xff0000), flash.display.PixelSnapping.NEVER);
 		sprite.addChild(_bitmap);
+		//smoothing = true;
 		// _bitmap.scaleX = 0.99;
 		// _bitmap.scaleY = 0.99;
 		_displayObject = sprite;

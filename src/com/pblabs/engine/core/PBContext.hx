@@ -90,6 +90,11 @@ class PBContext
 		return allocate(Entity);
 	}
 	
+	public function setName (val :String) :Void
+	{
+	    this.name = val;
+	}
+	
 	/**
 	 * Adds a GameObject to the Context. The GameObject must not be owned by another ObjectDB.
 	 */
@@ -193,13 +198,13 @@ class PBContext
 		com.pblabs.util.Log.debug("done set current group");
 		injector.mapValue(IPBGroup, rootGroup);
 		
-		// Do manager startup.
-		initializeManagers();
-		
 		#if !disable_object_pooling
 		_objectPool = injector.getMapping(com.pblabs.engine.pooling.ObjectPoolMgr);
 		if (_objectPool == null) com.pblabs.util.Log.error("No _objectPool in setup");
 		#end
+		
+		// Do manager startup.
+		initializeManagers();
 	}
 	
 	public function enter () :Void
@@ -239,7 +244,6 @@ class PBContext
 	
 	public function inject (object :Dynamic) :Void
 	{
-		trace("object=" + object);
 		injector.injectInto(object);
 	}
 	
@@ -247,7 +251,6 @@ class PBContext
 	public function shutdown () :Void
 	{
 		rootGroup.destroy();
-		
 		signalDestroyed.dispatch(this);
 		
 		for (m in _managers) {
@@ -257,9 +260,9 @@ class PBContext
 			
 			#if cpp
 			if (com.pblabs.util.ReflectUtil.is(m, "com.pblabs.engine.core.IPBManager")) {
-			#else
-			if (Std.is(m, IPBManager)) {
-			#end
+				#else
+				if (Std.is(m, IPBManager)) {
+				#end
 				cast(m, IPBManager).shutdown();
 			}
 		}
@@ -275,16 +278,27 @@ class PBContext
 		injector = null;
 		_tempPropertyInfo = null;
 		
-		#if debug
-		var sigs :Array<Signaler<Dynamic>> = cast [signalEnter, signalExit, signalDestroyed]; 
-		for (sig in sigs) {
-			if (sig.isListenedTo) {
-				for (b in sig.getBonds()) {
-					trace("Stuck bond on " + name + "=" + b);
+		#if (debug && !neko)
+		// var sigs :Array<Signaler<Dynamic>> = cast [signalEnter, signalExit, signalDestroyed];
+		var sigs :Hash<Signaler<Dynamic>> = new Hash();
+		sigs.set("signalEnter", signalEnter);
+		sigs.set("signalExit", signalExit);
+		sigs.set("signalDestroyed", signalDestroyed);
+		// cast [signalEnter, signalExit, signalDestroyed];
+		//Delay check.
+		var self = this;
+		haxe.Timer.delay(function () :Void {
+			for (sigkey in sigs.keys()) {
+				var sig = sigs.get(sigkey);
+				if (sig.isListenedTo) {
+					for (b in sig.getBonds()) {
+						//com.pblabs.util.ArrayUtil.indexOf(sigs, sig)
+						trace("Stuck bond on " + sigkey + " " + self.name + "=" + b);
+					}
 				}
+				com.pblabs.util.Assert.isFalse(sig.isListenedTo, self.name);
 			}
-			com.pblabs.util.Assert.isFalse(sig.isListenedTo, name);
-		}
+		}, 30);
 		#end
 	}
 	

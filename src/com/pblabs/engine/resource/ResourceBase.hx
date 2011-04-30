@@ -51,11 +51,6 @@ class ResourceBase<T>
 		return _isLoaded;
 	}
 	
-	public function toString () :String
-	{
-		return StringUtil.objectToString(this, ["name"]);
-	}
-	
 	function get_name () :String
 	{
 		return _name;
@@ -73,6 +68,13 @@ class ResourceBase<T>
 	var _onLoad :Void->Void;
 	var _onError :Dynamic->Void;
 	var _isLoaded :Bool;
+	
+	#if debug
+	public function toString () :String
+	{
+		return StringUtil.objectToString(this, ["name"]);
+	}
+	#end
 }
 
 

@@ -3,28 +3,9 @@
  * Copyright (C) 2010 Dion Amago
  * For more information see http://github.com/dionjwa/Hydrax
  *
- * This source file was derived from the actionscript aspirin library.
- * A copy of the LGPL license is located at the root of the SDK.
- *
- * The original file source header (required by the LGPL license):
- *
- * aspirin library - Taking some of the pain out of Actionscript development.
- * Copyright (C) 2007-2010 Three Rings Design, Inc., All Rights Reserved
- * http://code.google.com/p/ooo-aspirin/
- * 
- * This library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * 
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library.  If not, see <http://www.gnu.org/licenses/>.
- */
+ * This file is licensed under the terms of the MIT license, which is included
+ * in the License.html file at the root directory of this SDK.
+ ******************************************************************************/
 package com.pblabs.util;
 
 import haxe.PosInfos;
@@ -40,11 +21,24 @@ import haxe.Stack;
 class Log
 {
 	#if no_logging
+	public static var DEBUG :Dynamic;
+	public static var INFO :Dynamic;
+	public static var WARN :Dynamic;
+	public static var ERROR :Dynamic;
+	
 	public static inline function debug (ignored :Dynamic, ?ignored :Dynamic) :Void {}
 	public static inline function info (ignored :Dynamic, ?ignored :Dynamic) :Void {}
 	public static inline function warn (ignored :Dynamic, ?ignored :Dynamic) :Void {}
 	public static inline function error (ignored :Dynamic, ?ignored :Dynamic) :Void {}
+	public static inline function setLevel (key :Dynamic, level :Dynamic) :Void {}
+	public static inline function getStackTrace () :String {return null;}
 	#else
+	
+	inline public static var DEBUG = LogLevel.DEBUG;
+	inline public static var INFO = LogLevel.INFO;
+	inline public static var WARN = LogLevel.WARN;
+	inline public static var ERROR = LogLevel.ERROR;
+	
 	public static dynamic function debug (msg :Dynamic, ?infos : PosInfos) :Void
 	{
 		trace("debug: " + msg, infos);
@@ -64,13 +58,25 @@ class Log
 	{
 		trace("error: " + msg, infos);
 	}
-	#end
+	
+	public static dynamic function setLevel (key :Dynamic, level :LogLevel) :Void
+	{
+		//
+	}
 	
 	inline public static function getStackTrace () :String
 	{
 		return haxe.Stack.toString(haxe.Stack.callStack());
 	}
-	
+	#end
 }
 
-
+// #if !no_logging
+enum LogLevel {
+	DEBUG;
+	INFO;
+	WARN;
+	ERROR;
+	OFF;
+}
+// #end

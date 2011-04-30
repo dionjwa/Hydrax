@@ -1,7 +1,7 @@
 /*******************************************************************************
- * Hydrax: haXe port of the PushButton Engine
+ * Hydrax :haXe port of the PushButton Engine
  * Copyright (C) 2010 Dion Amago
- * For more information see http://github.com/dionjwa/Hydrax
+ * For more information see http ://github.com/dionjwa/Hydrax
  *
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
@@ -18,12 +18,12 @@ import com.pblabs.util.ReflectUtil;
 
 
 /**
- * A simple logging mechanism.
+ * A simple Logging mechanism.
  *
- * Log instances are created for modules, and the logging level can be configured per
+ * Log instances are created for modules, and the Logging level can be configured per
  * module in a hierarchical fashion.
  *
- * Typically, you should create a module name based on the full path to a class:
+ * Typically, you should create a module name based on the full path to a class :
  * calling getLog() and passing an object or Class will do this. Alternattely, you
  * may create a Log to share in several classes in a package, in which case the
  * module name can be like "com.foocorp.games.bunnywar". Finally, you can just
@@ -31,13 +31,13 @@ import com.pblabs.util.ReflectUtil;
  * You really should name things based on your packages, and your packages should be
  * named according to Sun's recommendations for Java packages.
  *
- * Typical usage for creating a Log to be used by the entire class would be:
+ * Typical usage for creating a Log to be used by the entire class would be :
  * public class MyClass
  * {
- *	 private static const log :Log = Log.getLog(MyClass);
+ *	 private static const Log :Log = Log.getLog(MyClass);
  *	 ...
  *
- * OR, if you just need a one-off Log:
+ * OR, if you just need a one-off Log :
  *	 protected function doStuff (thingy :Thingy) :void
  *	 {
  *		  if (!isValid(thingy)) {
@@ -49,18 +49,18 @@ import com.pblabs.util.ReflectUtil;
 class Log
  {
 	/** Log level constants. */
-	public static var DEBUG:Int = 0;
-	public static var INFO:Int = 1;
-	public static var WARNING:Int = 2;
-	public static var ERROR:Int = 3;
-	public static var OFF:Int = 4;
+	public static var DEBUG :Int = 0;
+	public static var INFO :Int = 1;
+	public static var WARN :Int = 2;
+	public static var ERROR :Int = 3;
+	public static var OFF :Int = 4;
 	// if you add to this, update LEVEL_NAMES and stringToLevel() at the bottom...
 
 	public static var showDateTime :Bool = true;
 	
-	#if (flash || cpp)
-		static var lines : Array<String> = new Array();
-		public static var useHTML : Bool = true;
+	#if flash
+		static var lines :Array<String> = new Array();
+		public static var useHTML :Bool = true;
 	#end
 
 	
@@ -78,22 +78,22 @@ class Log
 		} else {
 			module = Type.getClassName(ReflectUtil.getClass(moduleSpec));
 		}
-		var log = _logs.get(module);
-		log = if (log == null) new Log(module) else log; 
-		return log;
+		var Log = _Logs.get(module);
+		Log = if (Log == null) new Log(module) else Log; 
+		return Log;
 	}
 	
-	public static function testing (?msg :String, ?infos : PosInfos) :Void
+	public static function testing (?msg :String, ?infos :PosInfos) :Void
 	{
-		var log :Log = new Log("testing");
-		log.error(msg, infos);
+		var Log :Log = new Log("testing");
+		Log.error(msg, infos);
 	}
 
 	// /**
 	//  * A convenience function for quickly printing a stack trace
-	//  * to the log, useful for debugging.
+	//  * to the Log, useful for debugging.
 	//  */
-	// public static function dumpStack (?msg :String = "dumpStack", ?infos : PosInfos) :Void
+	// public static function dumpStack (?msg :String = "dumpStack", ?infos :PosInfos) :Void
 	// {
 	//	 testing(msg + "\n" + Stack.toString(Stack.callStack()), infos);
 	// }
@@ -104,7 +104,7 @@ class Log
 	}
 
 	/**
-	 * Add a logging target.
+	 * Add a Logging target.
 	 */
 	public static function addTarget (target :LogTarget) :Void
 	{
@@ -122,7 +122,7 @@ class Log
 	}
 
 	/**
-	 * Remove a logging target.
+	 * Remove a Logging target.
 	 */
 	public static function removeTarget (target :LogTarget) :Void
 	{
@@ -130,12 +130,12 @@ class Log
 	}
 
 	/**
-	 * Set the log level for the specified module.
+	 * Set the Log level for the specified module.
 	 *
-	 * @param module The smallest prefix desired to configure a log level.
+	 * @param module The smallest prefix desired to configure a Log level.
 	 * For example, you can set the global level with Log.setLevel("", Log.INFO);
 	 * Then you can Log.setLevel("com.foo.game", Log.DEBUG). Now, everything
-	 * logs at INFO level except for modules within com.foo.game, which is at DEBUG.
+	 * Logs at INFO level except for modules within com.foo.game, which is at DEBUG.
 	 */
 	public static function setLevel (module :Dynamic, level :Int) :Void
 	{
@@ -147,17 +147,22 @@ class Log
 		}
 		_levels = new Hash<Int>(); // reset cached levels
 	}
+	
+	static function setLevelStatic (module :Dynamic, level :com.pblabs.util.Log.LogLevel) :Void
+	{
+		setLevel (module, Type.enumIndex(level));
+	}
 
 	/**
-	 * Parses a String in the form of ":info;com.foo.game:debug;com.bar.util:warning"
+	 * Parses a String in the form of ":info;com.foo.game :debug;com.bar.util :warn"
 	 *
-	 * Semicolons separate modules, colons separate a module name from the log level.
+	 * Semicolons separate modules, colons separate a module name from the Log level.
 	 * An empty string specifies the top-level (global) module.
 	 */
 	public static function setLevels (settingString :String) :Void
 	{
 		for (module in settingString.split(";")) {
-			var setting:Array<String> = module.split(":");
+			var setting :Array<String> = module.split(":");
 			_setLevels.set(setting[0], stringToLevel(setting[1]));
 		}
 		_levels = new Hash<Int>(); // reset cached levels
@@ -177,19 +182,19 @@ class Log
 	/**
 	 * Log a message with 'debug' priority.
 	 *
-	 * @param args The first argument is the actual message to log. After that, each pair
-	 * of parameters is printed in key/value form, the benefit being that if no log
+	 * @param args The first argument is the actual message to Log. After that, each pair
+	 * of parameters is printed in key/value form, the benefit being that if no Log
 	 * message is generated then toString() will not be called on the values.
 	 * If any argument is a function, it is invoked with no args, so that you may avoid
-	 * converting detailed data into a String unless the message is actually logged.
+	 * converting detailed data into a String unless the message is actually Logged.
 	 * A final parameter may be an Error, in which case the stack trace is printed.
 	 *
 	 * @example
 	 * <listing version="3.0">
-	 *	log.debug("Message", "key1", value1, "key2", value2, optionalError);
+	 *	Log.debug("Message", "key1", value1, "key2", value2, optionalError);
 	 * </listing>
 	 */
-	public function debug (msg :Dynamic, ?args:Array<Dynamic>, ?infos : PosInfos) :Void
+	public function debug (msg :Dynamic, ?args :Array<Dynamic>, ?infos :PosInfos) :Void
 	{
 		doLog(DEBUG, msg, args, infos);
 	}
@@ -197,84 +202,84 @@ class Log
 	/**
 	 * Log a message with 'info' priority.
 	 *
-	 * @param args The first argument is the actual message to log. After that, each pair
-	 * of parameters is printed in key/value form, the benefit being that if no log
+	 * @param args The first argument is the actual message to Log. After that, each pair
+	 * of parameters is printed in key/value form, the benefit being that if no Log
 	 * message is generated then toString() will not be called on the values.
 	 * If any argument is a function, it is invoked with no args, so that you may avoid
-	 * converting detailed data into a String unless the message is actually logged.
+	 * converting detailed data into a String unless the message is actually Logged.
 	 * A final parameter may be an Error, in which case the stack trace is printed.
 	 *
 	 * @example
 	 * <listing version="3.0">
-	 *	log.info("Message", "key1", value1, "key2", value2, optionalError);
+	 *	Log.info("Message", "key1", value1, "key2", value2, optionalError);
 	 * </listing>
 	 */
-	public function info (msg :Dynamic, ?args:Array<Dynamic>, ?infos : PosInfos) :Void
+	public function info (msg :Dynamic, ?args :Array<Dynamic>, ?infos :PosInfos) :Void
 	{
 		doLog(INFO, msg, args, infos);
 	}
 
 	/**
-	 * Log a message with 'warning' priority.
+	 * Log a message with 'warn' priority.
 	 *
-	 * @param args The first argument is the actual message to log. After that, each pair
-	 * of parameters is printed in key/value form, the benefit being that if no log
+	 * @param args The first argument is the actual message to Log. After that, each pair
+	 * of parameters is printed in key/value form, the benefit being that if no Log
 	 * message is generated then toString() will not be called on the values.
 	 * If any argument is a function, it is invoked with no args, so that you may avoid
-	 * converting detailed data into a String unless the message is actually logged.
+	 * converting detailed data into a String unless the message is actually Logged.
 	 * A final parameter may be an Error, in which case the stack trace is printed.
 	 *
 	 * @example
 	 * <listing version="3.0">
-	 *	log.warning("Message", "key1", value1, "key2", value2, optionalError);
+	 *	Log.warn("Message", "key1", value1, "key2", value2, optionalError);
 	 * </listing>
 	 */
-	public function warning (msg :Dynamic, ?args:Array<Dynamic>, ?infos : PosInfos) :Void
+	public function warn (msg :Dynamic, ?args :Array<Dynamic>, ?infos :PosInfos) :Void
 	{
-		doLog(WARNING, msg, args, infos);
+		doLog(WARN, msg, args, infos);
 	}
 
 	/**
 	 * Log a message with 'error' priority.
 	 *
-	 * @param args The first argument is the actual message to log. After that, each pair
-	 * of parameters is printed in key/value form, the benefit being that if no log
+	 * @param args The first argument is the actual message to Log. After that, each pair
+	 * of parameters is printed in key/value form, the benefit being that if no Log
 	 * message is generated then toString() will not be called on the values.
 	 * If any argument is a function, it is invoked with no args, so that you may avoid
-	 * converting detailed data into a String unless the message is actually logged.
+	 * converting detailed data into a String unless the message is actually Logged.
 	 * A final parameter may be an Error, in which case the stack trace is printed.
 	 *
 	 * @example
 	 * <listing version="3.0">
-	 *	log.error("Message", "key1", value1, "key2", value2, optionalError);
+	 *	Log.error("Message", "key1", value1, "key2", value2, optionalError);
 	 * </listing>
 	 */
-	public function error (msg :Dynamic, ?args:Array<Dynamic>, ?infos : PosInfos) :Void
+	public function error (msg :Dynamic, ?args :Array<Dynamic>, ?infos :PosInfos) :Void
 	{
 		doLog(ERROR, msg, args, infos);
 	}
 
-	function doLog (level :Int, msg :Dynamic, args :Array<Dynamic>, infos : PosInfos ) :Void
+	function doLog (level :Int, msg :Dynamic, args :Array<Dynamic>, infos :PosInfos ) :Void
 	{
 		if (level < getLevel(_module)) {
-			return; // we don't want to log it!
+			return; // we don't want to Log it!
 		}
 		
 		var fontColor = "#000000";
 		if (_currentLevel != level) {
 			_currentLevel = level;
 			switch(level) {
-				case 0: 
+				case 0 :
 					fontColor = "#a6a5a5";
-				case 1:
+				case 1 :
 					fontColor = "#000000";
-				case 2: 
+				case 2 :
 					fontColor = "#ff952a";
-				case 3: 
+				case 3 :
 					fontColor = "#ff0000";
-				case 4: 
+				case 4 :
 					fontColor = "#000000";
-				default: 
+				default :
 					fontColor = "#000000";
 			}
 		}
@@ -284,26 +289,26 @@ class Log
 			msg = cast(msg, Array<Dynamic>)[0];
 		}
 		
-		var logMessage:String = formatMessage(level, msg, args, infos);
-		#if (flash || cpp)
-		logTraceFlash(logMessage);
+		var LogMessage :String = formatMessage(level, msg, args, infos);
+		#if flash
+		LogTraceFlash(LogMessage);
 		#else
-		trace(logMessage);
+		trace(LogMessage);
 		#end
-		// var htmlLogMessage = "<FONT COLOR=\"" + fontColor + "\">" + logMessage + "</FONT>";
-		var htmlLogMessage = logMessage;
+		// var htmlLogMessage = "<FONT COLOR=\"" + fontColor + "\">" + LogMessage + "</FONT>";
+		var htmlLogMessage = LogMessage;
 		// haxe.Log.trace(htmlLogMessage, infos);
-		// possibly also dispatch to any other log targets.
+		// possibly also dispatch to any other Log targets.
 		for (target in _targets) {
-			target.log(logMessage);
+			target.log(LogMessage);
 		}
 	}
 
 	function formatMessage (level :Int, msg :Dynamic, args :Array<Dynamic>, infos :PosInfos) :String
 	{
 		if (infos != null) {
-			// msg = LEVEL_NAMES[level] + ": " + infos.className.split(".")[infos.className.split(".").length - 1] + "." + infos.methodName + "." + infos.lineNumber + "  " + Std.string(msg);
-			// msg = LEVEL_NAMES[level] + ": " + Std.string(msg);
+			// msg = LEVEL_NAMES[level] + ":" + infos.className.split(".")[infos.className.split(".").length - 1] + "." + infos.methodName + "." + infos.lineNumber + "  " + Std.string(msg);
+			// msg = LEVEL_NAMES[level] + ":" + Std.string(msg);
 			msg = Std.string(msg);
 		}
 		if (showDateTime) {
@@ -321,7 +326,7 @@ class Log
 				}
 			}
 			if (args.length > 1) {
-				var ii:Int = 0;
+				var ii :Int = 0;
 				   while (ii < args.length) {
 					msg += if (ii == 0) " [" else ", ";
 					msg += argToString(args[ii]) + "=" + argToString(args[ii + 1]);
@@ -331,7 +336,7 @@ class Log
 			}
 		}
 		
-		return LEVEL_NAMES[level] + ": " + infos.fileName+":"+infos.lineNumber + "." +infos.methodName +"()  " + msg;
+		return LEVEL_NAMES[level] + ":" + infos.fileName+":"+infos.lineNumber + "." +infos.methodName +"()  " + msg;
 	}
 
 	/**
@@ -345,7 +350,7 @@ class Log
 			} else {
 				return Std.string(arg);
 			}
-		} catch (e :Dynamic){// "Error:";//(e :Error) {
+		} catch (e :Dynamic){// "Error :";//(e :Error) {
 			try {
 				return "<" + Std.string(e) + ">";
 			} catch (unknown :Dynamic) {
@@ -357,12 +362,12 @@ class Log
 
 	function getTimeStamp () :String
 	{
-		var d:Date = Date.now();
+		var d :Date = Date.now();
 		return d.toString();
 	}
 
 	/**
-	 * Get the logging level for the specified module.
+	 * Get the Logging level for the specified module.
 	 */
 	public static function getLevel (module :String) :Int
 	{
@@ -370,7 +375,7 @@ class Log
 		var lev = _levels.get(module);
 		if (lev == null) {
 			// cache miss- copy some parent module's level...
-			var ancestor:String = module;
+			var ancestor :String = module;
 			while (true) {
 				lev = _setLevels.get(ancestor);
 				if (lev != null || ancestor == "") {
@@ -379,7 +384,7 @@ class Log
 					_levels.set(module, lev); // if lev was null, this will become 0 (DEBUG)
 					break;
 				}
-				var dex:Int = ancestor.lastIndexOf(".");
+				var dex :Int = ancestor.lastIndexOf(".");
 				ancestor = if (dex == -1) "" else ancestor.substr(0, dex);
 			}
 		}
@@ -389,34 +394,34 @@ class Log
 	static function stringToLevel (s :String) :Int
 	{
 		switch (s.toLowerCase()) {
-			case "debug": return DEBUG;
-			case "info": return INFO;
-			case "warning" :return WARNING; 
-			case "warn": return WARNING;
-			case "error": return ERROR;
-			case "off": return OFF;
+			case "debug":return DEBUG;
+			case "info":return INFO;
+			case "warn" :return WARN; 
+			case "warning":return WARN;
+			case "error":return ERROR;
+			case "off":return OFF;
 			default :return DEBUG;
 		}
 	}
 	
-	#if (flash || cpp)
-	public static function traceWithMethod( v : Dynamic, ?pos : haxe.PosInfos ) {
+	#if flash
+	public static function traceWithMethod(v :Dynamic, ?pos :haxe.PosInfos ) {
 		var tf = flash.Boot.getTrace();
-		var pstr = if( pos == null ) "(null)" else pos.fileName+":"+pos.lineNumber + "." +pos.methodName +"()";
-		untyped __global__["trace"](pstr +": "+flash.Boot.__string_rec(v,""));
-		if( lines == null ) lines = [];
-		lines = lines.concat((pstr +": "+flash.Boot.__string_rec(v,"")).split("\n"));
+		var pstr = if(pos == null ) "(null)" else pos.fileName+":"+pos.lineNumber + "." +pos.methodName +"()";
+		untyped __global__["trace"](pstr +":"+flash.Boot.__string_rec(v,""));
+		if(lines == null ) lines = [];
+		lines = lines.concat((pstr +":"+flash.Boot.__string_rec(v,"")).split("\n"));
 		tf.text = lines.join("\n");
 		var stage = flash.Lib.current.stage;
-		if( stage == null )
+		if(stage == null )
 			return;
-		while( lines.length > 1 && tf.height > stage.stageHeight ) {
+		while(lines.length > 1 && tf.height > stage.stageHeight ) {
 			lines.shift();
 			tf.text = lines.join("\n");
 		}
 	}
 	
-	static function logTraceFlash (line :String) :Void
+	static function LogTraceFlash (line :String) :Void
 	{
 		
 		var tf = flash.Boot.getTrace();
@@ -428,9 +433,9 @@ class Log
 			tf.text = lines.join("\n");
 		}
 		var stage = flash.Lib.current.stage;
-		if( stage == null )
+		if(stage == null )
 		return;
-		while( lines.length > 1 && tf.height > stage.stageHeight ) {
+		while(lines.length > 1 && tf.height > stage.stageHeight ) {
 			lines.shift();
 			if (useHTML) {
 				tf.htmlText = lines.join("<br/>\n");
@@ -445,7 +450,7 @@ class Log
 	{
 		_setLevels = new Hash<Int>();
 		_targets = new List<LogTarget>();
-		#if (flash || cpp)
+		#if flash
 			_setLevels.set("", if (flash.system.Capabilities.isDebugger) 0 else 4);//Debug or Off (0 or 4)
 			haxe.Log.trace = traceWithMethod;
 			_targets.add(new FlashLogTarget());
@@ -454,33 +459,33 @@ class Log
 		#end
 	}
 	
-	static function debugStatic (msg :Dynamic, ?infos : PosInfos) :Void
+	static function debugStatic (msg :Dynamic, ?infos :PosInfos) :Void
 	{
-		var log = getLog(infos.className);
-		log.debug(msg, null, infos);
+		var Log = getLog(infos.className);
+		Log.debug(msg, null, infos);
 	}
 	
-	static function infoStatic (msg :Dynamic, ?infos : PosInfos) :Void
+	static function infoStatic (msg :Dynamic, ?infos :PosInfos) :Void
 	{
-		var log = getLog(infos.className);
-		log.info(msg, null, infos);
+		var Log = getLog(infos.className);
+		Log.info(msg, null, infos);
 	}
 	
-	static function warningStatic (msg :Dynamic, ?infos : PosInfos) :Void
+	static function warnStatic (msg :Dynamic, ?infos :PosInfos) :Void
 	{
-		var log = getLog(infos.className);
-		log.warning(msg, null, infos);
+		var Log = getLog(infos.className);
+		Log.warn(msg, null, infos);
 	}
 	
-	static function errorStatic (msg :Dynamic, ?infos : PosInfos) :Void
+	static function errorStatic (msg :Dynamic, ?infos :PosInfos) :Void
 	{
-		var log = getLog(infos.className);
-		log.error(msg, null, infos);
+		var Log = getLog(infos.className);
+		Log.error(msg, null, infos);
 	}
 	
 	public static function setup () :Void
 	{
-		#if (flash || cpp)
+		#if flash
 		//Show the method names
 		haxe.Log.trace = traceWithMethod;
 		#end
@@ -489,34 +494,35 @@ class Log
 		Log.showDateTime = false;
 		com.pblabs.util.Log.debug = debugStatic;
 		com.pblabs.util.Log.info = infoStatic;
-		com.pblabs.util.Log.warn = warningStatic;
+		com.pblabs.util.Log.warn = warnStatic;
 		com.pblabs.util.Log.error = errorStatic;
+		com.pblabs.util.Log.setLevel = setLevelStatic;
 		//Basic default, in case the user doesn't set anything
-		setLevel("", WARNING);
+		setLevel("", WARN);
 		#end
 	}
 	
-	/** The module to which this log instance applies. */
-	var _module:String;
+	/** The module to which this Log instance applies. */
+	var _module :String;
 
-	/** Other registered LogTargets, besides the trace log. */
+	/** Other registered LogTargets, besides the trace Log. */
 	static var _targets :List<LogTarget>;
 
-	/** A cache of log levels, copied from _setLevels. */
+	/** A cache of Log levels, copied from _setLevels. */
 	static var _levels :Hash<Int> = new Hash<Int>();
 
-	/** The configured log levels. */
-	static var _setLevels:Hash<Int>;
+	/** The configured Log levels. */
+	static var _setLevels :Hash<Int>;
 	
 	static var _currentLevel :Int = -1;
 	
-	static var _logs :Hash<Log> = new Hash<Log>();
+	static var _Logs :Hash<Log> = new Hash<Log>();
 	
 	/** The outputted names of each level. The last one isn't used, it corresponds with OFF. */
 	static var LEVEL_NAMES :Array<Dynamic> = [ "debug", "INFO", "WARN", "ERROR", false ];
 }
 
-#if (flash || cpp)
+#if flash
 class FlashLogTarget implements LogTarget
 {
 	public function new () {}

@@ -55,7 +55,10 @@ class Maps
 			}
 		}
 		
-		if (classname == "Class") {
+		if (classname == "com.pblabs.util.ds.Hashable") {
+			return cast new HashableMap();
+		}
+		else if (classname == "Class") {
 			if (IS_OBJECT_DICTIONARY) {
 				#if flash
 				return new HashMap<K, V>();
@@ -122,7 +125,16 @@ class Maps
 			} else if (Std.is(k, Hashable)) {
 			#end
 				untyped return new HashableMap<K, V>();
-			} else {
+			} 
+			#if cpp
+			else if (com.pblabs.util.ReflectUtil.is(k, "de.polygonal.ds.Hashable")) {
+			#else
+			else if (Std.is(k, com.pblabs.util.ds.Hashable)) {
+			#end
+				untyped return new com.pblabs.util.ds.maps.PolygonalHashableMap<K, V>();
+			}
+			
+			else {
 				if (IS_OBJECT_DICTIONARY) {
 					#if flash
 					return new HashMap<K, V>();

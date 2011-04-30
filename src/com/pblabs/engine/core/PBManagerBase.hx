@@ -1,25 +1,32 @@
 /*******************************************************************************
- * Hydrax: haXe port of the PushButton Engine
+ * Hydrax :haXe port of the PushButton Engine
  * Copyright (C) 2010 Dion Amago
- * For more information see http://github.com/dionjwa/Hydrax
+ * For more information see http ://github.com/dionjwa/Hydrax
  *
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.engine.core;
+
 /**
   * Manager that listens for changes in the IPBContext.
   * Designed to be initialized in the PBGame, not the PBContext 
   */
 class PBManagerBase
-	implements IPBManager, implements haxe.rtti.Infos
+	implements IPBManager, implements haxe.rtti.Infos, implements de.polygonal.ds.Hashable
 {
 	var context :IPBContext;
 	
 	@inject("com.pblabs.engine.core.PBGameBase")
 	var game :PBGameBase;
 	
-	public function new () {}
+	/** Key for hashing. Don't modify. */
+	public var key :Int;
+	
+	public function new () 
+	{
+		key = com.pblabs.engine.util.PBUtil.KEY_COUNT++;
+	}
 	
 	public function startup () :Void
 	{
@@ -34,9 +41,18 @@ class PBManagerBase
 	
 	public function shutdown () :Void
 	{
+		com.pblabs.util.Assert.isNotNull(game);
+		com.pblabs.util.Assert.isNotNull(game.newActiveContextSignaler);
+		com.pblabs.util.Assert.isNotNull(game.activeContextRemovedSignaler);
 		game.newActiveContextSignaler.unbind(onNewContextInternal);
 		game.activeContextRemovedSignaler.unbind(onContextRemovedInternal);
+		//Destroy signal bonds
+		if (game.getManager(SignalBondManager) != null) {
+			game.getManager(SignalBondManager).destroyBonds(this);
+		}
 		game = null;
+		context = null;
+		// com.pblabs.util.Assert.isTrue(context == null);
 	}
 	
 	function onNewContextInternal (c :IPBContext) :Void

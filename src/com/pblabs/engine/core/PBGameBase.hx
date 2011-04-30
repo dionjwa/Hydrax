@@ -29,8 +29,8 @@ using com.pblabs.util.ArrayUtil;
 
 enum	ContextTransition {
 	PUSH(c :IPBContext);
-	POP;
-	CHANGE(c :IPBContext);
+	POP(c :IPBContext);
+	CHANGE(oldContext :IPBContext, newContext :IPBContext);
 	REMOVE(c :IPBContext);
 }
 
@@ -141,9 +141,7 @@ class PBGameBase
 		com.pblabs.util.Assert.isNotNull(type, "type is null");
 		var i = Type.createInstance(type, EMPTY_ARRAY);
 		com.pblabs.util.Assert.isNotNull(i, "allocated'd instance is null, type=" + type);
-		
 		injector.injectInto(i);
-		
 		#if cpp
 		if (com.pblabs.util.ReflectUtil.is(i, "com.pblabs.engine.core.IPBContext") || com.pblabs.util.ReflectUtil.is(i, "com.pblabs.engine.core.PBContext")) {
 		#else
@@ -179,12 +177,15 @@ class PBGameBase
 	
 	public function popContext () :Void
 	{
-	    _contextTransitions.push(ContextTransition.POP);
+	    _contextTransitions.push(ContextTransition.POP(currentContext));
 	}
 	
-	public function changeContext (c :IPBContext) :Void
+	public function changeContext (oldContext :IPBContext, newContext :IPBContext) :Void
 	{
-	    _contextTransitions.push(ContextTransition.CHANGE(c));
+		com.pblabs.util.Assert.isNotNull(oldContext);
+		com.pblabs.util.Assert.isNotNull(newContext);
+		com.pblabs.util.Assert.isTrue(oldContext != newContext); 
+	    _contextTransitions.push(ContextTransition.CHANGE(oldContext, newContext));
 	}
 	
 	public function removeContext (c :IPBContext) :Void
@@ -272,24 +273,29 @@ class PBGameBase
 						_currentContext = null;
 					}
 					_contexts.push(c);
-				case POP:
-					if (_currentContext != null) {
+				case POP(c):
+					if (_currentContext == c) {
 						removeCurrentContext();
 					} else {
-						_contexts.pop();
+						_contexts.remove(c);
+						c.shutdown();
 					}
-				case CHANGE(c):
-					if (_currentContext != null) {
+				case CHANGE(oldContext, newContext):
+					com.pblabs.util.Assert.isNotNull(oldContext);
+					if (_currentContext == oldContext) {
 						removeCurrentContext();
+						_contexts.push(newContext);
 					} else {
-						_contexts.pop();
-					}
-					_contexts.push(c);
+						var idx = _contexts.indexOf(oldContext);
+						com.pblabs.util.Assert.isWithinRange(idx, 0, _contexts.length);
+						_contexts[idx] = newContext;
+						oldContext.shutdown();
+					} 
 				case REMOVE(c):
 					if (c == _currentContext) {
 						removeCurrentContext();
 					} else {
-						_contexts.remove(c);	
+						_contexts.remove(c);
 					}
 			}
 		}
@@ -324,7 +330,7 @@ class PBGameBase
 		startTimer();
 	}
 	
-	function onFrame (#if flash event:flash.events.TimerEvent #end):Void
+	function onFrame (#if flash event :flash.events.TimerEvent #end):Void
 	{
 		if (_contextProcessManager != null) {
 			_contextProcessManager.onFrame(#if flash event #end);
@@ -339,7 +345,7 @@ class PBGameBase
 		while (_callLater.length > 0) {
 			_callLater.pop()();
 		}
-		#if flash
+		#if (flash && client)
 		event.updateAfterEvent();
 		untyped flash.Lib.current.stage.invalidate();
 		#end
@@ -347,7 +353,10 @@ class PBGameBase
 	
 	function startTimer ():Void
 	{
+		#if !neko
 		Preconditions.checkArgument(_timer == null, "Timer is not null, have we already started the timer?");
+		#end
+		
 		#if flash
 		_timer = new flash.utils.Timer(untyped flash.Lib.current.stage["frameRate"]);
 		_timer.addEventListener(flash.events.TimerEvent.TIMER, onFrame);
@@ -364,7 +373,9 @@ class PBGameBase
 	
 	function stopTimer ():Void
 	{
+		#if !neko
 		Preconditions.checkArgument(_timer != null, "Timer is null, have we called stopTimer already?");
+		#end
 		#if flash
 		_timer.removeEventListener(flash.events.TimerEvent.TIMER, onFrame);
 		_timer.stop();

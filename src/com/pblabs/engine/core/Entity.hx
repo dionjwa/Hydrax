@@ -307,7 +307,6 @@ class Entity extends PBObject,
 			_deferredComponents.push(p);
 			return true;
 		}
-
 		injectComponent(c);
 		
 		#if cpp
@@ -325,10 +324,8 @@ class Entity extends PBObject,
 		#end
 			_context.processManager.addAnimatedObject(cast(c));
 		}
-		
 		// We have to be careful w.r.t. adding components from another component.
 		c.register(this, componentName);
-		
 		// Fire off the reset.
 		doResetComponents();
 		
@@ -337,7 +334,7 @@ class Entity extends PBObject,
 	
 	public function removeComponent(component:IEntityComponent):Void
 	{
-		com.pblabs.util.Assert.isNotNull(component, "Why is the component null?");
+		com.pblabs.util.Assert.isNotNull(component, "Why is the component null? " + com.pblabs.util.Log.getStackTrace());
 		
 		#if debug
 		_context.getManager(com.pblabs.engine.core.PBGameBase).callLater(component.postDestructionCheck);

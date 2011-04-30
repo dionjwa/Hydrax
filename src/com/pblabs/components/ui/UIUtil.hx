@@ -7,13 +7,17 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.ui;
+
 import com.pblabs.components.input.MouseInputComponent;
+import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.scene2D.BaseSceneLayer;
 import com.pblabs.components.scene2D.BaseSceneManager;
 import com.pblabs.components.scene2D.CircleShape;
 import com.pblabs.components.scene2D.ImageComponent;
 import com.pblabs.components.scene2D.SVGComponent;
 import com.pblabs.engine.core.IEntity;
+import com.pblabs.engine.core.ObjectType;
+import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.resource.EmbeddedResource;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.geom.Vector2;
@@ -61,6 +65,64 @@ class UIUtil
         so.initialize(name);
         mouse.bindDeviceClick(onInputDown);
         so.setLocation(loc.x, loc.y);
+        return so;
+    }
+    
+    public static function createTwoStateSVGButton (layer :BaseSceneLayer<Dynamic, Dynamic>, 
+    	svg1 :ResourceToken<Dynamic>, svg2 :ResourceToken<Dynamic>,
+    	name :String, onClick:Void->Void) :IEntity
+    {
+		var s1 = layer.context.allocate(SVGComponent);
+		s1.resourceToken = cast svg1;
+		s1.parentProperty = layer.entityProp();
+
+		var s2 = layer.context.allocate(SVGComponent);
+		s2.resourceToken = cast svg2;
+		s2.parentProperty = layer.entityProp();
+		
+		return createTwoStateButton(layer, s1, s2, name, onClick);
+    }
+    
+    public static function createTwoStateButton (layer :BaseSceneLayer<Dynamic, Dynamic>, 
+    	state1 :BaseSceneComponent<Dynamic>,
+    	state2 :BaseSceneComponent<Dynamic>,
+    	name :String, onClick:Void->Void) :IEntity
+    {
+        var so = layer.context.createBaseSceneEntity();
+        com.pblabs.util.Assert.isFalse(state1.isRegistered);
+        com.pblabs.util.Assert.isFalse(state2.isRegistered);
+        //Add 2 before 1 to get the z-order right.
+        so.addComponent(state2, "image2");
+        so.addComponent(state1, "image1");
+        
+        //Don't allow mouse events on the second image.
+        state2.objectMask = ObjectType.NONE;
+        
+        var mouse = layer.context.allocate(MouseInputComponent);
+        
+        //Explicitly bind the mouse events to the first image, so the 
+        //MouseInputComponent doesn't get confused (and bind to the 2nd image)
+        mouse.boundsProperty = new PropertyReference("@image1");
+        so.addComponent(mouse);
+        so.initialize(name);
+        state2.scaleX = 2;
+        state1.scaleX = 2;
+        state1.visible = true;
+        state2.visible = false;
+        mouse.bindDeviceClick(onClick);
+        var sm = layer.context.getManager(com.pblabs.engine.core.SignalBondManager);
+        com.pblabs.util.Assert.isNotNull(sm);
+        mouse.bindDeviceDown(function () :Void {
+        	trace("down");
+        	state1.visible = false;
+        	state2.visible = true;
+        	var bond = layer.context.getManager(com.pblabs.components.input.InputManager).deviceUp.bind(function (?e :Dynamic) :Void {
+        		state1.visible = true;
+        		state2.visible = false;
+        	}, true);
+        	
+        	sm.set(mouse.key, bond);
+        });
         return so;
     }
     

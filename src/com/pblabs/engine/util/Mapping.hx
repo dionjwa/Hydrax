@@ -11,7 +11,7 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBObject;
 
-class Predicates
+class Mapping
 {
 	/**
 	 * As it says.

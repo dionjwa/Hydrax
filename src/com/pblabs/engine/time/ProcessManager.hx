@@ -471,6 +471,10 @@ class ProcessManager implements IProcessManager
 	  */
 	function advanceInternal (deltaTime :Float, ?suppressSafety:Bool = false):Void
 	{
+		// #if nodejs
+		// trace(_virtualTime);
+		// // trace(js.Node.util.inspect(js.Node.process.memoryUsage()));
+		// #end
 		// Update platform time, to avoid lots of costly calls to getTimer.
 		_platformTime = Std.int(haxe.Timer.stamp() * 1000);
 		

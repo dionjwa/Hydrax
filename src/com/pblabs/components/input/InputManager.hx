@@ -158,6 +158,10 @@ class InputManager extends BaseInputManager,
 	
 	function getSceneManagers () :Array<BaseSceneManager<Dynamic>>
 	{
+		//Sometimes there can be no context if the context switch takes a while.
+		if (context == null) {
+			return null;
+		}
 		if (_sceneManagers == null) {
 			com.pblabs.util.Assert.isNotNull(context);
 			
@@ -429,7 +433,10 @@ class InputManager extends BaseInputManager,
 				while (childIndex >= 0) {
 					var so :BaseSceneComponent<Dynamic> = layer.children[childIndex];
 					childIndex--;
-					if (so.containsWorldPoint(worldLoc, mask)) {
+					//Copy to a temp vec, in case the object modifies the the argument
+					_tempVec.x = worldLoc.x;
+					_tempVec.y = worldLoc.y;
+					if (so.containsWorldPoint(_tempVec, mask)) {
 						_displayObjectFirstUnderPoint.set(mask.bits, so);
 						return so;
 					}

@@ -152,7 +152,7 @@ class DebugUtil
 			});
 	}
 
-	public static function traceCallback (s :String) :Dynamic
+	public static function traceCallback (s :String) :Void->Void
 	{
 		return function () :Void { trace(s); };
 	}
@@ -195,6 +195,17 @@ class DebugUtil
 		return "Lineage :\n" + lineage.join("\n");
 	}
 
+	public static function traceInheritance (obj :Dynamic) :Void
+	{
+		var sb = new StringBuf();
+		var cls = Type.getClass(obj);
+		while (cls != null) {
+			sb.add(Type.getClassName(cls) + "->");
+			cls = Type.getSuperClass(cls);
+		}
+		trace(sb.toString());
+	}
+	
 	static function extendedDisplayObjectName (d :DisplayObject) :String
 	{
 		return d + ".name=" + d.name + "  loc=" + d.x + " " + d.y + " size " + d.width + " " + d.height;

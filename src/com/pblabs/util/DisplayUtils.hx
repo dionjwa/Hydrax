@@ -88,7 +88,7 @@ class DisplayUtils
 	 * @return true if iteration was halted by callbackFunction returning true
 	 */
 	public static function applyToHierarchy (disp :DisplayObject,
-		callbackFunction :Dynamic) :Bool
+		callbackFunction :DisplayObject->Dynamic) :Bool
 	{
 		// halt iteration if callbackFunction returns true
 		if (callbackFunction(disp)) {
@@ -169,42 +169,10 @@ class DisplayUtils
 		if (d == null) {
 			return null;
 		}
-		var bd = convertToBitmapData(d, scale);
+		var bd = createBitmapData(d, scale);
 		return bd != null ? new Bitmap(bd) : null;
 	}
 	
-	/**
-	 * Converts any DisplayObject into a Bitmap.  This can increase the graphical
-	 * performance of complex MovieClips.
-	 */
-	public static function convertToBitmapData (d :DisplayObject, ?scale :Float = 1) :BitmapData
-	{
-		if (d == null) {
-			return null;
-		}
-
-		#if flash
-		var bounds = d.getBounds(d);
-		#elseif cpp
-		var bounds = d.nmeGetPixelBounds();
-		#end
-		if (bounds.width <= 0 && bounds.height <= 0) {
-			Log.error(["d", d, "d.name", d.name, "bounds", bounds]);
-			return null;
-		}
-
-		if (Std.int(bounds.width) <= 0 || Std.int(bounds.height) <= 0) {
-			Log.error(["int(bounds.width)", Std.int(bounds.width),
-				"int(bounds.height)", Std.int(bounds.height)]);
-			return null;
-		}
-		var bd = new BitmapData(Std.int(bounds.width * scale), Std.int(bounds.height * scale),
-			true, 0xffffff);
-
-		bd.draw(d, new Matrix(scale, 0, 0, scale, -bounds.left * scale, -bounds.top * scale));
-		return bd;
-	}
-
 	public static function detach (d :DisplayObject) :Void
 	{
 		if (d != null && d.parent != null) {
@@ -569,33 +537,67 @@ class DisplayUtils
 	#end
 
 	#if flash
-	public static function createBitmapData (disp :DisplayObject, ?width :Int = -1, ?height :Int =
-		-1, ?uniformScale :Bool = true, ?center :Point) :BitmapData
+	public static function createBitmapData (d :DisplayObject, ?scale :Float = 1.0, ?center :Point) :BitmapData
 	{
-		var bounds:Rectangle = disp.getBounds(disp);
-
-		if (width < 0) {
-			width = Std.int(bounds.width);
+		#if flash
+		var bounds = d.getBounds(d);
+		#elseif cpp
+		var bounds = d.nmeGetPixelBounds();
+		#end
+		if (bounds.width <= 0 && bounds.height <= 0) {
+			com.pblabs.util.Log.error(["d", d, "d.name", d.name, "bounds", bounds]);
+			return null;
 		}
-		if (height < 0) {
-			height = Std.int(bounds.height);
-		}
-
-		var scaleX:Float = width / bounds.width;
-		var scaleY:Float = height / bounds.height;
-		if (uniformScale) {
-			scaleX = scaleY = Math.min(scaleX, scaleY);
-		}
-
+	
 		if (center != null) {
-			center.x = -bounds.x * scaleX;
-			center.y = -bounds.y * scaleY;
+			center.x = -bounds.x * scale;
+			center.y = -bounds.y * scale;
 		}
 		
-		var bd = new BitmapData(cast width, cast height, true, 0);
-		bd.draw(disp, new Matrix(scaleX, 0, 0, scaleY, -bounds.x * scaleX, -bounds.y * scaleY));
+		var bd = new BitmapData(Std.int(bounds.width * scale), Std.int(bounds.height * scale),
+			true, toARGB(0xffffff, 0));
+
+		// bd.draw(d, new Matrix(scale, 0, 0, scale, -bounds.left * scale, -bounds.top * scale), null, null, null, true);
+		bd.draw(d, new Matrix(scale, 0, 0, scale, -bounds.left * scale, -bounds.top * scale), null, null, null, true);
 		return bd;
 	}
+	
+	// public static function createBitmapDataCentered (d :DisplayObject, ?scale :Float = 1.0, ?center :Point) :BitmapData
+	// {
+	// 	#if flash
+	// 	var bounds = d.getBounds(d);
+	// 	#elseif cpp
+	// 	var bounds = d.nmeGetPixelBounds();
+	// 	#end
+	// 	if (bounds.width <= 0 && bounds.height <= 0) {
+	// 		com.pblabs.util.Log.error(["d", d, "d.name", d.name, "bounds", bounds]);
+	// 		return null;
+	// 	}
+	
+	// 	var size = Math.max(bounds.width, bounds.height);
+		
+	// 	if (center != null) {
+	// 		center.x = size / 2 * scale;
+	// 		center.y = size / 2 * scale;
+	// 	}
+		
+	// 	var bd = new BitmapData(Std.int(size * scale), Std.int(size * scale),
+	// 		true, toARGB(0xffffff, 0));
+
+	// 	// bd.draw(d, new Matrix(scale, 0, 0, scale, -bounds.left * scale, -bounds.top * scale), null, null, null, true);
+	// 	bd.draw(d, new Matrix(scale, 0, 0, scale, size / 2 * scale, size / 2 * scale), null, null, null, true);
+	// 	return bd;
+	// }
+	
+	public static function toARGB (rgb :UInt, newAlpha :UInt) :UInt
+	{
+		//newAlpha has to be in the 0 to 255 range
+		var argb :UInt = 0;
+		argb += (newAlpha<<24);
+		argb += (rgb);
+		return argb;
+	}
+	
 	#end
 }
 
