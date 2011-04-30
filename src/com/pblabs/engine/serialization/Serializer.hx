@@ -46,7 +46,7 @@ using com.pblabs.util.XMLUtil;
  */
 class Serializer extends PBManagerBase
 #if cpp
-	implements haxe.rtti.Infos
+	,implements haxe.rtti.Infos
 #end
 {
 	var _currentEntity :IEntity;
@@ -239,8 +239,9 @@ class Serializer extends PBManagerBase
 				if (ReflectUtil.hasSuperClass(cls, Enumerable)) {
 					return deserializeEnumerable (object, xml, typeHint);
 				} else {
+					//If the static class has a deserialize method, we will store it here
 					if (Type.getInstanceFields(cls).has("deserialize")) {
-						com.pblabs.util.Log.warn("Adding " + Type.getClassName(cls) + " to mapped (de)serializers");
+						com.pblabs.util.Log.info("Adding " + Type.getClassName(cls) + " to mapped (de)serializers");
 						var des = function (obj :Dynamic, xml :Xml, typeHint :String) :Dynamic {
 							var inst = Type.createInstance(cls, EMPTY_ARRAY);
 							Reflect.callMethod(inst, Reflect.field(inst, "deserialize"), [xml]);
