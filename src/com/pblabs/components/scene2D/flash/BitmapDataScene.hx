@@ -68,6 +68,7 @@ class BitmapDataScene extends com.pblabs.components.scene2D.flash.SceneManager
 	
 	public override function onFrame(dt :Float) :Void
 	{
+		com.pblabs.engine.debug.Profiler.enter("bitmap onFrame");
 		// Let things update.
 		super.onFrame(dt);
 
@@ -140,6 +141,7 @@ class BitmapDataScene extends com.pblabs.components.scene2D.flash.SceneManager
 		
 		backbuffer.unlock();
 		bitmap.bitmapData = backbuffer;
+		com.pblabs.engine.debug.Profiler.exit("bitmap onFrame");
 	}
 	
 	override function onAdd () :Void

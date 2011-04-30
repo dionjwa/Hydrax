@@ -131,7 +131,7 @@ class BitmapCacheResource extends ResourceBase<ImageData>
 	#if debug
 	override public function toString () :String
 	{
-		return com.pblabs.util.ds.MapUtil.toString(_cache);
+		return "[" + name + ": " +  com.pblabs.util.ds.MapUtil.toString(_cache) + "]";
 	}
 	#end
 	
