@@ -11,7 +11,6 @@ package com.pblabs.util.ds.maps;
 
 import com.pblabs.util.ds.Collection;
 import com.pblabs.util.ds.Hashable;
-import com.pblabs.util.ds.maps.HashableMap;
 
 import haxe.FastList;
 
@@ -44,7 +43,7 @@ class HashableMap<K :Hashable, V> extends TransformKeyMap<K, Int, V>
 	
 	public static function getHashCode (key :Hashable) :Int
 	{
-		return key.hashCode();
+		return key == null ? 0 : key.hashCode();
 	}
 	
 	public function new()
