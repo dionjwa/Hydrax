@@ -62,8 +62,10 @@ class XMLUtil
 	
 	public static function child (xml :Xml, childName :String) :Xml
 	{
-		for (x in xml.elementsNamed(childName)) {
-			return x;
+		//If xml.elementsNamed(childName) is used, it fails parsing SVG
+		for (x in xml.elements()) {
+			if (x.nodeName == childName)
+				return x;
 		}
 		return null;
 	}
@@ -89,7 +91,7 @@ class XMLUtil
 		if (value != null) {
 			if (serializeFunc != null) {
 				serializeFunc(value, child);		
-			} else {
+			} else if (value != null) {
 				child.addChild(Xml.createPCData(Std.string(value)));
 			}
 		}
@@ -97,11 +99,11 @@ class XMLUtil
 		return child;
 	}
 	
-	public static function deserializeChild <T>(xml :Xml, childName :String, deserializeFunc :Xml->T) :T
+	public static function deserializeChild <T>(xml :Xml, childName :String, deserializeFunc :Xml->T, ?defaultValue :Null<T>) :T
 	{
 		var child = child(xml, childName);
 		if (child == null) {
-			return null;
+			return defaultValue;
 		}
 		return deserializeFunc(child);
 	}
@@ -111,7 +113,9 @@ class XMLUtil
 	{
 		if (XMLUtil.child(xml, childName) != null) {
 			return Std.parseFloat(XMLUtil.child(xml, childName).firstChild().nodeValue);
-		}
+		} else {
+				com.pblabs.util.Log.info("No child property to parse=" + childName);
+			}
 		return 0;
 	}
 	
@@ -120,6 +124,8 @@ class XMLUtil
 		try {
 			if (XMLUtil.child(xml, childName) != null) {
 				return new PropertyReference(parseString(XMLUtil.child(xml, childName)));
+			} else {
+				com.pblabs.util.Log.info("No child property to parse=" + childName);
 			}
 		} catch (e :Dynamic) {
 			com.pblabs.util.Log.error("Cannot parse PropertyReference from " + XMLUtil.child(xml, childName).toString()); 
@@ -127,17 +133,21 @@ class XMLUtil
 		return null;
 	}
 	
-	public static function parseArray <T>(xml :Xml, childName :String, parseElement :String->T) :Array<T>
+	public static function parseArray <T>(xml :Xml, parseElement :String->T, ?delim :String = ",") :Array<T>
 	{
+		com.pblabs.util.Assert.isNotNull(xml);
+		com.pblabs.util.Assert.isNotNull(parseElement);
 		var arr :Array<T> = [];
-		var namedChild = xml.child(childName);  
-		if (namedChild != null) {
-			var s = namedChild.firstChild().nodeValue;
-			if (!s.isBlank()) {
-				for (sval in s.split(",")) {
-					var token = sval.trim();
-					arr.push(parseElement(token));
-				}
+		
+		if (xml.firstChild() == null) {
+			return arr;
+		}
+		
+		var s = xml.firstChild().nodeValue;
+		if (!s.isBlank()) {
+			for (sval in s.split(delim)) {
+				var token = sval.trim();
+				arr.push(parseElement(token));
 			}
 		}
 		return arr;
@@ -153,5 +163,16 @@ class XMLUtil
 			return null;
 		}
 	}
+	
+	public static function getChildWithAttributeValue (xml :Xml, attributeName :String, val :String) :Xml
+	{
+	    for (child in xml.elements()) {
+			if (child.exists(attributeName) && child.get(attributeName) == val) {
+				return child;
+			}
+		}
+		return null;
+	}
+	
 	
 }
