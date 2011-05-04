@@ -141,11 +141,7 @@ class PBContext
 		//added, but removed before properly initializing. This means that the component
 		//will not get unregister called, and thus may not clear the inject fields, resulting
 		//in hanging references.  This is not allowed for proper object pooling/reuse.
-		#if cpp
-		if (!com.pblabs.util.ReflectUtil.is(i, "com.pblabs.engine.core.IEntityComponent")) {
-		#else
 		if (!Std.is(i, IEntityComponent)) {
-		#end
 			injector.injectInto(i);
 		} else {
 			cast(i, IEntityComponent).context = this;
@@ -232,11 +228,7 @@ class PBContext
 	{
 		var mng = _managers.remove(PBUtil.getManagerName(clazz, name));
 		
-		#if cpp
-		if (com.pblabs.util.ReflectUtil.is(mng, "com.pblabs.engine.core.IPBManager")) {
-		#else
 		if (Std.is(mng, IPBManager)) {
-		#end
 			cast(mng, IPBManager).shutdown();
 		}
 		injector.unmap(clazz, name);
@@ -258,11 +250,7 @@ class PBContext
 				continue;
 			}
 			
-			#if cpp
-			if (com.pblabs.util.ReflectUtil.is(m, "com.pblabs.engine.core.IPBManager")) {
-				#else
-				if (Std.is(m, IPBManager)) {
-				#end
+			if (Std.is(m, IPBManager)) {
 				cast(m, IPBManager).shutdown();
 			}
 		}
@@ -359,11 +347,7 @@ class PBContext
 		//manager
 		injector.mapValue(clazz, instance, optionalName);
 		
-		#if cpp
-		if (com.pblabs.util.ReflectUtil.is(instance, "com.pblabs.engine.core.IPBManager")) {
-		#else
 		if (Std.is(instance, IPBManager)) {
-		#end
 			cast(instance, IPBManager).startup();
 		}
 		return instance;

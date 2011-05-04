@@ -107,9 +107,11 @@ class BitmapCacheResource extends ResourceBase<ImageData>
 				return bd;
 			}
 			#elseif js
-			var newImage :js.Dom.Image = _manager.getFromName(tokens[0], tokens[1]);
-			newImage.src = _image.src;
-			return newImage;
+			throw "Not implemented";
+			return null;
+			// var newImage :js.Dom.Image = _manager.getFromName(tokens[0], tokens[1]);
+			// newImage.src = _image.src;
+			// return newImage;
 			#end
 		}
 		com.pblabs.util.Log.debug("Getting cached bitmap data for key=" + name);

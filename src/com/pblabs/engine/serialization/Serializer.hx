@@ -16,6 +16,7 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.PBManagerBase;
+import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.geom.Vector2;
 import com.pblabs.geom.VectorTools;
 import com.pblabs.util.Enumerable;
@@ -706,6 +707,20 @@ class Serializer extends PBManagerBase
 	{
 		cast(val, ISerializable).deserialize(xml);
 		return val;
+	}
+	
+	public static function parsePropertyReference <T>(xml :Xml, childName :String) :PropertyReference<T>
+	{
+		try {
+			if (XMLUtil.child(xml, childName) != null) {
+				return new PropertyReference(XMLUtil.parseString(XMLUtil.child(xml, childName)));
+			} else {
+				com.pblabs.util.Log.info("No child property to parse=" + childName);
+			}
+		} catch (e :Dynamic) {
+			com.pblabs.util.Log.error("Cannot parse PropertyReference from " + XMLUtil.child(xml, childName).toString()); 
+		}
+		return null;
 	}
 	
 	public function deserializeIterable(object :Dynamic, xml :Xml, typeHint :String) :Dynamic

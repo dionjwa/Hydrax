@@ -14,7 +14,7 @@ import com.pblabs.util.Preconditions;
 
 using Lambda;
 
-class JSSceneManager<Layer :JSLayer<Dynamic, Dynamic>> extends BaseSceneManager<Layer>,
+class JSSceneManager extends BaseSceneManager<JSLayer>,
 	implements IAnimatedObject
 {
 	public var container (get_container, null) :js.Dom.HtmlDom;
@@ -24,7 +24,7 @@ class JSSceneManager<Layer :JSLayer<Dynamic, Dynamic>> extends BaseSceneManager<
 		super();
 	}
 	
-	override public function setLayerIndex (layer :Layer, index :Int) :Void
+	override public function setLayerIndex (layer :JSLayer, index :Int) :Void
 	{
 		super.setLayerIndex(layer, index);
 		index = getLayerIndex(layer);
@@ -44,7 +44,11 @@ class JSSceneManager<Layer :JSLayer<Dynamic, Dynamic>> extends BaseSceneManager<
 	
 	public function updateTransform() :Void
 	{
-	    throw "Override ";
+	    for (layer in children) {
+	    	layer.isTransformDirty = true;
+		    // layer.updateTransform();
+		}
+		_transformDirty = false;
 	}
 	
 	override function onAdd () :Void

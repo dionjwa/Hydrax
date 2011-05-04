@@ -28,9 +28,9 @@ import com.pblabs.util.ReflectUtil;
 */
 class EntityComponent 
 	implements IEntityComponent//, implements haxe.rtti.Infos
-	#if cpp
-	,implements haxe.rtti.Infos
-	#end
+	// #if cpp
+	// ,implements haxe.rtti.Infos
+	// #end
 {
 	/** Key for hashing. Don't modify. */
 	public var key :Int;

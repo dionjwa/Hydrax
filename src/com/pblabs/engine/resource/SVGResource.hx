@@ -73,7 +73,11 @@ class SVGResource extends ResourceBase<js.Dom.Image>
 	{
 		super.unload();
 		_source = null;
+		#if flash
 		_imageClass = null;
+		#elseif js
+		_image = null;
+		#end
 	}
 	
 	#if debug
@@ -87,7 +91,7 @@ class SVGResource extends ResourceBase<js.Dom.Image>
 	{
 		com.pblabs.util.Log.debug("loadFromEmbedded");
 		#if js
-		onLoadError("Don't use Source.embedded for JS, use Source.url instead");
+		_onError("Don't use Source.embedded for JS, use Source.url instead");
 		#elseif flash
 		_imageClass = cast Type.resolveClass("SWFResources_" + embeddedName);
 		Preconditions.checkNotNull(_imageClass, "No embedded resource class SWFResources_" + embeddedName);

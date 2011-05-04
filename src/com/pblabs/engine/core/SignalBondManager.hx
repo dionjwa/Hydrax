@@ -176,11 +176,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		com.pblabs.util.Log.debug("Destroying on " + obj.name);
 		destroyBonds(obj);
 		
-		#if cpp
-		if (com.pblabs.util.ReflectUtil.is(obj, "com.pblabs.engine.core.IEntity")) {
-		#else
 		if (Std.is(obj, IEntity)) {
-		#end
 			//Signals bound to component signalers
 			for (c in cast(obj, IEntity)) {
 				com.pblabs.util.Assert.isNotNull(c, "??EntityComponent is null??");

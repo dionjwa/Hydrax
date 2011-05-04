@@ -28,10 +28,8 @@ class SceneUtil
 	public static var MANAGER_CLASS :Class<BaseSceneManager<Dynamic>> = 
 		#if (flash || cpp)
 		com.pblabs.components.scene2D.flash.SceneManager;
-		#elseif css
-		com.pblabs.components.scene2D.js.css.SceneManager;
 		#elseif js
-		com.pblabs.components.scene2D.js.canvas.SceneManager;
+		com.pblabs.components.scene2D.js.JSSceneManager;
 		#else
 		null;
 		#end
@@ -40,11 +38,12 @@ class SceneUtil
 	public static var LAYER_CLASS :Class<BaseSceneLayer<Dynamic, Dynamic>> = 
 		#if (flash || cpp)
 		com.pblabs.components.scene2D.flash.SceneLayer;
-		#elseif css
-		com.pblabs.components.scene2D.js.css.SceneLayer;
-		#elseif js
-		com.pblabs.components.scene2D.js.canvas.SceneLayer;
 		#else
+		// if css
+		// com.pblabs.components.scene2D.js.css.SceneLayer;
+		// #elseif js
+		// com.pblabs.components.scene2D.js.canvas.SceneLayer;
+		// #else
 		null;
 		#end
 
@@ -237,11 +236,7 @@ class SceneUtil
 
 	public static function updateIfUpdatable (obj :Dynamic) :Void
 	{
-		#if cpp
-		if (com.pblabs.util.ReflectUtil.is(obj, "com.pblabs.engine.time.IAnimatedObject")) {
-		#else
 		if (Std.is(obj, IAnimatedObject)) {
-		#end
 			cast(obj, IAnimatedObject).onFrame(0);
 		}
 	}

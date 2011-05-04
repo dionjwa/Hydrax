@@ -26,7 +26,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	implements com.pblabs.engine.time.IAnimatedObject
 {
 	public var displayObject(get_displayObject, set_displayObject) :DisplayObject;
-	var _transformMatrix :Matrix;
+	// var _transformMatrix :Matrix;
 	
 	public function new ()
 	{
@@ -122,7 +122,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	{
 		com.pblabs.util.Assert.isTrue(val >= 0);
 		scaleX = val / _width;
-		_width = val;
+		// _width = val;
 		return val;
 	}
 	
@@ -135,7 +135,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	{
 		com.pblabs.util.Assert.isTrue(val >= 0);
 		scaleY = val / _height;
-		_height = val;
+		// _height = val;
 		return val;
 	}
 	
@@ -159,12 +159,14 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	 * to update immediately.
 	 * @param updateProps Read fresh values from any mapped properties.
 	 */
-	public function updateTransform (?updateProps:Bool = false) :Void
+	override public function updateTransform () :Void
 	{
 		if (_displayObject == null) {
 			com.pblabs.util.Log.error("No _displayObject");
 			return;
 		}
+		
+		super.updateTransform();
 		
 		// if(updateProps)
 		//	 updateProperties();
@@ -179,11 +181,11 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		// 	tmpScaleY = _scale.y * (_size.y / localDimensions.height);
 		// }
 		
-		_transformMatrix.identity();
-		_transformMatrix.scale(_scaleX, _scaleY);
-		_transformMatrix.translate(-registrationPoint.x * _scaleX, - registrationPoint.y * _scaleY);
-		_transformMatrix.rotate(_angle + _angleOffset);
-		_transformMatrix.translate(_x + _locationOffset.x, _y + _locationOffset.y);
+		// _transformMatrix.identity();
+		// _transformMatrix.scale(_scaleX, _scaleY);
+		// _transformMatrix.translate(-registrationPoint.x * _scaleX, - registrationPoint.y * _scaleY);
+		// _transformMatrix.rotate(_angle + _angleOffset);
+		// _transformMatrix.translate(_x + _locationOffset.x, _y + _locationOffset.y);
 		
 		_displayObject.transform.matrix = _transformMatrix;
 		_displayObject.alpha = _alpha;

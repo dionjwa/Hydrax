@@ -8,6 +8,7 @@
  ******************************************************************************/
 package com.pblabs.engine.resource.flash;
 
+#if flash
 import com.pblabs.components.Constants;
 import com.pblabs.engine.resource.ResourceBase;
 import com.pblabs.engine.resource.Source;
@@ -56,7 +57,7 @@ class SwfResource extends ResourceBase<Dynamic>
 	}
 	
 	/** Assume we want to instantiate a class */
-	override public function get (?name :String) :T
+	override public function get (?name :String) :Dynamic
 	{
 		com.pblabs.util.Assert.isNotNull(name, "Must supply an argument for SwfResources.get");
 		return createInstance(name);
@@ -159,3 +160,4 @@ class SwfResource extends ResourceBase<Dynamic>
 		return Type.createInstance(cls, Constants.EMPTY_ARRAY);
 	}
 }
+#end

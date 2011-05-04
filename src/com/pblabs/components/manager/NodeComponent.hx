@@ -149,7 +149,7 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 	public function deserialize (xml :Xml) :Dynamic
 	{
 		if (xml.child("parent") != null) {
-			parentProperty = cast xml.parsePropertyReference("parent");
+			parentProperty = cast Serializer.parsePropertyReference(xml, "parent");
 		}
 		if (parentProperty != null) {
 			addToParent();

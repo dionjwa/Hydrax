@@ -290,11 +290,7 @@ class DragManager extends EntityComponent,
 				}
 			}
 			if (_pauseProcessManagerOnPan && _scene != null) {
-				#if cpp
-				if (com.pblabs.util.ReflectUtil.is(_scene, "com.pblabs.engine.time.IAnimatedObject")) {
-				#else
 				if (Std.is(_scene, IAnimatedObject)) {
-				#end
 					cast(_scene, IAnimatedObject).onFrame(0);
 				}
 			}

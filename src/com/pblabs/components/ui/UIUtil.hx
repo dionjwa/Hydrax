@@ -13,9 +13,9 @@ import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.scene2D.BaseSceneLayer;
 import com.pblabs.components.scene2D.BaseSceneManager;
 import com.pblabs.components.scene2D.CircleShape;
-import com.pblabs.components.scene2D.ImageComponent;
 import com.pblabs.components.scene2D.SVGComponent;
 import com.pblabs.engine.core.IEntity;
+import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.resource.EmbeddedResource;
@@ -56,7 +56,7 @@ class UIUtil
         var so = layer.context.createBaseSceneEntity();
         
         var c = layer.context.allocate(com.pblabs.components.scene2D.SVGComponent);
-        c.resourceToken = new ResourceToken(EmbeddedResource.NAME, svgId);
+        c.resource = new ResourceToken(EmbeddedResource.NAME, svgId);
         c.parentProperty = layer.entityProp();
         so.addComponent(c);
         
@@ -73,11 +73,11 @@ class UIUtil
     	name :String, onClick:Void->Void) :IEntity
     {
 		var s1 = layer.context.allocate(SVGComponent);
-		s1.resourceToken = cast svg1;
+		s1.resource = cast svg1;
 		s1.parentProperty = layer.entityProp();
 
 		var s2 = layer.context.allocate(SVGComponent);
-		s2.resourceToken = cast svg2;
+		s2.resource = cast svg2;
 		s2.parentProperty = layer.entityProp();
 		
 		return createTwoStateButton(layer, s1, s2, name, onClick);
@@ -105,15 +105,12 @@ class UIUtil
         mouse.boundsProperty = new PropertyReference("@image1");
         so.addComponent(mouse);
         so.initialize(name);
-        state2.scaleX = 2;
-        state1.scaleX = 2;
         state1.visible = true;
         state2.visible = false;
         mouse.bindDeviceClick(onClick);
         var sm = layer.context.getManager(com.pblabs.engine.core.SignalBondManager);
         com.pblabs.util.Assert.isNotNull(sm);
         mouse.bindDeviceDown(function () :Void {
-        	trace("down");
         	state1.visible = false;
         	state2.visible = true;
         	var bond = layer.context.getManager(com.pblabs.components.input.InputManager).deviceUp.bind(function (?e :Dynamic) :Void {
@@ -131,10 +128,11 @@ class UIUtil
     {
         var so = layer.context.createBaseSceneEntity();
         
-        var c :ImageComponent = layer.context.allocate(imageClass);
-        c.resource = cast resource;
-        c.parentProperty = layer.entityProp();
-        so.addComponent(c);
+        throw "Fix me";
+        // var c :IEntityComponent = layer.context.allocate(imageClass);
+        // c.resource = cast resource;
+        // c.parentProperty = layer.entityProp();
+        // so.addComponent(c);
         
         var mouse = layer.context.allocate(MouseInputComponent);
         so.addComponent(mouse);

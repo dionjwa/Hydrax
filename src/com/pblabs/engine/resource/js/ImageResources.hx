@@ -55,7 +55,7 @@ class ImageResources extends ResourceBase<js.Dom.Image>
 		}
 	}
 	
-	override public function create (?imageName :String) :js.Dom.Image
+	override public function get (?imageName :String) :js.Dom.Image
 	{
 		Preconditions.checkNotNull(imageName, "image name cannot be null");
 		var srcImage = _images.get(imageName);
@@ -65,10 +65,12 @@ class ImageResources extends ResourceBase<js.Dom.Image>
 		return newImage;
 	}
 	
-	override public function toString () :String
+	#if debug
+	public function toString () :String
 	{
 		return "[ImageResources: " + _images + "]";
 	}
+	#end
 
 	var _imageRefs :Array<String>;
 	var _images :Map<String, js.Dom.Image>;

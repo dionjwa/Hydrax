@@ -114,11 +114,7 @@ class PBGameBase
 		//manager
 		injector.mapValue(clazz, instance, optionalName);
 		
-		#if cpp
-		if (com.pblabs.util.ReflectUtil.is(instance, "com.pblabs.engine.core.IPBManager")) {
-		#else
 		if (Std.is(instance, IPBManager)) {
-		#end
 			try {
 				cast(instance, IPBManager).startup();
 			#if flash
@@ -142,11 +138,7 @@ class PBGameBase
 		var i = Type.createInstance(type, EMPTY_ARRAY);
 		com.pblabs.util.Assert.isNotNull(i, "allocated'd instance is null, type=" + type);
 		injector.injectInto(i);
-		#if cpp
-		if (com.pblabs.util.ReflectUtil.is(i, "com.pblabs.engine.core.IPBContext") || com.pblabs.util.ReflectUtil.is(i, "com.pblabs.engine.core.PBContext")) {
-		#else
 		if (Std.is(i, IPBContext) || Std.is(i, PBContext)) {
-		#end
 			var ctx = cast(i, PBContext);
 			//On flash Reflect.hasField is sufficient, however on JS
 			//Type.getInstanceFields is needed 
@@ -157,11 +149,7 @@ class PBGameBase
 			
 			com.pblabs.util.Assert.isTrue(ctx.injector.getMapping(IPBContext) == ctx);
 			
-			#if cpp
-			if (ctx.getManager(IProcessManager) != null && com.pblabs.util.ReflectUtil.is(ctx.getManager(IProcessManager), "com.pblabs.engine.time.ProcessManager")) {
-			#else
 			if (ctx.getManager(IProcessManager) != null && Std.is(ctx.getManager(IProcessManager), ProcessManager)) {
-			#end	
 				//The IPBContext starts paused, we control the unpausing.
 				cast(ctx.getManager(IProcessManager), ProcessManager).isRunning = false;
 			}
@@ -214,11 +202,7 @@ class PBGameBase
 		}
 		com.pblabs.util.Log.debug("Shutting down managers");
 		for (m in _managers) {
-			#if cpp
-			if (com.pblabs.util.ReflectUtil.is(m, "com.pblabs.engine.core.IPBManager")) {
-			#else
 			if (Std.is(m, IPBManager)) {
-			#end
 				com.pblabs.util.Log.debug("Shutting down " + com.pblabs.util.ReflectUtil.getClassName(m));
 				cast(m, IPBManager).shutdown();
 			}

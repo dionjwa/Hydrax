@@ -119,18 +119,10 @@ class Maps
 					return new StringMap<K, V>();
 				}
 				
-			#if cpp
-			} else if (com.pblabs.util.ReflectUtil.is(k, "com.pblabs.util.ds.Hashable")) {
-			#else
 			} else if (Std.is(k, Hashable)) {
-			#end
 				untyped return new HashableMap<K, V>();
 			} 
-			#if cpp
-			else if (com.pblabs.util.ReflectUtil.is(k, "de.polygonal.ds.Hashable")) {
-			#else
 			else if (Std.is(k, com.pblabs.util.ds.Hashable)) {
-			#end
 				untyped return new com.pblabs.util.ds.maps.PolygonalHashableMap<K, V>();
 			}
 			

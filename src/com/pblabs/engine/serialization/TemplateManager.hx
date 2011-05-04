@@ -468,6 +468,9 @@ class TemplateManager
 		com.pblabs.util.Log.debug("new thing, name=" +name + ", thing=" + thing);
 		com.pblabs.util.Log.debug("previous thing=" + _things.get(name));
 		_things.set(name, thing);
+		#if flash
+		untyped xml._map = null;
+		#end
 	}
 	
 	/**

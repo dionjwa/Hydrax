@@ -8,13 +8,10 @@
  ******************************************************************************/
 package com.pblabs.util;
 
-import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.util.Enumerable;
-
 using StringTools;
 
-using com.pblabs.util.XMLUtil;
 using com.pblabs.util.StringUtil;
+using com.pblabs.util.XMLUtil;
 
 class XMLUtil
 {
@@ -117,20 +114,6 @@ class XMLUtil
 				com.pblabs.util.Log.info("No child property to parse=" + childName);
 			}
 		return 0;
-	}
-	
-	public static function parsePropertyReference <T>(xml :Xml, childName :String) :PropertyReference<T>
-	{
-		try {
-			if (XMLUtil.child(xml, childName) != null) {
-				return new PropertyReference(parseString(XMLUtil.child(xml, childName)));
-			} else {
-				com.pblabs.util.Log.info("No child property to parse=" + childName);
-			}
-		} catch (e :Dynamic) {
-			com.pblabs.util.Log.error("Cannot parse PropertyReference from " + XMLUtil.child(xml, childName).toString()); 
-		}
-		return null;
 	}
 	
 	public static function parseArray <T>(xml :Xml, parseElement :String->T, ?delim :String = ",") :Array<T>

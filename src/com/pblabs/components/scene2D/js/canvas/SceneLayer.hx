@@ -11,7 +11,7 @@ package com.pblabs.components.scene2D.js.canvas;
 import com.pblabs.components.scene2D.BaseSceneLayer;
 import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.scene2D.js.JSLayer;
-import com.pblabs.components.scene2D.js.canvas.SceneComponent;
+import com.pblabs.components.scene2D.js.SceneComponent;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.ReflectUtil;
@@ -19,12 +19,12 @@ import com.pblabs.util.ReflectUtil;
 import easel.display.Canvas;
 import easel.display.Context2d;
 
-class SceneLayer extends JSLayer<SceneManager, SceneComponent>,
+class SceneLayer extends JSLayer,
 	implements IAnimatedObject
 {
 	/** Children mark this when they're modified*/
-	public var isDirty :Bool;
-	public var isTransformDirty :Bool;
+	// public var isDirty :Bool;
+	// public var isTransformDirty :Bool;
 	public var canvas (default, null) :Canvas;
 	public var ctx (default, null) :Context2d;
 	
@@ -33,8 +33,8 @@ class SceneLayer extends JSLayer<SceneManager, SceneComponent>,
 		super();
 		canvas = createCanvas();
 		div.appendChild(canvas);
-		isTransformDirty = true;
-		isDirty = true;
+		// isTransformDirty = true;
+		// isDirty = true;
 		_tempPoint = new Vector2();
 	}
 	

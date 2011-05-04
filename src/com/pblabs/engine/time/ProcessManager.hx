@@ -571,11 +571,7 @@ class ProcessManager implements IProcessManager
 			var deferredObject = _deferredObjects.pop();
 			
 			
-			#if cpp
-			if (com.pblabs.util.ReflectUtil.is(deferredObject.v1, "com.pblabs.engine.time.ITickedObject")) {
-			#else
 			if (Std.is(deferredObject.v1, ITickedObject)) {
-			#end
 				addTickedObject(cast deferredObject.v1, deferredObject.v2); 
 			} else {
 				addAnimatedObject(cast deferredObject.v1, deferredObject.v2);

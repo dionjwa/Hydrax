@@ -66,7 +66,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	public var zoomMin :Float;
 
 	/**
-	 * How the.scene2D.is aligned relative to its position property.
+	 * How the scene is aligned relative to its position property.
 	 *
 	 * @see SceneAlignment
 	 * @see position
@@ -88,7 +88,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	var _rotation :Float;
 	var _transformDirty :Bool;
 	
-	/** The view of the.scene2D.is always enclosed in the bounds */
+	/** The view of the scene is always enclosed in the bounds */
 	var _sceneBounds :Rectangle;
 	var _sceneAlignment :SceneAlignment;
 	var _sceneView :SceneView;
@@ -144,9 +144,11 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 			cls = SceneUtil.LAYER_CLASS;
 		}
 		
+		com.pblabs.util.Assert.isNotNull(cls, "Null Layer Class");
+		
 		var layer = context.allocate(cls);
 		//Check compatability
-		com.pblabs.util.Assert.isTrue(Std.is(layer, SceneUtil.LAYER_CLASS), "Layer class " + cls + " is not a " + SceneUtil.LAYER_CLASS);
+		// com.pblabs.util.Assert.isTrue(Std.is(layer, SceneUtil.LAYER_CLASS), "Layer class " + cls + " is not a " + SceneUtil.LAYER_CLASS);
 		var layerCast :com.pblabs.components.manager.NodeComponent<Dynamic, Dynamic> = cast layer;
 		layerCast.parentProperty = PBUtil.componentProp(this);
 		owner.addComponent(cast(layer, IEntityComponent), layerName);
@@ -165,29 +167,17 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	/** Calls onFrame on this and all children to make sure they're in the right place on the first frame */
 	public function update () :Void
 	{
-		#if cpp
-		if (com.pblabs.util.ReflectUtil.is(this, "com.pblabs.engine.time.IAnimatedObject")) {
-		#else
 		if (Std.is(this, IAnimatedObject)) {
-		#end
 			cast(this, IAnimatedObject).onFrame(0);
 		}
 		if (children != null) {
 			for (layer in children) {
-				#if cpp
-				if (com.pblabs.util.ReflectUtil.is(layer, "com.pblabs.engine.time.IAnimatedObject")) {
-				#else
 				if (Std.is(layer, IAnimatedObject)) {
-				#end
 					cast(layer, IAnimatedObject).onFrame(0);
 				}
 				if (layer.children != null) {
 					for (c in layer.children) {
-						#if cpp
-						if (com.pblabs.util.ReflectUtil.is(c, "com.pblabs.engine.time.IAnimatedObject")) {
-						#else
 						if (Std.is(c, IAnimatedObject)) {
-						#end
 							cast(c, IAnimatedObject).onFrame(0);
 						}
 					}
@@ -228,7 +218,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 
 	override function childAdded (c :Layer) :Void
 	{
-		com.pblabs.util.Log.debug("adding.scene2D.layer " + c);
+		com.pblabs.util.Log.debug("adding scene layer " + c);
 		super.childAdded(c);
 		_transformDirty = true;
 	}
@@ -236,7 +226,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	override function childRemoved (c :Layer) :Void
 	{
 		super.childRemoved(c);
-		com.pblabs.util.Log.debug("removing.scene2D.layer " + c);
+		com.pblabs.util.Log.debug("removing scene layer " + c);
 		_transformDirty = true;
 	}
 

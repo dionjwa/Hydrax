@@ -6,11 +6,10 @@
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
-#if !nodejs
 package com.pblabs.components.scene2D.js.canvas;
 import com.pblabs.components.scene2D.js.JSSceneManager;
 
-class SceneManager extends JSSceneManager<SceneLayer>
+class SceneManager extends JSSceneManager
 {
 	public function new ()
 	{
@@ -25,4 +24,3 @@ class SceneManager extends JSSceneManager<SceneLayer>
 		_transformDirty = false;
 	}
 }
-#end

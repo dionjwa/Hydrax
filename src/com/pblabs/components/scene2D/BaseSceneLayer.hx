@@ -21,7 +21,7 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 	/** For ignoring all objects in a layer */
 	public var objectMask :ObjectType;
 	@editor({ui:"UpdatingLabel"})
-	public var scene (get_scene, never) :BaseSceneManager<Dynamic>;
+	public var scene (get_scene, never) :Scene;
 	@editor({ui:"NumericStepper", min:0})
 	public var index (get_index, set_index) :Int;
 	@editor({ui:"HUISlider", min:0.0, max:3.0})
@@ -36,7 +36,7 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 	}
 	#end
 	
-	/** If true,.scene2D.objects in this layer ignore mouse/input events */
+	/** If true, scene objects in this layer ignore mouse/input events */
 	public var ignoreInput :Bool;
 	
 	public function new ()
@@ -53,7 +53,7 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 		return 0;
 	}
 
-	function get_scene () :BaseSceneManager<Dynamic>
+	function get_scene () :Scene
 	{
 		return cast parent;
 	}

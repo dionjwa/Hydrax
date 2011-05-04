@@ -74,11 +74,6 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>
 		boundingBox = [0.0, 0.0, 0.0, 0.0];
 	}
 	
-	override function onReset () :Void
-	{
-		super.onReset();
-	}
-	
 	override function onRemove () :Void
 	{
 		super.onRemove();
@@ -135,54 +130,54 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>
 		_isContentsDirty = true;
 	}
 	
-	private function updateTransform ()
-	{
-		// trace("updating transform");
-		// trace("x=" + x);
-		// trace("y=" + y);
-		// trace("angle=" + angle);
-		// trace("scale=" + scale);
-		var cos = Math.cos(angle);
-		var sin = Math.sin(angle);
-		var cx = -centerX;
-		var cy = -centerY;
-		// var cx = -x;
-		// var cy = -y;
+// 	private function updateTransform ()
+// 	{
+// 		// trace("updating transform");
+// 		// trace("x=" + x);
+// 		// trace("y=" + y);
+// 		// trace("angle=" + angle);
+// 		// trace("scale=" + scale);
+// 		var cos = Math.cos(angle);
+// 		var sin = Math.sin(angle);
+// 		var cx = -centerX;
+// 		var cy = -centerY;
+// 		// var cx = -x;
+// 		// var cy = -y;
 
-		if (cacheAsBitmap) {
-			cx += boundingBox[0];
-			cy += boundingBox[1];
-		}
+// 		if (cacheAsBitmap) {
+// 			cx += boundingBox[0];
+// 			cy += boundingBox[1];
+// 		}
 
-		transform[0] = scaleX * cos;
-		transform[1] = scaleY * sin;
-		transform[2] = scaleX * -sin;
-		transform[3] = scaleY * cos;
-		// TODO: Disable pixel snapping?
-		transform[4] = Math.floor(cx*transform[0] + cy*transform[2] + x);
-		transform[5] = Math.floor(cx*transform[1] + cy*transform[3] + y);
-		// trace("transform=" + transform);
-		// trace("cx=" + cx);
-		// trace("cx*transform[0]=" + (cx*transform[0]));
-		// trace("(cy*transform[2])=" + (cy*transform[2]));
-		// trace("x=" + x);
-		// transform[4] = cx*transform[0] + cy*transform[2] + x;
-		// transform[5] = cx*transform[1] + cy*transform[3] + y;
-		// trace("transform=" + transform);
-//		transform[4] = cx*transform[0] + cy*transform[2] + x;
-//		transform[5] = cx*transform[1] + cy*transform[3] + y;
-//		transform[4] = Math.floor(x);
-//		transform[5] = Math.floor(y);
-//		trace("y is " + untyped __js__("typeof(this.y)"));
-//		if (transform[5] < -1000) {
-//			trace("cx = " + cx);
-//			trace("cy = " + cy);
-//			trace("y = " + y);
-//			trace("transform = " + transform);
-//		}
+// 		transform[0] = scaleX * cos;
+// 		transform[1] = scaleY * sin;
+// 		transform[2] = scaleX * -sin;
+// 		transform[3] = scaleY * cos;
+// 		// TODO: Disable pixel snapping?
+// 		transform[4] = Math.floor(cx*transform[0] + cy*transform[2] + x);
+// 		transform[5] = Math.floor(cx*transform[1] + cy*transform[3] + y);
+// 		// trace("transform=" + transform);
+// 		// trace("cx=" + cx);
+// 		// trace("cx*transform[0]=" + (cx*transform[0]));
+// 		// trace("(cy*transform[2])=" + (cy*transform[2]));
+// 		// trace("x=" + x);
+// 		// transform[4] = cx*transform[0] + cy*transform[2] + x;
+// 		// transform[5] = cx*transform[1] + cy*transform[3] + y;
+// 		// trace("transform=" + transform);
+// //		transform[4] = cx*transform[0] + cy*transform[2] + x;
+// //		transform[5] = cx*transform[1] + cy*transform[3] + y;
+// //		transform[4] = Math.floor(x);
+// //		transform[5] = Math.floor(y);
+// //		trace("y is " + untyped __js__("typeof(this.y)"));
+// //		if (transform[5] < -1000) {
+// //			trace("cx = " + cx);
+// //			trace("cy = " + cy);
+// //			trace("y = " + y);
+// //			trace("transform = " + transform);
+// //		}
 
-		_isTransformDirty = false;
-	}
+// 		_isTransformDirty = false;
+// 	}
 	
 	public function setCacheAsBitmap (on :Bool)
 	{

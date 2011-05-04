@@ -1,23 +1,26 @@
 /*******************************************************************************
- * Hydrax: haXe port of the PushButton Engine
+ * Hydrax :haXe port of the PushButton Engine
  * Copyright (C) 2010 Dion Amago
- * For more information see http://github.com/dionjwa/Hydrax
+ * For more information see http ://github.com/dionjwa/Hydrax
  *
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
-#if !nodejs
 package com.pblabs.components.scene2D.js;
-import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.scene2D.BaseSceneLayer;
 
-class JSLayer <Scene :JSSceneManager<Dynamic>, Component :BaseSceneComponent<Dynamic>> extends BaseSceneLayer<Scene, Component>
+class JSLayer extends BaseSceneLayer<JSSceneManager, SceneComponent>
 {
+	public var isDirty :Bool;
+	public var isTransformDirty :Bool;
+	
 	public var div (default, null) :js.Dom.HtmlDom;
 	
 	public function new ()
 	{
 		super();
+		isTransformDirty = true;
+		isDirty = true;	
 		div = cast js.Lib.document.createElement("DIV");
 	}
 	
@@ -34,21 +37,21 @@ class JSLayer <Scene :JSSceneManager<Dynamic>, Component :BaseSceneComponent<Dyn
 			offsetWidth += sib.offsetWidth;
 			sib = sib.previousSibling;
 		}
-		untyped div.style.webkitTransform = "translate(0px, -" + offsetHeight + "px)";
+		// untyped div.style.webkitTransform = "translate(0px, -" + offsetHeight + "px)";
 	}
 	
 	override function addedToParent () :Void
 	{
 		super.addedToParent();
 		//Add to the HtmlDom container
-		parent.setLayerIndex(this, parent.getLayerIndex(this));
+		scene.setLayerIndex(this, scene.getLayerIndex(this));
 	}
 	
 	override function removingFromParent () :Void
 	{
 		super.removingFromParent();
-		if (div.parentNode == parent.container) { 
-			parent.container.removeChild(div);
+		if (div.parentNode == scene.container) { 
+			scene.container.removeChild(div);
 		}
 	}
 	
@@ -61,7 +64,6 @@ class JSLayer <Scene :JSSceneManager<Dynamic>, Component :BaseSceneComponent<Dyn
 	override function onAdd () :Void
 	{
 		super.onAdd();
-		div.style.cssText = "position:absolute;left:0px;top:0px;";
+		div.style.cssText = "position:absolute;left:0px;top:0px;position:relative;-webkit-transform:translateZ(0px)";
 	}
 }
-#end

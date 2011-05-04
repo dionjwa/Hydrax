@@ -7,57 +7,58 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.scene2D;
-import com.pblabs.components.input.IInteractiveComponent;
-import com.pblabs.engine.core.ObjectType;
-import com.pblabs.engine.resource.IResourceManager;
-import com.pblabs.engine.resource.ResourceToken;
-import com.pblabs.geom.RectangleTools;
-import com.pblabs.util.StringUtil;
-import com.pblabs.util.ds.Tuple;
 
-import de.polygonal.motor2.geom.math.XY;
+import com.pblabs.engine.resource.ResourceToken;
+
+import de.polygonal.motor2.geom.primitive.AABB2;
 
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.resource.ResourceToken;
+using com.pblabs.util.XMLUtil;
 
 /**
-  * !!Still experimental!
   * Cross platform SVG based Scene2D component.
-  * Currently only tested in Flash, CSS coming soon, Canvas maybe
+  * Currently supports Flash, js canvas, and js CSS.
   */
 class SVGComponent 
 #if js
-	#if css
-	extends com.pblabs.components.scene2D.js.css.SceneComponent
-	#else
-	extends com.pblabs.components.scene2D.js.canvas.SceneComponent
-	#end
+extends com.pblabs.components.scene2D.js.SceneComponent
 #elseif (flash || cpp)
 extends com.pblabs.components.scene2D.flash.SceneComponent 
 #end
 {
 	/** The IResource name and item id */
 	#if (flash || cpp)
-	public var resourceToken :ResourceToken<flash.display.Sprite>;
-	#elseif css
-	public var resourceToken :ResourceToken<Dynamic>;
-	#else
-	//Canvas
-	public var resourceToken :ResourceToken<Dynamic>;
+	public var resource :ResourceToken<flash.display.Sprite>;
+	#elseif js
+	/** Load the svg as a raw string.  It's inserted in the dom, or parsed and rendered to the canvas. */
+	public var resource :ResourceToken<String>;
+	public var svgData (get_svgData, set_svgData) :String;
 	var _svgData :String;
+	function get_svgData () :String { return _svgData; }
+	function set_svgData (val :String) :String
+	{
+		com.pblabs.util.Assert.isNotNull(val, "SVG data is null");
+		_svgData = val;
+		var idx = _svgData.indexOf("<svg ");
+		if (idx > -1) {
+			//SVG documents added to the dom via innerHTML are *not* allowed to have any preamble.
+			_svgData = _svgData.substr(idx);
+		}
+		var svgXml = Xml.parse(_svgData);
+		var b = parseBounds(svgXml);
+		width = b.intervalX;
+		height = b.intervalY;
+		registrationPoint.x = b.intervalX / 2;
+		registrationPoint.y = b.intervalY / 2;
+		return val;
+	}
 	#end
 	
 	public function new () :Void
 	{
 		super();
 	}
-	
-	#if debug
-	public function toString () :String
-	{
-		return StringUtil.objectToString(this, ["x", "y", "_width", "_height"]);
-	}
-	#end
 	
 	override function onAdd () :Void
 	{
@@ -66,111 +67,90 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		// var s = context.allocate(flash.display.Sprite);
 		// s.mouseEnabled = s.mouseChildren = false;
 		// _displayObject = s;
-		var svg :flash.display.Sprite = context.get(resourceToken);
+		var svg :flash.display.Sprite = context.get(resource);
 		com.pblabs.util.Assert.isNotNull(svg);
 		_displayObject = svg;
 		super.onAdd();
-		#elseif css
-		//Get the DomResource, this makes sure the inline svg is loaded
+		#elseif js
 		super.onAdd();
-		if (displayObject == null) {
-			if (resourceToken != null) {
-				var svg :js.Dom.HtmlDom = context.get(resourceToken);
-				com.pblabs.util.Assert.isNotNull(svg, "SVG loaded from " + resourceToken + " is null");
-				displayObject = svg;
-			}
-			
-		} else if (resourceToken != null) {
-			com.pblabs.util.Log.warn("Both displayObject AND the resource token are not null");
-		}
-		#if debug
-		com.pblabs.util.Assert.isFalse(Math.isNaN(_width));
-		com.pblabs.util.Assert.isFalse(Math.isNaN(_height));
-		#end
-		
-		isTransformDirty = true;
+		loadFromResource();
 		#else
-		//Canvas
-		com.pblabs.util.Assert.isNotNull(resourceToken);
-		_svgData = Std.string(context.get(resourceToken));
-		super.onAdd();
+		throw "Unsupported platform";
 		#end
-		
-		
-		
-		// #if js
-
-		// #elseif (flash || cpp)
-		// // throw "Not implemented";
-
-		// // registrationPoint = new com.pblabs.geom.Vector2(_displayObject.width / 2, _displayObject.height / 2); 
-		// #end
-		
-		// // #if js
-		
-		// // #else
-		
-		// #if (flash || cpp)
-		// // cast(_displayObject, flash.display.Sprite).addChild(svg);
-		// //Offset so in the center
-		// // svg.x = -svg.width / 2;
-		// // svg.y = -svg.height / 2;
-		// #end
-		
-		
 	}
 	
-	#if css
-	override public function onFrame (dt :Float) :Void
+	#if js
+	function loadFromResource () :Void
 	{
-		if (isTransformDirty && parent != null) {
-			isTransformDirty = false;
-			var xOffset = parent.xOffset;
-			var yOffset = parent.yOffset;
-			untyped div.style.webkitTransform = "translate(" + (_x + xOffset) + "px, " + (_y + yOffset) + "px) rotate(" + _angle + "rad)";
+		com.pblabs.util.Assert.isNotNull(resource);
+		svgData = Std.string(context.get(resource));
+	}
+	
+	override function addedToParent () :Void
+	{
+		super.addedToParent();
+		if (isOnCanvas) {
+			//Render the SVG to the backbuffer to then render to the canvas
+			cacheAsBitmap = true;
+		} else {
+			//Insert the SVGdirectly into the DOM
+			com.pblabs.util.Assert.isNotNull(svgData);
+			com.pblabs.util.Assert.isNotNull(div);
+			
+			div.innerHTML = svgData;
 		}
 	}
 	
-	override function set_width (val :Float) :Float
-	{
-		return super.set_width(val);
-	}
-	
-	override function set_height (val :Float) :Float
-	{
-		return super.set_height(val);
-	}
-	#end
-	
-	#if (js && !css)
 	override function onRemove () :Void
 	{
 		super.onRemove();
+		#if js
 		_svgData = null;
+		#end
 	}
 	
 	override public function draw (ctx :easel.display.Context2d)
 	{
-		// ctx.drawImage(displayObject, -displayObject.width / 2, -displayObject.height / 2);
-		// untyped ctx.drawSvg(_svgData, 0, 0);
-		// trace("rendering svg?");
-		// trace(Reflect.hasField(ctx.canvas, "drawSvg"));
-		// trace("Type.getClass(ctx)=" + Type.getClass(ctx));
-		// trace(Type.getInstanceFields(Type.getClass(ctx)));
-		var c = js.Lib.document.getElementById('canvas');
-		// trace("c=" + c);
-		// com.pblabs.util.Assert.isNotNull(c);
-		// var context2D = untyped c.getContext('2d');
-		untyped __js__('c.drawSvg(_svgData, 0, 0)');
-		// c.drawSvg(_svgData);
-		ctx.drawImage(c, 0, 0);
-		// untyped __js__("canvg(ctx.canvas, _svgData, { ignoreMouse: true, ignoreAnimation: true })");
-		// untyped __js__('ctx.canvas.drawSvg(_svgData, 0, 0)');
-		
+		com.pblabs.util.Assert.isNotNull(ctx);
+		if (svgData == null) {
+			trace("svgData=" + svgData);
+			_isContentsDirty = true;
+			ctx.fillRect(0, 0, 30, 30);
+			return;
+		}
+		//Temporary hack: use canvg library for rendering SVGs to canvas
+		untyped canvg(ctx.canvas, svgData, { ignoreMouse: true, ignoreAnimation: true, ignoreDimensions: true, ignoreClear: false });
 	}
 	
+	override private function redrawBackBuffer ()
+	{
+		if (_backBuffer == null) {
+			_backBuffer = cast js.Lib.document.createElement("canvas");
+			com.pblabs.util.Assert.isNotNull(div);
+			div.appendChild(_backBuffer);
+		}
+		_backBuffer.width = Std.int(bounds.intervalX);
+		_backBuffer.height = Std.int(bounds.intervalY);
+		super.redrawBackBuffer();
+	}
+	
+	public static function parseBounds (svg :Xml) :AABB2
+	{
+		var bounds = new AABB2();
+		svg = svg.ensureNotDocument();
+		var tokens = svg.get("viewBox").split(" ");
+		bounds.xmin = Std.parseFloat(tokens[0]);
+		bounds.ymin = Std.parseFloat(tokens[1]);
+		bounds.xmax = Std.parseFloat(tokens[2]);
+		bounds.ymax = Std.parseFloat(tokens[3]);
+		return bounds;
+	}
 	#end
 	
-	
-	
+	#if debug
+	public function toString () :String
+	{
+		return com.pblabs.util.StringUtil.objectToString(this, ["x", "y", "_width", "_height"]);
+	}
+	#end
 }

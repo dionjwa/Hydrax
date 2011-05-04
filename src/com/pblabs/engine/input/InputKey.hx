@@ -22,7 +22,7 @@ class InputKey //extends Enumerable<InputKey>
 {
 	
 	// public var defaultType(getDefaultType, null) : Enumerable<InputKey>;
-	public var keyCode(getKeyCode, null) : UInt;
+	public var keyCode(getKeyCode, null) : Int;
 	// public var staticTypeMap(getStaticTypeMap, null) : Hash<InputKey>;
 	// public var typeMap(getTypeMap, null) : Hash<InputKey>;
 	public static var INVALID:InputKey = new InputKey("INVALID", 0);

@@ -87,20 +87,12 @@ class Entity extends PBObject,
 				//Add the timed components here rather than forcing
 				//each implementing class to add itself.
 				
-				#if cpp
-				if (com.pblabs.util.ReflectUtil.is(pc.item, "com.pblabs.engine.time.ITickedObject")) {
-				#else
 				if (Std.is(pc.item, ITickedObject)) {
-				#end
 					_context.processManager.addTickedObject(cast(pc.item));
 				}
 				
 				
-				#if cpp
-				if (com.pblabs.util.ReflectUtil.is(pc.item, "com.pblabs.engine.time.IAnimatedObject")) {
-				#else
 				if (Std.is(pc.item, IAnimatedObject)) {
-				#end
 					_context.processManager.addAnimatedObject(cast(pc.item));
 				}
 				
@@ -147,20 +139,12 @@ class Entity extends PBObject,
 			_context.getManager(com.pblabs.engine.core.PBGameBase).callLater(c.postDestructionCheck);
 			#end
 			
-			#if cpp
-			if (com.pblabs.util.ReflectUtil.is(c, "com.pblabs.engine.time.ITickedObject")) {
-			#else
 			if (Std.is(c, ITickedObject)) {
-			#end
 				_context.processManager.removeTickedObject(cast(c));
 			}
 			
 			
-			#if cpp
-			if (com.pblabs.util.ReflectUtil.is(c, "com.pblabs.engine.time.IAnimatedObject")) {
-			#else
 			if (Std.is(c, IAnimatedObject)) {
-			#end
 				_context.processManager.removeAnimatedObject(cast(c));
 			}
 		}
@@ -309,19 +293,11 @@ class Entity extends PBObject,
 		}
 		injectComponent(c);
 		
-		#if cpp
-		if (com.pblabs.util.ReflectUtil.is(c, "com.pblabs.engine.time.ITickedObject")) {
-		#else
 		if (Std.is(c, ITickedObject)) {
-		#end
 			_context.processManager.addTickedObject(cast(c));
 		}
 		
-		#if cpp
-		if (com.pblabs.util.ReflectUtil.is(c, "com.pblabs.engine.time.IAnimatedObject")) {
-		#else
 		if (Std.is(c, IAnimatedObject)) {
-		#end
 			_context.processManager.addAnimatedObject(cast(c));
 		}
 		// We have to be careful w.r.t. adding components from another component.
@@ -378,7 +354,7 @@ class Entity extends PBObject,
 	{
 		for (c in _components)
 		{
-			#if cpp
+			#if (cpp && debug)
 			com.pblabs.util.Assert.isTrue(Type.getClassName(componentType) != "Dynamic");
 			#end
 			if (Std.is(c, componentType))
@@ -397,7 +373,7 @@ class Entity extends PBObject,
 	{
 		var list = new Array();
 		
-		#if cpp
+		#if (cpp && debug)
 		com.pblabs.util.Assert.isTrue(Type.getClassName(componentType) != "Dynamic");
 		#end
 			
@@ -467,20 +443,12 @@ class Entity extends PBObject,
 		}
 		
 		_components.remove(c.name);
-		#if cpp
-		if (com.pblabs.util.ReflectUtil.is(c, "com.pblabs.engine.time.ITickedObject")) {
-		#else
 		if (Std.is(c, ITickedObject)) {
-		#end
 			_context.processManager.removeTickedObject(cast(c));
 		}
 		
 		
-		#if cpp
-		if (com.pblabs.util.ReflectUtil.is(c, "com.pblabs.engine.time.IAnimatedObject")) {
-		#else
 		if (Std.is(c, IAnimatedObject)) {
-		#end
 			_context.processManager.removeAnimatedObject(cast(c));
 		}
 		return true;

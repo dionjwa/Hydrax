@@ -33,10 +33,8 @@ js.Dom.Image;
   * Cross platform Image using Scene2D component.
   */
 class ImageComponent 
-#if css
-extends com.pblabs.components.scene2D.js.css.SceneComponent
-#elseif js
-extends com.pblabs.components.scene2D.js.canvas.SceneComponent
+#if js
+extends com.pblabs.components.scene2D.js.SceneComponent
 #elseif (flash || cpp)
 extends com.pblabs.components.scene2D.flash.SceneComponent  
 #end
@@ -44,16 +42,20 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	/** The IResource name and item id.  Id can be null */
 	public var resource :ResourceToken<Dynamic>;
 	
-	#if (js && !css)
-	public var displayObject (default, set_displayObject) :js.Dom.Image;
-	function set_displayObject (val :js.Dom.Image) :js.Dom.Image
+	#if js
+	public var image (default, set_image) :js.Dom.Image;
+	function set_image (val :js.Dom.Image) :js.Dom.Image
 	{
-		this.displayObject = val;
+		this.image = val;
 		return val;
 	}
 	override public function draw (ctx :easel.display.Context2d) :Void
 	{
-		ctx.drawImage(displayObject, -displayObject.width / 2, -displayObject.height / 2);
+		if (image == null) {
+			_isContentsDirty = true;
+			return;
+		}
+		ctx.drawImage(image, 0, 0);//, -image.width / 2, -image.height / 2);
 	}
 	#end
 	
@@ -73,18 +75,18 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	{
 		com.pblabs.util.Assert.isNotNull(resource, "resource is null for #" + owner.name + "." + name);
 		#if js
-		//Get the DomResource, this makes sure the inline image is loaded
-		var image :js.Dom.Image = context.get(resource);
-		com.pblabs.util.Assert.isNotNull(image, "Image loaded from " + resource + " is null");
-		Preconditions.checkNotNull(image, "image from resource is null " +resource);
-		displayObject = image;
 		super.onAdd();
+		loadFromResource();
 		#elseif (flash || cpp)
 		var image :Dynamic = context.get(resource);
 		com.pblabs.util.Assert.isNotNull(image, "Image loaded from " + resource + " is null");
 		com.pblabs.util.Assert.isNotNull(image, "null image for " + resource);
 		if (Std.is(image, flash.display.BitmapData)) {
 			_displayObject = new flash.display.Bitmap(cast(image, flash.display.BitmapData));
+			_registrationPoint.x = _displayObject.width / 2;
+			_registrationPoint.y = _displayObject.height / 2;
+		} else if (Std.is(image, flash.display.Bitmap)) {
+			_displayObject = cast image;
 			_registrationPoint.x = _displayObject.width / 2;
 			_registrationPoint.y = _displayObject.height / 2;
 		} else if (Std.is(image, flash.display.DisplayObject)) {
@@ -95,15 +97,21 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		super.onAdd();
 		#end
 		
-		#if css
-		_width = image.width;
-		_height = image.height;
-		div.appendChild(displayObject);
-		#elseif (flash || cpp)
+		// #if css
+		// _width = image.width;
+		// _height = image.height;
+		// div.appendChild(displayObject);
+		// #elseif (flash || cpp)
 		
-		updateTransform();
-		#end
+		// updateTransform();
+		// #end
 	}
+	
+	// override function onReset () :Void
+	// {
+	// 	trace("resetting ImageComponent");
+	// 	super.onReset();
+	// }
 	
 	#if (flash || cpp)
 	override function onRemove () :Void
@@ -113,31 +121,49 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	}
 	#end
 	
-	#if css
-	override public function onFrame (dt :Float) :Void
+	#if js
+	function loadFromResource () :Void
 	{
-		if (isTransformDirty) {
-			isTransformDirty = false;
-			var xOffset = parent.xOffset - width / 2;
-			var yOffset = parent.yOffset - height / 2;
-			untyped div.style.webkitTransform = "translate(" + (_x + xOffset) + "px, " + (_y + yOffset) + "px) rotate(" + _angle + "rad)";
-		}
+		//Get the DomResource, this makes sure the inline image is loaded
+		image = context.get(resource);
+		// trace("image=" + image);
+		com.pblabs.util.Assert.isNotNull(image, "Image loaded from " + resource + " is null");
+		Preconditions.checkNotNull(image, "image from resource is null " +resource);
+		// trace("adding image to div");
+		_width = image.width;
+		_height = image.height;
+		_registrationPoint.x = _width / 2;
+		_registrationPoint.y = _height / 2;
+		div.appendChild(image);
+		// displayObject = image;
 	}
+#end	
+
+	// #if css
+	// override public function onFrame (dt :Float) :Void
+	// {
+	// 	if (isTransformDirty) {
+	// 		isTransformDirty = false;
+	// 		var xOffset = parent.xOffset - width / 2;
+	// 		var yOffset = parent.yOffset - height / 2;
+	// 		untyped div.style.webkitTransform = "translate(" + (_x + xOffset) + "px, " + (_y + yOffset) + "px) rotate(" + _angle + "rad)";
+	// 	}
+	// }
 	
-	override function set_width (val :Float) :Float
-	{
-		if (displayObject != null) { 
-			displayObject.setAttribute("width", val + "px");
-		}
-		return super.set_width(val);
-	}
+	// override function set_width (val :Float) :Float
+	// {
+	// 	if (displayObject != null) { 
+	// 		displayObject.setAttribute("width", val + "px");
+	// 	}
+	// 	return super.set_width(val);
+	// }
 	
-	override function set_height (val :Float) :Float
-	{
-		if (displayObject != null) {
-			displayObject.setAttribute("height", val + "px");
-		}
-		return super.set_height(val);
-	}
-	#end
+	// override function set_height (val :Float) :Float
+	// {
+	// 	if (displayObject != null) {
+	// 		displayObject.setAttribute("height", val + "px");
+	// 	}
+	// 	return super.set_height(val);
+	// }
+	// #end
 }

@@ -21,6 +21,8 @@ import com.pblabs.util.Preconditions;
 import de.polygonal.motor2.geom.math.XY;
 import de.polygonal.motor2.geom.primitive.AABB2;
 
+import flash.geom.Matrix;
+
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
@@ -31,7 +33,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		implements IInteractiveComponent, implements haxe.rtti.Infos, implements IBounded
 {
 	public var objectMask (get_objectMask, set_objectMask) :ObjectType;
-	public var layer (get_layer, null) :BaseSceneLayer<Dynamic, Dynamic>;
+	// public var layer (get_layer, null) :BaseSceneLayer<Dynamic, Dynamic>;
+	public var layer (get_layer, null) :Layer;
 	public var x (get_x, set_x) :Float;
 	public var y (get_y, set_y) :Float;
 	public var width (get_width, set_width) :Float;
@@ -52,7 +55,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	public var bounds (get_bounds, set_bounds) :AABB2;
 	public var visible (get_visible, set_visible) :Bool;
 	
-	/** Sometimes you need to control when the display object is added to the.scene2D.*/
+	/** Sometimes you need to control when the display object is added to the scene*/
 	public var autoAddToScene :Bool;
 	
 	/** We will listen to the signals of this coordinates component. */
@@ -77,6 +80,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	var _objectMask :ObjectType;
 	var _bounds :AABB2;
 	var _visible :Bool;
+	
+	var _transformMatrix :Matrix;
 	
 	public function new ()
 	{
@@ -108,6 +113,25 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		objectMask = ObjectType.ALL;
 		_bounds = new AABB2(0, 0, 1, 1);
 		autoAddToScene = true;
+		_transformMatrix = new Matrix();
+	}
+	
+	/**
+	 * Update the object's transform based on its current state. Normally
+	 * called automatically, but in some cases you might have to force it
+	 * to update immediately.
+	 */
+	public function updateTransform () :Void
+	{
+		if (!isTransformDirty) {
+			return;
+		}
+		_transformMatrix.identity();
+		_transformMatrix.scale(_scaleX, _scaleY);
+		_transformMatrix.translate(-registrationPoint.x * _scaleX, - registrationPoint.y * _scaleY);
+		_transformMatrix.rotate(_angle + _angleOffset);
+		_transformMatrix.translate(_x + _locationOffset.x, _y + _locationOffset.y);
+		isTransformDirty = false;
 	}
 	
 	public function containsScreenPoint (pos :XY, mask :ObjectType) :Bool
@@ -128,15 +152,20 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 			return false;
 		}
 		
-		#if (flash || cpp)
-		return RectangleTools.contains(x - (_width / 2 * _scaleX) + _locationOffset.x, 
-			y -(_height / 2 * _scaleY) + _locationOffset.y, _width * _scaleX, _height * _scaleY, pos, angle);
-		#elseif js
-		return RectangleTools.contains(x - _width / 2, y - _height / 2, _width, _height, pos, angle);
-		#else
-		throw "Not implemented";
-		return false;
-		#end
+		// #if (flash || cpp)
+		// return RectangleTools.contains(x - (_width / 2 * _scaleX) + _locationOffset.x, 
+		// 	y -(_height / 2 * _scaleY) + _locationOffset.y, _width * _scaleX, _height * _scaleY, pos, angle);
+		// #elseif js
+		// trace("pos=" + pos);
+		// trace("bounds=" + bounds);
+		return de.polygonal.motor2.geom.inside.PointInsideAABB.test2(pos, bounds);
+		// return RectangleTools.contains(x - (_width / 2 * _scaleX) + _locationOffset.x, 
+		// 	y -(_height / 2 * _scaleY) + _locationOffset.y, _width * _scaleX, _height * _scaleY, pos, angle);
+		// return RectangleTools.contains(x - _width / 2, y - _height / 2, _width, _height, pos, angle);
+		// #else
+		// throw "Not implemented";
+		// return false;
+		// #end
 	}
 	
 	public function setLocation (loc :XY) :Void
@@ -187,7 +216,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		setDefaultVars();
 	}
 	
-	function get_layer () :BaseSceneLayer<Dynamic, Dynamic>
+	function get_layer () :Layer
 	{
 		return cast parent;
 	}
