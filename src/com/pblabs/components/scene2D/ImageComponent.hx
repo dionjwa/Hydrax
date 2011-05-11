@@ -130,10 +130,14 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		com.pblabs.util.Assert.isNotNull(image, "Image loaded from " + resource + " is null");
 		Preconditions.checkNotNull(image, "image from resource is null " +resource);
 		// trace("adding image to div");
-		_width = image.width;
-		_height = image.height;
-		_registrationPoint.x = _width / 2;
-		_registrationPoint.y = _height / 2;
+		_unscaledBounds.xmin = -image.width / 2;
+		_unscaledBounds.xmax = image.width / 2;
+		_unscaledBounds.ymin = image.height / 2;
+		_unscaledBounds.ymax = image.height / 2;
+		// _width = image.width;
+		// _height = image.height;
+		_registrationPoint.x = width / 2;
+		_registrationPoint.y = height / 2;
 		div.appendChild(image);
 		// displayObject = image;
 	}

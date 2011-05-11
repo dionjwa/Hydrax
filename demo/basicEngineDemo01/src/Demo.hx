@@ -8,18 +8,10 @@ using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
 
-class Demo #if (flash || cpp) extends flash.display.Sprite #end 
+class Demo 
 {
 	public function new() 
 	{
-		#if (flash || cpp)
-		super();
-		#end
-		
-		#if (flash || cpp)
-		flash.Lib.current.addChild(this);
-		#end
-	
 		//Setup logging.
 		com.pblabs.engine.debug.Log.setup();
 		// com.pblabs.engine.debug.Log.setLevel(com.pblabs.engine.injection.Injector, com.pblabs.engine.debug.Log.DEBUG);
@@ -41,6 +33,11 @@ class Demo #if (flash || cpp) extends flash.display.Sprite #end
 		//Prevents the first frame have the location at (0,0)
 		scene2D.update();
 		so.addTask(LocationTask.CreateEaseOut(100, 200, 3));
+		
+		var timer = new haxe.Timer(50);
+		timer.run = function () :Void {
+			trace(blob.x + ", " + blob.y);
+		}
 	}
 
 	public static function main() 

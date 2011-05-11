@@ -65,9 +65,9 @@ using com.pblabs.util.StringUtil;
  */
 class TemplateManager
 	implements IPBManager
-#if cpp
-	,implements haxe.rtti.Infos
-#end
+// #if cpp
+// 	,implements haxe.rtti.Infos
+// #end
 {
 	public var signalLoaded :Signaler<XMLResource>;
 	public var signalFailed :Signaler<XMLResource>;

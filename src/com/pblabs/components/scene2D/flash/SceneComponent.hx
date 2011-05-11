@@ -26,7 +26,6 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	implements com.pblabs.engine.time.IAnimatedObject
 {
 	public var displayObject(get_displayObject, set_displayObject) :DisplayObject;
-	// var _transformMatrix :Matrix;
 	
 	public function new ()
 	{
@@ -87,21 +86,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		_displayObject.name = name;
 		_transformMatrix.identity();
 		_displayObject.transform.matrix = _transformMatrix;
-		
-		#if flash
-		var localDimensions = _displayObject.getBounds(displayObject);
-		#elseif cpp
-		var localDimensions = _displayObject.nmeGetPixelBounds();
-		#end
-		
-		_width = localDimensions.width;
-		_height = localDimensions.height;
-		
-		_bounds.xmin = _x - width / 2;
-		_bounds.xmax = _x + width / 2;
-		_bounds.ymin = _y - height / 2;
-		_bounds.ymax = _y + height / 2;
-		_isTransformDirty = true;
+		recomputeBounds();
 	}
 	
 	override function onRemove () :Void
@@ -113,30 +98,51 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		}
 	}
 	
-	override function get_width () :Float
-	{
-		return _width * _scaleX;
-	}
+	// override function get_width () :Float
+	// {
+	// 	return _width * _scaleX;
+	// }
 	
-	override function set_width (val :Float) :Float
-	{
-		com.pblabs.util.Assert.isTrue(val >= 0);
-		scaleX = val / _width;
-		// _width = val;
-		return val;
-	}
+	// override function set_width (val :Float) :Float
+	// {
+	// 	com.pblabs.util.Assert.isTrue(val >= 0);
+	// 	scaleX = val / _width;
+	// 	// _width = val;
+	// 	return val;
+	// }
 	
-	override function get_height () :Float
-	{
-		return _height * _scaleY;
-	}
+	// override function get_height () :Float
+	// {
+	// 	return _height * _scaleY;
+	// }
 	
-	override function set_height (val :Float) :Float
+	// override function set_height (val :Float) :Float
+	// {
+	// 	com.pblabs.util.Assert.isTrue(val >= 0);
+	// 	scaleY = val / _height;
+	// 	// _height = val;
+	// 	return val;
+	// }
+	
+	function recomputeBounds () :Void
 	{
-		com.pblabs.util.Assert.isTrue(val >= 0);
-		scaleY = val / _height;
-		// _height = val;
-		return val;
+		#if flash
+		var localDimensions = _displayObject.getBounds(displayObject);
+		#elseif cpp
+		var localDimensions = _displayObject.nmeGetPixelBounds();
+		#end
+		_unscaledBounds.xmin = localDimensions.left;
+		_unscaledBounds.xmax = localDimensions.right;
+		_unscaledBounds.ymin = localDimensions.top;
+		_unscaledBounds.ymax = localDimensions.bottom;
+		// _width = localDimensions.width;
+		// _height = localDimensions.height;
+		
+		// _bounds.xmin = _x - width / 2;
+		// _bounds.xmax = _x + width / 2;
+		// _bounds.ymin = _y - height / 2;
+		// _bounds.ymax = _y + height / 2;
+		_isTransformDirty = true;
 	}
 	
 	function get_displayObject () :DisplayObject
@@ -148,8 +154,9 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	{
 		Preconditions.checkArgument(_displayObject == null && !isRegistered);
 		_displayObject = d;
-		_width = _displayObject.width;
-		_height = _displayObject.height;
+		recomputeBounds();
+		// _width = _displayObject.width;
+		// _height = _displayObject.height;
 		return d;
 	}
 

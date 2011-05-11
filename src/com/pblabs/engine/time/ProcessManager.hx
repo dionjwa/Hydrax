@@ -34,9 +34,9 @@ using com.pblabs.util.NumberUtil;
  * @see IAnimatedObject
  */
 class ProcessManager implements IProcessManager
-#if cpp
-	,implements haxe.rtti.Infos
-#end
+// #if cpp
+// 	,implements haxe.rtti.Infos
+// #end
 {
 	/**
 	 * Integer identifying this frame. Incremented by one for every frame.

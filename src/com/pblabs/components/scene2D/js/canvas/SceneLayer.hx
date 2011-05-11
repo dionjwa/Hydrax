@@ -71,6 +71,7 @@ class SceneLayer extends JSLayer,
 		//Fill transparent first
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		// Render
+		trace('rendering children');
 		if (children != null) {
 			for (c in children) {
 				c.render(ctx);

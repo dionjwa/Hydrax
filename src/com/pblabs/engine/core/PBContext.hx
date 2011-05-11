@@ -27,9 +27,9 @@ import hsl.haxe.Signaler;
 
 class PBContext
 	implements IPBContext
-	#if cpp
-	,implements haxe.rtti.Infos
-	#end
+	// #if cpp
+	// ,implements haxe.rtti.Infos
+	// #end
 {
 	/** Key for hashing. Don't modify. */
 	public var key :Int;

@@ -177,8 +177,8 @@ class SceneView
 		// _layer.graphics.drawRect(0, 0, flash.Lib.current.stage.stageWidth-2, flash.Lib.current.stage.stageHeight-2);
 		// #end
 		// Intelligent default size.
-		_width = flash.Lib.current.stage.stageWidth;
-		_height = flash.Lib.current.stage.stageHeight;
+		_width = Std.int(flash.Lib.current.stage.stageWidth);
+		_height = Std.int(flash.Lib.current.stage.stageHeight);
 		
 		com.pblabs.util.Log.debug("added to stage " + _layer.width + " " + _layer.height);
 	}

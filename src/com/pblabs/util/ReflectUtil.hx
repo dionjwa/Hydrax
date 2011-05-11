@@ -122,13 +122,13 @@ class ReflectUtil
 		if (cacheXml.exists(name)) {
 			return cacheXml.get(name);
 		}
-		#if cpp
-		//If you don't check for the field first, in cpp an error is thrown.
-		if (!Type.getClassFields(cls).has("__rtti")) {//untyped cls.__rtti == null
-			cacheXml.set(name, null);
-			return null;
-		}
-		#end
+		// #if cpp
+		// //If you don't check for the field first, in cpp an error is thrown.
+		// if (!Type.getClassFields(cls).has("__rtti")) {//untyped cls.__rtti == null
+		// 	cacheXml.set(name, null);
+		// 	return null;
+		// }
+		// #end
 		var rtti = Reflect.field(cls, "__rtti");
 		if (rtti == null) {
 			cacheXml.set(name, null);

@@ -83,6 +83,7 @@ class ImageResource extends ResourceBase
 				// swallow the exception
 			}
 			_loader.unload();
+			_loader = null;
 		}
 		#end
 		

@@ -30,8 +30,8 @@ class ShapeComponent
 		_borderStroke = 1;
 		#if (flash || cpp)
 		_displayObject = new flash.display.Sprite();
-		_width = 10;
-		_height = 10;
+		// _width = 10;
+		// _height = 10;
 		cast(_displayObject, flash.display.Sprite).mouseChildren = cast(_displayObject, flash.display.Sprite).mouseEnabled = false;
 		#end
 	}
@@ -58,35 +58,35 @@ class ShapeComponent
 		com.pblabs.util.Log.debug("finished");
 	}
 	
-	override function get_width () :Float
-	{
-		return _width;
-	}
+	// override function get_width () :Float
+	// {
+	// 	return _width;
+	// }
 	
-	override function set_width (val :Float) :Float
-	{
-		_width = val;
-		isTransformDirty = true;
-		_bounds.xmin = _x - _width / 2;
-		_bounds.xmax = _x + _width / 2;
-		redraw();
-		return val;
-	}
+	// override function set_width (val :Float) :Float
+	// {
+	// 	_width = val;
+	// 	isTransformDirty = true;
+	// 	_bounds.xmin = _x - _width / 2;
+	// 	_bounds.xmax = _x + _width / 2;
+	// 	redraw();
+	// 	return val;
+	// }
 	
-	override function get_height () :Float
-	{
-		return _height;
-	}
+	// override function get_height () :Float
+	// {
+	// 	return _height;
+	// }
 	
-	override function set_height (val :Float) :Float
-	{
-		_height = val;
-		isTransformDirty = true;
-		_bounds.ymin = _y - _height / 2;
-		_bounds.ymax = _y + _height / 2;
-		redraw();
-		return val;
-	}
+	// override function set_height (val :Float) :Float
+	// {
+	// 	_height = val;
+	// 	isTransformDirty = true;
+	// 	_bounds.ymin = _y - _height / 2;
+	// 	_bounds.ymax = _y + _height / 2;
+	// 	redraw();
+	// 	return val;
+	// }
 	
 	public function redraw () :Void
 	{

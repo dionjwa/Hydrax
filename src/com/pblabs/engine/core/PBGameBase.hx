@@ -39,9 +39,9 @@ enum	ContextTransition {
   * This class inits all the managers, and managers the IPBContexts.
   */
 class PBGameBase
-#if cpp
-	implements haxe.rtti.Infos
-#end
+// #if cpp
+// 	implements haxe.rtti.Infos
+// #end
 {
 	public var currentContext (get_currentContext, null) :IPBContext;
 	var _currentContext :IPBContext;

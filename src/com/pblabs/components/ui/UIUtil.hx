@@ -35,6 +35,9 @@ using com.pblabs.geom.VectorTools;
 
 class UIUtil
 {
+	/** Component names for multi-image buttons, in case you need to modify them */
+	public static var IMAGE1 = "image1";
+	public static var IMAGE2 = "image2";
     // public static function createSimpleButton (layer :BaseSceneLayer<Dynamic, Dynamic>, name :String, text :String, loc :XY, onInputDown:Void->Void) :IEntity
     // {
     //     var so = layer.context.createBaseSceneEntity();
@@ -56,7 +59,7 @@ class UIUtil
         var so = layer.context.createBaseSceneEntity();
         
         var c = layer.context.allocate(com.pblabs.components.scene2D.SVGComponent);
-        c.resource = new ResourceToken(EmbeddedResource.NAME, svgId);
+        c.resources = [new ResourceToken(EmbeddedResource.NAME, svgId)];
         c.parentProperty = layer.entityProp();
         so.addComponent(c);
         
@@ -69,16 +72,18 @@ class UIUtil
     }
     
     public static function createTwoStateSVGButton (layer :BaseSceneLayer<Dynamic, Dynamic>, 
-    	svg1 :ResourceToken<Dynamic>, svg2 :ResourceToken<Dynamic>,
-    	name :String, onClick:Void->Void) :IEntity
+    	svg1 :Array<ResourceToken<Dynamic>>, svg2 :Array<ResourceToken<Dynamic>>,
+    	name :String, onClick:Void->Void, ?text1 :String = "", ?text2 :String = "") :IEntity
     {
 		var s1 = layer.context.allocate(SVGComponent);
-		s1.resource = cast svg1;
+		s1.resources = cast svg1;
 		s1.parentProperty = layer.entityProp();
+		s1.svgRegexReplacements.push(new Tuple(~/\$T/, text1));
 
 		var s2 = layer.context.allocate(SVGComponent);
-		s2.resource = cast svg2;
+		s2.resources = cast svg2;
 		s2.parentProperty = layer.entityProp();
+		s2.svgRegexReplacements.push(new Tuple(~/\$T/, text2));
 		
 		return createTwoStateButton(layer, s1, s2, name, onClick);
     }
@@ -92,8 +97,8 @@ class UIUtil
         com.pblabs.util.Assert.isFalse(state1.isRegistered);
         com.pblabs.util.Assert.isFalse(state2.isRegistered);
         //Add 2 before 1 to get the z-order right.
-        so.addComponent(state2, "image2");
-        so.addComponent(state1, "image1");
+        so.addComponent(state2, IMAGE2);
+        so.addComponent(state1, IMAGE1);
         
         //Don't allow mouse events on the second image.
         state2.objectMask = ObjectType.NONE;
@@ -102,7 +107,7 @@ class UIUtil
         
         //Explicitly bind the mouse events to the first image, so the 
         //MouseInputComponent doesn't get confused (and bind to the 2nd image)
-        mouse.boundsProperty = new PropertyReference("@image1");
+        mouse.boundsProperty = new PropertyReference("@" + IMAGE1);
         so.addComponent(mouse);
         so.initialize(name);
         state1.visible = true;

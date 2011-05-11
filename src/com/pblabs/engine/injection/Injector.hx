@@ -113,6 +113,8 @@ class Injector
 	
 	function injectFields (obj :Dynamic, cls :Class<Dynamic>) :Void
 	{
+		// trace("inject fields " + (Std.is(obj, de.polygonal.ds.Hashable) ? cast(obj, de.polygonal.ds.Hashable).key + "": "") 
+			// + " " + Type.getClassName(cls));
 		Preconditions.checkNotNull(cls, "obj class is null");
 		updateRuntimeCache(cls);
 		for (injectionTuple in instanceFieldInjections.get(cls)) {
@@ -141,7 +143,8 @@ class Injector
 					com.pblabs.util.Log.warn("No value set for injection key=" + injectionTuple.v2 + "  ->  " + cls.getClassName() + "." + field);
 					continue;
 				}
-				
+				// trace("setting " + (Std.is(obj, de.polygonal.ds.Hashable) ? cast(obj, de.polygonal.ds.Hashable).key + "": "") 
+					// + " " + Type.getClassName(cls) + "." + field);
 				//Haxe doesn't property handle properties when using reflection
 				try {
 					if (Lambda.has(Type.getInstanceFields(cls), "set_" + field)) {
@@ -159,12 +162,14 @@ class Injector
 			
 		}
 		
+		#if !cpp
 		var superCls = Type.getSuperClass(cls);
 		//Recursively inject superclass fields/listeners
 		if (superCls != null) {
 			com.pblabs.util.Log.debug("Injecting on superclass=" + superCls.getClassName());
 			injectFields(obj, superCls);
 		}
+		#end
 	}
 	
 	function get_isParentInjector () :Bool

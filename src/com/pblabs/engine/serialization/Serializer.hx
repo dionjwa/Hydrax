@@ -46,9 +46,6 @@ using com.pblabs.util.XMLUtil;
  * @see ISerializable
  */
 class Serializer extends PBManagerBase
-#if cpp
-	,implements haxe.rtti.Infos
-#end
 {
 	var _currentEntity :IEntity;
 	var _serializers :Map<String, Dynamic->Xml->Void>;

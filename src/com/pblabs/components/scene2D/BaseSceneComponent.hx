@@ -63,8 +63,6 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	var _x :Float;
 	var _y :Float;
-	var _width :Float;
-	var _height :Float;
 	var _angle :Float;
 	var _scaleX :Float;
 	var _scaleY :Float;
@@ -79,6 +77,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	var _registrationPoint :XY;
 	var _objectMask :ObjectType;
 	var _bounds :AABB2;
+	var _unscaledBounds :AABB2;
 	var _visible :Bool;
 	
 	var _transformMatrix :Matrix;
@@ -97,8 +96,6 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		_scaleX = 1;
 		_scaleY = 1;
 		_alpha = 1;
-		_width = 0;
-		_height = 0;
 		_layerIndex = 0;
 		_zIndex = 0;
 		_visible = true;
@@ -111,7 +108,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		//Sensible default
 		spatialProperty = SpatialComponent.P_SPATIAL;
 		objectMask = ObjectType.ALL;
-		_bounds = new AABB2(0, 0, 1, 1);
+		_bounds = new AABB2(0, 0, 0, 0);
+		_unscaledBounds = new AABB2(0, 0, 0, 0);
 		autoAddToScene = true;
 		_transformMatrix = new Matrix();
 	}
@@ -151,21 +149,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		if (!mask.and(objectMask)) {
 			return false;
 		}
-		
-		// #if (flash || cpp)
-		// return RectangleTools.contains(x - (_width / 2 * _scaleX) + _locationOffset.x, 
-		// 	y -(_height / 2 * _scaleY) + _locationOffset.y, _width * _scaleX, _height * _scaleY, pos, angle);
-		// #elseif js
-		// trace("pos=" + pos);
-		// trace("bounds=" + bounds);
 		return de.polygonal.motor2.geom.inside.PointInsideAABB.test2(pos, bounds);
-		// return RectangleTools.contains(x - (_width / 2 * _scaleX) + _locationOffset.x, 
-		// 	y -(_height / 2 * _scaleY) + _locationOffset.y, _width * _scaleX, _height * _scaleY, pos, angle);
-		// return RectangleTools.contains(x - _width / 2, y - _height / 2, _width, _height, pos, angle);
-		// #else
-		// throw "Not implemented";
-		// return false;
-		// #end
 	}
 	
 	public function setLocation (loc :XY) :Void
@@ -205,7 +189,6 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		if (!autoAddToScene) {
 			removeFromParent();
 		}
-			
 		//TODO: Bind scale component, not yet implemented
 	}
 	
@@ -280,8 +263,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	{
 		_scaleX = val;
 		_isTransformDirty = true;
-		_bounds.xmin = _x - width / 2;
-		_bounds.xmax = _x + width / 2;
+		_bounds.xmin = _x - (_scaleX * _unscaledBounds.intervalX) / 2;
+		_bounds.xmax = _x + (_scaleX * _unscaledBounds.intervalX) / 2;
 		return val;
 	}
 	
@@ -294,8 +277,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	{
 		_scaleY = val;
 		_isTransformDirty = true;
-		_bounds.ymin = _y - height / 2;
-		_bounds.ymax = _y + height / 2;
+		_bounds.ymin = _y - (_scaleY * _unscaledBounds.intervalY) / 2;
+		_bounds.ymax = _y + (_scaleY * _unscaledBounds.intervalY) / 2;
 		return val;
 	}
 	
@@ -312,31 +295,31 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	function get_width () :Float
 	{
-		return _width;
+		return _bounds.intervalX;
 	}
 	
 	function set_width (val :Float) :Float
 	{
 		com.pblabs.util.Assert.isTrue(val >= 0, "val=" + val + " " + com.pblabs.util.Log.getStackTrace());
-		_width = val;
 		isTransformDirty = true;
-		_bounds.xmin = _x - _width / 2;
-		_bounds.xmax = _x + _width / 2;
+		_bounds.xmin = _x - val / 2;
+		_bounds.xmax = _x + val / 2;
+		_scaleX =_bounds.intervalX / _unscaledBounds.intervalX;
 		return val;
 	}
 	
 	function get_height () :Float
 	{
-		return _height;
+		return _bounds.intervalY;
 	}
 	
 	function set_height (val :Float) :Float
 	{
 		com.pblabs.util.Assert.isTrue(val >= 0, "val=" + val);
-		_height = val;
 		isTransformDirty = true;
-		_bounds.ymin = _y - height / 2;
-		_bounds.ymax = _y + height / 2;
+		_bounds.ymin = _y - val / 2;
+		_bounds.ymax = _y + val / 2;
+		_scaleY =_bounds.intervalY / _unscaledBounds.intervalY;
 		return val;
 	}
 	

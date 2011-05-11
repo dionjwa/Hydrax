@@ -19,9 +19,9 @@ package com.pblabs.engine.core;
  */
 class PBObject 
 	implements IPBObject
-	#if cpp
-	,implements haxe.rtti.Infos
-	#end
+	// #if cpp
+	// ,implements haxe.rtti.Infos
+	// #end
 {
 	/** Key for hashing. Don't modify. */
 	public var key :Int;

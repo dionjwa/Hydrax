@@ -77,7 +77,7 @@ class ObjectPoolMgr extends PBManagerBase
 		if (pool != null) {
 			return pool.getObject();
 		} else {
-			com.pblabs.util.Log.debug(["getObject", "class not registered ", clazz]);
+			com.pblabs.util.Log.debug(["getObject", "class not registered ", ReflectUtil.getClassName(clazz)]);
 			com.pblabs.util.Log.debug("registered classes:" +  _classes);
 		}
 		return Type.createInstance(clazz, EMPTY_ARRAY);
@@ -86,7 +86,7 @@ class ObjectPoolMgr extends PBManagerBase
 	public function register<T> (clazz :Class<T>, ?pool :ObjectPool<T> = null) :Void
 	{
 		var className = ReflectUtil.getClassName(clazz);
-		Preconditions.checkArgument(_pools.get(className) == null, clazz + " already registered");
+		Preconditions.checkArgument(_pools.get(className) == null, className + " already registered");
 		if (pool == null) {
 			pool = new ObjectPool(clazz);
 		}

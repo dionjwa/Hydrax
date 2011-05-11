@@ -536,7 +536,7 @@ class DisplayUtils
 	}
 	#end
 
-	#if flash
+	#if (flash || cpp)
 	public static function createBitmapData (d :DisplayObject, ?scale :Float = 1.0, ?center :Point) :BitmapData
 	{
 		#if flash
@@ -554,8 +554,11 @@ class DisplayUtils
 			center.y = -bounds.y * scale;
 		}
 		
-		var bd = new BitmapData(Std.int(bounds.width * scale), Std.int(bounds.height * scale),
-			true, toARGB(0xffffff, 0));
+		#if flash
+		var bd = new BitmapData(Std.int(bounds.width * scale), Std.int(bounds.height * scale), true, toARGB(0xffffff, 0));
+		#else
+		var bd = new BitmapData(Std.int(bounds.width * scale), Std.int(bounds.height * scale), true, 0xffffff);
+		#end
 
 		// bd.draw(d, new Matrix(scale, 0, 0, scale, -bounds.left * scale, -bounds.top * scale), null, null, null, true);
 		bd.draw(d, new Matrix(scale, 0, 0, scale, -bounds.left * scale, -bounds.top * scale), null, null, null, true);
@@ -589,6 +592,9 @@ class DisplayUtils
 	// 	return bd;
 	// }
 	
+	#end
+	
+	#if flash
 	public static function toARGB (rgb :UInt, newAlpha :UInt) :UInt
 	{
 		//newAlpha has to be in the 0 to 255 range
@@ -597,7 +603,6 @@ class DisplayUtils
 		argb += (rgb);
 		return argb;
 	}
-	
 	#end
 }
 

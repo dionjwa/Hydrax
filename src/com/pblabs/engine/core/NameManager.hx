@@ -22,9 +22,9 @@ using com.pblabs.util.StringUtil;
  * names. These IPBObjects can be looked up by name.
  */
 class NameManager
-#if cpp
-	implements haxe.rtti.Infos
-#end
+// #if cpp
+// 	implements haxe.rtti.Infos
+// #end
 {
 	public function new() 
 	{ 

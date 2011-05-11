@@ -24,9 +24,9 @@ import com.pblabs.util.ds.Maps;
  * @see ObjectType
  */
 class ObjectTypeManager
-#if cpp
-	implements haxe.rtti.Infos
-#end
+// #if cpp
+// 	implements haxe.rtti.Infos
+// #end
 {
 	/**
 	* The number of object types that have been registered.

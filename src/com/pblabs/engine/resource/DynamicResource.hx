@@ -1,5 +1,6 @@
 package com.pblabs.engine.resource;
 
+import com.pblabs.util.Preconditions;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
@@ -12,6 +13,10 @@ class DynamicResource extends ResourceBase<Dynamic>
 {
 	var _source :Source;
 	var _data :Dynamic;
+	
+	#if flash
+	var _loader :flash.net.URLLoader;
+	#end
 	
 	public function new (name :String, source :Source)
 	{
@@ -41,10 +46,30 @@ class DynamicResource extends ResourceBase<Dynamic>
 		super.unload();
 		_source = null;
 		_data = null;
+		
+		#if flash
+		if (_loader != null) {
+			try {
+				_loader.close();
+			} catch (e :Dynamic) {
+				// swallow the exception
+			}
+			_loader = null;
+		}
+		#end
 	}
 	
 	function loadFromUrl (url) :Void
 	{
+		Preconditions.checkNotNull(url, "url is null");
+		#if flash
+		createLoader();
+		try {
+			_loader.load(new flash.net.URLRequest(url));
+		} catch (e :flash.errors.SecurityError) {
+			onLoadError(e);
+		}
+		#else
 		com.pblabs.util.Log.debug("loading url:" + url);
 		var self = this;
 		var conn = new haxe.Http(url);
@@ -62,5 +87,34 @@ class DynamicResource extends ResourceBase<Dynamic>
 			}
 		}
 		conn.request(false);
+		#end
 	}
+	
+	function onLoadError (e :Dynamic) :Void
+	{
+		_onError(e);
+	}
+	
+	#if flash
+	function createLoader () :Void
+	{
+		com.pblabs.util.Assert.isNull(_loader);
+		_loader = new flash.net.URLLoader();
+		_loader.dataFormat = flash.net.URLLoaderDataFormat.TEXT;
+		var loader = _loader;
+		var self = this;
+		var onComplete = function (e :flash.events.Event) :Void {
+			com.pblabs.util.Log.debug("onComplete");
+			loader.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
+			loader.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
+			self._data = cast loader.data;
+			self.loaded();
+		}
+		
+		
+		com.pblabs.util.EventDispatcherUtil.addOnceListener(loader, flash.events.Event.COMPLETE, onComplete);
+		loader.addEventListener(flash.events.IOErrorEvent.IO_ERROR, onLoadError);
+		loader.addEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, onLoadError);
+	}
+	#end
 }

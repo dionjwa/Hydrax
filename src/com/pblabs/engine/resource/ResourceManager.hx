@@ -30,9 +30,9 @@ using com.pblabs.util.IterUtil;
   */
 class ResourceManager 
 	implements IResourceManager, implements IPBManager
-	#if cpp
-	,implements haxe.rtti.Infos
-	#end
+	// #if cpp
+	// ,implements haxe.rtti.Infos
+	// #end
 {
 	public var signalerFractionComplete :Signaler<Float>;
 	/** The number of resoruces in this load batch */

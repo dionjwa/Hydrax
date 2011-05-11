@@ -278,8 +278,8 @@ class ProfileInfo
 	public function wipe () :Void
 	{
 		startTime = totalTime = activations = 0;
-		maxTime = Limits.INT32_MIN;
-		minTime = Limits.INT32_MAX;
+		maxTime = Limits.INT32MIN;
+		minTime = Limits.INT32MAX;
 	}
 	
 	public function print (indent :Int) :Void
