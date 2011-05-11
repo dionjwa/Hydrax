@@ -52,7 +52,6 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	public var svgData (get_svgData, set_svgData) :Array<String>;
 	var _svgData :Array<String>;
 	function get_svgData () :Array<String> { return _svgData; }
-	// #if js
 	function set_svgData (val :Array<String>) :Array<String>
 	{
 		com.pblabs.util.Assert.isNotNull(val, "SVG data is null");
@@ -60,13 +59,11 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		_svgData = [];
 		for (svg in val) {
 			_svgData.push(processReplacements(new String(svg), svgRegexReplacements));
-			// _svgData.push(new String(svg));
 		}
 		_individualBounds = [];
 		var boundsUnion = new AABB2();
 		
 		for (ii in 0..._svgData.length) {
-		// for (ii in 0...1) {
 			#if js
 			var idx = _svgData[ii].indexOf("<svg");
 			if (idx > -1) {
@@ -120,34 +117,6 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		
 		return val;
 	}
-	// #elseif (flash || cpp)
-	// function set_svgData (val :Array<String>) :Array<String>
-	// {
-	// 	com.pblabs.util.Assert.isNotNull(val, "SVG data is null");
-	// 	_svgData = processReplacements(val, svgRegexReplacements);
-	// 	var svgXml = Xml.parse(_svgData);
-	// 	var b = parseBounds(svgXml);
-	// 	_bounds = b;
-	// 	_width = b.intervalX;
-	// 	_height = b.intervalY;
-	// 	registrationPoint.x = b.intervalX / 2;
-	// 	registrationPoint.y = b.intervalY / 2;
-		
-	// 	_displayObject.removeAllChildren();
-		
-	// 	var svg = new org.svgweb.SVGViewerFlash();
-	// 	cast(_displayObject, flash.display.Sprite).addChild(svg);
-	// 	svg.xml = new flash.xml.XML(_svgData);
-		
-	// 	var self = this;
-	// 	com.pblabs.util.EventDispatcherUtil.addOnceListener(svg.svgRoot, org.svgweb.events.SVGEvent.SVGLoad, 
-	// 	function (ignored :Dynamic) :Void {
-	// 		self.renderCompleteSignal.dispatch();
-	// 	});
-		
-	// 	return val;
-	// }
-	// #end
 	
 	/** Dynamically replace text in the svg string.  Allows e.g. custom text */
 	public var svgRegexReplacements :Array<Tuple<EReg, String>>;
