@@ -8,7 +8,6 @@
  ******************************************************************************/
 package com.pblabs.engine.resource.flash;
 
-#if flash
 import com.pblabs.components.Constants;
 import com.pblabs.engine.resource.ResourceBase;
 import com.pblabs.engine.resource.Source;
@@ -160,4 +159,3 @@ class SwfResource extends ResourceBase<Dynamic>
 		return Type.createInstance(cls, Constants.EMPTY_ARRAY);
 	}
 }
-#end

@@ -86,7 +86,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		_displayObject.name = name;
 		_transformMatrix.identity();
 		_displayObject.transform.matrix = _transformMatrix;
-		recomputeBounds();
+		// recomputeBounds();
 	}
 	
 	override function onRemove () :Void

@@ -7,12 +7,13 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.scene2D;
- 
+
 import com.pblabs.components.base.AlphaComponent;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.components.tasks.TaskComponentTicked;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
+import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.geom.Vector2;
@@ -39,12 +40,10 @@ class SceneUtil
 		#if (flash || cpp)
 		com.pblabs.components.scene2D.flash.SceneLayer;
 		#else
-		// if css
-		// com.pblabs.components.scene2D.js.css.SceneLayer;
-		// #elseif js
-		// com.pblabs.components.scene2D.js.canvas.SceneLayer;
-		// #else
-		null;
+		/**
+		  * Note, this class should not be instantiated, use the subclasses instead.
+		  */
+		com.pblabs.components.scene2D.js.JSLayer;
 		#end
 
 	public static function createBaseScene (context :IPBContext, ?name :String = null, ?addDefaultLayer :Bool = false, 
@@ -240,4 +239,24 @@ class SceneUtil
 			cast(obj, IAnimatedObject).onFrame(0);
 		}
 	}
+	
+	public static function setBackgroundColor (layer :BaseSceneLayer<Dynamic, Dynamic>, color :Int) :RectangleShape
+	{
+	    var background = createBaseSceneEntity(layer.context, false);
+		var rect = layer.context.allocate(RectangleShape);
+		rect.parentProperty = layer.entityProp();
+		rect.width = layer.scene.sceneView.width;
+		rect.height = layer.scene.sceneView.height;
+		rect.fillColor = color;
+		rect.borderStroke = 0;
+		rect.borderColor = color;
+		background.addComponent(rect);
+		background.initialize(layer.context.getManager(NameManager).validateName("background"));
+		
+		var center = getAlignedPoint(layer.scene, SceneAlignment.CENTER);
+		setLocation(background, center.x, center.y);
+		
+		return rect;
+	}
+	
 }

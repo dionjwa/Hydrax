@@ -28,17 +28,23 @@ class CircleShape extends ShapeComponent
 		
 		var r = 20.0;
 		showAngleLine = true;
-		#if css
+		#if js
 		_svgContainer = untyped js.Lib.document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		div.appendChild(_svgContainer);
 		_svgContainer.setAttribute("width", (r * 2) + "px");
 		_svgContainer.setAttribute("height", (r * 2) + "px");
 		_svgContainer.setAttribute("version", "1.1");
 
 		_svg = untyped js.Lib.document.createElementNS("http://www.w3.org/2000/svg", "circle");
 		_svgContainer.appendChild(_svg);
-		#elseif js
-		boundingBox = [-4 / 2, -r / 2, r, r];
 		#end
+		
+		_unscaledBounds.xmin = -r;
+		_unscaledBounds.xmax = r;
+		_unscaledBounds.ymin = -r;
+		_unscaledBounds.ymax = r;
+		_bounds = _unscaledBounds.clone();
+		
 		radius = r;
 	}
 	
@@ -47,21 +53,7 @@ class CircleShape extends ShapeComponent
 		return CircleUtil.isWithinCircle(pos, x + (- _registrationPoint.x * _scaleX) - _locationOffset.x, y + (- _registrationPoint.y * _scaleY) - _locationOffset.y, radius * _scaleX);
 	}
 	
-	#if css
-	override public function onFrame (dt :Float) :Void
-	{
-		com.pblabs.util.Assert.isNotNull(parent);
-		
-		if (isTransformDirty) {
-			isTransformDirty = false;
-			var xOffset = parent.xOffset - width;
-			var yOffset = parent.yOffset - height;
-			untyped div.style.webkitTransform = "translate(" + (_x + xOffset) + "px, " + (_y + yOffset) + "px) rotate(" + _angle + "rad)";
-		}
-	}
-	#end
-	
-	#if css
+	#if js
 	override function onAdd () :Void
 	{
 		super.onAdd();
@@ -96,7 +88,7 @@ class CircleShape extends ShapeComponent
 			g.moveTo(0, 0);
 			g.lineTo(r, 0);
 		}
-		#elseif css
+		#elseif js
 		_svg.setAttribute("cx", r + "px");
 		_svg.setAttribute("cy", r + "px");
 		_svg.setAttribute( "r",  r + "px");
@@ -110,7 +102,7 @@ class CircleShape extends ShapeComponent
 		com.pblabs.engine.debug.Profiler.exit("redraw");
 	}
 	
-	#if (js && !css)
+	#if js
 	override public function draw (ctx :easel.display.Context2d)
 	{
 		ctx.beginPath();
@@ -153,7 +145,7 @@ class CircleShape extends ShapeComponent
 		return set_width(val * 2);
 	}
 	
-	#if css
+	#if js
 	var _svgContainer :js.Dom.HtmlDom;
 	var _svg :js.Dom.HtmlDom;
 	#end

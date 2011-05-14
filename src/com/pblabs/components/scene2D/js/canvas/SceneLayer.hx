@@ -6,7 +6,6 @@
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
- #if !nodejs
 package com.pblabs.components.scene2D.js.canvas;
 import com.pblabs.components.scene2D.BaseSceneLayer;
 import com.pblabs.components.scene2D.SceneUtil;
@@ -23,8 +22,6 @@ class SceneLayer extends JSLayer,
 	implements IAnimatedObject
 {
 	/** Children mark this when they're modified*/
-	// public var isDirty :Bool;
-	// public var isTransformDirty :Bool;
 	public var canvas (default, null) :Canvas;
 	public var ctx (default, null) :Context2d;
 	
@@ -33,8 +30,6 @@ class SceneLayer extends JSLayer,
 		super();
 		canvas = createCanvas();
 		div.appendChild(canvas);
-		// isTransformDirty = true;
-		// isDirty = true;
 		_tempPoint = new Vector2();
 	}
 	
@@ -71,7 +66,6 @@ class SceneLayer extends JSLayer,
 		//Fill transparent first
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		// Render
-		trace('rendering children');
 		if (children != null) {
 			for (c in children) {
 				c.render(ctx);
@@ -119,4 +113,3 @@ class SceneLayer extends JSLayer,
 	
 	var _tempPoint :Vector2;
 }
-#end

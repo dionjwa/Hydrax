@@ -67,7 +67,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	#if debug
 	public function toString () :String
 	{
-		return com.pblabs.util.StringUtil.objectToString(this, ["x", "y", "_width", "_height"]);
+		return com.pblabs.util.StringUtil.objectToString(this, ["x", "y", "width", "height"]);
 	}
 	#end
 	

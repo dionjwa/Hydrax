@@ -13,6 +13,15 @@ import haxe.macro.Expr;
 
 class PBMacros
 {
+	
+	@:macro public static function getDate() 
+	{
+		var date = Date.now().toString();
+		var pos = haxe.macro.Context.currentPos();
+		return { expr : EConst(CString(date)), pos : pos };
+	}
+	 
+	 
 	/**
 	  * Returns the name of the field variable instance.
 	  *

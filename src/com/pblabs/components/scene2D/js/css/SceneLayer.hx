@@ -12,7 +12,6 @@ import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.scene2D.js.JSLayer;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.geom.Vector2;
-import com.pblabs.util.Preconditions;
 
 import js.Dom;
 
@@ -21,8 +20,7 @@ import js.Lib;
 class SceneLayer extends JSLayer,
 	implements IAnimatedObject
 {
-	public var xOffset (get_xOffset, never) :Float;
-	public var yOffset (get_yOffset, never) :Float;
+	var _tempPoint :Vector2;
 	
 	public function new ()
 	{
@@ -39,28 +37,19 @@ class SceneLayer extends JSLayer,
 	
 	public function updateTransform () :Void
 	{
-		var sceneView = scene.sceneView;
-		var sceneAlignment = scene.sceneAlignment;
-		// Center it appropriately.
-		Preconditions.checkNotNull(_tempPoint);
-		Preconditions.checkNotNull(sceneAlignment);
-		Preconditions.checkNotNull(sceneView);
-		SceneUtil.calculateOutPoint(_tempPoint, sceneAlignment, sceneView.width, sceneView.height);
-		// untyped div.style.webkitTransform = "translate(" + (_tempPoint.x) + "px, " + (_tempPoint.y) + "px) rotate(" + parent.rotation + "rad) scale(" + parent.zoom + ") translate(" + (parent.x * parallaxFactor) + "px, " + (parent.y * parallaxFactor) + "px)";
+		com.pblabs.util.Assert.isNotNull(scene);
+		com.pblabs.util.Assert.isNotNull(_tempPoint);
+		com.pblabs.util.Assert.isNotNull(scene.sceneAlignment);
+		com.pblabs.util.Assert.isNotNull(scene.sceneView);
+		
+		_transformMatrix.identity();
+		//Adjust for SceneView center			
+		SceneUtil.calculateOutPoint(_tempPoint, scene.sceneAlignment, scene.sceneView.width, scene.sceneView.height);
+		_transformMatrix.translate(_tempPoint.x, _tempPoint.y);
+		_transformMatrix.rotate(scene.rotation);
+		_transformMatrix.scale(scene.zoom, scene.zoom);
+		_transformMatrix.translate(scene.x *_parallaxFactor, scene.y *_parallaxFactor);
+		untyped div.style.webkitTransform = _transformMatrix.toString();
+		isTransformDirty = false;
 	}
-	
-	
-	function get_xOffset () :Float
-	{
-		//TODO :actually compute the offsets.
-		return 0;//div.parentNode.offsetLeft;//offsetWidth;//- Std.parseInt(div.parentNode.style.width);
-	}
-	
-	function get_yOffset () :Float
-	{
-		return 0;//div.parentNode.offsetTop;//div.offsetHeight;//- Std.parseInt(div.parentNode.style.height);
-		// return div.offsetHeight + div.parentNode.offsetHeight;
-	}
-
-	var _tempPoint :Vector2;	
 }

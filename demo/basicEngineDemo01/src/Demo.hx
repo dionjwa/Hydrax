@@ -1,6 +1,7 @@
 package ;
 
 import com.pblabs.components.scene2D.CircleShape;
+import com.pblabs.components.scene2D.SceneAlignment;
 import com.pblabs.components.tasks.LocationTask;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
@@ -21,11 +22,15 @@ class Demo
 		var context = game.allocate(PBContext);
 		game.pushContext(context);
 		var scene2D = context.createBaseScene();
-		var layer = scene2D.addLayer("defaultLayer");
+		scene2D.sceneAlignment = SceneAlignment.CENTER;
+		// scene2D.sceneAlignment = SceneAlignment.TOP_LEFT;
+		// var layer = scene2D.addLayer("defaultLayer", com.pblabs.components.scene2D.js.canvas.SceneLayer);
+		var layer = scene2D.addLayer("defaultLayer", com.pblabs.components.scene2D.js.css.SceneLayer);
 		
 		//Create our blob that we will move around.
 		var so = context.createBaseSceneEntity();
-		var blob  = context.allocate(CircleShape);
+		// var blob  = context.allocate(CircleShape);
+		var blob  = context.allocate(com.pblabs.components.scene2D.RectangleShape);
 		blob.parentProperty = layer.entityProp();
 		so.addComponent(blob);
 		so.initialize("SomeSceneObj");
@@ -34,10 +39,12 @@ class Demo
 		scene2D.update();
 		so.addTask(LocationTask.CreateEaseOut(100, 200, 3));
 		
+		#if cpp
 		var timer = new haxe.Timer(50);
 		timer.run = function () :Void {
 			trace(blob.x + ", " + blob.y);
 		}
+		#end
 	}
 
 	public static function main() 

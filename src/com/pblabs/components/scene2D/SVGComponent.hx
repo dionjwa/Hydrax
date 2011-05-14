@@ -12,27 +12,29 @@ import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.ds.Tuple;
 
-import de.polygonal.motor2.geom.primitive.AABB2;
 import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor2.geom.primitive.AABB2;
+
+import flash.geom.Matrix;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
-import flash.geom.Matrix;
+using StringTools;
+
+using Lambda;
 
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.resource.ResourceToken;
-
-using com.pblabs.util.XMLUtil;
 using com.pblabs.util.StringUtil;
-using StringTools;
-
+using com.pblabs.util.XMLUtil;
 #if flash
 using com.pblabs.util.DisplayUtils;
 #end
+
 /**
   * Cross platform SVG based Scene2D component.
-  * Currently supports Flash, js canvas, and js CSS.
+  * Currently supports Flash, JS canvas, and JS CSS.
   */
 class SVGComponent 
 #if js
@@ -41,7 +43,6 @@ extends com.pblabs.components.scene2D.js.SceneComponent
 extends com.pblabs.components.scene2D.flash.SceneComponent 
 #end
 {
-	public static var ANCHOR_PREFIX = "anchor";
 	#if (flash || cpp)
 	/** Fired when the svgweb renderer completes */
 	public var renderCompleteSignal (default, null):Signaler<Void>;
@@ -60,6 +61,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		for (svg in val) {
 			_svgData.push(processReplacements(new String(svg), svgRegexReplacements));
 		}
+		
 		_individualBounds = [];
 		var boundsUnion = new AABB2();
 		
@@ -78,7 +80,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			//Parse the first image for anchor elements, and only use the first element for mouse bounds
 			if (ii == 0) {
 				boundsUnion.addAABB(b);
-				_relativeTransforms = parseAnchors(svgXml);
+				_relativeTransforms = HierarchyManager.parseAnchors(svgXml).array();
 				_relativeTransforms.unshift(new Vector2());
 			} else if (_relativeTransforms[ii] != null) {
 				_relativeTransforms[ii].x -= b.intervalX / 2;
@@ -205,6 +207,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 				if (v != null && v.x != 0 && v.y != 0) {
 					var t :Matrix = new Matrix(1, 0, 0, 1, v.x, v.y);
 					untyped d.style.webkitTransform = t.toString();
+					untyped d.style.MozTransform = t.toMozString();
 				}
 			}
 		}
@@ -274,25 +277,6 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			bounds.ymax = h;
 		}
 		return bounds;
-	}
-	
-	static function parseAnchors(svg :Xml) :Array<XY>
-	{
-		var anchors = new Array<XY>();
-		for (element in svg.elements()) {
-			if (element.nodeName.endsWith("rect")) {
-				if (element.get("inkscape:label") != null && element.get("inkscape:label").startsWith(ANCHOR_PREFIX)) {
-					var x = Std.parseFloat(element.get("x"));
-					var y = Std.parseFloat(element.get("y"));
-					var w = Std.parseFloat(element.get("width"));
-					var h = Std.parseFloat(element.get("height"));
-					var anchor = new Vector2(x + w / 2, y + h / 2);
-					anchors.push(anchor);
-				}
-			}
-			
-		}
-		return anchors;
 	}
 	
 	static function processReplacements(svg :String, replacements :Array<Tuple<EReg, String>>) :String

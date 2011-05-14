@@ -249,7 +249,7 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 		parent = null;
 	}
 	
-	public function hasParent () :Bool
+	inline public function hasParent () :Bool
 	{
 		return parent != null;
 	}

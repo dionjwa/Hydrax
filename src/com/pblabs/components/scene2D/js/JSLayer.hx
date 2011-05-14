@@ -50,8 +50,8 @@ class JSLayer extends BaseSceneLayer<JSSceneManager, SceneComponent>
 	override function removingFromParent () :Void
 	{
 		super.removingFromParent();
-		if (div.parentNode == scene.container) { 
-			scene.container.removeChild(div);
+		if (div.parentNode == cast(scene, JSSceneManager).container) { 
+			cast(scene, JSSceneManager).container.removeChild(div);
 		}
 	}
 	

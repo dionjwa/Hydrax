@@ -20,39 +20,40 @@ class RectangleShape extends ShapeComponent
 		super();
 		var w :Float = 20;
 		var h :Float = 10;
-		#if css
+		#if js
 		_rect = cast js.Lib.document.createElement("div");
-		#elseif js
-		boundingBox = [0, 0, w, h];
+		div.appendChild(_rect);
 		#end
-		_width = w;
-		_height = h;
+		_unscaledBounds.xmin = -w / 2;
+		_unscaledBounds.xmax = w / 2;
+		_unscaledBounds.ymin = -h / 2;
+		_unscaledBounds.ymax = h / 2;
+		
+		_bounds = _unscaledBounds.clone(); 
 	}
 	
-	#if css
-	override public function onFrame (dt :Float) :Void
+	// /** Don't scale, rather resize and redraw */
+	override public function updateTransform () :Void
 	{
-		com.pblabs.util.Assert.isNotNull(parent);
-		
-		if (isTransformDirty) {
-			isTransformDirty = false;
-			var xOffset = parent.xOffset - (width / 2);
-			var yOffset = parent.yOffset- (height / 2);
-			untyped div.style.webkitTransform = "translate(" + (_x + xOffset) + "px, " + (_y + yOffset) + "px) rotate(" + _angle + "rad)";
+		if (!isTransformDirty) {
+			return;
 		}
+		_transformMatrix.identity();
+		_transformMatrix.translate(-registrationPoint.x, - registrationPoint.y);
+		_transformMatrix.rotate(_angle + _angleOffset);
+		_transformMatrix.translate(_x + _locationOffset.x, _y + _locationOffset.y);
+		
+		#if flash
+		_displayObject.transform.matrix = _transformMatrix;
+		_displayObject.alpha = _alpha;
+		_displayObject.visible = (alpha > 0);
+		#end
+		
+		isTransformDirty = false;
 	}
-	#end
 	
 	override function onAdd () :Void
 	{
-		
-		#if css
-		//Put the element in the base div element
-		//Why put it in a div?
-		//http://dev.opera.com/articles/view/css3-transitions-and-2d-transforms/#transforms
-		div.appendChild(_rect);
-		#end
-		redraw();
 		super.onAdd();
 		context.getManager(com.pblabs.engine.time.IProcessManager).callLater(redraw);
 	}
@@ -70,32 +71,28 @@ class RectangleShape extends ShapeComponent
 		var g = cast(_displayObject, flash.display.Sprite).graphics;
 		g.clear();
 		g.beginFill(this.fillColor, 1);
-		g.drawRect(-width / 2, -height / 2, width, height);
+		g.drawRect(0, 0, width, height);
 		g.endFill();
-		// var lineThickness = .0;
 		g.lineStyle(borderStroke, borderColor, 1.0);
-		g.drawRect(-width / 2, -height / 2, width - borderStroke, height - borderStroke);
-		#elseif css
-		_rect.style.cssText = " width:" + width + "px; height:" + height + "px; background-color:" + StringUtil.toColorString(fillColor, "#") + "; border-color:" + StringUtil.toColorString(borderColor, "#") + "; border-style:solid; border-width:" + borderStroke + "px;";
+		g.drawRect(0, 0, width - borderStroke, height - borderStroke);
 		#elseif js
-		// sprite.dirtyContents();		
+		_rect.style.cssText = "left:0px;top:0px;width:" + width + "px; height:" + height + "px; background-color:" + StringUtil.toColorString(fillColor, "#") + "; border-color:" + StringUtil.toColorString(borderColor, "#") + "; border-style:solid; border-width:" + borderStroke + "px;-webkit-transform:translateZ(0px)";
 		#end
+		registrationPoint = new Vector2(width / 2, height / 2);
 	}
 	
-	#if (js && !css)
+	#if js
 	override public function draw (ctx :easel.display.Context2d)
 	{
 		ctx.fillStyle = StringUtil.toColorString(fillColor, "#");
-		ctx.fillRect(-width / 2, - height / 2, width, height);
+		ctx.fillRect(0, 0, width, height);
 		ctx.strokeStyle = StringUtil.toColorString(borderColor, "#");
 		ctx.lineWidth = borderStroke;
 		ctx.beginPath();
-		ctx.rect(-width / 2, - height / 2, width, height);
+		ctx.rect(0, 0, width, height);
 		ctx.stroke();
 	}
-	#end
 	
-	#if css
 	var _rect :js.Dom.HtmlDom;
 	#end
 }

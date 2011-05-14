@@ -149,7 +149,7 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 		_rootSprite.removeChild(layer.displayContainer);
 	}
 	
-	override function attach () :Void
+	override public function attach () :Void
 	{
 		com.pblabs.util.Assert.isNotNull(_rootSprite);
 		com.pblabs.util.Assert.isNotNull(displayContainer);
@@ -160,7 +160,7 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 		}
 	}
 	
-	override function detach () :Void
+	override public function detach () :Void
 	{
 		if (_rootSprite.parent != null) {
 			_rootSprite.detach();

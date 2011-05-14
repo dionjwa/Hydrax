@@ -124,6 +124,11 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		if (!isTransformDirty) {
 			return;
 		}
+		// trace("_scaleX=" + _scaleX);
+		// trace("_scaleY=" + _scaleY);
+		// trace("registrationPoint=" + registrationPoint);
+		// trace("_angle=" + _angle);
+		// trace("_angleOffset=" + _angleOffset);
 		_transformMatrix.identity();
 		_transformMatrix.scale(_scaleX, _scaleY);
 		_transformMatrix.translate(-registrationPoint.x * _scaleX, - registrationPoint.y * _scaleY);

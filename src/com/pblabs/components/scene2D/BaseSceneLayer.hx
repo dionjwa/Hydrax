@@ -12,6 +12,8 @@ import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.util.Preconditions;
 
+import flash.geom.Matrix;
+
 /**
   * A 2D layer holding 2DSceneComponents.
   */
@@ -21,7 +23,7 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 	/** For ignoring all objects in a layer */
 	public var objectMask :ObjectType;
 	@editor({ui:"UpdatingLabel"})
-	public var scene (get_scene, never) :Scene;
+	public var scene (get_scene, never) :BaseSceneManager<Dynamic>;
 	@editor({ui:"NumericStepper", min:0})
 	public var index (get_index, set_index) :Int;
 	@editor({ui:"HUISlider", min:0.0, max:3.0})
@@ -39,6 +41,8 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 	/** If true, scene objects in this layer ignore mouse/input events */
 	public var ignoreInput :Bool;
 	
+	var _transformMatrix :Matrix;
+	
 	public function new ()
 	{
 		super();
@@ -46,6 +50,7 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 		objectMask = ObjectType.ALL;
 		ignoreInput = false;
 		_parallaxFactor = 1.0;
+		_transformMatrix = new Matrix();
 	}
 	
 	dynamic public function sortChildren (c1 :Component, c2 :Component) :Int
@@ -53,7 +58,7 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 		return 0;
 	}
 
-	function get_scene () :Scene
+	function get_scene () :BaseSceneManager<Dynamic>
 	{
 		return cast parent;
 	}

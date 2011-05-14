@@ -18,8 +18,6 @@ import easel.display.Context2d;
 
 import js.Dom;
 
-typedef Rect = Array<Float>;
-
 /**
   * Base JS SceneComponent class.  Can be rendering on a Canvas layer, or 
   * rendered in a DOM based scene and transformed via CSS (currently much faster on iOs).
@@ -47,8 +45,6 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 	public var cacheAsBitmap (get_cacheAsBitmap, set_cacheAsBitmap) :Bool;
 	var _displayObject :HtmlDom;
 	
-	public var boundingBox :Rect;
-	
 	private var _isContentsDirty :Bool;
 	private var _backBuffer :Canvas;
 	
@@ -57,7 +53,6 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		super();
 		isOnCanvas = false;
 		_isContentsDirty = true;
-		boundingBox = [0.0, 0.0, 0.0, 0.0];
 		//Create the image and containing div element
 		//Why put it in a div?
 		//http ://dev.opera.com/articles/view/css3-transitions-and-2d-transforms/#transforms
@@ -74,10 +69,12 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 			com.pblabs.util.Assert.isNotNull(parent);
 			if (isTransformDirty) {
 				updateTransform();
-				//TODO: relative layer coords
-				// var xOffset = 0;//parent.xOffset;
-				// var yOffset = 0;//parent.yOffset;
+				//TODO: switch depending on browser
 				untyped div.style.webkitTransform = _transformMatrix.toString();
+				untyped div.style.MozTransform = _transformMatrix.toMozString();
+				// untyped div.style.msTransform = _transformMatrix.toString();
+				//Future
+				// untyped div.style.transform = _transformMatrix.toString();
 			}
 		}
 	}
@@ -179,9 +176,6 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 	{
 		var canvas :Canvas = cast js.Lib.document.createElement("canvas");
 		canvas.style.cssText = "position:relative;left:0px;top:0px;-webkit-transform:translateZ(0px)";
-		// canvas.style.position = "relative";
-		// canvas.style.left = "0px";
-		// canvas.style.top = "0px";
 		return canvas;
 	}
 	
@@ -218,8 +212,6 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		var ctx = _backBuffer.getContext("2d");
 		ctx.setTransform(1, 0, 0, 1, 0, 0);
 		ctx.save();
-		untyped ctx.transform(_scaleX.toFixed(4), 0, 0, _scaleY.toFixed(4), 0, 0); 
-		// untyped ctx.transform(5, 0, 0, 5, 0, 0);
 		_isContentsDirty = false;
 		draw(ctx);
 		ctx.restore();
@@ -249,7 +241,6 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 				ctx.globalAlpha *= alpha;
 			}
 			if (cacheAsBitmap) {
-				trace("drawing backbuffer to main canvas");
 				ctx.drawImage(_backBuffer, 0, 0);
 			} else {
 				draw(ctx);
