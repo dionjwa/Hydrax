@@ -15,6 +15,7 @@ demo/basicEngineDemo01/build
 demo/canvasDemo/build
 demo/panningAndZooming/build
 demo/resources/build
+demo/svgui/build
 \#*#
 src/AllClasses.hx
 lib/canvg/examples
