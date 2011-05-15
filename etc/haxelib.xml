@@ -1,7 +1,7 @@
 <project name="hydrax" url="https://github.com/dionjwa/Hydrax" license="BSD">
         <user name="dionjwa"/>
         <description>A port of the Pushbutton Game Engine.</description>
-        <version name="1.0.5">Added object pooling.  SignalBondManager and other bugs fixed. Extra debug-only code.  Changes to main loop timer events.</version>
+        <version name="1.0.6">SVG support for flash and js.</version>
         <depends name="feffects"/>
         <depends name="ArrayTools"/>
         <depends name="IterTools"/>
