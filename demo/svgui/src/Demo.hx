@@ -54,7 +54,7 @@ class Demo
 		game.getManager(IResourceManager).addResource(new com.pblabs.engine.resource.EmbeddedResource());
 		
 		//Add the embedded resources
-		var s = com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/anchors.svg", "anchors");
+		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/anchors.svg", "anchors");
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/button_01.svg", "button");
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/button_01_down.svg", "button_down");
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/icon.svg", "button_icon");
