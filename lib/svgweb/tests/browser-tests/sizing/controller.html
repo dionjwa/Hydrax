@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<!-- SVG Sizing Test Controller
+     by Rick Masters
+     Released under Apache 2 License
+
+     The latest source, including the PHP scripts, is available at
+     http://svgweb.googlecode.com/svn/trunk/tests/browser-tests/sizing/ 
+-->
+<html>
+  <head>
+  <script type="text/javascript">
+  function handleChange() {
+    var i=0;
+
+    $html_file = "generate-html.php?";
+
+    var params = {};
+    var elems = document.getElementsByTagName('INPUT');
+    for (i=0; i < elems.length; i++) {
+      elem = elems[i];
+      if (elem.checked) {
+         params[elem.name] = elem.value;
+         if (i == 0) {
+           $html_file += elem.name+ "=" + elem.value;
+         } else {
+           $html_file += "&" + elem.name + "=" + elem.value;
+         }
+      }
+    }
+    $svg_file = "generate-svg.php?" + "viewBoxMode=" + params.viewBoxMode +
+                "&preserveAspectRatioType=" + params.preserveAspectRatioType +
+                "&svgWidthType=" + params.svgWidthType +
+                "&svgHeightType=" + params.svgHeightType;
+
+    htmlStr = "";
+
+    switch (params.docType) {
+      case 'html4quirks':
+        htmlStr =  '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">' + "\n";
+        break;
+      case 'html4strict':
+        htmlStr += '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">' + "\n";
+        break;
+      case 'html5':
+      default:
+        htmlStr += "<!DOCTYPE html>\n";
+        break;
+    }
+
+    htmlStr += "<html>\n";
+    htmlStr += "<head>\n";
+
+    switch (params.svgWebMode) {
+      case 'pureNative':
+      default:
+        break;
+      case 'svgWebNative':
+        htmlStr += '    <meta name="svg.render.forceflash" content="false" />\n';
+        htmlStr += '    <script src="../../../src/svg.js" type="text/javascript"><' + '/script>\n';
+        break;
+      case 'svgWebFlash':
+        htmlStr += "    <meta" + ' name="svg.render.forceflash" content="true" ' + " /> \n";
+        htmlStr += '    <script src="../../../src/svg.js" type="text/javascript"><' + "/script> \n";
+        break;
+    }
+    htmlStr += "</head>\n";
+    htmlStr += "<body>\n";
+
+    // Maybe enclose the SVG object or element in a DIV
+    switch (params.parentType) {
+      case 'body':
+        break;
+
+      case 'div':
+      default:
+        switch (params.divWidthType) {
+          case "percent":
+            $divWidth = ' width:100%;';
+            break;
+          case "absent":
+            $divWidth = "";
+            break;
+          case "pixels":
+          default:
+            $divWidth = ' width:500px;';
+            break;
+        }
+        switch (params.divHeightType) {
+          case "percent":
+            $divHeight = ' height:100%;';
+            break;
+          case "absent":
+            $divHeight = "";
+            break;
+          case "pixels":
+          default:
+            $divHeight = ' height:400px;';
+            break;
+        }
+        htmlStr += '<div id="mydiv" style="border:2px solid black;' + $divWidth + $divHeight + '">' + "\n";
+        break;
+    }
+
+    var svgStr = "";
+    svgStr += '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" ' + "\n";
+
+    switch (params.svgWidthType) {
+      case "percent":
+        $svgWidth = 'width="100%" ';
+        break;
+      case "absent":
+        $svgWidth = "";
+        break;
+      case "pixels":
+      default:
+        $svgWidth = 'width="450" ';
+        break;
+    }
+    switch (params.svgHeightType) {
+      case "percent":
+        $svgHeight = 'height="100%" ';
+        break;
+      case "absent":
+        $svgHeight = "";
+        break;
+      case "pixels":
+      default:
+        $svgHeight = 'height="300" ';
+        break;
+    }
+    switch (params.viewBoxMode) {
+      case "absent":
+        $viewBox = "";
+        $preserveAspectRatio = "";
+        break;
+      case "present":
+      default:
+        $viewBox = 'viewBox="0 0 1500 1000" ';
+        switch (params.preserveAspectRatioType) {
+          case "absent":
+            $preserveAspectRatio = '';
+            break;
+          case "none":
+            $preserveAspectRatio = 'preserveAspectRatio="none" ';
+            break;
+          case "slice":
+            $preserveAspectRatio = 'preserveAspectRatio="xMidYMid slice" ';
+            break;
+          case "meet":
+          default:
+            $preserveAspectRatio = 'preserveAspectRatio="xMidYMid meet" ';
+            break;
+        }
+        break;
+    }
+    
+    
+    svgStr += "     " + $svgWidth + $svgHeight + $viewBox + "\n";
+    
+    svgStr += "     " + $preserveAspectRatio + ">\n";
+    
+    svgStr += '    <rect x="0" y="0" width="1500" height="1000" ' + "\n";
+    svgStr += '          fill="yellow" stroke="blue" stroke-width="12" ></rect>' + "\n";
+    svgStr += '    <path fill="red" d="M 750,100 L 250,900 L 1250,900 z" ></path>' + "\n";
+    svgStr += "</svg>\n" ;
+
+
+    // Create in inline SVG image, or an object tag that loads the file
+    switch (params.tagType) {
+      case 'script':
+      case 'svg':
+        if (params.tagType == 'script') {
+           htmlStr += '<script type="image/svg+xml">' + "\n";
+        }
+        htmlStr += svgStr;
+        if (params.tagType == 'script') {
+           htmlStr += "</" + "script>\n";
+        }
+        break;
+
+      case 'img':
+        // Format the object width
+        switch (params.objectWidthType) {
+          case 'percent':
+            $objectWidth = 'width="100%" ';
+            break;
+          case 'absent':
+            $objectWidth = "";
+            break;
+          case 'pixels':
+          default:
+            $objectWidth = 'width="450px" ';
+            break;
+        }
+        // Format the object height
+        switch (params.objectHeightType) {
+          case 'percent':
+            $objectHeight = 'height="100%" ';
+            break;
+          case 'absent':
+            $objectHeight = '';
+            break;
+          case 'pixels':
+          default:
+            $objectHeight = 'height="300px" ';
+            break;
+        }
+
+
+        // Format the svg file name
+        $svg_file = "generate-svg.php?" + "viewBoxMode=" + params.viewBoxMode +
+                    "&preserveAspectRatio=" + params.preserveAspectRatioType +
+                    "&svgWidthType=" + params.svgWidthType +
+                    "&svgHeightType=" + params.svgHeightType;
+
+
+        // Format the entire object tag now
+        switch (params.svgWebMode) {
+          case 'pureNative':
+          case 'svgWebNative':
+          case 'svgWebFlash':
+          default:
+            htmlStr += '<img src="' + $svg_file + "\n";
+            htmlStr += '        ' + $objectWidth + $objectHeight + ' id="mySVGObject"></img> ' + "\n";
+            break;
+        }
+        break;
+
+      case 'object':
+      default:
+
+        // Format the object width
+        switch (params.objectWidthType) {
+          case 'percent':
+            $objectWidth = 'width="100%" ';
+            break;
+          case 'absent':
+            $objectWidth = "";
+            break;
+          case 'pixels':
+          default:
+            $objectWidth = 'width="450px" ';
+            break;
+        }
+        // Format the object height
+        switch (params.objectHeightType) {
+          case 'percent':
+            $objectHeight = 'height="100%" ';
+            break;
+          case 'absent':
+            $objectHeight = '';
+            break;
+          case 'pixels':
+          default:
+            $objectHeight = 'height="300px" ';
+            break;
+        }
+
+
+        // Format the svg file name
+        $svg_file = "generate-svg.php?" + "viewBoxMode=" + params.viewBoxMode +
+                    "&preserveAspectRatio=" + params.preserveAspectRatioType +
+                    "&svgWidthType=" + params.svgWidthType +
+                    "&svgHeightType=" + params.svgHeightType;
+
+
+        // Format the entire object tag now
+        switch (params.svgWebMode) {
+          case 'pureNative':
+            htmlStr += '<object data="' + $svg_file + "\n";
+            htmlStr += '        type="image/svg+xml" ' + $objectWidth + $objectHeight + ' id="mySVGObject"></object> ' + "\n";
+            break;
+
+          case 'svgWebNative':
+          case 'svgWebFlash':
+          default:
+            // This is the crazy SVG Web syntax that works with all browsers
+            htmlStr += '<!--[if !IE]>-->' + "\n";
+            htmlStr += '  <object data="' + $svg_file + '" type="image/svg+xml"' + "\n";
+            htmlStr += '          ' + $objectWidth + $objectHeight + ' id="mySVGObject"> <!--<![endif]-->' + "\n";
+            htmlStr += '<!--[if lt IE 9]>' + "\n";
+            htmlStr += '  <object src="' + $svg_file + '" classid="image/svg+xml"' + "\n";
+            htmlStr += '          ' + $objectWidth + $objectHeight + ' id="mySVGObject"> <![endif]-->' + "\n";
+            htmlStr += '<!--[if gte IE 9]>' + "\n";
+            htmlStr += '  <object data="' + $svg_file + '" type="image/svg+xml"' + "\n";
+            htmlStr += '          ' + $objectWidth + $objectHeight + ' id="mySVGObject"> <![endif]-->' + "\n";
+            htmlStr += '  </object>' + "\n";
+           
+            break;
+        }
+        break;
+
+    }
+
+
+    switch (params.parentType) {
+      case 'body':
+        break;
+      case 'div':
+      default:
+        htmlStr += "</div>\n";
+        break;
+    }
+
+    htmlStr += "</body>\n";
+    htmlStr += "</html>\n";
+
+    var htmlFile = document.getElementById('htmlFile');
+    while (htmlFile.childNodes.length > 0) {
+      htmlFile.removeChild(htmlFile.childNodes[0]);
+    }
+    var link = document.createElement('a');
+    link.setAttribute('href', $html_file);
+    link.appendChild(document.createTextNode($html_file));
+    //document.getElementById('htmlFile').appendChild(document.createTextNode($html_file));
+    document.getElementById('htmlFile').appendChild(link);
+
+    var htmlCode = document.getElementById('htmlCode');
+    while (htmlCode.childNodes.length > 0) {
+      htmlCode.removeChild(htmlCode.childNodes[0]);
+    }
+    document.getElementById('htmlCode').appendChild(document.createTextNode(htmlStr));
+
+    var svgCode = document.getElementById('svgCode');
+    while (svgCode.childNodes.length > 0) {
+      svgCode.removeChild(svgCode.childNodes[0]);
+    }
+    document.getElementById('svgCode').appendChild(document.createTextNode(svgStr));
+
+  }
+  </script>
+  </head>
+  <body onload="handleChange();">
+  <h1>SVG sizing test permutations</h1>
+
+  <table width="100%">
+    <tr>
+      <td width="10%" valign="top">
+          <div id="htmlFile">
+          </div>
+      </td>
+  </tr>
+  </table>
+
+  <table width="100%">
+  <tr>
+  <td valign="top" >
+<pre><code id="htmlCode">
+</code></pre>
+  </td>
+
+  <td width="10%">
+  </td>
+
+  <td valign="top">
+<pre><code id="svgCode">
+</code></pre>
+  </td>
+  </table>
+
+
+  <form>
+   <table width="100%">
+   <td width="40%" valign="top">
+    <hr />
+    <p>DOCTYPE:</p>
+    <input type="radio" name="docType" value="html5" checked="checked" onchange="handleChange();" />HTML 5
+    <input type="radio" name="docType" value="html4quirks" onchange="handleChange();" />HTML 4 Transitional
+    <input type="radio" name="docType" value="html4strict" onchange="handleChange()" />HTML 4 Strict
+    <hr />
+    <p>Native / SVG Web Mode:</p>
+    <input type="radio" name="svgWebMode" value="pureNative" checked="checked" onchange="handleChange()" />Native SVG
+    <input type="radio" name="svgWebMode" value="svgWebNative" onchange="handleChange()" />Native w/SVG Web present
+    <input type="radio" name="svgWebMode" value="svgWebFlash" onchange="handleChange()" />SVG Web in Flash mode
+    <hr />
+    <p>Tag Type:</p>
+    <input type="radio" name="tagType" value="object" checked="checked" onchange="handleChange()" />object<br />
+    <input type="radio" name="tagType" value="svg" onchange="handleChange()" />svg (requires HTML 5 browser)<br />
+    <input type="radio" name="tagType" value="script" onchange="handleChange()" />script (requires SVG Web)<br />
+    <input type="radio" name="tagType" value="img" onchange="handleChange()" />img (requires HTML 5 browser)<br />
+    <hr />
+    <p>Parent type:</p>
+    <input type="radio" name="parentType" value="div" checked="checked" onchange="handleChange()" />div
+    <input type="radio" name="parentType" value="body" onchange="handleChange()" />body
+    <hr />
+   </td>
+   <td width="30%" valign="top">
+    <hr />
+    <p>Div width:</p>
+    <input type="radio" name="divWidthType" value="pixels" checked="checked" onchange="handleChange()" />pixels
+    <input type="radio" name="divWidthType" value="percent" onchange="handleChange()" />percent
+    <input type="radio" name="divWidthType" value="absent" onchange="handleChange()" />absent
+    <hr />
+    <p>Div height:</p>
+    <input type="radio" name="divHeightType" value="pixels" checked="checked" onchange="handleChange()" />pixels
+    <input type="radio" name="divHeightType" value="percent" onchange="handleChange()" />percent
+    <input type="radio" name="divHeightType" value="absent" onchange="handleChange()" />absent
+    <hr />
+    <p>object/img width:</p>
+    <input type="radio" name="objectWidthType" value="pixels" checked="checked" onchange="handleChange()" />pixels
+    <input type="radio" name="objectWidthType" value="percent" onchange="handleChange()" />percent
+    <input type="radio" name="objectWidthType" value="absent" onchange="handleChange()" />absent
+    <hr />
+    <p>object/img height:</p>
+    <input type="radio" name="objectHeightType" value="pixels" checked="checked" onchange="handleChange()" />pixels
+    <input type="radio" name="objectHeightType" value="percent" onchange="handleChange()" />percent
+    <input type="radio" name="objectHeightType" value="absent" onchange="handleChange()" />absent
+    <hr />
+   </td>
+   <td width="30%" valign="top">
+    <hr />
+    <p>SVG viewBox:</p>
+    <input type="radio" name="viewBoxMode" value="present" checked="checked" onchange="handleChange()" />present
+    <input type="radio" name="viewBoxMode" value="absent" onchange="handleChange()" />absent
+    <hr />
+    <p>SVG preserveAspectRatio:</p>
+    <input type="radio" name="preserveAspectRatioType" value="meet" checked="checked" onchange="handleChange()" />meet
+    <input type="radio" name="preserveAspectRatioType" value="slice" onchange="handleChange()" />slice
+    <input type="radio" name="preserveAspectRatioType" value="none" onchange="handleChange()" />none
+    <input type="radio" name="preserveAspectRatioType" value="absent" onchange="handleChange()" />absent
+    <hr />
+    <p>SVG width</p>
+    <input type="radio" name="svgWidthType" value="pixels" checked="checked" onchange="handleChange()" />pixels
+    <input type="radio" name="svgWidthType" value="percent" onchange="handleChange()" />percent
+    <input type="radio" name="svgWidthType" value="absent" onchange="handleChange()" />absent
+    <hr />
+    <p>SVG height:</p>
+    <input type="radio" name="svgHeightType" value="pixels" checked="checked" onchange="handleChange()" />pixels
+    <input type="radio" name="svgHeightType" value="percent" onchange="handleChange()" />percent
+    <input type="radio" name="svgHeightType" value="absent" onchange="handleChange()" />absent
+    <hr />
+   </td>
+   </table>
+   <p>HTML and PHP source code</p>
+   <ul>
+     <li>
+     <a href="http://svgweb.googlecode.com/svn/trunk/tests/browser-tests/sizing/controller.html">Test controller (HTML)</a>
+     </li>
+     <li>
+     <a href="http://svgweb.googlecode.com/svn/trunk/tests/browser-tests/sizing/generate-html.php">HTML generator (PHP)</a>
+     </li>
+     <li>
+     <a href="http://svgweb.googlecode.com/svn/trunk/tests/browser-tests/sizing/generate-svg.php">SVG generator (PHP)</a>
+     </li>
+   </ul>
+
+  </form>
+  
+</body>
+</html>

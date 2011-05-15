@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<resources>
+	<svg id="CLOCKWISE" url="rsrc/clockwise.svg"/>
+	<svg id="COUNTERCLOCKWISE" url="rsrc/counterclockwise.svg"/>
+	<svg id="DOWN" url="rsrc/down.svg"/>
+	<svg id="LEFT" url="rsrc/left.svg"/>
+	<svg id="RIGHT" url="rsrc/right.svg"/>
+	<svg id="UP" url="rsrc/up.svg"/>
+	<svg id="ZOOMIN" url="rsrc/zoomin.svg"/>
+	<svg id="ZOOMOUT" url="rsrc/zoomout.svg"/>
+	<img id="FACE" url="rsrc/face.png"/>
+</resources>

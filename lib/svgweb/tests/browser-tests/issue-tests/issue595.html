@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		
+		<title>SVG Web: r1283 regression eventListener</title>
+
+		<script src="../../../src/svg.js" data-path="../../../src/"></script>
+
+		<script type="text/javascript">
+
+		function loadListener() {
+		
+		    var newRect = document.getElementById("testRect");
+		    newRect.addEventListener('click', function(evt) {
+            /* debug code
+            console.log("In click event handler");
+            console.log("evt.target: " + evt.target);
+            console.log("typeof evt.target.id: " + typeof(evt.target.id));
+            */
+                                                          alert(evt.target.id);
+                                                          }, false);
+		
+		}
+
+		</script>
+		
+	</head>
+
+	<body onsvgload="loadListener()">
+	
+	<h1>Click the rectangle to alert its ID</h1>
+	
+		<script type="image/svg+xml">
+		
+			<svg viewBox="0 0 640 480" width="640px" height="480px">
+			
+				<rect id="testRect" x="50" y="50" width="250" height="300" stroke-width="30" stroke="cyan" fill="pink" fill-opacity="0.9"/>
+
+			</svg>
+		
+		</script>
+				
+	</body>
+	
+</html>

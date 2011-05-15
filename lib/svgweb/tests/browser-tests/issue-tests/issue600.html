@@ -1,0 +1,44 @@
+<html>
+<head>
+<script src="../../../src/svg.js" data-path="../../../src/"></script>
+
+<script>
+window.addEventListener('SVGLoad', function() {
+var mydiv = document.getElementById('mydiv');
+var svg = document.createElementNS(svgns, 'svg');
+svg.setAttribute('width', '100%');
+svg.setAttribute('height', '100%');
+svg.addEventListener('SVGLoad', function() {
+svg = this; 
+ready_fn(svg);
+}, false);
+svgweb.appendChild(svg, mydiv); 
+}, false);
+
+function ready_fn(svg){
+var circle = document.createElementNS(svgns, 'circle');
+circle.setAttributeNS(null, "cx","150");
+circle.setAttribute("cy","150");
+circle.setAttribute("fill","red");
+circle.setAttribute("r","170");
+svg.appendChild(circle);
+var rect = document.createElementNS(svgns, 'rect');
+rect.setAttribute("id", "myrect"); 
+rect.setAttribute("fill","yellow");
+rect.setAttribute("stroke","black");
+rect.setAttribute("stroke-width","5");
+rect.setAttribute("x", "350");
+rect.setAttribute("y", "20");
+rect.setAttribute("width", "200");
+rect.setAttribute("height", "350");
+svg.appendChild(rect);
+circle.addEventListener("mousedown", function(){alert('You clicked on the red circle!');}, false);
+rect.addEventListener("mousedown", function(){alert('You clicked on the yellow square!');}, false);
+}
+
+</script>
+</head>
+<body>
+<div id="mydiv" style="border:2px solid black; width:500px; height:400px;"></div>
+</body>
+</html>

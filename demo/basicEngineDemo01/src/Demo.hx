@@ -15,7 +15,6 @@ class Demo
 	{
 		//Setup logging.
 		com.pblabs.engine.debug.Log.setup();
-		// com.pblabs.engine.debug.Log.setLevel(com.pblabs.engine.injection.Injector, com.pblabs.engine.debug.Log.DEBUG);
 		
 		var game = new PBGame();
 		//The main "context".  This is equivalent to a level, or a menu screen.
@@ -23,13 +22,10 @@ class Demo
 		game.pushContext(context);
 		var scene2D = context.createBaseScene();
 		scene2D.sceneAlignment = SceneAlignment.CENTER;
-		// scene2D.sceneAlignment = SceneAlignment.TOP_LEFT;
-		// var layer = scene2D.addLayer("defaultLayer", com.pblabs.components.scene2D.js.canvas.SceneLayer);
-		var layer = scene2D.addLayer("defaultLayer", com.pblabs.components.scene2D.js.css.SceneLayer);
+		 var layer = scene2D.addLayer("defaultLayer");
 		
 		//Create our blob that we will move around.
 		var so = context.createBaseSceneEntity();
-		// var blob  = context.allocate(CircleShape);
 		var blob  = context.allocate(com.pblabs.components.scene2D.RectangleShape);
 		blob.parentProperty = layer.entityProp();
 		so.addComponent(blob);

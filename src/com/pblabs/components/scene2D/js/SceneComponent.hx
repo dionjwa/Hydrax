@@ -1,7 +1,7 @@
 /*******************************************************************************
- * Hydrax :haXe port of the PushButton Engine
+ * Hydrax: haXe port of the PushButton Engine
  * Copyright (C) 2010 Dion Amago
- * For more information see http ://github.com/dionjwa/Hydrax
+ * For more information see http://github.com/dionjwa/Hydrax
  *
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
@@ -34,7 +34,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		//http://sebleedelisle.com/2011/04/html5javascript-platform-game-optimised-for-ipad/
 		//But then the image is cached, and looks blurry if scaled.
 		//;-webkit-transform:translateZ(0px)
-		div.style.cssText = "position:absolute;-webkit-transform-origin:0% 0%;-moz-transform-origin:0% 0%";
+		div.style.cssText = "position:absolute;-webkit-transform-origin:0% 0%;-moz-transform-origin:0% 0%;cursor:default";
 		return div;
 	}
 	

@@ -1,0 +1,595 @@
+<h1>SVG Web Sizing Strategy</h1>
+<h2>Warning</h2>
+<p>
+This document is provided for historical and informational purposes but should
+not be used as a reference.
+</p>
+<p>
+I believe the observations are accurate and the strategies described in this document
+are pretty much what was initially coded into SVG Web. However, when it comes to
+specific sizing behavior in specific scenarios, this document should not be considered
+an accurate and up-to-date reference.
+</p>
+<p>
+This document was written early in the design of SVG Web sizing behavior and there may
+be mistakes in it and also, since then, bugs have been fixed and there are new generations
+of browsers and behavior may have changed.
+</p>
+
+
+<h2>Contents</h2>
+<ol>
+  <li>
+  Introduction
+  </li>
+  <li>
+  Overview
+    <ul>
+      <li>
+         Safari
+      </li>
+      <li>
+         Mozilla/FF
+      </li>
+      <li>
+         Opera
+      </li>
+      <li>
+         IE
+      </li>
+      <li>
+         Reference
+      </li>
+    </ul>
+  </li>
+
+  <li>
+  Object Sizing
+  </li>
+    <ul>
+      <li>
+     Both object width and height are specified
+      </li>
+      <li>
+     Neither object width nor height are specified
+      </li>
+      <li>
+     Only object width is specified
+      </li>
+      <li>
+     Only object height is specified
+      </li>
+    </ul>
+  </li>
+  <li>
+  Why Flash Scaling is not used
+  </li>
+
+</ol>
+
+<h2>
+Introduction
+</h2>
+
+<p>
+The goal of this project is to define a consistent SVG sizing behavior for SVG
+Web to emulate when used in flash mode. Different browsers size SVG images
+in different ways, and so we have decided to pick one browser behavior and
+implement that consistently on all browsers so that web developers can
+rely on consistent behavior without having to implement that themselves.
+</p>
+
+<p>
+When an object tag is used to embed an SVG image, the size of the object
+can be different from the size of the SVG image that is rendered within it.
+These can be considered two different layers of sizing and clipping.
+</p>
+
+<p>
+With some browsers (e.g. Opera,Firefox 3.x) native implementations,
+object sizing can utilize the SVG sizing parameters when either the
+object height or width is not specified.
+</p>
+
+<p>
+Both Opera and Firefox have made different choices with respect to sizing.
+The issues are complex enough that it is not clear what behavior is more
+correct or desirable in various circumstances. Safari, on the other hand
+has some clear shortcomings that call out to be patched over.
+</p>
+
+<p>
+The question is what behavior should SVG Web simulate for the automatic
+object sizing? Should it simulate the browser native rendering of whatever
+browser is being used? What about Safari with its shortcomings and IE which
+has no native behavior? Should we consider using a common sizing behavior
+for all browsers? (Just asking. I know this has serious issues.)
+</p>
+
+<p>
+Before answering those questions, the current native behavior of the
+different browsers should be considered.
+</p>
+
+<p>
+This document describes, for the different browsers, how object sizing
+logic works and how SVG sizing and scaling works within the object
+boundaries.
+</p>
+
+<p>
+In the Flash Scaling section, we describe what purpose automatic Flash
+scaling is good for and why we do not use it.
+</p>
+
+
+<h2>
+Overview
+</h2>
+
+<h3>
+Safari
+</h3>
+<p>
+With Safari 4.0.3 native rendering, the object is sized completely
+independent of the svg sizing parameters (width, height, viewBox,
+preserveAspectRatio). Percentages on the object refer to the parent
+node and percentages on the SVG refer to the object size. 
+If pixels or percentages are not provided on the object tag, the
+object width defaults to 300 and the object height defaults to 150.
+Obviously, this is simple and easiest to implement, but it means
+the Safari browser requires manually specifying the object height
+and width to match the svg height and width or you end up stuck
+with 300x150. This seems to be a serious shortcoming.
+</p>
+
+
+<h3>
+Mozilla
+</h3>
+<p>
+Mozilla recognized that the simple 300 x 150 object default size 
+is a not ideal for SVG files because SVG files specify a preferred
+height and width and should not be considered different from other
+images that do not have to specify their size.
+(See https://bugzilla.mozilla.org/show_bug.cgi?id=321531 and
+https://bugzilla.mozilla.org/show_bug.cgi?id=294086).
+As of Firefox 3, object sizing utilizes the SVG sizing parameters
+when either the object height or width is not specified.
+</p>
+
+<h3>
+Opera
+</h3>
+<p>
+Opera 9.64 also utilizes the svg sizing parameters when either the
+object height or width is not specified. It has similar logic to
+firefox does but it made different choices in certain circumstances.
+</p>
+
+<p>
+The common scenario is when an svg width and height is provided
+in pixels in the svg tag. The two variations of that scenarios
+are when the svg image is included with an object tag that has
+a both a width and height or neither of them.
+</p>
+
+<p>
+In the case where neither object width or height are provided, Firefox
+and Opera will both use the svg width and height (if it is pixels)
+to size the object. Safari however uses an object size of 300x150.
+</p>
+
+<p>
+In the case where the object height and width is specified in the object
+tag, and the svg file has a viewBox, firefox will scale the viewBox
+into the object area, but Opera and Safari will scale the viewBox
+into the svg height and width, regardless of the object size. In case
+of size mismatches, Opera will add scroll bars to the object while
+Safari clips.
+</p>
+
+<p>
+The rules for Firefox and Opera get complex because you can have
+pixel, percentages, or missing values for object height,
+object width, svg height, and svg width and there seems to be
+a different behavior for every circumstance.
+</p>
+
+<p>
+It is worth mentioning that after the object is sized, the svg
+height and width are used, generally, as follows:
+</p>
+
+<p>
+For Safari:
+</p>
+<p>
+The svg height and width determine size of the SVG
+'canvas' within the object area. If the width or height
+exceeds the object area, the svg file is clipped.
+If it is smaller, the svg file does not fill the
+whole area (respecting preserveAspectRatio).
+</p>
+
+<p>
+For Opera & FF:
+</p>
+<p>
+The svg height and width are used in various ways, if they are
+used at all. The rules below define how they are used.
+</p>
+
+<h3>
+IE
+</h3>
+<p>
+For IE, we will have to pick an object sizing behavior since there is
+no native object/SVG sizing behavior. (We pick Mozilla/Firefox).
+</p>
+
+<h3>
+Reference
+</h3>
+<p>
+Here is some additional reference material:
+</p>
+<ul>
+<li>
+<a href="http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-width">
+http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-width
+</a>
+</li>
+<li>
+<a href="http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-height">
+http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-height
+</a>
+</li>
+</p>
+</ul>
+
+
+
+<h2>
+Object and SVG Sizing Behavior
+</h2>
+
+<p>
+These are my observations of browser behavior, which SVG Web will try to emulate.
+Specifically, SVG Web is emulating the behavior of the latest version
+of Mozilla/FireFox. The rationale is that this is the browser with the highest
+market share that supports SVG natively. We have made the design decision
+with SVG Web that we should pick one sizing behavior and implement that
+consistently instead of trying to emulate the behavior of the 
+browser we are running on. Users will expect sizing to be consistent and
+if we do not implement that, then everyone using SVG Web will have to
+fix it themselves.
+Also, choosing a single behavior was pretty much a no brainer when it
+became clear that the behavior of some browsers was less than ideal.
+</p>
+
+
+<pre><code>
+CSS1Compat (FF only)
+----------
+
+If both object width and height are specified:
+   The object width is used directly.
+   For object height:
+       If object height is pixels that is used.
+       If the object height is %:
+           If width and height are both specified on the SVG file in pixels,
+               then the height is calculated based on the object width and the
+               aspect ratio between the svg height and width.
+               If viewBox is specified:
+                   ClipMode: UseNone
+               If viewBox is not specified:
+                   ClipMode: UseBoth
+           else
+               If viewBox is specified:
+                   The object height is calculated using the svg width
+                   and the aspect ratio from the viewBox.
+                   ClipMode: UseNone
+               If viewBox is not specified:
+                   If the svg height is in pixels use that.
+                   If the svg height is missing or %:
+                       The object height is 150px.
+                   ClipMode: UseBoth
+
+If neither object width nor height are specified:
+    Use BackCompat mode
+
+
+If object width is specified, but object height is not specified:
+    Use BackCompat mode
+
+
+If only object height is specified:
+    If object height is pixels that is used.
+        If width and height are both specified on the SVG file in pixels,
+            then the object width is calculated based on the object height and the
+            aspect ratio between the svg height and width.
+        else
+            If viewBox is specified:
+                Then the width is calculated based on the object height
+                and the aspect ratio on the viewBox.
+                ClipMode: UseNone
+            else
+                If the object width is the svg width
+                ClipMode: UseBoth
+    else
+        The object width is the svg width.
+        If the svg height is in pixels use that for height
+        else
+            If viewBox is specified:
+                Then the height is calculated based on the object width
+                and the aspect ratio on the viewBox.
+                ClipMode: UseNone
+            else
+                height is 150
+                
+
+
+
+BackCompat
+----------
+
+If both object width and height are specified:
+    Height and width are used directly for the size of the object/embed.
+    This applies whether the dimensions are provided as a percentage,
+    or any unit of measure like pixels, or a mix of both.
+    This is the same for FF, Safari, and Opera.
+    
+    With respect to SVG rendering:
+        If viewBox is specified:
+            On Safari and Opera, if svg width and height are specified,
+                then they are used to specify the area of the object
+                that the viewBox will be rendered within (respecting
+                preserveAspectRatio).
+                (On Opera only, if svg width/height exceeds object bounds,
+                scroll bars appear.)
+            On Firefox, svg width and height are ignored here and the area
+                the viewBox is rendered in (respecting preserveAspectRatio)
+                fills the entire object area.
+                ClipMode: UseNone
+
+        If viewBox is not specified:
+            Then svg width and height are used
+            as clipping areas within the object area and the default viewBox
+            is matched to the width and height so no scaling is done.
+            SVG sizes exceeding the object area are clipped.
+            ClipMode: UseBoth
+
+
+If neither object width nor height are specified:
+    On Safari the object defaults to 300px by 150px.
+
+    On Opera object width is taken from the svg element (defaulting
+        defaulting to 100% if not present). Percentages are based on the
+        parent node.
+
+        An SVG width percentage further determines the area of
+        the object that will be available for rendering.
+
+        For height:
+          If height is specified on the SVG in pixels, then that is used.
+          If height is specified in percentage:
+            If viewBox is specified:
+                The object height is calculated using the svg width
+                and the aspect ratio from the viewBox.
+                The area the viewBox is rendered in (respecting
+                preserveAspectRatio) fills the entire object area
+                available for rendering.
+
+            If viewBox is not specified:
+                An object height of 150px is used.
+                SVG renders without scaling.
+
+            An SVG height percentage further determines the area of
+            the object that will be available for rendering.
+            ClipMode: UseHeight
+
+
+
+    On Mozilla/FF, object width is taken from the svg element (defaulting
+        to 100% if not present). Percentages are based on the parent
+        of the object.
+        
+        The svg width is not used further in svg rendering.
+
+        For height:
+          If height is specified on the SVG in pixels, then that is used.
+          If height is specified in percentage:
+            If viewBox is specified: 
+                The object height is calculated using the svg width
+                and the aspect ratio from the viewBox.
+                SVG height percentages do not appear to have any effect in
+                this scenario.
+                ClipMode: UseNone
+
+            If viewBox is not specified:
+                An object height of 150px is used.
+                An SVG height percentage further determines the area of
+                the object that will be available for rendering.
+                ClipMode: UseHeight
+
+
+    
+If object width is specified, but object height is not specified:
+
+    On Safari the object height defaults to 150px.
+
+    On Opera, for the object height:
+       If the viewBox is specified, 
+           Then the object height is calculated based on the object width
+           and the aspect ratio on the viewBox.
+           An svg width or height determines the portion of the object
+           area that the viewBox will be rendered within
+           starting from the top left corner of the object (defaulting to 100%).
+           An svg height percentage determines the portion of
+           the object area that the viewBox will be rendered within.
+           The viewBox renders into resulting area.
+       else if the viewBox is not specified,
+           If svg height is % or missing:
+               The object height is 150px.
+               The svg rendering height % is relative to 150px and
+               starts from the top edge of the object (defaulting to 100%).
+           If svg height is pixels:
+               The object (and the svg rendering) height is the svg height.
+           SVG renders without scaling.
+           The svg width determines the portion of the object
+           area that the viewBox will be rendered within
+           starting from the left edge of the object (defaulting to 100%).
+           
+               
+    On FF, for the object height:
+       If the viewBox is specified, 
+           If width and height are both specified on the SVG file in pixels,
+               then the height is calculated based on the object width and the
+               aspect ratio between the svg height and width.
+               The viewBox scales into resulting area (honoring preserveAspectRatio).
+               SVG height and width are not using in actual rendering.
+           else
+               Then the height is calculated based on the object width
+               and the aspect ratio on the viewBox.
+               The viewBox renders into resulting area. Note there will
+               be no borders inside the object because the SVG scales
+               exactly into the available space (because the aspect resolution
+               was matched).
+               SVG height and width are not used at all.
+           ClipMode: UseNone
+       else if the viewBox is not specified,
+           If width and height are both specified on the SVG file in pixels,
+               then the height is calculated based on the object width and the
+               aspect ratio between the svg height and width.
+               The viewBox scales into resulting area (honoring preserveAspectRatio).
+           else
+               If svg height is % or missing:
+                   The object height is 150px.
+                   The svg rendering height % is relative to 150px and
+                   starts from the top edge of the object (defaulting to 100%).
+               If svg height is pixels:
+                   The object (and the svg rendering) height is the svg height.
+           SVG renders without scaling.
+           The svg width determines the portion of the object
+           area that the viewBox will be rendered within
+           starting from the left edge of the object (defaulting to 100%).
+           ClipMode: UseBoth
+
+               
+
+
+If only object height is specified:
+    On Safari the object width defaults to 300px.
+
+    On Opera, for the object width:
+       If the viewBox is specified, 
+           Then the width is calculated based on the object height
+           and the aspect ratio on the viewBox.
+           An SVG width percentage determines the portion of
+           the object area that the viewBox will be rendered within.
+           An SVG height percentage determines the portion of
+           the object area that the viewBox will be rendered within.
+           The viewBox renders into resulting area.
+       else if the viewBox is not specified,
+           The object width is taken from the svg width (defaulting to 100%).
+
+           The svg width is ALSO used for the svg clipping region.
+           So the same svg percent is used both to size the object and
+           the svg file within the object. Okay...
+
+           The svg height is used to define the svg rendering
+           area inside the object. Percents are relative to the object
+           height. No value defaults to 100%.
+
+           Exceeding the object area results in scroll bars
+           
+
+    On FF, for the object width:
+       Object tag height is used for object, whether % or pixels.
+       If viewBox is specified:
+           If width and height are both specified on the SVG file in pixels,
+               then the object width is calculated based on the object height and the
+               aspect ratio between the svg height and width.
+           Else
+               Then the width is calculated based on the object height
+               and the aspect ratio on the viewBox.
+           The viewBox scales into resulting area (honoring preserveAspectRatio).
+           SVG height and width are not used further in actual rendering.
+           ClipMode: UseNone
+       If viewBox is not specified:
+           The object width is taken from the svg width (defaulting to 100%).
+
+           The svg width is ALSO used for the svg clipping region.
+           So the same svg percent is used both to size the object and
+           the svg file within the object. Okay...
+
+           The svg height is used to define the svg rendering
+           area inside the object. Percents are relative to the object
+           height. No value defaults to 100%.
+
+           Exceeding the object area results in scroll bars for the object.
+           ClipMode: UseBoth
+</code></pre>
+
+
+<h2>
+3. Flash Scaling
+</h2>
+
+<p>
+The SVG drawing coordinates are draw initially to the flash
+coordinate system which, by default, are then mapped to browser coordinates.
+The "preferred" size of the SVG Web flash "movie" and the resulting
+coordinate system are define at flash compile time. The width and height
+of the flash coordinate system is defined at the top of SVGViewerWeb.as
+in the [SWF] directive. Currently, this is 2048 by 1024. 
+</p>
+
+<p>
+When you use SVG Web in your web page you specify a height and
+width (probably in the &lt;object&gt; tag) and then the flash coordinates are
+mapped into that height and width by flash. Flash uses the Stage.scaleMode
+parameter to determine exactly how the scaling is done. By default,
+it sizes the image to the object to a size which allows you to see
+the entire image within the area, preserves the aspect ratio, and
+is as large as possible within those constraints ("showAll").
+</p>
+
+<p>
+For example, if we use the default flash scaling mode, and 
+you specify a width and height of an SVG object as 512 by 256 (which
+applies to the resulting flash object) then the image will appear
+four times smaller than would be rendered by SVG if rendered
+natively because it must scale the 2048x1024 flash coordinates
+each by .25 to fit into the 512x256 area.
+</p>
+
+<p>
+In the default scaling mode, flash attempts to scale the flash coordinate
+system (2048 x 1024) into the object space. If the object area is square,
+then there would be borders above and below the flash object.
+</p>
+
+<p>
+The problem with the above arises when the top svg element
+uses a viewbox or width/height that is more tall than wide. In this case,
+when the browser renders the SVG natively, it correctly places borders
+on the sides. However, in our case, unless we specify an object size that
+is wider in aspect resolution than 2048x1024 (unlikely), flash resizing
+still places the borders on the top and bottom because it still thinks the
+flash area is more wide than tall (2048x1024) when compared to the object
+area.
+</p>
+
+<p>
+The flash plugin is not aware of the svg size or aspect ratio. It is only
+aware of its own coordinate space (2048x1024), which is fixed at compile time.
+Therefore, we cannot rely on flash resizing to help us scale the svg the
+right way. We must disable flash scaling with the "noScale" mode and
+performing the scaling manually in the rendering code.
+</p>
+
+
+
+

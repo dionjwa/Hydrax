@@ -1,0 +1,27 @@
+
+<!-- map does not work at all with DOCTYPE html -->
+
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<meta name="svg.render.forceflash" content="true">
+<script src="../../../src/svg.js" data-path="../../../src/svg.js"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript">
+  function initialize() {
+    var latlng = new google.maps.LatLng(-34.397, 150.644);
+    var myOptions = {
+      zoom: 8,
+      center: latlng,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+  }
+</script>
+</head>
+<body onload="initialize();">
+  <h2>Tests to see if SVG Web and Google Maps collide; if things work you should see
+      a Google Map on the page -- if you don't then there is a problem.</h2>
+  <div id="map_canvas" style="width:100%; height:100%"></div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<svg xmlns="http://www.w3.org/2000/svg" version="1.0" viewBox='0 0 56 51' onclick="if (window.frameElement &amp;&amp; window.frameElement.parentNode.nodeName === 'button') window.frameElement.parentNode.click()">
+<title>Tick or check mark</title>
+<path
+ d="M 55,1 C 42,11 24,33 19,46 C 17,47 14,50 12,50 C 11,50 6,34 0,32 C -2,31 8,24 7,24 C 13,31 13,34 16,39 C 24,24 54,-4 55,1 z "
+ style="fill:#0f0;stroke:none"/>
+</svg>

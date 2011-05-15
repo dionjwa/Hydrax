@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../../../src/svg.js" data-path="../../../src"></script>
+  <script type="text/javascript">
+  function init () {
+    var svgUrl = '../../../samples/svg-files/helloworld.svg';
+        
+    var container = document.getElementById("svgcontainer");
+
+    var obj = document.createElement('object', true);
+    obj.setAttribute('type', 'image/svg+xml');
+    obj.setAttribute('data', svgUrl);
+    obj.setAttribute('width', '100%');
+    obj.setAttribute('height', '100%');
+    obj.addEventListener(window.svgweb ? 'SVGload' : 'load', function() {
+        window.alert("SVG loaded, resizing container");
+        container.style.width = '300px';
+      }, false);
+            
+    svgweb.appendChild(obj, container);
+  }
+     </script>
+</head>
+<body onsvgload="init();">
+     <div id="svgcontainer" style="border:solid 1px black; width:500px; height:500px">
+     </div>
+</body>
+</html>

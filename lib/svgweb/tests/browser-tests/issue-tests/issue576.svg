@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Tiny//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">
+<svg version="1.1" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  id="svg-root"
+     width="100%" height="100%" viewBox="0 0 480 360">
+
+  <g id="test-body-content" font-family="Arial" font-size="10">
+
+    <g transform="translate(0, 0)">
+
+      <!-- Rects That start animations -->
+      <rect id="rectToBegin1" x="150" y="150" width="50" height="20" fill="#0f5" stroke="#085" stroke-width="4"/>
+      <text x="130" y="200" fill="navy">Click me (rectToBegin1)</text>
+      <text x="130" y="220" fill="navy">to begin anim</text>
+
+      <!-- Rects That start animations -->
+      <rect id="rectToBegin2" x="250" y="150" width="50" height="20" fill="#0f5" stroke="#085" stroke-width="4"/>
+      <text x="230" y="200" fill="navy">Click me (rectToBegin2)</text>
+      <text x="230" y="220" fill="navy">to end anim</text>
+
+      <!-- Animated Rect: Animation on Click -->
+      <rect id="rectToAnimateOnClick1" x="150" y="50" width="50" height="50" fill="#0f5" stroke="#085" stroke-width="4">
+         <animate id="animOnClick1" attributeName="rotate" from="0" to="360"  begin="rectToBegin1.click" dur="5s" end="rectToBegin2.click" fill="freeze"/>
+      </rect>
+      <text x="140" y="120" fill="navy">"rectToBegin1.click"</text>
+
+
+    </g>
+
+    <rect id="test-frame" x="1" y="1" width="478" height="358" fill="none" stroke="#000000"/>
+  </g>
+</svg>

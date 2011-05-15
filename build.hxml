@@ -11,4 +11,4 @@
 
 -swf9 build/hydrax.swf
 -D network-sandbox
--main AllClasses
+# -main AllClasses

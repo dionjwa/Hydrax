@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Quick Start</h1>
+
+<p>This is a quick start guide to using the SVG Web toolkit.</p>
+
+<h2 id="what_is_svg">What is SVG?</h2>
+
+<p>SVG, or Scalable Vector Graphics, is an open web standard that makes it easy
+to add interactive vector graphics to your web pages. Just like HTML gives you
+simple tags such as &lt;form&gt; or &lt;table&gt; to add to your web pages,
+SVG gives you such graphical tags as &lt;circle&gt; or &lt;rect&gt; for a 
+rectangle. Working with SVG is very similar to working with HTML --
+you use JavaScript to animate things, CSS (Cascading Style Sheets) to add 
+style, etc. A good introduction to SVG can be found at <a href="http://www.svgbasics.com/">www.svgbasics.com</a> (note: if you know of a good SVG tutorial that introduces SVG markup, scripting, and SMIL <a href="http://groups.google.com/group/svg-web">please contact us</a>!)</p> 
+
+<h2 id="what_is_toolkit">What is the SVG Web Toolkit?</h2>
+
+<p>SVG Web is a JavaScript library which provides SVG support on many browsers, 
+including Internet Explorer, Firefox, and Safari. Using the library plus native 
+SVG support you can instantly target ~95% of the existing installed web base.</p>
+
+<p>Once dropped in you get partial support for SVG 1.1, SVG Animation (SMIL), 
+Fonts, Video and Audio, DOM and style scripting through JavaScript, and more in 
+about a 60K library. Your SVG content can be embedded directly into normal HTML 
+5 or through the OBJECT tag. If native SVG support is already present in the 
+browser than that is used, though you can override this and have the SVG Web 
+toolkit handle things instead. No downloads or plugins are necessary other than 
+Flash which is used for the actual rendering, so its very easy to use and 
+incorporate into an existing web site.</p>
+
+<p>SVG Web can either be used from HTML and JavaScript web pages or pure Flash
+and Flex applications. This Quick Start guide only details using the SVG Web
+toolkit from HTML and JavaScript web pages rather than from pure Flash or Flex applications.</p>
+
+<p><b>Please keep in mind that SVG Web is in alpha. If you find something file 
+an <a href="http://code.google.com/p/svgweb/issues/list">Issue</a>.</b></p>
+
+<p>If you are using SVG Web, make sure to tell the community about it on our <a href="http://code.google.com/p/svgweb/wiki/ProjectsUsingSVGWeb">"Projects Using SVG Web"</a> Wiki page!</p>
+
+<h2 id="resources">Resources</h2>
+
+<p>At any time while you work through this Quick Start guide the following resources are available to you:</p>
+
+<ul>
+  <li><a href="http://svgweb.googlecode.com/svn/trunk/docs/UserManual.html">An in-depth technical User Manual</a></li>
+  <li><a href="http://codinginparadise.org/projects/svgweb/samples/demo.html">The demo viewer</a></li>
+  <li>Sample <a href="http://svgweb.googlecode.com/svn/trunk/samples/svg-files/">SVG</a> and <a href="http://svgweb.googlecode.com/svn/trunk/samples/javascript-samples/">HTML</a> files you can refer to</li>
+  <li>If all else fails there is an <a href="http://groups.google.com/group/svg-web">SVG Web Google Group</a> you can ask questions on.</li>
+</ul>
+
+<h2 id="getting_started">Getting Started</h2>
+
+<ol>
+  <li><a href="http://code.google.com/p/svgweb/downloads/list">Download and unpack the latest SVG Web ZIP archive</a></li>
+  <li><p>SVG Web comes with a small embedded web server that you can run locally in order to quickly get started. When developing, you can't simply load things from <code>file://</code> URLs as some browsers and Flash have issues when loaded from the local file system. Instead, you must load things through <code>http://</code>; the small bundled web server makes this easy. You must have Java installed to run it.</p>
+    
+    <p>To run the web server simply go into the SVG Web distribution and type the following into a command line:</p>
+    
+    <pre><code>java -jar src/tools/webserver.jar</code></pre>
+    
+    <p>By default this will start a local webserver on <code>127.0.0.1</code> on port 8080.</p>
+    
+    <p>You can optionally provide other local IP addresses if you want to listen on multiple IP addresses; this can be useful, for example, if you have a Parallels Virtual Machine instance running Windows XP, and you want to locally access your files while working. By default Parallels installs a loopback IP address on <code>10.211.55.2</code>. You can use the optional <code>-h</code> flag to start on multiple IP addresses with the embedded web server:</p>
+    
+    <pre><code>java -jar src/tools/webserver.jar -h 127.0.0.1 10.211.55.2</code></pre>
+    
+    <p>This would start up the local web server on <code>127.0.0.1:8080</code> and <code>10.211.55.2:8080</code>.</p>
+  </li>
+  <li>Ensure that the local web server is running by opening a web browser and going to <code><a href="http://127.0.0.1:8080/samples/javascript-samples/helloworld.html">http://127.0.0.1:8080/samples/javascript-samples/helloworld.html</a></code>. You should see two SVG images side by side, with a blue circle and the text "Hello World From Embedded SVG!" and "Hello World From An SVG File!".</li>
+</ol>
+
+<p>You're now ready to start playing with SVG and the SVG Web library! Let's start by delving into the <a href="http://127.0.0.1:8080/samples/javascript-samples/helloworld.html">helloworld.html</a> sample. From now on we will assume that you are running the local web server.</p>
+
+<h2 id="script_tag">SVG Web Script Tag</h2>
+
+<p>To use SVG Web, you must drop a <code>script</code> tag into your HTML page. This <em>must</em> be the first script tag on your page:</p>
+
+<pre><code><b>&lt;script src="svg.js"&gt;&lt;/script&gt;</b>
+  
+&lt;!-- Further script tags should follow after SVG Web's script tag --&gt;
+
+&lt;script src="foobar.js"&gt;&lt;/script&gt;
+&lt;script&gt;alert('hello world')&lt;/script&gt;</code></pre>
+
+<p>If your HTML page and the SVG Web library are in different directories, you also <em>must</em> provide a <code>data-path</code> <a href="http://www.w3.org/TR/html5/dom.html#embedding-custom-non-visible-data">HTML 5 attribute</a> pointing to where the SVG Web files are. This helps SVG Web figure out where to load up the extra files it needs.</p>
+
+<p>For example, if the SVG Web library is in <code>../../src</code>, then you would have the following <code>script</code> tag:</p>
+
+<pre><code>&lt;script src="../../src/svg.js" <b>data-path="../../src"</b>&gt;&lt;/script&gt;</pre></code>
+
+<h2 id="placing_svg">Placing SVG Into Your Page</h2>
+
+<p>There are currently two different ways to add SVG to your page using SVG Web:</p>
+
+<ul>
+  <li>Directly embedding SVG right into your HTML, including into normal non-XHTML HTML.</li>
+  <li>Using the OBJECT tag to embed SVG into your page.</li>
+</ul>
+
+<p>The <a href="http://127.0.0.1:8080/samples/javascript-samples/helloworld.html">helloworld.html</a> sample illustrates how to do both. Let's step through this file to see the two different ways to embed SVG.</p>
+
+<h2 id="direct_embed">Direct Embedding</h2>
+
+<p>SVG Web allows you to directly embed SVG into your HTML page, even for normal, non-XHTML pages.</p>
+
+<p>To directly embed SVG, you place your SVG into a SCRIPT block and set the <code>type</code> attribute to <code>image/svg+xml</code>. This is <a href="http://www.w3.org/TR/html5/semantics.html#script">valid HTML 5 syntax</a> for embedding data blocks and is necessary for your SVG to be parsed correctly. Here is an example direct embed from the <a href="http://127.0.0.1:8080/samples/javascript-samples/helloworld.html">helloworld.html</a> file:</p>
+
+<pre><code>&lt;h1&gt;This is some HTML here!&lt;/h1&gt;
+&lt;script type="image/svg+xml"&gt;
+   &lt;svg 
+       width="200" height="200"
+       style="background-color: #D2B48C; display: block; margin-bottom: 5px;"
+       id="embeddedSVG"&gt;
+     &lt;g 
+        id="myGroup" 
+        fill="blue" 
+        style="font-size: 18px; text-anchor: middle; font-family: serif;"&gt;
+         &lt;circle
+              id="myCircle" 
+              cx="100" cy="75" r="50"
+              stroke="firebrick"
+              stroke-width="3" /&gt;
+         &lt;text x="100" y="155"&gt;Hello World&lt;/text&gt;
+         &lt;text x="100" y="175"&gt;From Embedded SVG!&lt;/text&gt;
+     &lt;/g&gt;
+   &lt;/svg&gt;
+&lt;/script&gt;</code></pre>
+
+<p>When direct embedding SVG, you should leave off the XML declaration and SVG DOCTYPE, such as <code>&lt;?xml version="1.0"?&gt;</code>. You also don't need to declare the XLink or SVG namespaces as those will be defaulted and assumed.</p>
+
+<h2 id="object_tag">Embedding With the Object Tag</h2>
+
+<p>You can also embed your SVG using an OBJECT tag. This is useful when you want to keep your SVG assets separate from your web page.</p>
+
+<p>In an ideal world we would use a single OBJECT tag; unfortunately, we have a slightly more complex syntax to help Internet Explorer and have to repeat the OBJECT tag twice with slightly different attribute names. Here is an example from our <a href="http://127.0.0.1:8080/samples/javascript-samples/helloworld.html">helloworld.html</a> sample:</p>
+
+<pre>
+<code>
+&lt;!--[if !IE]&gt;--&gt;
+  &lt;object data="../svg-files/helloworld.svg" type="image/svg+xml"
+          width="200" height="200" id="mySVGObject"&gt; &lt;!--&lt;![endif]--&gt;
+&lt;!--[if lt IE 9]&gt;
+  &lt;object src="../svg-files/helloworld.svg" classid="image/svg+xml"
+          width="200" height="200" id="mySVGObject"&gt; &lt;![endif]--&gt;
+&lt;!--[if gte IE 9]&gt;
+  &lt;object data="../svg-files/helloworld.svg" type="image/svg+xml"
+          width="200" height="200" id="mySVGObject"&gt; &lt;![endif]--&gt;
+  &lt;/object&gt;
+</code>
+</pre>
+
+<p>In general, you should copy the above syntax exactly and modify the following:</p>
+
+<ul>
+  <li>Change the <code>src</code> and <code>data</code> attributes to point to where your SVG file is on all OBJECT tags.</li>
+  <li>Change the <code>width</code> and <code>height</code> attributes on all OBJECT tags to the desired width and height.</li>
+  <li>If you have an <code>id</code> or <code>class</code> attribute, make sure it is on all OBJECT tags.</li>
+</ul>
+
+<p>Note that your SVG file must be served from the same host as the page is served from.</p>
+
+<p>It's also important that your SVG file have an XML declaration on the first line as well as all namespaces declared; basically this file must be a valid XML file, which is a bit different than when you directly embed SVG into a web page. The helloworld.svg file:</p>
+
+<pre><code>&lt;?xml version="1.0"?&gt;
+
+&lt;svg 
+     version="1.1" 
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="200" height="200"
+     style="background-color: #D2B48C;"&gt;
+   &lt;g 
+      id="myGroup" 
+      fill="blue" 
+      style="font-size: 18px; text-anchor: middle; font-family: serif;"&gt;
+      &lt;circle
+         id="myCircle" 
+         cx="100" cy="75" r="50"
+         stroke="firebrick"
+         stroke-width="3" /&gt;
+      &lt;text x="100" y="155"&gt;Hello World&lt;/text&gt;
+      &lt;text x="100" y="175"&gt;From An SVG File!&lt;/text&gt;
+   &lt;/g&gt;
+&lt;/svg&gt;</code></pre>
+
+<p>Both the direct embed and OBJECT options can provide optional fallback content; <a href="http://svgweb.googlecode.com/svn/trunk/docs/UserManual.html#fallback">see the User Manual for more details</a>.</p>
+
+<h2 id="helloworld_svg">Hello World SVG</h2>
+
+<p>The SVG in the <a href="http://127.0.0.1:8080/samples/javascript-samples/helloworld.html">helloworld.html</a> sample provides a nice basic overview of SVG, so we will quickly review it here. Here is the SVG again:</p>
+
+<pre><code>&lt;?xml version="1.0"?&gt;
+
+&lt;svg 
+     version="1.1" 
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="200" height="200"
+     style="background-color: #D2B48C;"&gt;
+   &lt;g 
+      id="myGroup" 
+      fill="blue" 
+      style="font-size: 18px; text-anchor: middle; font-family: serif;"&gt;
+      &lt;circle
+         id="myCircle" 
+         cx="100" cy="75" r="50"
+         stroke="firebrick"
+         stroke-width="3" /&gt;
+      &lt;text x="100" y="155"&gt;Hello World&lt;/text&gt;
+      &lt;text x="100" y="175"&gt;From An SVG File!&lt;/text&gt;
+   &lt;/g&gt;
+&lt;/svg&gt;</code></pre>
+
+<p>First, notice that we are specifying a width and height on our SVG file as well on the <code>&lt;svg&gt;</code> root tag, as well as providing a background color for the entire SVG file. If you leave off a background color we default to making it transparent, which can be useful if you want to have other content on your HTML page show through.</p>
+
+<p>Next, notice the <code>g</code> element, which is a grouping element. You can think of this element as exactly akin to Photoshop's grouping operation. Grouping things together can make it easy to manipulate them all at once when scripting or transforming elements. In addition, you can provide default values for certain styles that will propagate to all the children. In the example above, we provide a default fill value with <code>fill="blue"</code> that all children will inherit, as well as default text values using a <code>style=""</code> attribute that all children will inherit: setting the font size to 18 pixels; centering the text in the middle of the image; and making the font be a serif font.</p>
+
+<p>We then use a <code>circle</code> element to draw a circle on the screen. We specify the center of where to place the circle on the page using <code>cx</code> and <code>cy</code>, and then specify a radius using <code>r</code>. We can specify the line color to use on the outside using the <code>stroke</code> attribute, and give the width of the line using <code>stroke-width</code>.</p>
+
+<p>In SVG, text doesn't line wrap, so we provide two <code>text</code> elements and give the <code>x</code> and <code>y</code> location to place them at.</p>
+
+<h2 id="renderer">Changing the Renderer</h2>
+
+<p>By default we use the Flash based renderer on Internet Explorer while using the native SVG support on other browsers like Firefox and Safari. You can optionally override this to force the Flash renderer on all browsers. This can make development easier, since you can use the SVG Web Flash based renderer on Firefox plus its great set of debugging and development tools; you can also choose to deploy using the Flash based renderer for all browsers in order to gain SVG features that might not be natively present or to have a more consistent deployment environment.</p>
+
+<p>You can change the renderer in two ways. First, you can force the Flash renderer by changing the URL of your page with the following flag:</p>
+
+<a href="http://127.0.0.1:8080/samples/javascript-samples/helloworld.html?svg.render.forceflash=true"><pre><code>http://127.0.0.1:8080/samples/javascript-samples/helloworld.html?svg.render.forceflash=true</code></pre></a>
+
+<p>Clicking the link above, for example, will show the helloworld.html sample but will force the Flash renderer to be used for everything. You can also set <code>svg.render.forceflash</code> to <code>false</code>.</p>
+
+<p>The second way to override the renderer used is by adding a <code>META</code> tag into your HTML page:</p>
+
+<pre><code>&lt;meta name="svg.render.forceflash" content="true"&gt;</code></pre>
+
+<h2 id="deploying">Deploying SVG Web</h2>
+
+<p>Let's look at how you can deploy your SVG files and SVG Web to your web server.</p>
+
+<p>First, upload the ZIP archive to your web server. The following files are required to be present:</p>
+
+<code><ul>
+  <li>src/svg.js</li>
+  <li>src/svg.htc</li>
+  <li>src/svg.swf</li>
+</ul></code>
+
+<p>The other files in the ZIP are optional; some are utilities that can help with deployment.</p>
+
+<p id="same_domain">Note that all of the SVG Web files by default must be on the same domain as any web pages that might use the library. For example, if you have <code>http://example.com/mypage.html</code>, then you should ensure the files above are also on <code>http://example.com</code>. Putting them on a <code>static.example.com</code> would not work. This arises from limitations in Flash and the Microsoft HTC (<code>svg.htc</code>) file that are used by SVG Web. SVG Web has partial support for hosting many of its files on a different domain however; see the <a href="UserManual.html#cross_domain">User Manual</a> for details.</p>
+
+<p id="correct_mime">You must ensure that your web server has the correct MIME settings for Flash SWF files (<code>application/x-shockwave-flash</code>), Microsoft HTC files (<code>text/x-component</code>), and SVG files (<code>image/svg+xml</code>). Since many developers don't know what MIME types are or don't have the ability to change this setting on their web server, SVG Web comes with a number of utilities to make this easier.</p>
+
+<p>First, your web server might already be configured out of the box and there is nothing to change. To test this, make sure the file <code>src/tools/config.html</code> is on your web server and hit it with a web browser. This file will scan and make sure the MIME type settings are set. If they are not it will report this to you and you will have to move to the next step. If the SVG mime type is not set correctly you can generally get away without changing this; note though that Firefox can sometimes exhibit bugs if the SVG MIME type is not set to <code>image/svg+xml</code>.</p>
+
+<p>At this point the best step is to <a href="http://code.google.com/p/svgweb/wiki/ChangingServerMIMEType">actually change your web server to add these MIME types</a>. If you don't have the ability or background to add MIME types to your web 
+server, three easy files have been provided that will do the work for you based
+on what you can run on your server (PHP, JSP, or ASP). Based on what you can
+run on your server, choose one of the following files:</p>
+
+<ul>
+  <li><code>src/svg-htc.php</code> - Will do the MIME work for you if you can run
+  PHP on your web server.</li>
+  <li><code>src/svg-htc.jsp</code> - Will do the MIME work for you if you can run
+  JSP on your web server.</li>
+  <li><code>src/svg-htc.asp</code> - Will do the MIME work for you if you can run
+  ASP on your web server.</li>
+</ul>
+
+<p>If you choose one of these, you must indicate so using the optional 
+<code>data-htc-filename</code> attribute in any HTML page that uses SVG Web:</p>
+
+<pre><code>&lt;script src="../svg.js" data-path=".." <b>data-htc-filename="svg-htc.php"</b>&gt;&lt;/script&gt;</code></pre> 
+
+<p>Only give the filename, such as <code>svg-htc.jsp</code>, rather than a full
+path, such as <code>../../svg-htc.jsp</code>. Note that if you use
+one of these files in order to automatically force the MIME type, when you run
+any of the bundled demos or samples you will have to append the following 
+query string to tell them to use your different HTC file or else they will not work:</p>
+
+<pre><code>http://example.com/svgweb/samples/demo.html?<b>svg.htcFilename=svg-htc.php</b></code></pre>
+
+<h2 id="scripting">Scripting SVG</h2>
+
+<p>Let's take a look at scripting your SVG using JavaScript. This section is not meant to be a tutorial on JavaScript plus SVG; rather, it is a very basic overview including some small divergences necessary for SVG Web.</p>
+
+<p>SVG Web includes a large set of the DOM (Document Object Model) when working with SVG. It is fairly complete though there are some omissions or areas which are still being worked on. Your JavaScript, even on Internet Explorer, has the 'illusion' of native SVG support.</p>
+
+<p id="onload"><a name="onsvgload"></a>Let's start with scripting SVG that is embedded right into a web page. We will be using the source in <code>helloworld.html</code>. First, before working with the DOM or SVG on your page you must wait for SVG Web to finish loading:</p>
+
+<pre><code>window.onsvgload = function() {
+  // do stuff now
+}</code></pre>
+
+<p>Notice that we use <code>window.onsvgload</code> rather than <code>window.onload</code>. You can alternatively also use <code>window.addEventListener</code> with the <code>SVGLoad</code> event (this also works on Internet Explorer):</p>
+
+<pre><code>window.addEventListener('SVGLoad', function() {
+  // function to be called when SVG Web and the page is done loading
+}, false)</code></pre>
+
+<p>On the <code>helloworld.html</code> page you will see two buttons, "Change Colors" and "Change Text." When clicked, they change the color of the circles in both SVG images, as well as change the text. The script for all of this is just a normal <code>&lt;script&gt;</code> tag embedded into the page, in the two functions <code>changeColors</code> and <code>changeText</code>. Let's look at the <code>changeColors</code> method:</p>
+
+<pre><code>function changeColors() {
+  // get elements from our embedded SVG first
+  
+  // use getElementById
+  var circle = document.getElementById('myCircle');
+  
+  // change using setAttribute
+  circle.setAttribute('stroke', 'green');
+  
+  // can also use style property
+  circle.style.fill = '#8A2BE2';
+  
+  // change the value inside our SVG OBJECT now
+  
+  // use the 'contentDocument' property to navigate into the SVG OBJECT
+  var doc = document.getElementById('mySVGObject').contentDocument;
+  circle = doc.getElementById('myCircle');
+  circle.style.fill = '#8A2BE2';
+}</code></pre>
+
+<p>First, you will see that we get our circle from the page using a normal <code>document.getElementById('myCircle')</code> call. This will grab the <code>circle</code> that was directly embedded into the page. Once we have our circle, we can change the color either by using a <code>setAttribute</code> call or by simply changing the <code>circle.style.fill</code> value; either cause the same results. Note that all of this code works even on Internet Explorer; SVG Web does the necessary magic to give the illusion of native support.</p>
+
+<p>In order to change the color of the circle inside our SVG OBJECT (the second SVG image), we have to 'navigate' into it. The key here is to use the <code>contentDocument</code> property. We first fetch the SVG OBJECT from the page by ID, and then grab the <code>contentDocument</code> property. At this point we have a normal <code>document</code> object we can now work with, so we simply grab the circle that is embedded inside this SVG object and change its color as well:</p>
+
+<pre><code>// use the 'contentDocument' property to navigate into the SVG OBJECT
+var doc = document.getElementById('mySVGObject').contentDocument;
+circle = doc.getElementById('myCircle');
+circle.style.fill = '#8A2BE2';</code></pre>
+
+<p>Next, let's look at the <code>changeText</code> function; we've written it a bit differently than necessary to show you some other DOM functions that can be used:</p>
+
+<pre><code>function changeText() {
+  // use getElementsByTagNameNS to get our text from our embedded SVG
+  
+  // 'svgns' is a 'magic' variable that we make available; it is just
+  // the SVG namespace 'http://www.w3.org/2000/svg' so you don't always
+  // have to remember it.  We also make the variable 'xlinkns' available.
+  var textElems = document.getElementsByTagNameNS(svgns, 'text');
+  
+  // change the text Hello World to Goodbye World
+  for (var i = 0; i &lt; textElems.length; i++) {
+    if (textElems[i].childNodes[0].nodeValue == 'Hello World') {
+      textElems[i].childNodes[0].nodeValue = 'Goodbye World';
+    }
+  }
+  
+  // change the text inside our SVG OBJECT as well
+  var doc = document.getElementById('mySVGObject').contentDocument;
+  textElems = doc.getElementsByTagNameNS(svgns, 'text');
+  for (var i = 0; i &lt; textElems.length; i++) {
+    if (textElems[i].childNodes[0].nodeValue == 'Hello World') {
+      textElems[i].childNodes[0].nodeValue = 'Goodbye World';
+    }
+  }
+}
+</code></pre>
+
+<p>First, notice that we can get SVG tags from the page by tag name not just by ID; however, it is very important that you use the namespace-aware method <code>getElementsByTagNameNS</code> instead of <code>getElementsByTagName</code> or else things won't work! You will also notice that we access the global variable <code>svgns</code> that SVG Web makes available to easily work with the SVG namespace (a similar one is available for the XLink namespace, <code>xlinkns</code>, when doing hyperlink code). These combine together to make it easy to work with the namespace-aware functions:</p>
+
+<pre><code>var textElems = document.getElementsByTagNameNS(svgns, 'text');</code></pre>
+
+<p>This will grab all of the SVG <code>text</code> elements that are directly embedded in the page (i.e. it will return two <code>text</code> elements); it will not return anything from SVG OBJECTs, since those are not directly in the page. Once we have our elements, we loop over them and get their text values by calling <code>textElems[i].childNodes[0].nodeValue</code>. The value of an SVG <code>text</code> is held as a DOM Text Node, so we have to grab the first child and get its value. Once we find any nodes that have the value "Hello World" we then change the text value in a similar manner.</p>
+  
+<p>We don't dynamically create any nodes in our <code>helloworld.html</code> sample, but here is a simple example code block showing how we would do this. Most importantly, notice how we use the namespace aware <code>createElementNS</code> method instead of <code>createElement</code>:</p>
+  
+<pre><code>var el = document.createElementNS(svgns, 'circle');
+el.setAttribute('cx', 200);
+el.setAttribute('cy', 200);
+el.setAttribute('r', 5);
+el.setAttribute('fill', '#223FA3');
+el.setAttribute('stroke-width', '1px');
+el.setAttribute('stroke', 'black');
+  
+var group = document.getElementById('myGroup');
+group.appendChild(el);
+</code></pre>
+
+<p>One small important thing to keep in mind is when you create DOM text nodes that you are going to use with your SVG, you must add an extra boolean argument to help SVG Web out:</p>
+
+<pre><code>var textNode = document.createTextNode('hello world'<b>, true</b>);
+var svgText = document.createElementNS(svgns, 'text');
+svgText.setAttribute('x', 100);
+svgText.setAttribute('y', 100);
+svgText.appendChild(textNode);</code></pre>
+
+<p>Now let's take a look at doing scripting inside of an SVG file rather than directly embedding into an HTML page. We will use the <code>helloworld.svg</code> file as our sample. I'll show you the full code sample first and then break it apart:</p>
+
+<pre><code>&lt;svg onload="loaded()"&gt;
+  &lt;script type="text/javascript"&gt;&lt;![CDATA[
+      function loaded() {
+        // change onloadFunc to point to your real onload function that you
+        // want called when the page is truly ready
+        var onloadFunc = doload;
+        
+        if (top.svgweb) {
+          top.svgweb.addOnLoad(onloadFunc, true, window);
+        } else {
+          onloadFunc();
+        }
+      }   
+      
+     function doload() {
+        // developers original onload handler
+        
+        // add an event listener to our circle; on* style events added right
+        // to the markup are not yet supported
+        var circle = document.getElementById('myCircle');
+        circle.addEventListener('mousedown', function() {
+          alert('You pressed the mouse button on our circle!');
+        }, false);
+     }
+  ]]&gt;&lt;/script&gt;</code></pre>
+  
+<p>First, notice that we have to do a little bit of trickery around the <code>onload</code> event in order to help SVG Web. If you want to have any script inside your SVG file, you must change the <code>onload</code> attribute to point to a special function, <code>loaded</code> that you should simple cut and paste into your code and change the <code>onloadFunc</code> variable to point to the name of your real function:</p>
+
+<pre><code>function loaded() {
+  <b>// change onloadFunc to point to your real onload function that you
+  // want called when the page is truly ready
+  var onloadFunc = doload;</b>
+  
+  if (top.svgweb) {
+    top.svgweb.addOnLoad(onloadFunc, true, window);
+  } else {
+    onloadFunc();
+  }
+}</code></pre>
+
+<p id="events">For SVG events, we only currently support the <code>addEventListener</code> method:</p>
+
+<pre><code>// add an event listener to our circle; on* style events added right
+// to the markup are not yet supported
+var circle = document.getElementById('myCircle');
+circle.addEventListener('mousedown', function(evt) {
+  alert('You pressed the mouse button on our circle: ' + evt.target.id);
+}, false);</code></pre>
+
+<p>This will cause an alert box to appear when a user presses the mouse button down. Notice that the <code>event</code> object is passed into the method (even on Internet Explorer -- use this instead of <code>window.event</code>). You can use the <code>event</code> object to get information, such as the id of the target: <code>evt.target.id</code>.</p>
+
+<h2 id="tips">Tips and Tricks</h2>
+
+<p>This section provides some tips and tricks to help with performance and reliability.</p>
+
+<ul>
+  <li id="tip_replace_renderer">Firefox's native SVG renderer can be slow in some circumstances. In these situations, it's recommended that you simply have SVG Web <a href="#renderer">replace the renderer</a> on Firefox if you run into performance or reliability issues with Firefox's native SVG renderer.</li>
+  
+  <li id="tip_suspendRedraw"><p>If you are doing a bunch of DOM operations in a loop, such as creating elements or updating an attribute, you can significantly speed things up by using the <code>suspendRedraw</code> methods. An example:</p>
+    
+  <pre><code>
+    var root = document.getElementsByTagNameNS(svgns, 'svg')[0];
+    var circles = document.getElementsByTagNameNS(svgns, 'circle');
+    var suspendID = root.suspendRedraw(5000);
+    // let's say there are 500 circles
+    for (var i = 0; i &lt; circles.length; i++) {
+      circles[i].setAttribute('fill', 'red');
+    }
+    root.unsuspendRedraw(suspendID);
+    // could also do root.unsuspendRedrawAll() to clear out all suspended 
+    // operations
+  </code></pre>
+  
+  <p>The suspendRedraw method takes a timeout in milliseconds until redrawing is forced; higher numbers are recommended. See the <a href="UserManual.html#suspendRedraw">suspendRedraw section in the User Manual</a> for more details on these methods.</p>
+  
+  <li id="document_fragment"><p>If you are creating many DOM nodes at once, you should use the DOM DocumentFragment API. This will significantly speed things up, especially if you are creating these nodes on page load. To create a DocumentFragment for use with SVG, you should call <code>document.createDocumentFragment(true)</code>. Note the extra <code>true</code> parameter -- this is required by SVG Web to help us know that this DocumentFragment will be used with SVG, possibly going into our fake Flash backend. A small code example:</p>
+    
+    <pre><code>
+      // note the extra 'true' argument
+      var frag = document.createDocumentFragment(true);
+      for (var i = 0; i &lt; 100; i++) {
+        var circle = document.createElementNS(svgns, 'circle');
+        circle.setAttribute('x', i * 10);
+        circle.setAttribute('y', 10);
+        circle.setAttribute('r', 5);
+        circle.setAttribute('fill', 'red');
+        // append to DocumentFragment
+        frag.appendChild(circle);
+      }
+      // now append the DocumentFragment to the DOM
+      var svg = document.getElementsByTagNameNS(svgns, 'svg')[0];
+      svg.appendChild(frag); // DocumentFragment disappears leaving circles
+    </code></pre>
+    
+  <p>See the section on <a href="UserManual.html#document_fragment">DocumentFragments in the UserManual</a> for more details.</p>
+</ul>
+</body>
+</html>

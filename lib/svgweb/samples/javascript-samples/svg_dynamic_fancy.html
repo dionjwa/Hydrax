@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+  <!-- 
+    Tests dynamically creating an SVG root, adding many circles to it,
+    and animating them to bounce using JavaScript. Fancier version with
+    linear gradients and blur filters.
+  -->
+  <head>
+    <script src="../../src/svg.js" data-path="../../src/"></script>
+  
+    <script type='text/javascript'>
+      var root = null;
+      var width = 640,
+          height = 400;
+      var particles = [];
+      var numParticles = 10;
+      var intervalId = null;
+      var shadowAngle = 0.6;
+      var wallOffset = 30;  // Number of pixels in from edge to "stop" balls.
+    
+      function Particle() {
+        this.dX = 0;
+        this.dY = 0;
+        this.shadowDX = 0;
+        this.shadowDY = 0;
+        this.stopped = false;
+
+        this.radius = 10 + Math.round(Math.random() * 20);
+
+        this.x = wallOffset + Math.random() * (width - 2 * wallOffset - this.radius);
+        this.y = wallOffset + Math.random() * (height - 2 * wallOffset - this.radius);
+
+        this.xvel = Math.random() * 4 - 2.5;
+        this.yvel = Math.random() * 4 - 2.5;
+
+        this.el = document.createElementNS(svgns, 'circle');
+        this.el.setAttribute('cx', this.x);
+        this.el.setAttribute('cy', this.y);
+        this.el.setAttribute('r', this.radius);
+        this.el.setAttribute('fill', 'url(#orange_red)');
+        this.el.setAttribute('stroke-width', '1px');
+        this.el.setAttribute('stroke', 'black');
+
+        this.shadow = document.createElementNS(svgns, 'ellipse');
+        this.shadow.setAttribute('cx', this.x + (shadowAngle * (height - wallOffset - this.y)));
+        this.shadow.setAttribute('cy', this.y + this.radius * 0.5 + (shadowAngle * (height - wallOffset - this.radius - this.y)));
+        this.shadow.setAttribute('rx', this.radius);
+        this.shadow.setAttribute('ry', this.radius * 0.5);
+        this.shadow.setAttribute('fill', '#666666');
+        this.shadow.setAttribute('filter', 'url(#Gaussian_Blur)');
+      }
+
+      Particle.prototype.update = function() {
+        this.x += this.xvel;
+        this.y += this.yvel;
+
+        this.yvel += 0.1;
+
+        if (this.x > width - wallOffset || this.x < wallOffset) {
+          this.xvel = -this.xvel;
+        }
+
+        if (this.y + this.radius > height - wallOffset || this.y < wallOffset) {
+          if (this.y + this.radius > height - wallOffset) {
+            this.yvel = Math.max(this.yvel - 0.2, 0);
+            if (this.xvel > 0) {
+              this.xvel = Math.max(this.xvel - 0.05, 0);
+            } else if (this.xvel < 0) {
+              this.xvel = Math.min(this.xvel + 0.05, 0);
+            }
+          }
+          this.yvel = -this.yvel;
+        }
+      
+        if (this.y < wallOffset) {
+          this.y = wallOffset;
+        }
+      }
+
+      function loop() {
+        root.suspendRedraw(10000);
+        for (var i = 0; i < numParticles; i++) {
+          var p = particles[i];
+          if (p.dragging) {
+            continue;
+          }
+          var x = p.x;
+          var y = p.y;
+          var oldShadowX = x + (shadowAngle * (height - y));
+          var oldShadowY = y + p.radius * 0.5 + (shadowAngle * (height - wallOffset - p.radius - y));
+          p.update();
+          var shadowX = p.x + (shadowAngle * (height - p.y));
+          var shadowY = p.y + p.radius * 0.5 + (shadowAngle * (height - wallOffset - p.radius - p.y));
+          p.dX += p.x - x;
+          p.dY += p.y - y;
+          p.shadowDX += shadowX - oldShadowX;
+          p.shadowDY += shadowY - oldShadowY;
+
+          if (p.x - x == 0 && p.y - y == 0) {
+            p.stopped = true;
+          }
+
+          p.el.setAttribute('transform', 'translate(' + p.dX + ',' + p.dY + ')');
+          p.shadow.setAttribute('transform', 'translate(' + p.shadowDX + ',' + p.shadowDY + ')');
+        }
+        root.unsuspendRedrawAll();
+      }
+      
+      // create our drawing surface and the filters and gradients we need
+      // in our definitions
+      function createContext() {
+        var defs = document.createElementNS(svgns, 'defs');
+        
+        // our blur filter
+        var filter = document.createElementNS(svgns, 'filter');
+        filter.id = 'Gaussian_Blur';
+        var blurFilter = document.createElementNS(svgns, 'feGaussianBlur');
+        blurFilter.id = 'blur';
+        blurFilter.setAttribute('in', 'SourceGraphic');
+        blurFilter.setAttribute('stdDeviation', 1);
+        filter.appendChild(blurFilter);
+        defs.appendChild(filter);
+        
+        // our gradient
+        var gradient = document.createElementNS(svgns, 'linearGradient');
+        gradient.id = 'orange_red';
+        gradient.setAttribute('x1', '0%');
+        gradient.setAttribute('y1', '0%');
+        gradient.setAttribute('x2', '100%');
+        gradient.setAttribute('y2', '100%');
+        var stop = document.createElementNS(svgns, 'stop');
+        stop.setAttribute('offset', '0%');
+        stop.setAttribute('style', 
+                          'stop-color:rgb(255,255,0); stop-opacity:1;');
+        gradient.appendChild(stop);
+        stop = document.createElementNS(svgns, 'stop');
+        stop.setAttribute('offset', '50%');
+        stop.setAttribute('style', 
+                          'stop-color:rgb(200,0,0); stop-opacity:0.75;');
+        gradient.appendChild(stop);
+        stop = document.createElementNS(svgns, 'stop');
+        stop.setAttribute('offset', '100%');
+        stop.setAttribute('style', 
+                          'stop-color:rgb(51,0,0); stop-opacity:1;');
+        gradient.appendChild(stop);
+        defs.appendChild(gradient);
+        
+        root.appendChild(defs);
+        
+        var group = document.createElementNS(svgns, 'g');
+        group.id = 'surface';
+        root.appendChild(group);
+      }
+      
+      window.onsvgload = function() {
+        var div = document.createElement('div');
+        div.style.textAlign = 'center';
+        div.style.verticalAlign = 'middle';
+        document.body.appendChild(div);
+        
+        root = document.createElementNS(svgns, 'svg');
+        root.setAttribute('width', '100%');
+        root.setAttribute('height', '100%');
+        root.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
+        createContext();
+        root.addEventListener('SVGLoad', function(evt) {
+          root = this;
+          
+          root.suspendRedraw(10000);
+          
+          for (var i = 0; i < numParticles; i++) {
+            particles[i] = new Particle();
+          }
+          
+          // add the shadows then the balls so that shadows always fall
+          // in the background
+          for (var i = 0; i < numParticles; i++) {
+            root.appendChild(particles[i].shadow);
+          }
+          
+          for (var i = 0; i < numParticles; i++) {
+            root.appendChild(particles[i].el);
+          }
+            
+          root.unsuspendRedrawAll();
+          
+          intervalId = setInterval(loop, 10);
+        }, false);
+        svgweb.appendChild(root, div);
+      }
+    </script>
+  
+    <style>
+      body {
+        margin: 0px;
+        padding: 0px;
+        background-color: #eeeeff;
+      }
+    </style>
+  </head>
+  
+  <body></body>
+</html>

@@ -1,0 +1,29 @@
+<HTML>
+  <HEAD>
+    <script type="text/javascript" 
+            src="../../../src/svg.js"
+            data-path="../../../src"></script>
+    <script type="text/javascript" src="jquery-1.3.2.js"></script>
+  </HEAD>
+  <BODY>
+    <div id="container"></div>
+    <script type="text/javascript">
+      var url = "test.svg"    
+      var svgObject = null;
+      
+      function loadsvg(e) {
+        var obj = document.createElement('object', true);
+        obj.id = 'svgobject';
+        obj.setAttribute('type', 'image/svg+xml');
+        obj.setAttribute('data', url);
+        obj.setAttribute('width', '400');
+        obj.setAttribute('height', '400');
+        
+        var container = document.getElementById('container');
+        svgweb.appendChild(obj, container);
+      }
+      
+      $(document).ready(loadsvg);
+    </script>
+  </BODY>
+</HTML>

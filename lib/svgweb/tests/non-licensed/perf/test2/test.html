@@ -1,0 +1,245 @@
+<html>
+  <head>
+    <script>
+      // Remove timing functions when done with Issue 96
+      window.timer = {};
+
+      function start(subject, subjectStarted) {
+        //console.log('start('+subject+','+subjectStarted+')');
+        if (subjectStarted && !ifStarted(subjectStarted)) {
+          //console.log(subjectStarted + ' not started yet so returning for ' + subject);
+          return;
+        }
+        //console.log('storing time for ' + subject);
+        window.timer[subject] = {start: new Date().getTime()};
+      }
+
+      function end(subject, subjectStarted) {
+        //console.log('end('+subject+','+subjectStarted+')');
+        if (subjectStarted && !ifStarted(subjectStarted)) {
+          //console.log(subjectStarted + ' not started yet so returning for ' + subject);
+          return;
+        }
+
+        if (!window.timer[subject]) {
+          console.log('Unknown subject: ' + subject);
+          return;
+        }
+
+        window.timer[subject].end = new Date().getTime();
+
+        //console.log('at end, storing total time: ' + total(subject));
+      }
+
+      function total(subject) {
+        if (!window.timer[subject]) {
+          console.log('Unknown subject: ' + subject);
+          return;
+        }
+
+        var t = window.timer[subject];
+        if (t) {
+          return t.end - t.start;
+        } else {
+          return null;
+        }
+      }
+
+      function ifStarted(subject) {
+        for (var i in window.timer) {
+          var t = window.timer[i];
+          if (i == subject && t.start !== undefined && t.end === undefined) {
+            return true;
+          }
+        }
+
+        return false;
+      }
+
+      function report() {
+        for (var i in window.timer) {
+          var t = total(i);
+          if (t !== null) {
+            console.log(i + ': ' + t + 'ms');
+          }
+        }
+      }
+      // Remove these functions when done with Issue 96
+      
+      // browser detection adapted from Dojo
+      var isOpera = false, isSafari = false, isMoz = false, isIE = false, 
+          isAIR = false, isKhtml = false, isFF = false;
+
+      function _detectBrowsers() {
+        var n = navigator,
+            dua = n.userAgent,
+            dav = n.appVersion,
+            tv = parseFloat(dav);
+
+        if (dua.indexOf('Opera') >= 0) { isOpera = tv; }
+        // safari detection derived from:
+        //    http://developer.apple.com/internet/safari/faq.html#anchor2
+        //    http://developer.apple.com/internet/safari/uamatrix.html
+        var index = Math.max(dav.indexOf('WebKit'), dav.indexOf('Safari'), 0);
+        if (index) {
+          // try to grab the explicit Safari version first. If we don't get
+          // one, look for 419.3+ as the indication that we're on something
+          // "Safari 3-ish". Lastly, default to "Safari 2" handling.
+          isSafari = parseFloat(dav.split('Version/')[1]) ||
+            (parseFloat(dav.substr(index + 7)) > 419.3) ? 3 : 2;
+        }
+        if (dua.indexOf('AdobeAIR') >= 0) { isAIR = 1; }
+        if (dav.indexOf('Konqueror') >= 0 || isSafari) { isKhtml =  tv; }
+        if (dua.indexOf('Gecko') >= 0 && !isKhtml) { isMoz = tv; }
+        if (isMoz) {
+          isFF = parseFloat(dua.split('Firefox/')[1]) || undefined;
+        }
+        if (document.all && !isOpera) {
+          isIE = parseFloat(dav.split('MSIE ')[1]) || undefined;
+        }
+      }
+
+      _detectBrowsers();
+
+      // end browser detection
+      
+      if (typeof console == 'undefined' || !console.log) {
+        var queue = [];
+        console = {};
+        //if (!debug) {
+        //  console.log = function() {};
+        //} else {
+          console.log = function(msg) {
+            var body = null;
+            var delay = false;
+
+            // IE can sometimes throw an exception if document.body is accessed
+            // before the document is fully loaded
+            try { 
+              body = document.getElementsByTagName('body')[0]; 
+            } catch (exp) {
+              delay = true;
+            }
+
+            // IE will sometimes have the body object but we can get the dreaded
+            // "Operation Aborted" error if we try to do an appendChild on it; a 
+            // workaround is that the doScroll method will throw an exception before 
+            // we can truly use the body element so we can detect this before
+            // any "Operation Aborted" errors
+            if (isIE) {
+              try {
+                document.documentElement.doScroll('left');
+              } catch (exp) {
+                delay = true;
+              }
+            }
+
+            if (delay) {
+              queue.push(msg);
+              return;
+            }
+
+            var p;
+            while (queue.length) {
+              var oldMsg = queue.shift();
+              p = document.createElement('p');
+              p.appendChild(document.createTextNode(oldMsg));
+              body.appendChild(p);
+            }
+
+            // display new message now
+            p = document.createElement('p');
+            p.appendChild(document.createTextNode(msg));
+            body.appendChild(p);
+          };
+
+          // IE has an unfortunate issue; under some situations calling
+          // document.body.appendChild can throw an Operation Aborted error,
+          // such as when there are many SVG OBJECTs on a page. This is a workaround
+          // to print out any queued messages until the page has truly loaded.
+          if (isIE) {
+            function flushQueue() {
+              while (queue.length) {
+                var oldMsg = queue.shift();
+                p = document.createElement('p');
+                p.appendChild(document.createTextNode(oldMsg));
+                document.body.appendChild(p);
+              }
+            }
+
+            var debugInterval = window.setInterval(function() {
+              if (document.readyState == 'complete') {
+                flushQueue();
+                window.clearTimeout(debugInterval);
+              }
+            }, 50);
+          }
+        //}
+      }
+      // end debug output methods
+
+
+      window.onload = function() {
+        // mxmlc -output Main.swf -use-network=false -warnings=false -compiler.strict=true -compiler.optimize=true -compiler.debug=false Main.as
+        console.log('loaded');
+        var flash = document.getElementById('myFlash');
+        console.log('flash='+flash);
+        
+        /*flash.sendToFlash = (function() {
+          return function() {
+            return this.CallFunction(
+                          "<invoke name=\"sendToFlash\" returntype=\"javascript\">" 
+                          + "<arguments><string>" + arguments[0] + "</string></arguments>"
+                          + "</invoke>");
+          };
+        })();*/
+        
+        var times = [];
+        for (var j = 0; j < 50; j++) {
+          var start = new Date().getTime();
+          for (var i = 0; i < 400; i++) {
+            flash.sendToFlash("{ type: 'invoke', "
+               + "method: 'setAttribute', "
+               + "elementGUID: '{23452345234523452345234523452345egsdfgsfgsfgsdfgsdfgsdfgsdfg}', "
+               + "attrNamespace: null, "
+               + "attrName: 'height', "
+               + "attrValue: '300' }");
+          }
+          var end = new Date().getTime();
+          var total = end - start;
+          times.push(total);
+        }
+        
+        var results = 0;
+        for (var j = 0; j < 50; j++) {
+          results += times[j];
+        }
+        results = results / 50;
+        console.log('average time='+results);
+        //end('sendToFlash');
+        //report();
+      }
+    </script>
+  </head>
+  
+  <body>
+    
+    <object
+      classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
+      codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/'swflash.cab#version=9,0,0,0"
+      width="100"
+      height="100"
+      id="myFlash"
+      name="myFlash"
+      style="display: inline; overflow: hidden;"
+      class="embedssvg"
+      >
+      <param name="allowScriptAccess" value="always"></param>
+      <param name="movie" value="Main.swf"></param>
+      <param name="quality" value="high"></param>
+      <param name="wmode" value="transparent"></param>
+      <param name="FlashVars" value="test1=test2"></param>
+    </object>
+    
+  </body>
+</html>

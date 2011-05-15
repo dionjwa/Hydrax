@@ -1,0 +1,392 @@
+/* Common CSS for all skins */
+
+/* 
+
+'''Notice to administrators!'''
+
+Any changes to [[MediaWiki:Monobook.css|Monobook.css]] or [[MediaWiki:Common.css|Common.css]] should be first proposed to [[Commons:Village Pump]]. 
+
+Always check with the [http://jigsaw.w3.org/css-validator/validator?uri=http%3A%2F%2Fcommons.wikimedia.org%2Fw%2Findex.php%3Ftitle%3DMediaWiki%3ACommon.css%26action%3Draw%26ctype%3Dtext%2Fcss&usermedium=all W3C CSS Validation Service] after any changes.
+
+Thank you. 
+
+(In [[w:Mozilla|Mozilla]] and [[w:Opera (web browser)|Opera]], you can test style changes dynamically with the [http://www.squarefree.com/bookmarklets/webdevel.html test styles] bookmarklet from squarefree.com. It pops up a window for adding style rules, and updates the page as you type.)
+
+*/
+
+
+/* Style for "notices" */
+.notice {
+   text-align: justify;
+   margin: 1em;
+   padding: 0.2em;
+}
+#disambig {
+   border-top: 3px double #ccc; 
+   border-bottom: 3px double #ccc;
+}
+#spoiler {
+   border-top: 2px solid #ddd;
+   border-bottom: 2px solid #ddd;
+}
+
+/* deprecated - use "messagebox standard-talk" */
+.Talk-Notice {
+   border: 1px solid #c0c090;
+   background-color: #f8eaba;
+   margin-bottom: 3px;
+   width: 80%;
+   border-spacing: 3px;
+   margin-left: auto;
+   margin-right: auto;
+}
+/* Make template background appear correctly on all browsers */
+.Talk-Notice td {
+   background: inherit;
+}
+
+/* Metadata */
+table.metadata {
+   border: 1px solid #aaa;
+   display: none;
+   speak: none;
+}
+
+/* Makes redirects appear in italics on [[Special:AllPages]] */
+.allpagesredirect, .redirect-in-category { font-style: italic; }
+
+/* Class for links with loudspeaker icon next to them */
+.audiolink a {
+   background: url("http://upload.wikimedia.org/wikipedia/commons/f/f7/Loudspeaker.png") center left no-repeat !important;
+   padding-left: 16px !important;
+   padding-right: 0 !important;
+}
+
+/* Make sure that "external references" from templates like [[Template:Ref]] 
+   do not get URL expansion, not even when printed. The anchor itself has 
+   class "external autonumber" and the url expansion is inserted when printing 
+   (see [http://commons.wikimedia.org/skins-1.5/common/commonPrint.css]) using the
+   ":after" pseudo-element.
+*/
+.nourlexpansion a.external.text:after,
+.nourlexpansion a.external.autonumber:after {
+   display: none !important;
+}
+
+/* deprecated - should be replaced with "plainlinks nourlexpansion" */
+.plainlinksneverexpand a {
+   background: none !important;
+   padding: 0 !important;
+}
+.plainlinksneverexpand a.external.text:after,
+.plainlinksneverexpand a.external.autonumber:after {
+   display: none !important;
+}
+
+/* When this would make a red link, hide it. For links where #ifexist cannot be used due to high number of requests. See [[meta:Help:Page_existence]]
+*/
+.hidden-redlink a.new {
+   display: none;
+   speak: none;
+}
+
+/* Message box templates */
+.messagebox {
+   border: 1px solid #aaa;
+   background-color: #f9f9f9;
+   width: 80%;
+   margin: 0 auto 1em;
+   padding: 0.2em;
+   text-align: justify;
+}
+.messagebox.merge {
+   border: 1px solid #cf9fff;
+   background-color: #f5edf5;
+   text-align: center;
+}
+.messagebox.cleanup {
+   border: 1px solid #9f9fff;
+   background-color: #efefff;
+   text-align: center;
+}
+.messagebox.standard-talk {
+   border: 1px solid #c0c090;
+   background-color: #f8eaba;
+}
+
+/* Infobox templates */
+.infobox {
+   border: 1px solid #aaa;
+   background-color: #f9f9f9;
+   color: black;
+   margin-bottom: 0.5em;
+   margin-left: 1em;
+   padding: 0.2em;
+   float: right;
+   clear: right;
+}
+.infobox td,
+.infobox th {
+   vertical-align: middle;
+}
+.infobox caption {
+   font-size: larger;
+   margin-left: inherit;
+}
+.infobox.bordered {
+   border-collapse: collapse;
+}
+.infobox.bordered td,
+.infobox.bordered th {
+   border: 1px solid #aaa;
+}
+.infobox.bordered .borderless td,
+.infobox.bordered .borderless th {
+   border: 0 solid #aaa;
+}
+.infobox.sisterproject {
+   width: 20em;
+   font-size: 90%;
+}
+
+.archive-box {
+   border: 1px solid #aaf;
+   background-color: #f2f2f9;
+   color: #000;
+   margin-bottom: 0.5em;
+   margin-left: 1em;
+   padding: 0.2em;
+   float: right;
+   clear: right;
+   text-align: center;
+}
+
+/* ===== Customisation of the interface ===== */
+
+/* Put a checker background at the image description page only visible if the image has transparent background */
+/* You may want to clear the gallery background for the main namespace on other projects as galleries are used in articles */
+#file img, .gallerybox .thumb img { background: url("http://upload.wikimedia.org/wikipedia/commons/5/5d/Checker-16x16.png") repeat; }
+
+/* Allow checkered background to be disabled by using <gallery class="nochecker"></gallery> */
+.nochecker .gallerybox .thumb img { background: white; }
+
+/* Moved upload link from toolbox into the MediaWiki:Sidebar thus suppressing the old duplicate */
+div#p-tb li#t-upload { display: none; }
+
+/* Removes underlines from links */
+.nounderlines a { text-decoration: none; }
+
+/* Makes the text of the "save" button bold */
+#wpSave { font-weight: bold; }
+
+/* Make sure the license dropdown of the upload form doesn't extend beyond the browser's
+   window, even if there are some long license descriptions. (If that happens, the description
+   box *also* goes beyond the right edge of the window.)
+*/
+select#wpLicense {
+   width: 100%;
+   overflow: hidden;
+}
+
+/* Give the upload form a little breathing space. */
+form#upload * td {
+   padding-bottom: 8px;
+}
+table#mw-upload-table * td {
+   padding-bottom: 8px;
+}
+
+/* And don't waste so much horizontal space on the upload form with that stupid fieldset
+form#mw-upload-form fieldset {
+   padding-left: 0.2em;
+   padding-right: 0.2em;
+}
+
+/* Show a border for warning messages on Special:Upload */
+td#wpDestFile-warning {
+   padding-bottom: 0;
+}
+#wpDestFile-warning ul {
+   margin-left: 0;
+   border: 1px solid #f00;
+   padding: 1.5em;
+}
+
+/* Styling for Abuse Filter tags */
+.mw-tag-markers {
+   font-style:italic;
+   font-size:90%;
+}
+
+/* Override rules that make edit link asymmetrical on talk pages and new section link skinnier than the rest */
+#p-cactions #ca-addsection a {
+   padding-left: 0.8em;
+   padding-right: 0.8em;
+}
+#p-cactions #ca-edit a {
+   padding-left: 0.8em;
+   padding-right: 0.8em;
+}
+
+/* Something nice for lists in RTL languages */
+div.RTL * ul {
+   margin-right: 10px;
+   display: table;
+}
+div.RTL * ol {
+   margin-right: 10px;
+   display: table;
+}
+
+/* Special:Search styles */
+.mw-search-results {
+   margin-left: 0;
+}
+.mw-search-results li {
+   margin: 0;
+   padding: 0.25em 1em;
+   border-bottom: 1px solid #d3daed;
+   background-color: #f6f8fc;
+   list-style-type: none;
+   list-style-image: none;
+}
+.mw-search-results table {
+   background-color: transparent;
+}
+.mw-search-result-data {
+   color: green;
+}
+
+/* Bytecounter colours */
+strong.mw-plusminus-neg { color: #c00; }
+strong.mw-plusminus-pos { color: #070; }
+span.mw-plusminus-neg { color: #900; }
+span.mw-plusminus-pos { color: #060; }
+
+/* wikitable/prettytable class for skinning normal tables */
+table.wikitable,
+table.prettytable {
+   margin: 1em 1em 1em 0;
+   background: #f9f9f9;
+   border: 1px solid #aaa;
+   border-collapse: collapse;
+}
+table.wikitable th, table.wikitable td,
+table.prettytable th, table.prettytable td {
+   border: 1px solid #aaa;
+   padding: 0.2em;
+}
+table.wikitable th,
+table.prettytable th {
+   background: #f2f2f2;
+   text-align: center;
+}
+table.wikitable caption,
+table.prettytable caption {
+   margin-left: inherit;
+   margin-right: inherit;
+}
+
+/* ===== Definitions for templates ===== */
+
+/* deprecated - allows selective hiding of markup in templates */
+.hiddenStructure {
+   display: none;
+   speak: none;
+}
+.hiddenStructure- {
+   display: none;
+   speak: none;
+}
+
+/* Template:DELheader */
+.delh {
+   background-color: #f3f9ff;
+   margin: 0 auto;
+   padding: 0 10px;
+   border: 1px solid #aaa;
+}
+
+/* Support for Template:IPA, Template:Unicode and Template:Polytonic.
+   The inherit declaration resets the font for all browsers except MSIE6.
+   The empty comment must remain.
+*/
+.IPA {
+   font-family: Chrysanthi Unicode, Doulos SIL, Gentium, GentiumAlt, Code2000, TITUS Cyberbit Basic, DejaVu Sans, Bitstream Vera Sans, Bitstream Cyberbit, Arial Unicode MS, Lucida Sans Unicode, Hiragino Kaku Gothic Pro, Matrix Unicode;
+   font-family /**/:inherit;
+}
+.Unicode {
+   font-family: TITUS Cyberbit Basic, Code2000, Doulos SIL, Chrysanthi Unicode, Bitstream Cyberbit, Bitstream CyberBase, Bitstream Vera, Thryomanes, Gentium, GentiumAlt, Visual Geez Unicode, Lucida Grande, Arial Unicode MS, Microsoft Sans Serif, Lucida Sans Unicode;
+   font-family /**/:inherit;
+}
+.polytonic {
+   font-family: Athena, Gentium, Palatino Linotype, Arial Unicode MS, Lucida Sans Unicode, Lucida Grande, Code2000; 
+   font-family /**/:inherit;
+}
+
+.utoc .tocnumber { display: none; }
+.utoc #toc ul,
+.utoc .toc ul {
+   line-height: 1.5em;
+   list-style-type: square;
+   margin: .3em 0 0 1.5em;
+   padding: 0;
+   list-style-image: url(skins-1.5/monobook/bullet.gif);
+}
+
+/* Ripped out of [[w:de:MediaWiki:Monobook.css]]. Necessary for displaying text in the upper right edge. */
+/* This is being used in [[Template:Shortcut]]. */
+#content span.coordinates a.external.text:after, #content span.coordinates a.external.autonumber:after { content: ""; }
+#content div.coordinates a.external.text:after, #content div.coordinates a.external.autonumber:after { content: ""; }
+
+#shortcut { display: none; }
+
+/* Template:Creator */ 
+table.creator {
+   border-collapse: collapse;
+   background-color: #f0f0ff;
+}
+table.creator th {
+   background: #e0e0ee;
+   vertical-align: top;
+}
+table.creator td {
+   background: #f0f0ff;
+   vertical-align: top;
+}
+table.creator td.creator-name {
+   font-weight: bold;
+}
+
+/* navigation boxes */
+table.navbox {
+   border: 1px solid #aaa;
+   width: 100%; 
+   margin: auto;
+   clear: both;
+   font-size: 88%;
+   text-align: center;
+   padding: 1px;
+   background: #fdfdfd;
+}
+table.navbox th {
+   padding-left: 1em;
+   padding-right: 1em;
+   background: #ccf;
+}
+
+/* Put on gallery_details the same styles as on gallery */
+table.gallery_details {
+   border: 1px solid #ccc;
+   margin: 2px;
+   padding: 2px;
+   background-color: #fff;
+}
+table.gallery_details tr { 
+   vertical-align: top;
+}
+table.gallery_details td {
+   vertical-align: top;
+   background-color: #f9f9f9;
+   border: 2px solid #fff;
+}

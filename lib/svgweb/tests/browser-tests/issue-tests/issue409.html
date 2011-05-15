@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="../../../src/svg.js" data-path="../../../src"></script>
+</head>
+<body>
+	<p>Once the page is fully loaded, click Setup, then Draw Square, then Scale Square.</p>
+	<input type="button" onclick="setupSVG()" value="Setup"/>
+	<input type="button" onclick="dostuff()" value="Draw square"/><br/>
+	<input type="button" onclick="dootherstuff()" value="Scale Square"/><br/>
+	<input type="button" onclick="dootherstuffnative()" value="Scale embedded square"/><br/>
+	<input type="button" onclick="dootherstuffobject()" value="Scale object square"/>
+	<h1>Dynamic</h1>
+	<div id="foo"></div>
+	<br/>
+	<h2>Embedded</h1>
+	<script type="image/svg+xml">
+	   <svg width="100px" height="100px" id="otherSVG">
+		<rect x="10" y="10" width="40" height="40" stroke="#ff0000"/>
+	   </svg>
+	</script>
+	<br/>
+	<h1>Object tag</h1>
+    <!--[if !IE]>-->
+      <object data="issue409.svg" type="image/svg+xml"
+              width="100px" height="100px" id="objectSVG"> <!--<![endif]-->
+    <!--[if lt IE 9]>
+      <object src="issue409.svg" classid="image/svg+xml"
+              width="100px" height="100px" id="objectSVG"> <![endif]-->
+    <!--[if gte IE 9]>
+      <object data="issue409.svg" type="image/svg+xml"
+              width="100px" height="100px" id="objectSVG"> <![endif]-->
+      </object>
+
+	<br/>
+	<script type="text/javascript">
+		var the_svg = null;
+		function setupSVG() {
+			var canvas = document.createElementNS(svgns,'svg');
+	    	canvas.setAttribute('width','100px');
+	    	canvas.setAttribute('height','100px');
+	    	canvas.setAttribute('viewBox', '0 0 100 100');
+		    canvas.addEventListener('SVGLoad', function(evt) {
+				the_svg = this;
+		    }, false);    
+			if (window.svgweb) {
+			  window.svgweb.appendChild(canvas,document.getElementById('foo'));
+			} else {
+			  document.getElementById('foo').appendChild(canvas);
+			}
+		}
+		function dostuff() {
+			var rect = document.createElementNS(svgns,'rect');
+			rect.setAttribute('x',10);
+			rect.setAttribute('y',10);
+			rect.setAttribute('width',40);
+			rect.setAttribute('height',40);
+			rect.setAttribute('stroke','#00ff00');
+			the_svg.appendChild(rect);
+		}
+		function dootherstuffobject() {
+			document.getElementById('objectSVG').contentDocument.rootElement.currentScale = 2.0;			
+		}
+		function dootherstuffnative() {
+			document.getElementById('otherSVG').currentScale = 2.0;
+		}
+		function dootherstuff() {
+			the_svg.currentScale = 2.0;
+		}
+	</script>
+</body>
+</html>

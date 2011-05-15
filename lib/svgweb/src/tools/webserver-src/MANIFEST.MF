@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Created-By: 1.5.0_19 (Apple Computer, Inc.)
+Main-Class: WebServer
+Class-Path: lib/jetty-6.1.19.jar lib/jetty-util-6.1.19.jar lib/servlet-api-2.5-20081211.jar

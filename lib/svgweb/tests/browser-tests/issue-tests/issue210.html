@@ -1,0 +1,63 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+
+	<head>
+		
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		
+		<title>SVG web: Issue 210 - "display" property not fully implemented in Flash</title>
+
+		<script src="../../../src/svg.js" data-path="../../../src/"></script>
+		
+		<script type="text/javascript">
+		
+		var i=0;
+
+		function init()	{
+			
+			if (i<100) {
+
+			i += 1;
+			
+			if (i/2 == Math.floor(i/2)) {
+			
+				document.getElementById('bar').setAttribute('display', 'none')
+				
+				} else {
+
+				document.getElementById('bar').setAttribute('display', 'inline')
+				
+				}
+			
+			setTimeout("init();",500);
+			
+			}
+		}
+        svgweb.addOnLoad(init);
+		</script>
+
+	</head>
+
+
+	<body>
+	
+	<h1>this rect changes its display property from "none" to "inline" every other timeout</h1>
+	
+		<script type="image/svg+xml">
+		
+			<svg viewBox="0 0 640 480" width="640px" height="480px">
+		
+				<g id="foo" fill="#ffb424">
+				
+				<rect id="bar" width="150" height="75" x="250" y="150" />
+				
+				</g>
+				
+			</svg>
+		
+		</script>
+		
+	</body>
+	
+</html>

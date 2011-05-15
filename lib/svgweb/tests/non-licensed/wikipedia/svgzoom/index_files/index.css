@@ -1,0 +1,109 @@
+/*  edit this file to customize the monobook skin for the entire site, but you're probably looking for [[Mediawiki:Common.css]].  This stylesheet is skin-specific. */
+
+/* Makes the background of a framed or thumbnail image white instead of gray. */
+/* Only visible with transparent images. */
+div.thumb div a img {
+    background-color:#fff;
+}
+
+/* Sets Commons background.  (being bold!) */
+
+body {
+  background: #fbf9ff url('http://upload.wikimedia.org/wikipedia/commons/a/a0/Commons-bg.png') 0 0 no-repeat;
+}
+
+
+/* Ripped out of [[w:de:MediaWiki:Monobook.css]]. Necessary for displaying text in the upper right edge. */
+/* This is being used in [[Template:Shortcut]]. */
+#shortcut {
+   display: inline;
+   position:absolute; z-index:1; border:none; background:none; right:12px; top:.3em; float:right; margin:0;
+   padding:0; line-height:1.5em; text-align:right; text-indent:0; font-size:90%; text-transform:none; white-space:normal;
+}
+
+/* NavFrame */
+div.BoxenVerschmelzen,
+div.NavFrame {
+   margin: 0;
+   padding: 2px;
+   border: 1px solid #aaa;
+   border-collapse: collapse;
+   font-size: 95%;
+}
+div.BoxenVerschmelzen div.NavFrame {
+   border-style: none;
+   border-style: hidden;
+}
+div.NavFrame + div.NavFrame {
+   border-top-style: none;
+   border-top-style: hidden;
+}
+div.NavPic {
+   background-color: #fff;
+   margin: 0;
+   padding: 2px;
+   float: left;
+}
+div.NavFrame div.NavHead {
+   height: 1.6em;
+   font-weight: bold;
+   font-size: 100%;
+   background-color: #efefef;
+   position:relative;
+}
+div.NavFrame p {
+   font-size: 100%;
+}
+div.NavFrame div.NavContent {
+   font-size: 100%;
+}
+div.NavFrame div.NavContent p {
+   font-size: 100%;
+}
+div.NavEnd {
+   margin: 0;
+   padding: 0;
+   line-height: 1px;
+   clear: both;
+}
+.NavToggle {
+ position:absolute; right:5px; font-weight:normal;
+}
+
+#wpUploadDescription { height: 160px;}
+
+/* hide heading for Main Page (Monobook skin only) */
+
+BODY.page-Main_Page H1.firstHeading {
+   display: none;
+}
+BODY.page-Hoofdpagina H1.firstHeading {
+   display: none;
+}
+BODY.page-Pagina_principale H1.firstHeading {
+   display: none;
+}
+BODY.page-Hauptseite H1.firstHeading {
+   display: none;
+}
+BODY.page-Hlavní_strana H1.firstHeading {
+   display: none;
+}
+
+/* extra buttons for edit dialog (from tr:) */
+.my-buttons {
+   padding: .5em;
+}
+.my-buttons a {
+   color: black;
+   background-color: #cde !important;
+   font-weight: bold;
+   font-size: .9em;
+   text-decoration: none;
+   border: thin #069 outset;
+   padding: 0 .1em .1em;
+}
+.my-buttons a:hover, .my-buttons a:active {
+   background-color: #bcd;
+   border-style: inset;
+}

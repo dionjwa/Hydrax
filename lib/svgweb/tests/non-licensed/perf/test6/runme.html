@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <script>
+      function debug(msg) {
+        console.log('FLASH: ' + msg);
+      }
+      
+      function getNumberOfRuns() {
+        var matches = window.location.search.match(/\?numRuns=([0-9]+)/);
+        runs = matches ? matches[1] : 200;
+        console.log('runs: ' + runs);
+        return runs;
+      }
+    </script>
+  </head>
+  <body>
+    <!--<EMBED SRC="Main.swf" WIDTH="400" HEIGHT="300" PLAY="true" LOOP="false" QUALITY="best" 
+    PLUGINSPAGE="http://www.macromedia.com/shockwave/download/index.cgi?P1_Prod_Version=ShockwaveFlash"
+    allowScriptAccess="always"> 
+    </EMBED>-->
+    
+    <embed width="890" height="649" class="embedssvg" style="visibility: visible;" pluginspage="http://www.macromedia.com/go/getflashplayer" flashvars="uniqueId=__svg__random___0__object&amp;sourceType=string&amp;clipMode=neither&amp;debug=true&amp;svgId=__svg__random___0__object" type="application/x-shockwave-flash" allowscriptaccess="always" swliveconnect="true" name="__svg__random___0__object" id="__svg__random___0__object" wmode="transparent" quality="high" src="Main.swf">
+      
+  </body>
+</html>

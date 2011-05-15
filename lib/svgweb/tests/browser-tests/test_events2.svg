@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<svg id="objectSVG2" xmlns="http://www.w3.org/2000/svg"
+     width="300" height="200"
+     onload="top.window.console.log('test 30 passed: dynamic object svg, svg onload markup, handler called'); if (this.nodeName == 'svg') { top.window.console.log('test 31 passed: dynamic object svg, svg onload markup, this is correct in handler'); } try { mywindowFunc32(); } catch(e) { top.window.console.log('test 32 failure:' +  (e.message || e)); } ">
+     
+  <script type="text/javascript"><![CDATA[
+
+
+    function mywindowFunc32() {
+        top.window.console.log('test 32 passed: dynamic object svg, svg onload markup, window is correct in handler');
+    }
+    function mywindowFunc35() {
+        top.window.console.log('test 35 passed: dynamic object svg, circle onclick markup, window is correct in handler');
+    }
+    function mywindowFunc38() {
+        top.window.console.log('test 38 passed: dynamic object svg, circle click addEventListener, window is correct in handler');
+    }
+    
+  ]]></script>
+ 
+  <circle id='objectCircle1' cx='50' cy='100' r='50' fill='yellow' onclick="top.window.console.log('test 33 passed: dynamic object svg, circle onclick markup, handler called'); if (this.nodeName == 'circle') { top.window.console.log('test 34 passed: dynamic object svg, circle onclick markup, this is correct in handler'); } try { mywindowFunc35(); } catch(e) { top.window.console.log('test 35 failure:' +  (e.message || e)); } " />
+  <circle id='objectCircle2' cx='150' cy='100' r='50' fill='brown'/>
+</svg>

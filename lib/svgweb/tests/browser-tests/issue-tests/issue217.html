@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../../../src/svg.js" data-path="../../../src/" data-debug="true"></script>
+    <script>
+      window.onsvgload = function() {
+        // replace another element
+        var svg = document.getElementById('svg2');
+        var circle = document.getElementById('replaceMe');
+        var rect = document.createElementNS(svgns, 'rect');
+        rect.setAttribute('x', 300);
+        rect.setAttribute('y', 300);
+        rect.setAttribute('width', 50);
+        rect.setAttribute('height', 50);
+        rect.setAttribute('fill', 'yellow');
+        svg.replaceChild(rect, circle);
+        // make sure changing the color of the replaced element doesn't do bad
+        // things
+        rect.setAttribute('fill', 'blue');
+      }
+    </script>
+  </head>
+  
+  <body>
+    <h2>You should see a blue rectangle, and should <em>not</em>
+        see a brown or yellow circle OR a yellow rectangle</h2>
+        
+    <script type="image/svg+xml">
+        <?xml version="1.0"?>
+        <svg
+           xmlns="http://www.w3.org/2000/svg"
+           width="450"
+           height="450"
+           id="svg2"
+           version="1.0">
+          <circle id="replaceMe" cx="300" cy="300" fill="brown" r="50"/>
+        </svg>
+    </script>
+    
+  </body>
+  
+</html>

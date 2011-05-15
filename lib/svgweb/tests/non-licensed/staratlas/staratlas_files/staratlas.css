@@ -1,0 +1,47 @@
+body {
+    margin: 0;
+    padding: 0;
+	background-color: #303030;
+	color: #ffffff;
+	font-family: Andale Mono, Andale Mono IPA, Lucida Console;
+	font-size: small;
+}
+
+p {
+	margin: 10px;
+}
+
+#logo {
+	width: 200px;
+	height: 50px;
+	margin-top: 10px;
+	margin-left: 5px;
+	margin-bottom: 10px;
+}
+
+#canvas {
+	height: 850px;
+	width: 850px;
+	margin-top: -60px;}
+	
+#time {
+	position: absolute;
+	width: 250px;
+	height: 25px;
+	top: 70px;
+	left: 730px;
+	color: #aaaaaa;
+	font-family: "Trebuchet MS", Verdana, Arial, sans-serif;
+	font-size: 11pt;	
+ }
+ 
+ #location {
+	position: absolute;
+	width: 250px;
+	height: 40px;
+	top: 30px;
+	left: 730px;
+	color: #aaaaaa;
+	font-family: "Trebuchet MS", Verdana, Arial, sans-serif;
+	font-size: 11pt;	
+}

@@ -1,0 +1,253 @@
+<html xmlns:svg="http://www.w3.org/2000/svg-20000303-stylable"><head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script src="../../../src/svg.js" data-path="../../../src/" type="text/javascript"></script><script>
+
+  var SVGDoc;
+
+
+	 function showreading(evt) {
+	  SVGDoc = document.getElementById('svg_main').contentDocument;
+	  var myx = evt.target.getAttribute('cx');
+	  var myy = evt.target.getAttribute('cy') - 40;
+	  var val = evt.target.getAttribute('val');
+	  var tim = evt.target.getAttribute('tim');
+	  var typ = evt.target.getAttribute('type');
+	  var units = evt.target.getAttribute('units');
+	  SVGDoc.getElementById('val').firstChild.data = typ + ": " + val + " " + units + " at " + tim;
+	  SVGDoc.getElementById('readings').setAttribute('transform','translate(' + myx + ',' + myy + ')');
+	 }
+
+	 function hidereading(evt) {
+	  SVGDoc = document.getElementById('svg_main').contentDocument;
+	  SVGDoc.getElementById('readings').setAttribute('transform','translate(500,800)');
+	 }
+
+ function plot(path) {
+  var n_path = SVGDoc.createElementNS('http://www.w3.org/2000/svg','path');
+  n_path.setAttribute( 'fill', 'none' );
+  n_path.setAttribute( 'd', path );
+  return n_path;
+ }
+ function point(x,y,val,tim,typ,units) {
+  var n_point = SVGDoc.createElementNS('http://www.w3.org/2000/svg', 'g');
+  var n_cir = SVGDoc.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  n_cir.setAttribute( 'cx', x );
+  n_cir.setAttribute( 'cy', y );
+  n_cir.setAttribute( 'r', 2 );
+  n_cir.setAttribute( 'val', val );
+  n_cir.setAttribute( 'tim', tim );
+  n_cir.setAttribute( 'type', typ );
+  n_cir.setAttribute( 'units', units );
+  n_point.appendChild(n_cir);
+  return n_point;
+ }
+ function add_text(x,y,t) {
+  var txt = SVGDoc.createElementNS('http://www.w3.org/2000/svg','text');
+  txt.setAttribute( 'x', x );
+  txt.setAttribute( 'y', y );
+  txt.appendChild(SVGDoc.createTextNode(t));
+  return txt;
+ }
+	function init(evt) {
+	//SVGDoc = document.embeds[0].getSVGDocument();
+	var obj = document.createElement('object', true);
+	obj.setAttribute('id', 'svg_main');
+	obj.setAttribute('type', 'image/svg+xml');
+	obj.setAttribute('data', 'issue270.svg');
+	obj.setAttribute('width', '90%');
+	obj.setAttribute('height', '85%');
+	obj.addEventListener(window.svgweb ? 'SVGLoad' : 'load', function() {
+
+	SVGDoc = document.getElementById('svg_main').contentDocument;
+
+        SVGDoc.getElementById("dataPoints").addEventListener("mouseover", showreading, false);
+        SVGDoc.getElementById("dataPoints").addEventListener("mouseout", hidereading, false);
+
+        SVGDoc.getElementById("fdataPoints").addEventListener("mouseover", showreading, false);
+        SVGDoc.getElementById("fdataPoints").addEventListener("mouseout", hidereading, false);
+
+        SVGDoc.getElementById("fdataPoints2").addEventListener("mouseover", showreading, false);
+        SVGDoc.getElementById("fdataPoints2").addEventListener("mouseout", hidereading, false);
+
+
+	var grid = SVGDoc.getElementById("grid");
+	var graphs = SVGDoc.getElementById("plot");
+	var fgraphs1 = SVGDoc.getElementById("fplot");
+	var fgraphs2 = SVGDoc.getElementById("fplot2");
+	var fgraphs3 = SVGDoc.getElementById("fplot3");
+	var xaxis = SVGDoc.getElementById("xShift");
+	var xLines = SVGDoc.getElementById("xLines");
+	var yaxis = SVGDoc.getElementById("y-axis");
+	var y2axis = SVGDoc.getElementById("y2-axis");
+	var points = SVGDoc.getElementById("dataPoints");
+	var fpoints1 = SVGDoc.getElementById("fdataPoints");
+	var fpoints2 = SVGDoc.getElementById("fdataPoints2");
+	var fpoints3 = SVGDoc.getElementById("fdataPoints3");
+	var readings = SVGDoc.getElementById("readings");
+	var legend = SVGDoc.getElementById("legend");
+	var action = SVGDoc.getElementById("actionRect");
+	var flood = SVGDoc.getElementById("floodRect");
+	var moderate = SVGDoc.getElementById("moderateRect");
+	var major = SVGDoc.getElementById("majorRect");
+	var stage = SVGDoc.getElementById("stage");
+	var nowLine = SVGDoc.getElementById("nowLine");
+	nowLine.setAttribute('transform','translate(52.3816666666667,0)');
+
+	var title = SVGDoc.getElementById("title");
+	var lastVal = SVGDoc.getElementById("lastVal");
+	var lastFlow = SVGDoc.getElementById("lastFlow");
+	var lastTim = SVGDoc.getElementById("lastTim");
+	var lastDay = SVGDoc.getElementById("lastDay");
+	var lastFlood = SVGDoc.getElementById("lastFlood");
+
+	xaxis.appendChild(add_text(1040,670,'Sat'));
+	xaxis.appendChild(add_text(896,670,'Fri'));
+	xaxis.appendChild(add_text(752,670,'Thu'));
+	xaxis.appendChild(add_text(608,670,'Wed'));
+	xaxis.appendChild(add_text(464,670,'Tue'));
+	xaxis.appendChild(add_text(320,670,'Mon'));
+	xaxis.appendChild(add_text(176,670,'Sun'));
+	xaxis.appendChild(add_text(1040,685,'09-12'));
+	xaxis.appendChild(add_text(896,685,'09-11'));
+	xaxis.appendChild(add_text(752,685,'09-10'));
+	xaxis.appendChild(add_text(608,685,'09-09'));
+	xaxis.appendChild(add_text(464,685,'09-08'));
+	xaxis.appendChild(add_text(320,685,'09-07'));
+	xaxis.appendChild(add_text(176,685,'09-06'));
+
+	xaxis.appendChild(add_text(1040,20,'09-12'));
+	xaxis.appendChild(add_text(896,20,'09-11'));
+	xaxis.appendChild(add_text(752,20,'09-10'));
+	xaxis.appendChild(add_text(608,20,'09-09'));
+	xaxis.appendChild(add_text(464,20,'09-08'));
+	xaxis.appendChild(add_text(320,20,'09-07'));
+	xaxis.appendChild(add_text(176,20,'09-06'));
+	xaxis.appendChild(add_text(1040,5,'8am'));
+	xaxis.appendChild(add_text(896,5,'8am'));
+	xaxis.appendChild(add_text(752,5,'8am'));
+	xaxis.appendChild(add_text(608,5,'8am'));
+	xaxis.appendChild(add_text(464,5,'8am'));
+	xaxis.appendChild(add_text(320,5,'8am'));
+	xaxis.appendChild(add_text(176,5,'8am'));
+
+	  
+
+
+	title.firstChild.data = "Ventura River at Foster Park (VRVC1)";
+
+	action.setAttributeNS(null,"height",(17.35-16.89)/0.025);
+	action.setAttributeNS(null,"y",640 - (17.35-(5))/0.025);
+
+	flood.setAttributeNS(null,"height",(17.61-17.35)/0.025);
+	flood.setAttributeNS(null,"y",640 - (17.61-(5))/0.025);
+
+	moderate.setAttributeNS(null,"height",(19.5-17.61)/0.025);
+	moderate.setAttributeNS(null,"y",640 - (19.5-(5))/0.025);
+
+	major.setAttributeNS(null,"height",(20 - 19.5)/0.025);
+
+	stage.appendChild(add_text(1035,640 - (16.89-(5))/0.025,'Action Flow: 15000'));
+	
+	stage.appendChild(add_text(1035,640 - (17.35-(5))/0.025,'Flood Flow: 18000'));
+	stage.appendChild(add_text(1035,640 - (17.61-(5))/0.025,'Moderate Flood Flow: 20000'));
+	stage.appendChild(add_text(1035,640 - (19.5-(5))/0.025,'Major Flood Flow: 40000'));
+
+	
+		yaxis.appendChild(add_text(130,645-(5-(5))/0.025,5));
+		y2axis.appendChild(add_text(1050,645-(5-(5))/0.025,0));
+		var y = 640 - (5-(5))/0.025;
+		grid.appendChild(plot("M 140 " + y.toString() + " L 1040 " + y.toString(),"gray"));
+	
+		yaxis.appendChild(add_text(130,645-(6-(5))/0.025,6));
+		y2axis.appendChild(add_text(1050,645-(6-(5))/0.025,10));
+		var y = 640 - (6-(5))/0.025;
+		grid.appendChild(plot("M 140 " + y.toString() + " L 1040 " + y.toString(),"gray"));
+	
+		yaxis.appendChild(add_text(130,645-(7-(5))/0.025,7));
+		y2axis.appendChild(add_text(1050,645-(7-(5))/0.025,40));
+		var y = 640 - (7-(5))/0.025;
+		grid.appendChild(plot("M 140 " + y.toString() + " L 1040 " + y.toString(),"gray"));
+	
+		yaxis.appendChild(add_text(130,645-(8-(5))/0.025,8));
+		y2axis.appendChild(add_text(1050,645-(8-(5))/0.025,90));
+		var y = 640 - (8-(5))/0.025;
+		grid.appendChild(plot("M 140 " + y.toString() + " L 1040 " + y.toString(),"gray"));
+	
+		yaxis.appendChild(add_text(130,645-(9-(5))/0.025,9));
+		y2axis.appendChild(add_text(1050,645-(9-(5))/0.025,200));
+		var y = 640 - (9-(5))/0.025;
+		grid.appendChild(plot("M 140 " + y.toString() + " L 1040 " + y.toString(),"gray"));
+	
+		yaxis.appendChild(add_text(130,645-(10-(5))/0.025,10));
+		y2axis.appendChild(add_text(1050,645-(10-(5))/0.025,420));
+		var y = 640 - (10-(5))/0.025;
+		grid.appendChild(plot("M 140 " + y.toString() + " L 1040 " + y.toString(),"gray"));
+	
+		yaxis.appendChild(add_text(130,645-(11-(5))/0.025,11));
+		y2axis.appendChild(add_text(1050,645-(11-(5))/0.025,800));
+		var y = 640 - (11-(5))/0.025;
+		grid.appendChild(plot("M 140 " + y.toString() + " L 1040 " + y.toString(),"gray"));
+	
+		yaxis.appendChild(add_text(130,645-(12-(5))/0.025,12));
+		y2axis.appendChild(add_text(1050,645-(12-(5))/0.025,1460));
+		var y = 640 - (12-(5))/0.025;
+		grid.appendChild(plot("M 140 " + y.toString() + " L 1040 " + y.toString(),"gray"));
+	
+		yaxis.appendChild(add_text(130,645-(13-(5))/0.025,13));
+		y2axis.appendChild(add_text(1050,645-(13-(5))/0.025,2520));
+		var y = 640 - (13-(5))/0.025;
+		grid.appendChild(plot("M 140 " + y.toString() + " L 1040 " + y.toString(),"gray"));
+	
+		yaxis.appendChild(add_text(130,645-(14-(5))/0.025,14));
+		y2axis.appendChild(add_text(1050,645-(14-(5))/0.025,4190));
+		var y = 640 - (14-(5))/0.025;
+		grid.appendChild(plot("M 140 " + y.toString() + " L 1040 " + y.toString(),"gray"));
+	
+		yaxis.appendChild(add_text(130,645-(15-(5))/0.025,15));
+		y2axis.appendChild(add_text(1050,645-(15-(5))/0.025,6710));
+		var y = 640 - (15-(5))/0.025;
+		grid.appendChild(plot("M 140 " + y.toString() + " L 1040 " + y.toString(),"gray"));
+	
+		yaxis.appendChild(add_text(130,645-(16-(5))/0.025,16));
+		y2axis.appendChild(add_text(1050,645-(16-(5))/0.025,10410));
+		var y = 640 - (16-(5))/0.025;
+		grid.appendChild(plot("M 140 " + y.toString() + " L 1040 " + y.toString(),"gray"));
+	
+		yaxis.appendChild(add_text(130,645-(17-(5))/0.025,17));
+		y2axis.appendChild(add_text(1050,645-(17-(5))/0.025,15730));
+		var y = 640 - (17-(5))/0.025;
+		grid.appendChild(plot("M 140 " + y.toString() + " L 1040 " + y.toString(),"gray"));
+	
+		yaxis.appendChild(add_text(130,645-(18-(5))/0.025,18));
+		y2axis.appendChild(add_text(1050,645-(18-(5))/0.025,23240));
+		var y = 640 - (18-(5))/0.025;
+		grid.appendChild(plot("M 140 " + y.toString() + " L 1040 " + y.toString(),"gray"));
+	
+		yaxis.appendChild(add_text(130,645-(19-(5))/0.025,19));
+		y2axis.appendChild(add_text(1050,645-(19-(5))/0.025,33630));
+		var y = 640 - (19-(5))/0.025;
+		grid.appendChild(plot("M 140 " + y.toString() + " L 1040 " + y.toString(),"gray"));
+	
+		yaxis.appendChild(add_text(130,645-(20-(5))/0.025,20));
+		y2axis.appendChild(add_text(1050,645-(20-(5))/0.025,47690));
+		var y = 640 - (20-(5))/0.025;
+		grid.appendChild(plot("M 140 " + y.toString() + " L 1040 " + y.toString(),"gray"));
+	
+		  lastVal.firstChild.data = "Last observed value: 5.66 ft / 3.3 cfs";
+		  lastFlood.firstChild.data = "Flood Flow: 18000";
+		  
+		  lastTim.firstChild.data = "07:00 10-Sep-2009";
+
+	   
+}, false);
+svgweb.appendChild(obj, document.body);
+
+	}
+    svgweb.addOnLoad(init);
+</script>
+<title>Ventura River at Foster Park</title>
+</head>
+<body>
+</body>
+</html>

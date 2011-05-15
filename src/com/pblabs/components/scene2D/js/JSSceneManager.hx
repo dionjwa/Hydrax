@@ -27,9 +27,13 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 	override public function addLayer (?layerName :String = null, ?cls :Class<Dynamic> = null, ?registerAsManager :Bool = false) :BaseSceneLayer<Dynamic, Dynamic>
 	{
 		if (cls == null || cls == JSLayer) {
+			#if use_html5_canvas_as_default_scene_layer
+			com.pblabs.util.Log.info("No JS class specified, defaulting to canvas rendering");
+			cls = com.pblabs.components.scene2D.js.canvas.SceneLayer;
+			#else
 			com.pblabs.util.Log.info("No JS class specified, defaulting to css rendering");
 			cls = com.pblabs.components.scene2D.js.css.SceneLayer;
-			// cls = com.pblabs.components.scene2D.js.canvas.SceneLayer;
+			#end
 		}
 		return super.addLayer(layerName, cls, registerAsManager);
 	}

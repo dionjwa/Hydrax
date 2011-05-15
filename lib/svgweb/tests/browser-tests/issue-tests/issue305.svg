@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+
+<svg version="1.1" 
+		 xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+		 width="200" height="300"
+     style="background-color: #D2B48C;"
+		 onload="">
+
+<g text-anchor="middle" font-family="Times-Roman" font-size="14" stroke="black">
+
+<g id="gcirc" visibility='hidden' class='circle'>
+<circle cx='50' cy='50' r='35' stroke='black' fill='red' stroke-dasharray='20 10' stroke-width='3' /> 
+<text stroke-width='1' stroke-dasharray="none" stroke="black" x='50' y='50' > Circle </text>
+</g>
+
+<g visibility='hidden' class='ellipse'>
+<ellipse cx='80' cy='80' rx='40' ry='50' stroke='black' fill='purple' stroke-dasharray='20 10' stroke-width='3' />
+<text stroke-width='1' stroke-dasharray="none" stroke="black" x='80' y='80' > Ellipse </text>
+</g>
+
+<g visibility='hidden' class='rectangle'>
+<rect x='45' y='100' width='150' height='75' stroke='black' fill='green' stroke-dasharray='20 10' stroke-width='3' />
+<text stroke-width='1' stroke-dasharray="none" stroke="black" x='120' y='150' > Rectangle </text>
+</g>
+
+</g>
+</svg>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Developer Notes</h1>
+<p>
+To build, you will have to pull from Subversion.
+
+
+<pre><code>
+svn checkout http://svgweb.googlecode.com/svn/trunk/ svgweb-read-only
+</code></pre>
+
+<p>Building is currently done consistently on Mac OS X and Linux.</p>
+<p>Windows XP is reported to build, but with some issues,
+using "MingW and msys" (see Issue 176 comment #4).</p>
+
+<p>
+You need the Flex/Flash SDK, the java runtime*, and the java sdk**.
+</p>
+<p>
+Respectively, that means mxmlc, java, and javac should be in your path.
+</p>
+
+<p>
+*If you do not compress the javascript, you do not need the java
+runtime</p>
+<p>**You can comment out the webserver.jar target if you have a web server
+and then you do not need the java sdk.</p>
+
+
+<p>Change to the top level directory where the Makefile is.</p>
+
+<p>
+To clobber the build:</p>
+
+<pre><code>
+make clean</code></pre>
+
+<p>
+To make a build:</p>
+
+<pre><code>
+make all</code></pre>
+
+<p>To control whether the JS is compressed (by default it is not):</p>
+
+<pre><code>
+make all COMPRESS=1</code></pre>
+
+<p>
+To control whether tests are copied into the build/ directory (not copied by default;
+these are located in tests/).</p>
+
+<pre><code>
+make all COPY_TESTS=1</code></pre>
+
+<p>
+Once building you will need to access things using the local web server as normal in
+build/. See the <a href="QuickStart.html">Quick Start guide</a> for details on running the 
+provided java webserver.</p>
+
+<p>If you have your own web server, you can run the following command, which will copy
+files to your web server directory. Substitute the appropriate directory for your system below.</p>
+
+
+<pre><code>
+make install SVGSRV=/var/www/html</code></pre>
+
+
+
+<h2>Flex Builder </h2>
+
+<p>
+We do not maintain project files for Flex Builder. However, it is not too dificult to import
+SVG Web into Flex Builder. You can take the following steps:</p>
+
+<p>
+1. Create a new ActionScript Project named svgweb.</p>
+
+<p>
+2. Navigate to the directory of the project.</p>
+(On my machine it is C:\Documents and Settings\username\My Documents\Flex Builder 3\svgweb)</p>
+
+<p>
+3. Copy over the SVG Web src/org directory into the flex src directory.</p>
+
+<p>
+4. Import the files. Select File Import, then select File System and the select the directories.</p>
+
+<p>Actually, I don't remember if I imported the directory in-place or from a separate location in the file system.
+You may have to try it both ways</p>
+
+<p>
+5. Place the svg file you want to test in the org directory.</p>
+
+<p>
+6. Create a class in the org directory to test with. The following worked for me:</p>
+
+<pre><code>
+package
+{
+    import org.svgweb.SVGViewerFlash;
+    import flash.display.Sprite;
+
+    [SWF(frameRate="40", width="800", height="600")]
+    public class SVGViewerFlashTest extends Sprite
+    {
+        private var svgImage:SVGViewerFlash;
+
+        public function SVGViewerFlashTest()
+        {
+            super();
+            svgImage = new SVGViewerFlash();
+            this.addChild(svgImage);
+            svgImage.loadURL("i369.svg");
+        }
+
+    }
+}
+</code></pre>
+
+<p>
+Note that there is another flash oriented example for SVG Web here: src/org/svgweb/tests/SVGViewerFlashTest.as</p>
+
+<p>
+You can see how to load these examples using straight html in samples/flash-samples/ and samples/flex-samples/.</p>
+
+<p>
+7. Import the new class file into flex builder</p>
+
+<p>
+8. In the Flex Navigator, right click on the new class file and "Set as Default Application"</p>
+
+<p>
+9. Modify the index.template.html file in the html-template directory.</p>
+
+<p>
+You have to modify the FlashVars if you want to pass parameters to svgweb. This is probably not necessary if you are hard coding the URL as I have done above.</p>
+
+<p>
+If you want to load different URLs, you could adapt code from src/org/svgweb/tests/svgflextest.mxml, which gets the URL from the FlashVars. </p>
+
+</p>
+Here is a diff of the changes against the default index.template.html file:</p>
+
+<pre><code>
+65c65
+&lt;       "FlashVars", "MMredirectURL="+MMredirectURL+'&amp;MMplayerType='+MMPlayerType+'&amp;MMdoctitle='+MMdoctitle+"",
+---
+&gt;       "FlashVars", "sourceType=url_svg&amp;svgURL=i369.svg",
+85a86
+&gt;           "FlashVars", "sourceType=url_svg&amp;svgURL=i369.svg",
+105a107
+&gt;                         &lt;param name="FlashVars" value="sourceType=url_svg&amp;svgURL=i369.svg"&gt;
+</code></pre>
+
+</body>
+</html>

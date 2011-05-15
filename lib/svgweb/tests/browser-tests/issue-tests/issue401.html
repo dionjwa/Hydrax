@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <script src="../../../src/svg.js" 
+                data-path="../../../src" 
+                data-debug="true" 
+                type="text/javascript"></script>
+                
+        <script type="text/javascript">
+      		var testTranslate = function() {
+    				var svgRoot = document.getElementById('svgobj').contentDocument.rootElement;
+    				var txs = svgRoot.currentTranslate.getX();
+    				var tys = svgRoot.currentTranslate.getY();
+				
+    				console.log("Starting translate, currentTranslate is: " + txs + ', ' + tys);
+				
+    				svgRoot.currentTranslate.setXY(txs + 20, tys + 20);
+    				console.log("After setting with setXY(), currentTranslate is: " 
+    				             + svgRoot.currentTranslate.getX() + ', ' 
+    				             + svgRoot.currentTranslate.getY()
+    				             + " (should be 20, 20)");
+				
+    				svgRoot.currentTranslate.setX(txs + 20);
+    				svgRoot.currentTranslate.setY(tys + 20);
+    				console.log("After setting with setX() and setY(), "
+    				             + "currentTranslate is: " 
+    				             + svgRoot.currentTranslate.getX() + ', ' 
+    				             + svgRoot.currentTranslate.getY()
+    				             + " (should be 20, 20)");
+  			}
+			
+  			function init() {
+  				var url = '../../../samples/svg-files/couch.svg';
+  				var obj = document.createElement('object', true);
+  				obj.id = 'svgobj';
+  				obj.setAttribute('type', 'image/svg+xml');
+  				obj.setAttribute('data', url);
+  				obj.setAttribute('width', '500');
+  				obj.setAttribute('height', '500');
+  				obj.addEventListener('SVGLoad', function(){
+  					testTranslate();
+  				}, false);
+				
+  				var div = document.getElementById('container');
+
+  				if (window.svgweb) {
+  				  window.svgweb.appendChild(obj, div);
+  				} else {
+  				  div.appendChild(obj);
+  				}
+  			}
+            if (window.svgweb) {
+                window.svgweb.addOnLoad(init);
+            } else {
+                window.onload = init;
+            }
+    	</script>
+    </head>
+    <body>
+    	<div id="container"></div>
+    </body>
+</html>

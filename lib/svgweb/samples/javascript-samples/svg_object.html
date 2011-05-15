@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <!-- Tests using the OBJECT syntax to embed an SVG file -->
+    
+  <head>
+    
+    <!-- Optional meta tag; if left off, we default to only using the Flash
+         renderer for Internet Explorer and using native support on other
+         browsers. You can force the Flash renderer for all browsers by
+         setting the META tag below to true. -->
+    <!-- meta name="svg.render.forceflash" content="true" / -->  <!-- disabled  -->
+    
+    <script src="../../src/svg.js" data-path="../../src/"></script>
+  </head>
+  
+  <body>
+    <h1>Tests using the OBJECT syntax to embed an SVG file</h1>
+
+    <!--[if !IE]>-->
+      <object data="../svg-files/photos.svg" type="image/svg+xml"
+              width="1250" height="750" id="mySVGObject"> <!--<![endif]-->
+    <!--[if lt IE 9]>
+      <object src="../svg-files/photos.svg" classid="image/svg+xml"
+              width="1250" height="750" id="mySVGObject"> <![endif]-->
+    <!--[if gte IE 9]>
+      <object data="../svg-files/photos.svg" type="image/svg+xml"
+              width="1250" height="750" id="mySVGObject"> <![endif]-->
+      </object>
+
+    <h1>Test HTML H1</h1>
+  </body>
+</html>

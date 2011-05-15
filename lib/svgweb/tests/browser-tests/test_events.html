@@ -1,0 +1,467 @@
+<html>
+
+  <!-- Runs a suite of unit tests against our JavaScript to ensure SVG
+       events work correctly.
+       See map of current status and corresponding Issues at:
+       http://spreadsheets.google.com/ccc?key=0AltsRkRxjMyOdC1jc0lsaG43RDlFaFZQM0dsUVAzZlE&hl=en
+   -->
+
+  <head>
+    <meta name="svg.render.forceflash" content="true" />
+    
+    <script src="../../src/svg.js" data-path="../../src/" data-debug="true">
+    </script>
+    <script src="testUtil.js"></script>
+    
+    <script>
+      // if true, we print out each assertion as we run them; helps with
+      // identifying where an assertion failed by printing the ones before it
+      var printAsserts = false;
+      
+      // used to record whether a Flash error has occurred asynchronously
+      // so we can halt testing and report the failure
+      var flashError = false;
+
+      function mywindowFunc4() {
+        top.window.console.log('test 4 failed: html object svg, svg onload markup, window is incorrect in handler');
+      }
+      function mywindowFunc7() {
+        top.window.console.log('test 7 failed: html object svg, svg onclick markup, window is incorrect in handler');
+      }
+      function mywindowFunc10() {
+        top.window.console.log('test 10 failed: html object svg, svg click addEventListener, window is incorrect in handler');
+      }
+      function mywindowFunc13() {
+        top.window.console.log('test 13 failed: html object svg, circle onclick = func, window is incorrect in handler');
+      }
+      function mywindowFunc16() {
+        top.window.console.log('test 16 passed: html object svg, circle onclick = func, window is correct in handler');
+      }
+      function mywindowFunc19() {
+        top.window.console.log('test 19 passed: html object svg, svg onload markup, window is correct in handler');
+      }
+      function mywindowFunc22() {
+        top.window.console.log('test 22 passed: html svg, circle onclick markup, window is correct in handler');
+      }
+      function mywindowFunc25() {
+        top.window.console.log('test 25 passed: html svg, circle addEventListener click, window is correct in handler');
+      }
+      function mywindowFunc28() {
+        top.window.console.log('test 28 passed: html svg, circle onclick=func , window is correct in handler');
+      }
+      function mywindowFunc32() {
+        top.window.console.log('test 32 failed: html svg, svg onload markup , window is not correct in handler');
+      }
+      function mywindowFunc35() {
+        top.window.console.log('test 35 failed: html svg, circle onclick markup , window is not correct in handler');
+      }
+      function mywindowFunc38() {
+        top.window.console.log('test 38 failed: html svg, circle click addeventlistener, window is not correct in handler');
+      }
+      function mywindowFunc41() {
+        top.window.console.log('test 41 failed: html svg, circle onclick = func, window is not correct in handler');
+      }
+      function mywindowFunc45() {
+        top.window.console.log('test 45 passed: dynamic svg, svg onload markup , window is correct in handler');
+      }
+      function mywindowFunc48() {
+        top.window.console.log('test 48 passed: dynamic svg, svg onload = func , window is correct in handler');
+      }
+      function mywindowFunc51() {
+        top.window.console.log('test 51 passed: dynamic svg, circle onclick markup , window is correct in handler');
+      }
+      function mywindowFunc54() {
+        top.window.console.log('test 54 passed: dynamic svg, circle click addeventlistener , window is correct in handler');
+      }
+      function mywindowFunc57() {
+        top.window.console.log('test 57 passed: dynamic svg, circle onclick = func , window is correct in handler');
+      }
+
+      window.onsvgload = function() {
+        function test1(evt) {
+          top.window.console.log("test 1 passed: html object loaded svg fired SVGLoad event handler that was added in window.onsvgload");
+        }
+        function test8(evt) {
+          top.window.console.log("test 8 passed: html object loaded svg fired click event handler that was added in window.onsvgload");
+          try {
+            if (this.nodeName == 'circle') {
+              top.window.console.log("test 9 passed: html object loaded svg fired click event handler and 'this' is correct");
+            }
+          }
+          catch (e) {
+            top.window.console.log("test 9 failed: " + (e.message || e));
+          }
+          try {
+            mywindowFunc10();
+          }
+          catch (e) {
+            top.window.console.log("test 10 failed: " + (e.message || e));
+          }
+        }
+        function test11(evt) {
+          top.window.console.log("test 11 passed: html object loaded svg fired onclick = func handler that was added in window.onsvgload");
+          try {
+            if (this.nodeName == 'circle') {
+              top.window.console.log("test 12 passed: html object loaded svg fired onclick= func event handler and 'this' is correct");
+            }
+          }
+          catch (e) {
+            top.window.console.log("test 12 failed: " + (e.message || e));
+          }
+          try {
+            mywindowFunc13();
+          }
+          catch (e) {
+            top.window.console.log("test 13 failed: " + (e.message || e));
+          }
+        }
+
+        // Run Tests
+        if (document.getElementById('testObject')) {
+          if (document.getElementById('testObject').addEventListener) {
+            document.getElementById('testObject').addEventListener('SVGLoad', test1, false);
+          }
+          else {
+            console.log("test 1 failed: html object is unpatched when window.onsvgload is called on IE");
+          }
+          if (document.getElementById('testObject').contentDocument) {
+            document.getElementById('testObject').contentDocument.getElementById('objectCircle1').addEventListener('click', test8, false);
+            document.getElementById('testObject').contentDocument.getElementById('objectCircle2').onclick = test11;
+          }
+          else {
+            console.log("test 8 failed: html object is unpatched when window.onsvgload is called");
+          }
+        }
+
+
+        function test14(evt) {
+          top.window.console.log("test 14 passed: html svg fired SVGLoad handler that was added in window.onsvgload");
+          try {
+            if (this.nodeName == 'svg') {
+              top.window.console.log("test 15 passed: html svg fired SVGLoad handler and 'this' is correct");
+            }
+          }
+          catch (e) {
+            top.window.console.log("test 15 failed: " + (e.message || e));
+          }
+          try {
+            mywindowFunc16();
+          }
+          catch (e) {
+            top.window.console.log("test 16 failed: " + (e.message || e));
+          }
+        }
+
+        function test23(evt) {
+          top.window.console.log("test 23 passed: html svg fired addEventListener click handler that was added in window.onsvgload");
+          try {
+            if (this.nodeName == 'circle') {
+              top.window.console.log("test 24 passed: html svg fired addEventListener click handler and 'this' is correct");
+            }
+          }
+          catch (e) {
+            top.window.console.log("test 24 failed: " + (e.message || e));
+          }
+          try {
+            mywindowFunc25();
+          }
+          catch (e) {
+            top.window.console.log("test 25 failed: " + (e.message || e));
+          }
+        }
+        function test26(evt) {
+          top.window.console.log("test 26 passed: html svg fired onclick = func handler that was added in window.onsvgload");
+          try {
+            if (this.nodeName == 'circle') {
+              top.window.console.log("test 27 passed: html svg fired onclick = func handler and 'this' is correct");
+            }
+          }
+          catch (e) {
+            top.window.console.log("test 27 failed: " + (e.message || e));
+          }
+          try {
+            mywindowFunc28();
+          }
+          catch (e) {
+            top.window.console.log("test 28 failed: " + (e.message || e));
+          }
+        }
+        function test36(evt) {
+          top.window.console.log("test 36 passed: html object loaded svg fired click event handler that was added in window.onsvgload");
+          try {
+            if (this.nodeName == 'circle') {
+              top.window.console.log("test 37 passed: html object loaded svg fired click event handler and 'this' is correct");
+            }
+          }
+          catch (e) {
+            top.window.console.log("test 37 failed: " + (e.message || e));
+          }
+          try {
+            mywindowFunc38();
+          }
+          catch (e) {
+            top.window.console.log("test 38 failed: " + (e.message || e));
+          }
+        }
+        function test39(evt) {
+          top.window.console.log("test 39 passed: html svg fired onclick = func handler that was added in window.onsvgload");
+          try {
+            if (this.nodeName == 'circle') {
+              top.window.console.log("test 40 passed: html svg fired onclick = func handler and 'this' is correct");
+            }
+          }
+          catch (e) {
+            top.window.console.log("test 40 failed: " + (e.message || e));
+          }
+          try {
+            mywindowFunc41();
+          }
+          catch (e) {
+            top.window.console.log("test 41 failed: " + (e.message || e));
+          }
+        }
+
+        function test52(evt) {
+          top.window.console.log("test 52 passed: dynamic svg, circle click addEventListener event handler that was added in window.onsvgload");
+          try {
+            if (this.nodeName == 'circle') {
+              top.window.console.log("test 53 passed: dynamic svg, click addEventListener event handler and 'this' is correct");
+            }
+          }
+          catch (e) {
+            top.window.console.log("test 53 failed: " + (e.message || e));
+          }
+          try {
+            mywindowFunc54();
+          }
+          catch (e) {
+            top.window.console.log("test 54 failed: " + (e.message || e));
+          }
+        }
+        function test55(evt) {
+          top.window.console.log("test 55 passed: dynamic svg fired onclick = func handler that was added in window.onsvgload");
+          try {
+            if (this.nodeName == 'circle') {
+              top.window.console.log("test 56 passed: dynamic svg fired onclick = func handler and 'this' is correct");
+            }
+          }
+          catch (e) {
+            top.window.console.log("test 56 failed: " + (e.message || e));
+          }
+          try {
+            mywindowFunc57();
+          }
+          catch (e) {
+            top.window.console.log("test 57 failed: " + (e.message || e));
+          }
+        }
+
+
+
+        // Run More Tests
+        if (document.getElementById('testSVG1')) {
+          try {
+            if (document.getElementById('testSVG1').addEventListener) {
+              document.getElementById('testSVG1').addEventListener('SVGLoad', test14, false);
+              document.getElementById('inlineCircle1').addEventListener('click', test23, false);
+            }
+            else {
+              top.window.console.log("test 14 failed: html svg is unpatched when window.onsvgload is called on IE");
+            }
+          }
+          catch (e) {
+            top.window.console.log("test 14 failed: " + (e.message || e));
+          }
+        }
+        else {
+          top.window.console.log("test 14 failed: inline svg is not present when window.onsvgload is called");
+        }
+
+        if (document.getElementById('testSVG2')) {
+          if (document.getElementById('inlineCircle2')) {
+            document.getElementById('inlineCircle2').onclick = test26;
+          }
+          else {
+            top.window.console.log("test 26 failed: inline svg is not present when window.onsvgload is called");
+          }
+        }
+        else {
+          top.window.console.log("test 26 failed: inline svg is not present when window.onsvgload is called");
+        }
+
+        // Run More Tests
+
+        var obj = document.createElement('object', true);
+        obj.setAttribute('id', 'dynamicObjectSVG');
+        obj.setAttribute('type', 'image/svg+xml');
+        obj.setAttribute('data', 'test_events2.svg');
+        obj.setAttribute('width', '200');
+        obj.setAttribute('height', '200');
+
+        obj.addEventListener('svgload', function() {
+          top.window.console.log("test 29 passed: dynamic object, addeventlistener svgload, handler called ");
+          top.window.document.getElementById('dynamicObjectSVG').contentDocument.getElementById('objectCircle1').addEventListener('click', test36, false);
+          top.window.document.getElementById('dynamicObjectSVG').contentDocument.getElementById('objectCircle2').onclick = test39;
+        }, false);
+        svgweb.appendChild(obj, document.body);
+
+
+        window.purpleSVG = document.createElementNS(svgns, 'svg');
+        window.purpleSVG.setAttribute('id', 'dynamicSVG');
+        window.purpleSVG.setAttribute('width', '200');
+        window.purpleSVG.setAttribute('height', '200');
+        window.purpleSVG.setAttribute('viewBox', '0 0 200 200');
+        window.purpleSVG.setAttribute('onload', "top.window.console.log('test 43 passed: dynamic svg, svg onload markup, handler called'); if (this.nodeName == 'svg') { top.window.console.log('test 44 passed: dynamic svg, svg onload markup, this is correct in handler'); } try { mywindowFunc45(); } catch(e) { top.window.console.log('test 45 failure:' +  (e.message || e)); }");
+        function purpleLoad() {
+          top.window.console.log("test 42 passed: dynamic svg, addeventlistener svgload, handler called ");
+
+          var backRect = top.window.document.createElementNS(svgns, 'rect');
+          backRect.setAttribute('width', '200');
+          backRect.setAttribute('height', '200');
+          backRect.setAttribute('fill', 'red');
+          this.appendChild(backRect);
+          top.window.console.log("test 58 passed: dynamic svg, addeventlistener svgload, this is correct");
+          if (top.window == window) {
+              top.window.console.log("test 59 passed: dynamic svg, addeventlistener svgload, window is correct");
+          }
+          var purpleCircle = top.window.document.createElementNS(svgns, 'circle');
+          purpleCircle.setAttribute('cx', '50');
+          purpleCircle.setAttribute('cy', '100');
+          purpleCircle.setAttribute('r', '50');
+          purpleCircle.setAttribute('fill', 'purple');
+          purpleCircle.setAttribute('onclick', "top.window.console.log('test 49 passed: dynamic svg, circle onclick markup, handler called'); if (this.nodeName == 'circle') { top.window.console.log('test 50 passed: dynamic svg, circle onclick markup, this is correct in handler'); } try { mywindowFunc51(); } catch(e) { top.window.console.log('test 51 failure:' +  (e.message || e)); } ");
+          purpleCircle.addEventListener('click', test52, false);
+          this.appendChild(purpleCircle);
+          var orangeCircle = top.window.document.createElementNS(svgns, 'circle');
+          orangeCircle.setAttribute('cx', '100');
+          orangeCircle.setAttribute('cy', '100');
+          orangeCircle.setAttribute('r', '50');
+          orangeCircle.setAttribute('fill', 'orange');
+          orangeCircle.onclick = test55;
+          this.appendChild(orangeCircle);
+        }
+        window.purpleSVG.addEventListener('SVGLoad', purpleLoad, false);
+        svgweb.appendChild(window.purpleSVG, document.body);
+
+        function test46() {
+            top.window.console.log('test 46 passed: dynamic svg, svg onload = func, handler called');
+            if (this.nodeName == 'svg') {
+              top.window.console.log('test 47 passed: dynamic svg, svg onload = func, this is correct in handler');
+            }
+            try {
+              mywindowFunc48();
+            }
+            catch(e) {
+              top.window.console.log('test 48 failure:' +  (e.message || e));
+            }
+        }
+        window.testOnloadSVG = document.createElementNS(svgns, 'svg');
+        window.testOnloadSVG.setAttribute('id', 'dynamicSVG2');
+        window.testOnloadSVG.setAttribute('width', '1');
+        window.testOnloadSVG.setAttribute('height', '1');
+        window.testOnloadSVG.setAttribute('viewBox', '0 0 200 200');
+        window.testOnloadSVG.onload = test46;
+        svgweb.appendChild(window.testOnloadSVG, document.body);
+      }
+
+      svgweb.addOnLoad(function() {
+        var startTime = new Date().getTime();
+        
+        // TODO: Get these into a separate test page with JSUnit testing
+        // to assert correct results
+        
+        // override svgweb._fireFlashError so we can know when errors
+        // have occurred
+        svgweb._fireFlashError = function(logMessage) {
+          flashError = true;
+          assertFailed(logMessage);
+        }
+        
+
+        // test mouse and click events
+        
+        // remove mouse events using removeEventListener()
+        
+        // add mouse events dynamically using on* form
+        //  * have code where we assign a function pointer:
+        //      myCircle.onmouseup = someFunc
+        //  * have code where we assign a string; make sure you use both
+        //    'evt' and 'this' keywords: 
+        //      myCircle.onmouseup = "someFunc(evt, this)"
+        //  * have code where we assign a string but don't run a final
+        //    function, such as alert('foobar')
+        // do this for circle, image, g, svg, and text
+        // on the MouseEvent, test the following values for correctness:
+        // screenX, screenY, clientX, clientY, ctrlKey, shiftKey, metaKey,
+        // button, relatedTarget, detail
+        
+        // remove mouse and click events dynamically using on* form
+        
+        // Make sure mouse events in the markup work (i.e. onmouseup):
+        //  * Make sure they show up externally when we call myCircle.onmouseup
+        //  * In the markup, assign a string handler that uses 'evt' and 'this'.
+        //  * In the markup, have code where we assign a string but don't run 
+        //    a final function, such as alert('foobar')
+        // do this for circle, image, g, svg, text, and USE
+        
+        // ensure event listeners + adding nodes works while unattached.
+        // create an element, addEventListener while unattached, then add
+        // to DOM. Make sure event listener works. Repeat for event listeners
+        // being added with on* form.
+        
+        // ensure event listeners + removing nodes works.
+        // dynamically create an element, add an event listener using
+        // addEventListener, then remove it; make sure events don't 
+        // propagate. Repeat for event listeners being added with on* form.
+        
+        // remove an element from the DOM that has an event listener,
+        // remove event while unattached from DOM, then reattach node to DOM.
+        // make sure event doesn't show up anymore. Repeat for event listeners
+        // add with both addEventListener() and on* forms.
+        
+        // test keyboard events
+        
+        var endTime = new Date().getTime();
+        
+        console.log('total test time='+(endTime - startTime) + 'ms');
+        
+        // set a slight timeout before reporting success in case a flash
+        // error occurred
+        window.setTimeout(function() {
+          if (!flashError) {
+            console.log('All automatic tests completed');
+            console.log('Click on the red circle to run tests 5 to 10');
+            console.log('Click on the blue circle to run tests 11 to 13');
+            console.log('Click on the grey circle to run tests 20 to 25');
+            console.log('Click on the green circle to run tests 26 to 28');
+            console.log('Click on the yellow circle to run tests 33 to 38');
+            console.log('Click on the brown circle to run tests 39 to 41');
+            console.log('Click on the purple circle to run tests 49 to 54');
+            console.log('Click on the orange circle to run tests 55 to 57');
+          }
+        }, 200);
+
+      });
+    </script>
+  </head>
+  
+  <body>
+    
+    <!--[if IE]><object id="testObject" src="test_events.svg" classid="image/svg+xml"  width="300" height="200" ><![endif]-->
+    <!--[if !IE]>--><object id="testObject"  data="test_events.svg" type="image/svg+xml" width="300" height="200" ><!--<![endif]--></object>
+
+    <script type="image/svg+xml">
+      <svg id="testSVG1" width="200" height="200" border="1px solid black;" onload="top.window.console.log('test 17 passed: inline svg, svg onload markup, handler called'); if (this.nodeName == 'svg') { top.window.console.log('test 18 passed: inline svg, svg onload markup, this is correct in handler'); } try { mywindowFunc19(); } catch(e) { top.window.console.log('test 19 failure: ' +  (e.message || e)); } " >
+
+          <circle id='inlineCircle1' cx='100' cy='100' r='50' fill='grey' onclick="top.window.console.log('test 20 passed: html object svg, circle onclick markup, handler called'); if (this.nodeName == 'circle') { top.window.console.log('test 21 passed: html object svg, circle onclick markup, this is correct in handler'); } try { mywindowFunc22(); } catch(e) { top.window.console.log('test 22 failure:' +  (e.message || e)); } " />
+      </svg>
+    </script>
+    <script type="image/svg+xml">
+      <svg id="testSVG2" width="200" height="200" border="1px solid black;">
+          <circle id='inlineCircle2' cx='100' cy='100' r='50' fill='green'/>
+      </svg>
+    </script>
+
+
+  </body>
+</html>

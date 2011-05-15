@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200" >
+<circle cx='60'  cy='80'  r='5' stroke='black' fill='none'/>
+<circle cx='80'  cy='80'  r='5' stroke='black' fill='none'/>
+<circle cx='100' cy='80'  r='5' stroke='black' fill='none'/>
+<circle cx='120' cy='80'  r='5' stroke='black' fill='none'/>
+<circle cx='140' cy='80'  r='5' stroke='black' fill='none'/>
+<circle cx='60'  cy='100' r='5' stroke='black' fill='none'/>
+<circle cx='80'  cy='100' r='5' stroke='black' fill='none'/>
+<circle cx='100' cy='100' r='5' stroke='black' fill='none'/>
+<circle cx='120' cy='100' r='5' stroke='black' fill='none'/>
+<circle cx='140' cy='100' r='5' stroke='black' fill='none'/>
+<circle cx='60'  cy='120' r='5' stroke='black' fill='none'/>
+<circle cx='80'  cy='120' r='5' stroke='black' fill='none'/>
+<circle cx='100' cy='120' r='5' stroke='black' fill='none'/>
+<circle cx='120' cy='120' r='5' stroke='black' fill='none'/>
+<circle cx='140' cy='120' r='5' stroke='black' fill='none'/>
+</svg>

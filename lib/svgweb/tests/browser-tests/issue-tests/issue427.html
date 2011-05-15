@@ -1,0 +1,48 @@
+<html>
+<head>
+<title>Issue 427 Test case</title>
+
+<style>
+object, embed, svg {
+	border	: 1px solid red;
+}
+</style>
+
+<script src="../../../src/svg.js" data-path="../../../src/"></script>
+<script type="text/javascript">
+
+var root;    
+function init() {
+	root = document.createElementNS(svgns, 'svg');
+	root.setAttribute('width', '500');
+	root.setAttribute('height', '500');
+	root.setAttribute('viewBox', '0 0 500 500');
+	root.addEventListener(window.svgweb ? 'SVGLoad' : 'load', function(evt) {
+			root = this;
+			
+			var el = document.createElementNS(svgns, 'circle'); 
+			el.setAttribute('cx', 50); 
+			el.setAttribute('cy', 50); 
+			el.setAttribute('r', 5); 
+			el.setAttribute('fill', 'blue');
+			
+			root.appendChild(el);
+		}, false);
+	svgweb.appendChild(root, document.body);
+};
+
+function resize() {
+	root.setAttribute('viewBox', '0 0 200 200');
+	root.setAttribute('width', '200');
+	root.setAttribute('height', '200');
+
+}
+</script>
+</head>
+<body onsvgload="init();">
+<div>
+	<button type="button" onclick="resize()">Resize</button>
+</div>
+</body>
+</html>
+

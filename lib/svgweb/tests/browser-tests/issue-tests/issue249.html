@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    
+    <script src="../../../src/svg.js" data-path="../../../src" data-debug="true"></script>
+    
+    <script>
+      function ready() {
+        var obj = document.getElementById('myObject');
+        if (!obj) {
+          printResults('Unable to fetch myObject');
+          return;
+        }
+        
+        var doc = obj.contentDocument;
+        if (!doc) {
+          printResults('Unable to fetch contentDocument');
+          return;
+        }
+        
+        var root = doc.rootElement;
+        if (!root) {
+          printResults('Unable to fetch rootElement');
+          return;
+        }
+        
+        var circle = doc.getElementById('myCircle');
+        if (!circle) {
+          printResults('Unable to fetch circle');
+          return;
+        }
+        
+        if (circle.getAttribute('id') != 'myCircle') {
+          printResults('Circle does not have correct ID');
+          return;
+        }
+        
+        printResults('Working!');
+      }
+      
+      function printResults(msg) {
+        var results = document.getElementById('testResults');
+        results.innerHTML = '';
+        results.appendChild(document.createTextNode(msg));
+      }
+
+      svgweb.addOnLoad(ready);
+    </script>
+    
+  </head>
+  
+  <body>
+    <p>Test case for <a href="http://code.google.com/p/svgweb/issues/detail?id=249">Issue 249</a> (<i>  	 flash renderer svgobj.contentDocument breaks if svg contains DOCTYPE declaration</i>).</p>
+    
+    <p>If contentDocument can be fetched and we can navigate to the
+       myCircle object even with a DOCTYPE in the SVG file, the message
+       'Working!' will appear below; if anything else appears then Issue 272
+       still fails.</p>
+       
+    <h2 id="testResults">Not Working!</h2>
+    <!--[if !IE]>-->
+      <object data="issue249.svg" type="image/svg+xml"
+              width="200" height="200" id="myObject"> <!--<![endif]-->
+    <!--[if lt IE 9]>
+      <object src="issue249.svg" classid="image/svg+xml"
+              width="200" height="200" id="myObject"> <![endif]-->
+    <!--[if gte IE 9]>
+      <object data="issue249.svg" type="image/svg+xml"
+              width="200" height="200" id="myObject"> <![endif]-->
+      </object>
+   
+  </body>
+</html>

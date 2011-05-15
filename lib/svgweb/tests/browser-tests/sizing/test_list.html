@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>List of Sizing Tests to run </h1>
+
+    <p>Remember to resize the browser with each test in order to test percentages and aspect resolution.<p>
+    <p>Test in IE 6, 7, 8, and 9, Firefox 3.X, Firefox 4.x, Chrome, Safari, and Opera</p>
+    <ol>
+      <li>
+      Run all sizing <a href="index.html">Test files</a>.
+      </li>
+      <li>
+      Run all tests in the <a href="../issue-tests/sizing.html">Sizing Issue List</a>
+      </li>
+      <li>
+      Zoom and Pan: Run the <a href="../../../samples/demo.html">demo</a>. Use browser zoom Ctrl++ and Ctrl+- to increase the size. Reload the page. Repeat for native mode. Should be the same.
+      </li>
+      <li>
+      Run the test generator to cover specific cases:
+        <ol>
+          <li>
+           html5 + object tag + div px + svg px  
+           <a href="../sizing/generate-html.php?docType=html5&svgWebMode=pureNative">pure native</a>
+           <a href="../sizing/generate-html.php?docType=html5&svgWebMode=svgWebNative">svg web native</a>
+           <a href="../sizing/generate-html.php?docType=html5&svgWebMode=svgWebFlash">svg web flash</a>
+          </li>
+          <li>
+           strict + object tag + div px + svg px  
+           <a href="../sizing/generate-html.php?docType=html4strict&svgWebMode=pureNative">pure native</a>
+           <a href="../sizing/generate-html.php?docType=html4strict&svgWebMode=svgWebNative">svg web native</a>
+           <a href="../sizing/generate-html.php?docType=html4strict&svgWebMode=svgWebFlash">svg web flash</a>
+          </li>
+          <li>
+           quirks + object tag + div px + svg px  
+           <a href="../sizing/generate-html.php?docType=html4quirks&svgWebMode=pureNative">pure native</a>
+           <a href="../sizing/generate-html.php?docType=html4quirks&svgWebMode=svgWebNative">svg web native</a>
+           <a href="../sizing/generate-html.php?docType=html4quirks&svgWebMode=svgWebFlash">svg web flash</a>
+          </li>
+        </ol>
+      </li>
+    </ol>
+
+  </body>
+</html>

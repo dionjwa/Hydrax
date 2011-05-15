@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<svg id="mySVG" width="500" height="500"
+		 xmlns="http://www.w3.org/2000/svg" 
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     onload="loaded()"
+     class="mySVGClassName1 mySVGClassName2">
+     
+  <script type="text/javascript"><![CDATA[
+    // A global variable that we set to ensure we don't incorrectly see it
+    // over in embed2.
+    var shouldNotClash = 'set globally in embed1';
+    
+    function loaded() {
+      // change onloadFunc to point to your real onload function that you
+      // want called when the page is truly ready
+      var onloadFunc = testLoaded;
+      
+      if (top.svgweb != undefined) {
+        top.svgweb.addOnLoad(onloadFunc, true, window);
+      } else {
+        onloadFunc();
+      }
+    }
+    
+    function testLoaded() {
+      // set top.window._objectsLoadedFirst to be false; we check for this
+      // in test_js.js testScope() function to ensure that objects load 
+      // before any onload listeners in embedded SVG files
+      top.window._objectsLoadedFirst = true;
+      
+      // tell containing testing class that our particular file has loaded
+      // so it can assert this later
+      top.svgweb._objectLoaded(0);
+    }
+  ]]></script>
+  
+  <g id="myGroup" class="foobar"><rect
+       id="myRect"
+       width="36.416"
+       height="36.416"
+       x="50"
+       y="50"
+       fill="red"/><text id="myText" 
+          x="80" 
+          y="80" 
+          font-family="Verdana" 
+          font-size="24" 
+          fill="blue">hello world</text><desc>This is a description</desc><title>This is a title</title><rect id="anotherRect1" x="350" y="150" width="50" height="50" style="fill: blue"/><rect id="anotherRect2" x="350" y="220" width="50" height="50"/></g>
+  <g id="removeMe">
+    <text x="80" y="150" id="testText5">You should not see this</text>
+    <rect x="80" y="190" width="15" height="15" fill="green"/>
+  </g>
+</svg>

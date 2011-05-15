@@ -24,7 +24,7 @@ class CanvasDemo
 		com.pblabs.engine.debug.Log.setup();
 		app = new PBGame();
 		Assert.isNotNull(app.getManager(SceneView));
-		app.getManager(SceneView).layerId = "screen";
+		app.getManager(SceneView).layerId = "haxe:screen";
 		var man = new ImageResource("man", Source.url("man.png"));
 		app.getManager(IResourceManager).addResource(man);
 		

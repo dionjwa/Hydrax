@@ -35,7 +35,7 @@ class Sets
 		#end
 	}
 	
-	public static function fromArray (set :Set<Dynamic>, arr :Array<Dynamic>) :Set<Dynamic>
+	public static function fromArray <T>(set :Set<T>, arr :Array<T>) :Set<T>
 	{
 	    set.clear();
 	    for (i in arr) {

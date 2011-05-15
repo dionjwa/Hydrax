@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+id="AHPS" width="960" height="680" viewBox="0 -70 1200 800" >
+
+	<!--scripts-->
+	<script ><![CDATA[
+	 function showreading(evt) {
+	  var myx = evt.target.getAttributeNS(null,'cx');
+	  var myy = evt.target.getAttributeNS(null,'cy');
+	  var val = evt.target.getAttributeNS(null,'val');
+	  var tim = evt.target.getAttributeNS(null,'tim');
+	  var typ = evt.target.getAttributeNS(null,'type');
+	  document.getElementById('readings').setAttribute('visibility', 'visible');
+	  document.getElementById('val').firstChild.data = typ + ": " + val + " ft at " + tim;
+	  document.getElementById('readings').setAttribute('transform','translate(' + myx + ',' + myy + ')');
+	 }
+
+	 function hidereading(evt) {
+	  document.getElementById('readings').setAttribute('visibility', 'hidden');
+	 }
+
+	]]></script>
+
+	<g  font-family="Arial" >
+
+	<rect x="0" y="-70" width="1200" height="800" fill="rgb(223,223,255)" />
+	<rect x="0" y="-70" width="1200" height="35" fill="lightblue" />
+	<path fill="black" d="M 1200 -70 1200 -35 0 -35 2 -37 1198 -68 Z" />
+	<rect x="2" y="-68" width="1196" height="31" fill="blue" />
+	<text id="title" font-size="24" text-anchor="middle" font-family="Arial" x="590" y="-45" fill="white" font-weight="bold" > </text>
+
+	<g font-size="18" text-anchor="middle">
+   		<text x="590" y="710"  >Site Time (PST)</text>
+   		<text x="590" y="-10"  >Universal Time (UTC)</text>
+  	</g>
+  		
+	<g font-size="24" transform="translate(80,340) rotate(-90)" >
+   		<text id="y1Label" x="0" y="0" text-anchor="middle" >Stage (ft)</text>
+   	</g>
+
+   	<g font-size="24" transform="translate(1100 340) rotate(90)" >
+   		<text id="y2Label" x="0" y="0" text-anchor="middle" >Flow (cfs)</text>
+   	</g>
+
+
+	<rect x="140" y="40" width="900" height="600" fill="white" />
+
+	<g opacity="0.25">
+	<image id="vclogo" x="190" y="80" width="286" height="184" xlink:href="poker.png"/>
+	</g>
+
+
+	<clipPath id="graphArea" fill="none">
+		<path d="M 140 40 L 1040 40 L 1040 640 L 140 640 Z" />
+	</clipPath>
+
+	<clipPath id="xAxisArea" fill="none" >
+		<path d="M 90 -10 L 1090 -10 L 1090 1090 L 90 1090 Z" />
+        </clipPath>
+	
+	<g id="grid" clip-path="url(#graphArea)" stroke="gray">
+
+		<rect id="actionRect" x="140" y="40" width="900" height="0" fill="rgb(255,255,128)" fill-opacity="0.7" />
+		<rect id="floodRect" x="140" y="40" width="900" height="0" fill="rgb(255,204,128)" fill-opacity="0.7" />
+		<rect id="moderateRect" x="140" y="40" width="900" height="0" fill="rgb(255,128,128)" fill-opacity="0.7" />
+		<rect id="majorRect" x="140" y="40" width="900" height="100" fill="rgb(220,150,255)" fill-opacity="0.7" />
+
+	</g>
+
+	    <g style="fill:none; stroke:black; stroke-width:1" clip-path="url(#graphArea)" >
+			<path d="M 140 40 L 1040 40 L 1040 640 L 140 640 Z" />
+	
+		<g id="yLines" style="fill:none; stroke:gray; stroke-width:1" />
+    
+		<g id="xLines" style="fill:none; stroke:gray; stroke-width:1">
+   			<path d="M 896 40 L 896 640" />
+   			<path d="M 752 40 L 752 640" />
+   			<path d="M 608 40 L 608 640" />
+   			<path d="M 464 40 L 464 640" />
+   			<path d="M 320 40 L 320 640" />
+   			<path d="M 176 40 L 176 640" />
+			<g transform="translate(36,0)" >
+   				<path d="M 896 40 L 896 640" />
+   				<path d="M 752 40 L 752 640" />
+   				<path d="M 608 40 L 608 640" />
+   				<path d="M 464 40 L 464 640" />
+   				<path d="M 320 40 L 320 640" />
+   				<path d="M 176 40 L 176 640" />
+			</g>
+			<g transform="translate(72,0)" >
+   				<path d="M 896 40 L 896 640" />
+   				<path d="M 752 40 L 752 640" />
+   				<path d="M 608 40 L 608 640" />
+   				<path d="M 464 40 L 464 640" />
+   				<path d="M 320 40 L 320 640" />
+   				<path d="M 176 40 L 176 640" />
+			</g>
+			<g transform="translate(108,0)" >
+   				<path d="M 896 40 L 896 640" />
+   				<path d="M 752 40 L 752 640" />
+   				<path d="M 608 40 L 608 640" />
+   				<path d="M 464 40 L 464 640" />
+   				<path d="M 320 40 L 320 640" />
+   				<path d="M 176 40 L 176 640" />
+			</g>
+		</g>
+		<g id="nowLine" transform="translate(0,0)" style="fill:none; stroke:blue; stroke-width:2" stroke-dasharray="1,3" >
+			<path d="M 752 40 L 752 640" />
+		</g>
+	</g>
+
+	<g id="y-axis" font-size="18" style="text-anchor:end" />
+
+     	<g id="y2-axis" font-size="18" />
+     	
+	<g id="x-axis" clip-path="url(#xAxisArea)" >
+ 		<g id="xShift" text-anchor="middle" >
+ 			<g transform="translate(0,640)" style="fill:none; stroke:gray; stroke-width:2">
+   				<path d="M 1040 15 L 1040 0 M 896 15 L 896 0 M 752 15 L 752 0 M 608 15 L 608 0 M 464 15 L 464 0 M 320 15 L 320 0 M 176 15 L 176 0" />
+    			</g>
+ 			<g transform="translate(0,25)" style="fill:none; stroke:gray; stroke-width:2">
+   				<path d="M 1040 15 L 1040 0 M 896 15 L 896 0 M 752 15 L 752 0 M 608 15 L 608 0 M 464 15 L 464 0 M 320 15 L 320 0 M 176 15 L 176 0" />
+    			</g>
+
+ 			<g transform="translate(72,640)" style="fill:none; stroke:gray; stroke-width:2">
+   				<path d="M 896 10 L 896 0" />
+   				<path d="M 752 10 L 752 0" />
+   				<path d="M 608 10 L 608 0" />
+   				<path d="M 464 10 L 464 0" />
+   				<path d="M 320 10 L 320 0" />
+   				<path d="M 176 10 L 176 0" />
+    			</g>
+ 			<g transform="translate(72,30)" style="fill:none; stroke:gray; stroke-width:2">
+   				<path d="M 896 10 L 896 0" />
+   				<path d="M 752 10 L 752 0" />
+   				<path d="M 608 10 L 608 0" />
+   				<path d="M 464 10 L 464 0" />
+   				<path d="M 320 10 L 320 0" />
+   				<path d="M 176 10 L 176 0" />
+    			</g>
+
+ 			<g transform="translate(36,640)" style="fill:none; stroke:gray; stroke-width:2">
+   				<path d="M 896 5 L 896 0" />
+   				<path d="M 752 5 L 752 0" />
+   				<path d="M 608 5 L 608 0" />
+   				<path d="M 464 5 L 464 0" />
+   				<path d="M 320 5 L 320 0" />
+   				<path d="M 176 5 L 176 0" />
+    			</g>
+ 			<g transform="translate(36,35)" style="fill:none; stroke:gray; stroke-width:2">
+   				<path d="M 896 5 L 896 0" />
+   				<path d="M 752 5 L 752 0" />
+   				<path d="M 608 5 L 608 0" />
+   				<path d="M 464 5 L 464 0" />
+   				<path d="M 320 5 L 320 0" />
+   				<path d="M 176 5 L 176 0" />
+    			</g>
+
+ 			<g transform="translate(108,640)" style="fill:none; stroke:gray; stroke-width:2">
+   				<path d="M 896 5 L 896 0" />
+   				<path d="M 752 5 L 752 0" />
+   				<path d="M 608 5 L 608 0" />
+   				<path d="M 464 5 L 464 0" />
+   				<path d="M 320 5 L 320 0" />
+   				<path d="M 176 5 L 176 0" />
+   				<path d="M 32 5 L 32 0" />
+    			</g>
+ 			<g transform="translate(108,35)" style="fill:none; stroke:gray; stroke-width:2">
+   				<path d="M 896 5 L 896 0" />
+   				<path d="M 752 5 L 752 0" />
+   				<path d="M 608 5 L 608 0" />
+   				<path d="M 464 5 L 464 0" />
+   				<path d="M 320 5 L 320 0" />
+   				<path d="M 176 5 L 176 0" />
+   				<path d="M 32 5 L 32 0" />
+    			</g>
+  		</g>
+	</g>
+
+	<g id="stage" clip-path="url(#graphArea)" font-weight="bold" fill="black" text-anchor="end" />
+
+	<g clip-path="url(#graphArea)">
+
+		<g id="xScale" transform="translate(140,0) scale(1,1)">
+
+		<g id="plot" stroke="blue" stroke-width="2" />
+		<g id="fplot" stroke="green" stroke-width="1" />
+		<g id="fplot2" stroke="cyan" stroke-width="1" />
+		<g id="fplot3" stroke="magenta" stroke-width="1" />
+
+		<g id="dataPoints" fill="blue" />
+		<g id="fdataPoints" fill="green" />
+		<g id="fdataPoints2" fill="cyan" />
+		<g id="fdataPoints3" fill="magenta" />
+
+		</g> <!--xScale-->
+
+	</g>
+
+	<g id="readings" style="text-anchor:middle" transform="translate(500 800)" >
+		<rect fill="white" stroke="black"  x="-52" y="12" width="235" height="20" />
+		<text id="reading" font-size="18" >
+			<tspan id="val" x="65" y="30"> </tspan>
+		</text>
+	</g>
+	<g id="lastReading" style="text-anchor:start" font-weight="bold" transform="translate(180 60)" >
+		<rect fill="white" stroke="none"  x="0" y="0" width="330" height="40" fill-opacity="0.6" />
+		<text id="reading" fill="blue" font-size="18">
+			<tspan id="lastVal" x="5" y="15"> </tspan>
+			<tspan id="lastTim" x="5" y="35"> </tspan>
+			<tspan id="lastFlood" x="320" y="35" style="text-anchor:end" fill="orange" > </tspan>
+		</text>
+	</g>
+
+	</g> <!-- graphics -->
+
+</svg>

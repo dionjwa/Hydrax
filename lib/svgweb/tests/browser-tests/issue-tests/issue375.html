@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<HTML>
+  <HEAD>
+    <meta name="svg.render.forceflash" content="true">
+    
+    <script type="text/javascript" src="../../../src/svg.js" data-path="../../../src"
+            data-debug="true"></script>
+    <script type="text/javascript" src="issue375-jquery-1.4.2.min.js"></script>
+  </HEAD>
+  <BODY>
+    <p>If an SVG image appears, JQuery and SVG Web work together; if not, they don't.</p>
+    
+    <div id="container"></div>
+    <script type="text/javascript">
+      var url = "issue375.svg";   
+      var svgObject = null;
+      
+      function loadsvg(e) {
+        window.addEventListener('SVGLoad', function() {
+          var obj = document.createElement('object', true);
+          obj.id = 'svgobject';
+          obj.setAttribute('type', 'image/svg+xml');
+          obj.setAttribute('data', url);
+          obj.setAttribute('width', '400');
+          obj.setAttribute('height', '400');
+        
+          var container = document.getElementById('container');
+          if (window.svgweb) {
+            window.svgweb.appendChild(obj, container);
+          } else {
+            container.appendChild(obj);
+          }
+        }, false);
+      }
+      
+      $(document).ready(loadsvg);
+    </script>
+  </BODY>
+</HTML>

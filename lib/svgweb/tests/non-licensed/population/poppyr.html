@@ -1,0 +1,583 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html>
+
+	<head>
+		
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
+		
+		<title>SVG web: Population Pyramid (test, derived from destatis.de)</title>
+
+		<script src="../../../src/svg.js" data-path="../../../src"></script>
+
+		
+<style type="text/css">
+
+body  { padding: 0px; margin: 0px; color: #000; font-size: 12px; background-color: #fff;
+        font-family: Helvetica, sans-serif; }
+#main { float: left; background-color: #fdffeb; height: 560px; width: 520px;}
+#meta { padding-right: 15px; padding-left: 25px; padding-top: 5px; padding-bottom: 15px; line-height: 125%; font-size: 14px; left: 530px; position: absolute; float: right; height: 540px; width: 420px; background-color: #ececec; }
+
+a:link, a:visited { border-bottom-style: dotted; border-bottom-width: 1px; border-top-style: none; color: #0019ff; text-decoration:none; }
+a:hover, a:active { background-color: #fffba2; color: #ff2e28; border-bottom-style: none; text-decoration: none; }
+
+#controlls {height: 31px; width: 480px;margin-left: 10px;margin-top: 5px;}
+#buttonPause {position: relative; left: 50px; float: left; font-size: 14px;}
+#buttonPlay {position: relative; right: 50px; float: right; font-size: 14px;}
+#yearControl { margin-top: 0px; text-align: center;}
+#languageControl {  float: left; margin-left: 0px; margin-top: 3px;}
+
+#data { margin-bottom: 35px; padding: 5px; position: relative; background-color: #ccc; top: 20px; height: 105px; width: 310px;display:block;}
+
+#dynamicTextGroup {padding-left: 15px; padding-bottom: 6px; padding-right: 5px; padding-top: 4px; margin-bottom: 35px; position: relative; background-color: #fff; top: 20px; height: 105px; width: 300px; display:none;}
+
+#displayCurrentYear {background-color: #ccc; font-size: 12px;}
+#displayAge {font-size: 16px; font-weight: bold;}
+#displayBirthYear {font-size: 14px;}
+
+#countData { margin-top: 41px; margin-left: 175px; font-size: 10px; line-height: 100%;}
+#yearData { float: left;  }
+
+
+table { margin-left: 8px; text-align: right; border-width: 1px; }
+td { width: 50px; padding: 3px;}
+tr {background-color: white;}
+.bold { background-color: #fff9c2; letter-spacing: 1px; font-weight: bold;}
+.left { width: 20px; padding-left: 8px; text-align: left; align: left;}
+
+li { margin-bottom: 6px; }
+h4 { margin-left: 10px; margin-bottom: 5px; margin-right: 0px; margin-top: 2px; font-size: 12px; font-weight: bold;}
+small { text-align: left; font-size: 10px; font-style: normal; font-weight: normal; }
+
+</style>
+
+		<script type="text/javascript" src="poppyr_files/data.js" charset="utf-8"></script>
+		
+		<script type="text/javascript">
+		
+var changeColor = 57;
+var the_count = 57; // defines data-column when pyramid is loaded
+var speed = 400;
+var scale = 2.8;   // data in thousand
+
+var pastMcolor = "#333366";
+var pastFcolor = "#660066";
+var futureMcolor =  "#336699";
+var futureFcolor =  "#990066";
+var highlight = "#FFCC33";
+
+var age;
+var svgdoc;
+var the_timeout;
+
+var myColour;
+var myStyle;
+var myBar;
+
+var myMalesBar;
+var myFemalesBar;
+var myMBar;
+var myFBar;
+
+var NrRecords = statmale0.length;
+var myMaleBarObj;
+var myFemaleBarObj;
+var indYear;
+
+var svgRoot;
+
+// var emptystate;
+// var selectedage;
+
+
+function localize(local) {
+
+	document.getElementById('lbl03country').firstChild.data=(txt03country[local]);
+	document.getElementById('lbl04men').firstChild.data=(txt04men[local]);
+	document.getElementById('lbl05women').firstChild.data=(txt05women[local]);
+	document.getElementById('lbl06thousand1').firstChild.data=(txt06thousand[local]);
+	document.getElementById('lbl06thousand2').firstChild.data=(txt06thousand[local]);
+	//document.getElementById('lbl14animation').firstChild.data=(txt14animation[local]);
+	document.getElementById('buttonPlay').firstChild.data=(txt16play[local]);
+	document.getElementById('buttonPause').firstChild.data=(txt17pause[local]);
+	document.getElementById('agegrouphead').firstChild.data=(txt20agegroupcount[local]);
+	//document.getElementById('lbl21adjustAge').firstChild.data=(txt21adjustage1[local]);
+	//document.getElementById('lbl22adjustAge').firstChild.data=(txt22adjustage2[local]);
+	//document.getElementById('lbl23sexsurplus1').firstChild.data=(txt23sexsurplus1[local]);
+	//document.getElementById('lbl24sexsurplus2').firstChild.data=(txt24sexsurplus2[local]);
+	document.getElementById('txt12').firstChild.data=(txt12coordpp[local]);
+	document.getElementById('txtMill').firstChild.data=(txt26mill[local]);
+	//document.getElementById('txt25').firstChild.data=(txt25variant[local])+' '+variantName;
+	//document.getElementById('txt27').firstChild.data=(txt27param[local]);	
+	
+	lbl04men = eval(txt04men)[local];
+	lbl05women = eval(txt05women)[local];
+	lbl07total = eval(txt07total)[local];
+	lbl08aged  = eval(txt08aged)[local];
+	lbl09born = eval(txt09born)[local];
+	lbl10sexratio  = eval(txt10sexratio)[local];
+	lbl11agestructure = eval(txt11agestructure)[local];
+	lbl26mill = eval(txt26mill)[local];
+	
+	pyramid(the_count);
+}
+
+
+function createPyramid() {
+  svgRoot.suspendRedraw();
+	for (i=0;i<(100);i++)	{
+    //create Males
+    var newMRect = document.createElementNS(svgns,"rect");
+    newMRect.setAttributeNS(null,'x',(445-(5*i)));
+    newMRect.setAttributeNS(null,'y',0);
+    newMRect.setAttributeNS(null,'id','male'+(i));
+    newMRect.setAttributeNS(null,'width',5);
+    newMRect.setAttributeNS(null,'height',0);
+    newMRect.addEventListener('mouseover', function(evt) { tellme(evt.target.id);}, false); 		
+    newMRect.addEventListener('mouseout', function(evt) { emptyme(evt.target.id);}, false); 		
+    document.getElementById('males').appendChild(newMRect);
+    //create Females
+    var newFRect = document.createElementNS(svgns,"rect");
+    newFRect.setAttributeNS(null,'x',(0+(5*i)));
+    newFRect.setAttributeNS(null,'y',120);
+    newFRect.setAttributeNS(null,'id','femm'+(i));
+    newFRect.setAttributeNS(null,'width',5);
+    newFRect.setAttributeNS(null,'height',0);
+    newFRect.addEventListener('mouseover', function(evt) { tellme(evt.target.id);}, false); 		
+    newFRect.addEventListener('mouseout', function(evt) { emptyme(evt.target.id);}, false); 		
+    document.getElementById('females').appendChild(newFRect);
+    }
+  svgRoot.unsuspendRedraw();
+}
+
+function init()	{
+  svgRoot = document.getElementsByTagNameNS(svgns, 'svg')[0];
+    hookEvent('main', 'mousewheel', MouseWheel);
+	createPyramid();
+	localize(0);
+}
+
+
+// Mousewheel Scrolling thanks to
+// http://blog.paranoidferret.com/index.php/2007/10/31/javascript-tutorial-the-scroll-wheel/
+
+function hookEvent(element, eventName, callback)
+{
+  if(typeof(element) == "string")
+    element = document.getElementById(element);
+  if(element == null)
+    return;
+  if(element.addEventListener)
+  {
+    if(eventName == 'mousewheel')
+    {
+      element.addEventListener('DOMMouseScroll', 
+        callback, false);  
+    }
+    element.addEventListener(eventName, callback, false);
+  }
+  else if(element.attachEvent)
+    element.attachEvent("on" + eventName, callback);
+}
+
+
+function MouseWheel(e)
+{
+  e = e ? e : window.event;
+  var wheelData = e.detail ? e.detail * -1 : e.wheelDelta / 120;
+  //do something
+  
+  	if (wheelData > 0) {
+		the_count += 1 
+		if (the_count>99)	{
+		the_count=1;}
+		} else {
+		the_count -= 1
+		if (the_count<2)	{
+		the_count=101;}
+		};
+	pyramid(the_count)
+}
+
+
+function tellme(clickID)	{
+	age = clickID.substring(4);
+		// emptystate = 0;
+		document.getElementById('dynamicTextGroup').style.display = 'block';
+		document.getElementById('data').style.display = 'none';
+		myMStat = "statmale"+age;
+		myFStat = "statfemale"+age;
+		popM = eval(myMStat)[the_count];
+		popF = eval(myFStat)[the_count];
+		sexR = (Math.ceil(popF/popM*100))/100;
+		currentYear = 1949+the_count;
+		born = currentYear-age;
+		document.getElementById('displayCurrentYear').firstChild.data=(currentYear);
+		document.getElementById('displayAge').firstChild.data=(age+" "+lbl08aged);
+		document.getElementById('displayBirthYear').firstChild.data=("("+lbl09born+" "+born+")");
+		document.getElementById('popcountM').firstChild.data=(lbl04men+":  "+popM+" 000");	
+		document.getElementById('popcountF').firstChild.data=(lbl05women+":  "+popF+" 000");	
+		document.getElementById('sexratio').firstChild.data=(lbl10sexratio+": "+sexR);	
+		// selectedage = age;
+		myMalesBar = "male"+age;
+		myFemalesBar = "femm"+age;
+		myMBar = document.getElementById(myMalesBar);
+		myMBar.setAttribute('fill',highlight);
+		myFBar = document.getElementById(myFemalesBar);
+		myFBar.setAttribute('fill',highlight);
+	}
+
+function emptyme()	{
+	// emptystate = 1;
+	document.getElementById('dynamicTextGroup').style.display = 'none';
+	document.getElementById('data').style.display = 'block';
+	selectedage = 199;
+	if (the_count<changeColor)	{
+	myMBar.setAttribute('fill',pastMcolor);
+	myFBar.setAttribute('fill',pastFcolor);
+	}
+	else	{
+	myMBar.setAttribute('fill',futureMcolor);
+	myFBar.setAttribute('fill',futureFcolor);
+	}
+}
+
+
+function pyramid(myYear)	{
+svgRoot.suspendRedraw();
+
+var NrYears = currYear.length;
+the_count = myYear;
+
+for (i=0;i<100;i++)	{
+
+var myMale = "statmale"+i;
+var myFemale = "statfemale"+i;
+var myMaleBar = "male"+i;
+var myFemaleBar = "femm"+i;
+var myMHeight = eval(myMale)[myYear];
+var myFHeight = eval(myFemale)[myYear];
+
+var myMTransformHeight = myMHeight/scale;
+var myFTransformHeight = myFHeight/scale;
+indYear = myYear-1;
+
+myMaleBarObj = document.getElementById(myMaleBar);
+myFemaleBarObj = document.getElementById(myFemaleBar);
+myMaleBarObj.setAttribute('height',myMTransformHeight);
+myFemaleBarObj.setAttribute('height',myFTransformHeight);
+
+		if (myYear<changeColor)	{
+			myMaleBarObj.setAttribute('fill',pastMcolor);
+			myFemaleBarObj.setAttribute('fill',pastFcolor);
+		}
+		else	{
+			myMaleBarObj.setAttribute('fill',futureMcolor);
+			myFemaleBarObj.setAttribute('fill',futureFcolor);
+		} 
+}
+
+document.getElementById('title').firstChild.data = (lbl11agestructure + ": "+currYear[indYear]);
+document.getElementById('totals').firstChild.data = stattotal[indYear];
+calcAgegroups()
+svgRoot.unsuspendRedraw();
+}
+
+
+function calcAgegroups() {
+	
+	var young = 0;
+	var medium = 0;
+	var old = 0;
+	
+	for (i=0;i<20;i++)	{
+		tmpMale = "statmale"+i;
+		tmpFemale = "statfemale"+i;
+		young = young + eval(tmpMale)[the_count] + eval(tmpFemale)[the_count];
+	}
+	for (j=20;j<65;j++)	{
+		tmpMale = "statmale"+j;
+		tmpFemale = "statfemale"+j;
+		medium = medium + eval(tmpMale)[the_count] + eval(tmpFemale)[the_count];
+	}
+
+	for (k=65;k<100;k++)	{
+		tmpMale = "statmale"+k;
+		tmpFemale = "statfemale"+k;
+		old = old + eval(tmpMale)[the_count] + eval(tmpFemale)[the_count];
+	}
+	// var stat100plus = 100+ AGE GROUP (males and females)
+	old = old + stat100plus[the_count];
+	var sum = young + medium + old;
+	
+	var percYoung = Math.round(young/sum*100);
+	var percMedium = Math.round(medium/sum*100);
+	var percOld = Math.round(old/sum*100);
+	
+	young = Math.round(young/100)/10
+	medium = Math.round(medium/100)/10
+	old = Math.round(old/100)/10
+	
+	if (young == Math.round(young)) {
+	document.getElementById("youngAbs").firstChild.nodeValue=young+'.0';
+	} else {
+		document.getElementById("youngAbs").firstChild.nodeValue=young;
+	}
+	if (medium == Math.round(medium)) {
+	document.getElementById("mediumAbs").firstChild.nodeValue=medium+'.0';
+	} else {
+		document.getElementById("mediumAbs").firstChild.nodeValue=medium;
+	}
+	if (old == Math.round(old)) {
+	document.getElementById("oldAbs").firstChild.nodeValue=old+'.0';
+	} else {
+		document.getElementById("oldAbs").firstChild.nodeValue=old;
+	}
+	document.getElementById("youngPerc").firstChild.nodeValue=percYoung;
+	document.getElementById("mediumPerc").firstChild.nodeValue=percMedium;
+	document.getElementById("oldPerc").firstChild.nodeValue=percOld;
+}
+
+
+function animate()	{
+if (the_count<NrRecords-1)	{
+the_count+=1;
+pyramid(the_count);
+the_timeout = setTimeout("animate();",speed);
+}
+else	{
+the_count=1;
+pyramid(the_count);
+the_timeout = setTimeout("animate();",speed);
+}
+}
+
+function stopani()	{
+clearTimeout(the_timeout);
+}
+
+function pyramidmenu(select) {
+the_count = parseInt(select.value);
+pyramid(the_count);
+}
+
+function showMeta() {
+	document.getElementById('meta').style.top = '0px';
+	}
+
+function hideMeta() {
+	document.getElementById('meta').style.top = '-360px';
+	}
+	
+function force() {
+	
+		location += "?svg.render.forceflash=true";
+				
+	}
+		
+		</script>
+
+</head>
+
+<body onload="init()">
+
+<div id="main">
+
+	<script type="image/svg+xml">
+	
+	<svg viewBox="-330 -152 620 460" width="520px" height="520px">
+  
+<g id="grid" style="stroke:rgb(153, 153, 153);stroke-width:1;" transform="translate(10 0)">
+
+<line x1="-5" y1="300" x2="260" y2="300"/>
+<line x1="-5" y1="250" x2="260" y2="250"/>
+<line x1="-5" y1="200" x2="260" y2="200"/>
+<line x1="-5" y1="150" x2="260" y2="150"/>
+<line x1="-5" y1="100" x2="260" y2="100"/>
+<line x1="-5" y1="50" x2="260" y2="50"/>
+<line x1="-5" y1="0" x2="260" y2="0"/>
+<line x1="-5" y1="-50" x2="160" y2="-50"/>
+<line x1="-5" y1="-100" x2="60" y2="-100"/>
+
+<line x1="-310" y1="300" x2="-45" y2="300"/>
+<line x1="-310" y1="250" x2="-45" y2="250"/>
+<line x1="-310" y1="200" x2="-45" y2="200"/>
+<line x1="-310" y1="150" x2="-45" y2="150"/>
+<line x1="-310" y1="100" x2="-45" y2="100"/>
+<line x1="-310" y1="50" x2="-45" y2="50"/>
+<line x1="-310" y1="0" x2="-45" y2="0"/>
+<line x1="-210" y1="-50" x2="-45" y2="-50"/>
+<line x1="-110" y1="-100" x2="-45" y2="-100"/>
+</g>
+
+     <g id="mainpyramid" opacity="0.75">
+     <g id="males" transform="rotate(90) translate(-100,40)">
+     <!--dynamically generated bars go here-->
+     </g>
+     <g id="females" transform="rotate(270) translate(-350,-110)">
+     <!--dynamically generated bars go here-->
+     </g>
+     </g>
+
+<g id="texts2" pointer-events="none">
+<text id="lbl03country" x="-15" y="-176" style="fill:black;font-size:20px;text-anchor:middle;font-family: Helvetica, sans-serif;">Deutschland</text>
+<text id="lbl04men" x="-100" y="130" style="fill:white;font-size:20px;font-weight:bold;text-anchor:middle;font-family: Helvetica, sans-serif;">Männer</text>
+<text id="lbl05women" x="75" y="130" style="fill:white;font-size:20px;font-weight:bold;text-anchor:middle;font-family: Helvetica, sans-serif;">Frauen</text>
+</g>
+
+<g style="fill:black;font-size:18px;text-anchor:middle;font-family: Helvetica, sans-serif;" transform="translate(-15 -5)" pointer-events="none">
+<g id="ykey" >
+<text x="0" y="360">0</text>
+<text x="0" y="310">10</text>
+<text x="0" y="260">20</text>
+<text x="0" y="210">30</text>
+<text x="0" y="160">40</text>
+<text x="0" y="110">50</text>
+<text x="0" y="60">60</text>
+<text x="0" y="10">70</text>
+<text x="0" y="-40">80</text>
+<text x="0" y="-90">90</text>
+<text x="0" y="-140">100</text>
+</g>
+</g>
+
+<g id="gridaxes" style="stroke:black;stroke-width:1;">
+<line x1="10" y1="350" x2="270" y2="350"/>
+<line x1="10" y1="350" x2="10" y2="-150"/>
+<line x1="-40" y1="350" x2="-40" y2="-150"/>
+<line x1="-300" y1="350" x2="-40" y2="350"/>
+</g>
+
+<g id="xkey" style="font-size:16px;text-anchor:middle;font-family: Helvetica, sans-serif;" pointer-events="none">
+
+<g id="xticks" style="stroke:black;stroke-width:1;">
+<line x1="-254" y1="350" x2="-254" y2="355"/>
+<line x1="-147" y1="350" x2="-147" y2="355"/>
+<line x1="117" y1="350" x2="117" y2="355"/>
+<line x1="224" y1="350" x2="224" y2="355"/>
+</g>
+
+<text id="xtick1" x="-254" y="370">600</text>
+<text id="xtick2" x="-147" y="370">300</text>
+<text id="xtick3" x="117" y="370">300</text>
+<text id="xtick4" x="224" y="370">600</text>
+
+<text id="lbl06thousand1" x="-200" y="380">Tausend</text>
+<text id="lbl06thousand2" x="170" y="380">Tausend</text>
+</g>
+
+<g id="labeltext" pointer-events="none">
+<text id="title" x="-15" y="-205" font-size="24" text-anchor="middle" font-family="Helvetica, sans-serif">Altersaufbau</text>
+</g>
+	
+</svg>
+
+</script>
+
+
+<div id="controlls">
+
+	<form id="languageControl">
+	  <select name="selectedLanguage" onchange="localize(parseInt(this.value))"> 
+	  <option value="0" selected="selected">en</option>
+	  <option value="1">de</option>
+	  <option value="2">es</option> 
+	  <option value="3">ru</option>
+
+	  <option value="4">fr</option> 
+	  </select>
+    </form>
+	
+<button id="buttonPause"  type="button" onclick="stopani()">Pause</button> 
+<button id="buttonPlay" type="button" onclick="animate()">Play</button>
+
+	<form id="yearControl">
+	  <select name="selectedYear" onchange="pyramidmenu(this)"> 
+	  <option value="1">1950</option>
+
+	  <option value="11">1960</option>
+	  <option value="21">1970</option> 
+	  <option value="31">1980</option>
+	  <option value="41">1990</option> 
+	  <option value="51">2000</option>
+	  <option value="57" selected="selected">2006</option> 
+	  <option value="61">2010</option> 
+	  <option value="71">2020</option>
+
+	  <option value="81">2030</option> 
+	  <option value="91">2040</option>
+	  <option value="101">2050</option> 
+	  </select>
+    </form>
+
+</div>
+</div>
+
+		<div id="meta">
+
+		
+		<h3>SVG Web Toolkit: Animated Population Pyramid</h3>
+		
+		This is a test page for <a href="http://code.google.com/p/svgweb/">bringing SVG to Internet Explorer via Flash</a>.
+		
+		<p>Actual data from 1950 to 2005, projected data 2006 to 2050. Population data and pyramid code derived from <a href="http://www.destatis.de/jetspeed/portal/cms/Sites/destatis/Internet/EN/Content/Statistics/Bevoelkerung/VorausberechnungBevoelkerung/InteraktiveDarstellung/Content75/Bevoelkerungspyramide1W1,templateId=renderSvg,property=svg.null">destatis.de/...</a></p>
+		
+		<p id="txt12">The 11th Coordinated Population Projection.</p><p>Variant 1-W1 / The assumptions:</p><ul><li>nearly constant birth rate<br/>at 1.4 children per woman,</li><li>life expectancy of newborn children in 2050:<br/>83.5 years for boys and<br/>88.0 years for girls,</li><li>annual net migration<br/>+ 100 000 persons</li></ul><small>Data: <a href="http://www.destatis.de/jetspeed/portal/cms/Sites/destatis/Internet/EN/Content/Statistics/Bevoelkerung/VorausberechnungBevoelkerung/InteraktiveDarstellung/InteraktiveDarstellung,templateId=renderPrint.psml">Federal Statistical Office of Germany 2006.</a></small>
+
+		
+		<div id="data">
+		<h4 id="agegrouphead">Altersgruppen</h4>
+		    <table>
+		    	<tr class="bold">
+		    		<td>&lt;20</td>
+		    		<td>20–64</td>
+		    		<td>65+</td>
+
+		    		<td id="txtTotal">Total</td>
+		    		<td onclick="force()"><small><i>Flash</i></small></td>
+		    	</tr>
+		    	<tr>
+		    		<td id="youngAbs">x</td>
+		    		<td id="mediumAbs">x</td>
+		    		<td id="oldAbs">x</td>
+
+		    		<td id="totals">x</td>
+		    		<td id="txtMill" class="left">Mill.</td>
+		    	</tr>
+		    	<tr>
+		    		<td id="youngPerc">x</td>
+		    		<td id="mediumPerc">x</td>
+		    		<td id="oldPerc">x</td>
+
+		    		<td>100</td>
+		    		<td class="left">%</td>
+		    	</tr>
+		    </table>
+		</div>
+		
+		<div id="dynamicTextGroup">
+
+			<div id="yearData">
+
+			<p id="displayCurrentYear">x</p>
+			<p id="displayAge">x</p>
+			<p id="displayBirthYear">x</p>
+			</div>
+
+			<div id="countData">
+			<p id="popcountM">x</p>
+
+			<p id="popcountF">x</p>
+			<p id="sexratio">x</p>
+			</div>
+
+		</div>
+		
+		<p>Your mousewheel is active!</p>
+		
+		</div>
+
+	</body>
+	
+</html>

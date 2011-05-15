@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    
+    <script src="../../../src/svg.js" data-path="../../../src" data-debug="true"></script>
+    
+    <script>
+      function ready() {
+        var results = document.getElementById('testResults');
+        results.innerHTML = '';
+        results.appendChild(document.createTextNode('Onload fired!'));
+      }
+    </script>
+    
+  </head>
+  
+  <body onload="ready()">
+    <p>Test case for <a href="http://code.google.com/p/svgweb/issues/detail?id=219">Issue 219</a> (<i>body.onload not fired for SVG OBJECT</i>).</p>
+    
+    <p>If the onload was fired we should see the message 'Onload fired!'
+       below; if it says 'Not Working!' then Issue 219 is not fixed:</p>
+       
+    <h2 id="testResults">Not Working!</h2>
+    <!--[if !IE]>-->
+      <object data="issue219.svg" type="image/svg+xml" width="200" height="200"> <!--<![endif]-->
+    <!--[if lt IE 9]>
+      <object src="issue219.svg" classid="image/svg+xml" width="200" height="200"> <![endif]-->
+    <!--[if gte IE 9]>
+      <object data="issue219.svg" type="image/svg+xml" width="200" height="200"> <![endif]-->
+      </object>
+    
+  </body>
+</html>

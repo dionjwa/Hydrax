@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1 id="intro">Introduction</h1>
+
+<p>The SVG Web library makes it possible to use SVG across all of the major 
+browsers, including Internet Explorer. Where native SVG support is not 
+available, such as on Internet Explorer, a full-featured Flash object is 
+used to render and manipulate the SVG behind the scenes. Where native browser
+SVG support is available (every other recent browser but Internet Explorer) 
+the SVG is rendered natively by the browser. A simple optional configuration is possible to force the use of SVG Web even on browsers with native SVG support, which can aide in deployment and using newer SVG features like SVG Video.</p>
+
+<p>The library is meant to bring seamless SVG support to Internet 
+Explorer using Flash as close to the SVG 1.1 Full standard as possible, using 
+native browser SVG support in other browsers. The Flash renderer can be used on 
+other browsers than Internet Explorer, though we default to only using Flash
+on IE automatically. The Flash SVG renderer in some cases supports SVG features that are not
+widely supported even with native support, such as SVG Video support, SVG 
+Fonts, SVG SMIL animation, etc.</p>
+
+<p>It is currently a non-goal of this library to fully support SVG 1.2; we will
+select specific elements from the SVG 1.2 spec where it makes sense, however,
+such as the SVG 1.2 Video and Audio tags.</p>
+
+<p>Another goal of the library is to make direct embedding of SVG into normal 
+non-XHTML HTML much easier, as was well as supporting using the OBJECT tag to 
+easily bring in SVG files. Using SVG in backgrounds and with the IMAGE tag is 
+not currently supported.</p>
+
+<p>The SVG Web toolkit is currently in Beta status. Please <a href="http://code.google.com/p/svgweb/issues/list">file issues</a> if you run into problems.</p>
+
+<h1 id="browser_support">Browser and Flash Support</h1>
+
+<p>The SVG Web library supports using either the Flash or Native SVG renderer 
+for different browsers, including Internet Explorer 6+, Firefox 2+, Safari 3+, 
+Opera, iPhone Version 2.1+ Webkit, and Chrome. Note that robust QA has not yet occurred for Opera and Chrome, and that there is currently a regression affecting usage on the iPhone. Android does not currently 
+support either Flash or SVG so is not supported. The iPhone before version
+2.1 does not natively support either Flash or SVG and therefore is not
+supported.</p>
+
+<p>Flash 10+ is required for the Flash renderer; this has close to 97% installed
+base so it is safe to depend on.</p>
+
+<p>The Adobe SVG Viewer (ASV) is not supported; it is a non-goal of this project to have support for the ASV viewer or its proprietary extensions.</p>
+
+<h1 id="direct_embed">Embedding SVG</h1>
+
+<p>First, you must bring in the svg.js file into your HTML page as the _first_
+script on your page, before all others:</p>
+
+<pre><code>&lt;script src="svg.js"&gt;&lt;/script&gt;</code></pre>
+
+<p>Next, SVG markup can be embedded into your HTML in two ways, either using a 
+SCRIPT tag or an OBJECT tag.</p>
+
+<p>For the SCRIPT tag, set the 'type' attribute to "image/svg+xml" and simply
+place the tag in your HTML page where you want the SVG to appear:</p>
+
+<pre><code>&lt;h1&gt;Here is an example SVG image:&lt;/h1&gt;
+
+&lt;script type="image/svg+xml"&gt;
+  &lt;svg xmlns="http://www.w3.org/2000/svg" 
+       width="200" height="200" 
+       version="1.1" baseProfile="full"&gt;
+       &lt;rect x="0" y="0" width="60" height="60" style="stroke: green;"/&gt;
+       &lt;rect x="25" y="25" 
+                 id="myRect" 
+                 rx="0.6" ry="0.6" 
+                 width="150" height="150" 
+                 fill="green" 
+                 stroke="yellow" stroke-width="8"/&gt;
+  &lt;/svg&gt;
+&lt;/script&gt;</code></pre>
+
+<p>Normal full-XML SVG can be used inside of the SCRIPT block. Adding an XML 
+declaration and the SVG and XLink namespaces are all optional and will be 
+added if not present (note: this differs from the SVG 1.1 spec and is added 
+for ease of authoring). You can also include all of them. Note that you should 
+not include the XML character encoding on the XML declaration tag, such as 
+'UTF-8' or 'ISO-8859-1', as this makes no sense since the overall document 
+has its own encoding). Here's some example SVG with everything specified if 
+you enjoy lots of typing:</p>
+
+<pre><code>&lt;script type="image/svg+xml"&gt;
+  &lt;?xml version="1.0"?&gt;
+  &lt;svg
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     version="1.1" baseProfile="full"
+     width="466"
+     height="265"
+     id="svg11242"&gt;
+  &lt;/svg&gt;
+&lt;/script&gt;</code></pre>
+
+<p>For simplicity of authoring this can also just be written as:</p>
+
+<pre><code>&lt;script type="image/svg+xml"&gt;
+  &lt;svg width="466" height="265" id="svg11242"&gt;&lt;/svg&gt;
+&lt;/script&gt;</code></pre>
+
+<p>The SCRIPT SVG block is supported in both XHTML as well as normal HTML pages 
+across all browsers, including Internet Explorer. If you are using XHTML
+you will probably want to wrap your embedded SVG with CDATA sections; these
+CDATA sections will also work directly in Internet Explorer without needing
+any further tricks:</p>
+
+<pre><code>&lt;script type="image/svg+xml"&gt;&lt;![CDATA[
+  &lt;svg width="466" height="265" id="svg11242"&gt;&lt;/svg&gt;
+]]&gt;&lt;/script&gt;</code></pre>
+
+<p>Note that direct embedding foreign markup using the SCRIPT tag + MIME type is a valid way to do things in HTML 5. We don't yet support the other, newer HTML 5 direct embed syntax for SVG due to some technical issues.</p>
+
+<p>The second way to embed SVG is with the the OBJECT tag, which will work on 
+Internet Explorer as well. Example:</p>
+
+<pre>
+<code>
+&lt;!--[if !IE]&gt;--&gt;
+  &lt;object data="scimitar.svg" type="image/svg+xml"
+          width="1250" height="750" id="mySVGObject"&gt; &lt;!--&lt;![endif]--&gt;
+&lt;!--[if lt IE 9]&gt;
+  &lt;object src="scimitar.svg" classid="image/svg+xml"
+          width="1250" height="750" id="mySVGObject"&gt; &lt;![endif]--&gt;
+&lt;!--[if gte IE 9]&gt;
+  &lt;object data="scimitar.svg" type="image/svg+xml"
+          width="1250" height="750" id="mySVGObject"&gt; &lt;![endif]--&gt;
+  &lt;h1&gt;Put optional fallback content here&lt;/h1&gt;
+  &lt;/object&gt;
+</code>
+</pre>
+
+<p>Notice the Internet Explorer conditional comments. The first OBJECT tag
+is for standards-compliant browsers while the second and third tags are 
+for Internet Explorer. This format is necessary for robust IE support, including
+IE 6, 7, 8, and 9.</p>
+
+<p>For the OBJECT tag for Internet Explorer prior to version 9, you must specify a 'src' 
+attribute pointing to your SVG file rather than using the standard 'data'
+attribute. Unfortunately again due to some limitations on
+Internet Explorer you should <i>not</i> include the 'type' attribute but rather
+must include a 'classid' attribute set to "image/svg+xml" for use with the
+SVG Web framework.</p>
+
+<p>The first and third OBJECT tags works according to the standard, which has a 'type'
+set to "image/svg+xml" and a 'data' attribute set to "scimitar.svg".</p>
+
+<p>Note that the URL given in the 'src' or 'data' attributes must be on the same 
+domain as the web page and follows the same domain rule (i.e. same protocol, 
+port, etc.); cross-domain object insertion is not supported for security 
+reasons. You must also specify a width and height.</p>
+
+<h1 id="extra_files">Extra Files</h1>
+
+<p>You must make sure that the library files svg.htc, svg.swf, and svg.js are 
+located by default in the same directory as your HTML page. They must also be 
+on the same domain as your HTML page and can not be on a separate domain, such 
+as having your html on mydomain.example.com and those three files on 
+static.example.com.</p>
+
+<p>You can override where on your domain you keep svg.htc, svg.swf, and svg.js
+by using the optional data-path attribute to point to a different relative
+or absolute directory path. If you like to validate your HTML
+note that this custom attribute is HTML 5 valid, as all attributes that are 
+prefixed with data- are:</p>
+
+<pre><code>&lt;script src="../svg.js" data-path=".."&gt;&lt;/script&gt;</code></pre>
+
+<p>It does not matter whether you have a trailing slash or not, such as .. versus
+../. You can also optionally use a META tag to configure this:</p>
+
+<pre><code>&lt;meta name="svg.config.data-path" content="../"&gt;</code></pre>
+
+<p>SVG Web has what is called an HTC file (svg.htc). For this to work you
+must make sure that your web server is configured to send the correct MIME
+type for HTC files (text/x-component). The page at 
+http://support.microsoft.com/kb/306231 provides some details on configuring
+Apache correctly for this.</p>
+
+<p>If you don't have the ability or background to add MIME types to your web 
+server, three easy files have been provided that will do the work for you based
+on what you can run on your server (PHP, JSP, or ASP). Based on what you can
+run on your server, choose one of the following files:</p>
+
+<ul>
+  <li><code>svg-htc.php</code> - Will do the MIME work for you if you can run
+  PHP on your web server.</li>
+  <li><code>svg-htc.jsp</code> - Will do the MIME work for you if you can run
+  JSP on your web server.</li>
+  <li><code>svg-htc.asp</code> - Will do the MIME work for you if you can run
+  ASP on your web server.</li>
+</ul>
+
+<p>If you choose one of these, you must indicate so using the optional 
+<code>data-htc-filename</code> attribute:</p>
+
+<pre><code>&lt;script src="../svg.js" data-path=".." <b>data-htc-filename="svg-htc.php"</b>&gt;&lt;/script&gt;</code></pre> 
+
+<p>Only give the filename, such as <code>svg-htc.jsp</code>, rather than a full
+path, such as <code>../../svg-htc.jsp</code></p>. Note that if you use
+one of these files in order to automatically force the MIME type, when you run
+any of the bundled demos or samples you will have to append the following 
+query string to tell them to use your different HTC file:</p>
+
+<pre><code>http://example.com/svgweb/samples/demo.html?<b>svg.htcFilename=svg-htc.php</b></code></pre>
+
+<p>Note that it is possible to host much of the bulk of SVG Web on a different domain than the page it is being used on; see the section <a href="#cross_domain">"Cross Domain SVG Web"</a> for details.</p>
+
+<p>SVG Web comes bundled with a simple testing file to help you isolate MIME type issues. Simply upload the SVG Web distribution to your web server and then navigate to <code>src/tools/config.html</code>; this page will report to you whether all your MIME types are set correctly.</p>
+
+<h1 id="renderer">Flash SVG Renderer Versus Native SVG Rendering</h1>
+
+<p>By default, the Flash renderer will be used on Internet Explorer 6 through 8; versions
+of Firefox before Firefox 3 (not yet supported); versions of Safari before Safari 3 (not yet supported); and
+versions of Opera before Opera 9 (not yet supported). The native SVG renderer will be used
+on Firefox 3+; Safari 3+; Chrome; iPhone version 2.1+ Webkit, and Internet Explorer version 9+.</p>
+
+<h1 id="override">Overriding Which Renderer is Used</h1>
+
+<p>In general, we will attempt to use native SVG abilities if they are present. 
+To override this and force the Flash renderer to be used you can drop the 
+following META tag into your page:</p>
+
+<pre><code>&lt;meta name="svg.render.forceflash" content="true"&gt;</code></pre>
+<p>The meta tag should be placed before the SVG Web script tag. </p>
+
+<p>You can also force the Flash renderer through the URL with the following flag:</p>
+
+<pre><code>http://example.com/mypage.html?svg.render.forceflash=true</code></pre>
+
+<p>Just set 'svg.render.forceflash' to true or false after a query parameter.</p>
+
+<p>Forcing the Flash renderer to be used on all platforms independent of 
+native support can ease QA and deployment, as well as make it possible to 
+use SVG features such as SMIL and SVG Video that might not be widely deployed 
+yet. Note that forcing Flash support will do nothing on the iPhone, as that
+platform does not support Flash; on the iPhone the Native Renderer will always
+be used (TODO: Confirm that this is true for the iPhone if the Flash renderer
+is being forced).</p>
+
+<h1 id="scripting">SVG Scripting Support</h1>
+
+<p>SVG has a SCRIPT tag, which allows you to embed JavaScript inside of your
+SVG. SVG files brought in with the OBJECT tag can have SVG SCRIPT blocks that 
+will execute as normal. If you directly embed SVG into an HTML page then SVG SCRIPT blocks will not work; in this case you should use normal HTML SCRIPT blocks to 'script' your SVG.</p>
+
+<p>For browsers with native SVG support, the SVG content inside of a SCRIPT tag 
+shows up fully in the browser's DOM, with the SCRIPT tag thrown away after the
+page has finished loading, so you can manipulate it with normal JavaScript; also note
+how we wait for the page and SVG Web to load below using <code>window.onsvgload</code> instead of <code>window.onload</code>:</p>
+
+<pre><code>&lt;script type="image/svg+xml"&gt;
+ &lt;svg width="200" height="200"&gt;
+     &lt;rect x="25" y="25" 
+               id="myRect" 
+               rx="0.6" ry="0.6" 
+               width="150" height="150" 
+               fill="green" 
+               stroke="yellow" stroke-width="8"/&gt;
+ &lt;/svg&gt;
+&lt;/script&gt;
+
+&lt;script&gt;
+  window.onsvgload = function() {
+    var rect = document.getElementById('myRect');
+    rect.setAttribute('fill', 'red');
+    rect.style.strokeWidth = 20;
+  }
+&lt;/script&gt;</code></pre>
+
+<p>Manipulating an SVG OBJECT tag with browsers with native support is as 
+normal following the standard; just use the contentDocument property on the 
+OBJECT to get a document object and execute your standard DOM functions 
+afterwards.</p>
+
+<p>For the Flash renderer, scripting support is as follows.</p>
+
+<p>If the Flash renderer is used on Internet Explorer, Firefox, and Safari, 
+the SVG Web library does some magic to have the SVG inside of a SCRIPT 
+block show up in the full DOM, fully manipulatable by JavaScript; the example
+code above this where 'myRect' is retrieved from the page and then
+manipulated would work the same, with document.getElementById('myRect')
+working as expected.</p>
+
+<p>If you have a SCRIPT block <i>inside</i> of your SVG then it will
+work correctly on <i>all browsers</i> with the Flash renderer as well:</p>
+
+<pre>
+<code>
+&lt;!--[if !IE]&gt;--&gt;
+  &lt;object data="blocks_game.svg" type="image/svg+xml"
+          width="500" height="500"&gt; &lt;!--&lt;![endif]--&gt;
+&lt;!--[if lt IE 9]&gt;
+  &lt;object src="blocks_game.svg" classid="image/svg+xml"
+          width="500" height="500"&gt; &lt;![endif]--&gt;
+&lt;!--[if gte IE 9]&gt;
+  &lt;object data="blocks_game.svg" type="image/svg+xml"
+          width="500" height="500"&gt; &lt;![endif]--&gt;
+  &lt;/object&gt;
+</code>
+</pre>
+
+<p>(inside of blocks_game.svg):</p>
+
+<pre><code>&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+         "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"&gt;
+
+&lt;svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     onload="init();"&gt;
+
+  &lt;script&gt;&lt;![CDATA[
+    function init() {
+      var board = document.getElementById("board"); 
+    }
+  ]]&gt;&lt;/script&gt;
+
+  &lt;g id="board" stroke-width="0.02"/&gt;
+
+&lt;/svg&gt;</code></pre>
+
+<p>On all browsers, including Internet Explorer, an SVG OBJECT tag can be 
+manipulated by external JavaScript as normal by using the contentDocument 
+property:</p>
+
+<pre>
+<code>
+&lt;!--[if !IE]&gt;--&gt;
+  &lt;object data="scimitar.svg" type="image/svg+xml"
+          width="1250" height="750" id="testSVG"&gt; &lt;!--&lt;![endif]--&gt;
+&lt;!--[if lt IE 9]&gt;
+  &lt;object src="scimitar.svg" classid="image/svg+xml"
+          width="1250" height="750" id="testSVG"&gt; &lt;![endif]--&gt;
+&lt;!--[if gte IE 9]&gt;
+  &lt;object data="scimitar.svg" type="image/svg+xml"
+          width="1250" height="750" id="testSVG"&gt; &lt;![endif]--&gt;
+  &lt;/object&gt;
+</code>
+</pre>
+
+&lt;script&gt;
+  window.addEventListener('SVGLoad', function() {
+    var doc = document.getElementById('testSVG').contentDocument;
+    var rect = doc.getElementsByTagNameNS(svgns, 'rect')[0];
+  }, false);
+&lt;/script&gt;</code></pre>
+
+<p>When doing DOM scripting on SVG elements, you should use the namespace aware
+DOM methods, including on Internet Explorer which is patched to support
+the standard:</p>
+
+<pre><code>var el = document.createElementNS(svgns, 'circle');
+el.setAttribute('cx', 200);
+el.setAttribute('cy', 200);
+el.setAttribute('r', 5);
+el.setAttribute('fill', '#223FA3');
+el.setAttribute('stroke-width', '1px');
+el.setAttribute('stroke', 'black');
+
+var root = document.getElementsByTagNameNS(svgns, 'svg')[0];
+root.appendChild(el);</code></pre>
+
+<p>Note that SVG attributes like 'stroke-width' aren't in the SVG namespace,
+so you can use setAttribute() instead of setAttributeNS(); using setAttributeNS
+is a common SVG mistake. You only need to do this for XLink attributes:</p>
+
+<pre><code>el.setAttributeNS(xlinkns, 'xlink:href', myURL);</code></pre>
+
+<p>If you like being pedantic and typing more you can use null for a namespace when working with SVG attributes:</p>
+
+<pre><code>el.setAttributeNS(null, 'fill', 'black');</code></pre>
+
+<p>Just using the following is also valid, and results in smaller code:</p>
+
+<pre><code>el.setAttribute('fill', 'black');</code></pre>
+
+<p>(Note: officially, the SVG 1.1 standard recommends setAttributeNS with a
+namespace of null, but setAttribute does the job and all the extra typing
+is silly. The DOM standard is already verbose enough as it is.)</p>
+
+<p>For convenience, the svg.js file exports the global properties window.svgns
+and window.xlinkns with the correct namespaces to ease development (note:
+ this is not part of the SVG 1.1 standard and is provided for convenience):</p>
+ 
+<pre><code>var circle = document.createElementNS(svgns, 'circle');</code></pre>
+
+<p>For events, you can use addEventListener/removeEventListener on SVG elements, 
+including on Internet Explorer (instead of using IE's proprietary 
+attachEvent):</p>
+
+<pre><code>circle.addEventListener('click', function(evt) {
+  // do something
+}, false);</code></pre>
+
+<p>On Internet Explorer, the event object is passed into your listener, just
+like the standard says, so you should use this instead of window.event.</p>
+
+<p>Controlling event bubbling with the final addEventListener argument is not
+supported; it is always automatically false. Also, event bubbling outside
+of the SVG root element does not occur (i.e. you can't add an event listener
+for mouse move events onto your HTML BODY tag and see them within the SVG. Just
+add it to the SVG root element itself if you want to intercept all these).</p>
+
+<h1 id="onload">Knowing When Your SVG Is Loaded</h1>
+
+<p>If you want to know when your SVG and the entire page is done loading, you 
+can use window.onsvgload; have an onsvgload attribute on the BODY tag; or use
+<code>window.addEventListener('SVGLoad', callback, useCapture)</code> or <code>window.addEventListener('svgload', callback, useCapture)</code>. Examples:</p>
+
+<pre><code>window.onsvgload = function() {
+  // all SVG loaded and rendered
+}</code></pre>
+
+<pre><code>window.addEventListener('SVGLoad', function() {
+  // all SVG loaded and rendered
+}, false)
+</code></pre>
+
+<p>Older versions of SVG Web would transparently allow developers to use <code>window.onload</code> and <code>window.addEventListener('load', ...)</code> to do the above, but this lead to issues with third-party libraries such as JQuery and was changed.</p>
+
+<p>If you dynamically create SVG root elements _after_ the page has already 
+finished loading, you must add an SVGLoad listener to the SVG root 
+element before you can add further children (note: this is a divergence from the 
+SVG 1.1 standard, and is needed due to the asynchronous Flash and 
+Microsoft Behavior magic going on under the covers to bootstrap different 
+parts of the library):</p>
+
+<pre><code>var root = document.createElementNS(svgns, 'svg');
+root.setAttribute('width', 200);
+root.setAttribute('height', 200);
+root.addEventListener('SVGLoad', function(evt) {
+  console.log('SVG onload called');
+  // now you can do things with the SVG root element, like add more children
+});
+if (window.svgweb) {
+  window.svgweb.appendChild(root, document.body);
+} else {
+  document.body.appendChild(root);
+}
+</code></pre>
+
+<p>Notice also that when we append our newly created SVG
+root that we must use the method <code>svgweb.appendChild</code>. This method
+has the following arguments:</p>
+
+<pre><code>svgweb.appendChild(newNode, parentNode);</code></pre>
+
+<p id="chaining_onloads">Note that if you are using a <code>window.onload</code> listener for something else (or using something like JQuery's <code>$(document).ready()</code> function), you should also make sure that SVG Web is done loading:</p>
+
+<pre><code>// JQuery onload
+  $(document).ready(function() {
+    window.addEventListener('SVGLoad', function() {
+      // ready to work with SVG now
+    }, false);
+  });
+
+  // window.onload
+  window.onload = function() {
+    window.addEventListener('SVGLoad', function() {
+      // ready to work with SVG now
+    }, false);
+  }</code></pre>
+  
+<p id="workaround_for_onload_inside_svg_files">If you are loading an SVG file using the OBJECT tag and have an <code>onload=""</code> attribute inside the SVG file on the <code>&lt;svg&gt;</code> root, such as:</p>
+
+<p>Containing HTML page:</p>
+
+<pre>
+<code>
+&lt;!--[if !IE]&gt;--&gt;
+  &lt;object data="photos.svg" type="image/svg+xml"
+          width="500" height="500"&gt; &lt;!--&lt;![endif]--&gt;
+&lt;!--[if lt IE 9]&gt;
+  &lt;object src="photos.svg" classid="image/svg+xml"
+          width="500" height="500"&gt; &lt;![endif]--&gt;
+&lt;!--[if gte IE 9]&gt;
+  &lt;object data="photos.svg" type="image/svg+xml"
+          width="500" height="500"&gt; &lt;![endif]--&gt;
+  &lt;/object&gt;
+</code>
+</pre>
+
+<p>photos.svg:</p>
+
+<pre><code>&lt;svg onload="doload()"&gt;
+  &lt;script type="text/javascript"&gt;&lt;![CDATA[
+     function doload() {
+        // developers onload handler
+     }
+  ]]&gt;
+&lt;/svg&gt;</code></pre>
+
+<p>Then you will have to modify your onload="" attribute a little bit to help the 
+SVG Web framework; you must add some code telling SVG Web that you
+are loaded, and SVG Web will call you when things are truly ready to be used. 
+You should change the above to:</p>
+
+<pre><code>&lt;svg onload="loaded()"&gt;
+  &lt;script type="text/javascript"&gt;&lt;![CDATA[
+      function loaded() {
+        // change onloadFunc to point to your real onload function that you
+        // want called when the page is truly ready
+        var onloadFunc = doload;
+        
+        if (window.svgweb) {
+          window.svgweb.addOnLoad(onloadFunc, true, window);
+        } else {
+          onloadFunc();
+        }
+      }   
+      
+     function doload() {
+        // developers original onload handler
+     }
+  ]]&gt;
+&lt;/svg&gt;</code></pre>
+
+<p>Note the new loaded() function above and that we've changed onload="" to run
+it instead of our own function; you should call loaded() instead, and copy
+the code in that function into your .svg file. Notice the following line:</p>
+
+<pre><code>// change onloadFunc to point to your real onload function that you
+// want called when the page is truly ready
+var onloadFunc = doload;</code></pre>
+
+<p>Change this variable to be your original onload function, such as doload
+in the example above. Notice that we pass a reference to the function
+and _don't_ have () at the end -- i.e. it is 'var onloadFunc = doload' NOT
+'var onloadFunc = doload()'.</p>
+
+<p>Note that using <code>window.addEventListener('SVGLoad', ...)</code> or <code>window.onsvgload = someFunc;</code> <i>inside</i> of an external SVG file is not supported; for more details <a href="#known_issues30">see this note</a>.
+
+<h1 id="compression">Compression</h1>
+
+<p>It has been reported that svgz (compressed SVG) files work with SVG Web. For Apache, the following conf file directives will support that format:<p>
+
+<pre><code>
+  AddType image/svg+xml svgz
+  AddEncoding x-gzip .svgz 
+</code></pre>
+
+
+<p> It is also recommended that you turn on GZip compression on your webserver for the svg.htc, svg.swf,
+and svg.js library files. You may also wish to enable gzip compression for plain SVG files, if you are not using the .svgz format. As with all optimization techniques, be sure to test it on all the browsers you intend to support.
+</p>
+
+<h1 id="sizing">Width and Height</h1>
+
+<p>For the Flash renderer, you should set the width and height of your SVG, 
+either on the root SVG element inside of an SVG SCRIPT block or on an SVG 
+OBJECT tag. The following different ways are supported to set this width and 
+height for the Flash renderer:</p>
+
+<p>* Directly setting the width and height attributes on the SVG root tag or the
+SVG OBJECT:</p>
+
+<pre><code>&lt;script classid="image/svg+xml"&gt;
+  &lt;svg width="30" height="30"&gt;&lt;/svg&gt;
+&lt;/script&gt;</code></pre>
+
+<p>or</p>
+
+<pre>
+<code>
+&lt;!--[if !IE]&gt;--&gt;
+  &lt;object data="example.svg" type="image/svg+xml"
+          width="30" height="30"&gt; &lt;!--&lt;![endif]--&gt;
+&lt;!--[if lt IE 9]&gt;
+  &lt;object src="example.svg" classid="image/svg+xml"
+          width="30" height="30"&gt; &lt;![endif]--&gt;
+&lt;!--[if gte IE 9]&gt;
+  &lt;object data="example.svg" type="image/svg+xml"
+          width="30" height="30"&gt; &lt;![endif]--&gt;
+  &lt;/object&gt;
+</code>
+</pre>
+
+<p>* A viewBox attribute on the SVG root element:</p>
+
+<pre><code>&lt;script type="image/svg+xml"&gt;
+  &lt;svg viewBox="0 0 300 300"&gt;&lt;/svg&gt;
+&lt;/script&gt;</code></pre>
+
+<p>* Leaving the width and height off the SVG OBJECT tag but having it set inside
+of the SVG file itself either with a width and height attribute</p>
+
+<p>* If no width and height is specified, then we default to 100% for both.</p>
+
+<p>Percentage values for the width and height for the SVG are supported, including
+the 'auto' keyword. We do not currently handle a width and height of 0
+(FIXME: I believe according to the spec a width and height of 0 should have
+the SVG have a visibility of 'none').
+TODO: I think we might support this now; double check.</p>
+
+<h1 id="css">CSS Support</h1>
+
+<p>This section only concerns the Flash renderer. Native SVG support works as
+normal.</p>
+
+<p>For the Flash renderer, SVG STYLE elements _are not_ currently supported:</p>
+
+<pre><code>&lt;svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink" 
+     width="600px" height="388px"&gt;
+	&lt;style type="text/css"&gt;
+		text {
+			font-size: 9pt;
+			font-family: sans-serif;
+		}
+		
+		.percentage,
+		.date,
+		.title {
+			font-weight: bold;
+		}
+	&lt;/style&gt;
+&lt;/svg&gt;</code></pre>
+
+<p>External style rules outside of the SVG _are not_ currently supported, such as 
+the following style rule embedded into an HTML page which will not work:</p>
+
+<pre><code>&lt;html&gt;
+  &lt;head&gt;
+    &lt;style&gt;
+      @namespace svg url("http://www.w3.org/2000/svg");
+      
+      svg\:rect,
+  		svg|rect {
+  		  fill: green;
+  		}
+  	&lt;/style&gt;
+  &lt;/head&gt;
+&lt;/html&gt;</code></pre>
+
+<p>Note the svg\:rect trick to have Internet Explorer see namespaced SVG CSS
+rules. Currently you should directly set these on the SVG root element or 
+SVG OBJECT tag which is supported:</p>
+
+<pre>
+<code>
+&lt;!--[if !IE]&gt;--&gt;
+  &lt;object data="scimitar.svg" type="image/svg+xml"
+          width="1250" height="750" id="testSVG"
+          style="display: inline; float: right; border: 1px solid black;"&gt; &lt;!--&lt;![endif]--&gt;
+&lt;!--[if lt IE 9]&gt;
+  &lt;object src="scimitar.svg" classid="image/svg+xml"
+          width="1250" height="750" id="testSVG"&gt; &lt;![endif]--&gt;
+          style="display: inline; float: right; border: 1px solid black;"&gt; &lt;![endif]--&gt;
+&lt;!--[if gte IE 9]&gt;
+  &lt;object data="scimitar.svg" type="image/svg+xml"
+          width="1250" height="750" id="testSVG"
+          style="display: inline; float: right; border: 1px solid black;"&gt; &lt;![endif]--&gt;
+  &lt;/object&gt;
+</code>
+</pre>
+
+<p>These properties are copied directly to the Flash rendering object. Changing
+any style properties like display, float, etc. through JavaScript
+after page load on the SVG root element or an SVG OBJECT does not 
+currently cause any dynamic behavior.</p>
+
+<p>You can dynamically change the CSS values on SVG elements through JavaScript:</p>
+
+<pre><code>var rect = document.getElementById('myRect');
+rect.style.strokeWidth = '5px'; // works!
+rect.setAttribute('stroke-width', '5px'); // also works!
+console.log('rect.style.strokeWidth='+rect.style.strokeWidth) // prints 5px</code></pre>
+
+<p>Inline style rules on SVG elements is also supported:</p>
+
+<pre><code>&lt;rect
+   y="-1.7111325"
+   x="-2.2665024"
+   height="455.04538"
+   width="455.04538"
+   id="rect3926"
+   style="opacity:1;fill:#c1cfeb;fill-opacity:1;stroke:#555040;stroke-width:3;"/&gt;</code></pre>
+   
+<p>Note that Firefox natively has glitches around using the .style property on SVG objects; the SVG Web toolkit actually patches Firefoxes native implementation and fixes this.</p>
+
+<h1 id="background_color">Root Background Color</h1>
+
+<p>If no background color for your SVG is specified with a CSS background-color
+attribute, the default is transparent (TODO: Confirm on non-IE browsers). 
+If you specify a color, that will be used for your background:</p>
+
+<pre><code>&lt;script type="image/svg+xml"&gt;
+ &lt;svg width="200" height="200" style="background-color: red;"&gt;
+ &lt;/svg&gt;
+&lt;/script&gt;</code></pre>
+
+<p>Setting the background using the 'background' CSS property is not currently
+supported, only with the 'background-color' property.</p>
+
+<h1 id="fallback">Fallback Content When SVG Not Possible</h1>
+
+<p>If neither native SVG nor Flash can be used, you can put fallback content
+inside of your OBJECT tag to be displayed; place it before the end &lt;/OBJECT&gt;
+tag:</p>
+
+<pre>
+<code>
+&lt;!--[if !IE]&gt;--&gt;
+  &lt;object data="embed1.svg" type="image/svg+xml"
+          width="500" height="500" id="mySVG"&gt; &lt;!--&lt;![endif]--&gt;
+&lt;!--[if lt IE 9]&gt;
+  &lt;object src="embed1.svg" classid="image/svg+xml"
+          width="500" height="500" id="mySVG"&gt; &lt;![endif]--&gt;
+&lt;!--[if gte IE 9]&gt;
+  &lt;object data="embed1.svg" type="image/svg+xml"
+          width="500" height="500" id="mySVG"&gt; &lt;![endif]--&gt;
+  &lt;img src="scimitar.png" /&gt;
+  &lt;/object&gt;
+</code>
+</pre>
+
+<p>This will display the PNG file if SVG can't be used. (Note: Fallback content
+for SVG OBJECTs is not yet implemented).</p>
+
+<p>You can achieve the same thing with SVG SCRIPT blocks by using a NOSCRIPT
+element directly following the SVG SCRIPT block. This NOSCRIPT element will
+get displayed if there is no JavaScript; it will also get executed if no
+SVG support is possible (note: executing the NOSCRIPT block if SVG support
+is not possible is a creative reuse of the NOSCRIPT block and is not part
+of the HTML 4.1 standard):</p>
+
+<pre><code>&lt;script type="image/svg+xml"&gt;
+ &lt;svg width="200" height="200"&gt;
+ &lt;/svg&gt;
+&lt;/script&gt;
+&lt;noscript&gt;
+  &lt;img src="scimitar.png"&gt;&lt;/img&gt;
+&lt;/noscript&gt;</code></pre>
+
+<p>This will display the given PNG file if JavaScript is turned off or if
+SVG support can't be bootstrapped. As a suggestion, if you want to generate
+nice PNG image files for your SVG for older browsers as fallback content, 
+you can use the excellent free and open source utility/library Batik to render 
+your SVG directly into image files (http://xmlgraphics.apache.org/batik/). Just
+plug Batik into your workflow (ant, makefiles, etc.) to automatically generate
+static images.</p>
+
+<p>If there is not a NOSCRIPT element or fallback content inside of an SVG OBJECT
+tag then a message indicating no support is directly written into the block
+for the user to see by default.</p>
+
+<p>You can detect from your JavaScript after the page has finished loading 
+whether SVG is possible either natively or with Flash using the following:</p>
+
+<pre><code>&lt;script&gt;
+  window.addEventListener('load', function() {
+    if (document.implementation.hasFeature(
+          'http://www.w3.org/TR/SVG11/feature#BasicStructure', '1.1') == false) {
+      alert('SVG not supported!');
+    }
+  }, false);
+&lt;/script&gt;</code></pre>
+
+<p>This will return true on all browsers that natively support SVG; we also patch
+things so that true will be returned if we can use Flash to do all the SVG
+hard work.</p>
+
+<h1 id="text_nodes">Text Nodes</h1>
+
+<p>When you create a text node that you know you will append to something within
+your SVG, you need to add an extra parameter to document.createTextNode:</p>
+
+<pre><code>var textNode = document.createTextNode('hello world', true);
+var metadata = document.getElementsByTagNameNS(svgns, 'metadata');
+metadata.appendChild(textNode);</pre></code>
+
+<p>The final argument should be 'true' to indicate that you will use this
+text node in your SVG. This is not part of the SVG 1.1 standard, but is 
+necessary for some internal machinery to work correctly. If you don't give the 
+final argument or set it to false then you will get a normal text node that 
+you can use with HTML content.</p>
+
+<h1 id="whitespace">Whitespace Handling</h1>
+
+<p>In an XML document there can be whitespace, such as spaces and newlines, between
+tags. Example:</p>
+
+<pre><code>&lt;mytag&gt;text&lt;/mytag&gt;    &lt;anothertag&gt;foobar&lt;/anothertag&gt;</code></pre>
+
+<p>Internet Explorer handles whitespace different than other browsers. In order
+to normalize things, when dealing with embedded SVG content using the SCRIPT 
+tag we remove all the whitespace that is between tags. This will allow you to 
+create JavaScript DOM code that works consistently between browsers. No empty
+whitespace text nodes will be in the SVG portion of the DOM.</p>
+
+<p>Remember, though, that the rest of your HTML document will be using the
+whitespace behavior of the browser itself. For example, if you have a BODY
+tag with some nested SVG and are calling BODY.childNodes, whitespace elements 
+will show up in the DOM on all browsers except for Internet Explorer.</p>
+
+<p>When working with SVG files embedded using the OBJECT tag, however, we retain
+all whitespace nodes, including on Internet Explorer, to 'mimic' the SVG
+running in an XML environment (which by default retains whitespace nodes).</p>
+
+<h1 id="break_abstraction">Knowing Which Renderer is Being Used and Which Nodes Are Fake</h1>
+
+<p>If you want to know from your JavaScript which renderer is being used, you
+can call svgweb.getHandlerType(). This will return the string 'flash' if the
+Flash renderer is being used and 'native' if the native renderer is being used.</p>
+
+<p>You can also detect whether a given DOM node that you are using is a real
+browser DOM node or a 'fake' one created and maintained by the SVG Web
+toolkit. All of our fake SVG nodes have a 'fake' property that will return true.
+Other nodes will simply not have this property. For example:</p>
+
+<pre><code>var circle = document.createElementNS(svgns, 'circle');
+alert(circle.fake); // will alert(true)
+var h1 = document.createElement('h1');
+alert(h1.fake); // will alert(undefined)</code></pre>
+
+<h1 id="manipulate_objects">Manipulating SVG Objects on the Page</h1>
+
+<p>If you embed SVG objects into your page using the OBJECT element, you can
+navigate into the SVG inside the OBJECT element using contentDocument:</p>
+
+<pre>
+<code>
+&lt;!--[if !IE]&gt;--&gt;
+  &lt;object data="embed1.svg" type="image/svg+xml"
+          width="500" height="500" id="testSVG"&gt; &lt;!--&lt;![endif]--&gt;
+&lt;!--[if lt IE 9]&gt;
+  &lt;object src="embed1.svg" classid="image/svg+xml"
+          width="500" height="500" id="testSVG"&gt; &lt;![endif]--&gt;
+&lt;!--[if gte IE 9]&gt;
+  &lt;object data="embed1.svg" type="image/svg+xml"
+          width="500" height="500" id="testSVG"&gt; &lt;![endif]--&gt;
+  &lt;img src="scimitar.png" /&gt;
+  &lt;/object&gt;
+
+var obj = document.getElementById('testSVG');
+var doc = obj.contentDocument; // grab the document object inside your SVG file
+var myCircle = doc.getElementById('myCircle');</code></pre>
+
+<p>Note that the getSVGDocument() method, introduced by the Adobe ASV plugin, is 
+not currently supported due to technical limitations (it is impossible to
+support on Firefox); you should use contentDocument instead.</p>
+
+<h1 id="dynamic">Dynamically Creating and Removing SVG OBJECTs and SVG Roots</h1>
+<h2 id="dynamic_object">Dynamically Creating an SVG OBJECT</h2>
+
+<p>If you want to dynamically create a new SVG OBJECT on your page, you must
+do the following. First, when you create your object, you must pass in the
+value 'true' to signal that this object will be used for SVG:</p>
+
+<pre><code>var obj = document.createElement('object', true);</code></pre>
+
+<p>Note that this is a divergence from the standard and is needed for the 
+SVG Web magic to happen.</p>
+
+<p>After creating your object, set it's 'data', 'type', 'width', and 'height'
+values, then add an onload listener to know when its ready to use:</p>
+
+<pre><code>var obj = document.createElement('object', true);
+obj.setAttribute('type', 'image/svg+xml');
+obj.setAttribute('data', 'rectangles.svg');
+obj.setAttribute('width', '500');
+obj.setAttribute('height', '500');
+obj.addEventListener('load', function() {
+  alert('loaded!');
+}, false);</code></pre>
+
+<p>To append your new SVG OBJECT to the page, you must use the svgweb.appendChild()
+method instead of calling appendChild on the element you want to attach it
+to. So if you wanted to attach it to the BODY element, you would do the
+following:</p>
+
+<pre><code>svgweb.appendChild(obj, document.body);</code></pre>
+
+<p>rather than:</p>
+
+<pre><code>document.body.appendChild(obj).</code></pre>
+
+<p>To write code that handles removal of SVG Web in the future, you would do the following:</p>
+<pre><code>
+if (window.svgweb) {
+  window.svgweb.appendChild(obj, document.body);
+} else {
+  document.body.appendChild(obj);
+}
+</code></pre>
+
+<p>The svgweb.appendChild() method takes the SVG OBJECT to append as its first 
+argument, and the parent to attach it to as its second argument.</p>
+
+<p>The parent that you attach your SVG OBJECT to must 
+already be attached to the real DOM on your page (i.e. it can't be disconnected
+from the page).</p>
+
+<p>Note that our svgweb.appendChild method is a divergence from the standard 
+necessary for SVG Web to do its magic.</p>
+
+<h3 id="data_scheme">Object data: URL Scheme</h3>
+<p>The 'data:' URL scheme is supported by SVG Web. Therefore, you can directly
+specify the content of the SVG object instead of specifying a source file.
+This could be done when creating an SVG image from scratch or from dynamic
+content or when the SVG content is small and can be embedded directly in
+javascript or html for the performance advantage (since another source file
+need not be retrieved from the network).</p>
+
+<p>So, if you want to create an blank SVG document, you could do the following: </p>
+
+<pre><code>obj.setAttribute('data', 'data:image/svg+xml,&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;&lt;/svg&gt;');</code></pre>
+
+<p>rather than specifying a source file:</p>
+
+<pre><code>obj.setAttribute('data', 'blank.svg');</code></pre>
+
+<p>In markup, this would look like this:</p>
+
+<pre>
+<code>
+&lt;!--[if !IE]&gt;--&gt;
+  &lt;object data='data:image/svg+xml,&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;&lt;/svg&gt;'
+          type="image/svg+xml" width="500" height="500" id="testSVG"&gt; &lt;!--&lt;![endif]--&gt;
+&lt;!--[if lt IE 9]&gt;
+  &lt;object src='data:image/svg+xml,&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;&lt;/svg&gt;'
+          classid="image/svg+xml" width="500" height="500" id="testSVG"&gt; &lt;![endif]--&gt;
+&lt;!--[if gte IE 9]&gt;
+  &lt;object data='data:image/svg+xml,&lt;svg xmlns="http://www.w3.org/2000/svg"&gt;&lt;/svg&gt;'
+          type="image/svg+xml" width="500" height="500" id="testSVG"&gt; &lt;![endif]--&gt;
+  &lt;img src="scimitar.png" /&gt;
+  &lt;/object&gt;
+</code>
+</pre>
+
+<h2 id="dynamic_root">Dynamically Creating an SVG Root</h2>
+<p>Dynamically creating an SVG Root element is similar for direct embedding into
+a web page. You don't have to create a SCRIPT tag like you would if you were direct embedding the SVG on page load:</p>
+
+<pre><code>&lt;script type="image/svg+xml"&gt;
+  &lt;svg&gt;
+    ...
+  &lt;/svg&gt;
+&lt;/script&gt;</code></pre>
+
+<p>Instead, you follow a process similar to the above:</p>
+
+<pre><code>// create SVG root element
+var svg = document.createElementNS(svgns, 'svg'); // don't need to pass in 'true'
+svg.setAttribute('width', '300');
+svg.setAttribute('height', '300');
+
+// create an example circle and append it to SVG root element
+var circle = document.createElementNS(svgns, 'circle');
+svg.appendChild(circle);
+
+// Must use a callback to know when SVG is appended to page (this is slight
+// divergence from standard). The following are supported ways to do this:
+svg.addEventListener('SVGLoad', function() {
+  svg = this; // this will correctly refer to your SVG root
+  alert('loaded!');
+}, false);
+// also supported:
+svg.onsvgload = function() {
+  alert('loaded!');
+}
+
+// now append the SVG root to our document
+svgweb.appendChild(svg, document.body); // note that we call svgweb.appendChild</code></pre>
+
+<p>Note in the above code that we have to use an event listener to know when the SVG root is finished loading into the page; this is a slight divergence from the standard necessary for SVG Web's magic.</p>
+
+<p>The parent that you attach either your SVG root must 
+already be attached to the real DOM on your page (i.e. it can't be disconnected
+from the page).</p>
+
+<h2 id="svgweb.removeChild">Removing SVG OBJECTs and SVG Roots From The Page</h2>
+
+<p>To remove an SVG OBJECT or SVG root, you must similarly call a special method on svgweb:</p>
+
+<pre><code>svgweb.removeChild(mySVGObject, parentNode);</code></pre>
+
+<p>The first argument to <code>svgweb.removeChild</code> is the SVG
+OBJECT or SVG Root to remove from the page, while the second is the parent node of
+this object. Note that you must directly remove an SVG OBJECT or SVG root using the
+above method; if you remove a parent node that might have an SVG OBJECT or root
+as a distant descendant than resources might not be cleaned up correctly.</p>
+
+<p>For example, if you have a container DIV that then has an SVG OBJECT, the
+following might have the SVG OBJECT disappear from the page but resources
+will not get cleaned up correctly, and memory will get wasted over time:</p>
+
+<pre><code>containerDiv = ''; // bad!!
+// or
+containerDiv.parentNode.removeChild(mySVGObject); // bad!!</code></pre>
+
+<p id="removeChildClosureReference">One final subtle note; when you remove an SVG OBJECT or SVG root from the page make sure to use the correct reference. Any of the following will work:</p>
+
+<pre><code>svg = document.createElementNS(svgns, 'svg');
+svg.setAttribute('width', 100);
+svg.setAttribute('height', 100);
+svg.id = 'dynamicRoot2';
+svg.addEventListener('SVGLoad', function() {
+  <b>// these are good:
+  svg = this;
+  svg = document.getElementById('dynamicRoot2');
+  // if this is the second SVG root:
+  svg = document.getElementsByTagNameNS(svgns, 'svg')[1];
+  
+  svgweb.removeChild(svg, svg.parentNode);</b>
+}, false);</code></pre>
+
+<p>Note that using the direct reference caught by the closure <em>will not</em> work as expected under all situations; this is a limitation of SVG Web:</p>
+
+<pre><code>svg = document.createElementNS(svgns, 'svg');
+svg.setAttribute('width', 100);
+svg.setAttribute('height', 100);
+svg.id = 'dynamicRoot2';
+svg.addEventListener('SVGLoad', function() {
+  <b>// bad!!
+  svgweb.removeChild(svg, svg.parentNode);</b>
+}, false);</code></pre>
+
+<a href="#known_issues19">See here for more details on this issue.</a>
+
+<h1 id="suspendRedraw">suspendRedraw/unsuspendRedraw</h1>
+
+<p>SVG Web implements the SVG <code>suspendRedraw</code>, <code>unsuspendRedraw</code>, and <code>unsuspendRedrawAll</code> methods, which can be called on an SVG root tag. <code>forceRedraw</code> is not currently implemented and there are no plans to do so.</p>
+
+<p><code>suspendRedraw</code> can significantly speed things up when doing DOM operations in a loop on many elements. An example:</p>
+
+<pre><code>
+  var root = document.getElementsByTagNameNS(svgns, 'svg')[0];
+  var circles = document.getElementsByTagNameNS(svgns, 'circle');
+  var suspendID = root.suspendRedraw(5000);
+  // let's say there are 500 circles
+  for (var i = 0; i &lt; circles.length; i++) {
+    circles[i].setAttribute('fill', 'red');
+  }
+  root.unsuspendRedraw(suspendID);
+  // could also do root.unsuspendRedrawAll() to clear out all suspended 
+  // operations
+</code></pre>
+
+<p>The suspendRedraw method takes a timeout in milliseconds until redrawing is forced; higher numbers are recommended. Under the covers for the Flash renderer we batch all the changes up and send them only when an unsuspend redraw operation is called, which makes things much faster.</p>
+
+<h1 id="document_fragment">DocumentFragments</h1>
+
+<p>The DOM DocumentFragment API is a way to efficiently add many DOM nodes to a page quickly; it is highly recommended when you are adding many SVG elements to a page quickly. This will significantly speed things up, especially if you are creating these nodes on page load. To create a DocumentFragment for use with SVG, you should call <code>document.createDocumentFragment(true)</code>. Note the extra <code>true</code> parameter -- this is required by SVG Web to help us know that this DocumentFragment will be used with SVG, possibly going into our fake Flash backend. A small code example:</p>
+  
+  <pre><code>
+    // note the extra 'true' argument
+    var frag = document.createDocumentFragment(true);
+    for (var i = 0; i &lt; 100; i++) {
+      var circle = document.createElementNS(svgns, 'circle');
+      circle.setAttribute('x', i * 10);
+      circle.setAttribute('y', 10);
+      circle.setAttribute('r', 5);
+      circle.setAttribute('fill', 'red');
+      // append to DocumentFragment
+      frag.appendChild(circle);
+    }
+    // now append the DocumentFragment to the DOM
+    var svg = document.getElementsByTagNameNS(svgns, 'svg')[0];
+    svg.appendChild(frag); // DocumentFragment disappears leaving circles
+  </code></pre>
+  
+<p>A few notes:</p>
+
+<ul>
+  <li>It is safe to recycle and reuse DocumentFragments. Once you use one the children will disappear and you can simply reuse it again.</li>
+  <li>You <em>must</em> provide the <code>true</code> argument to <code>document.createDocumentFragment(<b>true</b>)</code> when using DocumentFragments with SVG. This is an extra, non-standard argument necessary for SVG Web.</li>
+  <li>You can not nest HTML elements inside of an SVG DocumentFragment; you can also not create a root &lt;svg&gt; tag with children inside of a DocumentFragment. Neither of these will work.</li>
+</ul>
+
+<h1 id="cross_domain">Cross Domain SVG Web</h1>
+
+<p>Many web sites store their static files on a different domain than where many of their pages reside, such as <code>static.example.com</code>. To accomodate this use case SVG Web has a special set of <code>data-</code> attributes that can be used on your script tag.</p>
+
+<p>Before diving into this, please note that SVG Web basically consists of a JavaScript file (<code>svg.js</code>); a Flash SWF file (<code>svg.swf</code>); and a Microsoft Behavior HTC file (<code>svg.htc</code>). Due to limitations in Internet Explorer you can safely place the <code>svg.js</code> and <code>svg.swf</code> files on third-party domains, but the <code>svg.htc</code> file <em>must</em> be on the same domain as your web page itself. The HTC file is quite small, however, so hosting it on the same domain as the page itself is not a serious limitation.</p>
+
+<p>To host things separately, simply point the <code>src</code> attribute on your <code>script</code> tag that pulls in <code>svg.js</code> to the full URL. SVG Web will automatically detect that you are pulling things in cross-domain and will grab the <code>svg.swf</code> from the same location as the <code>svg.js</code> file. You must still provide the <code>data-path</code> attribute however; in this case you should provide the absolute or relative path to where the <code>svg.htc</code> is located on the same domain as the page, such as <code>../../../src</code> or </code>/src/</code>.</p>
+
+</p>As an example, if we are serving the page from <code>example.com</code> with the <code>svg.htc</code> file at <code>example.com/src/svg.htc</code> but have the SVG Web library over on <code>http://codinginparadise.org/projects/svgweb/src/</code> you would provide the following <code>script</code> tag:</p>
+
+<pre><code>  
+&lt;script
+   type="text/javascript"
+   src="http://codinginparadise.org/projects/svgweb/src/svg.js"
+   data-path="/src/"&gt;
+&lt;/script&gt;
+</code></pre>
+
+<h1 id="zoomAndPan">Zooming and Panning with currentTranslate and currentScale</h1>
+
+<p>SVG Web supports the <code>currentTranslate</code> and <code>currentScale</code> attributes on the SVG root tag. These can make it much easier to do scripted zooming and panning of the entire SVG image. To use <code>currentScale</code>, simply change the value to a number greater than 1 to zoom in and a number smaller than one to zoom out:
+  
+<pre><code>svgRoot.currentScale = 0.5; // zoom out
+svgRoot.currentScale = 1.5; // zoom in
+</code></pre>
+
+<p>When using <code>currentTranslate</code>, we have to diverge slightly from the SVG 1.1 standard to accomodate limitations in Internet Explorer. The standard supports setting and getting the translation x and y value directly as <code>x</code> and <code>y</code> attributes; we don't support this syntax:</p>
+
+<pre><code>// not supported
+svgRoot.currentTranslate.x = 5;
+svgRoot.currentTranslate.y = -10;
+</code></pre>
+
+<p>Instead, these have to be formal getters and setters, as follows:</p>
+
+<pre><code>
+svgRoot.currentTranslate.setX(5);
+svgRoot.currentTranslate.setY(-10);
+alert(svgRoot.currentTranslate.getX()); // should print 5
+alert(svgRoot.currentTranslate.getY()); // should print -10
+</code></pre>
+
+<p>We also support a small non-standard extension to set both the X and Y values at once, which can give a slight performance speedup when using the SVG Web renderer with Flash:</p>
+
+<pre><code>
+svgRoot.currentTranslate.setXY(5 /* x */, -10 /* y */);
+</code></pre>
+
+<p>Note that we patch these methods into the native SVG environment for consistency, so the above will be available even when using SVG Web in a native environment on Firefox, Safari, etc.</p>
+
+<p id="known_issues25">* <code>currentTranslate</code> is supported on the SVG root tag (see the section <a href="#zoomAndPan">"Zooming and Panning with currentTranslate and currentScale"</a> for details). However, due to limitations in Internet Explorer the way to work with this is slightly different when using SVG Web than the SVG 1.1 standard.
+
+<h1 id="known_issues">Known Issues and Errata</h1>
+
+<p>Most of the known issues are pretty minor and tend to affect edge conditions
+you won't run into often, but they are documented here for reference if
+you find that you are running into an issue:</p>
+
+<p id="known_issues1">* If you use the Flash viewer, and embed some SVG into a SCRIPT tag, the Flash will show up directly in the DOM as an EMBED tag (non-IE browsers) or an OBJECT tag (IE) with the 'class' set to 'embedssvg'. You can get the SVG root element by calling 'documentElement' on the EMBED tag (this is non-standard and is not part of the SVG 1.1 spec). </p>
+
+<p>For example, if your page had an SVG SCRIPT block right under the BODY tag, 
+this would get transformed into an EMBED tag with the Flash viewer:</p>
+
+<pre>BODY
+   EMBED (class='embedssvg')
+       svg root</pre>
+       
+<p>Using script you could get the svg root node as follows:</p>
+
+<pre><code>var embed = document.body.childNodes[0];
+if (embed.className &amp;&amp; embed.className.indexOf('embedssvg') != -1) {
+  var svg = embed.documentElement;
+  // now have root SVG element and can manipulate it as normal
+}</code></pre>
+
+<p id="known_issues2">* Scoping getElementsByTagNameNS on elements other than the document element is
+not implemented yet. For example, you can not currently do
+document.body.getElementsByTagNameNS(svgns, 'rect') or
+myDiv.getElementsByTagNameNS(svgns, 'ellipse').</p>
+
+<p id="known_issues3">* If you have no HTML TITLE element on the page when using the native
+renderer, Safari 3 will incorrectly pick up the first SVG TITLE element 
+instead and set the page title at the top of the browser. To correct this, 
+if you have no HTML TITLE, we automatically place an empty HTML TITLE into 
+the HEAD of the page, which fixes the issue.</p>
+
+<p id="known_issues4">* DOM Mutation Events are not supported and will not fire for SVG nodes 
+when the Flash viewer is used (i.e. if you create an SVG circle and then 
+attach it to the document, a DOM Mutation event will not fire).</p>
+
+<p id="known_issues5">* You should declare all of the namespaces you want to use on one of your 
+SVG root elements before calling createElementNS; unknown namespaces will
+not work afterwards. For example, if you have the following SVG:</p>
+
+<pre><code>&lt;svg id="mySVG" width="500" height="500"&gt;&lt;metadata/&gt;&lt;/svg&gt;</code></pre>
+
+You could not do the following:
+
+<pre><code>var dc = document.createElementNS('http://purl.org/dc/elements/1.1/', 
+                                  'dc:creator');
+var metadata = document.getElementsByTagNameNS(svgns, 'metadata')[0];
+metadata.appendChild(dc);</code></pre>
+
+This is because the DC (Dublic Core) namespace is not declared. To make
+this work, you should have the namespace on your SVG root markup:
+
+<pre><code>&lt;svg id="mySVG" width="500" height="500"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"&gt;
+   &lt;metadata/&gt;
+&lt;/svg&gt;</code></pre>
+
+<p>Note that this limitation is done on purpose to support existing XHTML
+documents that want to use createElementNS for their own purposes. This is
+also a limitation imposed by the XML namespace model itself rather than a
+limitation of the SVG Web framework.</p>
+
+<p id="known_issues6">* On Internet Explorer we don't support wildcarding a given tag name
+across known namespaces and a given tag:</p>
+
+<pre><code>getElementsByTagNameNS('*', 'someTag');</code></pre>
+
+<p>We _do_ support wildcard calls of the following type:</p>
+
+<pre><code>getElementsByTagNameNS('*', '*');
+getElementsByTagNameNS('someNameSpace', '*');
+getElementsByTagNameNS(null, 'someTag');</code></pre>
+
+<p>The same limitation applies when using getElementsByTagNameNS scoped to
+a particular node, so the following would not work on Internet Explorer:</p>
+
+<pre><code>someNode.getElementsByTagNameNS('*', 'someTag');</code></pre>
+
+<p id="known_issues7">* insertBefore and replaceChild only accepts DOM element nodes for now, not 
+DOM text nodes</p>
+
+<p id="known_issues8">* Only DOM element, text, and document type nodes are supported across the
+framework; this means you can't dynamically work and insert processing
+instructions, comments, attributes, etc.</p>
+
+<p id="known_issues9">* The isSupported() method on SVG DOM Nodes is not natively supported by 
+Firefox, so therefore doesn't work when the Native Handler is being used
+on that platform:</p>
+
+<pre><code>mySvgPath.isSupported('Core', '2.0')</code></pre>
+
+<p>It works on Safari and when the Flash Handler is being used on all browsers.</p>
+
+<p id="known_issues10">* On Internet Explorer, DOM text nodes created through document.createTextNode
+with the second argument given as 'true':</p>
+
+<pre><code>document.createTextNode('some text', true)</code></pre>
+
+<p>will have a .style property on them as an artifact of how we support
+various things internally. Changing this will have no affect. Technically
+DOM text nodes should not have a .style property.</p>
+
+<p id="known_issues11">* On Internet Explorer, the cssText property on an SVG node's style object
+should not be set or retrieved; it will have unreliable results. For example,
+calling myCircle.style.cssText will not correctly return the SVG CSS of that
+node; you will instead see some custom internal properties that we use to
+support some of the framework magic on Internet Explorer.</p>
+
+<p id="known_issues12">* The Firefox 3's native implementation of SVG doesn't correctly mirror
+inline style="" attributes into element.style.* values. For example,
+if I have the following SVG element:</p>
+
+<pre><code>&lt;path id="myPath" style="display: block; fill: red; opacity: 0.5" /&gt;</code></pre>
+
+<p>and then I access it's style properties:</p>
+
+<pre><code>var myPath = document.getElementById('myPath');
+console.log(myPath.style.fill); // does not print 'red' on Firefox!</code></pre>
+
+<p>Note that this is a bug in the Firefox browser itself and not from us. The 
+native SVG renderer on Safari does not have this issue. We correctly parse 
+and expose our style properties for the above case for the Flash renderer.</p>
+
+<p id="known_issues13">* By default the SVG root element has an overflow of hidden. If you make the
+overflow visible, when using the Flash renderer elements will not overflow
+outside of the containing Flash movie as we can't support rendering things
+outside of the Flash movie.</p>
+
+<p id="known_issues14">* If you are using the Flash renderer on a browser that has native SVG
+support, and use the OBJECT tag to embed an SVG file, the browser's native
+support might render the OBJECT tag first before we can get to it, followed 
+by our Flash renderer taking over and then rendering things. This might result 
+in a slight flash, or your embedded SVG file having it's onload() event fired 
+twice.</p>
+
+<p id="known_issues15">* If you dynamically change the data attribute of an SVG OBJECT element after
+page load, the updated SVG will not load for the Flash Handler and certain
+patched functions for the Native Handler will no longer work.</p>
+
+<p id="known_issues16">* You should avoid IDs on your OBJECT, SVG root, or SVG elements that start
+with numbers, such as "32MyElement". The SVG Web framework will not work
+correctly with such IDs.</p>
+
+<p id="known_issues17">* If you are using OBJECT tags to embed your SVG into the page while using
+the Flash handler support:</p>
+
+<pre>
+<code>
+&lt;!--[if !IE]&gt;--&gt;
+  &lt;object data="embed1.svg" type="image/svg+xml"
+          width="500" height="500" id="testSVG"&gt; &lt;!--&lt;![endif]--&gt;
+&lt;!--[if lt IE 9]&gt;
+  &lt;object src="embed1.svg" classid="image/svg+xml"
+          width="500" height="500" id="testSVG"&gt; &lt;![endif]--&gt;
+&lt;!--[if gte IE 9]&gt;
+  &lt;object data="embed1.svg" type="image/svg+xml"
+          width="500" height="500" id="testSVG"&gt; &lt;![endif]--&gt;
+  &lt;img src="scimitar.png" /&gt;
+  &lt;/object&gt;
+</code>
+</pre>
+
+<p>and call document.getElementsByTagName('object'), note that on Firefox 
+and Safari the OBJECT tag gets transformed into an EMBED tag by the browser 
+itself beyond our control, so you must call 
+document.getElementsByTagName('embed') instead of asking for objects in order 
+to enumerate all the SVG OBJECTs on the page.</p>
+
+<p>TODO: FIXME: Check to make sure this is still true.</p>
+
+<p id="known_issues18">* The 'this' keyword in an external SVG file when brought in with an SVG OBJECT
+tag when using the Flash renderer isn't always correct. For example, if you
+have the following SVG file:</p>
+
+<pre><code>&lt;svg onload="loaded(this)"&gt;
+  &lt;script&gt;&lt;![CDATA[
+    function loaded(onloadThis) {
+      // onloadThis correctly points to our SVG root element
+      
+      // call some other function
+      anotherFunc();
+    }
+    
+    function anotherFunc() {
+      alert(this); // 'this' incorrectly points to the containing HTML pages
+                   // window object
+    }
+  ]]&gt;&lt;/script&gt;
+&lt;/svg&gt;</code></pre>
+
+<p>If you use the 'this' keyword inside of an onload="" attribute on the SVG
+root tag, it will correctly point to the SVG root element. However, if you
+use the 'this' keyword later on inside of a script block, such as in a 
+function, it will incorrectly point to the containing HTML page's window
+object. Correct behavior would be for it to point to the SVG object's
+own window object.</p>
+
+<p>In general, though, you should not be using the 'this' keyword to grab a 
+reference to a window object; this is bad programming. Instead, you should 
+directly call and use window and only use 'this' when doing object-oriented 
+JavaScript development:</p>
+
+<pre><code>&lt;svg onload="loaded(this)"&gt;
+  &lt;script&gt;&lt;![CDATA[
+    function loaded(onloadThis) {
+      // onloadThis correctly points to our SVG root element
+      
+      anotherFunc();
+    }
+    
+    function anotherFunc() {
+      alert(window); // correctly points to just our SVG OBJECT window
+    }
+    
+    function SomeClass() {
+      this.someProp = 'foo'; // 'this' correctly points to SomeClass instance
+    }
+    
+    var instance = new SomeClass();
+  ]]&gt;&lt;/script&gt;</code></pre>
+  
+<p id="known_issues19">* If you are dynamically creating an SVG OBJECT with the Flash handler, after 
+creation the SVG OBJECT will not correctly point to a reference to that 
+OBJECT that might have been captured outside of a closure. For example, if you 
+have the following code:</p>
+
+<pre><code>var obj = document.createElement('object', true);
+obj.setAttribute('type', 'text/svg+xml');
+obj.setAttribute('data', 'myfile.svg');
+obj.addEventListener('SVGLoad', function() {
+  alert(obj.parentNode); // will incorrectly return null!
+}, false);
+if (window.svgweb) {
+  window.svgweb.appendChild(obj, myParentNode);
+} else {
+  myParentNode.appendChild(obj);
+}
+</code></pre>
+
+<p>Notice that we access 'obj.parentNode' after the SVG OBJECT has finished
+loading, and this incorrectly returns 'null' instead of the actual
+'myParentNode' value. 'obj' will not reference the actual Flash object as
+you would expect, so you should not continue using the value inside the closure 
+or later on as a stored value.</p>
+
+<p>There are two workarounds. First, 'this' inside your onload handler will 
+correctly reference the actual Flash object so you can further manipulate it
+or store the value:</p>
+
+<pre><code>var obj = document.createElement('object', true);
+obj.setAttribute('type', 'text/svg+xml');
+obj.setAttribute('data', 'myfile.svg');
+obj.addEventListener('SVGLoad', function() {
+  obj = this;
+  alert(obj.parentNode); // correctly prints 'myParentNode'
+}, false);
+if (window.svgweb) {
+  window.svgweb.appendChild(obj, myParentNode);
+} else {
+  myParentNode.appendChild(obj);
+}
+</code></pre>
+
+<p>You can also of course use getElementById if you gave your SVG OBJECT an id:</p>
+
+<pre><code>var obj = document.createElement('object', true);
+obj.setAttribute('type', 'text/svg+xml');
+obj.setAttribute('data', 'myfile.svg');
+obj.setAttribute('id', 'mySVG');
+obj.addEventListener('SVGLoad', function() {
+  obj = document.getElementById('mySVG');
+  alert(obj.parentNode); // correctly prints 'myParentNode'
+}, false);
+if (window.svgweb) {
+  window.svgweb.appendChild(obj, myParentNode);
+} else {
+  myParentNode.appendChild(obj);
+}
+</code></pre>
+
+<p>Note that similar issues pertain to <code>svgweb.removeChild</code> when dealing with SVG OBJECT references. See <a href="#removeChildClosureReference">here</a> for more details.</p>
+
+<p id="known_issues20">* Inside of an SVG OBJECT for the Flash handler, if you access the 
+window.location value for that file and try to change it, nothing will happen.
+You can, however, read the values off this object and they will correctly
+represent the URL of the object as given in the data or src attribute of the
+OBJECT. You could use this to pass parameters into your SVG file, for example.</p>
+
+<p id="known_issues21">* XML Comments (such as &lt;!-- Hello World --&gt;) will not show up in the DOM
+when using the Flash handler.</p>
+
+<p id="known_issues22">* If you have nested SVG elements (i.e. having an &lt;svg&gt; element nested in 
+your document), these don't currently show up in the DOM correctly.</p>
+
+<p id="known_issues23">* On some installations of Internet Explorer depending on what patches might
+be present, if you have "Disable Script Debugging" unchecked, you might see
+the Eolas "Click to activate" box around your Flash movies before users can
+interact with them. This will only happen once. It is rare for computers to
+have this box unchecked plus not having the right patches (this issue was fixed
+in later patches by Microsoft). The issue is documented here:
+http://code.google.com/p/svgweb/issues/detail?id=153</p>
+
+<p id="known_issues24">* Be careful doing complicated styling directly on an SVG OBJECT during creation when using the Flash handler, as the values might not get correctly copied over on Internet Explorer or can cause unusual glitches on Firefox/Flash. Avoid this:</p>
+
+<pre><code>
+var obj = document.createElement('object', true);
+obj.setAttribute('type', 'image/svg+xml');
+obj.setAttribute('data', someURL);
+obj.setAttribute('width', 300);
+obj.setAttribute('height', 300);
+obj.addEventListener('SVGLoad', myObjLoaded, false);
+
+<b>// avoid this
+obj.setAttribute('style', 'position: absolute; z-index: -1000; top: 0px; right: 0px')
+// or this
+obj.style.position = 'absolute';
+obj.style.zIndex = -1000;
+obj.style.top = '0px';
+obj.style.right = '0px';</b>
+
+if (window.svgweb) {
+  window.svgweb.appendChild(obj, myPage);
+} else {
+  myPage.appendChild(obj);
+}
+</code></pre> 
+
+<p>Instead, you should do your advanced styling on a <code>div</code> or <code>span</code> container and place the SVG OBJECT inside of that container:</p>
+
+<pre><code>
+var obj = document.createElement('object', true);
+obj.setAttribute('type', 'image/svg+xml');
+obj.setAttribute('data', someURL);
+obj.setAttribute('width', 300);
+obj.setAttribute('height', 300);
+obj.addEventListener('SVGLoad', myObjLoaded, false);
+
+<b>// position object using a DIV container to avoid 
+// strange style + OBJECT interactions
+var container = document.createElement('div');
+container.style.position = 'absolute';
+container.style.zIndex = 1000;
+container.style.top = '0px';
+container.style.left = '0px';
+
+myPage.appendChild(container);
+if (window.svgweb) {
+  window.svgweb.appendChild(obj, container);
+} else {
+  container.appendChild(obj);
+}
+</b>
+</code></pre>
+
+<p id="known_issues25">* <code>currentTranslate</code> is supported on the SVG root tag (see the section <a href="#zoomAndPan">"Zooming and Panning with currentTranslate and currentScale"</a> for details). However, due to limitations in Internet Explorer the way to work with this is slightly different when using SVG Web than the SVG 1.1 standard. See the <a href="#zoomAndPan">section</a> for details.
+  
+<p id="known_issues26">If you remove an SVG OBJECT with <code>svgweb.removeChild</code> and then re-attach it, things will not work. You must create a fresh SVG OBJECT in this case.
+  
+<p id="known_issues27">If you do a <code>cloneNode</code> on a node or group of nodes that have event listeners, these event listeners will not get copied over; this mimics the native behavior on Firefox and Safari which <em>do not</em> copy over event listeners from cloned nodes.</p>
+
+<p id="known_issues28"><code>currentTranslate</code> and <code>currentScale</code> will only work on the SVG root tags of SVG OBJECTs. If you apply them on directly embedded SVG the results will be unexpected (Safari/Native, for example, will scale the entire page). This makes sense as the SVG directly embedded into a page doesn't have its own translate or scale presence apart from the page itself.</p>
+
+<p id="known_issues29">Transparently intercepting <code>window.onload</code>; any <code>onload</code> attributes on the HTML <code>body</code> tag; <code>window.addEventListener('load', ...)</code>; and <code>window.attachEvent('onload', ...)</code> is not supported. You must instead use a slightly different syntax as detailed <a href="#onload">here</a>.
+  
+<p id="known_issues30">If you have code inside of an external SVG file that you bring in through the SVG OBJECT tag, you must subscribe to the onload event using the &lt;svg onload=""&gt; attribute as detailed <a href="#workaround_for_onload_inside_svg_files">here</a>. We don't support using <code>window.addEventListener('SVGLoad', ...)</code> or <code>window.onsvgload = someFunc;</code> <i>inside</i> of an external SVG file. For example, the following would <em>not</em> work:
+  
+<p>MyExternalSVGFile.svg:</p>
+
+<pre><code>&lt;svg&gt;
+  &lt;script&gt;
+    // doesn't work
+    window.addEventListener('SVGLoad', function() {
+      alert('loaded!');
+    }, false);
+    
+    // also doesn't work
+    window.onsvgload = function() { alert('foobar!'); }
+  &lt;/script&gt;
+&lt;/svg&gt;</code></pre>
+
+<p id="known_issues31">By default SVG Web will use the round joint style rather than the miter joint style mandated by the SVG standard for performance reasons in the Flash renderer. To override this, use the <code>shape-rendering</code> CSS property on your SVG root tag and set it to <code>geometric-precision</code>.
+
+<h1 id="breaking_changes">Breaking Changes</h1>
+
+<p>This section describes any removal of functionality or changing of our APIs that might break code that used previous versions of SVG Web.</p>
+
+<h2 id="breaking_changes_in_development">In Development</h2>
+
+<h2 id="breaking_changes_dracolisk">Dracolisk Release</h2>
+
+<ul>
+  <li id="breaking_change_onload">SVG Web <em>no longer</em> does magic around <code>window.addEventListener('load', ...)</code>; <code>window.onload</code>; and <code>window.attachEvent('load', ...)</code>, as this was breaking third-party code such as JQuery (<a href="http://code.google.com/p/svgweb/issues/detail?id=375">see issue</a>). You must now use a slightly different syntax, detailed <a href="#onload">here</a>.</li>
+  <li id="breaking_change_addeventlistener_inside_svg_files">Also related, inside of external SVG files you must only use the <code>&lt;svg onload=""&gt;</code> attribute to wait for SVG Web to finish loading; <a href="#known_issues30">see this note</a> for details.</li>
+  <li id="breaking_change_custom_prefixes">SVG Web no longer supports having the <code>svg:</code> prefix in your SVG markup, such as <code>&lt;svg:svg&gt;</code> or <code>&lt;some-custom-prefix:circle&gt;</code>. This was removed due to both spotty support, low usage, and the fact that it has a significant impact on the most common case performance for non-prefixed SVG.</li>
+</ul>
+</body>
+</html>

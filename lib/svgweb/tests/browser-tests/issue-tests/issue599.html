@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+
+		<meta charset="UTF-8">
+		<meta name="keywords" content="Wahlatlas, Onlineatlas, Landtagswahl, ST, Sachsen-Anhalt, Kartographie, Scalable Vector Graphics, SVG"/>
+		<meta name="description" content="Interaktive Karten zur Landtagswahl Sachsen-Anhalt 2011">
+		<title>Atlas zur Landtagswahl Sachsen-Anhalt 2011 (20. März)</title>
+
+		<script src="../../../src/svg.js" data-path="../../../src"></script>
+
+<style type="text/css">
+
+body  { line-height: 100%; margin: 0px; color: #000; font-size: 12px; background-color: #fffef4;
+        font-family: Helvetica, Arial, sans;
+       }
+
+a:link, a:visited { color: #a8a8a8; text-decoration:none; }
+a:hover, a:active { color: #4a4a4a; border-bottom-width: 1px; border-bottom-style: dotted; text-decoration: none; }
+
+#map {top: 3px; left: 3px; width: 600px; height: 625px; float: left; position: absolute; background-color: #818181;}
+
+#controlsContainer {top: 3px; padding-left: 18px; padding-right: 5px; left: 606px; width: 340px; height: 625px;
+					background-color: #dddddd; float: right; position: absolute;
+      				}
+
+h1 { letter-spacing: 1px; font-weight: bold; margin-top: 21px; margin-bottom: 28px;
+	color: #4f4c60; font-size: 21px; line-height: 120%;
+	font-variant: small-caps; font-family: Georgia, serif;}
+h3 {font-weight: bold; font-family: Helvetica, Arial, sans-serif; color: #3a3b4f;
+	font-size: 12px;  margin-top: 10px; margin-bottom: 10px;}
+
+.importnt {font-weight: bold;}
+
+#wkrresults {top: 120px; position: absolute;}
+#sieger {top: 280px; position: absolute;display: none;}
+#legende {top: 240px; position: absolute;}
+#copyright {color: #a8a8a8; bottom: 5px; font-size: 10px; line-height: 13px; position: absolute;}
+#zoomControls { top: 600px; left: 242px; position: absolute;}
+.sButtn {font-size: 9px;}
+
+#dropDown1 {top: 212px; position: absolute; z-index: 5;}
+#wkr-name {font-weight: bold; color: #e95502; width: 332px;}
+#wkrid {text-shadow: -1px -1px 1px #333333; position: absolute; top:30px; left: 20px;
+		color: #fff; font-size: 36px; font-weight: bold; line-height: 100%;}
+
+table { margin-top: 0px; padding: 0px; margin-right: 0px; margin-bottom: 0px; width: 326px; margin-left: -2px;}
+tr {background-color: #f2f2f2;}
+td {padding: 5px; text-align: right;}
+.inputTD {padding-top: 0; padding-bottom: 0;text-align: center;}
+.limit {font-size: 12px;padding-top: 0; padding-bottom: 0;}
+
+#histogram {padding-left: 3px; padding-top: 3px; clear: both; top: 460px; position: absolute;
+			height: 110px; width: 320px; background-color: #f2f2f2;}
+
+#PrintCopy {display:none;}
+
+@media print {
+	#PrintCopy {width: 15cm; padding-left: 1cm; top: 18cm; background-color: #fff; position: absolute; display: block;
+				font-family: Georgia, serif; line-height: 130%; font-size: 6pt;}
+	#map {background-color: #fff; top: 0.5cm; width: 15cm; height: 15cm;}
+	#polygons {opacity: 1;}
+	#topoBmp, #dropDown1, #zoomControls, #copyright {display:none;}
+	.noPrint {display:none;}
+	}
+
+</style>
+
+ 	<script src="issue599-1.js" charset="utf-8"></script>
+ 	<script src="issue599-2.js" charset="utf-8"></script>
+
+	</head>
+
+	<body onsvgload="load()">
+
+	<div id="controlsContainer">
+
+	<h1>Landtagswahl<br>Sachsen-Anhalt 2011</h1>
+
+	<p id="wkr-name">Anwendung wird geladen . . .</p>
+	<!-- <p id="wahlbetAkt">Wahlbeteiligung 2011</p> -->
+
+	<table id="wkrresults">
+	<!-- "AKT" = Aktuelle Wahl; "VORP" = VorPeriode	 -->
+		<tr>
+<!-- 		<td style="font-size: 9px;">Zweitstimme</td> -->
+		<td> </td>
+		<td style="width: 16%;">CDU</td>
+		<td style="width: 16%;">LINKE</td>
+		<td style="width: 16%;">SPD</td>
+		<td style="width: 16%;">FDP</td>
+		<td style="width: 16%;">GRÜNE</td>
+		</tr>
+		<tr class="importnt">
+		<td>2011</td>
+		<td id="cduAKTproz">–</td>
+		<td id="linkeAKTproz">–</td>
+		<td id="spdAKTproz">–</td>
+		<td id="fdpAKTproz">–</td>
+		<td id="grueneAKTproz">–</td>
+		</tr>
+		<tr>
+		<td>2006</td>
+		<td id="cduVORPproz">–</td>
+		<td id="linkeVORPproz">–</td>
+		<td id="spdVORPproz">–</td>
+		<td id="fdpVORPproz">–</td>
+		<td id="grueneVORPproz">–</td>
+		</tr>
+	</table>
+
+	<div id="dropDown1">
+		<form id="form1">
+	    <select name="types" onchange="fillItems(0)">
+		  <option value="2011">Landtag 2011</option>
+<!-- 		  <option value="1">– Zeitvergleich –</option> -->
+		  <option value="2006">Landtag 2006</option>
+		  <option value="2009">Bundestag 2009</option>
+		  <option value="3">Strukturdaten</option>
+	    </select>
+	    <select name="items" onchange="statistics(this.value)"></select>
+	    </form>
+	</div>
+
+<!--
+	<div id="sieger">
+		<p id="siegerWkr">Gewählt 2011:</p>
+		<h3 id="siegerHead">Wahlkreisgewinner</h3>
+		<p id="siegerBeruf">Beruf</p>
+	</div>
+-->
+
+	<div id="legende">
+	<h3 id="keyHead">Angezeigtes Thema</h3>
+	<form name="classification" style="margin-top: 0; margin-bottom: 3px;">
+	<table>
+	<tr>
+		<td style="width: 45px;">Legende</td><td colspan="2" style="text-align: center; width: 100px;">von … <b>bis unter</b></td>
+		<td style="width: 70px;text-align: center;">eigene</td><td>Häufigkeiten</td>
+	</tr>
+	<tr>
+		<td id="color0">&nbsp;</td><td id="min">min</td>
+		<td id="percClass0" class="importnt">bis</td>
+		<td class="inputTD"><input name="limit1" type="text" size="4" maxlength="4" value="" class="limit"/></td>
+		<td id="freq0">–</td>
+	</tr>
+	<tr>
+		<td id="color1">&nbsp;</td><td id="limit1a">limit1a</td>
+		<td id="percClass1" class="importnt">bis</td>
+		<td class="inputTD"><input name="limit2" type="text" size="4" maxlength="4" value="" class="limit"/></td>
+		<td id="freq1">–</td>
+	</tr>
+	<tr>
+		<td id="color2">&nbsp;</td><td id="limit2a">limit2a</td>
+		<td id="percClass2" class="importnt">bis</td>
+		<td class="inputTD"><input name="limit3" type="text" size="4" maxlength="4" value="" class="limit"/></td>
+		<td id="freq2">–</td>
+	</tr>
+	<tr>
+		<td id="color3">&nbsp;</td><td id="limit3a">limit3a</td>
+		<td id="percClass3" class="importnt">bis</td>
+		<td class="inputTD"><input name="limit4" type="text" size="4" maxlength="4" value="" class="limit"/></td>
+		<td id="freq3">–</td>
+	</tr>
+	<tr>
+		<td id="color4">&nbsp;</td>
+		<td id="limit4a">limit4a</td><td id="max" class="importnt">max</td>
+		<td class="inputTD"><button type="button" name="ok" onclick="newClassInput()" class="noPrint">ändern</button></td>
+		<td id="freq4">–</td>
+	</tr>
+	</table>
+	</form>
+
+	<form name="classMethodControl" style="float: right; margin-right: 60px;" class="noPrint">
+	  <select name="selectedMethod" onchange="colorMap(this.value)">
+	  <option value="none" id="option1">Berechnen</option>
+	  <option value="quantiles">Quantile</option>
+	  <option value="equaldistance">Klassenbreite</option>
+	  <option value="default">Voreinstellung</option>
+	  </select>
+	</form>
+
+	</div>
+
+	<div id="histogram" title="Ergebnisse aller 45 Wahlkreise, sortiert vom kleinsten zum größten Wert">
+
+	<p style="margin-left:6px; margin-top: 6px; position: absolute;">Werteverteilung</p>
+	<p style="margin-left:294px; margin-top:  5px; position: absolute; font-size:9px" id="maxTick">max</p>
+	<p style="margin-left:294px; margin-top: 95px; position: absolute; font-size:9px" id="minTick">min</p>
+
+		<script type="image/svg+xml">
+		<svg id="histogramlines" shape-rendering="crispEdges" stroke-linejoin="bevel"
+			width="300px" height="110px"
+			viewBox="-5 0 300 110">
+
+		</svg>
+		</script>
+
+	</div>
+
+	<div id="zoomControls">
+	<form name="ZoomControl" action="">
+		<input type="button" class="sButtn" value="ZOOM" onclick="zoomHelp()"/>
+		<input type="button" class="sButtn" value="RESET" onclick="resetZoom()"/>
+	</form>
+	</div>
+
+	<div id="copyright">
+	© Daten: <a href="http://www.statistik.sachsen-anhalt.de/wahlen/lt11/index.html" target="_blank">Statistisches Landesamt ST, 2010</a><br/>
+	© Karte: <a href="http://www.statistik.sachsen-anhalt.de/Internet/Home/Wir_ueber_uns/Kontaktdaten.html" target="_blank">Statistisches Landesamt ST, 2010</a><br/>
+	© Programm: <a href="http://wahlatlas.net/" target="_blank">wahlatlas.net, M. Neutze 2010</a><br/>
+	</div>
+
+	</div> <!-- end controlsContainer -->
+
+	<div id="PrintCopy">
+	<p>© Kartenquelle (außer Einfärbungen): Statistisches Landesamt Sachsen-Anhalt, Halle (Saale), 2010 – <i>http://www.statistik.sachsen-anhalt.de</i><br/>
+	© Daten: Statistisches Landesamt Sachsen-Anhalt, Halle (Saale), 2010 – <i>http://www.statistik.sachsen-anhalt.de/wahlen/lt11/index.html</i><br/>
+	© Programm und Idee: wahlatlas.net, Michael Neutze 2010</p>
+	<h2>Atlas zur Landtagswahl 2011 in Sachsen-Anhalt</h2>
+	<p>Für nichtgewerbliche Zwecke sind Vervielfältigung und unentgeltliche Verbreitung, mit Quellenangabe gestattet.<br/>
+	</div>
+
+	<div id="map">
+
+      <!--[if !IE]>-->
+           <object data="issue599.svgz" type="image/svg+xml" 
+                   width="600px" height="625px" id="mapObject"> <!--<![endif]-->
+      <!--[if gte IE 9]>
+           <object data="issue599.svgz" type="image/svg+xml" 
+                   width="600px" height="625px" id="mapObject"> <![endif]-->
+      <!--[if lt IE 9]>
+           <object src="issue599.svgz" classid="image/svg+xml" 
+                   width="600px" height="625px" id="mapObject"> <![endif]-->
+           </object>
+	</div>
+
+	<div id="wkrid">Karte lädt</div>
+
+</body>
+
+</html>

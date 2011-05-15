@@ -1,0 +1,185 @@
+html {
+  background-color: #df0000;
+  font: 0.9em/1.3em georgia, serif;
+  margin: 0; padding: 0;
+  color: #333;
+}
+body
+{
+   margin: 0; padding: 0:
+}
+h1
+{
+  font-size: 3.5em;
+  text-shadow: #ccc 2px 2px 2px;
+  color: #333;
+  margin-left: 50px;
+}
+h2
+{
+   padding-top: 30px;
+   font-size: 1.1em;
+}
+h3
+{
+   font-size: 1em;
+}
+.daygroup
+{
+  background-color: #fff;
+  padding: 20px;
+  margin: 20px 0;
+    -webkit-border-radius: 30px;
+      -moz-border-radius: 30px;
+        border-radius: 30px;
+  border: 2px solid #FF7F00;
+}
+
+html>body .daygroup { background-color: rgba(255,255,255,0.95); }
+
+.content img
+{
+  max-width: 98%;
+  border: 0;
+}
+a
+{
+   color: #418c8c;
+}
+
+a:visited
+{
+   color: #000;
+}
+p.date a
+{
+  text-decoration: none;
+}
+div.channelgroup h3 a
+{
+   text-decoration: none;
+   color: #000;
+}
+code
+{       
+        background-color:#eee;
+        font:1em 'Courier New', Courier, monospace;
+}
+pre
+{
+        font:0.8em 'Courier New', Courier, monospace;
+        background-color:#eee;
+        overflow:auto;
+        margin:10px;
+        padding:10px;
+}
+
+
+acronym,abbr,span.caps
+{
+        font-size:1em;
+        letter-spacing:.09em;
+        cursor:help;
+}      
+#outer
+{
+  width: 100%; 
+  margin: 0; padding: 0;
+  padding-top: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+#inner
+{
+   position: relative;
+   padding: 0;
+   width: 45%;
+   max-width: 600px;
+   margin: 0 0 0 10%; 
+}
+
+#header
+{
+   background-color: #fff;
+   width: 100%;
+   -webkit-border-radius: 30px;
+   -moz-border-radius: 30px;
+   border-radius: 30px;
+  border: 2px solid #FF7F00;
+}
+
+html>body #header { background-color: rgba(255,255,255,0.9); }
+
+#content
+{
+  margin: 0; 
+}
+
+div.content p
+{
+     font: 1em/1.3em georgia, serif;
+}
+
+#entry
+{
+   width: 100%;
+   margin-right: 10px;
+}
+#sidestuff
+{
+   background-color: #fff;
+   width: 100%;
+   -webkit-border-radius: 30px;
+   -moz-border-radius: 30px;
+   border-radius: 30px;
+   border: 2px solid #FF7F00;
+
+}
+
+html>body #sidestuff { background-color: rgba(255,255,255,0.9); }
+
+
+#sidestuff h2
+{
+  margin-left: 10px;
+  color: #df0000;
+}
+#sidestuff ul
+{
+  margin: 0 10px 0 20px;
+  padding: 0 5px;
+}
+#sidestuff ul li
+{
+   font:1em/1.3em georgia, serif;
+   display: inline;
+   margin: 0 0 10px 0;
+   color: #000;
+}
+#sidestuff p 
+{
+   padding-left: 20px;
+}
+p
+{
+  font-size: smaller; 
+}
+
+#phoenix
+{
+position: absolute; top: 10px; left: -30px; z-index: 10;
+}
+#flames
+{
+position: absolute; bottom: 0; left: 60px; z-index: 10;
+}
+.footeritem
+{
+   float: left;
+   margin: 10px 0 0 50px;
+}
+.footeritem a
+{
+   color: #ffff5a;
+}

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<!-- This file provides a simple example of directly embedding SVG into a page
+     as well as pulling SVG in from an external file. -->
+<html> 
+  <head>
+    <!-- The svg.js file must be the first JavaScript file you pull into your
+         page; provide the optional data-path attribute if the 
+         svg.js/svg.swf/svg.htc files are stored in a different directory from
+         where your HTML page is. -->
+    <script src="../../src/svg.js" data-path="../../src" data-debug="true"></script>
+    
+    <!-- By default Flash is used for rendering on IE and the native SVG support
+         is used on other browsers. You can override this and force Flash to
+         do all the rendering on all browsers in two ways; either provide
+         a META tag as follows:
+         
+         <meta name="svg.render.forceflash" content="true" />
+         
+         Or change the URL of your page to have the following query variable:
+         
+         helloworld.html?svg.render.forceflash=true
+    -->
+    
+    <!-- Example JavaScript block that shows scripting our SVG -->
+    <script type="text/javascript">
+      window.onsvgload = function() {
+        // SVG on the page should only be manipulated after the page is 
+        // finished loading
+        var buttons = document.getElementsByTagName('button');
+        for (var i = 0; i < buttons.length; i++) {
+          buttons[i].disabled = false;
+        }
+      }
+      
+      function changeColors() {
+        // get elements from our embedded SVG first
+        
+        // use getElementById
+        var circle = document.getElementById('myCircle');
+        
+        // change using setAttribute
+        circle.setAttribute('stroke', 'green');
+        
+        // can also use style property
+        circle.style.fill = '#8A2BE2';
+        
+        // change the value inside our SVG OBJECT now
+        
+        // use the 'contentDocument' property to navigate into the SVG OBJECT
+        var doc = document.getElementById('mySVGObject').contentDocument;
+        circle = doc.getElementById('myCircle');
+        circle.style.fill = '#8A2BE2';
+      }
+      
+      function changeText() {
+        // use getElementsByTagNameNS to get our text from our embedded SVG
+        
+        // 'svgns' is a 'magic' variable that we make available; it is just
+        // the SVG namespace 'http://www.w3.org/2000/svg' so you don't always
+        // have to remember it.  We also make the variable 'xlinkns' available.
+        var textElems = document.getElementsByTagNameNS(svgns, 'text');
+        
+        // change the text Hello World to Goodbye World
+        for (var i = 0; i < textElems.length; i++) {
+          if (textElems[i].childNodes[0].nodeValue == 'Hello World') {
+            textElems[i].childNodes[0].nodeValue = 'Goodbye World';
+          }
+        }
+        
+        // change the text inside our SVG OBJECT as well
+        var doc = document.getElementById('mySVGObject').contentDocument;
+        textElems = doc.getElementsByTagNameNS(svgns, 'text');
+        for (var i = 0; i < textElems.length; i++) {
+          if (textElems[i].childNodes[0].nodeValue == 'Hello World') {
+            textElems[i].childNodes[0].nodeValue = 'Goodbye World';
+          }
+        }
+      }
+    </script>
+  </head>
+  
+  <body>
+
+      <div style="margin-bottom: 1em; margin-top: 1em;">
+        <button onclick="changeColors()" disabled>Change Colors</button>
+        <button onclick="changeText()" disabled>Change Text</button>
+        <p>Click on second circle to see message</p>
+      </div>
+    
+      <!-- Directly embed SVG into your page by using a SCRIPT tag and
+           setting the type attribute to "image/svg+xml". -->    
+      <script type="image/svg+xml">
+        <svg width="200" height="200"
+             style="background-color: #D2B48C; display: block; margin-bottom: 5px;"
+             id="embeddedSVG">
+          <g id="myGroup" 
+             fill="blue" 
+             style="font-size: 18px; text-anchor: middle; font-family: serif;">
+            <circle id="myCircle"
+                    cx="100" cy="75" r="50"
+                    stroke="firebrick"
+                    stroke-width="3" />
+            <text x="100" y="155">Hello World</text>
+            <text x="100" y="175">From Embedded SVG!</text>
+          </g>
+        </svg>
+      </script>
+      <noscript>
+        <h1>Optional fallback content goes here!</h1>
+      </noscript>
+      
+      <!-- Embed an external SVG file using the following syntax; it must
+           be done exactly as given, rather than using the EMBED tag. Change
+           the data and src attributes to point to where your SVG file is
+           relative to the HTML page. -->
+           
+      <!--[if !IE]>-->
+        <object data="../svg-files/helloworld.svg" type="image/svg+xml"
+                width="200" height="200" id="mySVGObject"> <!--<![endif]-->
+      <!--[if lt IE 9]>
+        <object src="../svg-files/helloworld.svg" classid="image/svg+xml"
+                width="200" height="200" id="mySVGObject"> <![endif]-->
+      <!--[if gte IE 9]>
+        <object data="../svg-files/helloworld.svg" type="image/svg+xml"
+                width="200" height="200" id="mySVGObject"> <![endif]-->
+        </object>
+       
+  </body>
+</html>

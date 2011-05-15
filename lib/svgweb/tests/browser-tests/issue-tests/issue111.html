@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../../src/svg.js" data-path="../../../src" data-debug="true"></script>
+
+    <script type="text/javascript">
+window.onsvgload = function() {
+  var buttons = document.getElementsByTagName('button');
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].disabled = false;
+        }
+    }
+
+  var notAvailableSiteColor = 'grey';
+  var availableSiteColor = 'green';
+  var mouseOverColor = 'blue'
+ 
+  function changeColors() {
+    var availablesites = new Array();
+    availablesites[0]="site15";
+    availablesites[1]="site16";
+    availablesites[2]="site45"; 
+    availablesites[3]="site35"; 
+    availablesites[4]="site25"; 
+    availablesites[5]="site55"; 
+    availablesites[6]="site65"; 
+    availablesites[7]="site75"; 
+        
+    var doc = document.getElementById('mySVGObject').contentDocument;
+    var sites = doc.getElementsByTagNameNS(svgns, 'path');
+
+    for (var n = 0; n < sites.length; n++){
+      var id = sites[n].getAttribute('id');
+      var pos = findSitePos(availablesites, id);
+      if (pos !== null && availablesites[pos]){
+        sites[n].setAttribute('fill', availableSiteColor)
+        sites[n].addEventListener('mouseover', mymouseover, false);
+        sites[n].addEventListener('mouseout', mymouseout, false); 
+      } 
+      else{
+        sites[n].setAttribute('fill', notAvailableSiteColor);
+        sites[n].removeEventListener('mouseover', mymouseover, false);
+        sites[n].removeEventListener('mouseout', mymouseout, false);
+      }
+    }
+  }
+
+  function changeSites() {
+    var availablesites = new Array();
+    availablesites[0]="site19";
+    availablesites[1]="site14";
+    availablesites[2]="site48"; 
+    availablesites[3]="site38"; 
+    availablesites[4]="site28"; 
+    availablesites[5]="site58"; 
+    availablesites[6]="site68"; 
+    availablesites[7]="site74"; 
+        
+        // use the 'contentDocument' property to navigate into the SVG OBJECT
+        var doc = document.getElementById('mySVGObject').contentDocument;
+      sites = doc.getElementsByTagNameNS(svgns, 'path');
+
+    for (var n = 0; n < sites.length; n++){
+      var id = sites[n].getAttribute('id');
+		  var pos = findSitePos(availablesites, id);
+			if (pos !== null && availablesites[pos]){
+        sites[n].setAttribute('fill', availableSiteColor);
+        sites[n].addEventListener('mouseover', mymouseover, false);
+        sites[n].addEventListener('mouseout', mymouseout, false);
+      }
+      else{
+        sites[n].setAttribute('fill', notAvailableSiteColor);
+        sites[n].removeEventListener('mouseover', mymouseover, false);
+        sites[n].removeEventListener('mouseout', mymouseout, false);
+      }
+    }
+  }
+  
+  function findSitePos(sitesArray, siteName) {
+    for (var i = 0; i < sitesArray.length; i++) {
+      if (sitesArray[i] == siteName) {
+        return i;
+      }
+    }
+    
+    return null;
+  }
+
+  mymouseover = function(evt) {
+                    var target = evt.target;
+                    target.setAttribute('fill', mouseOverColor);
+                }
+
+  mymouseout = function(evt) {
+                    var target = evt.target;
+                    target.setAttribute('fill', availableSiteColor);
+                }
+  </script>
+</head>
+  
+<body>
+
+  <div style="margin-bottom: 1em; margin-top: 1em;">
+    <button onclick="changeColors()" disabled>Site Group 1</button>
+    <button onclick="changeSites()" disabled>Site Group 2</button>
+  </div>
+    <!--[if !IE]>-->
+      <object data="issue111.svg" type="image/svg+xml"
+              width="800" height="600" id="mySVGObject"> <!--<![endif]-->
+    <!--[if lt IE 9]>
+      <object src="issue111.svg" classid="image/svg+xml"
+              width="800" height="600" id="mySVGObject"> <![endif]-->
+    <!--[if gte IE 9]>
+      <object data="issue111.svg" type="image/svg+xml"
+              width="800" height="600" id="mySVGObject"> <![endif]-->
+      </object>
+  
+  </body>
+</html>

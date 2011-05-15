@@ -1,0 +1,34 @@
+<html> 
+  <head>
+    <script>
+      // record global start time
+      startTime = new Date().getTime();
+    </script>
+    
+    <script src="../../../src/svg.js" data-path="../../../src"
+            data-debug="false"></script>
+            
+    <script>
+      window.onload = function() {
+        var endTime = new Date().getTime();
+        
+        var totalTime = endTime - startTime;
+        console.log('Total time: ' + totalTime);
+      }
+    </script>
+  </head>
+  
+  <body>
+
+    <!--[if IE]>
+    <object src="svgweb-test-by10.svg" classid="image/svg+xml"
+            width="890" height="649">
+    <![endif]-->
+    <!--[if !IE]>-->
+    <object data="svgweb-test-by10.svg" type="image/svg+xml" 
+            width="890" height="649">
+    <!--<![endif]-->
+    </object>
+    
+  </body>
+</html>

@@ -43,12 +43,14 @@ class Demo #if flash extends flash.display.Sprite #end
 		#end
 		
 		com.pblabs.engine.debug.Log.setup();
-		// com.pblabs.engine.debug.Log.setLevel(ResourceManager, com.pblabs.engine.debug.Log.DEBUG);
-		// com.pblabs.engine.debug.Log.setLevel(ImageResource, com.pblabs.engine.debug.Log.DEBUG);
 		
 		game = new PBGame();
 		
+		#if flash
+		game.getManager(IResourceManager).addResource(new ImageResource("face", Source.url("../rsrc/face.png")));
+		#elseif js
 		game.getManager(IResourceManager).addResource(new ImageResource("face", Source.url("rsrc/face.png")));
+		#end
 		game.getManager(IResourceManager).load(startGame, function (e :Dynamic) {trace("Error loading: " + e);});
 	}
 	
@@ -122,11 +124,7 @@ class Demo #if flash extends flash.display.Sprite #end
 	
 	public static function main() 
 	{
-		#if flash
-		flash.Lib.current.addChild(new Demo());
-		#else
 		new Demo();
-		#end
 	}
 	
 	var game :PBGameBase;

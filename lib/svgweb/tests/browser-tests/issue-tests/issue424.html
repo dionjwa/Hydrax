@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../src/svg.js" data-path="../../../src" data-debug="true"></script>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<!--
+-->
+<script type="text/javascript">
+</script>
+<title>Example of svgDoc.getElementsByTagNameNS failing in IE</title>
+</head>
+<body>
+<h1>The circles should be red</h1>
+    <!--[if !IE]>-->
+      <object data="issue424.svg" type="image/svg+xml"
+              width="200" height="200" id="mySVGObject"> <!--<![endif]-->
+    <!--[if lt IE 9]>
+      <object src="issue424.svg" classid="image/svg+xml"
+              width="200" height="200" id="mySVGObject"> <![endif]-->
+    <!--[if gte IE 9]>
+      <object data="issue424.svg" type="image/svg+xml"
+              width="200" height="200" id="mySVGObject"> <![endif]-->
+      </object>
+
+<script type="image/svg+xml">
+  <svg id="embeddedSVG" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="200" height="200" >
+  <circle cx='60'  cy='80'  r='5' stroke='black' fill='none'/>
+  <circle cx='80'  cy='80'  r='5' stroke='black' fill='none'/>
+  <circle cx='100' cy='80'  r='5' stroke='black' fill='none'/>
+  <circle cx='120' cy='80'  r='5' stroke='black' fill='none'/>
+  <circle cx='140' cy='80'  r='5' stroke='black' fill='none'/>
+  <circle cx='60'  cy='100' r='5' stroke='black' fill='none'/>
+  <circle cx='80'  cy='100' r='5' stroke='black' fill='none'/>
+  <circle cx='100' cy='100' r='5' stroke='black' fill='none'/>
+  <circle cx='120' cy='100' r='5' stroke='black' fill='none'/>
+  <circle cx='140' cy='100' r='5' stroke='black' fill='none'/>
+  <circle cx='60'  cy='120' r='5' stroke='black' fill='none'/>
+  <circle cx='80'  cy='120' r='5' stroke='black' fill='none'/>
+  <circle cx='100' cy='120' r='5' stroke='black' fill='none'/>
+  <circle cx='120' cy='120' r='5' stroke='black' fill='none'/>
+  <circle cx='140' cy='120' r='5' stroke='black' fill='none'/>
+  </svg>
+</script>
+
+<script type="text/javascript">
+function toggleColours(){
+  toggleColour(document.getElementById("mySVGObject").contentDocument);
+  toggleColour(document);
+}
+
+function toggleColour(doc){
+	var root = doc.getElementsByTagNameNS(svgns, 'svg')[0];	
+	var circles = doc.getElementsByTagNameNS(svgns, 'circle');
+	var suspendID = root.suspendRedraw(10*circles*length);
+	for (var i = 0; i< circles.length; i++) {
+		circles[i].setAttribute('fill','red');
+	}
+	root.unsuspendRedraw(suspendID);
+}
+
+window.onsvgload = function() {
+	toggleColours();
+}
+</script>
+</body></html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <!-- Tests embedding SVG into a SCRIPT block, and manipulating it through
+       JavaScript -->
+
+ <head>
+
+   <script src="../../src/svg.js" data-path="../../src/"></script>
+   
+   <script>
+     window.addEventListener('SVGLoad', function() {
+       // use some JavaScript to animate the rectangles over and over
+       window._counter = 1;
+       window.setInterval(function() {
+         var rect = document.getElementById('myRect');
+         var fill;
+         if (window._counter % 2 == 0) {
+           fill = 'yellow';
+         } else {
+           fill = 'green';
+         }
+
+         rect.setAttribute('fill', fill);
+         var svg = document.getElementsByTagNameNS(svgns, 'svg')[0];
+         rect = svg.childNodes[0];
+         if (window._counter % 2 == 0) {
+           fill = 'blue';
+         } else {
+           fill = 'brown';
+         }
+
+         rect.setAttribute('fill', fill);
+
+         window._counter++;
+       }, 100);
+     }, false);
+   </script>
+ </head>
+
+ <body>
+   
+   <h1>Tests embedding SVG into a SCRIPT block, and manipulating it through
+        JavaScript; also tests not having an XML declaration within the
+        SCRIPT tags SVG</h1>
+
+   <script type="image/svg+xml">
+     <svg xmlns="http://www.w3.org/2000/svg" 
+             width="200" height="200" 
+             version="1.1" baseProfile="full">
+         <rect x="0" y="0" width="60" height="60" style="stroke: green;"/>
+         <rect x="25" y="25" 
+                   id="myRect" 
+                   rx="0.6" ry="0.6" 
+                   width="150" height="150" 
+                   fill="green" 
+                   stroke="yellow" stroke-width="8"/>
+     </svg>
+   </script>
+
+ </body>
+</html>

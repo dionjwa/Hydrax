@@ -1,0 +1,92 @@
+<html>
+
+  <!-- Runs a suite of unit tests against our JavaScript SVG DOM and CSS API -->
+
+  <head>
+    <meta name="svg.render.forceflash" content="false" />
+
+    <script src="../../src/svg.js" data-path="../../src" data-debug="true"></script>
+    <script src="test_js.js"></script>
+    <script src="testUtil.js"></script>
+    
+    <script>
+      function bodyOnLoad() {
+        // indicate which onload listener fired for later testing
+        window._pageLoadedListeners.push('bodyOnLoad');
+        
+        // specify how each of our SVG images is embedded to help the unit
+        // tests run correctly
+        var embedTypes = {};
+        embedTypes['mySVG'] = 'object';
+        embedTypes['svg2'] = 'object';
+        embedTypes['svg11242'] = 'object';
+
+        // run the tests
+        runTests(embedTypes);
+      }
+      
+      // subscribe to the page load event in different ways to make sure
+      // it works
+      window.addEventListener('svgload', function() {
+        window._pageLoadedListeners.push('addEventListener, useCapture=false');
+      }, false);
+      window.addEventListener('SVGLoad', function() {
+        window._pageLoadedListeners.push('addEventListener, useCapture=true');
+      }, true);
+      
+      if (window.attachEvent) { // IE
+        window.attachEvent('onSVGLoad', function() {
+          window._pageLoadedListeners.push('attachEvent');
+        });
+      }
+    </script>
+  </head>
+
+  <body onsvgload="bodyOnLoad()">
+    <div id="test_container">
+      <h1>Runs a suite of unit tests against our JavaScript SVG DOM
+          on a normal text/html page using OBJECTs to embed the SVG</h1>
+          
+      <!--[if !IE]>-->
+        <object data="embed1.svg" type="image/svg+xml"
+                width="500" height="500" id="mySVG"> <!--<![endif]-->
+      <!--[if lt IE 9]>
+        <object src="embed1.svg" classid="image/svg+xml"
+                width="500" height="500" id="mySVG"> <![endif]-->
+        <!--[if gte IE 9]>
+        <object data="embed1.svg" type="image/svg+xml"
+                width="500" height="500" id="mySVG"> <![endif]-->
+        <h1>Fallback content 1</h1>
+        </object>
+      
+      <!--[if !IE]>-->
+        <object data="embed2.svg?queryParam1=queryValue1&amp;queryParam2=query%20with%20spaces#someHash"
+                type="image/svg+xml" width="450" height="450" id="svg2"> <!--<![endif]-->
+      <!--[if lt IE 9]>
+        <object src="embed2.svg?queryParam1=queryValue1&amp;queryParam2=query%20with%20spaces#someHash"
+                classid="image/svg+xml" width="450" height="450" id="svg2"> <![endif]-->
+        <!--[if gte IE 9]>
+        <object data="embed2.svg?queryParam1=queryValue1&amp;queryParam2=query%20with%20spaces#someHash"
+                type="image/svg+xml" width="450" height="450" id="svg2"> <![endif]-->
+        <param name="Param1" value="ParamValue1" />
+        <param name="Param2" value="ParamValue2" />
+        <h1>Fallback content 2</h1>
+        </object>
+
+      <!--[if !IE]>-->
+        <object data="embed3.svg"
+                type="image/svg+xml" width="466" height="265" id="svg11242"> <!--<![endif]-->
+      <!--[if lt IE 9]>
+        <object src="embed3.svg"
+                classid="image/svg+xml" width="466" height="265" id="svg11242"> <![endif]-->
+        <!--[if gte IE 9]>
+        <object data="embed3.svg"
+                type="image/svg+xml" width="466" height="265" id="svg11242"> <![endif]-->
+        <h1>Fallback content 3</h1>
+        </object>
+    
+      <h1 id="testHTMLH1" style="border: 3px solid black;">Test HTML H1</h1>
+    </div> <!-- end test_container -->
+    
+    <h2 id="htmlH2">This is an HTML H2</h2>
+  </body></html>

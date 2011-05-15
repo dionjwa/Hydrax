@@ -1,0 +1,1 @@
+This directory contains third-party testing pages to ensure that things work. No copyright or license is asserted or claimed. These files should not be distributed beyond the source repository or in any download. Try to have a README.txt in each directory explaining where the pages came from, contacts if possible, and the goal of what is being tested.

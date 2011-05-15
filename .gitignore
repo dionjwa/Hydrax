@@ -17,3 +17,6 @@ demo/panningAndZooming/build
 demo/resources/build
 \#*#
 src/AllClasses.hx
+lib/canvg/examples
+lib/canvg/svgs
+lib/canvg/test

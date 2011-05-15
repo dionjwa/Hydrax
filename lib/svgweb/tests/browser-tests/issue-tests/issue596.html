@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html>
+<!-- manifest="pyramid.manifest" -->
+	<head>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<link rel="canonical" href="http://www.destatis.de/bevoelkerungspyramide/"/>
+		<title>12. Koordinierte Bevölkerungsvorausberechnung (beta)</title>
+		<script src="../../../src/svg.js" data-path="../../../src"></script>
+
+<style type="text/css">
+
+html,body  {height:100%; padding: 0; margin: 0; color: #000; font-size: 12px; background-color: #888; font-family: Arial, sans-serif; }
+
+#vertical{
+	float:left;
+	height:50%;
+	margin-top:-289px;/* half vertical height*/
+	width:100%; }
+#app {	width:961px;
+	margin-left:auto;
+	margin-right:auto;
+	height:578px;
+	clear:both; }
+
+#pyramid { float: left; background-color: #ffffff; height: 565px; width: 525px; padding-top: 10px;}
+
+#meta { word-spacing: -1px; padding-right: 25px; padding-left: 25px; padding-top: 65px; padding-bottom: 10px; line-height: 125%; font-size: 14px; position: relative; top: 0; float: right; height: 500px; width: 380px; background-color: #ececec;}
+
+#logo {position: absolute; background-color: #fff; top: 0px; left: 0px; width: 410px; padding-right: 20px;}
+
+a:link, a:visited { color: #2c59b2; text-decoration:none; }
+a:hover, a:active {color: #ff2e28;}
+
+#controlls {height: 31px; width: 480px;margin-left: 15px;margin-top: 10px; clear: both;}
+#buttonPause {position: relative; left: 50px; float: left; font-size: 14px;}
+#buttonPlay {position: relative; right: 50px; float: right; font-size: 14px;}
+#yearControl {text-align: center;}
+#languageControl {  float: left; margin-left: 10px;}
+                                                                                             
+#data { margin-bottom: 35px; padding: 5px; position: relative; background-color: #ccc; top: 20px; height: 110px; width: 340px;display:block;}
+
+#dynamicTextGroup {padding-left: 15px; padding-bottom: 6px; padding-right: 5px; padding-top: 4px; margin-bottom: 35px; position: relative; background-color: #fff; top: 20px; height: 110px; width: 300px; display:none;}
+
+#displayCurrentYear {background-color: #ccc; font-size: 12px;}
+#displayAge {font-size: 16px; font-weight: bold;}
+#displayBirthYear {font-size: 14px;}
+
+#countData { margin-top: 40px; margin-left: 175px; font-size: 12px; line-height: 95%;}
+#yearData { float: left;  }
+#variantControl { float: left; margin-right: 10px; }
+
+table { margin-left: 8px; text-align: right; border-width: 1px; }
+td { width: 45px; padding: 3px;}
+tr {background-color: white;}
+.head { background-color: #fffee1; font-weight: bold;}
+.left { padding-left: 8px; text-align: left;}
+/*
+#altQtxt {font-size: 12px;line-height: 95%;font-weight: normal;}
+*/
+ul {margin-bottom: 0; margin-top: 0; clear: both;}
+li { margin-bottom: 6px; }
+h3 {font-size: 16px; font-weight: bold;}
+h4 { margin-left: 10px; margin-bottom: 5px; margin-right: 0px; margin-top: 2px; font-size: 12px; font-weight: bold;}
+
+@media print {
+	.slide { display:none;}
+	#mainpyramid { opacity:1;}
+	}
+
+</style>
+
+		<script type="text/javascript" src="issue596.js" charset="utf-8"></script>
+
+		<script type="text/javascript">
+
+var myBars= { male:[], female:[], smale:[], sfemale:[] };
+
+var popData  = new Array(); // the currently selected dataset resides here
+var stat100plus =  new Array();
+var stattotal = new Array();
+var assumptions = new Array(); // some innerHTML will be stored here
+
+var startYear = 1950;
+var NrRecords = 110;  	// typically number of consecutive years
+var changeColor = 59; 	// color changes when projection begins
+var the_count = 59;   	// defines data-column when pyramid is loaded
+			// the_count + startYear = currently displayed year
+var speed = 400;
+var scale = 2.8;   // data in thousand
+
+var selectedLanguage;
+var selectedVariant = 0; // default variant when loaded, must match variantLoaded
+var variantLoaded = [1,0,0,0];  // keeps track which dataset has been loaded
+				  // each external js file will set a flag here
+
+var variantNames = ['1w1','1w2','3w2','6w1']; // variant '1w1' will be loaded and displayed by default
+
+var pastMcolor = "#333366";
+var pastFcolor = "#660066";
+var futureMcolor =  "#336699";
+var futureFcolor =  "#990066";
+var highlight = "#FFCC33";
+
+var oldPastColor = "#FFAA33";
+var mediumPastColor = "#338822";
+var oldFutureColor = "#FFCC33";
+var mediumFutureColor = "#669933";
+
+var youngPastColor = "#bbbbbb";
+var youngFutureColor = "#cccccc";
+
+var fixedage;		// mouseover-age when clicked on pyramid
+var fixedcount = -9;    // the_count when clicked
+			// -9 for clearing out highlighted age-band
+var the_timeout;
+var indYear;
+
+var upperAge = 65;
+var lowerAge = 20;
+var up = upperAge;
+var low = lowerAge;
+
+var agegroupactive = 0; 
+var symPyrPresent = 0; // turns 1 once SymPyramid is created
+var surplus = 0; // display-state of symmetric pyramid for sexsurplus (on-off)
+
+var	DOMykeyLow = null;
+var	DOMykeyUp = null;
+var	DOMtxLow = null;
+var	DOMtxMed = null;
+var	DOMtxUp = null;
+var	DOMdynamicTextGroup = null;
+var	DOMdata = null;
+var	DOMdisplayCurrentYear = null;
+var	DOMdisplayAge = null;
+var	DOMdisplayBirthYear = null;
+var	DOMpopcountM = null;
+var	DOMpopcountF = null;
+var	DOMsexratio = null;
+var	DOMsymetricPyramid = null;
+var	DOMheadline = null;
+var	DOMtotals = null;
+var	DOMyoungAbs = null;
+var	DOMmediumAbs = null;
+var	DOMoldAbs = null;
+var	DOMyoungPerc = null;
+var	DOMmediumPerc = null;
+var	DOMoldPerc = null;
+var	DOMaltQ = null;
+var	DOMip = null;
+var	DOMykey = null;
+var	DOMmainpyramid = null;
+var	DOMaltQtxt = null;
+var	DOMtxtAssumptions = null;
+var	SVGroot = null;
+
+
+function domReferences() {
+// globally save static DOM references
+	DOMykeyLow = document.getElementById('ykeyLow');
+	DOMykeyUp = document.getElementById('ykeyUp');
+	DOMtxLow = document.getElementById("txLow");
+	DOMtxMed = document.getElementById("txMed");
+	DOMtxUp = document.getElementById("txUp");
+	DOMdynamicTextGroup = document.getElementById('dynamicTextGroup');
+	DOMdata = document.getElementById('data');
+	DOMdisplayCurrentYear = document.getElementById('displayCurrentYear');
+	DOMdisplayAge = document.getElementById('displayAge');
+	DOMdisplayBirthYear = document.getElementById('displayBirthYear');
+	DOMpopcountM = document.getElementById('popcountM');
+	DOMpopcountF = document.getElementById('popcountF');
+	DOMsexratio = document.getElementById('sexratio');
+	DOMsymetricPyramid = document.getElementById('symetricPyramid');
+	DOMheadline = document.getElementById('headline');
+	DOMtotals = document.getElementById('totals');
+	DOMyoungAbs = document.getElementById("youngAbs");
+	DOMmediumAbs = document.getElementById("mediumAbs");
+	DOMoldAbs = document.getElementById("oldAbs");
+	DOMyoungPerc = document.getElementById("youngPerc");
+	DOMmediumPerc = document.getElementById("mediumPerc");
+	DOMoldPerc = document.getElementById("oldPerc");
+	DOMaltQ = document.getElementById("altQ");
+	DOMip = document.getElementById('ip');
+	DOMykey = document.getElementById('ykey');
+	DOMmainpyramid = document.getElementById('mainpyramid');
+	DOMtxtAssumptions = document.getElementById('txtAssumptions');
+	SVGroot = document.getElementById('root');
+	//DOMageSliderToggle = document.getElementById('ageSliderToggle');
+	}
+
+
+////////////////////////
+// begin localized texts
+
+var languages = ['en','de','es','ru','fr'];
+
+var txt03country = ['Germany','Deutschland','Alemania','Германия','Allemagne'];
+var txt04men = ['Men','Männer','Varones','Мужчины','Hommes'];
+var txt05women = ['Women','Frauen','Mujeres','Женщины','Femmes'];
+var txt06thousand = ['thousand','Tausend','Miles','тысяч','Milliers'];
+var txt07total = ['Total','Gesamt','Total','Всего','Total'];
+var txt08aged = ['yrs old','jährige','edad','-летние','ans'];
+var txt09born = ['born','geboren','nacidos','год рождения:','nés en'];
+var txt10sexratio = ['Sex Ratio W/M','Proporz F/M','Proporción M/V','Соотношение ж/м','proportion f/h'];
+var txt11agestructure = ['Age Structure','Altersaufbau','Estructura de edad','Возрастная структура','Pyramide des âges'];
+var txt12coordpp = ['12th coordinated Population Projection','12. koordinierte Bevölkerungsvorausberechnung','12. Proyección coordinada de la población','12-й координированный прогноз населения','12ème Projection coordonnée de la population'];
+var txt14animation = ['Animation','Animation','Animación','анимация','Animation'];
+var txt16play = ['Play','Start','Comienzo','Старт','Démarrage'];
+var txt17pause = ['Pause','Pause','Pausa','Пауза','Pause'];
+var txt20agegroupcount = ['Age-groups','Altersgruppen','Grupos de edad','Возрастные группы',"Groupes d'âges"];
+var txt21adjustage = ['Change Age-Groups','Altersgruppen ändern','Cambiar grupos de edad','Возрастные группы изменить',"Modifier les groupes d'âges"];
+var txt23sexsurplus = ['Highlight surplus of men or women','Frauen- bzw. Männer-Überschuss anzeigen','Mostrar el exceso de mujeres o de varones','Показать женский/мужской перевес',"Afficher l'excédent d'hommes/de femmes"];
+var txt25variant = ['Variant', 'Variante', 'Variante', 'Вариант','Variante'];
+var txt26mill = ['Mill.','Mill.','Mill.','млн.','millions'];
+var txt27param = ['Assumptions','Zu den Annahmen','Supuestos','к предположениям','Les hypothèses'];
+var txt28AQ = ['Old-age dependency ratio','Altenquotient','es','Число лиц пенсионного возраста на 100 работоспособных','Taux de dépendance des personnes agées' ];
+var txtpast = ['1950 to 2008: population updating','1950 bis 2008: Fortschreibung','es','1950-2008: текущий статистический учет населения','1950-2008: accroissement de la population'];
+var txtfuture = ['2009 to 2060: population projection', '2009 bis 2060: Vorausberechnung','es','2009-2060: прогноз населения','2009-2060: projections'];
+
+var lbl04men;
+var lbl05women
+var lbl07total;
+var lbl08aged;
+var lbl09born;
+var lbl10sexratio;
+var lbl11agestructure;
+var lbl26mill;
+
+// end localized texts
+//////////////////////
+
+function localize(local) {
+
+	document.getElementById('lbl03country').firstChild.data=(txt03country[local]);
+	document.getElementById('lbl04men').firstChild.data=(txt04men[local]);
+	document.getElementById('lbl05women').firstChild.data=(txt05women[local]);
+	document.getElementById('lbl06thousand1').firstChild.data=(txt06thousand[local]);
+	document.getElementById('lbl06thousand2').firstChild.data=(txt06thousand[local]);
+	document.getElementById('buttonPlay').firstChild.data=(txt16play[local]);
+	document.getElementById('buttonPause').firstChild.data=(txt17pause[local]);
+	document.getElementById('agegrouphead').firstChild.data=(txt20agegroupcount[local]);
+	document.getElementById('txt12').firstChild.data=(txt12coordpp[local]);
+	document.getElementById('txtMill').firstChild.data=(txt26mill[local]);
+	document.getElementById('txtTotal').firstChild.data=(txt07total[local]);
+	document.getElementById('altQtxt').title=txt28AQ[local];
+	document.getElementById('txtPast').firstChild.data=(txtpast[local]);
+	document.getElementById('txtFuture').firstChild.data=(txtfuture[local]);
+	document.getElementById('showagediv').nextSibling.nodeValue=txt21adjustage[local];
+	document.getElementById('sex_surplus').nextSibling.nodeValue=txt23sexsurplus[local];
+
+	lbl04men = txt04men[local];
+	lbl05women = txt05women[local];
+	lbl07total = txt07total[local];
+	lbl08aged  = txt08aged[local];
+	lbl09born = txt09born[local];
+	lbl10sexratio  = txt10sexratio[local];
+	lbl11agestructure = txt11agestructure[local];
+	lbl26mill = txt26mill[local];
+
+	DOMheadline.firstChild.data = (lbl11agestructure + ": "+(startYear+the_count));
+
+	assumptions = eval('v'+variantNames[selectedVariant]+'Assumptions');
+	DOMtxtAssumptions.innerHTML = assumptions[local];
+
+	selectedLanguage = local;
+}
+
+
+function createPyramid() {
+
+	var males = document.getElementById('males');
+	var females = document.getElementById('females');
+
+	var fragM = document.createDocumentFragment(true);
+	var fragF = document.createDocumentFragment(true);
+
+	for (i=0;i<(100);i++)	{
+
+    //create Males
+    var newMRect = document.createElementNS(svgns,"rect");
+    newMRect.setAttribute('x',(445-(5*i)));
+    newMRect.setAttribute('y',0);
+    newMRect.setAttribute('id','male'+(i));
+    newMRect.setAttribute('width',5);
+    newMRect.setAttribute('height',0);
+    newMRect.addEventListener('mouseover', function(evt) { tellme(evt.target.id);}, false);
+    newMRect.addEventListener('mouseout', function(evt) { emptyme(evt.target.id);}, false);
+    newMRect.addEventListener('click', function(evt) { fixage(evt.target.id);}, false);
+
+	myBars.male[i] = newMRect;
+	fragM.appendChild(newMRect);
+
+    //create Females
+    var newFRect = document.createElementNS(svgns,"rect");
+    newFRect.setAttribute('x',(0+(5*i)));
+    newFRect.setAttribute('y',120);
+    newFRect.setAttribute('id','femm'+(i));
+    newFRect.setAttribute('width',5);
+    newFRect.setAttribute('height',0);
+    newFRect.addEventListener('mouseover', function(evt) { tellme(evt.target.id);}, false);
+    newFRect.addEventListener('mouseout', function(evt) { emptyme(evt.target.id);}, false); 
+    newFRect.addEventListener('click', function(evt) { fixage(evt.target.id);}, false);
+                                       
+   	myBars.female[i] = newFRect;
+	fragF.appendChild(newFRect);
+    }
+
+    males.appendChild(fragM);
+    females.appendChild(fragF);
+}
+
+
+function createSymPyramid() {
+// creates the symmetric pyramid on top of the mainpyramid for display of sexsurplus, will be called only when needed 
+
+	var smales = document.getElementById('smales');
+	var sfemales = document.getElementById('sfemales');
+
+	var fragMs = document.createDocumentFragment(true);
+	var fragFs = document.createDocumentFragment(true);
+
+	for (i=0;i<(100);i++)	{
+
+    //create Males
+    var newMsRect = document.createElementNS(svgns,"rect");
+    newMsRect.setAttribute('x',(445-(5*i)));
+    newMsRect.setAttribute('y',0);
+    newMsRect.setAttribute('id','smale'+(i));
+    newMsRect.setAttribute('width',5);
+    newMsRect.setAttribute('height',0);
+
+	myBars.smale[i] = newMsRect;
+	fragMs.appendChild(newMsRect);
+
+    //create Females
+    var newFsRect = document.createElementNS(svgns,"rect");
+    newFsRect.setAttribute('x',(0+(5*i)));
+    newFsRect.setAttribute('y',120);
+    newFsRect.setAttribute('id','femm'+(i));
+    newFsRect.setAttribute('width',5);
+    newFsRect.setAttribute('height',0);
+                                       
+   	myBars.sfemale[i] = newFsRect;
+	fragFs.appendChild(newFsRect);        
+    }
+
+    smales.appendChild(fragMs);
+    sfemales.appendChild(fragFs);
+    
+    symPyrPresent = 1;
+}
+
+
+function loadData(variantNr) {
+
+	if (!variantLoaded[variantNr]) {
+
+	var head= document.getElementsByTagName('head')[0];
+	var script= document.createElement('script');
+	script.type= 'text/javascript';
+	script.charset= 'utf-8';
+	script.src= '12kvb'+variantNames[variantNr]+'.js';
+	head.appendChild(script);
+
+	} else {
+
+	loadVariant(variantNr)
+
+	}
+}
+
+
+function loadVariant(variantNr) {
+
+	popData = eval('v'+variantNames[variantNr]+'data');
+	stat100plus = eval('v'+variantNames[variantNr]+'plus');
+	stattotal = eval('v'+variantNames[variantNr]+'total');
+
+	assumptions = eval('v'+variantNames[variantNr]+'Assumptions');
+	DOMtxtAssumptions.innerHTML = assumptions[selectedLanguage];
+	selectedVariant = variantNr;
+
+	pyramid(the_count);
+
+	}
+
+
+function init()	{
+
+
+	// prevent framing
+	if(top.location!=location){top.location.href=document.location.href;}
+
+	domReferences();
+	hookEvent('pyramid', 'mousewheel', MouseWheel);
+	document.getElementById('buttonPause').disabled=true;
+	document.getElementById('buttonPlay').disabled=false;
+	createPyramid();
+
+	// make sure all dropdown menus are in their initial state, even after reload
+	document.getElementById('variantControl').selectVariant.selectedIndex = 0;
+	document.getElementById('yearControl').selectYear.selectedIndex = 6;
+
+
+	var UIlanguage = 1;
+
+	try {
+	if (navigator.language.substring(0, 2)=='en') {UIlanguage = 0};
+	if (navigator.language.substring(0, 2)=='de') {UIlanguage = 1};
+	if (navigator.language.substring(0, 2)=='es') {UIlanguage = 2};
+	if (navigator.language.substring(0, 2)=='ru') {UIlanguage = 3};
+	if (navigator.language.substring(0, 2)=='fr') {UIlanguage = 4};
+	} catch(e) {
+	UIlanguage = 1
+	}
+
+	// we had to re-order the language menu
+	// spanish translation incomplete
+	if (UIlanguage == 4) {
+	document.getElementById('languageControl').selectLanguage.selectedIndex = 2
+	} else {
+	document.getElementById('languageControl').selectLanguage.selectedIndex = UIlanguage;
+	}
+
+	localize(UIlanguage);
+
+	loadVariant(0); // v1w1 statically loaded from this head
+
+    //DOMageSliderToggle.addEventListener('mouseover', function() {showAgeSlider();}, false);
+    //DOMageSliderToggle.addEventListener('mouseout',  function() {hideAgeSlider();}, false);
+
+}
+
+
+// Mousewheel Scrolling thanks to
+// http://blog.paranoidferret.com/index.php/2007/10/31/javascript-tutorial-the-scroll-wheel/
+
+function hookEvent(element, eventName, callback)
+{
+  if(typeof(element) == "string")
+    element = document.getElementById(element);
+  if(element == null)
+    return;
+  if(element.addEventListener)
+  {
+    if(eventName == 'mousewheel')
+    {
+      element.addEventListener('DOMMouseScroll', 
+        callback, false);  
+    }
+    element.addEventListener(eventName, callback, false);
+  }
+  else if(element.attachEvent)
+    element.attachEvent("on" + eventName, callback);
+}
+
+
+function MouseWheel(e)
+{
+  e = e ? e : window.event;
+  var wheelData = e.detail ? e.detail * -1 : e.wheelDelta;
+  
+  	if (wheelData > 0) {
+		the_count += 1 
+		if (the_count>NrRecords-2)	{
+		the_count=0;}
+		} else {
+		the_count -= 1
+		if (the_count<2)	{
+		the_count=NrRecords;}
+		};
+	pyramid(the_count)
+}
+
+
+function tellme(mouseoverID)	{
+// mouseover the pyramid triggers this function
+	var age = mouseoverID.substring(4);
+		DOMdynamicTextGroup.style.display = 'block';
+		DOMdata.style.display = 'none';
+		myBars.male[age].setAttribute('fill',highlight); 
+		myBars.female[age].setAttribute('fill',highlight);
+		var popM = popData[0][age][the_count];
+		var popF = popData[1][age][the_count];
+		var sexR = (Math.round(popF/popM*100))/100;
+		var currentYear = startYear+the_count;
+		var born = currentYear-age;
+		DOMdisplayCurrentYear.firstChild.data=(currentYear);
+		DOMdisplayAge.firstChild.data=(age+" "+lbl08aged);
+		DOMdisplayBirthYear.firstChild.data=(lbl09born+" "+born);
+		DOMpopcountM.firstChild.data=(lbl04men+":  "+popM+" 000");
+		DOMpopcountF.firstChild.data=(lbl05women+":  "+popF+" 000");
+		DOMsexratio.firstChild.data=(lbl10sexratio+": "+sexR);
+	}
+
+
+function fixage(clickID) {
+// clicking the pyramid triggers this function
+// the highlighted age-band shell persist and move through the animated pyramid
+	var age = clickID.substring(4);
+	fixedage = age - 0; // get age as an integer 
+	fixedcount = the_count - 0 // combination of age + year when clicked is preserved
+}
+
+
+function emptyme(mouseoutID)	{
+	var age = mouseoutID.substring(4);
+	//selectedage = 199;
+	DOMdynamicTextGroup.style.display = 'none';
+	DOMdata.style.display = 'block';
+	if (the_count<changeColor)	{
+		myBars.male[age].setAttribute('fill',pastMcolor); 
+		myBars.female[age].setAttribute('fill',pastFcolor);
+		}
+	else	{
+		myBars.male[age].setAttribute('fill',futureMcolor); 
+		myBars.female[age].setAttribute('fill',futureFcolor);
+		}
+}
+
+
+function sexsurplus() {
+
+	if (symPyrPresent==0) {
+		createSymPyramid()
+		}
+
+	DOMsymetricPyramid.setAttribute('display','block');
+	surplus=1;
+	pyramid(the_count)
+	}
+
+function surplusoff() {
+	DOMsymetricPyramid.setAttribute('display','none');
+	surplus=0;
+	pyramid(the_count)
+	} 
+
+
+function pyramid(myYear)	{   
+
+	var NrYears = 100;
+	the_count = myYear;
+
+    	if (fixedcount>-1)	{
+		var selectedage = fixedage + the_count - fixedcount;
+		DOMdynamicTextGroup.style.display = 'block';
+		DOMdata.style.display = 'none';
+		if (selectedage<0 || selectedage>99)	{
+		fixedcount=-9;
+		DOMdynamicTextGroup.style.display = 'none';
+		DOMdata.style.display = 'block';
+		}
+		}
+
+    var suspendID = SVGroot.suspendRedraw(5000);
+    
+		for (i=0;i<100;i++)	{
+
+		var myMHeight = popData[0][i][myYear];
+		var myFHeight = popData[1][i][myYear];
+
+		myBars.male[i].setAttribute('height',myMHeight/scale); 
+		myBars.female[i].setAttribute('height',myFHeight/scale);
+
+		if (surplus==1) {
+
+			if (myFHeight>myMHeight)	{
+				var mySHeight = myMHeight;
+			} else {
+				var mySHeight = myFHeight;
+			}
+
+		myBars.smale[i].setAttribute('height',mySHeight/scale); 
+		myBars.sfemale[i].setAttribute('height',mySHeight/scale); 
+
+		}
+
+			if (agegroupactive == 1) {
+			if (myYear<changeColor)	{
+			if (i<lowerAge) {
+			myBars.male[i].setAttribute('fill',youngPastColor);
+			myBars.female[i].setAttribute('fill',youngPastColor);
+			}
+			if (i>=lowerAge && i<upperAge) {
+			myBars.male[i].setAttribute('fill',mediumPastColor);
+			myBars.female[i].setAttribute('fill',mediumPastColor);
+			}
+			if (i>=upperAge) {
+			myBars.male[i].setAttribute('fill',oldPastColor);
+			myBars.female[i].setAttribute('fill',oldPastColor);
+			}
+		}
+		else	{
+			if (i<lowerAge) {
+			myBars.male[i].setAttribute('fill',youngFutureColor);
+			myBars.female[i].setAttribute('fill',youngFutureColor);
+			}
+			if (i>=lowerAge && i<upperAge) {
+			myBars.male[i].setAttribute('fill',mediumFutureColor);
+			myBars.female[i].setAttribute('fill',mediumFutureColor);
+			}
+			if (i>=upperAge) {
+			myBars.male[i].setAttribute('fill',oldFutureColor);
+			myBars.female[i].setAttribute('fill',oldFutureColor);
+			}
+		} 
+	} else {
+	if (selectedage==i)	{
+		myBars.male[i].setAttribute('fill',highlight);
+		myBars.female[i].setAttribute('fill',highlight);
+		// updating dynamicTextGroup for fixed BirthYear
+		popM = popData[0][i][the_count];
+		popF = popData[1][i][the_count];
+		sexR = (Math.round(popF/popM*100))/100;
+		born = startYear+fixedcount-fixedage;
+		DOMdisplayCurrentYear.firstChild.data=(startYear+the_count);
+		DOMdisplayAge.firstChild.data=((startYear+the_count-born)+" "+lbl08aged);
+		DOMdisplayBirthYear.firstChild.data=(lbl09born+" "+born);
+		DOMpopcountM.firstChild.data=(lbl04men+":  "+popM+" 000");
+		DOMpopcountF.firstChild.data=(lbl05women+":  "+popF+" 000");
+		DOMsexratio.firstChild.data=(lbl10sexratio+": "+sexR);
+	}
+	else	{
+		if (myYear<changeColor)	{
+			myBars.male[i].setAttribute('fill',pastMcolor);
+			myBars.female[i].setAttribute('fill',pastFcolor);
+		}
+		else	{
+			myBars.male[i].setAttribute('fill',futureMcolor);
+			myBars.female[i].setAttribute('fill',futureFcolor);
+		} 
+	}
+	}
+    } // end age-band loop (100 age years)
+
+    SVGroot.unsuspendRedraw(suspendID);
+
+	DOMheadline.firstChild.data = (lbl11agestructure + ": "+(startYear+the_count));
+	DOMtotals.firstChild.data = stattotal[myYear];
+
+	calcAgegroups()
+
+    } // end pyramid function
+
+
+function calcAgegroups() {
+
+	var young = 0;
+	var medium = 0;
+	var old = 0;
+
+	for (i=0;i<lowerAge;i++)	{
+		young += popData[0][i][the_count] + popData[1][i][the_count];
+	}
+	for (j=lowerAge;j<upperAge;j++)	{
+		medium += popData[0][j][the_count] + popData[1][j][the_count];
+	}
+
+	for (k=upperAge;k<100;k++)	{
+		old += popData[0][k][the_count] + popData[1][k][the_count];
+	}
+	// var stat100plus = 100+ AGE GROUP (males and females)
+	old = old + stat100plus[the_count];
+	var sum = young + medium + old;
+
+	var percYoung = Math.round(young/sum*100);
+	var percMedium = Math.round(medium/sum*100);
+	var percOld = Math.round(old/sum*100);
+
+	var OldPercMed = Math.round(old/medium*100);
+
+	DOMyoungAbs.firstChild.data=Math.round(young/100)/10;
+	DOMmediumAbs.firstChild.data=Math.round(medium/100)/10;
+	DOMoldAbs.firstChild.data=Math.round(old/100)/10;
+
+	DOMyoungPerc.firstChild.data=percYoung;
+	DOMmediumPerc.firstChild.data=percMedium;
+	DOMoldPerc.firstChild.data=percOld;
+	DOMaltQ.firstChild.data=OldPercMed;
+}
+
+
+function changeUpper(val){ 
+	up = Math.round(val);
+	if (up < low) {
+		upperAge = low
+		lowerAge = up
+	} else {
+		upperAge = up
+	}
+    ageDevider()
+	pyramid(the_count)
+	}
+
+function changeLower(val){ 
+	low = Math.round(val);
+	if (low > up) {
+		upperAge = low
+		lowerAge = up
+	} else {
+		lowerAge = low
+	}
+	ageDevider()
+	pyramid(the_count)
+	}
+	 
+function ageDevider() {
+	var yLow = 360-lowerAge*5;
+	var yUp  = 360-upperAge*5;
+	DOMykeyLow.setAttribute('y',yLow);
+	DOMykeyUp.setAttribute('y',yUp);
+	DOMykeyLow.firstChild.data=lowerAge;
+	DOMykeyUp.firstChild.data=upperAge;
+	DOMtxLow.firstChild.data="<"+lowerAge;
+	DOMtxMed.firstChild.data=lowerAge+"–"+(upperAge-1);
+	DOMtxUp.firstChild.data=upperAge+"+"; 
+	}
+
+function showAgeSlider() {
+       DOMip.setAttribute('display','block');
+       DOMykey.setAttribute('fill','#ccc');
+       DOMykeyLow.setAttribute('display','block');
+       DOMykeyUp.setAttribute('display','block');
+       }
+       
+function hideAgeSlider() {
+       DOMip.setAttribute('display','none');
+       DOMykey.setAttribute('fill','#000');
+       DOMykeyLow.setAttribute('display','none');
+       DOMykeyUp.setAttribute('display','none');
+       DOMmainpyramid.setAttribute('pointer-events','all');
+       }
+
+
+function loadAgegroupSlider() {
+// reset selected year, hide dynamic text group
+fixedcount=-9;
+agegroupactive =1;
+	DOMdynamicTextGroup.style.display = 'none';
+	DOMdata.style.display = 'block';
+       slUpper=new scrollBar(-270,-150,7,500,changeUpper,100,0,upperAge);
+       DOMip.appendChild(slUpper.svg);
+       slLower=new scrollBar(-270,-150,7,500,changeLower,100,0,lowerAge); 
+       DOMip.appendChild(slLower.svg);
+       DOMmainpyramid.setAttribute('pointer-events','none');
+       showAgeSlider();
+       pyramid(the_count);
+       DOMtxLow.style.backgroundColor='#e0e0e0';
+       DOMtxMed.style.backgroundColor='#94CC6B';
+       DOMtxUp.style.backgroundColor='#ffd965'; 
+       }
+
+
+function removeAgegroupSlider() {
+	hideAgeSlider();
+	DOMip.removeChild(slUpper.svg);
+	DOMip.removeChild(slLower.svg);
+	agegroupactive = 0;
+	pyramid(the_count);
+	DOMtxLow.style.backgroundColor='#fffee1';
+	DOMtxMed.style.backgroundColor='#fffee1';
+	DOMtxUp.style.backgroundColor='#fffee1';
+}
+
+
+function animate()	{
+
+document.getElementById('buttonPlay').disabled=true;
+document.getElementById('buttonPause').disabled=false;
+
+if (the_count<NrRecords-2)	{
+the_count+=1;
+pyramid(the_count);
+the_timeout = setTimeout("animate();",speed);
+}
+else	{
+the_count=0;
+pyramid(the_count);
+the_timeout = setTimeout("animate();",speed);
+}
+}
+
+
+function stopani()	{
+document.getElementById('buttonPlay').disabled=false;
+document.getElementById('buttonPause').disabled=true;
+clearTimeout(the_timeout);
+}
+
+
+function pyramidmenu(select) {
+the_count = parseInt(select.value);
+pyramid(the_count);
+}
+
+
+function force() {
+
+		location += "?svg.render.forceflash=true";
+
+	}
+                    
+//////////////////////////////////////
+// Begin adapted Treebuilder 
+// ! Slider Code 
+// thanks to Holger Will of treebuilder.de
+// see http://www.treebuilder.de/default.asp?file=67211.xml 
+
+// this is for changing the age-groups
+
+function scrollBar(x,y,w,h,func,min,max,setValue){
+
+this.w=w // stroke-width of slider 'knob'
+this.h=h // range in svg units
+this.x=x
+this.y=y
+var g = document.createElementNS(svgns,"g")
+var ci = document.createElementNS(svgns,"rect")
+ci.setAttribute("x",x)
+ci.setAttribute("y",y-w/2+(100-setValue)/(min-max)*h)
+ci.setAttribute("rx",2) 
+ci.setAttribute("ry",2) 
+ci.setAttribute("height",w)
+ci.setAttribute("width",510)
+ci.setAttribute("fill","#36c")
+ci.setAttribute("opacity",.5)
+ci.setAttribute("class","slide")
+var svg=this
+this.ci=ci
+g.appendChild(ci)
+this.svg=g
+
+this.startSlide= function(){
+//event.preventDefault()
+SVGroot.addEventListener("mousemove",svg.slide,false)
+SVGroot.addEventListener("mouseup",svg.stopSlide,false)
+}
+
+this.stopSlide= function(){
+SVGroot.removeEventListener("mousemove",svg.slide,false)
+SVGroot.removeEventListener("mouseup",svg.stopSlide,false)
+}
+
+this.slide = function(evt){
+try{var m=svg.ci.parentNode.getScreenCTM()
+}catch(e){
+var m=getScreenCTM(svg.ci.parentNode)}
+var p=SVGroot.createSVGPoint()
+p.x=evt.clientX
+p.y=evt.clientY
+p=p.matrixTransform(m.inverse())
+if(p.y <= (y + h) && p.y >= y){
+svg.ci.setAttribute("y",p.y-w/2)
+ra=min + (p.y - y)*(max-min) / h
+func(ra)
+svg.value=ra
+} 
+}
+
+ci.addEventListener("mousedown",this.startSlide,false)
+}
+
+// End (old) Treebuilder Slider Code 
+////////////////////////////////////
+
+</script>
+
+</head>
+
+<body onsvgload="init()">
+
+<div id="vertical"><!-- see http://www.search-this.com/2008/05/15/easy-vertical-centering-with-css/ for centering the app inside the browser window --></div>
+
+<div id="app">
+
+	<div id="meta">
+
+		<div id="logo">
+		<img src="destatis-beta-logo.gif" alt="Logo für beta Tests" style="float: right;">
+		</div>
+
+		<h3 id="txt12">12. koordinierte Bevölkerungsvorausberechnung</h3>
+
+		<p><span id="txtPast">Fortschreibung 1950 bis 2008</span><br><span id="txtFuture">Vorausberechnung 2009 bis 2060</span>		
+		<p>
+		
+	  <form id="variantControl">
+	  <select name="selectVariant" onchange="loadData((this.value-0))"> 
+	  <option value="0">Variante 1-W1</option> 
+	  <option value="1">Variante 1-W2</option> 
+	  <option value="2">Variante 3-W2</option>
+	  <option value="3">Variante 6-W1</option> 
+	  </select>
+	  </form>
+		
+		<div id="txtAssumptions">Die Annahmen:<p>
+		
+		<ul>
+			<li>Geburtenhäufigkeit annähernd konstant<br>
+			bei 1,4 Kindern je Frau</li>
+			<li>Lebenserwartung Neugeborener im Jahr 2060:<br>
+			85,0 Jahre für Jungen<br>
+			89,2 Jahre für Mädchen</li>
+			<li>Jährlicher Wanderungssaldo<br/>
+			+ 100 000 Personen</li>
+		</ul></div>
+		
+		<div id="data">
+		<h4 id="agegrouphead">Altersgruppen</h4>
+		    <table>
+		    	<tr class="head">
+		    		<td id="txLow">&lt;20</td>
+		    		<td id="txMed">20–64</td>
+		    		<td id="txUp">65+</td>
+		    		<td id="txtTotal">Total</td>
+		    		<td onclick="force()"><small><i>&nbsp;</i></small></td>
+				<td id="altQtxt" title="Altenquotient">AQ</td>
+		    	</tr>
+		    	<tr>
+		    		<td id="youngAbs">x</td>
+		    		<td id="mediumAbs">x</td>
+		    		<td id="oldAbs">x</td>
+		    		<td id="totals">x</td>
+		    		<td id="txtMill" class="left">Mill.</td>
+				<td id="altQ">x</td>
+		    	</tr>
+		    	<tr>
+		    		<td id="youngPerc">x</td>
+		    		<td id="mediumPerc">x</td>
+		    		<td id="oldPerc">x</td>
+		    		<td>100</td>
+		    		<td class="left">%</td>
+				<td>&nbsp;</td>
+		    	</tr>
+		    </table>
+		</div>
+		
+		<div id="dynamicTextGroup">
+
+			<div id="yearData">
+			<p id="displayCurrentYear">x</p>
+			<p id="displayAge">x</p>
+			<p id="displayBirthYear">x</p>
+			</div>
+
+			<div id="countData">
+			<p id="popcountM">x</p>
+			<p id="popcountF">x</p>
+			<p id="sexratio">x</p>
+			</div>
+
+		</div>
+		
+		<form id="extras">
+		<input id="showagediv" type="checkbox" onclick="if (this.checked) {loadAgegroupSlider()} else {removeAgegroupSlider()}" /> 
+		Altersgrenzen ändern<br>
+		<input id="sex_surplus" type="checkbox" onclick="if (this.checked) {sexsurplus()} else {surplusoff()}" /> 
+		Frauen- bzw. Männerüberschuss anzeigen<p>
+		</form>
+
+		<p style="font-size: 11px; text-align: right;">© <a href="http://www.destatis.de/jetspeed/portal/cms/Sites/destatis/Internet/DE/Presse/pk/2009/Bevoelkerung/bevoelkerungsentwicklung2009__Uebersicht,templateId=renderPrint.psml">Statistisches Bundesamt 2009</a></p>
+		
+	</div> <!-- end meta div -->
+
+	<div id="pyramid">
+
+	<script type="image/svg+xml">
+	
+	<!-- background-color to work around jagged edges http://code.google.com/p/svgweb/issues/detail?id=156  -->
+	<svg id="root" viewBox="-330 -152 620 460" width="520px" height="520px" style="background-color:#ffffff; display: block;">
+  
+	<g id="grid" style="stroke:rgb(153, 153, 153);stroke-width:1;" transform="translate(10 0)">
+
+	<line x1="-5" y1="300" x2="260" y2="300"/>
+	<line x1="-5" y1="250" x2="260" y2="250"/>
+	<line x1="-5" y1="200" x2="260" y2="200"/>
+	<line x1="-5" y1="150" x2="260" y2="150"/>
+	<line x1="-5" y1="100" x2="260" y2="100"/>
+	<line x1="-5" y1="50" x2="260" y2="50"/>
+	<line x1="-5" y1="0" x2="260" y2="0"/>
+	<line x1="-5" y1="-50" x2="160" y2="-50"/>
+	<line x1="-5" y1="-100" x2="60" y2="-100"/>
+
+	<line x1="-310" y1="300" x2="-45" y2="300"/>
+	<line x1="-310" y1="250" x2="-45" y2="250"/>
+	<line x1="-310" y1="200" x2="-45" y2="200"/>
+	<line x1="-310" y1="150" x2="-45" y2="150"/>
+	<line x1="-310" y1="100" x2="-45" y2="100"/>
+	<line x1="-310" y1="50" x2="-45" y2="50"/>
+	<line x1="-310" y1="0" x2="-45" y2="0"/>
+	<line x1="-210" y1="-50" x2="-45" y2="-50"/>
+	<line x1="-110" y1="-100" x2="-45" y2="-100"/>
+	</g>
+
+     <g id="mainpyramid" opacity="0.75" style="shape-rendering: crispEdges;">
+     <g id="males" transform="rotate(90) translate(-100,40)">
+     </g>
+     <g id="females" transform="rotate(270) translate(-350,-110)">
+     </g>
+     </g>
+
+     <g id="symetricPyramid" pointer-events="none" display="none" style="opacity:0.5;fill:white;stroke:none;shape-rendering: crispEdges;">
+     <g id="smales" transform = "rotate(90) translate(-100 40)" >
+     </g>
+     <g id="sfemales" transform = "rotate(270) translate(-350 -110)">
+     </g>
+     </g>
+     
+	<g id="texts2" pointer-events="none">
+	<text id="lbl03country" x="-15" y="-176" style="fill:black;font-size:20px;text-anchor:middle;font-family: Arial, sans-serif;">Deutschland</text>
+	<text id="lbl04men" x="-100" y="130" style="fill:white;font-size:20px;font-weight:bold;text-anchor:middle;font-family: Arial, sans-serif;">Männer</text>
+	<text id="lbl05women" x="75" y="130" style="fill:white;font-size:20px;font-weight:bold;text-anchor:middle;font-family: Arial, sans-serif;">Frauen</text>
+	</g>
+
+	<g style="fill:black;font-size:18px;text-anchor:middle;font-family: Arial, sans-serif;" transform="translate(-15 -5)" pointer-events="none">
+	<g id="ykey" >
+	<text x="0" y="360">0</text>
+	<text x="0" y="310">10</text>
+	<text x="0" y="260">20</text>
+	<text x="0" y="210">30</text>
+	<text x="0" y="160">40</text>
+	<text x="0" y="110">50</text>
+	<text x="0" y="60">60</text>
+	<text x="0" y="10">70</text>
+	<text x="0" y="-40">80</text>
+	<text x="0" y="-90">90</text>
+	<text x="0" y="-140">100</text>
+	</g>
+	<text id="ykeyLow" x="0" y="260" font-weight="bold" display="none">20</text>
+	<text id="ykeyUp"  x="0" y="35"  font-weight="bold" display="none">65</text>
+	</g>
+
+
+	<g id="gridaxes" style="stroke:black;stroke-width:1;">
+	<line x1="10" y1="350" x2="270" y2="350"/>
+	<line x1="10" y1="350" x2="10" y2="-150"/>
+	<line x1="-40" y1="350" x2="-40" y2="-150"/>
+	<line x1="-300" y1="350" x2="-40" y2="350"/>
+	</g>
+
+	<g id="xkey" style="font-size:16px;text-anchor:middle;font-family: Arial, sans-serif;" pointer-events="none">
+
+	<g id="xticks" style="stroke:black;stroke-width:1;">
+	<line x1="-254" y1="350" x2="-254" y2="355"/>
+	<line x1="-147" y1="350" x2="-147" y2="355"/>
+	<line x1="117" y1="350" x2="117" y2="355"/>
+	<line x1="224" y1="350" x2="224" y2="355"/>
+	</g>
+
+	<text id="xtick1" x="-254" y="370">600</text>
+	<text id="xtick2" x="-147" y="370">300</text>
+	<text id="xtick3" x="117" y="370">300</text>
+	<text id="xtick4" x="224" y="370">600</text>
+
+	<text id="lbl06thousand1" x="-200" y="380">Tausend</text>
+	<text id="lbl06thousand2" x="170" y="380">Tausend</text>
+	</g>
+
+	<g id="labeltext" pointer-events="none">
+	<text id="headline" x="-15" y="-205" font-size="24" text-anchor="middle" font-family="Arial, sans-serif">Altersaufbau</text>
+	</g>
+
+	<!-- 
+	<rect id="ageSliderToggle" x="-325" y="-175" height="535" width="600" fill="cyan" fill-opacity="0" pointer-events="none" onmouseover="showAgeSlider()" onmouseout="hideAgeSlider()"/>
+
+	Age-Group Slider Node -->
+	<g id="ip" cursor="s-resize"> 
+	</g>
+
+	</svg>
+
+	</script>  <!-- SVG ends here -->
+
+		<div id="controlls">
+
+			<form id="languageControl">
+			  <select name="selectLanguage" onchange="localize(this.value-0)"> 
+			  <option value="0">en</option>
+			  <option value="1">de</option>
+			  <option value="4">fr</option> 			  <!-- <option value="2">es</option> --> 
+			  <option value="3">ru</option>
+
+			  </select>
+		    </form>
+
+		<button id="buttonPause"  type="button" onclick="stopani()">Pause</button> 
+		<button id="buttonPlay" type="button" onclick="animate()">Play</button>
+
+			<form id="yearControl">
+			  <select name="selectYear" onchange="pyramidmenu(this)"> 
+			  <option value="0">1950</option>
+			  <option value="10">1960</option>
+			  <option value="20">1970</option> 
+			  <option value="30">1980</option>
+			  <option value="40">1990</option> 
+			  <option value="50">2000</option>
+			  <option value="60">2010</option> 
+			  <option value="70">2020</option>
+			  <option value="80">2030</option> 
+			  <option value="90">2040</option>
+			  <option value="100">2050</option> 
+			  <option value="110">2060</option> 
+			  </select>
+		    </form>
+
+		</div>
+
+	</div> <!-- end pyramid div -->
+
+</div> <!-- end app div -->
+
+</body>
+
+</html>

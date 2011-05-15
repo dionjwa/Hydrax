@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <!--using forceflash breaks this page. square does not show up-->
+  <head>
+    <title>square</title>
+    <script src="../../../src/svg.js" data-path="../../../src"></script>
+   <script>
+  
+  window.onsvgload = function () {
+  
+    //container is the object element used to load the SVG document
+    var container = document.getElementById('container');
+    container.setAttribute("width", 500);
+    container.setAttribute("height", 500);
+
+    //get the SVG Document 
+    var doc = container.contentDocument;
+    doc.firstChild.setAttribute("width", 500);
+    doc.firstChild.setAttribute("height", 500);
+    //doc.firstChild.setAttribute("viewBox", "0 0 500 500");
+
+    //create an instance of the square
+    var square = doc.createElementNS(svgns, 'use');
+    square.setAttributeNS(xlinkns, 'xlink:href', "#square");
+    square.setAttribute("style", "fill:red");
+    //append to SVG document
+    doc.documentElement.appendChild(square);
+  };
+   </script>
+  </head>
+  <body style="margin:0">
+    <!--[if !IE]>-->
+      <object data="issue580.svg" type="image/svg+xml" id="container"> <!--<![endif]-->
+    <!--[if lt IE 9]>
+      <object src="issue580.svg" classid="image/svg+xml" id="container"> <![endif]-->
+    <!--[if gte IE 9]>
+      <object data="issue580.svg" type="image/svg+xml" id="container"> <![endif]-->
+      </object>
+
+  </body>
+</html>
+

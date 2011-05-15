@@ -1,0 +1,35 @@
+                    <svg width="200" height="200" 
+                       style="display: block; margin-bottom: 5px;float:left;" 
+                       id="embeddedSVG" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <script type="text/javascript">
+        function toggle(me) {
+        var status = document.getElementById('status1a');
+        if (me.getAttribute('fill') == 'url(#blueNavy)') {
+        me.setAttribute('fill', 'url(#redMaroon)');
+        status.textContent = "The ball is now red.";
+        } else {
+        me.setAttribute('fill', 'url(#blueNavy)');
+        status.textContent = "The ball is now blue.";
+        }
+        };</script>
+    <defs>                      
+                            <linearGradient id="blueNavy" gradientTransform="rotate(90)">
+                                <stop stop-color="blue" offset="0"/>
+                                <stop stop-color="navy" offset="1"/>
+                            </linearGradient>
+                            <linearGradient id="redMaroon" gradientTransform="rotate(90)">
+                                <stop stop-color="red" offset="0"/>
+                                <stop stop-color="maroon" offset="1"/>
+                            </linearGradient>
+                        </defs>
+                        <g id="myGroup" fill="blue" style="font-size: 18px; text-anchor: middle; font-family: serif;">
+                            <circle id="myCircle" cx="100" cy="75" r="50" stroke="firebrick" stroke-width="3" fill="url(#blueNavy)" onclick="toggle(this)" cursor="pointer"/>
+                            <text x="100" y="75" fill="white" font-size="9pt" onclick="toggle(document.getElementById('myCircle'))" cursor="pointer" >Click Me</text>
+                            <g fill="black" font-size="9pt">
+                            <text x="100" y="140">This is a sample</text>
+                            <text x="100" y="160">of an SVG document.</text>
+                           <text x="100" y="180" id="status1a">Click on the ball above.</text>
+                            </g>
+
+                       </g>
+                    </svg>

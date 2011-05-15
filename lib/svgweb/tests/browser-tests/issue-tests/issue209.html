@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>SVG web: Issue 209  - MouseMove doesn't work</title>
+		<script src="../../../src/svg.js" data-path="../../../src"></script>
+		<script type="text/javascript">
+		var mapRoot = null;
+		var nMouseOffsetX = 0;
+		var nMouseOffsetY = 0;
+		
+		function init()	{
+			    mapRoot = document.getElementById('svgroot');
+			    document.getElementById('baz').addEventListener("mousemove", mouseMove, false);
+			}
+			
+		function mouseMove(evt) { 
+			var m = mapRoot.getScreenCTM();
+			var p = mapRoot.createSVGPoint();
+		    p.x = evt.clientX;
+		    p.y = evt.clientY;
+		    
+		    p = p.matrixTransform(m.inverse());
+		    p.x -= nMouseOffsetX;
+		    p.y -= nMouseOffsetY;
+		    
+		    document.getElementById('xcoords').firstChild.data=parseInt(p.x);
+		    document.getElementById('ycoords').firstChild.data=parseInt(p.y);
+		    
+		}
+
+        svgweb.addOnLoad(init);
+		</script>
+	</head>
+	<body>
+		<h1>move your mouse over the rectangle</h1>
+		<h4 id="xcoords">xcoords</h4>
+		<h4 id="ycoords">ycoords</h4>
+		<script type="image/svg+xml">
+			<svg id="svgroot" viewBox="0 0 640 480" width="640px" height="480px">
+				<g id="baz">
+				<g id="hey">
+				<g id="you">
+					<rect id="bar" width="450" height="375" x="250" y="50" fill="#ffb424" />
+				</g>
+				</g>
+				</g>
+					
+			</svg>
+		</script>
+	</body>
+</html>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800px" height="400px" 
+     viewBox="0 0 800 400" style="border: 1px solid black;">
+  <style>
+    @font-face {
+      font-family: "DroidSans";
+      src: url(DroidSans.ttf) format("truetype");
+    }
+    
+    @font-face {
+      font-family: Scheherazade;
+      src: url(ScheherazadeRegAAT.ttf) format("truetype-aat");
+    }
+  </style>
+  
+  <text x="50" y="50" style="font-family: DroidSans;">This should be Droid Sans</text>
+  <text x="50" y="90">This should be plain boring text</text>
+  <text x="50" y="130" style="font-family: Scheherazade;">نص حكيم له سر قاطع وذو شأن عظيم مكتوب على ثوب أخضر ومغلف بجلد أزرق</text>
+  <text x="50" y="180">نص حكيم له سر قاطع وذو شأن عظيم مكتوب على ثوب أخضر ومغلف بجلد أزرق</text>
+  
+  <rect x="170" y="40" rx="3" ry="3" width="70" height="70" 
+        fill="red" stroke="blue" stroke-width="2px" style="opacity: 0.5;"/>
+</svg>

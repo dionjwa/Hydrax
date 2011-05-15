@@ -3,7 +3,7 @@
 #Creates the haxelib package
 import os, os.path, string, sys, shutil
 
-hydraxroot = "/Users/dion/storage/projects/hydrax"
+hydraxroot = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
 #Apply license headers
 execfile(os.path.join(hydraxroot, "bin", "applyLicenseHeaders.py"))

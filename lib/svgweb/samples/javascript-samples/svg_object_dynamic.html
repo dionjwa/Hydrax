@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <!-- Tests embedding SVG using an OBJECT tag, and manipulating it through
+       JavaScript -->
+
+ <head>
+
+   <script src="../../src/svg.js" data-path="../../src/"></script>
+   
+   <script>
+     window.addEventListener('SVGLoad', function() {
+       var doc = document.getElementById('mySVG').contentDocument;                
+                    
+       // use some JavaScript to animate the rectangles over and over
+       window._counter = 1;
+       window.setInterval(function() {
+         var rect = doc.getElementById('myRect');
+         var fill;
+         if (window._counter % 2 == 0) {
+           fill = 'yellow';
+         } else {
+           fill = 'green';
+         }
+         rect.setAttribute('fill', fill);
+         
+         rect = doc.getElementsByTagNameNS(svgns, 'rect')[0];
+         if (window._counter % 2 == 0) {
+           fill = 'blue';
+         } else {
+           fill = 'brown';
+         }
+         rect.setAttribute('fill', fill);
+
+         window._counter++;
+       }, 100);
+     }, false);
+   </script>
+ </head>
+
+ <body>
+   
+   <h1>Tests embedding SVG using an OBJECT tag, and manipulating it through
+        JavaScript</h1>
+        
+   <!--[if !IE]>-->
+     <object data="../svg-files/mysvg.svg" type="image/svg+xml"
+             width="250" height="150" id="mySVG"> <!--<![endif]-->
+   <!--[if lt IE 9]>
+     <object src="../svg-files/mysvg.svg" classid="image/svg+xml"
+             width="250" height="150" id="mySVG"> <![endif]-->
+   <!--[if gte IE 9]>
+     <object data="../svg-files/mysvg.svg" type="image/svg+xml"
+             width="250" height="150" id="mySVG"> <![endif]-->
+     </object>
+
+ </body>
+</html>

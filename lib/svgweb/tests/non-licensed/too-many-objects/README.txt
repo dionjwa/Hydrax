@@ -1,0 +1,1 @@
+PK Smithies (cpk@smithies.org) report to Brad Neuberg on the SVG-Developers list that he had seen issues when he had many many OBJECTs on a page with the ASV viewer on Internet Explorer. He sent me these testing files to emulate his environment. Brad Neuberg modified them to work with SVG Web to see how we work under these conditions.

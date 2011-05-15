@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" id="foo">
+	<defs>
+		<g id="square">
+			<rect class='square' height='512' width='512'/>
+		</g>
+  </defs>
+ </svg>

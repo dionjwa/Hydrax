@@ -1,0 +1,1 @@
+Test case to help get displaying PATH nodes faster; test case taken from Issue 277 (http://code.google.com/p/svgweb/issues/detail?id=277) in order to help on Issue 287 (http://code.google.com/p/svgweb/issues/detail?id=287). Copyright owned by the author of the sample attached to Issue 277.

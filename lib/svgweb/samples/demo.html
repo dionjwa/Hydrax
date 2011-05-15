@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="svg.render.forceflash" content="true" />
+  <script src="../src/svg.js" data-path="../src"></script>
+</head>
+<body><h1 style="margin:2px">Welcome to the SVG Web Demo!
+         <span style="font-size: 10pt">
+          <a href='http://code.google.com/p/svgweb'
+           >SVG rendering for common web browsers using Flash.</a>
+           
+          <!-- TODO: Bring docs up to date -->
+          <!--[<a href='http://code.google.com/p/sgweb/source/browse/trunk/docs/FAQ.html'
+           >FAQ</a>]
+          [<a href='http://code.google.com/p/sgweb/source/browse/trunk/docs/UserManual.html'
+           > Manual </a>]--></span></h1>
+    <label>Select SVG:
+    </label>
+    <select id="selectSVG" onchange="showSVG();">
+        <option value="scim">scimitar
+        <option value="scim-anim">scimitar-anim
+        <option value="anim1">anim1 - animate
+        <option value="anim2">anim2 - animateTransform
+        <option value="anim3">anim3 - key splines!
+        <option value="video1">video1
+        <option value="videos">videos
+        <option value="svgopen">svgopen2009
+        <option value="droid font1">DroidSans SVG font
+        <option value="droid font2">DroidSans-Bold
+        <option value="droid font3">DroidSansMono
+        <option value="droid font4">DroidSerif-BoldItalic
+        <option value="droid font5">DroidSerif-Bold
+        <option value="droid font6">DroidSerif-Italic
+        <option value="droid font7">DroidSerif-Regular
+        <option value="tiger">tiger
+        <option value="spcar">sporty car - nice
+        <option value="techcar">techy car - nice
+        <option value="cam">camera
+        <option value="ford">ford
+        <option value="pg13">ratedpg13 - be patient
+        <option value="eggs">eggs
+        <option value="grapes">grapes
+        <option value="metal">metal
+        <option value="pres">presentation
+        <option value="ufo">ufo
+        <option value="acar">antique car
+        <option value="blocks_game">blocks game
+        <option value="photos">photos
+        <option value="webstats">web stats
+        <option value="us">us states
+        <option value="snakes">snakes
+        <option value="steps">steps
+        <option value="circles1">circles1
+        <option value="gaussian 1">gaussian collage
+        <option value="gaussian 2">gaussian simple
+        <option value="gaussian 3">gaussian effect region
+        <option value="image">image
+        <option value="lingrad1">linear grad 1
+        <option value="lingrad2">linear grad 2
+        <option value="lingrad3">linear grad: userSpace
+        <option value="linear grad pct">linear grad: bounding
+        <option value="mouseEvents">mouseEvents
+        <option value="pencil">pencil
+        <option value="preserve">preserveAspectRatio
+        <option value="radial1">radialGradient1
+        <option value="radial2">radialGradient2
+        <option value="smile">smile
+        <option value="clippath">clip-path
+        <option value="inlineobject">inline object data
+        <option value="001">animate-elem-02-t.svg
+        <option value="002">animate-elem-03-t.svg
+        <option value="003">animate-elem-04-t.svg
+        <option value="004">animate-elem-05-t.svg
+        <option value="005">animate-elem-06-t.svg
+        <option value="006">animate-elem-07-t.svg
+        <option value="007">animate-elem-08-t.svg
+        <option value="008">animate-elem-09-t.svg
+        <option value="009">animate-elem-10-t.svg
+        <option value="010">animate-elem-11-t.svg
+        <option value="011">animate-elem-12-t.svg
+        <option value="012">animate-elem-13-t.svg
+        <option value="013">animate-elem-14-t.svg
+        <option value="014">animate-elem-15-t.svg
+        <option value="015">animate-elem-17-t.svg
+        <option value="016">animate-elem-19-t.svg
+        <option value="017">animate-elem-20-t.svg
+        <option value="018">animate-elem-21-t.svg
+        <option value="019">animate-elem-22-b.svg
+        <option value="020">animate-elem-23-t.svg
+        <option value="021">animate-elem-24-t.svg
+        <option value="022">animate-elem-25-t.svg
+        <option value="023">animate-elem-26-t.svg
+        <option value="024">animate-elem-27-t.svg
+        <option value="025">animate-elem-28-t.svg
+        <option value="026">animate-elem-29-b.svg
+        <option value="027">animate-elem-30-t.svg
+        <option value="028">animate-elem-31-t.svg
+        <option value="029">animate-elem-32-t.svg
+        <option value="030">animate-elem-33-t.svg
+        <option value="031">animate-elem-34-t.svg
+        <option value="032">animate-elem-36-t.svg
+        <option value="033">animate-elem-37-t.svg
+        <option value="034">animate-elem-39-t.svg
+        <option value="035">animate-elem-40-t.svg
+        <option value="036">animate-elem-41-t.svg
+        <option value="037">animate-elem-44-t.svg
+        <option value="038">animate-elem-46-t.svg
+        <option value="039">animate-elem-52-t.svg
+        <option value="040">animate-elem-60-t.svg
+        <option value="041">animate-elem-61-t.svg
+        <option value="042">animate-elem-62-t.svg
+        <option value="043">animate-elem-63-t.svg
+        <option value="044">animate-elem-64-t.svg
+        <option value="045">animate-elem-65-t.svg
+        <option value="046">animate-elem-66-t.svg
+        <option value="047">animate-elem-67-t.svg
+        <option value="048">animate-elem-68-t.svg
+        <option value="049">animate-elem-69-t.svg
+        <option value="050">animate-elem-70-t.svg
+        <option value="051">animate-elem-77-t.svg
+        <option value="052">animate-elem-78-t.svg
+        <option value="053">animate-elem-80-t.svg
+        <option value="054">animate-elem-81-t.svg
+        <option value="055">animate-elem-82-t.svg
+        <option value="056">animate-elem-83-t.svg
+        <option value="057">animate-elem-84-t.svg
+        <option value="058">animate-elem-85-t.svg
+        <option value="059">color-prof-01-f.svg
+        <option value="060">color-prop-01-b.svg
+        <option value="061">color-prop-02-f.svg
+        <option value="062">color-prop-03-t.svg
+        <option value="063">coords-coord-01-t.svg
+        <option value="064">coords-coord-02-t.svg
+        <option value="065">coords-trans-01-b.svg
+        <option value="066">coords-trans-02-t.svg
+        <option value="067">coords-trans-03-t.svg
+        <option value="068">coords-trans-04-t.svg
+        <option value="069">coords-trans-05-t.svg
+        <option value="070">coords-trans-06-t.svg
+        <option value="071">coords-units-01-b.svg
+        <option value="072">coords-units-02-b.svg
+        <option value="073">coords-units-03-b.svg
+        <option value="074">coords-viewattr-01-b.svg
+        <option value="075">coords-viewattr-02-b.svg
+        <option value="076">coords-viewattr-03-b.svg
+        <option value="077">extend-namespace-01-f.svg
+        <option value="078">filters-blend-01-b.svg
+        <option value="079">filters-color-01-b.svg
+        <option value="080">filters-composite-02-b.svg
+        <option value="081">filters-comptran-01-b.svg
+        <option value="082">filters-conv-01-f.svg
+        <option value="083">filters-diffuse-01-f.svg
+        <option value="084">filters-displace-01-f.svg
+        <option value="085">filters-example-01-b.svg
+        <option value="086">filters-felem-01-b.svg
+        <option value="087">filters-gauss-01-b.svg
+        <option value="088">filters-image-01-b.svg
+        <option value="089">filters-light-01-f.svg
+        <option value="090">filters-morph-01-f.svg
+        <option value="091">filters-offset-01-b.svg
+        <option value="092">filters-specular-01-f.svg
+        <option value="093">filters-tile-01-b.svg
+        <option value="094">filters-turb-01-f.svg
+        <option value="095">fonts-desc-02-t.svg
+        <option value="096">fonts-elem-01-t.svg
+        <option value="097">fonts-elem-02-t.svg
+        <option value="098">fonts-elem-03-b.svg
+        <option value="099">fonts-elem-04-b.svg
+        <option value="100">fonts-elem-05-t.svg
+        <option value="101">fonts-elem-06-t.svg
+        <option value="102">fonts-elem-07-b.svg
+        <option value="103">fonts-glyph-02-t.svg
+        <option value="104">fonts-glyph-03-t.svg
+        <option value="105">fonts-glyph-04-t.svg
+        <option value="106">fonts-kern-01-t.svg
+        <option value="107">interact-cursor-01-f.svg
+        <option value="108">interact-dom-01-b.svg
+        <option value="109">interact-events-01-b.svg
+        <option value="110">interact-order-01-b.svg
+        <option value="111">interact-order-02-b.svg
+        <option value="112">interact-order-03-b.svg
+        <option value="113">interact-zoom-01-t.svg
+        <option value="114">linking-a-01-b.svg
+        <option value="115">linking-a-02-b.svg
+        <option value="116">linking-a-03-b.svg
+        <option value="117">linking-a-04-t.svg
+        <option value="118">linking-a-05-t.svg
+        <option value="119">linking-a-07-t.svg
+        <option value="120">linking-uri-01-b.svg
+        <option value="121">linking-uri-02-b.svg
+        <option value="122">linking-uri-03-t.svg
+        <option value="123">masking-intro-01-f.svg
+        <option value="124">masking-mask-01-b.svg
+        <option value="125">masking-opacity-01-b.svg
+        <option value="126">masking-path-01-b.svg
+        <option value="127">masking-path-02-b.svg
+        <option value="128">masking-path-03-b.svg
+        <option value="129">masking-path-04-b.svg
+        <option value="130">masking-path-05-f.svg
+        <option value="131">metadata-example-01-b.svg
+        <option value="132">painting-fill-01-t.svg
+        <option value="133">painting-fill-02-t.svg
+        <option value="134">painting-fill-03-t.svg
+        <option value="135">painting-fill-04-t.svg
+        <option value="136">painting-fill-05-b.svg
+        <option value="137">painting-marker-01-f.svg
+        <option value="138">painting-marker-02-f.svg
+        <option value="139">painting-marker-03-f.svg
+        <option value="140">painting-render-01-b.svg
+        <option value="141">painting-stroke-01-t.svg
+        <option value="142">painting-stroke-02-t.svg
+        <option value="143">painting-stroke-03-t.svg
+        <option value="144">painting-stroke-04-t.svg
+        <option value="145">painting-stroke-07-t.svg
+        <option value="146">paths-data-01-t.svg
+        <option value="147">paths-data-02-t.svg
+        <option value="148">paths-data-03-f.svg
+        <option value="149">paths-data-04-t.svg
+        <option value="150">paths-data-05-t.svg
+        <option value="151">paths-data-06-t.svg
+        <option value="152">paths-data-07-t.svg
+        <option value="153">paths-data-08-t.svg
+        <option value="154">paths-data-09-t.svg
+        <option value="155">paths-data-10-t.svg
+        <option value="156">paths-data-12-t.svg
+        <option value="157">paths-data-13-t.svg
+        <option value="158">paths-data-14-t.svg
+        <option value="159">paths-data-15-t.svg
+        <option value="160">pservers-grad-01-b.svg
+        <option value="161">pservers-grad-02-b.svg
+        <option value="162">pservers-grad-03-b.svg
+        <option value="163">pservers-grad-03-b-anim.svg
+        <option value="164">pservers-grad-04-b.svg
+        <option value="165">pservers-grad-05-b.svg
+        <option value="166">pservers-grad-06-b.svg
+        <option value="167">pservers-grad-07-b.svg
+        <option value="168">pservers-grad-08-b.svg
+        <option value="169">pservers-grad-09-b.svg
+        <option value="170">pservers-grad-10-b.svg
+        <option value="171">pservers-grad-11-b.svg
+        <option value="172">pservers-grad-12-b.svg
+        <option value="173">pservers-grad-13-b.svg
+        <option value="174">pservers-grad-14-b.svg
+        <option value="175">pservers-grad-15-b.svg
+        <option value="176">pservers-grad-16-b.svg
+        <option value="177">pservers-grad-17-b.svg
+        <option value="178">pservers-grad-18-b.svg
+        <option value="179">pservers-grad-19-b.svg
+        <option value="180">pservers-pattern-01-b.svg
+        <option value="181">render-elems-01-t.svg
+        <option value="182">render-elems-02-t.svg
+        <option value="183">render-elems-03-t.svg
+        <option value="184">render-elems-06-t.svg
+        <option value="185">render-elems-07-t.svg
+        <option value="186">render-elems-08-t.svg
+        <option value="187">render-groups-01-b.svg
+        <option value="188">render-groups-03-t.svg
+        <option value="189">script-handle-01-b.svg
+        <option value="190">script-handle-02-b.svg
+        <option value="191">script-handle-03-b.svg
+        <option value="192">script-handle-04-b.svg
+        <option value="193">shapes-circle-01-t.svg
+        <option value="194">shapes-circle-02-t.svg
+        <option value="195">shapes-ellipse-01-t.svg
+        <option value="196">shapes-ellipse-02-t.svg
+        <option value="197">shapes-intro-01-t.svg
+        <option value="198">shapes-line-01-t.svg
+        <option value="199">shapes-polygon-01-t.svg
+        <option value="200">shapes-polyline-01-t.svg
+        <option value="201">shapes-rect-01-t.svg
+        <option value="202">shapes-rect-02-t.svg
+        <option value="203">struct-cond-01-t.svg
+        <option value="204">struct-cond-02-t.svg
+        <option value="205">struct-cond-03-t.svg
+        <option value="206">struct-defs-01-t.svg
+        <option value="207">struct-dom-01-b.svg
+        <option value="208">struct-dom-02-b.svg
+        <option value="209">struct-dom-03-b.svg
+        <option value="210">struct-dom-04-b.svg
+        <option value="211">struct-dom-05-b.svg
+        <option value="212">struct-dom-06-b.svg
+        <option value="213">struct-frag-01-t.svg
+        <option value="214">struct-frag-02-t.svg
+        <option value="215">struct-frag-03-t.svg
+        <option value="216">struct-frag-04-t.svg
+        <option value="217">struct-frag-05-t.svg
+        <option value="218">struct-frag-06-t.svg
+        <option value="219">struct-group-01-t.svg
+        <option value="220">struct-group-02-b.svg
+        <option value="221">struct-group-03-t.svg
+        <option value="222">struct-image-01-t.svg
+        <option value="223">struct-image-02-b.svg
+        <option value="224">struct-image-03-t.svg
+        <option value="225">struct-image-04-t.svg
+        <option value="226">struct-image-05-b.svg
+        <option value="227">struct-image-06-t.svg
+        <option value="228">struct-image-07-t.svg
+        <option value="229">struct-image-08-t.svg
+        <option value="230">struct-image-09-t.svg
+        <option value="231">struct-image-10-t.svg
+        <option value="232">struct-symbol-01-b.svg
+        <option value="233">struct-use-01-t.svg
+        <option value="234">struct-use-03-t.svg
+        <option value="235">struct-use-05-b.svg
+        <option value="236">styling-css-01-b.svg
+        <option value="237">styling-css-02-b.svg
+        <option value="238">styling-css-03-b.svg
+        <option value="239">styling-css-04-f.svg
+        <option value="240">styling-css-05-b.svg
+        <option value="241">styling-css-06-b.svg
+        <option value="242">styling-inherit-01-b.svg
+        <option value="243">styling-pres-01-t.svg
+        <option value="244">text-align-01-b.svg
+        <option value="245">text-align-02-b.svg
+        <option value="246">text-align-03-b.svg
+        <option value="247">text-align-04-b.svg
+        <option value="248">text-align-05-b.svg
+        <option value="249">text-align-06-b.svg
+        <option value="250">text-align-08-b.svg
+        <option value="251">text-altglyph-01-b.svg
+        <option value="252">text-deco-01-b.svg
+        <option value="253">text-fonts-01-t.svg
+        <option value="254">text-fonts-02-t.svg
+        <option value="255">text-fonts-03-t.svg
+        <option value="256">text-intro-01-t.svg
+        <option value="257">text-intro-02-b.svg
+        <option value="258">text-intro-03-b.svg
+        <option value="259">text-intro-04-t.svg
+        <option value="260">text-intro-05-t.svg
+        <option value="261">text-path-01-b.svg
+        <option value="262">text-spacing-01-b.svg
+        <option value="263">text-text-01-b.svg
+        <option value="264">text-text-03-b.svg
+        <option value="265">text-text-04-t.svg
+        <option value="266">text-text-05-t.svg
+        <option value="267">text-text-06-t.svg
+        <option value="268">text-text-07-t.svg
+        <option value="269">text-text-08-b.svg
+        <option value="270">text-tref-01-b.svg
+        <option value="271">text-tselect-01-b.svg
+        <option value="272">text-tselect-02-f.svg
+        <option value="273">text-tspan-01-b.svg
+        <option value="274">text-ws-01-t.svg
+        <option value="275">text-ws-02-t.svg
+        <option value="276">types-basicDOM-01-b.svg
+        <option value='410'>410
+        <option value='aa'>aa
+        <option value='accessible'>accessible
+        <option value='acid'>acid
+        <option value='adobe'>adobe
+        <option value='alphachannel'>alphachannel
+        <option value='android'>android
+        <option value='atom'>atom
+        <option value='basura'>basura
+        <option value='beacon'>beacon
+        <option value='betterplace'>betterplace
+        <option value='bloglines'>bloglines
+        <option value='bozo'>bozo
+        <option value='bzr'>bzr
+        <option value='bzrfeed'>bzrfeed
+        <option value='ca'>ca
+        <option value='cartman'>cartman
+        <option value='caution'>caution
+        <option value='cc'>cc
+        <option value='ch'>ch
+        <option value='check'>check
+        <option value='compass'>compass
+        <option value='copyleft'>copyleft
+        <option value='copyright'>copyright
+        <option value='couch'>couch
+        <option value='couchdb'>couchdb
+        <option value='cygwin'>cygwin
+        <option value='debian'>debian
+        <option value='decimal'>decimal
+        <option value='dh'>dh
+        <option value='digg'>digg
+        <option value='dojo'>dojo
+        <option value='dst'>dst
+        <option value='duck'>duck
+        <option value='duke'>duke
+        <option value='dukechain'>dukechain
+        <option value='easypeasy'>easypeasy
+        <option value='eee'>eee
+        <option value='eff'>eff
+        <option value='erlang'>erlang
+        <option value='evol'>evol
+        <option value='facebook'>facebook
+        <option value='faux-art'>faux-art
+        <option value='fb'>fb
+        <option value='feed'>feed
+        <option value='feedsync'>feedsync
+        <option value='fsm'>fsm
+        <option value='gcheck'>gcheck
+        <option value='genshi'>genshi
+        <option value='git'>git
+        <option value='gnome2'>gnome2
+        <option value='google'>google
+        <option value='gpg'>gpg
+        <option value='gump-bench'>gump-bench
+        <option value='heart'>heart
+        <option value='heliocentric'>heliocentric
+        <option value='hg0'>hg0
+        <option value='http'>http
+        <option value='ibm'>ibm
+        <option value='ie-lock'>ie-lock
+        <option value='ielock'>ielock
+        <option value='ietf'>ietf
+        <option value='instiki'>instiki
+        <option value='integral'>integral
+        <option value='intertwingly'>intertwingly
+        <option value='irony'>irony
+        <option value='italian-flag'>italian-flag
+        <option value='iw'>iw
+        <option value='jabber'>jabber
+        <option value='jquery'>jquery
+        <option value='json'>json
+        <option value='jsonatom'>jsonatom
+        <option value='legal'>legal
+        <option value='m'>m
+        <option value='mac'>mac
+        <option value='mail'>mail
+        <option value='mars'>mars
+        <option value='mememe'>mememe
+        <option value='microformat'>microformat
+        <option value='mono'>mono
+        <option value='moonlight'>moonlight
+        <option value='mozilla'>mozilla
+        <option value='msft'>msft
+        <option value='msie'>msie
+        <option value='mt'>mt
+        <option value='mudflap'>mudflap
+        <option value='myspace'>myspace
+        <option value='no'>no
+        <option value='obama'>obama
+        <option value='odf'>odf
+        <option value='open-clipart'>open-clipart
+        <option value='openid'>openid
+        <option value='opensearch'>opensearch
+        <option value='openweb'>openweb
+        <option value='opera'>opera
+        <option value='osa'>osa
+        <option value='oscon'>oscon
+        <option value='osi'>osi
+        <option value='padlock'>padlock
+        <option value='patch'>patch
+        <option value='pdftk'>pdftk
+        <option value='penrose-staircase'>penrose-staircase
+        <option value='penrose-tiling'>penrose-tiling
+        <option value='php'>php
+        <option value='poi'>poi
+        <option value='pull'>pull
+        <option value='python'>python
+        <option value='rack'>rack
+        <option value='rails'>rails
+        <option value='raleigh'>raleigh
+        <option value='rdf'>rdf
+        <option value='rest'>rest
+        <option value='rfeed'>rfeed
+        <option value='ruby'>ruby
+        <option value='rubyforge'>rubyforge
+        <option value='scion'>scion
+        <option value='semweb'>semweb
+        <option value='star'>star
+        <option value='svg'>svg
+        <option value='sync'>sync
+        <option value='twitter'>twitter
+        <option value='ubuntu'>ubuntu
+        <option value='unicode-han'>unicode-han
+        <option value='unicode'>unicode
+        <option value='usaf'>usaf
+        <option value='utensils'>utensils
+        <option value='venus'>venus
+        <option value='vmware'>vmware
+        <option value='vnu'>vnu
+        <option value='vote'>vote
+        <option value='w3c'>w3c
+        <option value='whatwg'>whatwg
+        <option value='why'>why
+        <option value='wii'>wii
+        <option value='wikimedia'>wikimedia
+        <option value='wireless'>wireless
+        <option value='wp'>wp
+        <option value='wso2'>wso2
+        <option value='x11'>x11
+        <option value='yadis'>yadis
+        <option value='yahoo'>yahoo
+        <option value='yinyang'>yinyang
+        <option value='zillow'>zillow
+    </select>
+    <input type="button" onclick="showNext()" value="next" style="margin-right:10px" />
+    <p id='selectModeP'><span>Select Display Mode:</span>
+    <select id="selectMode" onchange="setMode(this.selectedIndex);">
+        <option value="image">image
+        <option value="xml">xml
+    </select>
+    </p>
+    <p><span>Select Renderer:</span>
+    <select id="selectRenderer" onchange="changeRenderer(this.value);">
+        <option value="flash">rendered by Flash
+        <option value="native">browser native svg
+    </select>
+    </p>
+    <p><span>Show Demos Known to Fail:</span>
+      <input id="showFailingDemos" type="checkbox" onclick="handleFailingDemos()" />
+    </p>
+      
+    <p>
+    <input type="button" onclick="modTranslate(25,0);" value="&lt;"/>
+    <input type="button" onclick="modTranslate(-25,0);" value="&gt;"/>
+    <input type="button" onclick="modTranslate(0,25)" value="^"/>
+    <input type="button" onclick="modTranslate(0,-25)" value="V"/>
+    <input type="button" onclick="modScale(10/9)" value="+"/>
+    <input type="button" onclick="modScale(9/10)" value="-"/>
+    </p>
+    <p><div id='mySVGDiv' style='display:block;float:left;'><!--SVG will go here --></div></p>
+    <pre id='myXMLp' width="100%" style='clear:left;'></pre>
+
+    <script type='text/javascript'>
+    var currentSVGIndex = -1;
+    var currentSVGObject;
+    var currentSVGName;
+    
+    var SVGFiles= [
+                    { name: 'scim', svgURL: "svg-files/scimitar.svg", width:466, height:265 },
+                    { name: 'scim-anim', svgURL: "svg-files/scimitar-anim.svg", width:466, height:265 },
+                    { name: 'anim1', svgURL: "svg-files/anim1.svg", width:800, height:600 },
+                    { name: 'anim2', svgURL: "svg-files/anim2.svg", width:800, height:600 },
+                    { name: 'anim3', svgURL: "svg-files/anim3.svg", width:800, height:600 },
+                    { name: 'video1', svgURL: "svg-files/video1.svg", width:800, height:600 },
+                    { name: 'videos', svgURL: "svg-files/videos.svg", width:800, height:600 },
+                    { name: 'svgopen', svgURL: "svg-files/svg2009.svg", width:850, height:200 },
+                    { name: 'droid font1', svgURL: "svg-files/DroidSans.svg", width:800, height:600 },
+                    { name: 'droid font2', svgURL: "svg-files/DroidSans-Bold.svg", width:800, height:600 },
+                    { name: 'droid font3', svgURL: "svg-files/DroidSansMono.svg", width:800, height:600 },
+                    { name: 'droid font4', svgURL: "svg-files/DroidSerif-BoldItalic.svg", width:800, height:600 },
+                    { name: 'droid font5', svgURL: "svg-files/DroidSerif-Bold.svg", width:800, height:600 },
+                    { name: 'droid font6', svgURL: "svg-files/DroidSerif-Italic.svg", width:800, height:600 },
+                    { name: 'droid font7', svgURL: "svg-files/DroidSerif-Regular.svg", width:800, height:600 },
+                    { name: 'tiger', svgURL: "svg-files/tiger.svg", width:800, height:800 },
+                    { name: 'spcar', svgURL: "svg-files/car.svg", width:900, height:600 },
+                    { name: 'techcar', svgURL: "svg-files/gallardo.svg", width:1000, height:600 },
+                    { name: 'cam', svgURL: "svg-files/AJ_Digital_Camera.svg", width:406, height:206 },
+                    { name: 'ford', svgURL: "svg-files/compuserver_msn_Ford_Focus.svg", width:548, height:303 },                    
+                    { name: 'pg13', svgURL: "svg-files/juanmontoya_lingerie.svg", width:858, height:1074 },
+                    { name: 'eggs', svgURL: "svg-files/rg1024_eggs.svg", width:430, height:474 },
+                    { name: 'grapes', svgURL: "svg-files/rg1024_green_grapes.svg", width:558, height:781 },
+                    { name: 'metal', svgURL: "svg-files/rg1024_metal_effect.svg", width:445, height:479 },
+                    { name: 'pres', svgURL: "svg-files/rg1024_Presentation_with_girl.svg", width:305, height:398 },
+                    { name: 'ufo', svgURL: "svg-files/rg1024_Ufo_in_metalic_style.svg", width:729, height:379 },
+                    { name: 'acar', svgURL: "svg-files/tommek_Car.svg", width:1052, height:744 },
+                    { name: 'blocks_game', svgURL: "svg-files/blocks_game.svg", width:345, height:407 },
+                    { name: 'photos', svgURL: "svg-files/photos.svg", width:800, height:600 },
+                    { name: 'webstats', svgURL: "svg-files/displayWebStats.svg", width:800, height:600, fails: true },
+                    { name: 'us', svgURL: "svg-files/USStates.svg", fails: true },
+                    { name: 'snakes', svgURL: "svg-files/snake.svg", fails: true },
+                    { name: 'steps', svgURL: "svg-files/Steps.svg", fails: true },
+                    { name: 'circles1', svgURL: "svg-files/circles1.svg", width:800, height:600, fails: true },
+                    { name: 'gaussian 1', svgURL: "svg-files/gaussian1.svg" },
+                    { name: 'gaussian 2', svgURL: "svg-files/gaussian2.svg" },
+                    { name: 'gaussian 3', svgURL: "svg-files/gaussian3.svg" },
+                    { name: 'image', svgURL: "svg-files/image.svg" },
+                    { name: 'lingrad1', svgURL: "svg-files/lineargradient1.svg" },
+                    { name: 'lingrad2', svgURL: "svg-files/lineargradient2.svg" },
+                    { name: 'lingrad3', svgURL: "svg-files/lineargradient3.svg" },
+                    { name: 'linear grad pct', svgURL: "svg-files/lineargradient4.svg" },
+                    { name: 'mouseEvents', svgURL: "svg-files/mouseEvents.svg", width: 600, height: 600, fails: true },
+                    { name: 'pencil', svgURL: "svg-files/pencil.svg" },
+                    { name: 'preserve', svgURL: "svg-files/preserveAspectRatio.svg" },
+                    { name: 'radial1', svgURL: "svg-files/radialgradient1.svg" },
+                    { name: 'radial2', svgURL: "svg-files/radialgradient2.svg" },
+                    { name: 'smile', svgURL: "svg-files/smile.svg" },
+                    { name: 'clippath', svgURL: "svg-files/clippath.svg" },
+                    { name: 'inlineobject', width: 300, height: 200,
+                                       svgURL: 'data:image/svg+xml,' + 
+                                               '<svg xmlns="http://www.w3.org/2000/svg">' +
+                                               '  <rect height="100" width="100" fill="blue"/>' +
+                                               '</svg>'
+                    },
+                    { name: '001', svgURL: "../tests/svggen/animate-elem-02-t.svg", width:800, height:600},
+                    { name: '002', svgURL: "../tests/svggen/animate-elem-03-t.svg", width:800, height:600},
+                    { name: '003', svgURL: "../tests/svggen/animate-elem-04-t.svg", width:800, height:600},
+                    { name: '004', svgURL: "../tests/svggen/animate-elem-05-t.svg", width:800, height:600},
+                    { name: '005', svgURL: "../tests/svggen/animate-elem-06-t.svg", width:800, height:600},
+                    { name: '006', svgURL: "../tests/svggen/animate-elem-07-t.svg", width:800, height:600},
+                    { name: '007', svgURL: "../tests/svggen/animate-elem-08-t.svg", width:800, height:600},
+                    { name: '008', svgURL: "../tests/svggen/animate-elem-09-t.svg", width:800, height:600},
+                    { name: '009', svgURL: "../tests/svggen/animate-elem-10-t.svg", width:800, height:600},
+                    { name: '010', svgURL: "../tests/svggen/animate-elem-11-t.svg", width:800, height:600},
+                    { name: '011', svgURL: "../tests/svggen/animate-elem-12-t.svg", width:800, height:600},
+                    { name: '012', svgURL: "../tests/svggen/animate-elem-13-t.svg", width:800, height:600},
+                    { name: '013', svgURL: "../tests/svggen/animate-elem-14-t.svg", width:800, height:600},
+                    { name: '014', svgURL: "../tests/svggen/animate-elem-15-t.svg", width:800, height:600},
+                    { name: '015', svgURL: "../tests/svggen/animate-elem-17-t.svg", width:800, height:600},
+                    { name: '016', svgURL: "../tests/svggen/animate-elem-19-t.svg", width:800, height:600},
+                    { name: '017', svgURL: "../tests/svggen/animate-elem-20-t.svg", width:800, height:600},
+                    { name: '018', svgURL: "../tests/svggen/animate-elem-21-t.svg", width:800, height:600},
+                    { name: '019', svgURL: "../tests/svggen/animate-elem-22-b.svg", width:800, height:600},
+                    { name: '020', svgURL: "../tests/svggen/animate-elem-23-t.svg", width:800, height:600},
+                    { name: '021', svgURL: "../tests/svggen/animate-elem-24-t.svg", width:800, height:600},
+                    { name: '022', svgURL: "../tests/svggen/animate-elem-25-t.svg", width:800, height:600},
+                    { name: '023', svgURL: "../tests/svggen/animate-elem-26-t.svg", width:800, height:600},
+                    { name: '024', svgURL: "../tests/svggen/animate-elem-27-t.svg", width:800, height:600},
+                    { name: '025', svgURL: "../tests/svggen/animate-elem-28-t.svg", width:800, height:600},
+                    { name: '026', svgURL: "../tests/svggen/animate-elem-29-b.svg", width:800, height:600},
+                    { name: '027', svgURL: "../tests/svggen/animate-elem-30-t.svg", width:800, height:600},
+                    { name: '028', svgURL: "../tests/svggen/animate-elem-31-t.svg", width:800, height:600},
+                    { name: '029', svgURL: "../tests/svggen/animate-elem-32-t.svg", width:800, height:600},
+                    { name: '030', svgURL: "../tests/svggen/animate-elem-33-t.svg", width:800, height:600},
+                    { name: '031', svgURL: "../tests/svggen/animate-elem-34-t.svg", width:800, height:600},
+                    { name: '032', svgURL: "../tests/svggen/animate-elem-36-t.svg", width:800, height:600},
+                    { name: '033', svgURL: "../tests/svggen/animate-elem-37-t.svg", width:800, height:600},
+                    { name: '034', svgURL: "../tests/svggen/animate-elem-39-t.svg", width:800, height:600},
+                    { name: '035', svgURL: "../tests/svggen/animate-elem-40-t.svg", width:800, height:600},
+                    { name: '036', svgURL: "../tests/svggen/animate-elem-41-t.svg", width:800, height:600},
+                    { name: '037', svgURL: "../tests/svggen/animate-elem-44-t.svg", width:800, height:600},
+                    { name: '038', svgURL: "../tests/svggen/animate-elem-46-t.svg", width:800, height:600},
+                    { name: '039', svgURL: "../tests/svggen/animate-elem-52-t.svg", width:800, height:600},
+                    { name: '040', svgURL: "../tests/svggen/animate-elem-60-t.svg", width:800, height:600},
+                    { name: '041', svgURL: "../tests/svggen/animate-elem-61-t.svg", width:800, height:600},
+                    { name: '042', svgURL: "../tests/svggen/animate-elem-62-t.svg", width:800, height:600},
+                    { name: '043', svgURL: "../tests/svggen/animate-elem-63-t.svg", width:800, height:600},
+                    { name: '044', svgURL: "../tests/svggen/animate-elem-64-t.svg", width:800, height:600},
+                    { name: '045', svgURL: "../tests/svggen/animate-elem-65-t.svg", width:800, height:600},
+                    { name: '046', svgURL: "../tests/svggen/animate-elem-66-t.svg", width:800, height:600},
+                    { name: '047', svgURL: "../tests/svggen/animate-elem-67-t.svg", width:800, height:600},
+                    { name: '048', svgURL: "../tests/svggen/animate-elem-68-t.svg", width:800, height:600},
+                    { name: '049', svgURL: "../tests/svggen/animate-elem-69-t.svg", width:800, height:600},
+                    { name: '050', svgURL: "../tests/svggen/animate-elem-70-t.svg", width:800, height:600},
+                    { name: '051', svgURL: "../tests/svggen/animate-elem-77-t.svg", width:800, height:600},
+                    { name: '052', svgURL: "../tests/svggen/animate-elem-78-t.svg", width:800, height:600},
+                    { name: '053', svgURL: "../tests/svggen/animate-elem-80-t.svg", width:800, height:600},
+                    { name: '054', svgURL: "../tests/svggen/animate-elem-81-t.svg", width:800, height:600},
+                    { name: '055', svgURL: "../tests/svggen/animate-elem-82-t.svg", width:800, height:600},
+                    { name: '056', svgURL: "../tests/svggen/animate-elem-83-t.svg", width:800, height:600},
+                    { name: '057', svgURL: "../tests/svggen/animate-elem-84-t.svg", width:800, height:600},
+                    { name: '058', svgURL: "../tests/svggen/animate-elem-85-t.svg", width:800, height:600},
+                    { name: '059', svgURL: "../tests/svggen/color-prof-01-f.svg", width:800, height:600},
+                    { name: '060', svgURL: "../tests/svggen/color-prop-01-b.svg", width:800, height:600},
+                    { name: '061', svgURL: "../tests/svggen/color-prop-02-f.svg", width:800, height:600},
+                    { name: '062', svgURL: "../tests/svggen/color-prop-03-t.svg", width:800, height:600},
+                    { name: '063', svgURL: "../tests/svggen/coords-coord-01-t.svg", width:800, height:600},
+                    { name: '064', svgURL: "../tests/svggen/coords-coord-02-t.svg", width:800, height:600},
+                    { name: '065', svgURL: "../tests/svggen/coords-trans-01-b.svg", width:800, height:600},
+                    { name: '066', svgURL: "../tests/svggen/coords-trans-02-t.svg", width:800, height:600},
+                    { name: '067', svgURL: "../tests/svggen/coords-trans-03-t.svg", width:800, height:600},
+                    { name: '068', svgURL: "../tests/svggen/coords-trans-04-t.svg", width:800, height:600},
+                    { name: '069', svgURL: "../tests/svggen/coords-trans-05-t.svg", width:800, height:600},
+                    { name: '070', svgURL: "../tests/svggen/coords-trans-06-t.svg", width:800, height:600},
+                    { name: '071', svgURL: "../tests/svggen/coords-units-01-b.svg", width:800, height:600},
+                    { name: '072', svgURL: "../tests/svggen/coords-units-02-b.svg", width:800, height:600},
+                    { name: '073', svgURL: "../tests/svggen/coords-units-03-b.svg", width:800, height:600},
+                    { name: '074', svgURL: "../tests/svggen/coords-viewattr-01-b.svg", width:800, height:600},
+                    { name: '075', svgURL: "../tests/svggen/coords-viewattr-02-b.svg", width:800, height:600},
+                    { name: '076', svgURL: "../tests/svggen/coords-viewattr-03-b.svg", width:800, height:600},
+                    { name: '077', svgURL: "../tests/svggen/extend-namespace-01-f.svg", width:800, height:600},
+                    { name: '078', svgURL: "../tests/svggen/filters-blend-01-b.svg", width:800, height:600},
+                    { name: '079', svgURL: "../tests/svggen/filters-color-01-b.svg", width:800, height:600},
+                    { name: '080', svgURL: "../tests/svggen/filters-composite-02-b.svg", width:800, height:600},
+                    { name: '081', svgURL: "../tests/svggen/filters-comptran-01-b.svg", width:800, height:600},
+                    { name: '082', svgURL: "../tests/svggen/filters-conv-01-f.svg", width:800, height:600},
+                    { name: '083', svgURL: "../tests/svggen/filters-diffuse-01-f.svg", width:800, height:600},
+                    { name: '084', svgURL: "../tests/svggen/filters-displace-01-f.svg", width:800, height:600},
+                    { name: '085', svgURL: "../tests/svggen/filters-example-01-b.svg", width:800, height:600},
+                    { name: '086', svgURL: "../tests/svggen/filters-felem-01-b.svg", width:800, height:600},
+                    { name: '087', svgURL: "../tests/svggen/filters-gauss-01-b.svg", width:800, height:600},
+                    { name: '088', svgURL: "../tests/svggen/filters-image-01-b.svg", width:800, height:600},
+                    { name: '089', svgURL: "../tests/svggen/filters-light-01-f.svg", width:800, height:600},
+                    { name: '090', svgURL: "../tests/svggen/filters-morph-01-f.svg", width:800, height:600},
+                    { name: '091', svgURL: "../tests/svggen/filters-offset-01-b.svg", width:800, height:600},
+                    { name: '092', svgURL: "../tests/svggen/filters-specular-01-f.svg", width:800, height:600},
+                    { name: '093', svgURL: "../tests/svggen/filters-tile-01-b.svg", width:800, height:600},
+                    { name: '094', svgURL: "../tests/svggen/filters-turb-01-f.svg", width:800, height:600},
+                    { name: '095', svgURL: "../tests/svggen/fonts-desc-02-t.svg", width:800, height:600},
+                    { name: '096', svgURL: "../tests/svggen/fonts-elem-01-t.svg", width:800, height:600},
+                    { name: '097', svgURL: "../tests/svggen/fonts-elem-02-t.svg", width:800, height:600},
+                    { name: '098', svgURL: "../tests/svggen/fonts-elem-03-b.svg", width:800, height:600},
+                    { name: '099', svgURL: "../tests/svggen/fonts-elem-04-b.svg", width:800, height:600},
+                    { name: '100', svgURL: "../tests/svggen/fonts-elem-05-t.svg", width:800, height:600},
+                    { name: '101', svgURL: "../tests/svggen/fonts-elem-06-t.svg", width:800, height:600},
+                    { name: '102', svgURL: "../tests/svggen/fonts-elem-07-b.svg", width:800, height:600},
+                    { name: '103', svgURL: "../tests/svggen/fonts-glyph-02-t.svg", width:800, height:600},
+                    { name: '104', svgURL: "../tests/svggen/fonts-glyph-03-t.svg", width:800, height:600},
+                    { name: '105', svgURL: "../tests/svggen/fonts-glyph-04-t.svg", width:800, height:600},
+                    { name: '106', svgURL: "../tests/svggen/fonts-kern-01-t.svg", width:800, height:600},
+                    { name: '107', svgURL: "../tests/svggen/interact-cursor-01-f.svg", width:800, height:600},
+                    { name: '108', svgURL: "../tests/svggen/interact-dom-01-b.svg", width:800, height:600},
+                    { name: '109', svgURL: "../tests/svggen/interact-events-01-b.svg", width:800, height:600},
+                    { name: '110', svgURL: "../tests/svggen/interact-order-01-b.svg", width:800, height:600},
+                    { name: '111', svgURL: "../tests/svggen/interact-order-02-b.svg", width:800, height:600},
+                    { name: '112', svgURL: "../tests/svggen/interact-order-03-b.svg", width:800, height:600},
+                    { name: '113', svgURL: "../tests/svggen/interact-zoom-01-t.svg", width:800, height:600},
+                    { name: '114', svgURL: "../tests/svggen/linking-a-01-b.svg", width:800, height:600},
+                    { name: '115', svgURL: "../tests/svggen/linking-a-02-b.svg", width:800, height:600},
+                    { name: '116', svgURL: "../tests/svggen/linking-a-03-b.svg", width:800, height:600},
+                    { name: '117', svgURL: "../tests/svggen/linking-a-04-t.svg", width:800, height:600},
+                    { name: '118', svgURL: "../tests/svggen/linking-a-05-t.svg", width:800, height:600},
+                    { name: '119', svgURL: "../tests/svggen/linking-a-07-t.svg", width:800, height:600},
+                    { name: '120', svgURL: "../tests/svggen/linking-uri-01-b.svg", width:800, height:600},
+                    { name: '121', svgURL: "../tests/svggen/linking-uri-02-b.svg", width:800, height:600},
+                    { name: '122', svgURL: "../tests/svggen/linking-uri-03-t.svg", width:800, height:600},
+                    { name: '123', svgURL: "../tests/svggen/masking-intro-01-f.svg", width:800, height:600},
+                    { name: '124', svgURL: "../tests/svggen/masking-mask-01-b.svg", width:800, height:600},
+                    { name: '125', svgURL: "../tests/svggen/masking-opacity-01-b.svg", width:800, height:600},
+                    { name: '126', svgURL: "../tests/svggen/masking-path-01-b.svg", width:800, height:600},
+                    { name: '127', svgURL: "../tests/svggen/masking-path-02-b.svg", width:800, height:600},
+                    { name: '128', svgURL: "../tests/svggen/masking-path-03-b.svg", width:800, height:600},
+                    { name: '129', svgURL: "../tests/svggen/masking-path-04-b.svg", width:800, height:600},
+                    { name: '130', svgURL: "../tests/svggen/masking-path-05-f.svg", width:800, height:600},
+                    { name: '131', svgURL: "../tests/svggen/metadata-example-01-b.svg", width:800, height:600},
+                    { name: '132', svgURL: "../tests/svggen/painting-fill-01-t.svg", width:800, height:600},
+                    { name: '133', svgURL: "../tests/svggen/painting-fill-02-t.svg", width:800, height:600},
+                    { name: '134', svgURL: "../tests/svggen/painting-fill-03-t.svg", width:800, height:600},
+                    { name: '135', svgURL: "../tests/svggen/painting-fill-04-t.svg", width:800, height:600},
+                    { name: '136', svgURL: "../tests/svggen/painting-fill-05-b.svg", width:800, height:600},
+                    { name: '137', svgURL: "../tests/svggen/painting-marker-01-f.svg", width:800, height:600},
+                    { name: '138', svgURL: "../tests/svggen/painting-marker-02-f.svg", width:800, height:600},
+                    { name: '139', svgURL: "../tests/svggen/painting-marker-03-f.svg", width:800, height:600},
+                    { name: '140', svgURL: "../tests/svggen/painting-render-01-b.svg", width:800, height:600},
+                    { name: '141', svgURL: "../tests/svggen/painting-stroke-01-t.svg", width:800, height:600},
+                    { name: '142', svgURL: "../tests/svggen/painting-stroke-02-t.svg", width:800, height:600},
+                    { name: '143', svgURL: "../tests/svggen/painting-stroke-03-t.svg", width:800, height:600},
+                    { name: '144', svgURL: "../tests/svggen/painting-stroke-04-t.svg", width:800, height:600},
+                    { name: '145', svgURL: "../tests/svggen/painting-stroke-07-t.svg", width:800, height:600},
+                    { name: '146', svgURL: "../tests/svggen/paths-data-01-t.svg", width:800, height:600},
+                    { name: '147', svgURL: "../tests/svggen/paths-data-02-t.svg", width:800, height:600},
+                    { name: '148', svgURL: "../tests/svggen/paths-data-03-f.svg", width:800, height:600},
+                    { name: '149', svgURL: "../tests/svggen/paths-data-04-t.svg", width:800, height:600},
+                    { name: '150', svgURL: "../tests/svggen/paths-data-05-t.svg", width:800, height:600},
+                    { name: '151', svgURL: "../tests/svggen/paths-data-06-t.svg", width:800, height:600},
+                    { name: '152', svgURL: "../tests/svggen/paths-data-07-t.svg", width:800, height:600},
+                    { name: '153', svgURL: "../tests/svggen/paths-data-08-t.svg", width:800, height:600},
+                    { name: '154', svgURL: "../tests/svggen/paths-data-09-t.svg", width:800, height:600},
+                    { name: '155', svgURL: "../tests/svggen/paths-data-10-t.svg", width:800, height:600},
+                    { name: '156', svgURL: "../tests/svggen/paths-data-12-t.svg", width:800, height:600},
+                    { name: '157', svgURL: "../tests/svggen/paths-data-13-t.svg", width:800, height:600},
+                    { name: '158', svgURL: "../tests/svggen/paths-data-14-t.svg", width:800, height:600},
+                    { name: '159', svgURL: "../tests/svggen/paths-data-15-t.svg", width:800, height:600},
+                    { name: '160', svgURL: "../tests/svggen/pservers-grad-01-b.svg", width:800, height:600},
+                    { name: '161', svgURL: "../tests/svggen/pservers-grad-02-b.svg", width:800, height:600},
+                    { name: '162', svgURL: "../tests/svggen/pservers-grad-03-b.svg", width:800, height:600},
+                    { name: '163', svgURL: "../tests/svggen/pservers-grad-03-b-anim.svg", width:800, height:600},
+                    { name: '164', svgURL: "../tests/svggen/pservers-grad-04-b.svg", width:800, height:600},
+                    { name: '165', svgURL: "../tests/svggen/pservers-grad-05-b.svg", width:800, height:600},
+                    { name: '166', svgURL: "../tests/svggen/pservers-grad-06-b.svg", width:800, height:600},
+                    { name: '167', svgURL: "../tests/svggen/pservers-grad-07-b.svg", width:800, height:600},
+                    { name: '168', svgURL: "../tests/svggen/pservers-grad-08-b.svg", width:800, height:600},
+                    { name: '169', svgURL: "../tests/svggen/pservers-grad-09-b.svg", width:800, height:600},
+                    { name: '170', svgURL: "../tests/svggen/pservers-grad-10-b.svg", width:800, height:600},
+                    { name: '171', svgURL: "../tests/svggen/pservers-grad-11-b.svg", width:800, height:600},
+                    { name: '172', svgURL: "../tests/svggen/pservers-grad-12-b.svg", width:800, height:600},
+                    { name: '173', svgURL: "../tests/svggen/pservers-grad-13-b.svg", width:800, height:600},
+                    { name: '174', svgURL: "../tests/svggen/pservers-grad-14-b.svg", width:800, height:600},
+                    { name: '175', svgURL: "../tests/svggen/pservers-grad-15-b.svg", width:800, height:600},
+                    { name: '176', svgURL: "../tests/svggen/pservers-grad-16-b.svg", width:800, height:600},
+                    { name: '177', svgURL: "../tests/svggen/pservers-grad-17-b.svg", width:800, height:600},
+                    { name: '178', svgURL: "../tests/svggen/pservers-grad-18-b.svg", width:800, height:600},
+                    { name: '179', svgURL: "../tests/svggen/pservers-grad-19-b.svg", width:800, height:600},
+                    { name: '180', svgURL: "../tests/svggen/pservers-pattern-01-b.svg", width:800, height:600},
+                    { name: '181', svgURL: "../tests/svggen/render-elems-01-t.svg", width:800, height:600},
+                    { name: '182', svgURL: "../tests/svggen/render-elems-02-t.svg", width:800, height:600},
+                    { name: '183', svgURL: "../tests/svggen/render-elems-03-t.svg", width:800, height:600},
+                    { name: '184', svgURL: "../tests/svggen/render-elems-06-t.svg", width:800, height:600},
+                    { name: '185', svgURL: "../tests/svggen/render-elems-07-t.svg", width:800, height:600},
+                    { name: '186', svgURL: "../tests/svggen/render-elems-08-t.svg", width:800, height:600},
+                    { name: '187', svgURL: "../tests/svggen/render-groups-01-b.svg", width:800, height:600},
+                    { name: '188', svgURL: "../tests/svggen/render-groups-03-t.svg", width:800, height:600},
+                    { name: '189', svgURL: "../tests/svggen/script-handle-01-b.svg", width:800, height:600},
+                    { name: '190', svgURL: "../tests/svggen/script-handle-02-b.svg", width:800, height:600},
+                    { name: '191', svgURL: "../tests/svggen/script-handle-03-b.svg", width:800, height:600},
+                    { name: '192', svgURL: "../tests/svggen/script-handle-04-b.svg", width:800, height:600},
+                    { name: '193', svgURL: "../tests/svggen/shapes-circle-01-t.svg", width:800, height:600},
+                    { name: '194', svgURL: "../tests/svggen/shapes-circle-02-t.svg", width:800, height:600},
+                    { name: '195', svgURL: "../tests/svggen/shapes-ellipse-01-t.svg", width:800, height:600},
+                    { name: '196', svgURL: "../tests/svggen/shapes-ellipse-02-t.svg", width:800, height:600},
+                    { name: '197', svgURL: "../tests/svggen/shapes-intro-01-t.svg", width:800, height:600},
+                    { name: '198', svgURL: "../tests/svggen/shapes-line-01-t.svg", width:800, height:600},
+                    { name: '199', svgURL: "../tests/svggen/shapes-polygon-01-t.svg", width:800, height:600},
+                    { name: '200', svgURL: "../tests/svggen/shapes-polyline-01-t.svg", width:800, height:600},
+                    { name: '201', svgURL: "../tests/svggen/shapes-rect-01-t.svg", width:800, height:600},
+                    { name: '202', svgURL: "../tests/svggen/shapes-rect-02-t.svg", width:800, height:600},
+                    { name: '203', svgURL: "../tests/svggen/struct-cond-01-t.svg", width:800, height:600},
+                    { name: '204', svgURL: "../tests/svggen/struct-cond-02-t.svg", width:800, height:600},
+                    { name: '205', svgURL: "../tests/svggen/struct-cond-03-t.svg", width:800, height:600},
+                    { name: '206', svgURL: "../tests/svggen/struct-defs-01-t.svg", width:800, height:600},
+                    { name: '207', svgURL: "../tests/svggen/struct-dom-01-b.svg", width:800, height:600},
+                    { name: '208', svgURL: "../tests/svggen/struct-dom-02-b.svg", width:800, height:600},
+                    { name: '209', svgURL: "../tests/svggen/struct-dom-03-b.svg", width:800, height:600},
+                    { name: '210', svgURL: "../tests/svggen/struct-dom-04-b.svg", width:800, height:600},
+                    { name: '211', svgURL: "../tests/svggen/struct-dom-05-b.svg", width:800, height:600},
+                    { name: '212', svgURL: "../tests/svggen/struct-dom-06-b.svg", width:800, height:600},
+                    { name: '213', svgURL: "../tests/svggen/struct-frag-01-t.svg", width:800, height:600},
+                    { name: '214', svgURL: "../tests/svggen/struct-frag-02-t.svg", width:800, height:600},
+                    { name: '215', svgURL: "../tests/svggen/struct-frag-03-t.svg", width:800, height:600},
+                    { name: '216', svgURL: "../tests/svggen/struct-frag-04-t.svg", width:800, height:600},
+                    { name: '217', svgURL: "../tests/svggen/struct-frag-05-t.svg", width:800, height:600},
+                    { name: '218', svgURL: "../tests/svggen/struct-frag-06-t.svg", width:800, height:600},
+                    { name: '219', svgURL: "../tests/svggen/struct-group-01-t.svg", width:800, height:600},
+                    { name: '220', svgURL: "../tests/svggen/struct-group-02-b.svg", width:800, height:600},
+                    { name: '221', svgURL: "../tests/svggen/struct-group-03-t.svg", width:800, height:600},
+                    { name: '222', svgURL: "../tests/svggen/struct-image-01-t.svg", width:800, height:600},
+                    { name: '223', svgURL: "../tests/svggen/struct-image-02-b.svg", width:800, height:600},
+                    { name: '224', svgURL: "../tests/svggen/struct-image-03-t.svg", width:800, height:600},
+                    { name: '225', svgURL: "../tests/svggen/struct-image-04-t.svg", width:800, height:600},
+                    { name: '226', svgURL: "../tests/svggen/struct-image-05-b.svg", width:800, height:600},
+                    { name: '227', svgURL: "../tests/svggen/struct-image-06-t.svg", width:800, height:600},
+                    { name: '228', svgURL: "../tests/svggen/struct-image-07-t.svg", width:800, height:600},
+                    { name: '229', svgURL: "../tests/svggen/struct-image-08-t.svg", width:800, height:600},
+                    { name: '230', svgURL: "../tests/svggen/struct-image-09-t.svg", width:800, height:600},
+                    { name: '231', svgURL: "../tests/svggen/struct-image-10-t.svg", width:800, height:600},
+                    { name: '232', svgURL: "../tests/svggen/struct-symbol-01-b.svg", width:800, height:600},
+                    { name: '233', svgURL: "../tests/svggen/struct-use-01-t.svg", width:800, height:600},
+                    { name: '234', svgURL: "../tests/svggen/struct-use-03-t.svg", width:800, height:600},
+                    { name: '235', svgURL: "../tests/svggen/struct-use-05-b.svg", width:800, height:600},
+                    { name: '236', svgURL: "../tests/svggen/styling-css-01-b.svg", width:800, height:600},
+                    { name: '237', svgURL: "../tests/svggen/styling-css-02-b.svg", width:800, height:600},
+                    { name: '238', svgURL: "../tests/svggen/styling-css-03-b.svg", width:800, height:600},
+                    { name: '239', svgURL: "../tests/svggen/styling-css-04-f.svg", width:800, height:600},
+                    { name: '240', svgURL: "../tests/svggen/styling-css-05-b.svg", width:800, height:600},
+                    { name: '241', svgURL: "../tests/svggen/styling-css-06-b.svg", width:800, height:600},
+                    { name: '242', svgURL: "../tests/svggen/styling-inherit-01-b.svg", width:800, height:600},
+                    { name: '243', svgURL: "../tests/svggen/styling-pres-01-t.svg", width:800, height:600},
+                    { name: '244', svgURL: "../tests/svggen/text-align-01-b.svg", width:800, height:600},
+                    { name: '245', svgURL: "../tests/svggen/text-align-02-b.svg", width:800, height:600},
+                    { name: '246', svgURL: "../tests/svggen/text-align-03-b.svg", width:800, height:600},
+                    { name: '247', svgURL: "../tests/svggen/text-align-04-b.svg", width:800, height:600},
+                    { name: '248', svgURL: "../tests/svggen/text-align-05-b.svg", width:800, height:600},
+                    { name: '249', svgURL: "../tests/svggen/text-align-06-b.svg", width:800, height:600},
+                    { name: '250', svgURL: "../tests/svggen/text-align-08-b.svg", width:800, height:600},
+                    { name: '251', svgURL: "../tests/svggen/text-altglyph-01-b.svg", width:800, height:600},
+                    { name: '252', svgURL: "../tests/svggen/text-deco-01-b.svg", width:800, height:600},
+                    { name: '253', svgURL: "../tests/svggen/text-fonts-01-t.svg", width:800, height:600},
+                    { name: '254', svgURL: "../tests/svggen/text-fonts-02-t.svg", width:800, height:600},
+                    { name: '255', svgURL: "../tests/svggen/text-fonts-03-t.svg", width:800, height:600},
+                    { name: '256', svgURL: "../tests/svggen/text-intro-01-t.svg", width:800, height:600},
+                    { name: '257', svgURL: "../tests/svggen/text-intro-02-b.svg", width:800, height:600},
+                    { name: '258', svgURL: "../tests/svggen/text-intro-03-b.svg", width:800, height:600},
+                    { name: '259', svgURL: "../tests/svggen/text-intro-04-t.svg", width:800, height:600},
+                    { name: '260', svgURL: "../tests/svggen/text-intro-05-t.svg", width:800, height:600},
+                    { name: '261', svgURL: "../tests/svggen/text-path-01-b.svg", width:800, height:600},
+                    { name: '262', svgURL: "../tests/svggen/text-spacing-01-b.svg", width:800, height:600},
+                    { name: '263', svgURL: "../tests/svggen/text-text-01-b.svg", width:800, height:600},
+                    { name: '264', svgURL: "../tests/svggen/text-text-03-b.svg", width:800, height:600},
+                    { name: '265', svgURL: "../tests/svggen/text-text-04-t.svg", width:800, height:600},
+                    { name: '266', svgURL: "../tests/svggen/text-text-05-t.svg", width:800, height:600},
+                    { name: '267', svgURL: "../tests/svggen/text-text-06-t.svg", width:800, height:600},
+                    { name: '268', svgURL: "../tests/svggen/text-text-07-t.svg", width:800, height:600},
+                    { name: '269', svgURL: "../tests/svggen/text-text-08-b.svg", width:800, height:600},
+                    { name: '270', svgURL: "../tests/svggen/text-tref-01-b.svg", width:800, height:600},
+                    { name: '271', svgURL: "../tests/svggen/text-tselect-01-b.svg", width:800, height:600},
+                    { name: '272', svgURL: "../tests/svggen/text-tselect-02-f.svg", width:800, height:600},
+                    { name: '273', svgURL: "../tests/svggen/text-tspan-01-b.svg", width:800, height:600},
+                    { name: '274', svgURL: "../tests/svggen/text-ws-01-t.svg", width:800, height:600},
+                    { name: '275', svgURL: "../tests/svggen/text-ws-02-t.svg", width:800, height:600},
+                    { name: '276', svgURL: "../tests/svggen/types-basicDOM-01-b.svg", width:800, height:600},
+                    { name: '410', svgURL: 'svg-files/410.svg', width:100, height:100 },
+                    { name: 'aa', svgURL: 'svg-files/aa.svg', width:90, height:112 },
+                    { name: 'accessible', svgURL: 'svg-files/accessible.svg', width:100, height:100 },
+                    { name: 'acid', svgURL: 'svg-files/acid.svg', width:95, height:108 },
+                    { name: 'adobe', svgURL: 'svg-files/adobe.svg', width:93, height:105 },
+                    { name: 'alphachannel', svgURL: 'svg-files/alphachannel.svg', width:100, height:100 },
+                    { name: 'android', svgURL: 'svg-files/android.svg', width:105, height:96 },
+                    { name: 'atom', svgURL: 'svg-files/atom.svg', width:100, height:100 },
+                    { name: 'basura', svgURL: 'svg-files/basura.svg', width:100, height:100 },
+                    { name: 'beacon', svgURL: 'svg-files/beacon.svg', width:100, height:100 },
+                    { name: 'betterplace', svgURL: 'svg-files/betterplace.svg', width:107, height:93 },
+                    { name: 'bloglines', svgURL: 'svg-files/bloglines.svg', width:15, height:15 },
+                    { name: 'bozo', svgURL: 'svg-files/bozo.svg', width:100, height:100 },
+                    { name: 'bzr', svgURL: 'svg-files/bzr.svg', width:100, height:100 },
+                    { name: 'bzrfeed', svgURL: 'svg-files/bzrfeed.svg', width:100, height:100 },
+                    { name: 'ca', svgURL: 'svg-files/ca.svg', width:82, height:123 },
+                    { name: 'cartman', svgURL: 'svg-files/cartman.svg', width:97, height:104 },
+                    { name: 'caution', svgURL: 'svg-files/caution.svg', width:100, height:100 },
+                    { name: 'cc', svgURL: 'svg-files/cc.svg', width:100, height:100 },
+                    { name: 'ch', svgURL: 'svg-files/ch.svg', width:100, height:100 },
+                    { name: 'check', svgURL: 'svg-files/check.svg', width:100, height:100 },
+                    { name: 'compass', svgURL: 'svg-files/compass.svg', width:100, height:100 },
+                    { name: 'copyleft', svgURL: 'svg-files/copyleft.svg', width:100, height:100 },
+                    { name: 'copyright', svgURL: 'svg-files/copyright.svg', width:100, height:100 },
+                    { name: 'couch', svgURL: 'svg-files/couch.svg', width:100, height:100 },
+                    { name: 'couchdb', svgURL: 'svg-files/couchdb.svg', width:74, height:135 },
+                    { name: 'cygwin', svgURL: 'svg-files/cygwin.svg', width:100, height:100 },
+                    { name: 'debian', svgURL: 'svg-files/debian.svg', width:100, height:100 },
+                    { name: 'decimal', svgURL: 'svg-files/decimal.svg', width:80, height:125 },
+                    { name: 'dh', svgURL: 'svg-files/dh.svg', width:100, height:100 },
+                    { name: 'digg', svgURL: 'svg-files/digg.svg', width:100, height:100 },
+                    { name: 'dojo', svgURL: 'svg-files/dojo.svg', width:83, height:121 },
+                    { name: 'dst', svgURL: 'svg-files/dst.svg', width:100, height:100 },
+                    { name: 'duck', svgURL: 'svg-files/duck.svg', width:200, height:300 },
+                    { name: 'duke', svgURL: 'svg-files/duke.svg', width:136, height:75 },
+                    { name: 'dukechain', svgURL: 'svg-files/dukechain.svg', width:136, height:102 },
+                    { name: 'easypeasy', svgURL: 'svg-files/easypeasy.svg', width:91, height:110 },
+                    { name: 'eee', svgURL: 'svg-files/eee.svg', width:83, height:121 },
+                    { name: 'eff', svgURL: 'svg-files/eff.svg', width:84, height:120 },
+                    { name: 'erlang', svgURL: 'svg-files/erlang.svg', width:80, height:125 },
+                    { name: 'evol', svgURL: 'svg-files/evol.svg', width:60, height:167 },
+                    { name: 'facebook', svgURL: 'svg-files/facebook.svg', width:100, height:100 },
+                    { name: 'faux-art', svgURL: 'svg-files/faux-art.svg', width:400, height:654 },
+                    { name: 'fb', svgURL: 'svg-files/fb.svg', width:100, height:100 },
+                    { name: 'feed', svgURL: 'svg-files/feed.svg', width:100, height:100 },
+                    { name: 'feedsync', svgURL: 'svg-files/feedsync.svg', width:100, height:100 },
+                    { name: 'fsm', svgURL: 'svg-files/fsm.svg', width:66, height:150 },
+                    { name: 'gcheck', svgURL: 'svg-files/gcheck.svg', width:90, height:110 },
+                    { name: 'genshi', svgURL: 'svg-files/genshi.svg', width:100, height:70 },
+                    { name: 'git', svgURL: 'svg-files/git.svg', width:70, height:120 },
+                    { name: 'gnome2', svgURL: 'svg-files/gnome2.svg', width:109, height:91 },
+                    { name: 'google', svgURL: 'svg-files/google.svg', width:100, height:100 },
+                    { name: 'gpg', svgURL: 'svg-files/gpg.svg', width:115, height:87 },
+                    { name: 'gump-bench', svgURL: 'svg-files/gump-bench.svg', width:200, height:10 },
+                    { name: 'heart', svgURL: 'svg-files/heart.svg', width:100, height:100 },
+                    { name: 'heliocentric', svgURL: 'svg-files/heliocentric.svg', width:100, height:100 },
+                    { name: 'hg0', svgURL: 'svg-files/hg0.svg', width:98, height:103 },
+                    { name: 'http', svgURL: 'svg-files/http.svg', width:77, height:130 },
+                    { name: 'ibm', svgURL: 'svg-files/ibm.svg', width:68, height:148 },
+                    { name: 'ie-lock', svgURL: 'svg-files/ie-lock.svg', width:110, height:90 },
+                    { name: 'ielock', svgURL: 'svg-files/ielock.svg', width:100, height:100 },
+                    { name: 'ietf', svgURL: 'svg-files/ietf.svg', width:57, height:175 },
+                    { name: 'instiki', svgURL: 'svg-files/instiki.svg', width:105, height:96 },
+                    { name: 'integral', svgURL: 'svg-files/integral.svg', width:182, height:55 },
+                    { name: 'intertwingly', svgURL: 'svg-files/intertwingly.svg', width:100, height:100 },
+                    { name: 'irony', svgURL: 'svg-files/irony.svg', width:113, height:75 },
+                    { name: 'italian-flag', svgURL: 'svg-files/italian-flag.svg', width:80, height:120 },
+                    { name: 'iw', svgURL: 'svg-files/iw.svg', width:100, height:100 },
+                    { name: 'jabber', svgURL: 'svg-files/jabber.svg', width:120, height:80 },
+                    { name: 'jquery', svgURL: 'svg-files/jquery.svg', width:100, height:100 },
+                    { name: 'json', svgURL: 'svg-files/json.svg', width:102, height:100 },
+                    { name: 'jsonatom', svgURL: 'svg-files/jsonatom.svg', width:102, height:100 },
+                    { name: 'legal', svgURL: 'svg-files/legal.svg', width:96, height:104 },
+                    { name: 'm', svgURL: 'svg-files/m.svg', width:98, height:102 },
+                    { name: 'mac', svgURL: 'svg-files/mac.svg', width:100, height:90 },
+                    { name: 'mail', svgURL: 'svg-files/mail.svg', width:120, height:80 },
+                    { name: 'mars', svgURL: 'svg-files/mars.svg', width:100, height:100 },
+                    { name: 'mememe', svgURL: 'svg-files/mememe.svg', width:100, height:100 },
+                    { name: 'microformat', svgURL: 'svg-files/microformat.svg', width:100, height:100 },
+                    { name: 'mono', svgURL: 'svg-files/mono.svg', width:100, height:100 },
+                    { name: 'moonlight', svgURL: 'svg-files/moonlight.svg', width:100, height:100 },
+                    { name: 'mozilla', svgURL: 'svg-files/mozilla.svg', width:78, height:133 },
+                    { name: 'msft', svgURL: 'svg-files/msft.svg', width:95, height:105 },
+                    { name: 'msie', svgURL: 'svg-files/msie.svg', width:100, height:100 },
+                    { name: 'mt', svgURL: 'svg-files/mt.svg', width:100, height:100 },
+                    { name: 'mudflap', svgURL: 'svg-files/mudflap.svg', width:80, height:120 },
+                    { name: 'myspace', svgURL: 'svg-files/myspace.svg', width:108, height:92 },
+                    { name: 'no', svgURL: 'svg-files/no.svg', width:100, height:100 },
+                    { name: 'obama', svgURL: 'svg-files/obama.svg', width:102, height:102 },
+                    { name: 'odf', svgURL: 'svg-files/odf.svg', width:100, height:100 },
+                    { name: 'open-clipart', svgURL: 'svg-files/open-clipart.svg', width:200, height:260 },
+                    { name: 'openid', svgURL: 'svg-files/openid.svg', width:100, height:100 },
+                    { name: 'opensearch', svgURL: 'svg-files/opensearch.svg', width:100, height:100 },
+                    { name: 'openweb', svgURL: 'svg-files/openweb.svg', width:118, height:84 },
+                    { name: 'opera', svgURL: 'svg-files/opera.svg', width:94, height:106 },
+                    { name: 'osa', svgURL: 'svg-files/osa.svg', width:100, height:100 },
+                    { name: 'oscon', svgURL: 'svg-files/oscon.svg', width:111, height:96, fails: true },
+                    { name: 'osi', svgURL: 'svg-files/osi.svg', width:100, height:100 },
+                    { name: 'padlock', svgURL: 'svg-files/padlock.svg', width:100, height:100 },
+                    { name: 'patch', svgURL: 'svg-files/patch.svg', width:100, height:100 },
+                    { name: 'pdftk', svgURL: 'svg-files/pdftk.svg', width:100, height:100 },
+                    { name: 'penrose-staircase', svgURL: 'svg-files/penrose-staircase.svg', width:283, height:372 },
+                    { name: 'penrose-tiling', svgURL: 'svg-files/penrose-tiling.svg', width:160, height:160 },
+                    { name: 'php', svgURL: 'svg-files/php.svg', width:72, height:136 },
+                    { name: 'poi', svgURL: 'svg-files/poi.svg', width:100, height:100 },
+                    { name: 'pull', svgURL: 'svg-files/pull.svg', width:100, height:100 },
+                    { name: 'python', svgURL: 'svg-files/python.svg', width:100, height:100 },
+                    { name: 'rack', svgURL: 'svg-files/rack.svg', width:111, height:90 },
+                    { name: 'rails', svgURL: 'svg-files/rails.svg', width:100, height:100 },
+                    { name: 'raleigh', svgURL: 'svg-files/raleigh.svg', width:100, height:100 },
+                    { name: 'rdf', svgURL: 'svg-files/rdf.svg', width:100, height:100 },
+                    { name: 'rest', svgURL: 'svg-files/rest.svg', width:100, height:100 },
+                    { name: 'rfeed', svgURL: 'svg-files/rfeed.svg', width:100, height:100 },
+                    { name: 'ruby', svgURL: 'svg-files/ruby.svg', width:100, height:100 },
+                    { name: 'rubyforge', svgURL: 'svg-files/rubyforge.svg', width:100, height:100 },
+                    { name: 'scion', svgURL: 'svg-files/scion.svg', width:83, height:120 },
+                    { name: 'semweb', svgURL: 'svg-files/semweb.svg', width:100, height:100 },
+                    { name: 'star', svgURL: 'svg-files/star.svg', width:100, height:100 },
+                    { name: 'svg', svgURL: 'svg-files/svg.svg', width:100, height:100 },
+                    { name: 'sync', svgURL: 'svg-files/sync.svg', width:94, height:104 },
+                    { name: 'twitter', svgURL: 'svg-files/twitter.svg', width:100, height:100 },
+                    { name: 'ubuntu', svgURL: 'svg-files/ubuntu.svg', width:140, height:140 },
+                    { name: 'unicode-han', svgURL: 'svg-files/unicode-han.svg', width:150, height:400 },
+                    { name: 'unicode', svgURL: 'svg-files/unicode.svg', width:87, height:115 },
+                    { name: 'usaf', svgURL: 'svg-files/usaf.svg', width:96, height:104 },
+                    { name: 'utensils', svgURL: 'svg-files/utensils.svg', width:62, height:160 },
+                    { name: 'venus', svgURL: 'svg-files/venus.svg', width:125, height:80 },
+                    { name: 'vmware', svgURL: 'svg-files/vmware.svg', width:100, height:100 },
+                    { name: 'vnu', svgURL: 'svg-files/vnu.svg', width:100, height:100 },
+                    { name: 'vote', svgURL: 'svg-files/vote.svg', width:100, height:100 },
+                    { name: 'w3c', svgURL: 'svg-files/w3c.svg', width:76, height:131 },
+                    { name: 'whatwg', svgURL: 'svg-files/whatwg.svg', width:100, height:100 },
+                    { name: 'why', svgURL: 'svg-files/why.svg', width:100, height:100 },
+                    { name: 'wii', svgURL: 'svg-files/wii.svg', width:70, height:143 },
+                    { name: 'wikimedia', svgURL: 'svg-files/wikimedia.svg', width:100, height:100 },
+                    { name: 'wireless', svgURL: 'svg-files/wireless.svg', width:100, height:100 },
+                    { name: 'wp', svgURL: 'svg-files/wp.svg', width:100, height:100 },
+                    { name: 'wso2', svgURL: 'svg-files/wso2.svg', width:70, height:150 },
+                    { name: 'x11', svgURL: 'svg-files/x11.svg', width:100, height:100 },
+                    { name: 'yadis', svgURL: 'svg-files/yadis.svg', width:121, height:83 },
+                    { name: 'yahoo', svgURL: 'svg-files/yahoo.svg', width:75, height:133 },
+                    { name: 'yinyang', svgURL: 'svg-files/yinyang.svg', width:100, height:100 },
+                    { name: 'zillow', svgURL: 'svg-files/zillow.svg', width:90, height:111 }
+                  ];
+                  
+    // useful global flag to handle Internet Explorer differently
+    var isIE = false;
+    if (document.all && !navigator.userAgent.indexOf('Opera') >= 0) {
+      isIE = parseFloat(navigator.appVersion.split('MSIE ')[1]) || undefined;
+    }
+    
+    // Internet Explorer doesn't support the disabled attribute on OPTION
+    // elements, so we have to keep a copy of the original SELECT around
+    // if the user toggles showing failing demos on and off
+    var origSelect;
+                  
+    /* 
+      Internet Explorer's list of standard XHR PROGIDS. 
+    */
+    var XHR_PROGIDS = [
+      'MSXML2.XMLHTTP.6.0', 'MSXML2.XMLHTTP.3.0', 'MSXML2.XMLHTTP',
+      'Microsoft.XMLHTTP'
+    ];
+
+    /*
+      Standard way to grab XMLHttpRequest object.
+    */
+    function xhrObj() {
+        if (typeof XMLHttpRequest != 'undefined') {
+          return new XMLHttpRequest();
+        } else if (ActiveXObject) {
+          var xhr = null;
+          var i; // save the good PROGID for quicker access next time
+          for (i = 0; i < XHR_PROGIDS.length && !xhr; ++i) {
+            try {
+              xhr = new ActiveXObject(XHR_PROGIDS[i]);
+            } catch(e) {}
+          }
+
+          if (!xhr) {
+            throw 'XMLHttpRequest object not available on this platform.';
+          }
+
+          return xhr;
+        }
+    }
+                  
+    function setMode(mode) {
+        if (mode == 0) {
+            document.getElementById('mySVGDiv').style.display='';
+            document.getElementById('myXMLp').style.display='none';
+        }
+        if (mode == 1) {
+            if (document.getElementById('mySVGDiv').style.display != 'none') {
+              var name = indexToName(currentSVGIndex);
+              fetchXML(SVGFiles['_' + name].svgURL);
+            }
+        }
+    }
+    
+    function fetchXML(url) {
+      var req = xhrObj();
+      
+      // bust the cache for IE since IE's XHR GET requests are wonky
+      if (isIE) {
+        url += (url.indexOf('?') == -1) ? '?' : '&';
+        url += new Date().getTime();
+      }
+
+      req.onreadystatechange = function() {
+        if (req.readyState == 4) {
+          if (req.status == 200) { // done
+            showXML(req.responseText);
+          } else { // error
+            alert('Unable to fetch SVG file at ' + url + ': ' 
+                  + req.status + ': ' + req.statusText);
+          }
+        }
+      };
+
+      req.open('GET', url, true);
+      req.send(null);
+    }
+    
+    function showXML(newXMLString) {
+        var newline=isIE ? '\r\n' : '\n';
+        newXMLString = newXMLString.split(/\r\n/g).join(newline);
+        newXMLString = newXMLString.split(/\n|\r/g).join(newline);
+        var xmlText = document.createTextNode(newXMLString);
+        var myP = document.getElementById('myXMLp');
+        if (myP.childNodes[0]) {
+            myP.removeChild(myP.childNodes[0]);
+        }
+        document.getElementById('myXMLp').appendChild(xmlText);
+        document.getElementById('mySVGDiv').style.display='none';
+        document.getElementById('myXMLp').style.display='';
+    }
+    
+    function svgOnLoad(svgInstance, svgName) {
+        // for profiling
+        //report();
+        var name = indexToName(currentSVGIndex);
+
+        // the user might have rapidly pressed next, so that this onload event
+        // is 'late' and doesn't represent what we want anymore
+        if (svgName != name) {
+          return;
+        }
+        
+        // save a reference to the SVG OBJECT after its been transformed
+        currentSVGObject = svgInstance;
+        
+        var entry = SVGFiles['_' + name];
+    }
+    
+    // turns an option index position into the SVG file name it represents
+    function indexToName(index) {
+      var options = document.getElementById('selectSVG').childNodes;
+      var optionIndex = 0;
+      for (var i = 0; i < options.length; i++) {
+        if (options[i].nodeType != 1) {
+          continue;
+        }
+        
+        if (optionIndex == index) {
+          return options[i].getAttribute('value');
+        }
+        optionIndex++;
+      }
+    }
+    
+    // turns an SVG name into the index position it represents
+    function nameToIndex(name) {
+      var options = document.getElementById('selectSVG').childNodes;
+      var optionIndex = 0;
+      for (var i = 0; i < options.length; i++) {
+        if (options[i].nodeType != 1) {
+          continue;
+        }
+        
+        if (name == options[i].getAttribute('value')) {
+          return optionIndex;
+        }
+        optionIndex++;
+      }
+      
+      return undefined;
+    }
+
+    function showSVG(forceIndex) {
+        var svgIndex;
+        if (forceIndex !== undefined) {
+          svgIndex = forceIndex;
+          document.getElementById('selectSVG').selectedIndex = svgIndex;
+        } else {
+          var select = document.getElementById('selectSVG');
+          svgIndex = select.selectedIndex;
+        }
+        
+        // get the SVG file name to display
+        var svgName = indexToName(svgIndex);
+        
+        // now render new SVG file
+        if (currentSVGIndex != svgIndex) {
+            var newSVG = SVGFiles['_' + svgName];
+            currentSVGName = svgName;
+            currentSVGObject = document.createElement('object', true);
+            currentSVGObject.setAttribute('type', 'image/svg+xml');
+            currentSVGObject.setAttribute('data', newSVG.svgURL);
+            currentSVGObject.setAttribute('svgName', svgName);
+            if (newSVG.width != undefined) {
+              currentSVGObject.setAttribute('width', newSVG.width);
+            }
+            if (newSVG.height != undefined) {
+              currentSVGObject.setAttribute('height', newSVG.height);
+            }
+            currentSVGObject.addEventListener('SVGLoad', function() {
+              // if the user is very rapidly pressing the next button, some of
+              // the old SVG OBJECTs might have loaded in the interim while
+              // we were waiting; remove all existing SVG OBJECTs except
+              // our new one again
+              removeObjects(currentSVGName);
+                            
+              // indicate that we are now loade
+              svgOnLoad(this, svgName);
+            }, false);
+            
+            // remove any old SVG OBJECTs that might be around
+            var container = document.getElementById('mySVGDiv');
+            
+            // reset the display mode
+            setMode(0);
+            
+            // remove any SVG OBJECTs already on the page
+            removeObjects();
+            
+            // append new SVG object
+            currentSVGObject = svgweb.appendChild(currentSVGObject, container);
+
+            currentSVGIndex = svgIndex;
+            
+            document.getElementById('myXMLp').style.display='none';
+            document.getElementById('selectMode').selectedIndex=0;
+            document.getElementById('selectSVG').blur();
+        }
+    }
+    
+    function removeObjects(exceptFor) {      
+      // remove any old SVG OBJECTs that might be around
+      var container = document.getElementById('mySVGDiv');
+      
+      for (var i = 0; i < container.childNodes.length; i++) {
+        var child = container.childNodes[i];
+        if (child.nodeType == 1 
+            && (child.className.indexOf('embedssvg') != -1
+                || child.getAttribute('type') == 'image/svg+xml')) {
+          if (exceptFor && child.getAttribute('svgName') == exceptFor) {
+            continue;
+          }
+          
+          // if the user rapidly presses the next button there might
+          // not be an object to remove
+          try {
+            svgweb.removeChild(child, container);
+          } catch (exp) {
+            console.log('Error removing child: ' + (exp.message || exp));
+          }
+        }
+      }
+    }
+
+    function changeRenderer(newRenderer) {
+      if (newRenderer != svgweb.getHandlerType()) {
+        var url = window.location.toString();
+        
+        // strip off any existing query string
+        url = url.replace(/\?.*$/, '');
+        
+        // build up our new query string
+        var name = indexToName(currentSVGIndex);
+        url = '?name='+encodeURIComponent(name);
+        if (newRenderer == 'flash') {
+          url += '&svg.render.forceflash=true';
+        } else {
+          url += '&svg.render.forceflash=false';
+        }
+        
+        // save whether to show failing demos
+        var showAll = document.getElementById('showFailingDemos').checked;
+        if (showAll) {
+          url += '&showFailingDemos=true';
+        }
+        
+        window.location = url;
+      }
+    }
+
+    function modTranslate(tx, ty) {
+        if (!currentSVGObject || !currentSVGObject.contentDocument) {
+          // not finished loading yet
+          return;
+        }
+        var svgRoot = currentSVGObject.contentDocument.rootElement;
+        svgRoot.currentTranslate.setXY(svgRoot.currentTranslate.x + tx,
+                                       svgRoot.currentTranslate.y + ty);
+    }
+
+    function modScale(scale) {
+        if (!currentSVGObject || !currentSVGObject.contentDocument) {
+          // not finished loading yet
+          return;
+        }
+        var svgRoot = currentSVGObject.contentDocument.rootElement;
+        svgRoot.currentScale *= scale;
+    }
+
+    function handleFailingDemos(firstTime) {
+      var showAll = document.getElementById('showFailingDemos').checked;
+      var select = document.getElementById('selectSVG');
+      
+      if (firstTime === undefined) {
+        firstTime = false;
+      }
+      
+      var origIndex = select.selectedIndex;
+      
+      // IE doesn't supported disabled attribute on OPTION elements, so we
+      // keep an original pristine version of the options around if the user
+      // toggles showing failing demos on and off
+      if (!origSelect) {
+        origSelect = select.cloneNode(true);
+      }
+      
+      // remove old children
+      select.innerHTML = '';
+      
+      // add in the new OPTIONs with the correct failing demos setting
+      for (var i = 0; i < origSelect.childNodes.length; i++) {
+        var option = origSelect.childNodes[i];
+        if (option.nodeName.toLowerCase() != 'option') {
+          continue;
+        }
+        
+        var name = option.getAttribute('value');
+        var entry = SVGFiles['_' + name];
+        if (!entry) {
+          console.log('Unable to find SVGFiles demo entry for ' + name);
+          continue;
+        }
+        
+        if (entry.fails && !showAll) {
+          continue;
+        }
+        
+        // make a copy of the original OPTION
+        select.appendChild(option.cloneNode(true));
+      }
+      
+      // force a redisplay if not first time
+      currentSVGIndex = -1;
+      if (!firstTime) {
+        showSVG(origIndex);
+      }
+    }
+    
+    function showNext() {
+      var selectSVG = document.getElementById('selectSVG');
+      var nextIndex = selectSVG.selectedIndex + 1;
+      var showAll = document.getElementById('showFailingDemos').checked;
+      
+      // skip past disabled demos if user wants that
+      while (!showAll && nextIndex < SVGFiles.length 
+             && SVGFiles[nextIndex].fails) {
+        nextIndex++;
+      }
+      
+      selectSVG.selectedIndex = nextIndex;
+      showSVG();
+    }
+    
+    function indexSVGFiles() {
+      for (var i = 0; i < SVGFiles.length; i++) {
+        var entry = SVGFiles[i];
+        SVGFiles['_' + entry.name] = entry;
+      }
+    }
+    
+    if (!document.implementation.hasFeature('http://www.w3.org/TR/SVG11/feature#BasicStructure', '1.1')) {
+        document.getElementById('selectRenderer').disabled='true';
+    }
+    
+    window.onsvgload = function() {
+      // be able to grab a specific demo by name
+      indexSVGFiles();
+      
+      // enable or disable demos known to fail
+      handleFailingDemos(true);
+      
+      // see if an SVG file is specified in the URL
+      var svgIndex, svgName;
+      var search = window.location.search;
+      if (search.indexOf('svgIndex') != -1) {
+        svgIndex = search.match(/svgIndex=([0-9]+)/)[1];
+      } else if (search.indexOf('name') != -1) {
+        svgName = decodeURIComponent(search).match(/name=([^\&]*)/);
+        if (svgName.length) {
+          svgName = svgName[1];
+          svgIndex = nameToIndex(svgName);
+        }
+      }
+      
+      // see if the native renderer was forced
+      if (window.location.search.indexOf('svg.render.forceflash=false') != -1) {
+        document.getElementById('selectRenderer').value = 'native';
+      }
+      
+      // see if we are forcing all demos to be shown
+      if (window.location.search.indexOf('showFailingDemos=true') != -1) {
+        document.getElementById('showFailingDemos').checked = true;
+      }
+      
+      showSVG(svgIndex);
+    }
+    </script>
+</body>
+</html>

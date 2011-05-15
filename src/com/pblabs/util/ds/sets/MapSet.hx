@@ -12,7 +12,6 @@ import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 import com.pblabs.util.ds.Set;
 import com.pblabs.util.Preconditions;
-using com.pblabs.util.ds.MapUtil;
 /**
  * A Set that uses a Map for storing the elements.
  */
@@ -47,7 +46,7 @@ class MapSet<T> implements Set<T>
 
 	public function isEmpty () :Bool
 	{
-		return _source.isEmpty();
+		return _source.size() == 0;
 	}
 
 	public function clear () :Void
@@ -71,7 +70,7 @@ class MapSet<T> implements Set<T>
 	#if debug
 	public function toString () :String
 	{
-		return com.pblabs.util.ds.MapUtil.toString(_source);
+		return com.pblabs.util.IterUtil.join(com.pblabs.util.IterUtil.toArray(_source.keys()), ", ");
 	}
 	#end
 	

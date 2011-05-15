@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+				
+		<title>SVG Web: Two independent sliders</title>
+
+		<script src="../../../src/svg.js" data-path="../../../src"></script>
+		
+		<script type="text/javascript">
+		
+// Slider Code Example from Holger Will
+// http://www.treebuilder.de/default.asp?file=67211.xml		
+		
+function scrollBar(x,y,w,h,func,min,max){
+this.w=w
+this.h=h
+this.x=x
+this.y=y
+this.value=min
+var g = document.createElementNS(svgns,"g")
+var re = document.createElementNS(svgns,"rect")
+var ci = document.createElementNS(svgns,"circle")
+re.setAttribute("x",x)
+re.setAttribute("y",y)
+re.setAttribute("width",w)
+re.setAttribute("height",h)
+ci.setAttribute("cx",x + w/2)
+ci.setAttribute("cy",y + w/2)
+ci.setAttribute("r",w/2)
+ci.setAttribute("fill","red")
+var svg=this
+this.ci=ci
+g.appendChild(re)
+g.appendChild(ci)
+this.svg=g
+
+this.startSlide= function(){
+root.addEventListener("mousemove",svg.slide,false)
+root.addEventListener("mouseup",svg.stopSlide,false)
+}
+
+this.stopSlide= function(){
+root.removeEventListener("mousemove",svg.slide,false)
+root.removeEventListener("mouseup",svg.stopSlide,false)
+}
+
+this.slide = function(evt){
+try{var m=svg.ci.parentNode.getScreenCTM()
+}catch(e){
+var m=getScreenCTM(svg.ci.parentNode)}
+var p=root.createSVGPoint()
+p.x=evt.clientX
+p.y=evt.clientY
+p=p.matrixTransform(m.inverse())
+
+if(p.y <= (y + h - w/2) && p.y >= y + w/2){
+svg.ci.setAttribute("cy",p.y)
+ra=min + (p.y - y - w/2)*(max-min) / (h-w)
+func(ra)
+svg.value=ra
+}
+}
+
+ci.addEventListener("mousedown",this.startSlide,false)
+}
+
+function change1(val1){
+document.getElementById("t1").firstChild.nodeValue=val1
+}
+
+function change2(val2){
+document.getElementById("t2").firstChild.nodeValue=val2
+}
+
+function init(){
+root = document.getElementById("svgroot");
+sl1=new scrollBar(50,25,10,100,change1,100,10)
+document.getElementById("ip1").appendChild(sl1.svg)
+sl2=new scrollBar(350,25,10,100,change2,100,10)
+document.getElementById("ip2").appendChild(sl2.svg)
+}
+		
+	</script>
+
+	</head>
+
+	<body onsvgload="init()">
+	
+	<h1>The two sliders should behave independently</h1>
+	<h3>(using Holger Will's Slider Example)</h3>
+	<p>Sliders behave independently in native SVG renderer</p>
+	<p>In Flash renderer, moving any of the two sliders at first works ok but on touching the second both sliders move together</p>
+	
+		<script type="image/svg+xml">
+		
+			<svg  id="svgroot" viewBox="-50 -50 800 600" width="800px" height="600px">
+		
+				<text id="t1" x="0" y="175">value1</text>
+			
+				<g id="ip1" transform="rotate(15)">
+			
+				</g>
+
+				<text id="t2" x="350" y="150">value2</text>
+			
+				<g id="ip2" transform="rotate(15)">
+			
+				</g>
+
+			</svg>
+		
+		</script>
+		
+	</body>
+	
+</html>

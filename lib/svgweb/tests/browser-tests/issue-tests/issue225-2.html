@@ -1,0 +1,115 @@
+
+<html>
+
+	<head>
+		
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+				
+		<title>SVG web: Issue 225  - transform mouse to object coordinates (slider)</title>
+
+		<script src="../../../src/svg.js" data-path="src/"></script>
+		
+		<script type="text/javascript">
+		
+// Slider Code Example from Holger Will
+// http://www.treebuilder.de/default.asp?file=67211.xml		
+
+var svgns = 'http://www.w3.org/2000/svg';
+
+function scrollBar(x,y,w,h,func,min,max){
+
+this.w=w
+this.h=h
+this.x=x
+this.y=y
+this.value=min
+var g = sliderDoc.createElementNS(svgns,"g")
+var re = sliderDoc.createElementNS(svgns,"rect")
+var ci = sliderDoc.createElementNS(svgns,"circle")
+re.setAttribute("x",x)
+re.setAttribute("y",y)
+re.setAttribute("width",w)
+re.setAttribute("height",h)
+ci.setAttribute("cx",x + w/2)
+ci.setAttribute("cy",y + w/2)
+ci.setAttribute("r",w/2)
+ci.setAttribute("fill","red")
+var svg=this
+this.ci=ci
+g.appendChild(re);
+g.appendChild(ci);
+this.svg=g
+
+this.startSlide= function(){
+root.addEventListener("mousemove",svg.slide,false)
+root.addEventListener("mouseup",svg.stopSlide,false)
+}
+
+this.stopSlide= function(){
+root.removeEventListener("mousemove",svg.slide,false)
+root.removeEventListener("mouseup",svg.stopSlide,false)
+}
+
+this.slide = function(evt){
+//alert('got slide!');
+try{var m=svg.ci.parentNode.getScreenCTM()
+}catch(e){
+//alert('screenctm problem!');
+var m=getScreenCTM(svg.ci.parentNode)}
+var p=root.createSVGPoint()
+p.x=evt.clientX
+p.y=evt.clientY
+p=p.matrixTransform(m.inverse())
+
+if(p.y <= (y + h - w/2) && p.y >= y + w/2){
+svg.ci.setAttribute("cy",p.y)
+ra=min + (p.y - y - w/2)*(max-min) / (h-w)
+func(ra)
+svg.value=ra
+}
+}
+
+ci.addEventListener("mousedown",this.startSlide,false)
+
+}
+
+
+function change(val){
+sliderDoc.getElementById("tx").firstChild.nodeValue=val
+}
+
+var sliderDoc;
+
+function init(){
+sliderDoc = document.getElementById("mySVGObject").contentDocument;
+//alert(sliderDoc);
+sl=new scrollBar(50,25,10,100,change,100,10)
+sliderDoc.getElementById("ip").appendChild(sl.svg)
+root = sliderDoc.getElementById("svgroot");
+//alert(root);
+}
+window.onsvgload = init;
+		
+		</script>
+
+	</head>
+
+
+	<body >
+	
+	<h1>Holger Will's Slider Example</h1>
+
+    <!--[if !IE]>-->
+    <object data="issue225.svg" type="image/svg+xml" width="100%" height="100%" id="mySVGObject">
+    <!--<![endif]-->
+    <!--[if lt IE 9]>
+    <object src="issue225.svg" classid="image/svg+xml" width="100%" height="100%" id="mySVGObject">
+    <![endif]-->
+    <!--[if gte IE 9]>
+    <object data="issue225.svg" type="image/svg+xml" width="100%" height="100%" id="mySVGObject">
+    <![endif]-->
+    </object>
+
+	</body>
+	
+</html>

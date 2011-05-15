@@ -1,0 +1,37 @@
+<?xml version="1.0" standalone="no"?>
+
+<svg xmlns="http://www.w3.org/2000/svg" 
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:svg="http://www.w3.org/2000/svg"
+ id="canvas" onload="loaded()">
+  
+  <script type="text/javascript"><![CDATA[
+      var SVG = "http://www.w3.org/2000/svg";
+      var XLINK = "http://www.w3.org/1999/xlink";
+
+      function loaded() {
+          // change onloadFunc to point to your real onload function that you
+          // want called when the page is truly ready
+          var onloadFunc = doload;
+        
+          if (top.svgweb != undefined) {
+            top.svgweb.addOnLoad(onloadFunc, true, window);
+          } else {
+            onloadFunc();
+          }
+      }  
+	  
+      function doload()
+      {
+		 
+		 document.getElementById("BlueCircle").addEventListener("mousedown", function(evt){alert('Click');}, false);
+		 document.getElementById("canvas").addEventListener("mousedown", function(evt){alert('Click');}, false);
+      }
+
+   ]]></script>
+
+
+   <!-- rect id='rect' x='0' y='0' width='100%' height='100%' style='fill:white;opacity:0;'/ -->
+   <circle id='BlueCircle' cx='25' cy='25' r='20' style='fill:blue; '/>
+
+</svg>

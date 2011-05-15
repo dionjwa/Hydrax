@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		
+		<title>SVG web: Issue 201 - cloneNode in ie7, ie8</title>
+
+		<script src="../../../src/svg.js" data-path="../../../src"></script>
+		
+		<script type="text/javascript">
+			function cloneRect(){
+			
+			    var fooG = document.getElementById('foo');
+			    var barRect = document.getElementById('bar');
+
+			    var cloneElement = barRect.cloneNode(true);
+			    
+			    cloneElement.setAttribute('id', 'bar2');
+			    cloneElement.setAttribute('transform', 'translate(30 15)');		       
+			    fooG.appendChild(cloneElement);
+			}
+		
+			function init()	{
+    
+    			document.getElementById('bar').addEventListener('mousedown', function() { cloneRect();}, false);			
+    
+    			}
+
+            svgweb.addOnLoad(init);
+		
+		</script>
+
+	</head>
+
+
+	<body>
+
+	<h1>Test case for <a href="http://code.google.com/p/svgweb/issues/detail?id=201">Issue 201</a></h1>
+	
+	<h1>Mousedown on rectangle to clone it (clone will sit on top) </h1>
+	
+		<script type="image/svg+xml">
+		
+			<svg viewBox="0 0 640 280" width="640px" height="280px">
+		
+				<g id="foo" fill="#ffb424" stroke="#333333" stroke-width="3">
+				
+				<rect id="bar" x="250" y="50" width="250" height="50"/>
+				
+				</g>
+				
+			</svg>
+		
+		</script>
+		
+		<h3>Reference rendering (PNG) after mousedown showing how things <em>should</em> look:</h3>
+		
+		<img src="issue201.png"/>
+		
+	</body>
+	
+</html>

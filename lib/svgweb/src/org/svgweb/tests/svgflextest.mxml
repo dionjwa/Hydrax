@@ -1,0 +1,29 @@
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml"
+  xmlns="org.svgweb.*"
+  width="100%"
+  height="100%"
+  paddingTop="0" paddingBottom="0" 
+  paddingLeft="0" paddingRight="0"
+  initialize="myInit()"
+  horizontalAlign="left" 
+  >
+  <mx:Script>
+    <![CDATA[
+    private function myInit():void {               
+        // The FlashVars
+        var obj:Object = Application.application.parameters;
+        var item:String;
+
+        for (item in obj) {
+            if (item == "loadURL") {
+                 svgflex.viewer.loadURL(obj[item]);
+            }
+        }
+
+        // An alternative to the above is to set the xml directly:
+        // svgflex.viewer.xml = new XML("<svg></svg>");
+    }
+    ]]>
+  </mx:Script>
+  <SVGViewerFlex id="svgflex"/>
+</mx:Application>

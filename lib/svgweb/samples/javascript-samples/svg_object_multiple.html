@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+  <!-- 
+    Tests having multiple SVG OBJECTs on the page at the same time,
+    as well as making SVG objects have different display and position
+    attributes set both through inline styles as well as CSS style
+    rules. 
+  -->
+    
+  <head>
+    
+    <script src="../../src/svg.js" data-path="../../src/"></script>
+    
+    <style type="text/css">
+      object {
+        overflow: hidden;
+      }
+      
+      #blockSVG {
+        display: block;
+      }
+      
+      #inlineSVG {
+        display: inline;
+      }
+      
+      #absoluteSVG {
+        position: absolute; 
+        right: 5px; 
+        bottom: 5px; 
+        border: 5px solid red;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <h1>Tests having multiple SVG OBJECTs on the page at the same time,
+        as well as making SVG objects have different display and position
+        attributes set both through inline styles as well as CSS style
+        rules.</h1>
+    
+    <h2>A block-level SVG object using implicit width and height set with
+        inline style rule:</h2>
+    
+    <!--[if !IE]>-->
+      <object data="../svg-files/scimitar.svg" type="image/svg+xml"
+              style="display: block;" id="testSVG1"> <!--<![endif]-->
+    <!--[if lt IE 9]>
+      <object src="../svg-files/scimitar.svg" classid="image/svg+xml"
+              style="display: block;" id="testSVG1"> <![endif]-->
+    <!--[if gte IE 9]>
+      <object data="../svg-files/scimitar.svg" type="image/svg+xml"
+              style="display: block;" id="testSVG1"> <![endif]-->
+      </object>
+
+    <h2>A block-level SVG object using implicit width and height set using
+        CSS rule:</h2>
+    
+    <!--[if !IE]>-->
+      <object data="../svg-files/scimitar.svg" type="image/svg+xml"
+              id="blockSVG"> <!--<![endif]-->
+    <!--[if lt IE 9]>
+      <object src="../svg-files/scimitar.svg" classid="image/svg+xml"
+              id="blockSVG"> <![endif]-->
+    <!--[if gte IE 9]>
+      <object data="../svg-files/scimitar.svg" type="image/svg+xml"
+              id="blockSVG"> <![endif]-->
+      </object>
+    
+    <h2>An inline-level SVG object set using an inline style rule:
+    
+    <!--[if !IE]>-->
+      <object data="../svg-files/rectangles.svg" type="image/svg+xml"
+              width="200" height="200" id="testSVG2"
+              style="display: inline;"> <!--<![endif]-->
+    <!--[if lt IE 9]>
+      <object src="../svg-files/rectangles.svg" classid="image/svg+xml"
+              width="200" height="200" id="testSVG2"
+              style="display: inline;"> <![endif]-->
+    <!--[if gte IE 9]>
+      <object data="../svg-files/rectangles.svg" type="image/svg+xml"
+              width="200" height="200" id="testSVG2"
+              style="display: inline;"> <![endif]-->
+      </object>
+
+      Some more text following the object.
+    </h2>
+          
+    <h2>An inline-level SVG object set using a CSS style rule:
+
+    <!--[if !IE]>-->
+      <object data="../svg-files/rectangles.svg" type="image/svg+xml"
+              width="200" height="200" id="inlineSVG"> <!--<![endif]-->
+    <!--[if lt IE 9]>
+      <object src="../svg-files/rectangles.svg" classid="image/svg+xml"
+              width="200" height="200" id="inlineSVG"> <![endif]-->
+    <!--[if gte IE 9]>
+      <object data="../svg-files/rectangles.svg" type="image/svg+xml"
+              width="200" height="200" id="inlineSVG"> <![endif]-->
+      </object>
+
+      Some more text following the object.</h2>
+      
+    <!--[if !IE]>-->
+      <object data="../svg-files/rectangles.svg" type="image/svg+xml"
+              width="450" height="450" id="svg2"> <!--<![endif]-->
+    <!--[if lt IE 9]>
+      <object src="../svg-files/rectangles.svg" classid="image/svg+xml"
+              width="450" height="450" id="svg2"> <![endif]-->
+    <!--[if gte IE 9]>
+      <object data="../svg-files/rectangles.svg" type="image/svg+xml"
+              width="450" height="450" id="svg2"> <![endif]-->
+        <h1>Fallback content 2</h1>
+      </object>
+      
+          
+    <h2>An absolutely positioned SVG object (should be at bottom right corner 
+        of page, with a thick red border):</h2>
+
+    <!--[if !IE]>-->
+      <object data="../svg-files/rectangles.svg" type="image/svg+xml"
+              width="200" height="200" id="absoluteSVG"> <!--<![endif]-->
+    <!--[if lt IE 9]>
+      <object src="../svg-files/rectangles.svg" classid="image/svg+xml"
+              width="200" height="200" id="absoluteSVG"> <![endif]-->
+    <!--[if gte IE 9]>
+      <object data="../svg-files/rectangles.svg" type="image/svg+xml"
+              width="200" height="200" id="absoluteSVG"> <![endif]-->
+      </object>
+      
+  </body>
+</html>

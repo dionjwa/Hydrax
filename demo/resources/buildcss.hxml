@@ -3,6 +3,7 @@
 -lib hydrax
 -cp src
 
+--remap flash:jeash
 -js build/haxe.js
 -main Demo
 

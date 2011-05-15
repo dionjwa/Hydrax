@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="130" viewBox="0 0 300 130">
+<defs>
+  <linearGradient id="gr2" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+    <stop offset="100%" stop-color="#000060" stop-opacity="1" />
+  </linearGradient>
+</defs>
+<g>
+  <rect x="0" y="0" width="50" height="50" fill="url(#gr2)" />
+  <polygon points="60,0 110,0 110,50 60,50" fill="url(#gr2)" />
+  <path d="M 120,0 L 170,0 170,50 120,50" fill="url(#gr2)" />
+  <ellipse cx="205" cy="25" rx="25" ry="25" fill="url(#gr2)" />
+  <circle cx="265" cy="25" r="25" fill="url(#gr2)" />
+
+  <rect x="0" y="60" width="50" height="50" fill="url(#gr2)" />
+  <polygon points="60,60 110,60 110,110 60,110" fill="url(#gr2)" />
+  <path d="M 120,60 L 170,60 170,110 120,110" fill="url(#gr2)" />
+  <ellipse cx="205" cy="85" rx="25" ry="25" fill="url(#gr2)" />
+  <circle cx="265" cy="85" r="25" fill="url(#gr2)" />
+</g>
+</svg>

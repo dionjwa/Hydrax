@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>SVG web: Issue 225  - transform mouse to object coordinates (slider)</title>
+        <script src="../../../src/svg.js"></script>
+        <script type="text/javascript">
+        
+// Slider Code Example from Holger Will
+// http://www.treebuilder.de/default.asp?file=67211.xml        
+        
+function scrollBar(x,y,w,h,func,min,max) {
+
+  this.w=w;
+  this.h=h;
+  this.x=x;
+  this.y=y;
+  this.value=min;
+  var g = document.createElementNS(svgns,"g");
+  var re = document.createElementNS(svgns,"rect");
+  var ci = document.createElementNS(svgns,"circle");
+  re.setAttribute("x",x);
+  re.setAttribute("y",y);
+  re.setAttribute("width",w);
+  re.setAttribute("height",h);
+  ci.setAttribute("cx",x + w/2);
+  ci.setAttribute("cy",y + w/2);
+  ci.setAttribute("r",w/2);
+  ci.setAttribute("fill","red");
+  var svg=this;
+  this.ci=ci;
+  g.appendChild(re);
+  g.appendChild(ci);
+  this.svg=g;
+  
+  this.startSlide= function() {
+    root.addEventListener("mousemove",svg.slide,false);
+    root.addEventListener("mouseup",svg.stopSlide,false);
+  }
+
+  this.stopSlide= function() {
+    root.removeEventListener("mousemove",svg.slide,false);
+    root.removeEventListener("mouseup",svg.stopSlide,false);
+  }
+
+  this.slide = function(evt) {
+    try{
+      var m=svg.ci.parentNode.getScreenCTM();
+      var r=root.getScreenCTM();
+    }catch(e) {
+      var m=getScreenCTM(svg.ci.parentNode);
+    }
+    var p=root.createSVGPoint();
+    p.x=evt.clientX;
+    p.y=evt.clientY;
+    var foo=m.inverse();
+    p=p.matrixTransform(foo);
+    if(p.y <= (y + h - w/2) && p.y >= y + w/2) {
+      svg.ci.setAttribute("cy",p.y);
+      ra=min + (p.y - y - w/2)*(max-min) / (h-w)
+      func(ra);
+      svg.value=ra;
+    }
+  }
+
+  ci.addEventListener("mousedown",this.startSlide,false);
+}
+
+
+function change(val) {
+  document.getElementById("tx").firstChild.nodeValue=val;
+}
+
+function init() {
+  sl=new scrollBar(50,25,10,100,change,100,10);
+  document.getElementById("ip").appendChild(sl.svg);
+  root = document.getElementById("svgroot");
+}
+
+svgweb.addOnLoad(init);
+        
+        </script>
+    </head>
+    <body>
+    <h1>Holger Will's Slider Example</h1>
+        <script type="image/svg+xml">
+            <svg  id="svgroot" viewBox="-50 -50 350 350" width="100%" height="100%">
+                <text id="tx" x="0" y="150">x</text>
+                <g id="ip" transform="rotate(15)">
+                </g>
+            </svg>
+        </script>
+    </body>
+</html>

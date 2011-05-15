@@ -29,7 +29,6 @@ import com.pblabs.util.ReflectUtil;
 using com.pblabs.components.input.InputUtil;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
-using com.pblabs.components.ui.UIUtil;
 using com.pblabs.engine.util.PBUtil;
 
 class Demo 

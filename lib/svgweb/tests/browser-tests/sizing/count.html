@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <body>
+  <h1>Number of SVG sizing test permutations</h1>
+
+  <p>ViewBoxVariations = [ present, not present ].length = 2</p>
+  <p>ViewBoxPreserveAspectRatioVariations = [ 'xMidYMid', 'none', null ].length = 3</p>
+  <p>NoViewBoxPreserveAspectRatioVariations = [ null ].length = 1</p>
+
+  <p>SVGHeightVariations = [ PixelSVGHeight, PctSVGHeight, NullSVGHeight ].length * (ViewBoxPreserveAspectRatioVariations + NoViewBoxPreserveAspectVariations) = 12</p>
+  <p>SVGTagVariations = [ PixelSVGWidth, PctSVGWidth, NullSVGWidth ].length * SVGHeightVariations = 36</p>
+
+  <p>ObjectHeightVariations = [ NullObjectHeight,  PixelObjectHeight, PctObjectHeight].length * SVGTagVariations = 108</p>
+  <p>ObjectTagVariations = [ NullObjectWidth, PixelObjectWidth, PctObjectWidth].length * ObjectHeightVariations= 324</p>
+
+  <p>ScriptHeightVariations = [ NullScriptHeight,  PixelScriptHeight, PctScriptHeight].length * SVGTagVariations = 108</p>
+  <p>ScriptTagVariations = [ NullScriptWidth, PixelScriptWidth, PctScriptWidth].length * ScriptHeightVariations= 324</p>
+
+  <p>TagTypeVariations = ObjectTagVariations + SVGTagVariations + ScriptTagVariations = 360</p>
+
+  <p>DivHeightVariations = [ NullDivHeight,  PixelDivHeight, PctDivHeight].length * TagTypeVariations = 1080</p>
+  <p>DivVariations = [ NullDivWidth,  PixelDivWidth, PctDivWidth].length * DivHeightVariations = 3240</p>
+
+  <p>BodyVariations = TagTypeVariations = 360</p>
+
+  <p>ContainerVariations = DivVariations + BodyVariations = 3600</p>
+
+  <p>DOCTYPE Variations = [ HTML5, HTML 4.01 Transitional, HTML 4.01 strict ].length * ContainerVariations = 10800</p>
+
+  <p>Media Variations = [ 'text/html' ].length * DOCTYPE = 10800</p>
+
+  <p>Native Variations = Media Variations = 10800</p>
+
+  <p>SVG Web Variations = [ 'No SVG Web Present, Native SVG', 'SVG Web Present, but using Native SVG', 'SVG Web using Flash' ].length * NativeVariations = 30240
+
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE HTML> 
+<!-- SVG Layered weather element viewer     -->
+<!-- Author: Emma Hung (Emma.Hung@ec.gc.ca) -->
+<!-- Date:     Dec  2008                    -->
+<!-- Modified: Sept 2009                    -->
+<html>
+<head>
+<script src="../../../src/svg.js" data-path="../../../src" data-debug="true"></script>
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+<script type="text/javascript">
+//============================================================================
+// If checked make layer visible otherwise hide layer.
+//============================================================================
+function toggleLayer(checkbox) {
+	svgDoc = document.getElementById('mySVGObject').contentDocument;
+	var root = svgDoc.getElementsByTagNameNS(svgns, 'svg')[0];
+	var vis = (!checkbox.checked) ? "hidden": "visible";
+	if (svgDoc.querySelectorAll) {	// Opera
+		var e = svgDoc.querySelectorAll('.'+checkbox.value);
+		var suspendID = root.suspendRedraw(e.length*10);
+		for (var i=0; i<e.length; i++) {
+			e.item(i).setAttributeNS(svgns,"visibility",vis);
+		}
+		root.unsuspendRedraw(suspendID);
+	}
+	else if (svgDoc.getElementsByClassName) {	// Firefox
+		var e = svgDoc.getElementsByClassName(checkbox.value);
+		var suspendID = root.suspendRedraw(e.length*10);
+		for (var i=0; i<e.length; i++) {
+			e.item(i).setAttribute("visibility",vis);
+		}
+		root.unsuspendRedraw(suspendID);
+	}
+	else {	// IE
+		var i=0;
+		var g = svgDoc.getElementsByTagNameNS(svgns, 'g');
+		var suspendID = root.suspendRedraw(g.length*10);
+		while (e = g[i++]) {
+			if (e.getAttribute("class") == checkbox.value){
+				e.setAttribute("visibility", vis);
+			}
+		}
+		root.unsuspendRedraw(suspendID);
+	}
+}
+
+// Toggle all selections on or all off
+function toggleAll(button) {
+	for (var i = 0;  i < document.layerSelect_form.elements.length;  i++) {
+		if (document.layerSelect_form.elements[i].type == "checkbox"){
+			document.layerSelect_form.elements[i].checked = (button.value == "Choisir Tout") ? true : false; 
+			toggleLayer(document.layerSelect_form.elements[i]);
+ 	}
+ }  
+ button.value = (button.value == "Choisir Tout") ? "Choisir Aucun" : "Choisir Tout"
+}
+
+var startTime = new Date().getTime();
+window.onsvgload = function() {
+  var endTime = new Date().getTime();
+  var totalTime = endTime - startTime;
+  console.log('Total time: ' + totalTime);
+}
+</script>
+
+<title>Example SVG Weather Product</title>
+<style type="text/css">
+</style>
+</head>
+<body>
+
+<table border="0" height='100%' width='%100' cellpadding="8" cellspacing="0">
+<tr> <td width='80%'> 
+
+      <!--[if IE]>
+      <object src="prog10int1.svg" classid="image/svg+xml"
+	      width="734.4" height="684"
+              id="mySVGObject">
+      <![endif]-->
+      <!--[if !IE]>-->
+      <object data="prog10int1.svg" type="image/svg+xml" 
+	      width="734.4" height="684"
+              id="mySVGObject">
+      <!--<![endif]-->
+      </object>
+</td> <td width='230px' align="center" valign="top" bgcolor="#C0C0C0">
+
+<form name="layerSelect_form" action="">
+<table border="0" cellpadding="0" cellspacing="2">
+<tr><td>&nbsp;</td> </tr>
+<tr><td><b>Layers</b></td> </tr>
+
+<tr><td><input type='checkbox' onclick='toggleLayer(this)' value='rh_bands'> Humidité relative </td></tr>
+<tr><td><input type='checkbox' onclick='toggleLayer(this)' value='weather-system'> Nuages &amp; Précipitations </td></tr>
+<tr><td><input type='checkbox' onclick='toggleLayer(this)' value='jet-axes'> Courant-jet bas niveau </td></tr>
+<tr><td><input type='checkbox' onclick='toggleLayer(this)' value='storm-tracks'> Déplacement Systèmes </td></tr>
+<tr><td><input type='checkbox' onclick='toggleLayer(this)' value='wind'> Vent </td></tr>
+<tr><td><input type='checkbox' onclick='toggleLayer(this)' value='temperature'> Température </td></tr>
+<tr><td><input type='checkbox' onclick='toggleLayer(this)' value='fronts'> Front </td></tr>
+<tr><td><input type='checkbox' onclick='toggleLayer(this)' value='pressure'> Pression </td></tr>
+<tr><td><input type='checkbox' onclick='toggleLayer(this)' value='comments'> Commentaire </td></tr>
+<tr><td><input type='button' onclick='toggleAll(this)'     value='Choisir Aucun'></td></tr>
+
+</table>
+<script type="text/javascript">
+// Make sure all checkboxes are checked whenever the page is reloaded in the browser.
+ for (var i = 0;  i < document.layerSelect_form.elements.length;  i++)
+		if (document.layerSelect_form.elements[i].type == "checkbox"){
+				   document.layerSelect_form.elements[i].checked = true;
+			   	}  
+</script>
+</form>
+</td> </tr>
+</table>
+
+</body></html>

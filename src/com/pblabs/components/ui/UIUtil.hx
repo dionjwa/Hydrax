@@ -1,7 +1,7 @@
 /*******************************************************************************
- * Hydrax :haXe port of the PushButton Engine
+ * Hydrax: haXe port of the PushButton Engine
  * Copyright (C) 2010 Dion Amago
- * For more information see http ://github.com/dionjwa/Hydrax
+ * For more information see http://github.com/dionjwa/Hydrax
  *
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
@@ -26,8 +26,6 @@ import com.pblabs.util.Preconditions;
 import com.pblabs.util.ds.Tuple;
 
 import de.polygonal.motor2.geom.math.XY;
-
-import net.amago.components.minimalcomp.Component;
 
 using com.pblabs.components.input.InputUtil;
 using com.pblabs.components.scene2D.SceneUtil;
@@ -66,7 +64,7 @@ class UIUtil
 		c.parentProperty = layer.entityProp();
 		so.addComponent(c);
 		
-		so.addComponent(layer.context.allocate(Component));
+		// so.addComponent(layer.context.allocate(Component));
 		
 		var mouse = layer.context.allocate(MouseInputComponent);
 		so.addComponent(mouse);
@@ -120,7 +118,7 @@ class UIUtil
 		mouse.boundsProperty = new PropertyReference("@" + IMAGE1);
 		
 		//Component for creating layouts
-		so.addComponent(layer.context.allocate(Component));
+		// so.addComponent(layer.context.allocate(Component));
 		
 		so.addComponent(mouse);
 		so.initialize(layer.context.getManager(NameManager).validateName(name));

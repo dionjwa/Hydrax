@@ -1,0 +1,18 @@
+<html xmlns:svg>
+  <head>
+    <?IMPORT namespace="svg" implementation="perform.htc">
+    
+    <script>
+      window.setTimeout(function(){
+        console.log('test');
+        var htc = document.createElement('svg:foo');
+        htc.callMe('test');
+        console.log('end');
+      }, 300);
+    </script>
+  </head>
+    
+  <body>
+    <svg:test></svg:test>
+  </body>  
+</html>

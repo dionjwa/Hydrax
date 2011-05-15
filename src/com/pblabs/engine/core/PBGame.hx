@@ -50,7 +50,7 @@ class PBGame extends PBGameBase
 		
 		#if (js && !nodejs)
 		//Sensible default
-		getManager(com.pblabs.components.scene2D.SceneView).layerId = "screen";
+		getManager(com.pblabs.components.scene2D.SceneView).layerId = "haxe:screen";
 		#end
 	}
 }

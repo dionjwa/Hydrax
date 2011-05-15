@@ -1,6 +1,6 @@
 #build file
 -D debug
-# -lib hydrax
+-lib hydrax
 
 -cp src
 --remap flash:jeash
@@ -9,12 +9,12 @@
 
 
 #For local testing
--lib IterTools
--lib ArrayTools
--lib ListTools
--lib feffects
+# -lib IterTools
+# -lib ArrayTools
+# -lib ListTools
+# -lib feffects
 
--cp ../../../hydrax/src
--cp ../../../hydrax/lib/hsl
--cp ../../../hydrax/lib/hsl-pico
--cp ../../../libdamago/lib/polygonal/src/lib
+# -cp ../../../hydrax/src
+# -cp ../../../hydrax/lib/hsl
+# -cp ../../../hydrax/lib/hsl-pico
+# -cp ../../../libdamago/lib/polygonal/src/lib

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--======================================================================-->
+<!--=  Copyright 2000 World Wide Web Consortium, (Massachusetts          =-->
+<!--=  Institute of Technology, Institut National de Recherche en        =-->
+<!--=  Informatique et en Automatique, Keio University). All Rights      =-->
+<!--=  Reserved. See http://www.w3.org/Consortium/Legal/.                =-->
+<!--======================================================================-->
+<!-- =====================================================================-->
+<!--                                                                      -->
+<!-- This page generated from script                                      -->
+<!--                                                                      -->
+<!-- Author : script: Rick Graham                                         -->
+<!--          layout: Vincent Hardy                                       -->        
+<!--                                                                      -->
+<!-- File: color-prop-05-t					-->
+<!-- =====================================================================-->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg height="223" width="350">
+	<image id="svgImage" xlink:href="../svggen/color-prop-05-t.svg" height="120" width="160" y="77" x="10" />
+	<image id="refImage" xlink:href="../png/basic-color-prop-05-t.png" height="120" width="160" y="77" x="180" />
+	<g font-weight="bold" font-size="12" text-anchor="middle" fill="white">
+		<rect x="10" y="25" width="330" height="25" fill="black" />
+		<text id="testName" y="43" x="175" text-anchor="middle" font-size="14" >color-prop-05-t</text>
+		<rect x="10" y="51" width="160" height="25" fill="#aaaaaa" />
+		<text x="90" y="68" text-anchor="middle">SVG Image</text>
+		<rect x="180" y="51" width="160" height="25" fill="#aaaaaa" />
+		<text x="260" y="68" text-anchor="middle">PNG Image</text>
+		<use xlink:href="#navigationGroup" />
+		<g id="navigationGroup" font-weight="bold" fill="#aaaaaa" >
+			<a xlink:href="basic-color-prop-04-t.svg">
+				<text y="16" x="10" text-anchor="start" >Previous</text>
+			</a>
+			<a xlink:href="../svggen/color-prop-05-t.svg">
+				<text y="16" x="85" text-anchor="start" >No Nav</text>
+			</a>
+			<a xlink:href="basic-coords-coord-01-t.svg">
+				<text y="16" x="150" text-anchor="start" >Next</text>
+			</a>
+			<a xlink:href="full-color-prop-05-t.svg">
+				<text y="214" x="10" text-anchor="start" >Full</text>
+			</a>
+			<text y="214" x="75" text-decoration="underline" text-anchor="start" >Basic</text>
+			<a xlink:href="tiny-color-prop-05-t.svg">
+				<text y="214" x="150" text-anchor="start" >Tiny</text>
+			</a>        
+		</g>
+	</g>
+</svg>

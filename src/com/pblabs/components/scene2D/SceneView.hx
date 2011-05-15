@@ -65,7 +65,7 @@ class SceneView
 		_layerId = layerId;
 		if (_layerId == null) {
 			//Default div id
-			_layerId = "screen";
+			_layerId = "haxe:screen";
 		}
 		#elseif (flash || cpp)
 		_layer = new flash.display.Sprite();
@@ -83,27 +83,11 @@ class SceneView
 	
 	public function startup():Void
 	{
-		
 		#if (flash || cpp)
-		
 		if (_layer.parent == null) {
 			flash.Lib.current.addChild(_layer);
 		}
-		
-		// if (parentContainer != null) {
-		//	 Preconditions.checkNotNull(_displayContainer, "displayContainer is null");
-		//	 parentContainer.addChild(_displayContainer);
-		// } else {
-		//	 // _displayContainer =
-		//	 //If no parent passed in, assume we want to attach to the stage
-		//	 flash.Lib.current.addChild(_displayContainer);
-		// }
 		#end
-		
-		
-		// #if (flash || cpp)
-		// displayContainer.addChild(_layer);
-		// #end
 	}
 	
 	public function shutdown():Void
@@ -112,7 +96,6 @@ class SceneView
 		if (_layer.parent != null) {
 			_layer.parent.removeChild(_layer);
 		}
-		// context.displayContainer.removeChild(_layer);
 		#end
 	}
 	
@@ -172,10 +155,6 @@ class SceneView
 		_layer.graphics.beginFill(0, 0);
 		_layer.graphics.drawRect(0, 0, flash.Lib.current.stage.stageWidth, flash.Lib.current.stage.stageHeight);
 		_layer.graphics.endFill();
-		// #if debug
-		// _layer.graphics.lineStyle(2, 0x0000ff, 1);
-		// _layer.graphics.drawRect(0, 0, flash.Lib.current.stage.stageWidth-2, flash.Lib.current.stage.stageHeight-2);
-		// #end
 		// Intelligent default size.
 		_width = Std.int(flash.Lib.current.stage.stageWidth);
 		_height = Std.int(flash.Lib.current.stage.stageHeight);

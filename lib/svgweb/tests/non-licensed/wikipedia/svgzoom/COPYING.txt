@@ -1,0 +1,4 @@
+This file records any third-party source code or images used in svgzoom.js or in svgzoom-images/*.
+
+* svgzoom-images/searchtool.png - PNG image taken from Wikimedia Commons at <http://commons.wikimedia.org/wiki/File:Gnome-searchtool.svg>. File is under the LGPL.
+* svgzoom-images/control-*.png - PNG map control images taken from the Open Layers project <http://openlayers.org/> 

@@ -52,10 +52,8 @@ class Demo
 		com.pblabs.engine.debug.Log.setup();
 		game = new PBGame();
 		
-		#if css
-		game.getManager(SceneView).layerId = "haxe:screencss";
-		#elseif js
-		game.getManager(SceneView).layerId = "haxe:screencanvas";
+		#if js
+		game.getManager(SceneView).layerId = "haxe:screen";
 		#end
 		
 		
@@ -65,7 +63,7 @@ class Demo
 		game.registerManager(com.pblabs.components.input.GestureInputManager, new com.pblabs.components.input.GestureInputManager());
 		game.getManager(IResourceManager).addResource(new ImageResource("face", Source.url("../rsrc/face.png")));
 		#elseif flash
-		game.getManager(IResourceManager).addResource(new ImageResource("face", Source.embedded("face")));
+		game.getManager(IResourceManager).addResource(new ImageResource("face", Source.embedded("FACE")));
 		#end
 		game.registerManager(InputManager, new InputManager());
 		

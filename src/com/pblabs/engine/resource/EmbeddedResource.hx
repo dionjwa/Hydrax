@@ -10,9 +10,14 @@ package com.pblabs.engine.resource;
 
 import com.pblabs.engine.resource.ResourceBase;
 import com.pblabs.util.Preconditions;
+import com.pblabs.util.ds.Set;
+import com.pblabs.util.ds.Sets;
 
 /**
   * Generic embedded resources.
+  * 
+  * Represents assets embedded in some way.
+  * First, haxe.Resource is checked.  If no resource is found there, then:
   *
   * On the JS platform, this means data in the page itself.  This waits for the page to load before allowing the elements to be accessed.
   * Used for e.g. loading SVG elements by id.  Returns a deep copy of the element, so you only need to 
@@ -29,9 +34,12 @@ class EmbeddedResource extends ResourceBase<Dynamic>
 	    return new ResourceToken(NAME, key);
 	}
 	
+	var _haxeResources :Set<String>;
+	
 	public function new (?name :String = null)
 	{
 		super(name == null ? NAME : name);
+		_haxeResources = Sets.fromArray(Sets.newSetOf(String), haxe.Resource.listNames());
 	}
 	
 	override public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
@@ -56,6 +64,13 @@ class EmbeddedResource extends ResourceBase<Dynamic>
 	override public function get (?elementName :String) :Dynamic
 	{
 		Preconditions.checkNotNull(elementName, "element name cannot be null");
+		
+		//Check haxe embedded resources first
+		if (_haxeResources.exists(elementName)) {
+			return haxe.Resource.getBytes(elementName);
+		}
+		
+		//If no haxe embedded resources, check platforms specific embedding
 		#if js
 		var element = js.Lib.document.getElementById(elementName);
 		Preconditions.checkNotNull(element, "No element with id=\"" + elementName + "\"");
@@ -74,19 +89,7 @@ class EmbeddedResource extends ResourceBase<Dynamic>
 		}
 		
 		Preconditions.checkNotNull(cls, "No embedded resource class SWFResources_" + elementName + " or " + elementName);
-		// trace("Creating " + cls);
-		// var test = Type.createInstance(cls, EMPTY_ARRAY);
-		// var testcls = cls;
-		// while(testcls != null) {
-		// 	trace(Type.getClassName(testcls));
-		// 	testcls = Type.getSuperClass(testcls);
-		// }
-		// trace("is bitmap? " + Std.is(test, flash.display.Bitmap));
-		return Type.createInstance(cls, EMPTY_ARRAY);
+		return Type.createInstance(cls, com.pblabs.util.Constants.EMPTY_ARRAY);
 		#end
 	}
-	
-	#if (flash || cpp)
-	static var EMPTY_ARRAY :Array<Dynamic> = [];
-	#end
 }

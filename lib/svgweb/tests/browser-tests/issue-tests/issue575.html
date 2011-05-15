@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		
+		<title>SVG Web: Issue 575 "line-cap defaults to round"</title>
+
+		<script src="../../../src/svg.js" data-path="../../../src"></script>
+		
+	</head>
+
+	<body>
+
+		<script type="image/svg+xml">
+		
+			<svg viewBox="0 0 800 600" width="800px" height="600px">
+			
+			<g stroke-width="15" stroke="green">
+			
+			<line x1="30"  y1="300" x2="90"  y2="100" />
+			<line x1="90"  y1="300" x2="150" y2="100" stroke-linecap="round" stroke-linejoin="miter"/>
+    		<line x1="150" y1="300" x2="210" y2="100" stroke-width="30" stroke-linecap="square" stroke-linejoin="miter"/>
+		    <line x1="210" y1="300" x2="270" y2="100" stroke-linecap="butt"  stroke-linejoin="miter"/>
+	
+			</g>
+	
+		</svg>
+		
+		</script>
+		
+	</body>
+	
+</html>

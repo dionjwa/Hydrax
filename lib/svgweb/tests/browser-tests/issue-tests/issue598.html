@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		
+		<title>SVG Web: Issue 598</title>
+
+		<script src="../../../src/svg.js" data-path="../../../src"></script>
+
+		<script type="text/javascript">
+
+		function displayRect() {
+		
+		    var rightRect = document.getElementById("testRectRight");
+    	    rightRect.style.display='block';
+		
+			}
+
+		</script>
+		
+	</head>
+
+	<body>
+	
+	<h3>Click the rectangle to set display of 2nd rect from 'none' to 'block'</h3>
+	
+		<script type="image/svg+xml">
+		
+			<svg viewBox="0 0 640 480" width="640px" height="480px">
+			
+				<rect id="testRectLeft" x="50" y="50" width="250" height="300" stroke-width="30" fill="pink" 
+					onclick="displayRect()" />
+
+				<rect id="testRectRight" x="350" y="50" width="250" height="300" stroke-width="30" fill="cyan"
+					style="display:none;" />
+
+			</svg>
+		
+		</script>
+				
+	</body>
+	
+</html>

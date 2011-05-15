@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <!-- Tests embedding SVG using an OBJECT tag, and manipulating it through
+       JavaScript -->
+
+ <head>
+
+   <script src="../../src/svg.js" data-path="../../src/"></script>
+   
+   <script>
+     function objLoadFunc() {
+       var doc = document.getElementById('mySVG').contentDocument;                
+                    
+       // use some JavaScript to animate the rectangles over and over
+       window._counter = 1;
+       window.setInterval(function() {
+         var rect = doc.getElementById('myRect');
+         var fill;
+         if (window._counter % 2 == 0) {
+           fill = 'yellow';
+         } else {
+           fill = 'green';
+         }
+         rect.setAttribute('fill', fill);
+         
+         rect = doc.getElementsByTagNameNS(svgns, 'rect')[0];
+         if (window._counter % 2 == 0) {
+           fill = 'blue';
+         } else {
+           fill = 'brown';
+         }
+         rect.setAttribute('fill', fill);
+
+         window._counter++;
+       }, 100);
+     }
+
+     function loadFunc() {
+       var obj = document.createElement('object', true);
+       obj.id = 'mySVG';
+       obj.setAttribute('type', 'image/svg+xml');
+       obj.setAttribute('data', '../svg-files/mysvg.svg');
+       obj.setAttribute('width', '250');
+       obj.setAttribute('height', '150');
+
+       obj.addEventListener(window.svgweb ? 'SVGLoad' : 'load', objLoadFunc, false);
+
+       var container = document.getElementById('svgDiv');
+       if (window.svgweb) {
+         svgweb.appendChild(obj, container);
+       } else {
+         container.appendChild(obj);
+       }
+
+     }
+
+     if (window.svgweb) {
+        svgweb.addOnLoad(loadFunc);
+     }
+     else {
+        window.addEventListener('load', loadFunc, false);
+     }
+
+   </script>
+ </head>
+
+ <body>
+   
+   <h1>Tests added SVG using an OBJECT element created with JavaScript, and manipulating it through
+        JavaScript</h1>
+   <div id="svgDiv">     
+   <!-- SVG Goes here -->
+   </div>
+
+ </body>
+</html>

@@ -1,0 +1,171 @@
+<!-- 
+The 'lightWeight' attribute below is important for two reasons:
+* It vastly improves performance
+* There is a bug that Behaviors are not cached correctly, so without
+  this property the same HTC file will get called for every SVG element
+  on the page. The lightWeight property sidesteps this bug.
+-->
+<component lightWeight="true">
+
+    <!-- _Node properties -->
+    <property name="nodeName" get="_getNodeName" />
+    <property name="nodeType" get="_getNodeType" />
+    <property name="nodeValue" get="_getNodeValue" 
+                               put="_setNodeValue" />
+    <property name="localName" get="_getLocalName" />
+    <property name="prefix" get="_getPrefix" />
+    <property name="namespaceURI" get="_getNamespaceURI" />
+    
+    <property name="childNodes" get="_getChildNodes" />
+    
+    <property name="parentNode" get="_getParentNode" />
+    <property name="firstChild" get="_getFirstChild" />
+    <property name="lastChild" get="_getLastChild" />
+    <property name="previousSibling" get="_getPreviousSibling" />
+    <property name="nextSibling" get="_getNextSibling" />
+    
+    <property name="textContent" get="_getTextContent"
+                                 put="_setTextContent" />
+    <property name="data" get="_getData" put="_setData" />
+    <property name="ownerDocument" get="_getOwnerDocument" />
+
+    <!-- Non-standard defacto properties -->
+    <!-- TODO: Implement -->
+    <!--
+    <property name="innerHTML" 
+                     get="_getInnerHTML" put="_setInnerHTML" />
+    -->
+                     
+    <!-- _Element properties -->
+    <property name="id" get="_getId" put="_setId" />
+    
+    <!-- SVGSVGElement and SVGUseElement readonly props -->
+    <property name="x" get="_getX" />             
+    <property name="y" get="_getY" />
+    <property name="width" get="_getWidth" />
+    <property name="height" get="_getHeight" />
+    
+    <!-- A flag for someone to query whether a DOM node is one of our
+         own fake ones or a real browser native one. Useful for someone
+         to 'break' the abstraction if needed. -->
+    <property name="fake" value="true"/>
+             
+    <method name="getAttribute" />
+    <method name="setAttribute" />
+    <method name="setAttributeNS" />
+    <method name="appendChild" />
+    <method name="removeChild" />
+    <method name="replaceChild" />
+    <method name="insertBefore" />
+    <method name="hasChildNodes" />
+    <method name="hasAttributes" />
+    <method name="isSupported" />
+    <method name="addEventListener" />
+    <method name="removeEventListener" />
+    
+    <!-- Internal method we use to get the HTC internal objects -->
+    <method name="_getHTCDocument" />
+    <method name="_getHTCDefaults" />
+    
+    <defaults tabStop="false" contentEditable="false"
+              canHaveHTML="true" viewInheritStyle="true"
+              viewMasterTab="false" viewLinkContent="false"
+              style="display: block" />
+
+</component>
+
+<script type="text/javascript">
+  /** Called from _SVGSVGElement._onHTCLoaded() in order to get an internal
+      document reference to insert our Flash. */
+  function _getHTCDocument() { return this.element.document; }
+  
+  /** Called from FlashInserter._insertFlashIE() in order to insert our 
+      Flash. */
+  function _getHTCDefaults() { return this.defaults; }
+  
+  // there is a very strong correlation between the length of this script
+  // and performance, so we minimize size as much as possible
+  
+  function getAttribute(n) { return this._fakeNode.getAttribute(n); }  
+  function setAttribute(n, v) { return this._fakeNode.setAttribute(n, v); }  
+  function setAttributeNS(ns, qName, v) { return this._fakeNode.setAttributeNS(ns, qName, v); }
+  function appendChild(c) { return this._fakeNode.appendChild(c); }
+  function removeChild(c) { return this._fakeNode.removeChild(c); }
+  function replaceChild(n, o) { return this._fakeNode.replaceChild(n, o); }
+  function insertBefore(n, o) { return this._fakeNode.insertBefore(n, o); }
+  function hasChildNodes() { return this._fakeNode.hasChildNodes(); }
+  function hasAttributes() { return this._fakeNode.hasAttributes(); }
+  function isSupported(f, v) { return this._fakeNode.isSupported(f, v); }
+  function addEventListener(t, l, u) { return this._fakeNode.addEventListener(t, l, u); }
+  function removeEventListener(t, l, u) { return this._fakeNode.removeEventListener(t, l, u); }
+
+  function _getNodeName() { return this._fakeNode.nodeName; }
+  function _getNodeType() { return this._fakeNode.nodeType; }
+  function _getLocalName() { return this._fakeNode.localName; }
+  function _getPrefix() { return this._fakeNode.prefix; }
+  function _getNamespaceURI() { return this._fakeNode.namespaceURI; }
+  
+  function _getChildNodes() { return this._fakeNode._getChildNodes(); }
+  
+  function _getParentNode() { return this._fakeNode._getParentNode(); }
+  function _getFirstChild() { return this._fakeNode._getFirstChild(); }
+  function _getLastChild() { return this._fakeNode._getLastChild(); }
+  function _getPreviousSibling() { return this._fakeNode._getPreviousSibling(); }
+  function _getNextSibling() { return this._fakeNode._getNextSibling(); }
+  
+  function _getNodeValue() { return this._fakeNode._nodeValue; }
+  function _setNodeValue(v) { return this._fakeNode._setNodeValue(v); }
+  
+  function _getTextContent() { return this._fakeNode._getTextContent(); }  
+  function _setTextContent(v) { return this._fakeNode._setTextContent(v); }
+  function _getData() { return this._fakeNode._getData(); }  
+  function _setData(v) { return this._fakeNode._setData(v); }
+  
+  function _getOwnerDocument() { return this._fakeNode.ownerDocument; }
+  
+  function _getId() { return this._fakeNode._getId(); }
+  function _setId(v) { return this._fakeNode._setId(v); }
+  
+  // TODO: Implement
+  /*
+  function _getInnerHTML() { return this._fakeNode._getInnerHTML(); }
+  function _setInnerHTML(v) { return this._fakeNode._setInnerHTML(v); }
+  */
+  
+  // SVGSVGElement and SVGUseElement only properties
+  
+  function _getX() { return this._fakeNode._getX(); }  
+  function _getY() { return this._fakeNode._getY(); }  
+  function _getWidth() { return this._fakeNode._getWidth(); }
+  function _getHeight() { return this._fakeNode._getHeight(); }
+  
+  // Patch the __flash__removeCallback method or else we will sometimes
+  // get an exception on page unload for IE:
+  // http://bugs.adobe.com/jira/browse/FP-529
+  // Patching this method in exactly this way was the only manner I could find
+  // to override __flash__removeCallback. TODO: See if we can extract this code
+  // from the HTC; I was not able to get it to work.
+  if (window.__flash__removeCallback) {
+    window.__flash__removeCallback =
+      (function() {
+        return function(instance, name) {
+          if (instance) instance[name] = null;
+        }
+      })();
+  }
+</script>
+
+<!-- IE has a bug where if a JScript portion is greater than 512 bytes,
+     the page will freeze during unload for a large period of time. 
+     There are two workarounds to this:
+     
+     * Abandon JScript and use VBScript instead, which doesn't have this
+       issue.
+     * Add an empty script block right after the JScript block that 
+       is of type text/vbscript (!!!!)
+       
+     The bug is documented here:
+     
+     http://www.pcreview.co.uk/forums/thread-727396.php
+-->
+<script type="text/vbscript"></script>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../../../src/svg.js" data-path="../../../src/" type="text/javascript"></script>
+
+    <script type="text/javascript">
+      function on_appstartup() {
+          var obj = document.getElementById('myobj');
+          var svgDoc = obj.contentDocument;
+          var svgRoot = svgDoc.documentElement;
+          var anim1 = svgDoc.getElementById('animOnClick1');
+          //anim1.beginElement();
+      }
+
+      svgweb.addOnLoad(on_appstartup);
+    </script>
+  </head>
+  <body>
+    <!--[if !IE]>-->
+      <object data="issue576.svg" type="image/svg+xml"
+              width="100%" height="100%" id="svgObj"> <!--<![endif]-->
+    <!--[if lt IE 9]>
+      <object src="issue576.svg" classid="image/svg+xml"
+              width="100%" height="100%" id="svgObj"> <![endif]-->
+    <!--[if gte IE 9]>
+      <object data="issue576.svg" type="image/svg+xml"
+              width="100%" height="100%" id="svgObj"> <![endif]-->
+      </object>
+
+  </body>
+</html>
+

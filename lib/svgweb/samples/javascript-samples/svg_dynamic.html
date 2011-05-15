@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+  <!-- 
+    Tests dynamically creating an SVG root, adding many circles to it,
+    and animating them to bounce using JavaScript.
+  -->
+  <head>
+    <script src="../../src/svg.js" data-path="../../src/"></script>
+  
+    <script type='text/javascript'>
+      var root = null;
+      var width = 320, height = 200;
+      var particles = [];
+      var NUM_PARTICLES = 25;
+    
+      function Particle() {
+        this.X = 0;
+        this.Y = 0;
+      
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+
+        this.xvel = Math.random() * 5 - 2.5;
+        this.yvel = Math.random() * 5 - 2.5;
+      
+        this.el = document.createElementNS(svgns, 'circle');
+        this.el.setAttribute('cx', this.x);
+        this.el.setAttribute('cy', this.y);
+        this.el.setAttribute('r', 5);
+        this.el.setAttribute('fill', 'blue');
+        this.el.setAttribute('stroke-width', '1px');
+        this.el.setAttribute('stroke', 'yellow');
+
+        root.appendChild(this.el);
+      }
+
+      Particle.prototype.update = function() {
+        this.x += this.xvel;
+        this.y += this.yvel;
+
+        this.yvel += 0.5;
+
+        if (this.x > width || this.x < 0) { 
+          this.xvel = -this.xvel;
+        }
+
+        if (this.y > height || this.y < 0) { 
+          this.yvel = -this.yvel;
+        }
+      
+        if (this.y < 0) {
+          this.y = 0;
+        }
+      }
+
+      function loop() {
+        root.suspendRedraw(10000);
+        for (var i = 0; i < NUM_PARTICLES; i++) {
+          var p = particles[i];
+          var x = p.x;
+          var y = p.y;
+          p.update();
+          p.X += p.x - x;
+          p.Y += p.y - y;
+          p.el.setAttribute('transform', 'translate(' + p.X + ',' + p.Y + ')');
+        }
+        root.unsuspendRedrawAll();
+      }
+      
+      window.onsvgload = function() {
+        root = document.createElementNS(svgns, 'svg');
+        root.setAttribute('width', '100%');
+        root.setAttribute('height', '100%');
+        root.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
+        root.addEventListener('SVGLoad', function(evt) {
+          root = this;
+          root.suspendRedraw(10000);
+          for (var i = 0; i < NUM_PARTICLES; i++) {
+            particles[i] = new Particle();
+          }
+          root.unsuspendRedrawAll();
+
+          setInterval(loop, 10);
+        }, false);
+        if (window.svgweb) {
+          window.svgweb.appendChild(root, document.body);
+        } else {
+          document.body.appendChild(root);
+        }
+      };
+    </script>
+  
+    <style>
+      body {
+        background-color: black;
+      }
+    </style>
+  </head>
+  
+  <body></body>
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <!-- Tests using an javaScript to create multiple objects, and manipulating it through
+       JavaScript -->
+
+ <head>
+
+   <script src="../../../src/svg.js" data-path="../../../src/"></script>
+   
+   <script>
+     if (!window.svgns) {
+       window.svgns = "http://www.w3.org/2000/svg";
+     }
+     function objLoadFunc1() {
+       var doc = document.getElementById('mySVG1').contentDocument;
+                    
+       // use some JavaScript to animate the rectangles over and over
+       window._counter1 = 1;
+       window.setInterval(function() {
+         var rect = doc.getElementById('myRect');
+         var fill;
+         if (window._counter1 % 2 == 0) {
+           fill = 'yellow';
+         } else {
+           fill = 'green';
+         }
+         rect.setAttribute('fill', fill);
+         
+         rect = doc.getElementsByTagNameNS(svgns, 'rect')[0];
+         if (window._counter1 % 2 == 0) {
+           fill = 'blue';
+         } else {
+           fill = 'brown';
+         }
+         rect.setAttribute('fill', fill);
+
+         window._counter1++;
+       }, 100);
+     }
+
+     function objLoadFunc2() {
+       var doc = document.getElementById('mySVG2').contentDocument;
+                    
+       // use some JavaScript to animate the rectangles over and over
+       window._counter2 = 1;
+       window.setInterval(function() {
+         var rect = doc.getElementById('myRect');
+         var fill;
+         if (window._counter2 % 2 == 0) {
+           fill = 'yellow';
+         } else {
+           fill = 'green';
+         }
+         rect.setAttribute('fill', fill);
+         
+         rect = doc.getElementsByTagNameNS(svgns, 'rect')[0];
+         if (window._counter2 % 2 == 0) {
+           fill = 'blue';
+         } else {
+           fill = 'brown';
+         }
+         rect.setAttribute('fill', fill);
+
+         window._counter2++;
+       }, 100);
+     }
+
+     function loadFunc() {
+       var obj = document.createElement('object', true);
+       obj.id = 'mySVG1';
+       obj.setAttribute('type', 'image/svg+xml');
+       obj.setAttribute('data', 'issue564.svg');
+       obj.setAttribute('width', '250');
+       obj.setAttribute('height', '150');
+
+       var eventName = 'load';
+       if (window.svgweb && window.svgweb.getHandlerType() == 'flash') {
+          eventName = 'SVGLoad';
+       }
+       obj.addEventListener(eventName, objLoadFunc1, false);
+
+       var container = document.getElementById('svgDiv1');
+       if (window.svgweb) {
+         svgweb.appendChild(obj, container);
+       } else {
+         container.appendChild(obj);
+       }
+
+
+       obj = document.createElement('object', true);
+       obj.id = 'mySVG2';
+       obj.setAttribute('type', 'image/svg+xml');
+       obj.setAttribute('data', 'issue564.svg');
+       obj.setAttribute('width', '250');
+       obj.setAttribute('height', '150');
+       obj.addEventListener(eventName, objLoadFunc2, false);
+
+       container = document.getElementById('svgDiv2');
+       if (window.svgweb) {
+         svgweb.appendChild(obj, container);
+       } else {
+         container.appendChild(obj);
+       }
+     }
+
+     if (window.svgweb) {
+        svgweb.addOnLoad(loadFunc);
+     }
+     else {
+        window.addEventListener('load', loadFunc, false);
+     }
+
+   </script>
+ </head>
+
+ <body>
+   
+   <h1>Tests added SVG using an OBJECT element created with JavaScript, and manipulating it through
+        JavaScript</h1>
+   <div id="svgDiv1">
+   <!-- SVG Goes here -->
+   </div>
+
+   <div id="svgDiv2">
+   <!-- SVG Goes here -->
+   </div>
+ </body>
+</html>

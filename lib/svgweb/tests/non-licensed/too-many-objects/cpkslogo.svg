@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+"http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<!-- Created with Sodipodi ("http://www.sodipodi.com/") -->
+<svg
+   zoomAndPan="magnify"
+   contentStyleType="text/css"
+   externalResourcesRequired="false"
+   preserveAspectRatio="xMidYMid meet"
+   version="1.0"
+   viewBox="0 0 192 192"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink">
+ <style type="text/css">
+  circle, line,path {
+   stroke:#fff;
+   stroke-opacity:1;
+   stroke-width:3;
+   fill:none;
+   stroke-linecap:round;
+  }
+ </style>
+  <title>CPKS Logo</title>
+  <desc>Image of my seal, created from a monogram of my initials combined with its mirror-image.</desc>
+  <defs id="defs556">
+  <g id="monogram">
+    <path id="CS" d="M 47 85 C 51 122 67 143 92 161 C 123 184 161 151 161 131 C 167 106 98 58 104 34 C 105 16 128 15 130 29"/>
+    <path id="letterP" d="M 118 158 C 118 158 46 71 40 62 C 35 54 59 60 62 89"/>
+    <line y2="145" x1="55.6" x2="133" y1="47" id="Kupright"/>
+    <path id="Kdown" d="M 91 61 C 91 61 125 103.5 149 132.5 C 165 142 177 127 171 113"/>
+  </g>
+  </defs>
+  <rect x="0" y="0" width="192" height="192" style="fill:#000;"/>
+  <circle r="94" cx="96" cy="96"/>
+  <circle r="88" cx="96" cy="96"/>
+  <use transform="translate(-6,0)" xlink:href="#monogram"/>
+  <use transform="matrix(-1,0,0,1,200,0)" xlink:href="#monogram"/>
+</svg>
