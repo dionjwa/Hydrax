@@ -28,6 +28,7 @@ using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.resource.ResourceToken;
 using com.pblabs.util.StringUtil;
 using com.pblabs.util.XMLUtil;
+using com.pblabs.util.SvgUtil;
 #if flash
 using com.pblabs.util.DisplayUtils;
 #end
@@ -43,6 +44,8 @@ extends com.pblabs.components.scene2D.js.SceneComponent
 extends com.pblabs.components.scene2D.flash.SceneComponent 
 #end
 {
+	public static var TEXT_REPLACE :EReg = ~/\$T/;
+	
 	#if (flash || cpp)
 	/** Fired when the svgweb renderer completes */
 	public var renderCompleteSignal (default, null):Signaler<Void>;
@@ -52,11 +55,13 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	public var resources :Array<ResourceToken<String>>;
 	public var svgData (get_svgData, set_svgData) :Array<String>;
 	var _svgData :Array<String>;
+	var _svgDataUnmodified :Array<String>;
 	function get_svgData () :Array<String> { return _svgData; }
 	function set_svgData (val :Array<String>) :Array<String>
 	{
 		com.pblabs.util.Assert.isNotNull(val, "SVG data is null");
 		//Create copies
+		_svgDataUnmodified = val;
 		_svgData = [];
 		for (svg in val) {
 			_svgData.push(processReplacements(new String(svg), svgRegexReplacements));
@@ -67,11 +72,8 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		
 		for (ii in 0..._svgData.length) {
 			#if js
-			var idx = _svgData[ii].indexOf("<svg");
-			if (idx > -1) {
-				//SVG documents added to the dom via innerHTML are *not* allowed to have any preamble.
-				_svgData[ii] = _svgData[ii].substr(idx);
-			}
+			//SVG documents added to the dom via innerHTML are *not* allowed to have any preamble.
+			_svgData[ii] = _svgData[ii].cleanSvgForInnerHtml();
 			#end
 			var svgXml = Xml.parse(_svgData[ii]).ensureNotDocument();
 			var b = parseBounds(svgXml);
@@ -92,7 +94,6 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		registrationPoint.y = boundsUnion.intervalY / 2;
 		_unscaledBounds = boundsUnion;
 		_bounds = _unscaledBounds.clone();
-		
 		
 		#if (flash || cpp)
 		_displayObject.removeAllChildren();
@@ -120,6 +121,27 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		return val;
 	}
 	
+	public var text (get_text, set_text) :String;
+	var _text :String;
+	function get_text () :String
+	{
+		return _text;
+	}
+	
+	function set_text (val :String) :String
+	{
+		_text = val;
+		svgRegexReplacements = [new Tuple(TEXT_REPLACE, _text)];
+		if (isRegistered) {
+			svgData = _svgDataUnmodified;
+		}
+		// var self = this;
+		// svgData = _svgDataUnmodified.map(function(s :String) :String {
+		// 	return s.replace(TEXT_REPLACE, self._text);
+		// }).array();
+		return val;
+	}
+	
 	/** Dynamically replace text in the svg string.  Allows e.g. custom text */
 	public var svgRegexReplacements :Array<Tuple<EReg, String>>;
 	
@@ -135,7 +157,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		renderCompleteSignal = new DirectSignaler(this);
 		var s = new flash.display.Sprite();
 		s.mouseEnabled = s.mouseChildren = false;
-		_displayObject = s; 
+		_displayObject = s;
 		#end
 	}
 	
@@ -299,7 +321,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	}
 	#end
 	
-	#if (debug && flash)
+	#if (debug_hxhsl && flash)
 	override public function postDestructionCheck () :Void
 	{
 		super.postDestructionCheck();

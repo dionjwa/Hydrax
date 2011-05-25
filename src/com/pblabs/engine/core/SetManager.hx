@@ -49,6 +49,13 @@ class SetManager extends PBManager
 		return getSetManager(context).getObjectsInSet(set).filter(com.pblabs.util.Predicates.notNull);
 	}
 	
+	public static function destroyAllInSet(context :IPBContext, set :String) :Void
+	{
+		com.pblabs.util.Assert.isNotNull(context);
+		com.pblabs.util.Assert.isNotNull(getSetManager(context));
+		return getSetManager(context).destroySet(set);
+	}
+	
 	public static function getAllEntitiesInSet(context :IPBContext, set :String) :Iterable<IEntity>
 	{
 		com.pblabs.util.Assert.isNotNull(context);
@@ -145,7 +152,10 @@ class SetManager extends PBManager
 	
 	public function destroySet (set :String) :Void
 	{
-		for (obj in removeSet(set).array()) {
+		if (!_sets.exists(set)) {
+			return;
+		}
+		for (obj in removeSet(set)) {
 			if (obj != null && obj.isLiveObject) {
 				obj.destroy();
 			}

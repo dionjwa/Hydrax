@@ -35,8 +35,7 @@ class PBGame extends PBGameBase
 		// Register ourselves.
 		registerManager(PBGameBase, this);
 		
-		// Bring in the standard managers.
-		registerManager(NameManager, new NameManager());
+		// Bring in the global managers.
 		registerManager(SignalBondManager, new SignalBondManager());
 		
 		registerManager(com.pblabs.engine.pooling.ObjectPoolMgr, new com.pblabs.engine.pooling.ObjectPoolMgr());
@@ -50,7 +49,7 @@ class PBGame extends PBGameBase
 		
 		#if (js && !nodejs)
 		//Sensible default
-		getManager(com.pblabs.components.scene2D.SceneView).layerId = "haxe:screen";
+		getManager(com.pblabs.components.scene2D.SceneView).layerId = "haxeSceneView";
 		#end
 	}
 }

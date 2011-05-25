@@ -504,6 +504,7 @@ private class CallOnceBond<Datatype> extends RegularBond<Datatype> {
 	public override function callListener(data:Datatype, currentTarget:Subject, origin:Subject, propagationStatus:Int):Int {
 		if (halted == false) {
 			var status = super.callListener(data, currentTarget, origin, propagationStatus);
+			trace("listener called, destroying bond");
 			destroy();
 			return status;
 		}

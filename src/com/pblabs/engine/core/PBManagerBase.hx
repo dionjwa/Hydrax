@@ -31,8 +31,8 @@ class PBManagerBase
 	public function startup () :Void
 	{
 		com.pblabs.util.Assert.isNotNull(game, "No PBGameBase?");
-		game.newActiveContextSignaler.bind(onNewContextInternal);
-		game.activeContextRemovedSignaler.bind(onContextRemovedInternal);
+		game.signalContextEnter.bind(onNewContextInternal);
+		game.signalContextExit.bind(onContextRemovedInternal);
 		
 		if (game.currentContext != null) {
 			onNewContextInternal(game.currentContext);
@@ -42,10 +42,10 @@ class PBManagerBase
 	public function shutdown () :Void
 	{
 		com.pblabs.util.Assert.isNotNull(game);
-		com.pblabs.util.Assert.isNotNull(game.newActiveContextSignaler);
-		com.pblabs.util.Assert.isNotNull(game.activeContextRemovedSignaler);
-		game.newActiveContextSignaler.unbind(onNewContextInternal);
-		game.activeContextRemovedSignaler.unbind(onContextRemovedInternal);
+		com.pblabs.util.Assert.isNotNull(game.signalContextEnter);
+		com.pblabs.util.Assert.isNotNull(game.signalContextExit);
+		game.signalContextEnter.unbind(onNewContextInternal);
+		game.signalContextExit.unbind(onContextRemovedInternal);
 		//Destroy signal bonds
 		if (game.getManager(SignalBondManager) != null) {
 			game.getManager(SignalBondManager).destroyBonds(this);
@@ -57,7 +57,10 @@ class PBManagerBase
 	
 	function onNewContextInternal (c :IPBContext) :Void
 	{
-		com.pblabs.util.Assert.isNull(context, "onNewContextInternal, our current context should be null");
+		// com.pblabs.util.Assert.isNull(context, "onNewContextInternal, our current context should be null");
+		if (context != null) {
+			onContextRemovedInternal(context);
+		}
 		context = c;
 		onNewContext();
 	}

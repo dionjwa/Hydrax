@@ -76,25 +76,27 @@ class UIUtil
 	
 	public static function createTwoStateSVGButton (layer :BaseSceneLayer<Dynamic, Dynamic>, 
 		svg1 :Array<ResourceToken<Dynamic>>, svg2 :Array<ResourceToken<Dynamic>>,
-		name :String, onClick :Void->Void, ?text1 :String = "", ?text2 :String = null) :IEntity
+		text :String, onClick :Void->Void) :IEntity
 	{
+		text = text == null ? "" : text;
 		com.pblabs.util.Assert.isNotNull(svg1);
 		com.pblabs.util.Assert.isTrue(svg1.length > 0);
 		com.pblabs.util.Assert.isNotNull(svg2);
 		com.pblabs.util.Assert.isTrue(svg2.length > 0);
 		
-		text2 = text2 == null ? text1 :text2; 
 		var s1 = layer.context.allocate(SVGComponent);
 		s1.resources = cast svg1;
 		s1.parentProperty = layer.entityProp();
-		s1.svgRegexReplacements.push(new Tuple(~/\$T/, text1));
+		s1.text = text;
+		s1.svgRegexReplacements.push(new Tuple(~/\$T/, text));
 
 		var s2 = layer.context.allocate(SVGComponent);
 		s2.resources = cast svg2;
 		s2.parentProperty = layer.entityProp();
-		s2.svgRegexReplacements.push(new Tuple(~/\$T/, text2));
+		s2.text = text;
+		// s2.svgRegexReplacements.push(new Tuple(~/\$T/, text));
 		
-		return createTwoStateButton(layer, s1, s2, name, onClick);
+		return createTwoStateButton(layer, s1, s2, layer.context.getManager(NameManager).validateName("button"), onClick);
 	}
 	
 	public static function createTwoStateButton (layer :BaseSceneLayer<Dynamic, Dynamic>, 
@@ -118,7 +120,7 @@ class UIUtil
 		mouse.boundsProperty = new PropertyReference("@" + IMAGE1);
 		
 		//Component for creating layouts
-		// so.addComponent(layer.context.allocate(Component));
+		so.addComponent(layer.context.allocate(com.pblabs.components.minimalcomp.Component));
 		
 		so.addComponent(mouse);
 		so.initialize(layer.context.getManager(NameManager).validateName(name));
@@ -133,10 +135,29 @@ class UIUtil
 			var bond = layer.context.getManager(com.pblabs.components.input.InputManager).deviceUp.bind(function (?e :Dynamic) :Void {
 				state1.visible = true;
 				state2.visible = false;
-			}, true);
+			}).destroyOnUse();
 			
 			sm.set(mouse.key, bond);
 		});
+		return so;
+	}
+	
+	public static function createText (layer :BaseSceneLayer<Dynamic, Dynamic>, svg :ResourceToken<Dynamic>, 
+		text :String, ?align :String) :IEntity
+	{
+		var so = layer.context.createBaseSceneEntity();
+		var s1 = layer.context.allocate(SVGComponent);
+		s1.resources = cast [ svg ];
+		s1.parentProperty = layer.entityProp();
+		s1.text = text;
+		s1.svgRegexReplacements.push(new Tuple(~/\$T/, text));
+		s1.objectMask = ObjectType.NONE;
+		so.addComponent(s1);
+		
+		//Component for creating layouts
+		so.addComponent(layer.context.allocate(com.pblabs.components.minimalcomp.Component));
+		
+		so.initialize(layer.context.getManager(NameManager).validateName("text"));
 		return so;
 	}
 	

@@ -45,7 +45,6 @@ class StringUtil
 		return s == null || s == "";
 	}
 	
-	
 	public static function getFileExtension (file :String):String
 	{
 		var extensionIndex = file.lastIndexOf(".");
@@ -59,29 +58,44 @@ class StringUtil
 	 
 	public static function objectToString (obj :Dynamic, ?fields :Array<String>) :String
 	{
-		var s :StringBuf = new StringBuf();
-		try {
-			s.add("[" + ReflectUtil.tinyClassName(Type.getClass(obj)));
-			fields = fields == null ? Type.getInstanceFields(Type.getClass(obj)) : fields;
-		} catch (e :Dynamic) {
-			s.add("[undefined");
-			fields = fields == null ? [] : fields;
+		if (obj == null ) {
+			return "null";
 		}
+		var s :StringBuf = new StringBuf();
+		var clsName = "";
+		
+		var isDynamic = Reflect.fields(obj) != null && Reflect.fields(obj).length > 0;
+		
+		fields = fields == null && isDynamic ? Reflect.fields(obj) : fields;
+		try {
+			if (!isDynamic) {
+				clsName = Type.getClass(obj) != null ? ReflectUtil.tinyClassName(Type.getClass(obj)) : "Dynamic";
+				fields = fields == null && Type.getClass(obj) != null ? Type.getInstanceFields(Type.getClass(obj)) : fields;
+			}
+		} catch (e :Dynamic) {
+			clsName = "Dynamic";
+		}
+		s.add("[" + clsName);
+		
+		fields = fields == null ? [] : fields;
 		for (f in fields) {
-			s.add(", " + f + "=" + ReflectUtil.field(obj, f));
+			s.add(", " + f + "=" + (isDynamic ? Reflect.field(obj, f) : ReflectUtil.field(obj, f)));
 		}
 		s.add("]");
 		return s.toString();
 	}
 	
-	public static function stringify (obj :Dynamic, fields :Array<String>) :String
+	public static function stringify (obj :Dynamic, ?fields :Array<String>) :String
 	{
-		var s :StringBuf = new StringBuf();
-		for (f in fields) {
-			s.add(f + "=" + ReflectUtil.field(obj, f) + ", ");
+		#if js
+		try {
+			return JSON.stringify(obj);
+		} catch (e :Dynamic) {
+			return objectToString(obj, fields);
 		}
-		var str = s.toString();
-		return str.substr(0, str.length - 2);
+		#else
+		return objectToString(obj, fields);
+		#end
 	}
 	
 	 

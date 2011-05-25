@@ -32,6 +32,7 @@ enum	ContextTransition {
 	POP(c :IPBContext);
 	CHANGE(oldContext :IPBContext, newContext :IPBContext);
 	REMOVE(c :IPBContext);
+	ROLL_BACK_UNTIL(cls :Class<Dynamic>);//Must be an IPBContext
 }
 
 /**
@@ -50,8 +51,11 @@ class PBGameBase
 		return _currentContext;
 	}
 	
-	public var newActiveContextSignaler (default, null) :Signaler<IPBContext>;
-	public var activeContextRemovedSignaler (default, null) :Signaler<IPBContext>;
+	
+	public var signalContextSetup (default, null) :Signaler<IPBContext>;
+	public var signalContextShutdown (default, null) :Signaler<IPBContext>;
+	public var signalContextEnter (default, null) :Signaler<IPBContext>;
+	public var signalContextExit (default, null) :Signaler<IPBContext>;
 	var injector :Injector;
 
 	var _contexts :Array<IPBContext>;
@@ -145,6 +149,16 @@ class PBGameBase
 			if (Reflect.hasField(ctx, "setInjectorParent") || Type.getInstanceFields(type).has("setInjectorParent")) {
 				Reflect.callMethod(ctx, Reflect.field(ctx, "setInjectorParent"), [injector]);
 			}
+			//Bind the context shutdown signal to ours
+			var self = this;
+			var bond :hsl.haxe.Bond = null;
+			bond = cast(ctx, PBContext).signalDestroyed.bind(function (c :IPBContext) :Void {
+				self.callLater(function () :Void {
+					self.signalContextShutdown.dispatch(ctx);
+				});
+			}).destroyOnUse();
+			//Fire setup
+			signalContextSetup.dispatch(ctx);
 			ctx.setup();
 			
 			com.pblabs.util.Assert.isTrue(ctx.injector.getMapping(IPBContext) == ctx);
@@ -181,6 +195,11 @@ class PBGameBase
 		_contextTransitions.push(ContextTransition.REMOVE(c));
 	}
 	
+	public function rollBackUntil (c :Class<Dynamic>) :Void
+	{
+		_contextTransitions.push(ContextTransition.ROLL_BACK_UNTIL(c));
+	}
+	
 	public function callLater (f :Void->Dynamic) :Void
 	{
 		com.pblabs.util.Assert.isNotNull(f);
@@ -209,8 +228,10 @@ class PBGameBase
 		}
 		
 		#if debug
-		com.pblabs.util.Assert.isFalse(newActiveContextSignaler.isListenedTo);
-		com.pblabs.util.Assert.isFalse(activeContextRemovedSignaler.isListenedTo);
+		com.pblabs.util.Assert.isFalse(signalContextEnter.isListenedTo);
+		com.pblabs.util.Assert.isFalse(signalContextExit.isListenedTo);
+		com.pblabs.util.Assert.isFalse(signalContextSetup.isListenedTo);
+		com.pblabs.util.Assert.isFalse(signalContextShutdown.isListenedTo);
 		#end
 		
 		_managers = null;
@@ -240,7 +261,7 @@ class PBGameBase
 			c.getManager(IProcessManager).isRunning = false;
 			self._contexts.remove(c);
 			c.exit();
-			self.activeContextRemovedSignaler.dispatch(c);
+			self.signalContextExit.dispatch(c);
 			c.shutdown();
 		}
 		
@@ -253,7 +274,7 @@ class PBGameBase
 				case PUSH(c):
 					if (_currentContext != null) {
 						_currentContext.exit();
-						activeContextRemovedSignaler.dispatch(_currentContext);
+						signalContextExit.dispatch(_currentContext);
 						_currentContext = null;
 					}
 					_contexts.push(c);
@@ -281,6 +302,20 @@ class PBGameBase
 					} else {
 						_contexts.remove(c);
 					}
+				case ROLL_BACK_UNTIL(c):
+					if (_currentContext != null && Std.is(_currentContext, c)) {
+						removeCurrentContext();
+						_contexts.push(allocate(c));
+					} else {
+						while (_contexts.length > 0) {
+							var ctx = _contexts.pop();
+							ctx.shutdown();
+							if (Std.is(ctx, c)) {
+								break;
+							}
+						}
+						_contexts.push(allocate(c));
+					}
 			}
 		}
 		
@@ -290,7 +325,7 @@ class PBGameBase
 		
 		if (_currentContext != null) {
 			//Dispatch the signaller first, so that managers are notified.
-			newActiveContextSignaler.dispatch(_currentContext);
+			signalContextEnter.dispatch(_currentContext);
 			_currentContext.enter();
 			_contextProcessManager = cast _currentContext.getManager(IProcessManager);
 			_contextProcessManager.isRunning = true;
@@ -300,8 +335,10 @@ class PBGameBase
 	function init () :Void
 	{
 		//Called by the constructor.
-		newActiveContextSignaler = new DirectSignaler(this);
-		activeContextRemovedSignaler = new DirectSignaler(this);
+		signalContextEnter = new DirectSignaler(this);
+		signalContextExit = new DirectSignaler(this);
+		signalContextSetup = new DirectSignaler(this);
+		signalContextShutdown = new DirectSignaler(this);
 		_managers = Maps.newHashMap(String);
 
 		injector = createInjector();

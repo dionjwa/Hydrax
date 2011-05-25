@@ -1,4 +1,4 @@
-package js.externs.node.mime;
+package js.externs;
 /**
   * Extern for node-mime
   * https://github.com/bentomas/node-mime

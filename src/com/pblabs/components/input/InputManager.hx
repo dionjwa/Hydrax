@@ -265,10 +265,12 @@ class InputManager extends BaseInputManager,
 
 	inline function adjustDeviceLocation (m :MouseLocation) :Vector2
 	{
+		// trace('sceneView.mouseOffsetX=' + sceneView.mouseOffsetX);
 		#if (flash || cpp)
 		return new Vector2(m.globalLocation.x, m.globalLocation.y);
 		#elseif js
-		return new Vector2(m.globalLocation.x - sceneView.mouseOffsetX, m.globalLocation.y - sceneView.mouseOffsetY);
+		var offset = sceneView.mouseOffset;
+		return new Vector2(m.globalLocation.x - offset.x, m.globalLocation.y - offset.y);
 		#else
 		return new Vector2(m.x, m.y);
 		#end

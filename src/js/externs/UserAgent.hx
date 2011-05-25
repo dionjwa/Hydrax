@@ -1,4 +1,4 @@
-package js.externs.node.useragent;
+package js.externs;
 /**
   * Extern for node-user-agent
   * https://github.com/3rd-Eden/node-useragent

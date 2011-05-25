@@ -19,7 +19,6 @@ import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBGroup;
 import com.pblabs.engine.core.IPBManager;
-import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBGroup;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.debug.Profiler;
@@ -79,9 +78,6 @@ class TemplateManager
 	
 	@inject("com.pblabs.engine.resource.IResourceManager")
 	public var resourceManager :IResourceManager;
-	
-	@inject("com.pblabs.engine.core.NameManager")
-	public var nameManager :NameManager;
 	
 	/**
 	 * Defines the event to dispatch when a level file is successfully loaded.

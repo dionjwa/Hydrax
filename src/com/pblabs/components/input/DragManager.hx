@@ -341,7 +341,7 @@ class DragManager extends EntityComponent,
 			endPanning();
 		}
 		#if testing
-		js.Lib.document.getElementById("haxe:test2").innerHTML = "pan onDeviceUp: _fingersDown=" + e.touchCount + ", _isEasing=" + _isEasing + ", isPanning=" + isPanning;
+		//js.Lib.document.getElementById("haxe:test2").innerHTML = "pan onDeviceUp: _fingersDown=" + e.touchCount + ", _isEasing=" + _isEasing + ", isPanning=" + isPanning;
 		#end
 	}
 	

@@ -18,6 +18,7 @@ import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.geom.Vector2;
 
+import de.polygonal.core.math.Mathematics;
 import de.polygonal.motor2.geom.math.XY;
 
 using com.pblabs.engine.util.PBUtil;
@@ -258,5 +259,39 @@ class SceneUtil
 		
 		return rect;
 	}
+	
+	#if js
+	/**
+	  * Hacks to get the proper dimensions
+	  */
+	public static function getFullScreenDimensions (?landscape :Bool = false) :XY
+	{
+	    // trace('js.Lib.window.navigator.userAgent=' + js.Lib.window.navigator.userAgent);
+	    var screen = js.Lib.window.screen;
+		var width = screen.width;
+		var height = screen.height;
+		
+		if (landscape) {
+			width = Mathematics.max(screen.width, screen.height);
+			height = Mathematics.min(screen.width, screen.height);
+		} else {
+			width = Mathematics.min(screen.width, screen.height);
+			height = Mathematics.max(screen.width, screen.height);
+		}
+		
+		if (js.Lib.window.navigator.userAgent.indexOf("iPhone") > -1) {
+			if (js.Lib.window.navigator.userAgent.indexOf("iPhone OS 4") > -1) {
+				//Retina display, double resolution
+				width *= 2;
+				height *= 2;
+				height -= 40;
+			} else {
+				height -= 20;
+			}
+		}
+		return new Vector2(width, height);
+	}
+	#end
+	
 	
 }

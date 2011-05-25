@@ -711,9 +711,10 @@ class ProcessManager implements IProcessManager
 	var _duringAdvance :Bool;
 	
 	#if debug
+	public var name :String;
 	public function toString () :String
 	{
-	    return "_virtualTime=" + _virtualTime + 
+	    return name + "_virtualTime=" + _virtualTime + 
 	    	"\ntotalObjects=" + (_tickedObjects != null ? _tickedObjects.length : 0); 
 	    	// "\n_tickedObjects=" + _tickedObjects;
 	}

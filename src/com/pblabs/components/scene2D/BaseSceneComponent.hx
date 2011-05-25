@@ -172,7 +172,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		var coords = spatialProperty != null ? owner.getProperty(spatialProperty) : null;
 		
 		if (coords != null) {
-			#if debug
+			#if debug_hxhsl
 			var bond = bindSignal(coords.signalerLocation, setLocation);
 			bond.debugInfo = com.pblabs.util.ReflectUtil.tinyClassName(Type.getClass(this));
 			#else
@@ -195,6 +195,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 			removeFromParent();
 		}
 		//TODO: Bind scale component, not yet implemented
+		_isTransformDirty = true;
 	}
 	
 	override function onRemove () :Void

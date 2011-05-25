@@ -45,9 +45,14 @@ import com.pblabs.util.ReflectUtil;
  *			  ....
  */ 
  
- 
+typedef LogTarget = {
+	function log (msg :String) :Void;
+}
+
 class Log
- {
+{
+	// public static var traces = new Array<String->Void>();
+	
 	/** Log level constants. */
 	public static var DEBUG :Int = 0;
 	public static var INFO :Int = 1;
@@ -73,7 +78,9 @@ class Log
 	public static function getLog (moduleSpec :Dynamic) :Log
 	{
 		var module :String;
-		if (Std.is(moduleSpec, String)) {
+		if (moduleSpec == null ) {
+			module = "";
+		} else if (Std.is(moduleSpec, String)) {
 			module = cast(moduleSpec, String);
 		} else {
 			module = Type.getClassName(ReflectUtil.getClass(moduleSpec));
@@ -336,7 +343,11 @@ class Log
 			}
 		}
 		
-		return LEVEL_NAMES[level] + ":" + infos.fileName+":"+infos.lineNumber + "." +infos.methodName +"()  " + msg;
+		if (infos != null) {
+			return LEVEL_NAMES[level] + ":" + infos.fileName+":"+infos.lineNumber + "." +infos.methodName +"()  " + msg;
+		} else {
+			return LEVEL_NAMES[level] + ": " + msg;
+		}
 	}
 
 	/**
@@ -461,26 +472,31 @@ class Log
 	
 	static function debugStatic (msg :Dynamic, ?infos :PosInfos) :Void
 	{
-		var Log = getLog(infos.className);
+		var Log = getLog(validateInfosClassName(infos));
 		Log.debug(msg, null, infos);
 	}
 	
 	static function infoStatic (msg :Dynamic, ?infos :PosInfos) :Void
 	{
-		var Log = getLog(infos.className);
+		var Log = getLog(validateInfosClassName(infos));
 		Log.info(msg, null, infos);
 	}
 	
 	static function warnStatic (msg :Dynamic, ?infos :PosInfos) :Void
 	{
-		var Log = getLog(infos.className);
+		var Log = getLog(validateInfosClassName(infos));
 		Log.warn(msg, null, infos);
 	}
 	
 	static function errorStatic (msg :Dynamic, ?infos :PosInfos) :Void
 	{
-		var Log = getLog(infos.className);
+		var Log = getLog(validateInfosClassName(infos));
 		Log.error(msg, null, infos);
+	}
+	
+	inline static function validateInfosClassName(infos :PosInfos) :String
+	{
+		return infos != null ? infos.className : null;
 	}
 	
 	public static function setup () :Void
@@ -522,8 +538,9 @@ class Log
 	static var LEVEL_NAMES :Array<Dynamic> = [ "debug", "INFO", "WARN", "ERROR", false ];
 }
 
+
 #if flash
-class FlashLogTarget implements LogTarget
+class FlashLogTarget// implements LogTarget
 {
 	public function new () {}
 	public function log (msg :String) :Void

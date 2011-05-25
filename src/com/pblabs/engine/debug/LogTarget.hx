@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.engine.debug;
 
-interface LogTarget
+interface LogTarget2
 {
 	/**
 	 * Log the specified message, which is already fully formatted.

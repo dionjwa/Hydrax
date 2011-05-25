@@ -59,6 +59,11 @@ class MouseInputManager extends BaseInputManager
             untyped js.Lib.document.addEventListener("onmousedown", rootMouseListener);
             untyped js.Lib.document.addEventListener("onmouseup", rootMouseListener);
             untyped js.Lib.document.addEventListener("onclick", rootMouseListener);
+            
+            // untyped js.Lib.document.getElementById("haxeSceneView").addEventListener("onmousedown", rootMouseListener);
+            // untyped js.Lib.document.getElementById("haxeSceneView").addEventListener("onmouseup", rootMouseListener);
+            // untyped js.Lib.document.getElementById("haxeSceneView").addEventListener("onclick", rootMouseListener);
+            
         } else {
             untyped js.Lib.document.removeEventListener("onmousedown", rootMouseListener);
             untyped js.Lib.document.removeEventListener("onmouseup", rootMouseListener);
@@ -99,7 +104,8 @@ class MouseInputManager extends BaseInputManager
         mouseDown.dispatch(new MouseLocation(mouseX, mouseY, new Point(_layer.stage.mouseX, _layer.stage.mouseY)));
         #elseif js
             #if testing
-            js.Lib.document.getElementById("haxe:mouseDown").innerHTML = "manual mouseDown: (" + mouseX + ", " + mouseY + ")";
+            trace(mouseX + ", " + mouseY);
+            js.Lib.document.getElementById("haxe:mouseDown").innerHTML = "<p>manual mouseDown: (" + mouseX + ", " + mouseY + ")</p>";
             #end
         mouseDown.dispatch(new MouseLocation(mouseX, mouseY, new hsl.haxe.data.mathematics.Point(mouseX, mouseY)));
         #end

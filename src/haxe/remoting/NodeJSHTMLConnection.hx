@@ -7,14 +7,19 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package haxe.remoting;
-#if nodejs
- 
+
+#if !nodejs
+#error
+#end
+
 import haxe.remoting.Context;
 
 import js.Node;
 
 /**
   * Haxe HTTP remoting connection for node.js
+  * Used with com.pblabs.components.remoting.AsyncProxy
+  * for client and server asynchronous communications.
   */
 class NodeJSHTMLConnection
 {
@@ -24,7 +29,6 @@ class NodeJSHTMLConnection
 	{
 	    _context = ctx;
 	}
-	
 	
 	public function connect (ctx :Context) :Void
 	{
@@ -93,4 +97,3 @@ class NodeJSHTMLConnection
 		}
 	}	
 }
-#end

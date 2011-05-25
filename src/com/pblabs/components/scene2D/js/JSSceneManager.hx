@@ -37,6 +37,7 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 		}
 		return super.addLayer(layerName, cls, registerAsManager);
 	}
+	
 	override public function setLayerIndex (layer :JSLayer, index :Int) :Void
 	{
 		super.setLayerIndex(layer, index);
@@ -46,6 +47,20 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 		}
 		_rootContainer.appendChild(layer.div);
 		
+	}
+	
+	override public function attach () :Void
+	{
+		com.pblabs.util.Assert.isNotNull(sceneView);
+		com.pblabs.util.Assert.isNotNull(sceneView.layer);
+		sceneView.layer.appendChild(_rootContainer);
+	}
+	
+	override public function detach () :Void
+	{
+		if (_rootContainer.parentNode != null) {
+			_rootContainer.parentNode.removeChild(_rootContainer);
+		}
 	}
 	
 	public function onFrame (dt :Float) :Void
@@ -75,11 +90,11 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 
 		
 		_rootContainer = cast js.Lib.document.createElement("div");
-		sceneView.layer.appendChild(_rootContainer);
+		// sceneView.layer.appendChild(_rootContainer);
 		_rootContainer.style.cssText = "position:absolute";
 		#if debug
 		com.pblabs.util.Assert.isNotNull(_rootContainer);
-		com.pblabs.util.Assert.isNotNull(_rootContainer.parentNode);
+		// com.pblabs.util.Assert.isNotNull(_rootContainer.parentNode);
 		#end
 	}
 	

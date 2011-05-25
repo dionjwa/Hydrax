@@ -222,14 +222,14 @@ class SpatialComponent extends EntityComponent,
 		dispatchLocation();
 	}
 	
-	#if debug
-	#if !neko
+	#if (debug && !neko)
 	public function toString () :String
 	{
 		return "[x=" + x + ", y=" + y + ", angle=" + angle + "]";
 	}
 	#end
 	
+	#if debug_hxhsl
 	override public function postDestructionCheck () :Void
 	{
 		super.postDestructionCheck();

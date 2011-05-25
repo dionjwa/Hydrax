@@ -8,6 +8,7 @@ import com.pblabs.geom.Vector2;
 import com.pblabs.util.Comparators;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
+import com.pblabs.util.ds.maps.DynamicMap;
 import com.pblabs.util.ds.maps.SortedMap;
 
 import de.polygonal.motor2.geom.math.XY;
@@ -15,6 +16,7 @@ import de.polygonal.motor2.geom.math.XY;
 using StringTools;
 
 using com.pblabs.components.scene2D.SceneUtil;
+using com.pblabs.geom.VectorTools;
 using com.pblabs.util.StringUtil;
 using com.pblabs.util.XMLUtil;
 
@@ -60,9 +62,8 @@ class HierarchyManager extends EntityComponent,
 		svg = svg.ensureNotDocument();
 		var id = svg.get("id");
 		if (id != null && _svgAnchorCache.exists(id)) {
-			return _svgAnchorCache.get(id);
+			return deepCopy(_svgAnchorCache.get(id));
 		}
-			
 		var anchors :Map<String, XY> = new SortedMap(Maps.newHashMap(String), Comparators.compareStrings);
 		for (element in svg.elements()) {
 			if (element.nodeName.endsWith("rect")) {
@@ -81,7 +82,7 @@ class HierarchyManager extends EntityComponent,
 			_svgAnchorCache.set(id, anchors);
 		}
 		
-		return anchors;
+		return deepCopy(anchors);
 	}
 	
 	static function getAnchorIdentifier (s :BaseSceneComponent<Dynamic>) :String
@@ -124,7 +125,7 @@ class HierarchyManager extends EntityComponent,
 	{
 		var id = getAnchorIdentifier(s);
 		if (_anchors.exists(id)) {
-			return _anchors.get(id);
+			return deepCopy(_anchors.get(id));
 		}
 		
 		if (Std.is(s, SVGComponent)) {
@@ -132,17 +133,26 @@ class HierarchyManager extends EntityComponent,
 			com.pblabs.util.Assert.isNotNull(svgdisp.resources);
 			com.pblabs.util.Assert.isTrue(svgdisp.resources.length > 0);
 			_anchors.set(id, parseAnchors(Xml.parse(svgdisp.svgData[0])));
-			return _anchors.get(id);
+			return deepCopy(_anchors.get(id));
 		}
 		#if flash
 		else if (Std.is(s, com.pblabs.components.scene2D.flash.SceneComponent)) {
 			var disp :com.pblabs.components.scene2D.flash.SceneComponent = cast s;
 			_anchors.set(id, analyseDisplayObject(disp.displayObject));
-			return _anchors.get(id);
+			return deepCopy(_anchors.get(id));
 		}
 		#end
 		com.pblabs.util.Log.warn("SceneComponent does not have anchors");
 		return null;
+	}
+	
+	static function deepCopy (toCopy :Map<String, XY>) :Map<String, XY>
+	{
+		var m = new DynamicMap<XY>();
+		for (key in toCopy.keys()) {
+			m.set(key, toCopy.get(key).clone());
+		}
+		return m;
 	}
 	
 	/** Update the relative locations on every frame */	
@@ -178,29 +188,6 @@ class HierarchyManager extends EntityComponent,
 		com.pblabs.util.Assert.isNotNull(child);
 		
 		removeChild(child);
-		// #if flash
-		// var flashdisp = cast(parent, com.pblabs.components.scene2D.flash.SceneComponent);
-		// com.pblabs.util.Assert.isNotNull(flashdisp.displayObject);
-		// trace(Type.getClass(flashdisp.displayObject));
-		// com.pblabs.util.Assert.isTrue(Std.is(flashdisp.displayObject, flash.display.MovieClip));
-		// var parentDisplayType = analyseImage(cast(flashdisp.displayObject, flash.display.MovieClip));
-		
-		
-		// var link = new Link();
-		// link.child = child;
-		// link.parent = parent;
-		// link.parentDisplayType = parentDisplayType;
-		// link.childKey = childKey;
-		// link.childEntityName = child.owner.name;
-		// _links.push(link);
-		// #elseif js
-		
-		// var svgdisp = cast(parent, SVGComponent);
-		// com.pblabs.util.Assert.isNotNull(svgdisp);
-		// analyseSVG(svgdisp.resources[0].resourceId, svgdisp.svgData[0]);
-		// for (ii in 0...svgdisp.svgData.length) {
-		// 	analyseSVG(svgdisp.resources[ii].resourceId, svgdisp.svgData[ii]);
-		// }
 		var anchors = getAnchors(parent);
 		for (key in anchors.keys()) {
 			if (key.startsWith(childKey)) {
@@ -218,85 +205,8 @@ class HierarchyManager extends EntityComponent,
 		link.childEntityName = child.owner.name;
 		_links.push(link);
 		
-		// #end
 		onFrame(0);
 	}
-	
-	
-	// #if js
-	/**
-	  * Stores relative child locations. 
-	  * Only tested on Illustrator exported SVG that use symbols.
-	  */
-	// public function analyseSVG (svgId :String, svgText :String) :String
-	// {
-	// 	com.pblabs.util.Assert.isNotNull(svgId);
-	// 	com.pblabs.util.Assert.isNotNull(svgText);
-	// 	if (_anchors.exists(svgId)) {
-	// 		return svgId;
-	// 	}
-		
-	// 	var anchorData :Map<String, XY> = Maps.newHashMap(String);
-	// 	_anchors.set(svgId, anchorData);
-		
-	// 	var xml = Xml.parse(svgText);
-	// 	xml = xml.ensureNotDocument();
-	// 	var bounds = SVGComponent.parseBounds(xml);
-		
-	// 	var anchorRegex :EReg = ~/.* id="(anchor[A-Za-z_0-9]*)" .*/;
-	// 	var transformRegex :EReg = ~/.* transform="matrix\(([ \-0-9\.]*)\)" .*/;
-		
-	// 	for (line in svgText.split("\n")) {
-	// 		if (anchorRegex.match(line)) {
-	// 			var anchorName = anchorRegex.matched(1).split('_')[0]; 
-	// 			if (transformRegex.match(line)) {
-	// 				var tokens = transformRegex.matched(1).split(' ');
-	// 				var dx = Std.parseFloat(tokens[4]);
-	// 				//For some reason, Illustrator SVG exports scale the y by -1.
-	// 				var dy = -Std.parseFloat(tokens[5]);
-	// 				anchorData.set(anchorName, new Vector2(dx + bounds.intervalX / 2, dy + bounds.intervalY / 2));
-	// 			}
-	// 		}
-	// 	}
-		
-		
-		
-	// 	// for (e in xml.elements()) {
-	// 	// 	if (e.nodeName == "defs") {
-	// 	// 		// trace(e.nodeName);
-	// 	// 		if (e.get("id").startsWith("anchor")) {
-	// 	// 			// trace("  " + e.get("id"));
-	// 	// 			var transform = e.get("transform");
-	// 	// 			// matrix(1 0 0 -1 651.9678 255.9873)
-	// 	// 			var tokens = transform.replace("(", "").replace(")", "").split(" ");
-	// 	// 			var dx = Std.parseFloat(tokens[4]);
-	// 	// 			var dy = Std.parseFloat(tokens[5]);
-	// 	// 			anchorData.set(e.get("id").split("_")[0], new Vector2(dx, dy));
-	// 	// 		}
-	// 	// 	}
-	// 	// }
-		
-		
-		
-		
-	// 	// for (e in xml.elements()) {
-	// 	// 	if (e.nodeName == "use") {
-	// 	// 		// trace(e.nodeName);
-	// 	// 		if (e.get("id").startsWith("anchor")) {
-	// 	// 			// trace("  " + e.get("id"));
-	// 	// 			var transform = e.get("transform");
-	// 	// 			// matrix(1 0 0 -1 651.9678 255.9873)
-	// 	// 			var tokens = transform.replace("(", "").replace(")", "").split(" ");
-	// 	// 			var dx = Std.parseFloat(tokens[4]);
-	// 	// 			var dy = Std.parseFloat(tokens[5]);
-	// 	// 			anchorData.set(e.get("id").split("_")[0], new Vector2(dx, dy));
-	// 	// 		}
-	// 	// 	}
-	// 	// }
-		
-	// 	return svgId;
-	// }
-	// #end
 	
 	override function onRemove () :Void
 	{
@@ -331,15 +241,18 @@ class HierarchyManager extends EntityComponent,
 			trace("missing in _anchors: " + parent);
 			return null;
 		}
-		return _anchors.get(parent).get(child);
+		return _anchors.get(parent).get(child).clone();
 	}
 	
 	#if debug
 	public function toString () :String
 	{
 		var sb = new StringBuf();
-		for (key in _anchors.keys()) {
-			sb.add("\n" + key + "==>" + com.pblabs.util.ds.MapUtil.toString(_anchors.get(key)));
+		sb.add("HierarchyManager");
+		if (_anchors != null) {
+			for (key in _anchors.keys()) {
+				sb.add("\n  " + key + "==>" + com.pblabs.util.ds.MapUtil.toString(_anchors.get(key)));
+			}
 		}
 		return sb.toString();
 	}

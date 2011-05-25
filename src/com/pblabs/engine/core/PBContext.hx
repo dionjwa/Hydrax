@@ -76,6 +76,9 @@ class PBContext
 		injector = createInjector();
 		_managers = Maps.newHashMap(String);
 		_processManager = registerManager(IProcessManager, createProcessManager(), true);
+		#if debug
+		cast(_processManager, ProcessManager).name = this.name;
+		#end
 		registerManager(IPBContext, this, true);
 		_tempPropertyInfo = new PropertyInfo();
 		signalObjectAdded = new DirectSignaler(this);
@@ -137,6 +140,10 @@ class PBContext
 		var i = _objectPool != null ? _objectPool.get(type) : Type.createInstance(type, EMPTY_ARRAY);
 		#end
 		Assert.isNotNull(i, "allocated'd instance is null, type=" + type);
+		
+		#if debug
+		com.pblabs.util.Assert.isFalse(Std.is(i, IPBContext), "You are forbidden to allocate IPBContexts from IPBContexts, use the PBGame");
+		#end
 		//Components get injected by the entity.  The reason is that a component may get
 		//added, but removed before properly initializing. This means that the component
 		//will not get unregister called, and thus may not clear the inject fields, resulting
@@ -257,7 +264,6 @@ class PBContext
 		
 		_processManager.shutdown();
 		
-		
 		rootGroup = null;
 		_currentGroup = null;
 		_processManager = null;
@@ -266,13 +272,11 @@ class PBContext
 		injector = null;
 		_tempPropertyInfo = null;
 		
-		#if (debug && !neko)
-		// var sigs :Array<Signaler<Dynamic>> = cast [signalEnter, signalExit, signalDestroyed];
+		#if (debug_hxhsl && !neko)
 		var sigs :Hash<Signaler<Dynamic>> = new Hash();
 		sigs.set("signalEnter", signalEnter);
 		sigs.set("signalExit", signalExit);
 		sigs.set("signalDestroyed", signalDestroyed);
-		// cast [signalEnter, signalExit, signalDestroyed];
 		//Delay check.
 		var self = this;
 		haxe.Timer.delay(function () :Void {
@@ -286,7 +290,7 @@ class PBContext
 				}
 				com.pblabs.util.Assert.isFalse(sig.isListenedTo, self.name);
 			}
-		}, 30);
+		}, 60);
 		#end
 	}
 	

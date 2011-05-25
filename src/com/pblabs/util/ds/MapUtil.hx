@@ -68,15 +68,17 @@ class MapUtil
 	}
 	
 	// #if debug
-	public static function toString(map :MapType) :String 
+	public static function toString(map :MapType, ?sep :String = ":", ?stringifyValues :Bool = false) :String 
 	{
 		var s = new StringBuf();
-		s.add("Map {");
+		s.add("{");
 		var it = map.keys();
 		for(i in it) {
 			s.add(StringUtil.getStringKey(i));
-			s.add(" => ");
+			s.add(sep);
+			if (stringifyValues) s.add("'");
 			s.add(StringUtil.getStringKey(map.get(i)));
+			if (stringifyValues) s.add("'");
 			if( it.hasNext() )
 				s.add(", ");
 		}

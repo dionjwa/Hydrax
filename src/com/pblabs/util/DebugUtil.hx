@@ -208,6 +208,6 @@ class DebugUtil
 	
 	static function extendedDisplayObjectName (d :DisplayObject) :String
 	{
-		return d + ".name=" + d.name + "  loc=" + d.x + " " + d.y + " size " + d.width + " " + d.height;
+		return d + ".name=" + d.name + "  loc=" + d.x + " " + d.y + " size " + d.width + " " + d.height + " alpha=" + d.alpha;
 	}
 }

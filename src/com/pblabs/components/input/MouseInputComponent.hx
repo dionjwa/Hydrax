@@ -75,7 +75,7 @@ class MouseInputComponent extends EntityComponent
 			if (bond != null) {
 				bond.destroy();
 			}
-		}, true);
+		}).destroyOnUse();
 		
 		return mouse;
 	}

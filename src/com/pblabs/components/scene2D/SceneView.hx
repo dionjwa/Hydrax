@@ -6,17 +6,29 @@
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
-#if !nodejs
 package com.pblabs.components.scene2D;
+
 import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.PBObject;
+import com.pblabs.geom.Vector2;
 import com.pblabs.util.Preconditions;
 
+import de.polygonal.core.math.Mathematics;
+import de.polygonal.motor2.geom.math.XY;
+
+using StringTools;
 #if js
 import js.Dom;
 #end
 
-using StringTools;
+#if js
+#end
+
+#if js
+#end
+
+#if js
+#end
 
 /**
  * This class represents a root rendering and input surface.
@@ -34,8 +46,13 @@ using StringTools;
 class SceneView 
 	implements IPBManager, implements haxe.rtti.Infos
 {
+	public var maxWidth (get_maxWidth, set_maxWidth) :Int;
+	var _maxWidth :Int;
+	public var maxHeight (get_maxHeight, set_maxHeight) :Int;
+	var _maxHeight :Int;
 	public var height(get_height, set_height) : Int;
 	public var width(get_width, set_width) : Int;
+	public var fullScreen :Bool;
 
 	#if (flash || cpp)	
 	public var layer (get_layer, null) :flash.display.Sprite;
@@ -45,8 +62,8 @@ class SceneView
 	var _layer :HtmlDom;
 	public var layerId (get_layerId, set_layerId) :String;
 	var _layerId :String;
-	public var mouseOffsetX (get_mouseOffsetX, never) :Float;
-	public var mouseOffsetY (get_mouseOffsetY, never) :Float;
+	public var mouseOffset (get_mouseOffset, never) :XY;
+	// public var mouseOffsetY (get_mouseOffsetY, never) :Float;
 	#end
 	
 	var _height :Int;
@@ -58,15 +75,16 @@ class SceneView
 	public function new (?width :Int = 0, ?height :Int = 0)
 	#end
 	{
+		#if js
 		_width = width;
 		_height = height;
-	   
-		#if js
-		_layerId = layerId;
-		if (_layerId == null) {
-			//Default div id
-			_layerId = "haxe:screen";
-		}
+		fullScreen = true;
+		_maxWidth = 960;
+		_maxHeight = 640;
+		// if (_layerId == null) {
+		//Default div id
+		layerId = "haxeSceneView";
+		// }
 		#elseif (flash || cpp)
 		_layer = new flash.display.Sprite();
 		_layer.mouseChildren = false;
@@ -105,7 +123,14 @@ class SceneView
 
 	function set_height (value :Int):Int
 	{
+		#if js
+		_height = Mathematics.min(value, maxHeight);
+		if (_layer != null) {
+			_layer.style.height = _height + "px";
+		}
+		#else
 		_height = value;
+		#end
 		return value;
 	}
 
@@ -116,8 +141,39 @@ class SceneView
 
 	function set_width (value :Int):Int
 	{
+		#if js
+		_width = Mathematics.min(value, maxWidth);
+		if (_layer != null) {
+			_layer.style.width = _width + "px";
+		}
+		#else
 		_width = value;
+		#end
 		return value;
+	}
+	
+	function get_maxWidth () :Int
+	{
+		return _maxWidth;
+	}
+	
+	function set_maxWidth (val :Int) :Int
+	{
+		_maxWidth = val;
+		width = Mathematics.min(width, _maxWidth); 
+		return val;
+	}
+	
+	function get_maxHeight () :Int
+	{
+		return _maxHeight;
+	}
+	
+	function set_maxHeight (val :Int) :Int
+	{
+		_maxHeight = val;
+		height = Mathematics.min(height, _maxHeight);
+		return val;
 	}
 
 	#if (flash || cpp)
@@ -163,18 +219,30 @@ class SceneView
 	}
 	#end
 	
-	#if (js && !nodejs)
+	#if js
 	function get_layer () :js.HtmlDom
 	{
 		Preconditions.checkArgument(_layer != null || _layerId != null, "Attempting to access the root layer, but no layerId was provided. _layerId=" + _layerId);
 		if (_layer == null) {
 			Preconditions.checkNotNull(_layerId, "no layer, and layerId is null");
 			_layer = cast js.Lib.document.getElementById(_layerId);
-			_width = Std.parseInt(_layer.style.width.replace("px",""));
-			_height = Std.parseInt(_layer.style.height.replace("px",""));
+			
+			// if (fullScreen) {
+			// 	var dim = SceneUtil.getFullScreenDimensions(true);
+			// 	width = Std.int(dim.x);
+			// 	height = Std.int(dim.y);
+			// } else {
+				//Get the dimensions from the div
+				//?
+				_width = Std.parseInt(_layer.style.width.replace("px", ""));
+				_height = Std.parseInt(_layer.style.height.replace("px", ""));
+			// }
 			#if debug
 			_layer.style.borderColor = "#0000ff";
-			_layer.style.borderWidth = "1px";
+			var border = 3;
+			_layer.style.borderWidth = border + "px";
+			width -= border * 2;
+			height -= border * 2;
 			#end
 		}
 		com.pblabs.util.Assert.isNotNull(_layer, "Could not find HTML element with id=" + _layerId);
@@ -199,16 +267,23 @@ class SceneView
 		return val;
 	}
 	
-	function get_mouseOffsetX () :Float
+	function get_mouseOffset () :XY
 	{
-		return layer.offsetLeft + Std.parseFloat(_layer.style.borderWidth) * 2;
+		#if js
+		var os :{top:Float, left:Float} = new JQuery("#" + layerId).offset();
+		var v = new Vector2(os.left, os.top);
+		v.x += Std.parseFloat(_layer.style.borderWidth);
+		v.y += Std.parseFloat(_layer.style.borderWidth);
+		// trace('v=' + v);
+		return v;
+		// trace(new JQuery("#" + layerId).offset());
+		#end
+		// return layer.offsetLeft + Std.parseFloat(_layer.style.borderWidth) * 2;
 	}
 	
-	function get_mouseOffsetY () :Float
-	{
-		return layer.offsetTop + Std.parseFloat(_layer.style.borderWidth) * 2;
-	}
+	// function get_mouseOffsetY () :Float
+	// {
+	// 	return layer.offsetTop + Std.parseFloat(_layer.style.borderWidth) * 2;
+	// }
 	#end
 }
-
-#end
