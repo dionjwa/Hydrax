@@ -21,3 +21,4 @@ src/AllClasses.hx
 lib/canvg/examples
 lib/canvg/svgs
 lib/canvg/test
+lib/as3svgrenderlib

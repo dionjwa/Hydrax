@@ -23,12 +23,7 @@ class AlphaComponent extends NotifyingValueComponent
 		super();
 		_value = 1;
 	}
- 
-	public function toString () :String
-	{
-		return "Alpha=" + alpha; 
-	}
-
+	
 	override function onRemove():Void
 	{
 		super.onRemove();
@@ -44,5 +39,12 @@ class AlphaComponent extends NotifyingValueComponent
 	{
 		return super.set_value(val);
 	}
+	
+	#if debug
+	override public function toString () :String
+	{
+		return "Alpha=" + alpha; 
+	}
+	#end
 }
 

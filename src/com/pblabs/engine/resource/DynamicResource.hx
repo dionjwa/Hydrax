@@ -111,7 +111,6 @@ class DynamicResource extends ResourceBase<Dynamic>
 			self.loaded();
 		}
 		
-		
 		com.pblabs.util.EventDispatcherUtil.addOnceListener(loader, flash.events.Event.COMPLETE, onComplete);
 		loader.addEventListener(flash.events.IOErrorEvent.IO_ERROR, onLoadError);
 		loader.addEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, onLoadError);

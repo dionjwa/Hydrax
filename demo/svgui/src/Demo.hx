@@ -10,6 +10,7 @@ import com.pblabs.components.scene2D.ImageComponent;
 import com.pblabs.components.scene2D.SVGComponent;
 import com.pblabs.components.scene2D.SceneAlignment;
 import com.pblabs.components.scene2D.SceneUtil;
+import com.pblabs.components.scene2D.SvgCache;
 import com.pblabs.components.tasks.AngleTask;
 import com.pblabs.components.tasks.LocationTask;
 import com.pblabs.components.tasks.RepeatingTask;
@@ -54,11 +55,15 @@ class Demo
 		game.getManager(IResourceManager).addResource(new com.pblabs.engine.resource.EmbeddedResource());
 		
 		//Add the embedded resources
-		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/anchors.svg", "anchors");
+		// com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/anchors.svg", "anchors");
+		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/squad_selector.svg", "anchors");
+		
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/button_01.svg", "button");
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/button_01_down.svg", "button_down");
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/icon.svg", "button_icon");
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/text_center.svg", "text");
+		
+		
 		// com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/text_left.svg", "text");
 		// com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/text_right.svg", "text");
 		
@@ -68,10 +73,10 @@ class Demo
 	
 	function startGame () :Void
 	{
-		var context = game.allocate(PBContext);
-		game.pushContext(context);
+		var context :PBContext = game.pushContext(PBContext);
 		var scene = context.addSingletonComponent(SceneUtil.MANAGER_CLASS);
 		scene.sceneAlignment = SceneAlignment.TOP_LEFT;
+		// scene.sceneView.layer.parent.removeChild(scene.sceneView.layer);
 		#if flash
 		var layer :BaseSceneLayer<Dynamic, Dynamic> = scene.addLayer();
 		#elseif js
@@ -81,11 +86,12 @@ class Demo
 		// var layer :BaseSceneLayer<Dynamic, Dynamic> = scene.addLayer(null, com.pblabs.components.scene2D.js.canvas.SceneLayer);
 		#end
 		
+		context.registerManager(SvgCache, new SvgCache());
 		//The hierarchy manager
-		var hm = context.addSingletonComponent(HierarchyManager);
+		var hm :HierarchyManager = context.addSingletonComponent(HierarchyManager);
 		
 		//Create some widget that is automatically placed relative
-		var uiblob = SceneUtil.createBaseSceneEntity(context);
+		var uiblob = SceneUtil.createBaseSceneEntity(cast context);
 		var c = context.allocate(SVGComponent);
 		c.objectMask = ObjectType.NONE;
 		c.resources = [EmbeddedResource.token("anchors")];
@@ -96,11 +102,13 @@ class Demo
 		var svg3 = EmbeddedResource.token("button_icon");
 		var svgtext = EmbeddedResource.token("text");
 		
-		// c.parentProperty = layer.entityProp();
-		// uiblob.addComponent(c);
-		// uiblob.initialize("uilblob");
-		// uiblob.setLocation(uiblob.getWidth() / 2 + 30, uiblob.getHeight() / 2);
-		// c.visible = true;
+		c.parentProperty = layer.entityProp();
+		uiblob.addComponent(c);
+		uiblob.initialize("uilblob");
+		// c.removeFromParent();
+		// c.addToParent();
+		uiblob.setLocation(uiblob.getWidth() / 2 + 30 + 300, uiblob.getHeight() / 2);
+		c.visible = true;
 		
 		
 		
@@ -114,15 +122,14 @@ class Demo
 		// var button3 = layer.createTwoStateSVGButton([svg1], [svg2], "testButton", function () :Void {}, "Button 3", "!CLICKED");
 		// hm.setAsChild(c, "anchor3", button3.getComponent(BaseSceneComponent));
 		
-		var button3 = layer.createText(svgtext, "testButtonfockmen");
+		// var button3 = layer.createText(svgtext, "testButtonfockmen");
 		
-		#if flash
-		drawGrid(flash.Lib.current.graphics, 100);
-		#end
-		button3.setLocation(200, 200);
-		// trace('button3.getComponentByType(SVGComponent)=' + button3.getComponentByType(SVGComponent));
-		// button3.getComponentByType(SVGComponent).scale = 5;
+		// #if flash
+		// drawGrid(flash.Lib.current.graphics, 100);
+		// #end
 		// hm.setAsChild(c, "anchor3", button3.getComponent(BaseSceneComponent));
+		
+		// c.owner.addTask(LocationTask.CreateLinear(c.x + 100, c.y + 100, 5));
 	}
 	
 	public static function main() 

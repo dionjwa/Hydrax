@@ -65,7 +65,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	}
 	
 	#if debug
-	public function toString () :String
+	override public function toString () :String
 	{
 		return com.pblabs.util.StringUtil.objectToString(this, ["x", "y", "width", "height"]);
 	}
@@ -82,15 +82,15 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		com.pblabs.util.Assert.isNotNull(image, "Image loaded from " + resource + " is null");
 		com.pblabs.util.Assert.isNotNull(image, "null image for " + resource);
 		if (Std.is(image, flash.display.BitmapData)) {
-			_displayObject = new flash.display.Bitmap(cast(image, flash.display.BitmapData));
+			displayObject = new flash.display.Bitmap(cast(image, flash.display.BitmapData));
 			_registrationPoint.x = _displayObject.width / 2;
 			_registrationPoint.y = _displayObject.height / 2;
 		} else if (Std.is(image, flash.display.Bitmap)) {
-			_displayObject = cast image;
+			displayObject = cast image;
 			_registrationPoint.x = _displayObject.width / 2;
 			_registrationPoint.y = _displayObject.height / 2;
 		} else if (Std.is(image, flash.display.DisplayObject)) {
-			_displayObject = cast image;
+			displayObject = cast image;
 		} else {
 			com.pblabs.util.Log.error("Unrecognized image type=" + com.pblabs.util.ReflectUtil.getClassName(image)); 
 		}

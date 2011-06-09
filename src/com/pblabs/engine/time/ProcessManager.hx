@@ -18,6 +18,10 @@ import com.pblabs.engine.time.ITickedObject;
 import com.pblabs.util.MathUtil;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.ds.Tuple;
+
+import de.polygonal.ds.Prioritizable;
+import de.polygonal.ds.PriorityQueue;
+
 using com.pblabs.util.NumberUtil;
 
 /** 
@@ -34,9 +38,6 @@ using com.pblabs.util.NumberUtil;
  * @see IAnimatedObject
  */
 class ProcessManager implements IProcessManager
-// #if cpp
-// 	,implements haxe.rtti.Infos
-// #end
 {
 	/**
 	 * Integer identifying this frame. Incremented by one for every frame.
@@ -120,8 +121,8 @@ class ProcessManager implements IProcessManager
 		timeScale = 1.0;
 		_lastTime = -1.0;
 		_elapsed = 0;
-		_animatedObjects = [];
-		_tickedObjects = [];
+		_animatedObjects = new PriorityQueue();
+		_tickedObjects = new PriorityQueue();
 		_deferredCallbacks = [];
 		_deferredObjects = [];
 		_needPurgeEmpty = false;
@@ -135,15 +136,15 @@ class ProcessManager implements IProcessManager
 		#end
 	}
 	
-	public function startup():Void
-	{
-	}
-	
 	public function shutdown():Void
 	{
 		stop();
-		_animatedObjects = [];
-		_tickedObjects = [];
+		
+		_animatedObjects.free();
+		_tickedObjects.free();
+		_animatedObjects = null;
+		_tickedObjects = null;
+		
 		_deferredCallbacks = [];
 		_deferredObjects = [];
 		_isRunning = false;
@@ -153,9 +154,13 @@ class ProcessManager implements IProcessManager
 	  * Defer a function until after objects are ticked and animated for the 
 	  * current update loop.
 	  */
-	public function callLater (f :Void->Dynamic) :Void
+	public function callLater(f:Void->Dynamic, ?frames :Int = 1):Void
 	{
-		_deferredCallbacks.push(f);
+		if (_deferredCallbacks[frames - 1] == null) {
+			_deferredCallbacks[frames - 1] = [];
+		}
+		_deferredCallbacks[frames - 1].push(f);
+		// _deferredCallbacks.push(f);
 	}
 	
 	/**
@@ -234,9 +239,16 @@ class ProcessManager implements IProcessManager
 	 * (first-processed) priority is Math.POSITIVE_INFINITY. The lowest (last-processed) 
 	 * priority is -Math.POSITIVE_INFINITY.
 	 */
-	public function addAnimatedObject(object:IAnimatedObject, ?priority:Float = 0.0):Void
+	public function addAnimatedObject(object:IAnimatedObject, ?priority:Int = 0):Void
 	{
-		addObject(object, priority, _animatedObjects, false);
+		com.pblabs.util.Log.debug("Adding animated object=" + object);
+		if(_duringAdvance) {
+			com.pblabs.util.Log.debug("adding to deferred");
+			_deferredObjects.push(new Tuple(object, priority));
+			return;
+		}
+		_animatedObjects.enqueue(new ProcessObjectAnimated(object, priority));
+		// addObject(object, priority, _animatedObjects, false);
 	}
 	
 	/**
@@ -248,9 +260,18 @@ class ProcessManager implements IProcessManager
 	 * (first-processed) priority is Math.POSITIVE_INFINITY. The lowest (last-processed) 
 	 * priority is -Math.POSITIVE_INFINITY.
 	 */
-	public function addTickedObject(object:ITickedObject, ?priority:Float = 0.0):Void
+	public function addTickedObject(object :ITickedObject, ?priority:Int = 0):Void
 	{
-		addObject(object, priority, _tickedObjects, true);
+		com.pblabs.util.Log.debug("Adding ticked object=" + object);
+		if(_duringAdvance) {
+			com.pblabs.util.Log.debug("adding to deferred");
+			_deferredObjects.push(new Tuple(object, priority));
+			return;
+		}
+		_tickedObjects.enqueue(new ProcessObjectTicked(object, priority));
+		
+		// addObject(object, priority, _tickedObjects, true);
+		// com.pblabs.util.Log.debug("  after adding, _tickedObjects=" + _tickedObjects); 
 	}
 	
 	/**
@@ -258,11 +279,17 @@ class ProcessManager implements IProcessManager
 	 * 
 	 * @param object The object to remove.
 	 */
-	public function removeAnimatedObject(object:IAnimatedObject):Void
+	public function removeAnimatedObject(object :IAnimatedObject):Void
 	{
 		if (!removeFromDeferredObjects(object)) {
-			removeObject(object, _animatedObjects);
+			for (processObject in _animatedObjects) {
+				if (processObject.listener == object) {
+					 _animatedObjects.remove(processObject);
+					 break;
+				}
+			}
 		}
+		// com.pblabs.util.Log.debug("after removal, _animatedObjects=" + _animatedObjects.);
 	}
 	
 	/**
@@ -272,9 +299,21 @@ class ProcessManager implements IProcessManager
 	 */
 	public function removeTickedObject(object:ITickedObject):Void
 	{
+		com.pblabs.util.Log.debug(object);
+		com.pblabs.util.Log.debug("current _tickedObjects=" + _tickedObjects);
 		if (!removeFromDeferredObjects(object)) {
-			removeObject(object, _tickedObjects);
+			for (processObject in _tickedObjects) {
+				if (processObject.listener == object) {
+					 _tickedObjects.remove(processObject);
+					 break;
+				}
+			}
 		}
+		com.pblabs.util.Log.debug("after removal, tickedObjects=" + _tickedObjects);
+		
+		// if (!removeFromDeferredObjects(object)) {
+		// 	removeObject(object, _tickedObjects);
+		// }
 	}
 	
 	/**
@@ -303,7 +342,7 @@ class ProcessManager implements IProcessManager
 	 */
 	function get_listenerCount():Int
 	{
-		return _tickedObjects.length + _animatedObjects.length;
+		return _tickedObjects.size() + _animatedObjects.size();
 	}
 	
 	/**
@@ -312,97 +351,109 @@ class ProcessManager implements IProcessManager
 	 * @param priority Priority; this is used to keep the list ordered.
 	 * @param list List to add to.
 	 */
-	function addObject(object:Dynamic, priority:Float, list:Array<Dynamic>, isTickedObject :Bool):Void
-	{
-		// If we are in a tick, defer the add.
-		if(_duringAdvance)
-		{
-			_deferredObjects.push(new Tuple(object, priority));
-			return;
-		}
+	// function addObject(object:Dynamic, priority:Int, objectList:Array<Dynamic>, isTickedObject :Bool):Void
+	// {
+	// 	// If we are in a tick, defer the add.
+	// 	com.pblabs.util.Log.debug("addObject " + object + ", _duringAdvance=" + _duringAdvance + ", isTickedObject=" + isTickedObject);
+	// 	com.pblabs.util.Log.debug('objectList=' + objectList);
+	// 	com.pblabs.util.Log.debug('(objectList == _tickedObjects)=' + (objectList == _tickedObjects));
 		
-		var position:Int = -1;
-		for (i in 0...list.length)
-		{
-			if(!list[i])
-				continue;
+	// 	objectList = isTickedObject ? cast _tickedObjects : cast _animatedObjects;
+	// 	com.pblabs.util.Log.debug('(objectList == _tickedObjects)=' + (objectList == _tickedObjects));
+		
+	// 	if(_duringAdvance)
+	// 	{
+	// 		com.pblabs.util.Log.debug("adding to deferred");
+	// 		_deferredObjects.push(new Tuple(object, priority));
+	// 		return;
+	// 	}
+		
+	// 	var position:Int = -1;
+	// 	for (i in 0...objectList.length)
+	// 	{
+	// 		if(!objectList[i])
+	// 			continue;
 			
-			if (list[i].listener == object)
-			{
-				com.pblabs.util.Log.warn("This object has already been added to the process manager.");
-				return;
-			}
+	// 		if (objectList[i].listener == object)
+	// 		{
+	// 			com.pblabs.util.Log.warn("This object has already been added to the process manager.");
+	// 			return;
+	// 		}
 			
-			if (list[i].priority < priority)
-			{
-				position = i;
-				break;
-			}
-		}
+	// 		if (objectList[i].priority < priority)
+	// 		{
+	// 			position = i;
+	// 			break;
+	// 		}
+	// 	}
 		
-		//Code duplication, but this way it's typed.
-		if (isTickedObject) {
-			var processObject = new ProcessObjectTicked();
-			processObject.listener = object;
-			processObject.priority = priority;
-			#if profiler
-			processObject.profilerKey = ReflectUtil.getClassName(object);
-			#end
+	// 	//Code duplication, but this way it's typed.
+	// 	if (isTickedObject) {
+	// 		var processObject = new ProcessObjectTicked();
+	// 		processObject.listener = object;
+	// 		processObject.priority = priority;
+	// 		#if profiler
+	// 		processObject.profilerKey = ReflectUtil.getClassName(object);
+	// 		#end
 			
-			if (position < 0 || position >= list.length)
-				list.push(processObject);
-			else
-				list.insert(position, processObject);
-		} else {
-			var processObject = new ProcessObjectAnimated();
-			processObject.listener = object;
-			processObject.priority = priority;
-			#if profiler
-			processObject.profilerKey = ReflectUtil.getClassName(object);
-			#end
+	// 		if (position < 0 || position >= objectList.length) {
+	// 			objectList.push(processObject);
+	// 		} else {
+	// 			objectList.insert(position, processObject);
+	// 		}
+	// 		com.pblabs.util.Log.debug("Adding to objectList=" + objectList);
+	// 	} else {
+	// 		var processObject = new ProcessObjectAnimated();
+	// 		processObject.listener = object;
+	// 		processObject.priority = priority;
+	// 		#if profiler
+	// 		processObject.profilerKey = ReflectUtil.getClassName(object);
+	// 		#end
 			
-			if (position < 0 || position >= list.length)
-				list.push(processObject);
-			else
-				list.insert(position, processObject);
-		}
+	// 		if (position < 0 || position >= objectList.length) {
+	// 			objectList.push(processObject);
+	// 		} else {
+	// 			objectList.insert(position, processObject);
+	// 		}
+	// 		com.pblabs.util.Log.debug("Adding to objectList=" + objectList);
+	// 	}
 		
+	// 	com.pblabs.util.Log.debug(" objectList=" + objectList);
 		
-		
-	}
+	// }
 	
 	/**
 	 * Peer to addObject; removes an object from a list. 
 	 * @param object Object to remove.
 	 * @param list List from which to remove.
 	 */
-	function removeObject(object:Dynamic, list:Array<Dynamic>):Void
-	{
-		com.pblabs.util.Assert.isNotNull(object, com.pblabs.util.Log.getStackTrace());
+	// function removeObject(object:Dynamic, objectList:Array<Dynamic>):Void
+	// {
+	// 	com.pblabs.util.Assert.isNotNull(object, com.pblabs.util.Log.getStackTrace());
 		
-		if (listenerCount == 1 && _deferredCallbacks.length == 0) {
-			com.pblabs.util.Log.debug("Stopping because listener count == 1 and no _deferredCallbacks");	
-			stop();
-		}
+	// 	if (listenerCount == 1 && _deferredCallbacks[0] == null) {//|| .length == 0
+	// 		com.pblabs.util.Log.debug("Stopping because listener count == 1 and no _deferredCallbacks");	
+	// 		stop();
+	// 	}
 		
-		for (i in 0...list.length) {
-			if(list[i] == null)
-				continue;
+	// 	for (i in 0...objectList.length) {
+	// 		if(objectList[i] == null)
+	// 			continue;
 			
-			if (list[i].listener == object) {
-				if(_duringAdvance) {
-					list[i] = null;
-					_needPurgeEmpty = true;
-				} else {
-					list.splice(i, 1);
-				}
+	// 		if (objectList[i].listener == object) {
+	// 			if(_duringAdvance) {
+	// 				objectList[i] = null;
+	// 				_needPurgeEmpty = true;
+	// 			} else {
+	// 				objectList.splice(i, 1);
+	// 			}
 				
-				return;
-			}
-		}
+	// 			return;
+	// 		}
+	// 	}
 		
-		com.pblabs.util.Log.info(ReflectUtil.getClassName(object) + " " + object + ": object has not been added to the process manager.\n" + com.pblabs.util.Log.getStackTrace());
-	}
+	// 	com.pblabs.util.Log.info(ReflectUtil.getClassName(object) + " " + object + ": object has not been added to the process manager.\n" + com.pblabs.util.Log.getStackTrace());
+	// }
 	
 	/**
 	 * Main callback; this is called every frame and allows game Logic to run. 
@@ -471,6 +522,7 @@ class ProcessManager implements IProcessManager
 	  */
 	function advanceInternal (deltaTime :Float, ?suppressSafety:Bool = false):Void
 	{
+		com.pblabs.util.Log.debug("advanceInternal, dt=" + deltaTime);
 		// #if nodejs
 		// trace(_virtualTime);
 		// // trace(js.Node.util.inspect(js.Node.process.memoryUsage()));
@@ -499,9 +551,9 @@ class ProcessManager implements IProcessManager
 			
 			_duringAdvance = true;
 			var object :ProcessObjectTicked;
-			for(j in 0..._tickedObjects.length)
+			for(object in _tickedObjects)
 			{
-				object = _tickedObjects[j];
+				// object = _tickedObjects[j];
 				if(object == null)
 					continue;
 				
@@ -549,8 +601,8 @@ class ProcessManager implements IProcessManager
 		_duringAdvance = true;
 		_interpolationFactor = _elapsed / MS_PER_TICK;
 		var animatedObject :ProcessObjectAnimated;
-		for(i in 0..._animatedObjects.length) {
-			animatedObject = _animatedObjects[i];
+		for(animatedObject in _animatedObjects) {
+			// animatedObject = _animatedObjects[i];
 			if(animatedObject == null)
 				continue;
 			
@@ -582,35 +634,37 @@ class ProcessManager implements IProcessManager
 			
 		// Pump the call later queue.
 		com.pblabs.engine.debug.Profiler.enter("callLater_postFrame");
-		while (_deferredCallbacks.length > 0) {
-			_deferredCallbacks.pop()();
+		var deferred = _deferredCallbacks.shift();
+		while (deferred != null && deferred.length > 0) {
+			deferred.pop()();
 		}
 		com.pblabs.engine.debug.Profiler.exit("callLater_postFrame");
 		
 		// Purge the lists if needed.
 		if(_needPurgeEmpty)
 		{
-			_needPurgeEmpty = false;
-			
 			com.pblabs.engine.debug.Profiler.enter("purgeEmpty");
+			_needPurgeEmpty = false;
+			_animatedObjects.pack();
+			_tickedObjects.pack();
 			
-			var j :Int = 0;
-			while (j < _animatedObjects.length) {
-				if(_animatedObjects[j] != null) {
-					j++;
-					continue;
-				}
-				_animatedObjects.splice(j, 1);
-			}
+			// var j :Int = 0;
+			// while (j < _animatedObjects.size()) {
+			// 	if(_animatedObjects[j] != null) {
+			// 		j++;
+			// 		continue;
+			// 	}
+			// 	_animatedObjects.splice(j, 1);
+			// }
 			
-			j = 0;
-			while (j < _tickedObjects.length) {
-				if(_tickedObjects[j] != null) {
-					j++;
-					continue;
-				}
-				_tickedObjects.splice(j, 1);
-			}
+			// j = 0;
+			// while (j < _tickedObjects.size()) {
+			// 	if(_tickedObjects[j] != null) {
+			// 		j++;
+			// 		continue;
+			// 	}
+			// 	_tickedObjects.splice(j, 1);
+			// }
 			com.pblabs.engine.debug.Profiler.exit("purgeEmpty");
 		}
 		
@@ -662,11 +716,14 @@ class ProcessManager implements IProcessManager
 	
 	function removeFromDeferredObjects (object :Dynamic) :Bool
 	{
+		com.pblabs.util.Log.debug(object);
 		if (_deferredObjects.length == 0) {
+			com.pblabs.util.Log.debug("No deferredObjects to remove " + object);
 			return false;
 		}
 		for (tup in _deferredObjects) {
 			if (tup.v1 == object) {
+				com.pblabs.util.Log.debug("Found and removing from _deferredObjects :" + object); 
 				_deferredObjects.remove(tup);
 				return true;
 			}
@@ -702,11 +759,11 @@ class ProcessManager implements IProcessManager
 	var _interpolationFactor :Float;
 	var _lastTime :Float;
 	var _elapsed :Int;
-	var _animatedObjects:Array<ProcessObjectAnimated>;
-	var _tickedObjects:Array<ProcessObjectTicked>;
+	var _animatedObjects:PriorityQueue<ProcessObjectAnimated>;
+	var _tickedObjects:PriorityQueue<ProcessObjectTicked>;
 	var _needPurgeEmpty:Bool;
-	var _deferredCallbacks :Array<Void->Dynamic>;
-	var _deferredObjects :Array<Tuple<Dynamic, Float>>;
+	var _deferredCallbacks :Array<Array<Void->Dynamic>>;
+	var _deferredObjects :Array<Tuple<Dynamic, Int>>;
 	var _frameCounter :Int;
 	var _duringAdvance :Bool;
 	
@@ -715,8 +772,8 @@ class ProcessManager implements IProcessManager
 	public function toString () :String
 	{
 	    return name + "_virtualTime=" + _virtualTime + 
-	    	"\ntotalObjects=" + (_tickedObjects != null ? _tickedObjects.length : 0); 
-	    	// "\n_tickedObjects=" + _tickedObjects;
+	    	" _tickedObjects=" + (_tickedObjects != null ? _tickedObjects.size() : 0) +
+	    	" _animatedObjects=" + (_animatedObjects != null ? _animatedObjects.size() : 0);
 	}
 	#end
 	
@@ -734,38 +791,43 @@ class ProcessManager implements IProcessManager
 }
 
 class ProcessObjectTicked
+	implements Prioritizable
 {
-	public function new () 
+	public function new (listener :ITickedObject, ?priority :Int = 0)
 	{
 		#if profiler
 		profilerKey = null;
 		#end
-		priority = 0.0;
-		listener = null;
+		this.priority = priority;
+		this.listener = listener;
+		position = 0;
 	}
 	
 	#if profiler
 	public var profilerKey :String;
 	#end
 	public var listener :ITickedObject;
-	public var priority :Float;
+	public var priority :Int;
+	public var position:Int;
 	
 	#if debug
 	public function toString () :String
 	{
-	    return "\n" + com.pblabs.util.ReflectUtil.tinyClassName(Type.getClass(listener)) + " " + Std.string(listener);
+	    return "ProcessObjectTicked[" + Std.string(listener) + "]";
 	}
 	#end
 }
 
 class ProcessObjectAnimated
+	implements Prioritizable
 {
-	public function new () 
+	public function new (listener :IAnimatedObject, ?priority :Int = 0) 
 	{
 		#if profiler
 		profilerKey = null;
 		#end
-		priority = 0.0;
+		this.priority = priority;
+		this.listener = listener;
 		listener = null;
 	}
 	
@@ -773,12 +835,13 @@ class ProcessObjectAnimated
 	public var profilerKey :String;
 	#end
 	public var listener :IAnimatedObject;
-	public var priority :Float;
+	public var priority :Int;
+	public var position:Int;
 	
 	#if debug
 	public function toString () :String
 	{
-	    return Std.string(listener);
+	    return "ProcessObjectAnimated[" + Std.string(listener) + "]";
 	}
 	#end
 }

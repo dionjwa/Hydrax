@@ -70,6 +70,9 @@ class MapUtil
 	// #if debug
 	public static function toString(map :MapType, ?sep :String = ":", ?stringifyValues :Bool = false) :String 
 	{
+		if (map == null) {
+			return "null";
+		}
 		var s = new StringBuf();
 		s.add("{");
 		var it = map.keys();

@@ -45,7 +45,7 @@ class Predicates
 	}
 
 	/**
-	 * A predicate that tests for items that are not null (or undefined).
+	 * A predicate that tests for items that are not null.
 	 */
 	public static function notNull (item :Dynamic) :Bool
 	{

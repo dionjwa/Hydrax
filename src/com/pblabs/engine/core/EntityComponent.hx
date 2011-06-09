@@ -175,6 +175,11 @@ class EntityComponent
   	  //Subclasses override
   }
   var debugOwnerName :String;
+  
+  public function toString () :String
+  {
+      return com.pblabs.util.ReflectUtil.tinyClassName(Type.getClass(this)) + key;
+  }
   #end
   
   @editorData({ignore :"true"})

@@ -26,10 +26,11 @@
  * along with this library.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.pblabs.util;
+
 import com.pblabs.util.ArrayUtil;
 
-import mathx.MersenneTwister;
-import mathx.RandomGenerator;
+import de.polygonal.core.math.random.PRNG;
+import de.polygonal.core.math.random.ParkMiller;
 
 class Rand
 {
@@ -37,6 +38,7 @@ class Rand
 	
 	inline public static var STREAM_GAME :Int = 0;
 	inline public static var STREAM_COSMETIC :Int = 1;
+	public static var DEFAULT_PRNG_CLASS :Class<Dynamic> = ParkMiller;
 
 	/** The compiler doesn't like constant defined function default arguments */
 	inline public static var STREAM_UNSPECIFIED :Int = 0xffffff;//==MathUtil.UINT32_MAX;
@@ -47,16 +49,19 @@ class Rand
 	 * streams in sync.
 	 */
 	public static var errorOnUnspecifiedStreamId :Bool = false;
+	
+	// We always have the STREAM_GAME and STREAM_COSMETIC streams
+	static var _randStreams :Array<PRNG> = cast [ new ParkMiller(), new ParkMiller() ];
 
 	/** Adds a new random stream, and returns its streamId. */
-	public static function addStream (?seed :Int = 0) :Int
+	public static function addStream (?seed :Int = 0, ?generator :PRNG) :Int
 	{
-		_randStreams.push(new MersenneTwister(seed));
+		_randStreams.push(generator != null ? generator : Type.createInstance(DEFAULT_PRNG_CLASS, [seed]));
 		return (_randStreams.length - 1);
 	}
 
 	/** Returns the Random object associated with the given streamId. */
-	public static function getStream (?streamId :Int = 0xffffff) :MersenneTwister
+	public static function getStream (?streamId :Int = 0xffffff) :PRNG
 	{
 		if (streamId == STREAM_UNSPECIFIED) {
 			if (errorOnUnspecifiedStreamId) {
@@ -84,20 +89,27 @@ class Rand
 	/** Returns an integer in the range [0, MAX) */
 	public static function nextInt (?streamId :Int = 0xffffff) :Int
 	{
-		return getStream(streamId).nextInt();
+		return getStream(streamId).randInt();
 	}
 
 	/** Returns an int in the range [min, max] */
 	public static function nextIntInRange (min :Int, max :Int, ?streamId :Int = 0xffffff) :Int
 	{
 		// return min + getStream(streamId).nextInt() % (max - min + 1);
-		return min + getStream(streamId).nextInt(max - min + 1);
+		// trace("getting stream");
+		// trace('getStream(streamId)=' + getStream(streamId));
+		// trace('(max - min + 1)=' + (max - min + 1));
+		// var val = min + getStream(streamId).nextInt(max - min + 1);
+		// trace("returning " + val);
+		// return val;
+		return getStream(streamId).randIntRange(min, max);
+		// return min + getStream(streamId).nextInt(max - min + 1);
 	}
 
 	/** Returns a Boolean. */
 	public static function nextBoolean (?streamId :Int = 0xffffff) :Bool
 	{
-		return getStream(streamId).nextBool();
+		return getStream(streamId).randIntRange(0, 1) > 0;//nextBool();
 	}
 
 	/**
@@ -112,13 +124,14 @@ class Rand
 	/** Returns a Number in the range [0.0, 1.0) */
 	public static function nextFloat (?streamId :Int = 0xffffff) :Float
 	{
-		return getStream(streamId).nextFloat();
+		return getStream(streamId).randDouble();
 	}
 
 	/** Returns a Number in the range [low, high) */
 	public static function nextFloatInRange (low :Float, high :Float, ?streamId :Int = 0xffffff) :Float
 	{
-		return low + (getStream(streamId).nextFloat() * (high - low));
+		return getStream(streamId).randDoubleRange(low, high);
+		// return low + (getStream(streamId).nextFloat() * (high - low));
 	}
 
 	/** Randomizes the order of the elements in the given Array, in place. */
@@ -130,9 +143,6 @@ class Rand
 	/** Returns a float that has a 50% change of haivng it's sign shuffled */
 	public static function nextSign (val :Float, ?streamId :Int = 0xffffff) :Float
 	{
-		return getStream(streamId).nextBool() ? val : val * -1;
+		return nextBoolean(streamId) ? val : val * -1;
 	}
-
-	// We always have the STREAM_GAME and STREAM_COSMETIC streams
-	static var _randStreams :Array<MersenneTwister> = [ new MersenneTwister(), new MersenneTwister() ];
 }

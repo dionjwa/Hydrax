@@ -66,8 +66,8 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		}
 		if (isOnCanvas) {
 		} else {
-			com.pblabs.util.Assert.isNotNull(parent);
-			if (isTransformDirty) {
+			// com.pblabs.util.Assert.isNotNull(parent);
+			if (parent != null && isTransformDirty) {
 				updateTransform();
 				//TODO: switch depending on browser
 				untyped div.style.webkitTransform = _transformMatrix.toString();
@@ -97,7 +97,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		
 		if (isOnCanvas) {
 		} else {
-			layer.div.appendChild(div);
+			cast(layer, JSLayer).div.appendChild(div);
 			com.pblabs.util.Assert.isNotNull(div.parentNode);
 		}
 	}
@@ -118,7 +118,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 	override function set_isTransformDirty (val :Bool) :Bool
 	{
 		if (val && layer != null) {
-			layer.isDirty = true;
+			cast(layer, JSLayer).isDirty = true;
 		}
 		return super.set_isTransformDirty(val);
 	}

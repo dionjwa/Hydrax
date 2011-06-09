@@ -121,7 +121,7 @@ class BitmapRenderer extends com.pblabs.components.scene2D.flash.SceneComponent,
 	static var zeroPoint = new Point();
 	
 	#if debug
-	public function toString () :String
+	override public function toString () :String
 	{
 		return com.pblabs.util.StringUtil.objectToString(this, ["x", "y", "width", "height"]);
 	}

@@ -91,7 +91,7 @@ class Tuple <V1, V2>
 	#if debug
 	public function toString () :String
 	{
-		return "[" + v1 + ", " + v2 + "]";
+		return "[_hashCode=" + _hashCode + ", " + v1 + ", " + v2 + "]";
 	}
 	#end
 	

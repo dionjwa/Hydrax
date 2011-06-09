@@ -12,12 +12,13 @@ import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.time.IProcessManager;
-import com.pblabs.util.MathUtil;
 
-using com.pblabs.util.XMLUtil;
+import de.polygonal.core.math.Mathematics;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
+
+using com.pblabs.util.XMLUtil;
 
 class HealthComponent extends EntityComponent,
 	implements ISerializable
@@ -96,7 +97,7 @@ class HealthComponent extends EntityComponent,
 	function set_health (value :Float):Float
 	{
 		// Clamp the amount of damage.
-		value = MathUtil.fclamp(value, 0, healthMax);
+		value = Mathematics.fclamp(value, 0, healthMax);
 		
 		// Notify via a HealthEvent.
 		_tempPrevHealth = _health;
@@ -199,7 +200,7 @@ class HealthComponent extends EntityComponent,
 	var _timeOfLastDamage :Float;
 	var _cachedHealthEvent :HealthEvent;
 	
-	#if debug_hxhsl
+	#if debug
 	override public function postDestructionCheck () :Void
 	{
 		super.postDestructionCheck();
@@ -215,7 +216,7 @@ class HealthComponent extends EntityComponent,
 	}
 	#end
 	#if (debug || editor)
-	public function toString () :String
+	override public function toString () :String
 	{
 		return "Health=" + health + " / " + healthMax; 
 	}
@@ -262,5 +263,3 @@ class HealthEvent
 		return amount == 0;
 	}
 }
-
-

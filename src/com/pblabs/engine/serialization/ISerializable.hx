@@ -12,8 +12,6 @@
  ******************************************************************************/
 package com.pblabs.engine.serialization;
 
-import com.pblabs.engine.core.IPBContext;
-
 /**
   * Not yet moved from flash XML processing
   * Hopefully the performance of Xml is on par with flash.xml.XML

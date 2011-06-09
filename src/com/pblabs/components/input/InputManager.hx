@@ -146,14 +146,14 @@ class InputManager extends BaseInputManager,
 		if (context.isLive && context.getManager(IProcessManager) != null) {
 			context.getManager(IProcessManager).removeAnimatedObject(this);
 		}
-		_sceneManagers = null;
-		clearInputDataCache();
 	}
 	
 	override function onNewContext () :Void
 	{
 		super.onNewContext();
 		context.getManager(IProcessManager).addAnimatedObject(this);
+		_sceneManagers = null;
+		clearInputDataCache();
 	}
 	
 	function getSceneManagers () :Array<BaseSceneManager<Dynamic>>

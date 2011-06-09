@@ -150,6 +150,37 @@ class PBMacros
 	}
 	
 	/**
+	  */
+	@:macro 
+	public static function buildPropertiesClass(resourceId :String) 
+	{
+		var pos = haxe.macro.Context.currentPos();
+		
+		var p = function (d :ExprDef) :Expr {
+			return {expr :d, pos :pos};
+		}
+		
+		var data = haxe.Resource.getString(resourceId);
+		var fields = [];
+		
+		for (l in data.split("\n")) {
+			var line = l.trim();
+			if (line.startsWith("#") || line == "") {
+				continue;
+			}
+			var tokens = line.split("=");
+			var id = tokens.shift();
+			var val = tokens.join("=");
+			var tString = TPath({ pack : [], name : "String", params : [], sub : null });
+			var eval = p(EConst(haxe.macro.Constant.CString(val)));
+			var evar  = { name : "public__static__" + id, type : tString, expr : eval};
+			fields.push(p(EVars([evar])));
+		}
+		
+		return { expr : EBlock(fields), pos : pos };
+	}
+	
+	/**
 	  * Embed a binary resource at compile time, but specified in code rather than in the *hxml file.
 	  *
 	  * Returns the haxe.Resource key.
@@ -184,58 +215,28 @@ class PBMacros
 		return { expr : EConst(CString(resourceId)), pos : pos };
 	}
 	
-	// /**
-	//   * Builds all methods from implemented interfaces for a class extending 
-	//   * net.amago.components.remoting.AsyncProxy
-	//   */
-	// @:macro
-	// public static function addAsyncProxyMethods()
-	// {
-	// 	var pos = Context.currentPos();
-	// 	var clsType = haxe.macro.Context.getLocalClass().get();
-		
-	// 	var e = function (d :ExprDef) :Expr {
-	// 		return {expr :d, pos :pos};
-	// 	}
-		
-	// 	var functionRegex : EReg = ~/^[ \t]*function[ \t]*.*/;
-	// 	var interfaceFunctionExprs = [];
-		
-	// 	for (d in clsType.interfaces) {
-	// 		var interfaceName = d.t.get().pack.join("/") + "/" + d.t.get().name + ".hx";
-	// 		var path = Context.resolvePath(interfaceName);
-	// 		for (line in neko.io.File.getContent(path).split("\n")) {
-	// 			if (functionRegex.match(line)) {
-	// 				var parserCompatibleLine = line.replace("Void;", "Void {}");
-	// 				var functionExpr = Context.parse(parserCompatibleLine, pos);
-	// 				switch(functionExpr.expr) {
-	// 					case EFunction(f): 
-	// 						var name = f.name;
-	// 						var functionArgsForReturnCall = new Array<String>();
-	// 						var callBackName :String = null;
-	// 						for (arg in f.args) {
-	// 							switch(arg.type) {
-	// 								case TFunction(args, ret)://Ignore the callbacks
-	// 								callBackName = arg.name;
-	// 								default: //add the rest
-	// 								functionArgsForReturnCall.push(arg.name);
-	// 							}
-	// 						}
-						
-	// 						var exprStr = '_conn.resolve("' + name + '").call([' + 
-	// 							functionArgsForReturnCall.join(", ") + ']' + (callBackName != null ? ', ' + callBackName: "") + ')';
-							
-	// 							var functionBlock = ExprDef.EBlock([
-	// 							haxe.macro.Context.parse(exprStr, pos)
-	// 						]);
-	// 						Reflect.setField(Reflect.field(f, "expr"), "expr", functionBlock); 
-	// 						interfaceFunctionExprs.push(functionExpr);
-	// 					default: haxe.macro.Context.warning("Should not be here", pos);
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// 	return { expr : EBlock(interfaceFunctionExprs), pos : pos };
-	// }
-	
+	/**
+	  * Embeds all the resources from a resources.xml file, in the format:
+	  * <resources>
+	  *      <svg id="SCENERY_BACKGROUND_02" url="rsrc/scenery/background_02.svg"/>
+	  *      <svg id="UI_BUTTON_01" url="rsrc/ui/button_01.svg"/>
+	  *      <svg id="UI_BUTTON_01_DOWN" url="rsrc/ui/button_01_down.svg"/>
+	  *      <svg id="UI_BUTTON_02" url="rsrc/ui/button_02.svg"/>
+	  *  </resources>
+	  */
+	@:macro
+	public static function embedResourceXml(resourceXmlPath :String)
+	{
+		var pos = haxe.macro.Context.currentPos();
+		var xml = Xml.parse(neko.io.File.getContent(resourceXmlPath));
+		for (resources in xml.elementsNamed("resources")) {
+			for (e in resources.elements()) {
+				var bytes = neko.io.File.getBytes(e.get("url"));
+				haxe.macro.Context.addResource(e.get("id"), bytes);
+				
+			}
+		}
+		//I have to return something?  
+		return { expr :EConst(CString("null")), pos : pos };
+	}
 }

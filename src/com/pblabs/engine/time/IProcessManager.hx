@@ -12,8 +12,6 @@
  ******************************************************************************/
 package com.pblabs.engine.time;
 
-import com.pblabs.engine.core.IPBManager;
-
 /**
  * The process manager manages all time related functionality in the engine.
  * It provides mechanisms for performing actions every frame, every tick, or
@@ -28,7 +26,7 @@ import com.pblabs.engine.core.IPBManager;
  * @see ITickedObject
  * @see IAnimatedObject
  */
-interface IProcessManager implements IPBManager
+interface IProcessManager
 {
 	/**
 	 * The amount of time that has been processed by the process manager. This does
@@ -58,7 +56,7 @@ interface IProcessManager implements IPBManager
 	 * (first-processed) priority is Number.MAX_VALUE. The lowest (last-processed) 
 	 * priority is -Number.MAX_VALUE.
 	 */
-	function addAnimatedObject(object:IAnimatedObject, ?priority:Float = 0.0):Void;
+	function addAnimatedObject(object:IAnimatedObject, ?priority:Int = 0):Void;
 
 	/**
 	 * Unregisters an object from receiving frame callbacks.
@@ -76,7 +74,7 @@ interface IProcessManager implements IPBManager
 	 * (first-processed) priority is Number.MAX_VALUE. The lowest (last-processed) 
 	 * priority is -Number.MAX_VALUE.
 	 */
-	function addTickedObject(object:ITickedObject, ?priority:Float = 0.0):Void;
+	function addTickedObject(object:ITickedObject, ?priority:Int = 0):Void;
 
 	/**
 	 * Unregisters an object from receiving tick callbacks.
@@ -91,6 +89,9 @@ interface IProcessManager implements IPBManager
 	 * this way.
 	 * @param method Function to call.
 	 * @param args Any arguments.
+	 * @param frames The number of frames to delay, default to 1.
 	 */
-	function callLater(method:Void->Dynamic):Void;
+	function callLater(method:Void->Dynamic, ?frames :Int = 1):Void;
+	
+	function shutdown () :Void;
 }

@@ -20,20 +20,21 @@ using Lambda;
 class SetMultiMap<K, V> extends AbstractMultiMap<K, V>,
 	implements MultiMap<K, V>
 {
-	public static function create <K, V>(keyClass :Class<Dynamic>) :SetMultiMap<K, V>
+	public static function create <K, V>(keyClass :Class<Dynamic>, ?valueClass :Class<Dynamic>) :SetMultiMap<K, V>
 	{
-		return new SetMultiMap<K, V>(keyClass);
+		return new SetMultiMap<K, V>(keyClass, valueClass);
 	}
 	
 	var _map :Map<K, Set<V>>;
 	var _keyClass :Class<Dynamic>;
 	var _valueClass :Class<Dynamic>;
 	
-	public function new (keyClass :Class<Dynamic>)
+	public function new (keyClass :Class<Dynamic>, ?valueClass :Class<Dynamic> = null)
 	{
 		super();
 		_map = Maps.newHashMap(keyClass);
 		_keyClass = keyClass;
+		_valueClass = valueClass;
 	}
 	
 	override public function set (key :K, value :V) :Void

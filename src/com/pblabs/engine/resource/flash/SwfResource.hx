@@ -22,6 +22,7 @@ import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
 using com.pblabs.util.EventDispatcherUtil;
+using Lambda;
 
 class SwfResource extends ResourceBase<Dynamic> 
 {
@@ -70,6 +71,7 @@ class SwfResource extends ResourceBase<Dynamic>
 		switch (_source) {
 			case url (u) :loadFromUrl(u);
 			case bytes (b) :loadFromBytes(b);
+			case embedded (name) :loadFromEmbedded(name);
 			default :
 				com.pblabs.util.Log.error("Resource source type not handled :" + _source);
 		}
@@ -110,6 +112,30 @@ class SwfResource extends ResourceBase<Dynamic>
 
 		context.applicationDomain = ApplicationDomain.currentDomain;
 		_loader.loadBytes(bytes.getData(), context);
+	}
+	
+	/**
+	  * Embedded here is either an embedded swf using the compiler --resource command,
+	  * where the swf is then embedded as bytes, or when the swf is compiled as a binary lump
+	  * in another swf that is then compiled in using the -swflib compiler command 
+	  * (creating classes of all the embedded resources).
+	  */
+	function loadFromEmbedded (id :String) :Void
+	{
+		//Check haxe embedded resources first
+		if (haxe.Resource.listNames().has(id)) {
+			loadFromBytes(haxe.Resource.getBytes(id));
+			return;
+		}
+		var cls :Class<Dynamic> = com.pblabs.engine.resource.EmbeddedResource.resolveEmbeddedClassName(id);
+		if (cls == null) {
+			if (_onError != null) {
+				_onError("No embedded class: " + id);
+			}
+			return;
+		}
+		//It's a ByteArray/Asset
+		loadFromBytes(haxe.io.Bytes.ofData(Type.createInstance(cls, com.pblabs.util.Constants.EMPTY_ARRAY)));
 	}
 	
 	override public function unload () :Void

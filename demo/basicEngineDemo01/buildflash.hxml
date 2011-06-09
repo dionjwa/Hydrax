@@ -1,7 +1,7 @@
 #build file
 -D debug
 
--lib hydrax
+# -lib hydrax
 
 -cp src
 
@@ -11,14 +11,17 @@
 -main Demo
 
 #For local testing
-# -lib IterTools
-# -lib ArrayTools
-# -lib ListTools
-# -lib feffects
+-lib IterTools
+-lib ArrayTools
+-lib ListTools
+-lib feffects
+-lib hsl-1
 
-# -cp ../../../hydrax/src
+-cp ../../../hydrax/src
 # -cp ../../../hydrax/lib/hsl
 # -cp ../../../hydrax/lib/hsl-pico
-# -cp ../../../libdamago/lib/polygonal/src/lib
+-cp ../../../libdamago/lib/polygonal/src/lib
+
+-D debug_hxhsl
 
 

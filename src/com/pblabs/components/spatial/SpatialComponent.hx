@@ -223,13 +223,13 @@ class SpatialComponent extends EntityComponent,
 	}
 	
 	#if (debug && !neko)
-	public function toString () :String
+	override public function toString () :String
 	{
 		return "[x=" + x + ", y=" + y + ", angle=" + angle + "]";
 	}
 	#end
 	
-	#if debug_hxhsl
+	#if debug
 	override public function postDestructionCheck () :Void
 	{
 		super.postDestructionCheck();

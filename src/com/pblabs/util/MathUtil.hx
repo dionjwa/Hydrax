@@ -56,12 +56,6 @@ class MathUtil
 		return (x < min) ? min : (x > max) ? max : x;
 	}
 	
-	/** Clamps a number to the interval &#091;<i>min</i>,<i>max</i>&#093; so <i>min</i> <= <i>x</i> <= <i>max</i>. */
-	inline public static function fclamp(x:Float, min:Float, max:Float):Float
-	{
-		return (x < min) ? min : (x > max) ? max : x;
-	}
-	
 	/** Fast replacement for Math.floor(<i>x</i>). */
 	inline public static function floor(x:Float):Int
 	{

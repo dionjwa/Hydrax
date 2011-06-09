@@ -22,9 +22,6 @@ using com.pblabs.util.StringUtil;
  * names. These IPBObjects can be looked up by name.
  */
 class NameManager
-// #if cpp
-// 	implements haxe.rtti.Infos
-// #end
 {
 	public function new() 
 	{ 
@@ -159,4 +156,11 @@ class NameManager
 	}
 	
 	var _objects :Map<String, IPBObject>;
+	
+	#if debug
+	public function toString () :String
+	{
+	    return "NameManager=" + com.pblabs.util.ds.MapUtil.toString(_objects);
+	}
+	#end
 }

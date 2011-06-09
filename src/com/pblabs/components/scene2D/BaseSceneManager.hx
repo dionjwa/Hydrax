@@ -19,9 +19,9 @@ import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.util.PBUtil;
 import com.pblabs.geom.Rectangle;
 import com.pblabs.geom.Vector2;
-import com.pblabs.util.MathUtil;
 import com.pblabs.util.Preconditions;
 
+import de.polygonal.core.math.Mathematics;
 import de.polygonal.motor2.geom.math.XY;
 
 using com.pblabs.engine.core.SignalBondManager;
@@ -178,12 +178,16 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 				if (layer.children != null) {
 					for (c in layer.children) {
 						if (Std.is(c, IAnimatedObject)) {
+							
 							cast(c, IAnimatedObject).onFrame(0);
 						}
 					}
 				}
 			}
 		}
+		#if flash
+		flash.Lib.current.stage.invalidate();
+		#end
 	}
 
 	function isLayer (name :String) :Bool
@@ -353,7 +357,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	function set_zoom (value :Float) :Float
 	{
 		// Make sure our zoom level stays within the desired bounds
-		value = MathUtil.fclamp(value, zoomMin, zoomMax);
+		value = Mathematics.fclamp(value, zoomMin, zoomMax);
 		if (_zoom == value) {
 			return _zoom;
 		}
@@ -389,7 +393,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	static var EMPTY_ARRAY :Array<Dynamic> = [];
 	
 	#if (debug || editor)
-	public function toString () :String
+	override public function toString () :String
 	{
 		return owner != null ? owner.name :name;
 	}

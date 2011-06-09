@@ -86,12 +86,12 @@ class Entity extends PBObject,
 				
 				//Add the timed components here rather than forcing
 				//each implementing class to add itself.
-				
+				com.pblabs.util.Log.debug("Is pc.item=" + pc.item + " a ITickedObject?: " + Std.is(pc.item, ITickedObject));  
 				if (Std.is(pc.item, ITickedObject)) {
 					_context.processManager.addTickedObject(cast(pc.item));
 				}
 				
-				
+				com.pblabs.util.Log.debug("Is pc.item=" + pc.item + " a IAnimatedObject?: " + Std.is(pc.item, IAnimatedObject));
 				if (Std.is(pc.item, IAnimatedObject)) {
 					_context.processManager.addAnimatedObject(cast(pc.item));
 				}

@@ -25,6 +25,12 @@ class SceneLayer extends JSLayer,
 	public var canvas (default, null) :Canvas;
 	public var ctx (default, null) :Context2d;
 	
+	// public var graphics (get_graphics, never) :flash.display.Graphics;
+	// function get_graphics () :
+	// {
+	// 	return _graphics;
+	// }
+	
 	public function new ()
 	{
 		super();

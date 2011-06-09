@@ -30,6 +30,9 @@ package com.pblabs.util;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 
+#if nodejs
+import js.Node;
+#end
 /**
  * Contains useful static function for performing operations on Strings.
  */
@@ -89,7 +92,7 @@ class StringUtil
 	{
 		#if js
 		try {
-			return JSON.stringify(obj);
+			return js.externs.JSON.stringify(obj);
 		} catch (e :Dynamic) {
 			return objectToString(obj, fields);
 		}

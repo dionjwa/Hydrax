@@ -23,11 +23,6 @@ class ScaleComponent extends NotifyingValueComponent
 		_value = 1;//Scale default
 	}
 	
-	public function toString () :String
-	{
-		return "Scale=" + scale; 
-	}
-	
 	function get_scale () :Float
 	{
 		return super.get_value();
@@ -37,4 +32,11 @@ class ScaleComponent extends NotifyingValueComponent
 	{
 		return super.set_value(val);
 	}
+	
+	#if debug
+	override public function toString () :String
+	{
+		return "Scale=" + scale; 
+	}
+	#end
 }

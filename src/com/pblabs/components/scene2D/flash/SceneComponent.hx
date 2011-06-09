@@ -14,13 +14,14 @@ import com.pblabs.util.Preconditions;
 import de.polygonal.core.math.Mathematics;
 
 import flash.display.DisplayObject;
+import flash.display.Sprite;
 
 import flash.geom.Matrix;
 
 using com.pblabs.engine.util.PBUtil;
 using com.pblabs.util.ArrayUtil;
-using com.pblabs.util.MathUtil;
 using com.pblabs.util.DisplayUtils;
+using com.pblabs.util.MathUtil;
 
 class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	implements com.pblabs.engine.time.IAnimatedObject
@@ -152,7 +153,8 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	
 	function set_displayObject (d :DisplayObject) :DisplayObject
 	{
-		Preconditions.checkArgument(_displayObject == null && !isRegistered);
+		// Preconditions.checkArgument(_displayObject == null && !isRegistered);
+		Preconditions.checkArgument(parent == null);
 		_displayObject = d;
 		recomputeBounds();
 		// _width = _displayObject.width;

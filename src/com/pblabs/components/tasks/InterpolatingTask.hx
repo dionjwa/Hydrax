@@ -9,12 +9,12 @@
 
 package com.pblabs.components.tasks;
 
-import com.pblabs.util.MathUtil;
+import com.pblabs.components.tasks.IEntityTask;
+import com.pblabs.engine.core.IEntity;
+
+import de.polygonal.core.math.Mathematics;
 
 import feffects.easing.Linear;
-
-import com.pblabs.engine.core.IEntity;
-import com.pblabs.components.tasks.IEntityTask;
 
 class InterpolatingTask implements IEntityTask 
 {
@@ -49,7 +49,7 @@ class InterpolatingTask implements IEntityTask
 		if (duration <= 0) {
 			return b;
 		}
-		t = MathUtil.fclamp(t, 0, duration);
+		t = Mathematics.fclamp(t, 0, duration);
 		return easingFn(t, a, (b - a), duration);
 	}
 
@@ -57,5 +57,3 @@ class InterpolatingTask implements IEntityTask
 	var _elapsedTime :Float;
 	var _easingFn :Float->Float->Float->Float->Float;
 }
-
-

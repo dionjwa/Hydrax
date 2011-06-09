@@ -87,7 +87,7 @@ class BitmapCacheResource extends ResourceBase<ImageData>
 					bm.bitmapData = null;
 					_cache.set(name, bd);
 				}
-			} catch (e :Dynamic) {//Fail gracefully, ie return a defualt DisplayObject
+			} catch (e :Dynamic) {//Fail gracefully, ie return a default DisplayObject
 				com.pblabs.util.Log.info("No resource from " + name + ", subsituting red blob");
 				var bd = new flash.display.BitmapData(120, 30, true);
 				bd.floodFill(0, 0, com.pblabs.util.GraphicsUtil.toARGB(0xff0000, 0));

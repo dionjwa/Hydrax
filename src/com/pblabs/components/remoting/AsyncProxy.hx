@@ -4,12 +4,13 @@ package com.pblabs.components.remoting;
   * std haxe.remoting.AsyncProxy, where only the client uses callbacks, thus
   * the server must return the function result immediately.
   *
-  * This is problematic for 'servers' whose functions being called require callbacks.
+  * This is problematic for 'servers' where the called functioned does not return 
+  * immediately.
   * Examples:
   * Node.js, where most functions are designed to use callbacks.
   * Flash->JS facebook API
   *
-  * It's up to the Connection class to sync the callbacks from both ends. 
+  * It's up to the subclass to sync the callbacks from both ends. 
   */
 @:autoBuild(com.pblabs.components.remoting.Macros.addAsyncProxyMethods())
 class AsyncProxy 

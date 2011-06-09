@@ -9,7 +9,8 @@
 package com.pblabs.util;
 
 import com.pblabs.util.EqualableUtil;
-import mathx.RandomGenerator;
+
+import de.polygonal.core.math.random.RNG;
 
 /**
  * Contains methods operating on Arrays that understand the 
@@ -59,9 +60,12 @@ class ArrayUtil
 	 *
 	 * @param rando a random number generator to use, or null if you don't care.
 	 */
-	public static function shuffle (arr :Array<Dynamic>, rando :RandomGenerator = null) :Void
+	public static function shuffle (arr :Array<Dynamic>, rando :RNG = null) :Void
 	{
-		var randFunc = rando != null ? rando.nextInt :
+		var randFunc = rando != null ? 
+			function (n :Int) :Int {
+				return rando.randIntRange(0, n); 
+			}:
 			function (n :Int) :Int {
 				return Std.int(Math.random() * n);
 			};

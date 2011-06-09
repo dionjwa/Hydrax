@@ -1,6 +1,7 @@
 #build file
 -D debug
 -lib hydrax
+-lib jQueryExtern
 
 -cp src
 --remap flash:jeash

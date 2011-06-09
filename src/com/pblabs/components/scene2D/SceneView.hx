@@ -21,15 +21,6 @@ using StringTools;
 import js.Dom;
 #end
 
-#if js
-#end
-
-#if js
-#end
-
-#if js
-#end
-
 /**
  * This class represents a root rendering and input surface.
  * Most games will only ever have one SceneView, but it's 
@@ -95,7 +86,12 @@ class SceneView
 			// _layer.width = width;
 			// _layer.height = height;
 		}
-		#end		
+		#end
+		
+		#if cpp
+		height = Std.int(nme.Lib.stage.height);
+		width = Std.int(nme.Lib.stage.width);
+		#end
 		
 	}
 	

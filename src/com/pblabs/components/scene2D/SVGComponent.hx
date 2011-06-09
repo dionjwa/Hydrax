@@ -52,7 +52,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	#end
 	/** The IResources */
 	/** Load the svg(s) as a raw strings.  They're inserted in the dom, or parsed and rendered to the canvas. */
-	public var resources :Array<ResourceToken<String>>;
+	public var resources :Array<ResourceToken<Dynamic>>;
 	public var svgData (get_svgData, set_svgData) :Array<String>;
 	var _svgData :Array<String>;
 	var _svgDataUnmodified :Array<String>;
@@ -77,12 +77,13 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			#end
 			var svgXml = Xml.parse(_svgData[ii]).ensureNotDocument();
 			var b = parseBounds(svgXml);
+			// trace('b=' + b);
 			_individualBounds.push(b);
 			
 			//Parse the first image for anchor elements, and only use the first element for mouse bounds
 			if (ii == 0) {
 				boundsUnion.addAABB(b);
-				_relativeTransforms = HierarchyManager.parseAnchors(svgXml).array();
+				_relativeTransforms = SvgCache.parseAnchors(svgXml).array();
 				_relativeTransforms.unshift(new Vector2());
 			} else if (_relativeTransforms[ii] != null) {
 				_relativeTransforms[ii].x -= b.intervalX / 2;
@@ -93,15 +94,28 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		registrationPoint.x = boundsUnion.intervalX / 2;
 		registrationPoint.y = boundsUnion.intervalY / 2;
 		_unscaledBounds = boundsUnion;
+		// trace('registrationPoint=' + registrationPoint);
+		// trace('_unscaledBounds=' + _unscaledBounds);
 		_bounds = _unscaledBounds.clone();
 		
 		#if (flash || cpp)
 		_displayObject.removeAllChildren();
+		/**
+		  * svgweb will stop rendering if an Event.REMOVED_FROM_STAGE event
+		  * is fired.  This is super annoying, as if you create an SVGComponent,
+		  * and then detach it (to reattach it later), the svg will *never* finish
+		  * rendering (even if you reattach it to the state).
+		  */
+		
+		// var svgSprites = [];
 		for (ii in 0...svgData.length) {
 			var svgString = svgData[ii];
 			//Transform it
 			var svg = new org.svgweb.SVGViewerFlash();
+			// svgSprites.push(svg);
 			cast(_displayObject, flash.display.Sprite).addChild(svg);
+			// var intermediateLayer = new flash.display.Sprite();
+			// intermediateLayer.addChild(svg);
 			svg.xml = new flash.xml.XML(svgString);
 			if (ii > 0) {
 				var v = _relativeTransforms[ii];
@@ -111,13 +125,29 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 				}
 			}
 			var self = this;
+			// trace("adding listener for render complete");
+			var finishedRendering = false;
+			var removedFromState = function (e :Dynamic) :Void {
+				if (!finishedRendering) {
+					throw "If the svg.displayObject is removed from the stage before rendering is complete, the rendering will never finish";
+				}
+			} 
+			_displayObject.addEventListener(flash.events.Event.REMOVED_FROM_STAGE, removedFromState);
+			
 			com.pblabs.util.EventDispatcherUtil.addOnceListener(svg.svgRoot, org.svgweb.events.SVGEvent.SVGLoad, 
-			function (ignored :Dynamic) :Void {
-				self.renderCompleteSignal.dispatch();
-			});
+				function (ignored :Dynamic) :Void {
+					finishedRendering = true;
+					self._displayObject.removeEventListener(flash.events.Event.REMOVED_FROM_STAGE, removedFromState);
+					self.recomputeBounds();
+					self.renderCompleteSignal.dispatch();
+				});
 		}
+		com.pblabs.util.DebugUtil.drawDot(cast _displayObject, 0xff0000, 30);
+		com.pblabs.util.DebugUtil.fillBoundingRect(cast _displayObject, cast _displayObject);
+		//TODO: Is the js renderer asynchronous???
+		renderCompleteSignal.dispatch();
+		#else
 		#end
-		
 		return val;
 	}
 	
@@ -131,14 +161,10 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	function set_text (val :String) :String
 	{
 		_text = val;
-		svgRegexReplacements = [new Tuple(TEXT_REPLACE, _text)];
+		svgRegexReplacements.unshift(new Tuple(TEXT_REPLACE, _text));
 		if (isRegistered) {
 			svgData = _svgDataUnmodified;
 		}
-		// var self = this;
-		// svgData = _svgDataUnmodified.map(function(s :String) :String {
-		// 	return s.replace(TEXT_REPLACE, self._text);
-		// }).array();
 		return val;
 	}
 	
@@ -156,6 +182,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		#if (flash || cpp)
 		renderCompleteSignal = new DirectSignaler(this);
 		var s = new flash.display.Sprite();
+		com.pblabs.util.DebugUtil.drawDot(s, 0xff0000, 20);
 		s.mouseEnabled = s.mouseChildren = false;
 		_displayObject = s;
 		#end
@@ -182,7 +209,9 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	override function onAdd () :Void
 	{
 		super.onAdd();
-		loadFromResource();
+		if (resources != null) {
+			loadFromResource();
+		}
 	}
 	
 	function loadFromResource () :Void
@@ -190,9 +219,26 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		com.pblabs.util.Assert.isNotNull(resources);
 		var svgs = [];
 		for (rs in resources) {
-			var svgString = context.get(rs);
-			com.pblabs.util.Assert.isNotNull(svgString, "Missing svgString from " + rs);
-			svgs.push(Std.string(svgString));
+			var svg = context.get(rs);
+			// trace('Loaded as svg resource=' + svg);
+			com.pblabs.util.Assert.isNotNull(svg, "Missing svg resource from " + rs);
+			
+			#if flash
+			if (Std.is(svg, flash.display.DisplayObject)) {
+				cast(_displayObject, flash.display.Sprite).addChild(cast svg);
+				// com.pblabs.util.DebugUtil.traceDisplayChildren(_displayObject);
+				registrationPoint = new com.pblabs.geom.Vector2(_displayObject.width / 2, _displayObject.height / 2);
+				_bounds = new AABB2();
+				_bounds.xmin = 0;
+				_bounds.xmax = _displayObject.width;
+				_bounds.ymin = 0;
+				_bounds.ymax = _displayObject.height;
+				recomputeBounds();
+				return;
+			}
+			#end
+			
+			svgs.push(Std.string(svg));
 		}
 		svgData = svgs;
 	}
@@ -315,13 +361,13 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	}
 	
 	#if debug
-	public function toString () :String
+	override public function toString () :String
 	{
 		return com.pblabs.util.StringUtil.objectToString(this, ["x", "y", "width", "height"]);
 	}
 	#end
 	
-	#if (debug_hxhsl && flash)
+	#if (debug && flash)
 	override public function postDestructionCheck () :Void
 	{
 		super.postDestructionCheck();

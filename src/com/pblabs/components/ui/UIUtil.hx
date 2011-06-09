@@ -55,28 +55,57 @@ class UIUtil
 	//	 return so;
 	// }
 	
-	public static function createSVGButton (layer :BaseSceneLayer<Dynamic, Dynamic>, name :String, svgId :String, loc :XY, onInputDown :Void->Void) :IEntity
+	public static function createSVGButton (layer :BaseSceneLayer<Dynamic, Dynamic>, 
+		svg1 :Array<ResourceToken<Dynamic>>, ?onClick :Void->Void, ?onDown :Void->Void, ?name :String) :IEntity
 	{
 		var so = layer.context.createBaseSceneEntity();
 		
-		var c = layer.context.allocate(com.pblabs.components.scene2D.SVGComponent);
-		c.resources = [new ResourceToken(EmbeddedResource.NAME, svgId)];
+		var c = layer.context.allocate(SVGComponent);
+		c.resources = cast svg1;
 		c.parentProperty = layer.entityProp();
 		so.addComponent(c);
 		
-		// so.addComponent(layer.context.allocate(Component));
+		so.addComponent(layer.context.allocate(com.pblabs.components.minimalcomp.Component));
 		
 		var mouse = layer.context.allocate(MouseInputComponent);
 		so.addComponent(mouse);
-		so.initialize(layer.context.getManager(NameManager).validateName(name));
-		mouse.bindDeviceClick(onInputDown);
-		so.setLocation(loc.x, loc.y);
+		so.initialize(layer.context.getManager(NameManager).validateName(name == null ? "button" : name));
+		if (onClick != null) {
+			mouse.bindDeviceClick(onClick);
+		}
+		if (onDown != null) {
+			mouse.bindDeviceDown(onDown);
+		}
 		return so;
 	}
 	
+	public static function createTwoStateSVGToggle (layer :BaseSceneLayer<Dynamic, Dynamic>, 
+		svg1 :Array<ResourceToken<Dynamic>>, 
+		svg2 :Array<ResourceToken<Dynamic>>,
+		onDown :Void->Void,
+		?name :String) :IEntity
+	{
+		return createTwoStateSVGButton(layer,
+			svg1,
+			svg2,
+			null,
+			onDown,
+			name,
+			null,
+			null,
+			true);
+	}
+	
 	public static function createTwoStateSVGButton (layer :BaseSceneLayer<Dynamic, Dynamic>, 
-		svg1 :Array<ResourceToken<Dynamic>>, svg2 :Array<ResourceToken<Dynamic>>,
-		text :String, onClick :Void->Void) :IEntity
+		svg1 :Array<ResourceToken<Dynamic>>, 
+		svg2 :Array<ResourceToken<Dynamic>>,
+		text :String, 
+		onClick :Void->Void,
+		?onDown :Void->Void,
+		?name :String, 
+		?svgRegex1 :Array<Tuple<EReg, String>>,
+		?svgRegex2 :Array<Tuple<EReg, String>>,
+		?isToggle :Bool = false) :IEntity
 	{
 		text = text == null ? "" : text;
 		com.pblabs.util.Assert.isNotNull(svg1);
@@ -88,21 +117,29 @@ class UIUtil
 		s1.resources = cast svg1;
 		s1.parentProperty = layer.entityProp();
 		s1.text = text;
-		s1.svgRegexReplacements.push(new Tuple(~/\$T/, text));
+		if (svgRegex1 != null) {
+			s1.svgRegexReplacements = s1.svgRegexReplacements.concat(svgRegex1);
+		}
 
 		var s2 = layer.context.allocate(SVGComponent);
 		s2.resources = cast svg2;
 		s2.parentProperty = layer.entityProp();
 		s2.text = text;
-		// s2.svgRegexReplacements.push(new Tuple(~/\$T/, text));
+		if (svgRegex2 != null) {
+			s2.svgRegexReplacements = s2.svgRegexReplacements.concat(svgRegex2);
+		}
 		
-		return createTwoStateButton(layer, s1, s2, layer.context.getManager(NameManager).validateName("button"), onClick);
+		return createTwoStateButton(layer, s1, s2, 
+			layer.context.getManager(NameManager).validateName(name == null ? "button" : name), onClick, onDown, isToggle);
 	}
 	
 	public static function createTwoStateButton (layer :BaseSceneLayer<Dynamic, Dynamic>, 
 		state1 :BaseSceneComponent<Dynamic>,
 		state2 :BaseSceneComponent<Dynamic>,
-		name :String, onClick :Void->Void) :IEntity
+		name :String, 
+		onClick :Void->Void,
+		?onDown :Void->Void,
+		?isToggle = false) :IEntity
 	{
 		var so = layer.context.createBaseSceneEntity();
 		com.pblabs.util.Assert.isFalse(state1.isRegistered);
@@ -126,20 +163,39 @@ class UIUtil
 		so.initialize(layer.context.getManager(NameManager).validateName(name));
 		state1.visible = true;
 		state2.visible = false;
-		mouse.bindDeviceClick(onClick);
+		if (onClick != null) {
+			mouse.bindDeviceClick(onClick);
+		}
+		if (onDown != null) {
+			mouse.bindDeviceDown(onDown);
+		}
 		var sm = layer.context.getManager(com.pblabs.engine.core.SignalBondManager);
 		com.pblabs.util.Assert.isNotNull(sm);
-		mouse.bindDeviceDown(function () :Void {
-			state1.visible = false;
-			state2.visible = true;
-			var bond = layer.context.getManager(com.pblabs.components.input.InputManager).deviceUp.bind(function (?e :Dynamic) :Void {
-				state1.visible = true;
-				state2.visible = false;
-			}).destroyOnUse();
-			
-			sm.set(mouse.key, bond);
-		});
+		if (isToggle) {
+			mouse.bindDeviceDown(function () :Void {
+				state1.visible = state2.visible;
+				state2.visible = !state1.visible;
+			});
+		} else {
+			mouse.bindDeviceDown(function () :Void {
+				state1.visible = false;
+				state2.visible = true;
+				var bond = layer.context.getManager(com.pblabs.components.input.InputManager).deviceUp.bind(function (?e :Dynamic) :Void {
+					state1.visible = true;
+					state2.visible = false;
+				}).destroyOnUse();
+				
+				sm.set(mouse.key, bond);
+			});
+		}
 		return so;
+	}
+	
+	public static function setTwoStateButtonMask (e :IEntity, mask :ObjectType) :Void
+	{
+		var sc :BaseSceneComponent<Dynamic> = e.getComponentByName(UIUtil.IMAGE1);
+		com.pblabs.util.Assert.isNotNull(sc);
+		sc.objectMask = mask;
 	}
 	
 	public static function createText (layer :BaseSceneLayer<Dynamic, Dynamic>, svg :ResourceToken<Dynamic>, 
@@ -161,29 +217,29 @@ class UIUtil
 		return so;
 	}
 	
-	public static function createButton (layer :BaseSceneLayer<Dynamic, Dynamic>, name :String, imageClass :Class<Dynamic>,
-		resource :ResourceToken<Dynamic>, ?loc :XY = null, ?onInputDown :Void->Void = null) :IEntity
-	{
-		var so = layer.context.createBaseSceneEntity();
+	// public static function createButton (layer :BaseSceneLayer<Dynamic, Dynamic>, name :String, imageClass :Class<Dynamic>,
+	// 	resource :ResourceToken<Dynamic>, ?loc :XY = null, ?onInputDown :Void->Void = null) :IEntity
+	// {
+	// 	var so = layer.context.createBaseSceneEntity();
 		
-		throw "Fix me";
-		// var c :IEntityComponent = layer.context.allocate(imageClass);
-		// c.resource = cast resource;
-		// c.parentProperty = layer.entityProp();
-		// so.addComponent(c);
+	// 	throw "createButton Fix me";
+	// 	// var c :IEntityComponent = layer.context.allocate(imageClass);
+	// 	// c.resource = cast resource;
+	// 	// c.parentProperty = layer.entityProp();
+	// 	// so.addComponent(c);
 		
-		var mouse = layer.context.allocate(MouseInputComponent);
-		so.addComponent(mouse);
-		if (onInputDown != null) {
-			mouse.bindDeviceClick(onInputDown);
-		}
-		so.initialize(name);
-		if (loc != null) {
-			so.setLocation(loc.x, loc.y);
-		}
-		MouseInputComponent.makeReactiveButton(mouse);
-		return so;
-	}
+	// 	var mouse = layer.context.allocate(MouseInputComponent);
+	// 	so.addComponent(mouse);
+	// 	if (onInputDown != null) {
+	// 		mouse.bindDeviceClick(onInputDown);
+	// 	}
+	// 	so.initialize(name);
+	// 	if (loc != null) {
+	// 		so.setLocation(loc.x, loc.y);
+	// 	}
+	// 	MouseInputComponent.makeReactiveButton(mouse);
+	// 	return so;
+	// }
 	
 	/** We can add more args here when the UI bits become more sophisticated */
 	public static function createZoomWidget (layer :BaseSceneLayer<Dynamic, Dynamic>, target :BaseSceneManager<Dynamic>, loc :Vector2, ?size :Float = 200) :Void
@@ -200,18 +256,18 @@ class UIUtil
 			target.zoom -= 0.1;
 		}
 		
-		var ein = layer.createSVGButton("zoomInWidget", "zoomin", loc, zoomIn);
-		var svg = ein.getComponent(SVGComponent);
-		svg.width = svg.height = size;
+		// var ein = layer.createSVGButton("zoomInWidget", "zoomin", loc, zoomIn);
+		// var svg = ein.getComponent(SVGComponent);
+		// svg.width = svg.height = size;
 		
-		var mouse = ein.getComponent(MouseInputComponent);
-		mouse.isRotatable = mouse.isScalable = mouse.isTranslatable = false;  
+		// var mouse = ein.getComponent(MouseInputComponent);
+		// mouse.isRotatable = mouse.isScalable = mouse.isTranslatable = false;  
 		
-		var eout = layer.createSVGButton("zoomOutWidget", "zoomout", loc.add(new Vector2(0, size)), zoomOut);
-		svg = eout.getComponent(SVGComponent);
-		svg.width = svg.height = size;
-		mouse = eout.getComponent(MouseInputComponent);
-		mouse.isRotatable = mouse.isScalable = mouse.isTranslatable = false;
+		// var eout = layer.createSVGButton("zoomOutWidget", "zoomout", loc.add(new Vector2(0, size)), zoomOut);
+		// svg = eout.getComponent(SVGComponent);
+		// svg.width = svg.height = size;
+		// mouse = eout.getComponent(MouseInputComponent);
+		// mouse.isRotatable = mouse.isScalable = mouse.isTranslatable = false;
 	}
 	
 	/** We can add more args here when the UI bits become more sophisticated */
@@ -229,17 +285,17 @@ class UIUtil
 			target.rotation -= 0.05;
 		}
 		
-		var anticlock = layer.createSVGButton("anticlockwiseWidget", "counterclockwise", loc, antiClockwise);
-		var svg = anticlock.getComponent(SVGComponent);
-		svg.width = svg.height = size;
-		var mouse = anticlock.getComponent(MouseInputComponent);
-		mouse.isRotatable = mouse.isScalable = mouse.isTranslatable = false;  
+		// var anticlock = layer.createSVGButton("anticlockwiseWidget", "counterclockwise", loc, antiClockwise);
+		// var svg = anticlock.getComponent(SVGComponent);
+		// svg.width = svg.height = size;
+		// var mouse = anticlock.getComponent(MouseInputComponent);
+		// mouse.isRotatable = mouse.isScalable = mouse.isTranslatable = false;  
 		
-		var clock = layer.createSVGButton("clockwiseWidget", "clockwise", loc.add(new Vector2(0, size)), clockWise);
-		svg = clock.getComponent(SVGComponent);
-		svg.width = svg.height = size;
-		mouse = clock.getComponent(MouseInputComponent);
-		mouse.isRotatable = mouse.isScalable = mouse.isTranslatable = false;
+		// var clock = layer.createSVGButton("clockwiseWidget", "clockwise", loc.add(new Vector2(0, size)), clockWise);
+		// svg = clock.getComponent(SVGComponent);
+		// svg.width = svg.height = size;
+		// mouse = clock.getComponent(MouseInputComponent);
+		// mouse.isRotatable = mouse.isScalable = mouse.isTranslatable = false;
 	}
 	
 	public static function createScrollWidget (layer :BaseSceneLayer<Dynamic, Dynamic>, target :BaseSceneManager<Dynamic>, loc :Vector2, ?size :Float = 200) :Void
@@ -264,13 +320,13 @@ class UIUtil
 		var fs = [upf, downf, leftf, rightf];
 		var labels = ["up", "down", "left", "right"];
 		var locs = [loc, loc.add(new Vector2(0, size)), loc.add(new Vector2(-size, size / 2)), loc.add(new Vector2(size, size / 2))];
-		for(i in 0...labels.length) {
-			var e = layer.createSVGButton(labels[i] + "Widget", labels[i], locs[i], fs[i]);
-			var svg = e.getComponent(SVGComponent);
-			svg.width = svg.height = size;
-			var mouse = e.getComponent(MouseInputComponent);
-			mouse.isRotatable = mouse.isScalable = mouse.isTranslatable = false;	  
-		}
+		// for(i in 0...labels.length) {
+		// 	var e = layer.createSVGButton(labels[i] + "Widget", labels[i], locs[i], fs[i]);
+		// 	var svg = e.getComponent(SVGComponent);
+		// 	svg.width = svg.height = size;
+		// 	var mouse = e.getComponent(MouseInputComponent);
+		// 	mouse.isRotatable = mouse.isScalable = mouse.isTranslatable = false;	  
+		// }
 	}
 	
 

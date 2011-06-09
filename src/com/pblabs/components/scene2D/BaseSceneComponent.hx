@@ -34,7 +34,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 {
 	public var objectMask (get_objectMask, set_objectMask) :ObjectType;
 	// public var layer (get_layer, null) :BaseSceneLayer<Dynamic, Dynamic>;
-	public var layer (get_layer, null) :Layer;
+	public var layer (get_layer, null) :BaseSceneLayer<Dynamic, Dynamic>;
 	public var x (get_x, set_x) :Float;
 	public var y (get_y, set_y) :Float;
 	public var width (get_width, set_width) :Float;
@@ -108,8 +108,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		//Sensible default
 		spatialProperty = SpatialComponent.P_SPATIAL;
 		objectMask = ObjectType.ALL;
-		_bounds = new AABB2(0, 0, 0, 0);
-		_unscaledBounds = new AABB2(0, 0, 0, 0);
+		_bounds = new AABB2(0, 0, 1, 1);
+		_unscaledBounds = new AABB2(0, 0, 1, 1);
 		autoAddToScene = true;
 		_transformMatrix = new Matrix();
 	}
@@ -165,14 +165,17 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	override function onReset () :Void
 	{
+		com.pblabs.engine.debug.Profiler.enter("basescene onReset");
+		com.pblabs.engine.debug.Profiler.enter("super");
 		super.onReset();
+		com.pblabs.engine.debug.Profiler.exit("super");
 		Preconditions.checkNotNull(parentProperty, "parentProperty is null in " + com.pblabs.util.ReflectUtil.getClassName(this));
 		com.pblabs.util.Assert.isNotNull(parent, com.pblabs.util.ReflectUtil.tinyClassName(Type.getClass(this)) + ".parent is null, prop=" + parentProperty);
 		
 		var coords = spatialProperty != null ? owner.getProperty(spatialProperty) : null;
-		
+		com.pblabs.engine.debug.Profiler.enter("bindsignals");
 		if (coords != null) {
-			#if debug_hxhsl
+			#if debug
 			var bond = bindSignal(coords.signalerLocation, setLocation);
 			bond.debugInfo = com.pblabs.util.ReflectUtil.tinyClassName(Type.getClass(this));
 			#else
@@ -186,16 +189,20 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		} else {
 			com.pblabs.util.Log.info("No coords component found, you are on your own regarding updating Scene components " + com.pblabs.util.Log.getStackTrace());
 		}
+		com.pblabs.engine.debug.Profiler.exit("bindsignals");
 		
 		if (owner.getComponent(com.pblabs.components.base.AlphaComponent) != null) {
 			bindSignal(owner.getComponent(com.pblabs.components.base.AlphaComponent).signaler, set_alpha);
 		}
 		
+		com.pblabs.engine.debug.Profiler.enter("removing");
 		if (!autoAddToScene) {
 			removeFromParent();
 		}
+		com.pblabs.engine.debug.Profiler.exit("removing");
 		//TODO: Bind scale component, not yet implemented
 		_isTransformDirty = true;
+		com.pblabs.engine.debug.Profiler.exit("basescene onReset");
 	}
 	
 	override function onRemove () :Void
@@ -205,7 +212,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		setDefaultVars();
 	}
 	
-	function get_layer () :Layer
+	function get_layer () :BaseSceneLayer<Dynamic, Dynamic>
 	{
 		return cast parent;
 	}
@@ -310,6 +317,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		isTransformDirty = true;
 		_bounds.xmin = _x - val / 2;
 		_bounds.xmax = _x + val / 2;
+		com.pblabs.util.Assert.isTrue(_unscaledBounds.intervalX > 0, com.pblabs.util.Log.getStackTrace());
 		_scaleX =_bounds.intervalX / _unscaledBounds.intervalX;
 		return val;
 	}
@@ -325,6 +333,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		isTransformDirty = true;
 		_bounds.ymin = _y - val / 2;
 		_bounds.ymax = _y + val / 2;
+		com.pblabs.util.Assert.isTrue(_unscaledBounds.intervalY > 0);
 		_scaleY =_bounds.intervalY / _unscaledBounds.intervalY;
 		return val;
 	}

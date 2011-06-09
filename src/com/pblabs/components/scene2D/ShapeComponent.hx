@@ -18,6 +18,7 @@ class ShapeComponent
 	public var fillColor (get_fillColor, set_fillColor) :Int;
 	public var borderColor (get_borderColor, set_borderColor) :Int;
 	public var borderStroke (get_borderStroke, set_borderStroke) :Float;
+	public var borderAlpha (get_borderAlpha, set_borderAlpha) :Float;
 	
 	public function new ()
 	{
@@ -25,6 +26,7 @@ class ShapeComponent
 		_fillColor = 0xff0000;
 		_borderColor = 0x000000;
 		_borderStroke = 1;
+		_borderAlpha = 1;
 		#if (flash || cpp)
 		_displayObject = com.pblabs.util.SpriteUtil.create();
 		#end
@@ -130,8 +132,21 @@ class ShapeComponent
 		return val;
 	}
 	
+	function get_borderAlpha () :Float
+	{
+		return _borderAlpha;
+	}
+	
+	function set_borderAlpha (val :Float) :Float
+	{
+		_borderAlpha = val;
+		redraw();
+		return val;
+	}
+	
 	var _fillColor :Int;
 	var _borderColor :Int;
 	var _borderStroke :Float;
+	var _borderAlpha :Float;
 
 }

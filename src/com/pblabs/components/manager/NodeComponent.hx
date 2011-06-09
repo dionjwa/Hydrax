@@ -257,9 +257,13 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 	override function onReset () :Void
 	{
 		super.onReset();
-		removeFromParent();
-		if (parentProperty != null) {
-			addToParent();
+		//Don't change parents unnecessarily, it can be expensive or complicated .
+		if ((parent == null && parentProperty != null) || 
+			(parent != null && parentProperty != null && owner.getProperty(parentProperty) != parent)) {
+			removeFromParent();
+			if (parentProperty != null) {
+				addToParent();
+			}
 		}
 	}
 	

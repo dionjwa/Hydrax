@@ -44,28 +44,28 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		return null;
 	}
 	
-	public static function bindSignal <T>(component :EntityComponent, signaler :Signaler<T>, listener :T->Dynamic#if debug_hxhsl ,?infos :haxe.PosInfos #end ) :Bond
+	public static function bindSignal <T>(component :EntityComponent, signaler :Signaler<T>, listener :T->Dynamic#if debug ,?infos :haxe.PosInfos #end ) :Bond
 	{
 		com.pblabs.util.Assert.isNotNull(component, "component is null");
 		com.pblabs.util.Assert.isNotNull(component.context, "component.context is null");
 		var bonds = component.context.getManager(SignalBondManager);
 		com.pblabs.util.Assert.isNotNull(bonds, "SignalBondManager is null");
 		
-		#if debug_hxhsl
+		#if debug
 		return bonds.bind(component, signaler, listener, infos);
 		#else
 		return bonds.bind(component, signaler, listener);
 		#end
 	}
 	
-	public static function bindVoidSignal (component :EntityComponent, signaler :Signaler<Void>, listener :Void->Dynamic#if debug_hxhsl ,?infos :haxe.PosInfos #end ) :Bond
+	public static function bindVoidSignal (component :EntityComponent, signaler :Signaler<Void>, listener :Void->Dynamic#if debug ,?infos :haxe.PosInfos #end ) :Bond
 	{
 		com.pblabs.util.Assert.isNotNull(component, "component is null");
 		com.pblabs.util.Assert.isNotNull(component.context, "component.context is null");
 		var bonds = component.context.getManager(SignalBondManager);
 		com.pblabs.util.Assert.isNotNull(bonds, "SignalBondManager is null");
 		
-		#if debug_hxhsl
+		#if debug
 		return bonds.bindVoid(component, signaler, listener, infos);
 		#else
 		return bonds.bindVoid(component, signaler, listener);
@@ -78,7 +78,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		key = com.pblabs.engine.util.PBUtil.KEY_COUNT++;
 	}
 
-	public function bind <T>(owner :Hashable, signaler :Signaler<T>, listener :T->Dynamic, ?onlyOnce :Null<Bool> = false #if debug_hxhsl ,?infos :haxe.PosInfos #end ) :Bond
+	public function bind <T>(owner :Hashable, signaler :Signaler<T>, listener :T->Dynamic, ?onlyOnce :Null<Bool> = false #if debug ,?infos :haxe.PosInfos #end ) :Bond
 	{
 		com.pblabs.util.Assert.isNotNull(owner, "owner is null");
 		com.pblabs.util.Assert.isNotNull(signaler, "signaler is null");
@@ -97,7 +97,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		}
 		set(owner.key, bond);
 		
-		#if debug_hxhsl
+		#if debug
 		bond.infos = infos;
 		bond.debugInfo = infos == null ? "no infos @SignalBondManager.bind" : ""; 
 		com.pblabs.util.Log.debug("New " + bond);
@@ -106,7 +106,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		return bond;
 	}
 	
-	public function bindVoid (owner :Hashable, signaler :Signaler<Void>, listener :Void->Dynamic, ?onlyOnce :Null<Bool> = false#if debug_hxhsl ,?infos :haxe.PosInfos #end ) :Bond
+	public function bindVoid (owner :Hashable, signaler :Signaler<Void>, listener :Void->Dynamic, ?onlyOnce :Null<Bool> = false#if debug ,?infos :haxe.PosInfos #end ) :Bond
 	{
 		com.pblabs.util.Assert.isNotNull(owner, "owner is null");
 		com.pblabs.util.Assert.isNotNull(signaler, "signaler is null");
@@ -127,7 +127,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		com.pblabs.util.Assert.isNotNull(bond, "bond is null");
 		set(owner.key, bond);
 		
-		#if debug_hxhsl
+		#if debug
 		bond.infos = infos;
 		com.pblabs.util.Log.debug("New " + bond);
 		#end
@@ -135,15 +135,15 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		return bond;
 	}
 	
-	#if debug_hxhsl public function destroyBondsOnKey (key :Int) :Int #else
+	#if debug public function destroyBondsOnKey (key :Int) :Int #else
 	public function destroyBondsOnKey (key :Int) :Void #end
 	{
-		#if debug_hxhsl
+		#if debug
 		var count :Int = 0;
 		#end
 		if (exists(key)) {
 			for (bond in get(key)) {
-				#if debug_hxhsl
+				#if debug
 				count++;
 				#end
 				bond.destroy();
@@ -151,7 +151,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 			remove(key);
 		}
 		
-		#if debug_hxhsl
+		#if debug
 		return count;
 		#end
 	}
@@ -194,7 +194,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	inline public function destroyBonds (c :Hashable) :Void
 	{
 		com.pblabs.util.Assert.isNotNull(c, "??owner is null??");
-		#if debug_hxhsl
+		#if debug
 		var count = destroyBondsOnKey(c.key);
 		com.pblabs.util.Log.debug(count + " bonds broken on " + ReflectUtil.getClassName(c));
 		#else

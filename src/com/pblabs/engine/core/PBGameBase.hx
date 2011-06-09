@@ -40,9 +40,6 @@ enum	ContextTransition {
   * This class inits all the managers, and managers the IPBContexts.
   */
 class PBGameBase
-// #if cpp
-// 	implements haxe.rtti.Infos
-// #end
 {
 	public var currentContext (get_currentContext, null) :IPBContext;
 	var _currentContext :IPBContext;
@@ -171,8 +168,33 @@ class PBGameBase
 		return i;
 	}
 	
-	public function pushContext (ctx :IPBContext) :IPBContext
+	// public function pushContext (ctx :IPBContext) :IPBContext
+	// {
+	// 	_contextTransitions.push(ContextTransition.PUSH(ctx));
+	// 	return ctx;
+	// }
+	
+	// public function popContext () :Void
+	// {
+	//     _contextTransitions.push(ContextTransition.POP(currentContext));
+	// }
+	
+	// public function changeContext (oldContext :IPBContext, newContext :IPBContext) :Void
+	// {
+	// 	com.pblabs.util.Assert.isNotNull(oldContext);
+	// 	com.pblabs.util.Assert.isNotNull(newContext);
+	// 	com.pblabs.util.Assert.isTrue(oldContext != newContext); 
+	//     _contextTransitions.push(ContextTransition.CHANGE(oldContext, newContext));
+	// }
+	
+	// public function removeContext (c :IPBContext) :Void
+	// {
+	// 	_contextTransitions.push(ContextTransition.REMOVE(c));
+	// }
+	
+	public function pushContext (c :Class<Dynamic>) :Dynamic
 	{
+		var ctx :IPBContext = allocate(c);
 		_contextTransitions.push(ContextTransition.PUSH(ctx));
 		return ctx;
 	}
@@ -182,12 +204,14 @@ class PBGameBase
 	    _contextTransitions.push(ContextTransition.POP(currentContext));
 	}
 	
-	public function changeContext (oldContext :IPBContext, newContext :IPBContext) :Void
+	public function changeContext (oldContext :IPBContext, c :Class<Dynamic>) :Dynamic
 	{
+		var newContext :IPBContext = allocate(c);
 		com.pblabs.util.Assert.isNotNull(oldContext);
 		com.pblabs.util.Assert.isNotNull(newContext);
 		com.pblabs.util.Assert.isTrue(oldContext != newContext); 
 	    _contextTransitions.push(ContextTransition.CHANGE(oldContext, newContext));
+	    return newContext;
 	}
 	
 	public function removeContext (c :IPBContext) :Void
@@ -249,10 +273,15 @@ class PBGameBase
 	  */
 	function updateContextTransitions () :Void
 	{
+		com.pblabs.util.Log.debug("updateContextTransitions");
+		com.pblabs.util.Log.debug("_contextTransitions.length=" + _contextTransitions.length);
+		com.pblabs.util.Log.debug('_isUpdatingContextTransition=' + _isUpdatingContextTransition);
+		
 		if (_isUpdatingContextTransition || _contextTransitions.length == 0) {
 			return;
 		}
 		
+		com.pblabs.engine.debug.Profiler.enter("updateContexts");
 		var self = this;
 		var removeCurrentContext = function () :Void {
 			var c = self._currentContext;
@@ -325,11 +354,19 @@ class PBGameBase
 		
 		if (_currentContext != null) {
 			//Dispatch the signaller first, so that managers are notified.
+			com.pblabs.util.Log.debug("New current context=" + _currentContext);
 			signalContextEnter.dispatch(_currentContext);
 			_currentContext.enter();
 			_contextProcessManager = cast _currentContext.getManager(IProcessManager);
 			_contextProcessManager.isRunning = true;
+		} else {
+			com.pblabs.util.Log.debug("No current context");
 		}
+		
+		com.pblabs.engine.debug.Profiler.exit("updateContexts");
+		#if (debug && profiler)
+		com.pblabs.engine.debug.Profiler.report();
+		#end
 	}
 	
 	function init () :Void
@@ -353,27 +390,33 @@ class PBGameBase
 	
 	function onFrame (#if flash event :flash.events.TimerEvent #end):Void
 	{
+		com.pblabs.util.Log.debug("onFrame");
+		com.pblabs.util.Log.debug('_contextProcessManager=' + _contextProcessManager);
 		if (_contextProcessManager != null) {
 			_contextProcessManager.onFrame(#if flash event #end);
 		}
-		if (_contextTransitions.length > 0) {
+
+		if (_contextTransitions != null && _contextTransitions.length > 0) {
 			updateContextTransitions();
 			// if (_contextProcessManager != null) {
 			// 	_contextProcessManager.onFrame(#if flash event #end);
 			// }
 		}
-		
+
 		while (_callLater.length > 0) {
 			_callLater.pop()();
 		}
-		#if (flash && client)
-		event.updateAfterEvent();
-		untyped flash.Lib.current.stage.invalidate();
+		#if flash
+		if (event != null) {//We may be called from an external process, and therefore have no event
+			event.updateAfterEvent();
+			untyped flash.Lib.current.stage.invalidate();
+		}
 		#end
 	}
 	
 	function startTimer ():Void
 	{
+		com.pblabs.util.Log.debug("startTimer");
 		#if !neko
 		Preconditions.checkArgument(_timer == null, "Timer is not null, have we already started the timer?");
 		#end
@@ -394,6 +437,7 @@ class PBGameBase
 	
 	function stopTimer ():Void
 	{
+		com.pblabs.util.Log.debug("stopTimer");
 		#if !neko
 		Preconditions.checkArgument(_timer != null, "Timer is null, have we called stopTimer already?");
 		#end

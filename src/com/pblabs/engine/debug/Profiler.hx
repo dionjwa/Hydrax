@@ -236,8 +236,8 @@ class Profiler
 		if (!_bound) {
 			_bound = true;
 			flash.Lib.current.stage.addEventListener(flash.events.KeyboardEvent.KEY_DOWN, function (keyEvent :flash.events.KeyboardEvent) :Void {
-				if (keyEvent.keyCode == com.pblabs.engine.input.InputKey.P.keyCode) {
-					trace("calling report");
+				trace(keyEvent);
+				if (Std.int(keyEvent.keyCode) == com.pblabs.engine.input.InputKey.P.keyCode) {
 					Profiler.report();
 				}
 			});

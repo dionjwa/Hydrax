@@ -18,7 +18,11 @@ class Html5StorageManager
 	public function new ()
 	{
 		_isAvailable = false;
-		_isAvailable = untyped __js__('Modernizr.localstorage');
+		try {
+			_isAvailable = untyped __js__('Modernizr.localstorage');
+		} catch (e :Dynamic) {
+			com.pblabs.util.Log.error(ERR_MSG + "\n" + e);
+		}
 	}
 	
 	public function isAvailable () :Bool

@@ -27,9 +27,6 @@ import hsl.haxe.Signaler;
 
 class PBContext
 	implements IPBContext
-	// #if cpp
-	// ,implements haxe.rtti.Infos
-	// #end
 {
 	/** Key for hashing. Don't modify. */
 	public var key :Int;
@@ -272,7 +269,7 @@ class PBContext
 		injector = null;
 		_tempPropertyInfo = null;
 		
-		#if (debug_hxhsl && !neko)
+		#if (debug && !neko)
 		var sigs :Hash<Signaler<Dynamic>> = new Hash();
 		sigs.set("signalEnter", signalEnter);
 		sigs.set("signalExit", signalExit);
@@ -372,7 +369,7 @@ class PBContext
 	{
 		// Early out if we got a null property reference.
 		if (reference == null || reference.property == null || reference.property == "") {
-			// com.pblabs.util.Log.debug("  null bail out early");
+			com.pblabs.util.Log.debug("  null bail out early");
 			return null;
 		}
 
@@ -390,15 +387,15 @@ class PBContext
 			
 			var cl:Array<String> = reference.cachedLookup;
 			var cachedWalk:Dynamic = entity.getComponentByName(cl[0]);
-			if (!cachedWalk) {
-				handleMissingProperty(suppressErrors, reference, cl[0]);
+			if (cachedWalk == null) {
+				handleMissingProperty(suppressErrors, reference, cl[0], "no cachedWalk");
 				return null;
 			}
 
 			for (i in 1...cl.length - 1) {
-				cachedWalk = Reflect.field(cachedWalk, cl[i]);
+				cachedWalk = ReflectUtil.field(cachedWalk, cl[i]);
 				if (cachedWalk == null) {
-					handleMissingProperty(suppressErrors, reference, cl[i]);
+					handleMissingProperty(suppressErrors, reference, cl[i], "cachedWalk == null");
 					return null;
 				}
 			}
@@ -430,7 +427,7 @@ class PBContext
 			// Component reference, look up the component by name.
 			parentElem = entity.getComponentByName(curLookup);
 			if (parentElem == null) {
-				handleMissingProperty(suppressErrors, reference, curLookup);
+				handleMissingProperty(suppressErrors, reference, curLookup, "parentElem == null for @ type ref");
 				return null;
 			}
 
@@ -442,7 +439,7 @@ class PBContext
 			//			parentElem = NameManager.instance.lookup(curLookup);
 			parentElem = db._nameManager.get(curLookup);
 			if (parentElem == null) {
-				handleMissingProperty(suppressErrors, reference, curLookup);
+				handleMissingProperty(suppressErrors, reference, curLookup, "parentElem == null for # type ref");
 				return null;
 			}
 
@@ -479,11 +476,10 @@ class PBContext
 			// Try the next element in the path.
 			var oldParentElem :Dynamic = parentElem;
 			try {
-				parentElem = Reflect.field(parentElem, curLookup);
+				parentElem = ReflectUtil.field(parentElem, curLookup);
 			} catch (e :String) {
 				parentElem = null;
 			}
-			
 
 			// Several different possibilities that indicate we failed to advance.
 			var gotEmpty:Bool = false;
@@ -495,7 +491,7 @@ class PBContext
 			}
 
 			if (gotEmpty) {
-				handleMissingProperty(suppressErrors, reference, curLookup);
+				handleMissingProperty(suppressErrors, reference, curLookup, "gotEmpty");
 				return null;
 			}
 
@@ -523,7 +519,6 @@ class PBContext
 		}
 		
 		if (Lambda.has(Type.getInstanceFields(Type.getClass(info.propertyParent)), "get_" + info.propertyName)) {
-			// trace("Found getter=" + "get_" + info.propertyName);
 			p.getterName = "get_" + info.propertyName;
 		}
 		if (Lambda.has(Type.getInstanceFields(Type.getClass(info.propertyParent)), "set_" + info.propertyName)) {

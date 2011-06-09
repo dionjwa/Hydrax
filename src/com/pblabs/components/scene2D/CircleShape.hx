@@ -21,31 +21,31 @@ class CircleShape extends ShapeComponent
 {
 	public var radius (get_radius, set_radius) :Float;
 	public var showAngleLine :Bool;
-		
+	var _radius :Float;
 	public function new ()
 	{
 		super();
 		
-		var r = 20.0;
+		_radius = 20.0;
 		showAngleLine = true;
 		#if js
 		_svgContainer = untyped js.Lib.document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		div.appendChild(_svgContainer);
-		_svgContainer.setAttribute("width", (r * 2) + "px");
-		_svgContainer.setAttribute("height", (r * 2) + "px");
+		_svgContainer.setAttribute("width", (_radius * 2) + "px");
+		_svgContainer.setAttribute("height", (_radius * 2) + "px");
 		_svgContainer.setAttribute("version", "1.1");
 
 		_svg = untyped js.Lib.document.createElementNS("http://www.w3.org/2000/svg", "circle");
 		_svgContainer.appendChild(_svg);
 		#end
 		
-		_unscaledBounds.xmin = -r;
-		_unscaledBounds.xmax = r;
-		_unscaledBounds.ymin = -r;
-		_unscaledBounds.ymax = r;
+		_unscaledBounds.xmin = -_radius;
+		_unscaledBounds.xmax = _radius;
+		_unscaledBounds.ymin = -_radius;
+		_unscaledBounds.ymax = _radius;
 		_bounds = _unscaledBounds.clone();
 		
-		radius = r;
+		// radius = r;
 	}
 	
 	override public function containsWorldPoint (pos :XY, mask :ObjectType) :Bool
@@ -71,7 +71,7 @@ class CircleShape extends ShapeComponent
 	override public function redraw () :Void
 	{
 		com.pblabs.engine.debug.Profiler.enter("redraw");
-		var r = radius;
+		var r = _radius;
 		#if (flash || cpp)
 		var zoom = parent != null && parent.parent != null ? parent.parent.zoom : 1.0;
 		var g = cast(_displayObject, flash.display.Sprite).graphics;
@@ -88,6 +88,7 @@ class CircleShape extends ShapeComponent
 			g.moveTo(0, 0);
 			g.lineTo(r, 0);
 		}
+		recomputeBounds();
 		#elseif js
 		_svg.setAttribute("cx", r + "px");
 		_svg.setAttribute("cy", r + "px");
@@ -127,22 +128,34 @@ class CircleShape extends ShapeComponent
 	
 	override function get_height () :Float
 	{
-		return get_width();
+		return get_radius();
 	}
 	
 	override function set_height (val :Float) :Float
 	{
-		return super.set_width(val);
+		return set_radius(val);
+	}
+	
+	override function get_width () :Float
+	{
+		return get_radius();
+	}
+	
+	override function set_width (val :Float) :Float
+	{
+		return set_radius(val);
 	}
 	
 	function get_radius () :Float
 	{
-		return get_width() / 2;
+		return _radius;
 	}
 	
 	function set_radius (val :Float) :Float
 	{
-		return set_width(val * 2);
+		_radius = val;
+		_isTransformDirty = true;
+		return val;
 	}
 	
 	#if js

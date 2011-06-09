@@ -9,5 +9,4 @@ class SvgUtil
 	{
 		return svg.substr(svg.indexOf("<svg"));
 	}
-	
 }

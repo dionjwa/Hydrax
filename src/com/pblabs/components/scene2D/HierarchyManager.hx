@@ -1,9 +1,9 @@
 package com.pblabs.components.scene2D;
 
+import com.pblabs.components.scene2D.SvgCache;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntity;
-import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Comparators;
 import com.pblabs.util.ds.Map;
@@ -16,6 +16,7 @@ import de.polygonal.motor2.geom.math.XY;
 using StringTools;
 
 using com.pblabs.components.scene2D.SceneUtil;
+using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.geom.VectorTools;
 using com.pblabs.util.StringUtil;
 using com.pblabs.util.XMLUtil;
@@ -27,158 +28,48 @@ using com.pblabs.util.XMLUtil;
   *
   * This manager is an alternative to extending existing components.
   */
-class HierarchyManager extends EntityComponent,
-	implements IAnimatedObject
+class HierarchyManager extends EntityComponent
 {
 	public static var ANCHOR_PREFIX = "anchor";
 	public static var INKSCAPE_LABEL = "inkscape:label";
-	static var _svgAnchorCache :Map<String, Map<String, XY>> = Maps.newHashMap(String);
 	
-	#if flash
-	/** Retrieves relative child locations */
-	public static function analyseDisplayObject (clip :flash.display.DisplayObject) :Map<String, XY>
-	{
-		if (clip == null) {
-			return null;
-		}
-		
-		var clipData :Map<String, XY> = new SortedMap(Maps.newHashMap(String), Comparators.compareStrings);
-		com.pblabs.util.DisplayUtils.applyToHierarchy(clip, function (d :flash.display.DisplayObject) :Dynamic {
-			if (d.name.startsWith("anchor")) {
-				clipData.set(d.name, new Vector2(d.x, d.y));
-			}
-		});
-		
-		// for (i in 0...clip.numChildren) {
-		// 	var child = clip.getChildAt(i);
-		// 	clipData.set(child.name, new Vector2(child.x, child.y));
-		// }
-		return clipData;
-	}
-	#end
-	
-	public static function parseAnchors(svg :Xml) :Map<String, XY>
-	{
-		svg = svg.ensureNotDocument();
-		var id = svg.get("id");
-		if (id != null && _svgAnchorCache.exists(id)) {
-			return deepCopy(_svgAnchorCache.get(id));
-		}
-		var anchors :Map<String, XY> = new SortedMap(Maps.newHashMap(String), Comparators.compareStrings);
-		for (element in svg.elements()) {
-			if (element.nodeName.endsWith("rect")) {
-				if (element.get(INKSCAPE_LABEL) != null && element.get(INKSCAPE_LABEL).startsWith(ANCHOR_PREFIX)) {
-					var x = Std.parseFloat(element.get("x"));
-					var y = Std.parseFloat(element.get("y"));
-					var w = Std.parseFloat(element.get("width"));
-					var h = Std.parseFloat(element.get("height"));
-					var anchor = new Vector2(x + w / 2, y + h / 2);
-					anchors.set(element.get(INKSCAPE_LABEL), anchor);
-				}
-			}
-		}
-		
-		if (id != null) {
-			_svgAnchorCache.set(id, anchors);
-		}
-		
-		return deepCopy(anchors);
-	}
-	
-	static function getAnchorIdentifier (s :BaseSceneComponent<Dynamic>) :String
-	{
-		if (Std.is(s, SVGComponent)) {
-			var svgdisp :SVGComponent = cast s;
-			com.pblabs.util.Assert.isNotNull(svgdisp.resources);
-			com.pblabs.util.Assert.isTrue(svgdisp.resources.length > 0);
-			return svgdisp.resources[0].resourceId;
-		}
-		#if flash
-		else if (Std.is(s, com.pblabs.components.scene2D.flash.SceneComponent)) {
-			var disp :com.pblabs.components.scene2D.flash.SceneComponent = cast s;
-			return s.owner.name + "." + s.name;
-		}
-		#end
-		com.pblabs.util.Log.warn("SceneComponent does not have anchors, cannot get proper anchor identifier");
-		return null;
-	}
+	@inject("com.pblabs.components.scene2D.SvgCache")
+	var svgCache :SvgCache;
 	
 	/**
 	  * Maps <svg id or DisplayObject.name, map of <anchor name, relative location>>  
 	  */
 	var _anchors :Map<String, Map<String, XY>>;
 	var _links :Array<Link>;
-	var _toRemove :Array<Link>;
 	
 	public function new ()
 	{
 		super();
 		_anchors = Maps.newHashMap(String);
 		_links = [];
-		_toRemove = [];
-		var testmap :Map<String, XY> = Maps.newHashMap(String);
-		testmap.set("anchor1", new com.pblabs.geom.Vector2(0, 0));
-		_anchors.set("test", testmap);
 	}
 	
-	public function getAnchors (s :BaseSceneComponent<Dynamic>) :Map<String, XY>
+	inline public function getAnchors (s :BaseSceneComponent<Dynamic>) :Map<String, XY>
 	{
-		var id = getAnchorIdentifier(s);
-		if (_anchors.exists(id)) {
-			return deepCopy(_anchors.get(id));
-		}
-		
-		if (Std.is(s, SVGComponent)) {
-			var svgdisp :SVGComponent = cast s;
-			com.pblabs.util.Assert.isNotNull(svgdisp.resources);
-			com.pblabs.util.Assert.isTrue(svgdisp.resources.length > 0);
-			_anchors.set(id, parseAnchors(Xml.parse(svgdisp.svgData[0])));
-			return deepCopy(_anchors.get(id));
-		}
-		#if flash
-		else if (Std.is(s, com.pblabs.components.scene2D.flash.SceneComponent)) {
-			var disp :com.pblabs.components.scene2D.flash.SceneComponent = cast s;
-			_anchors.set(id, analyseDisplayObject(disp.displayObject));
-			return deepCopy(_anchors.get(id));
-		}
-		#end
-		com.pblabs.util.Log.warn("SceneComponent does not have anchors");
-		return null;
+		com.pblabs.util.Assert.isNotNull(svgCache, "Missing SvgCache");
+		return svgCache.getAnchors(s);
 	}
 	
-	static function deepCopy (toCopy :Map<String, XY>) :Map<String, XY>
+	function updateLink (link :Link) :Void
 	{
-		var m = new DynamicMap<XY>();
-		for (key in toCopy.keys()) {
-			m.set(key, toCopy.get(key).clone());
+		com.pblabs.util.Assert.isNotNull(link);
+		var offset = getOffset(link.parentDisplayType, link.childKey);
+		if (offset == null) {
+			com.pblabs.util.Log.warn("Not a valid match " + link.parentDisplayType + "." + link.childKey);
+			return;
 		}
-		return m;
-	}
-	
-	/** Update the relative locations on every frame */	
-	public function onFrame (dt :Float) :Void
-	{
-		for (link in _links) {
-			com.pblabs.util.Assert.isNotNull(link);
-			var offset = getOffset(link.parentDisplayType, link.childKey);
-			if (offset == null) {
-				com.pblabs.util.Log.warn("Not a valid match " + link.parentDisplayType + "." + link.childKey);
-				continue;
-			}
-			var parentCoords = link.parent.owner.getComponent(SpatialComponent);
-			com.pblabs.util.Assert.isNotNull(parentCoords);
-			var locX = parentCoords.x + offset.x - link.parent.registrationPoint.x;
-			var locY = parentCoords.y + offset.y - link.parent.registrationPoint.y;
-			locX = Std.int(locX) + 0.5;
-			locY = Std.int(locY) + 0.5;
-			link.child.owner.setLocation(locX, locY);
-		}
-		if (_toRemove.length > 0) {
-			for (item in _toRemove) {
-				_links.remove(item);
-			}
-			_toRemove = [];
-		}
+		var parentCoords = link.parent.owner.getComponent(SpatialComponent);
+		com.pblabs.util.Assert.isNotNull(parentCoords);
+		var locX = parentCoords.x + offset.x - link.parent.registrationPoint.x;
+		var locY = parentCoords.y + offset.y - link.parent.registrationPoint.y;
+		locX = Std.int(locX) + 0.5;
+		locY = Std.int(locY) + 0.5;
+		link.child.owner.setLocation(locX, locY);
 	}
 	
 	public function setAsChild (parent :BaseSceneComponent<Dynamic>, childKey :String, child :BaseSceneComponent<Dynamic>) :Void
@@ -188,7 +79,14 @@ class HierarchyManager extends EntityComponent,
 		com.pblabs.util.Assert.isNotNull(child);
 		
 		removeChild(child);
-		var anchors = getAnchors(parent);
+		
+		var anchorId = SvgCache.getAnchorIdentifier(parent);
+		var anchors = _anchors.get(anchorId);
+		if (anchors == null) {
+			anchors = getAnchors(parent);
+			_anchors.set(anchorId, anchors);
+		}
+		
 		for (key in anchors.keys()) {
 			if (key.startsWith(childKey)) {
 				childKey = key;
@@ -198,14 +96,18 @@ class HierarchyManager extends EntityComponent,
 		var link = new Link();
 		link.child = child;
 		link.parent = parent;
-		// link.parentDisplayType = "test";
-		// link.childKey = "anchor1";
-		link.parentDisplayType = getAnchorIdentifier(parent);//svgdisp.resources[0].resourceId;
+		link.parentDisplayType = anchorId;
 		link.childKey = childKey;
 		link.childEntityName = child.owner.name;
 		_links.push(link);
+		updateLink(link);
 		
-		onFrame(0);
+		var self = this;
+		if (parent.owner.getComponent(SpatialComponent) != null) {
+			child.bindSignal(parent.owner.getComponent(SpatialComponent).signalerLocation, function (loc :XY) :Void {
+				self.updateLink(link);
+			});
+		}
 	}
 	
 	override function onRemove () :Void
@@ -214,23 +116,22 @@ class HierarchyManager extends EntityComponent,
 		_anchors.clear();
 		_anchors = null;
 		_links = null;
-		_toRemove = null;
 	}
 	
 	function entityDestroyed (e :IEntity) :Void
 	{
-		for (link in _links) {
+		for (link in _links.copy()) {
 			if (link.childEntityName == e.name) {
-				_toRemove.push(link);
+				_links.remove(link);
 			}
 		}
 	}
 	
 	function removeChild (child :BaseSceneComponent<Dynamic>) :Void
 	{
-		for (link in _links) {
+		for (link in _links.copy()) {
 			if (link.childEntityName == child.owner.name) {
-				_toRemove.push(link);
+				_links.remove(link);
 			}
 		}
 	}
@@ -238,17 +139,21 @@ class HierarchyManager extends EntityComponent,
 	function getOffset (parent :String, child :String) :XY
 	{
 		if (_anchors.get(parent) == null) {
-			trace("missing in _anchors: " + parent);
+			com.pblabs.util.Log.error("missing in _anchors: " + parent);
 			return null;
+		}
+		if (_anchors.get(parent).get(child) == null) {
+			com.pblabs.util.Log.error("Missing child=" + child + " from anchors from parent=" + parent + ", anchors=" + com.pblabs.util.ds.MapUtil.toString(_anchors.get(parent)));
+			return new Vector2();
 		}
 		return _anchors.get(parent).get(child).clone();
 	}
 	
 	#if debug
-	public function toString () :String
+	override public function toString () :String
 	{
 		var sb = new StringBuf();
-		sb.add("HierarchyManager");
+		sb.add(com.pblabs.util.ReflectUtil.tinyClassName(Type.getClass(this)));
 		if (_anchors != null) {
 			for (key in _anchors.keys()) {
 				sb.add("\n  " + key + "==>" + com.pblabs.util.ds.MapUtil.toString(_anchors.get(key)));

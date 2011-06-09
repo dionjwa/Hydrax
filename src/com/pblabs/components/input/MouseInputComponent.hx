@@ -209,6 +209,7 @@ class MouseInputComponent extends EntityComponent
 		}
 		
 		_bounds = _bounds == null ? owner.getComponentByType(IInteractiveComponent) : _bounds;
+		// trace('_bounds=' + _bounds.name);
 		
 		com.pblabs.util.Assert.isNotNull(_bounds, "bounds is null, There's no IInteractiveComponent by type and the boundsProperty is null.  How are we supposed to work?");
 		
@@ -244,6 +245,11 @@ class MouseInputComponent extends EntityComponent
 	{
 		_mouseDownThis = false;
 		if (isTranslatable || (_deviceDownSignaler != null || _deviceClickSignaler != null || _deviceDownSignaler != null)) {
+			
+			// if (data.firstObjectUnderPoint() == _bounds && data.firstObjectUnderPoint(bounds.objectMask) != _bounds) {
+			// 	trace("mouse down on " + owner.name + ", but the mask is invalid");
+			// }
+			
 			if (data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
 				_mouseDownThis = true;
 				if (_deviceDownSignaler != null) {
@@ -308,7 +314,7 @@ class MouseInputComponent extends EntityComponent
 	// }
 	
 	#if debug
-	public function toString () :String
+	override public function toString () :String
 	{
 		return cast(owner, com.pblabs.engine.core.Entity).toString();
 	}

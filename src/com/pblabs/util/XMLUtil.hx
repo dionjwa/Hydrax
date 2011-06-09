@@ -118,6 +118,9 @@ class XMLUtil
 	
 	public static function parseArray <T>(xml :Xml, parseElement :String->T, ?delim :String = ",") :Array<T>
 	{
+		if (xml == null) {
+			return [];
+		}
 		com.pblabs.util.Assert.isNotNull(xml);
 		com.pblabs.util.Assert.isNotNull(parseElement);
 		var arr :Array<T> = [];
@@ -150,6 +153,16 @@ class XMLUtil
 	public static function getChildWithAttributeValue (xml :Xml, attributeName :String, val :String) :Xml
 	{
 	    for (child in xml.elements()) {
+			if (child.exists(attributeName) && child.get(attributeName) == val) {
+				return child;
+			}
+		}
+		return null;
+	}
+	
+	public static function elementNamedWithAttribute (xml :Xml, elementName :String, attributeName :String, val :String) :Xml
+	{
+	    for (child in xml.elementsNamed(elementName)) {
 			if (child.exists(attributeName) && child.get(attributeName) == val) {
 				return child;
 			}

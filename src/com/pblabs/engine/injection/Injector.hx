@@ -16,7 +16,7 @@ import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 import com.pblabs.util.ds.MultiMap;
 import com.pblabs.util.ds.Tuple;
-import com.pblabs.util.ds.multimaps.ArrayMultiMap;
+import com.pblabs.util.ds.multimaps.SetMultiMap;
 import com.pblabs.util.ReflectUtil;
 
 using Lambda;
@@ -27,15 +27,11 @@ using com.pblabs.util.IterUtil;
 using com.pblabs.util.ReflectUtil;
 
 /**
-  *Injects component PropertyReference fields and hsl signal listeners
-  * Use @inject("<id>") to inject fields and functions (as signal listeners)
-  * E.g. @inject SpatialComponent.x
+  * Injects component PropertyReference variable fields.
+  * Use @inject("<id>") to inject fields.
+  * E.g. @inject("SpatialComponent.x")
   * If there is no manually assigned field injections (via setFieldInjection),
-  * the injection label must correspond with a property reference.
-  
-  * More detail:
-  * The listener annotation can list more than one comma seperating signals e.g.
-  * @inject(["signal1", "signal2"])
+  * the injection label must correspond to a property reference.
   */
 class Injector
 {
@@ -48,7 +44,7 @@ class Injector
 	var _parentInjector :Injector;
 	
 	/** Maps class names to <fieldname, injection member key> */
-	public static var instanceFieldInjections :MultiMap<Class<Dynamic>, Tuple<String, Array<String>>> = ArrayMultiMap.create(Class);
+	public static var instanceFieldInjections :MultiMap<Class<Dynamic>, Tuple<String, Array<String>>> = SetMultiMap.create(Class, Tuple);
 	public static var NULL_INJECTION :Tuple<String, Array<String>> = new Tuple(null, null);
 	static var SINGLE_VALUE_ARRAY :Array<Dynamic> = [null];
 	
@@ -113,10 +109,8 @@ class Injector
 	
 	function injectFields (obj :Dynamic, cls :Class<Dynamic>) :Void
 	{
-		// trace("inject fields " + (Std.is(obj, de.polygonal.ds.Hashable) ? cast(obj, de.polygonal.ds.Hashable).key + "": "") 
-			// + " " + Type.getClassName(cls));
-		Preconditions.checkNotNull(cls, "obj class is null");
 		updateRuntimeCache(cls);
+		Preconditions.checkNotNull(cls, "obj class is null");
 		for (injectionTuple in instanceFieldInjections.get(cls)) {
 			if (injectionTuple == NULL_INJECTION) {
 				break;
@@ -143,8 +137,6 @@ class Injector
 					com.pblabs.util.Log.warn("No value set for injection key=" + injectionTuple.v2 + "  ->  " + cls.getClassName() + "." + field);
 					continue;
 				}
-				// trace("setting " + (Std.is(obj, de.polygonal.ds.Hashable) ? cast(obj, de.polygonal.ds.Hashable).key + "": "") 
-					// + " " + Type.getClassName(cls) + "." + field);
 				//Haxe doesn't property handle properties when using reflection
 				try {
 					if (Lambda.has(Type.getInstanceFields(cls), "set_" + field)) {
@@ -155,21 +147,11 @@ class Injector
 							Reflect.setField(obj, field, injectedValue);
 					}
 				} catch (e :Dynamic) {
-					// com.pblabs.util.Log.error(["Could not inject", "injectedValue", injectedValue, "obj", obj, "field", field]);
 					throw "Could not inject:  " + obj + "." + field + "=" + injectedValue + ", type=" + ReflectUtil.getClassName(injectedValue) + "\n" + e;
 				}
 			}
 			
 		}
-		
-		#if !cpp
-		var superCls = Type.getSuperClass(cls);
-		//Recursively inject superclass fields/listeners
-		if (superCls != null) {
-			com.pblabs.util.Log.debug("Injecting on superclass=" + superCls.getClassName());
-			injectFields(obj, superCls);
-		}
-		#end
 	}
 	
 	function get_isParentInjector () :Bool
@@ -227,16 +209,23 @@ class Injector
 			com.pblabs.util.Log.debug("No injections");
 		}
 		
-		//Mark with a null injection, so we know this class has been checked
-		if (instanceFieldInjections.get(cls) == null) {
-			instanceFieldInjections.set(cls, NULL_INJECTION);
-		}
-		
 		var superCls = Type.getSuperClass(cls);
 		//Recursively inject superclass fields/listeners
 		if (superCls != null) {
 			com.pblabs.util.Log.debug("Caching injections on superclass=" + superCls.getClassName());
 			updateRuntimeCache(superCls);
+			
+			//Copy the inject metadata
+			for (tup in instanceFieldInjections.get(superCls)) {
+				if (tup != NULL_INJECTION) {
+					instanceFieldInjections.set(cls, tup);
+				}
+			}
+		}
+		
+		//Mark with a null injection, so we know this class has been checked
+		if (instanceFieldInjections.get(cls) == null) {
+			instanceFieldInjections.set(cls, NULL_INJECTION);
 		}
 	}
 	
@@ -252,5 +241,3 @@ class Injector
 		return val;
 	}
 }
-
-
