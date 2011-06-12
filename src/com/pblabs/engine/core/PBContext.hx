@@ -269,7 +269,7 @@ class PBContext
 		injector = null;
 		_tempPropertyInfo = null;
 		
-		#if (debug && !neko)
+		#if (debug_hxhsl && !neko)
 		var sigs :Hash<Signaler<Dynamic>> = new Hash();
 		sigs.set("signalEnter", signalEnter);
 		sigs.set("signalExit", signalExit);

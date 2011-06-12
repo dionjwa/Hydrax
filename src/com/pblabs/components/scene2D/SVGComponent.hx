@@ -373,7 +373,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	}
 	#end
 	
-	#if (debug && flash)
+	#if (debug_hxhsl && flash)
 	override public function postDestructionCheck () :Void
 	{
 		super.postDestructionCheck();

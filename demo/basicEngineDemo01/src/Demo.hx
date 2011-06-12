@@ -12,6 +12,8 @@ import com.pblabs.engine.core.PBGame;
 
 import de.polygonal.motor2.geom.math.XY;
 
+import com.pblabs.engine.core.SignalBondManager;
+
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
@@ -24,6 +26,7 @@ class Demo
 	{
 		//Setup logging.
 		com.pblabs.engine.debug.Log.setup();
+		
 		
 		var game = new PBGame();
 		//The main "context".  This is equivalent to a level, or a menu screen.

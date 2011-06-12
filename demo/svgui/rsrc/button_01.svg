@@ -98,15 +98,7 @@
    y="35.763672"
    id="text3067"
    style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;writing-mode:lr-tb;text-anchor:middle;font-family:Arial;-inkscape-font-specification:Arial"
-   sodipodi:linespacing="125%"><tspan
-     sodipodi:role="line"
-     id="tspan3014"
-     x="39.603516"
-     y="35.763672">$T</tspan></text>
-
-
-
-
+   sodipodi:linespacing="125%">$T</text>
 
 <rect
    style="fill:#0000ff;fill-opacity:0;fill-rule:evenodd;stroke:none"
@@ -115,4 +107,4 @@
    height="12"
    x="80"
    y="29"
-   inkscape:label="anchor_2" /></svg>
+   inkscape:label="anchor" /></svg>

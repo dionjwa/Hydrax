@@ -44,28 +44,28 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		return null;
 	}
 	
-	public static function bindSignal <T>(component :EntityComponent, signaler :Signaler<T>, listener :T->Dynamic#if debug ,?infos :haxe.PosInfos #end ) :Bond
+	public static function bindSignal <T>(component :EntityComponent, signaler :Signaler<T>, listener :T->Dynamic#if debug_hxhsl ,?infos :haxe.PosInfos #end ) :Bond
 	{
 		com.pblabs.util.Assert.isNotNull(component, "component is null");
 		com.pblabs.util.Assert.isNotNull(component.context, "component.context is null");
 		var bonds = component.context.getManager(SignalBondManager);
 		com.pblabs.util.Assert.isNotNull(bonds, "SignalBondManager is null");
 		
-		#if debug
+		#if debug_hxhsl
 		return bonds.bind(component, signaler, listener, infos);
 		#else
 		return bonds.bind(component, signaler, listener);
 		#end
 	}
 	
-	public static function bindVoidSignal (component :EntityComponent, signaler :Signaler<Void>, listener :Void->Dynamic#if debug ,?infos :haxe.PosInfos #end ) :Bond
+	public static function bindVoidSignal (component :EntityComponent, signaler :Signaler<Void>, listener :Void->Dynamic#if debug_hxhsl ,?infos :haxe.PosInfos #end ) :Bond
 	{
 		com.pblabs.util.Assert.isNotNull(component, "component is null");
 		com.pblabs.util.Assert.isNotNull(component.context, "component.context is null");
 		var bonds = component.context.getManager(SignalBondManager);
 		com.pblabs.util.Assert.isNotNull(bonds, "SignalBondManager is null");
 		
-		#if debug
+		#if debug_hxhsl
 		return bonds.bindVoid(component, signaler, listener, infos);
 		#else
 		return bonds.bindVoid(component, signaler, listener);
@@ -97,7 +97,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		}
 		set(owner.key, bond);
 		
-		#if debug
+		#if debug_hxhsl
 		bond.infos = infos;
 		bond.debugInfo = infos == null ? "no infos @SignalBondManager.bind" : ""; 
 		com.pblabs.util.Log.debug("New " + bond);
@@ -127,7 +127,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		com.pblabs.util.Assert.isNotNull(bond, "bond is null");
 		set(owner.key, bond);
 		
-		#if debug
+		#if debug_hxhsl
 		bond.infos = infos;
 		com.pblabs.util.Log.debug("New " + bond);
 		#end

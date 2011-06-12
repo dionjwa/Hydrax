@@ -229,7 +229,7 @@ class SpatialComponent extends EntityComponent,
 	}
 	#end
 	
-	#if debug
+	#if debug_hxhsl
 	override public function postDestructionCheck () :Void
 	{
 		super.postDestructionCheck();
