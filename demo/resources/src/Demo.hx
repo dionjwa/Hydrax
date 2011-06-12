@@ -56,8 +56,7 @@ class Demo #if flash extends flash.display.Sprite #end
 	
 	function startGame () :Void
 	{
-		var context = game.allocate(PBContext);
-		game.pushContext(context);
+		var context :PBContext = game.pushContext(PBContext);
 		
 		//Scene for game elements
 		var gamescene = context.createBaseScene();

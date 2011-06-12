@@ -56,13 +56,13 @@ class Demo
 		
 		//Add the embedded resources
 		// com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/anchors.svg", "anchors");
-		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/squad_selector.svg", "anchors");
+		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/anchors.svg", "anchors");
 		
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/button_01.svg", "button");
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/button_01_down.svg", "button_down");
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/icon.svg", "button_icon");
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/text_center.svg", "text");
-		
+		com.pblabs.util.PBMacros.embedBinaryDataResource("../../lib/gm2d/samples/2-Svg/tiger.svg", "tiger");
 		
 		// com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/text_left.svg", "text");
 		// com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/text_right.svg", "text");
@@ -73,6 +73,27 @@ class Demo
 	
 	function startGame () :Void
 	{
+		trace("start game");
+		
+		// trace(com.pblabs.util.ds.MapUtil.toString(SvgCache.parseAnchors(Xml.parse(haxe.Resource.getString("anchors")))));
+		// return;
+		// trace(Type.resolveClass("com.lorentz.SVG.display.SVGDocument"));
+		// var svg = Type.createInstance(Type.resolveClass("com.lorentz.SVG.display.SVGDocument"), []);
+		
+		// var d = new xinf.xml.Document();
+		// trace(haxe.Resource.getString("tiger"));
+		// var svg = new gm2d.svg.SVG2Gfx(Xml.parse(haxe.Resource.getString("anchors")));
+		// trace("adding svg");
+		// var shape = svg.CreateShape();
+		// flash.Lib.current.stage.addChild(shape);
+      // shape.scaleX = shape.scaleY = 0.5;
+		// shape.cacheAsBitmap = true;
+		// addChild(shape);
+      // makeCurrent();
+		
+		
+		
+		// return;
 		var context :PBContext = game.pushContext(PBContext);
 		var scene = context.addSingletonComponent(SceneUtil.MANAGER_CLASS);
 		scene.sceneAlignment = SceneAlignment.TOP_LEFT;
@@ -108,19 +129,19 @@ class Demo
 		// c.removeFromParent();
 		// c.addToParent();
 		uiblob.setLocation(uiblob.getWidth() / 2 + 30 + 300, uiblob.getHeight() / 2);
-		c.visible = true;
+		// c.visible = true;
 		
 		
 		
 		
-		// var button1 = layer.createTwoStateSVGButton([svg1, svg3], [svg2, svg3], "testButton", function () :Void {}, "Button 1", "!CLICKED");
-		// hm.setAsChild(c, "anchor1", button1.getComponent(BaseSceneComponent));
+		var button1 = layer.createTwoStateSVGButton([svg1, svg3], [svg2, svg3], "testButton1", function () :Void {});
+		hm.setAsChild(c, "anchor1", button1.getComponent(BaseSceneComponent));
 		
-		// var button2 = layer.createTwoStateSVGButton([svg1], [svg2], "testButton", function () :Void {}, "Button 2", "!CLICKED");
-		// hm.setAsChild(c, "anchor2", button2.getComponent(BaseSceneComponent));
+		var button2 = layer.createTwoStateSVGButton([svg1], [svg2], "testButton2", function () :Void {});
+		hm.setAsChild(c, "anchor2", button2.getComponent(BaseSceneComponent));
 		
-		// var button3 = layer.createTwoStateSVGButton([svg1], [svg2], "testButton", function () :Void {}, "Button 3", "!CLICKED");
-		// hm.setAsChild(c, "anchor3", button3.getComponent(BaseSceneComponent));
+		var button3 = layer.createTwoStateSVGButton([svg1], [svg2], "testButton3", function () :Void {});
+		hm.setAsChild(c, "anchor3", button3.getComponent(BaseSceneComponent));
 		
 		// var button3 = layer.createText(svgtext, "testButtonfockmen");
 		
