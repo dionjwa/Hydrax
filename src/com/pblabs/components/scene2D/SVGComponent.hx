@@ -20,18 +20,20 @@ import flash.geom.Matrix;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
-using StringTools;
-
 using Lambda;
+
+using StringTools;
 
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.resource.ResourceToken;
 using com.pblabs.util.StringUtil;
-using com.pblabs.util.XMLUtil;
 using com.pblabs.util.SvgUtil;
+using com.pblabs.util.XMLUtil;
 #if flash
 using com.pblabs.util.DisplayUtils;
+import de.polygonal.core.math.Mathematics;
 #end
+
 
 /**
   * Cross platform SVG based Scene2D component.
@@ -144,7 +146,8 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 					toRender--;
 					if (toRender <= 0) {
 						finishedRendering = true;
-						cast(self._displayObject, flash.display.Sprite).addChildAt(svg, ii);
+						var sprite = cast(self._displayObject, flash.display.Sprite);
+						sprite.addChildAt(svg, Mathematics.clamp(ii, 0, sprite.numChildren));
 						self.recomputeBounds();
 						self.renderCompleteSignal.dispatch();
 					}

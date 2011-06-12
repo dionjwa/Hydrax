@@ -62,7 +62,7 @@ class Demo
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/button_01_down.svg", "button_down");
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/icon.svg", "button_icon");
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/text_center.svg", "text");
-		com.pblabs.util.PBMacros.embedBinaryDataResource("../../lib/gm2d/samples/2-Svg/tiger.svg", "tiger");
+		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/tiger.svg", "tiger");
 		
 		// com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/text_left.svg", "text");
 		// com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/text_right.svg", "text");
@@ -73,31 +73,9 @@ class Demo
 	
 	function startGame () :Void
 	{
-		trace("start game");
-		
-		// trace(com.pblabs.util.ds.MapUtil.toString(SvgCache.parseAnchors(Xml.parse(haxe.Resource.getString("anchors")))));
-		// return;
-		// trace(Type.resolveClass("com.lorentz.SVG.display.SVGDocument"));
-		// var svg = Type.createInstance(Type.resolveClass("com.lorentz.SVG.display.SVGDocument"), []);
-		
-		// var d = new xinf.xml.Document();
-		// trace(haxe.Resource.getString("tiger"));
-		// var svg = new gm2d.svg.SVG2Gfx(Xml.parse(haxe.Resource.getString("anchors")));
-		// trace("adding svg");
-		// var shape = svg.CreateShape();
-		// flash.Lib.current.stage.addChild(shape);
-      // shape.scaleX = shape.scaleY = 0.5;
-		// shape.cacheAsBitmap = true;
-		// addChild(shape);
-      // makeCurrent();
-		
-		
-		
-		// return;
 		var context :PBContext = game.pushContext(PBContext);
 		var scene = context.addSingletonComponent(SceneUtil.MANAGER_CLASS);
 		scene.sceneAlignment = SceneAlignment.TOP_LEFT;
-		// scene.sceneView.layer.parent.removeChild(scene.sceneView.layer);
 		#if flash
 		var layer :BaseSceneLayer<Dynamic, Dynamic> = scene.addLayer();
 		#elseif js

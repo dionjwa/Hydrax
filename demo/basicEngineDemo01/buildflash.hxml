@@ -1,7 +1,7 @@
 #build file
 -D debug
 
-# -lib hydrax
+-lib hydrax
 
 -cp src
 
@@ -17,11 +17,11 @@
 -lib feffects
 -lib hsl-1
 
--cp ../../../hydrax/src
+# -cp ../../../hydrax/src
 # -cp ../../../hydrax/lib/hsl
 # -cp ../../../hydrax/lib/hsl-pico
--cp ../../../libdamago/lib/polygonal/src/lib
+# -cp ../../../libdamago/lib/polygonal/src/lib
 
--D debug_hxhsl
+# -D debug_hxhsl
 
 
