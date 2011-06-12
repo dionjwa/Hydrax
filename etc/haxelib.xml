@@ -1,7 +1,7 @@
 <project name="hydrax" url="https://github.com/dionjwa/Hydrax" license="BSD">
         <user name="dionjwa"/>
         <description>A port of the Pushbutton Game Engine.</description>
-        <version name="1.0.7">Improved js/cpp/svg support and bugfixes.</version>
+        <version name="1.0.8">Bugfix release.</version>
         <depends name="feffects"/>
         <depends name="ArrayTools"/>
         <depends name="IterTools"/>
