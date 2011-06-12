@@ -36,6 +36,9 @@ using com.pblabs.util.DisplayUtils;
 /**
   * Cross platform SVG based Scene2D component.
   * Currently supports Flash, JS canvas, and JS CSS.
+  * Supports multiple svg resources.  More than one resource
+  * will be interpreted as svg elements to be attached to 
+  * svg parent (the first resource) elements starting with the label "anchor".
   */
 class SVGComponent 
 #if js
@@ -45,6 +48,9 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 #end
 {
 	public static var TEXT_REPLACE :EReg = ~/\$T/;
+	#if flash
+	static var INVISIBLE_STAGE :flash.display.Sprite;
+	#end
 	
 	#if (flash || cpp)
 	/** Fired when the svgweb renderer completes */
@@ -77,7 +83,6 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			#end
 			var svgXml = Xml.parse(_svgData[ii]).ensureNotDocument();
 			var b = parseBounds(svgXml);
-			// trace('b=' + b);
 			_individualBounds.push(b);
 			
 			//Parse the first image for anchor elements, and only use the first element for mouse bounds
@@ -94,28 +99,36 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		registrationPoint.x = boundsUnion.intervalX / 2;
 		registrationPoint.y = boundsUnion.intervalY / 2;
 		_unscaledBounds = boundsUnion;
-		// trace('registrationPoint=' + registrationPoint);
-		// trace('_unscaledBounds=' + _unscaledBounds);
 		_bounds = _unscaledBounds.clone();
 		
 		#if (flash || cpp)
-		_displayObject.removeAllChildren();
-		/**
-		  * svgweb will stop rendering if an Event.REMOVED_FROM_STAGE event
-		  * is fired.  This is super annoying, as if you create an SVGComponent,
-		  * and then detach it (to reattach it later), the svg will *never* finish
-		  * rendering (even if you reattach it to the state).
-		  */
 		
-		// var svgSprites = [];
+		/**
+		  * svgweb has 2 issues:
+		  *  1) It takes a number of frames to (asynchronously) render the svg
+		  *  2) It cancels the rendering if the sprite is removed from the stage
+		  *      before the rendering is finished (recieves a Event.REMOVED_FROM_STAGE).
+		  * To deal with this, we create a hidden sprite attached to the stage, 
+		  * and use that as our sprite parent until the svg has finished rendering
+		  * and dispatched the render finish event.
+		  * http://code.google.com/p/svgweb/issues/detail?id=265
+		  */
+		  if (INVISIBLE_STAGE == null) {
+		  	  INVISIBLE_STAGE = new flash.display.Sprite();
+		  	  INVISIBLE_STAGE.mouseChildren = INVISIBLE_STAGE.mouseEnabled = false;
+		  	  flash.Lib.current.stage.addChild(INVISIBLE_STAGE);
+		  	  INVISIBLE_STAGE.alpha = 0;
+		  	  INVISIBLE_STAGE.x = 5000;
+		  }
+		
+		_displayObject.removeAllChildren();
+		var toRender :Int = svgData.length;
 		for (ii in 0...svgData.length) {
 			var svgString = svgData[ii];
 			//Transform it
 			var svg = new org.svgweb.SVGViewerFlash();
-			// svgSprites.push(svg);
-			cast(_displayObject, flash.display.Sprite).addChild(svg);
-			// var intermediateLayer = new flash.display.Sprite();
-			// intermediateLayer.addChild(svg);
+			INVISIBLE_STAGE.addChild(svg);
+			
 			svg.xml = new flash.xml.XML(svgString);
 			if (ii > 0) {
 				var v = _relativeTransforms[ii];
@@ -125,28 +138,23 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 				}
 			}
 			var self = this;
-			// trace("adding listener for render complete");
 			var finishedRendering = false;
-			var removedFromState = function (e :Dynamic) :Void {
-				if (!finishedRendering) {
-					throw "If the svg.displayObject is removed from the stage before rendering is complete, the rendering will never finish";
-				}
-			} 
-			_displayObject.addEventListener(flash.events.Event.REMOVED_FROM_STAGE, removedFromState);
-			
 			com.pblabs.util.EventDispatcherUtil.addOnceListener(svg.svgRoot, org.svgweb.events.SVGEvent.SVGLoad, 
 				function (ignored :Dynamic) :Void {
-					finishedRendering = true;
-					self._displayObject.removeEventListener(flash.events.Event.REMOVED_FROM_STAGE, removedFromState);
-					self.recomputeBounds();
-					self.renderCompleteSignal.dispatch();
+					toRender--;
+					if (toRender <= 0) {
+						finishedRendering = true;
+						cast(self._displayObject, flash.display.Sprite).addChildAt(svg, ii);
+						self.recomputeBounds();
+						self.renderCompleteSignal.dispatch();
+					}
 				});
 		}
 		com.pblabs.util.DebugUtil.drawDot(cast _displayObject, 0xff0000, 30);
 		com.pblabs.util.DebugUtil.fillBoundingRect(cast _displayObject, cast _displayObject);
-		//TODO: Is the js renderer asynchronous???
 		renderCompleteSignal.dispatch();
 		#else
+		//TODO: Is the js renderer asynchronous???
 		#end
 		return val;
 	}
@@ -220,13 +228,11 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		var svgs = [];
 		for (rs in resources) {
 			var svg = context.get(rs);
-			// trace('Loaded as svg resource=' + svg);
 			com.pblabs.util.Assert.isNotNull(svg, "Missing svg resource from " + rs);
 			
 			#if flash
 			if (Std.is(svg, flash.display.DisplayObject)) {
 				cast(_displayObject, flash.display.Sprite).addChild(cast svg);
-				// com.pblabs.util.DebugUtil.traceDisplayChildren(_displayObject);
 				registrationPoint = new com.pblabs.geom.Vector2(_displayObject.width / 2, _displayObject.height / 2);
 				_bounds = new AABB2();
 				_bounds.xmin = 0;
