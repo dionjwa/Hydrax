@@ -10,6 +10,8 @@ execfile(os.path.join(hydraxroot, "bin", "applyLicenseHeaders.py"))
 
 #Copy all the src folders
 tmp = os.path.join(hydraxroot, "tmp")
+if os.path.exists(tmp):
+	shutil.rmtree(tmp);
 haxelibroot = os.path.join(tmp, "hydrax")
 
 if os.path.exists(haxelibroot):
