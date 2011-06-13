@@ -197,7 +197,6 @@ class Injector
 					} else {
 						com.pblabs.util.Log.error("@inject on " + cls.getClassName() + "." + field + ", but there is no inject annotation, and the class does not implement haxe.rtti.Infos, so we cannot get the class field types at runtime.");
 					}
-					
 				} else {
 					var injectArr :Array<String> = cast(injectMeta);
 					com.pblabs.util.Log.debug("Binding field injection " + cls.getClassName() + "." + field + " -> " + injectArr);
@@ -209,6 +208,8 @@ class Injector
 			com.pblabs.util.Log.debug("No injections");
 		}
 		
+		#if !cpp
+		//In cpp, each class has all the fields and metadata, no need to drill down to all the superclasses.
 		var superCls = Type.getSuperClass(cls);
 		//Recursively inject superclass fields/listeners
 		if (superCls != null) {
@@ -222,6 +223,7 @@ class Injector
 				}
 			}
 		}
+		#end
 		
 		//Mark with a null injection, so we know this class has been checked
 		if (instanceFieldInjections.get(cls) == null) {
