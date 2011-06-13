@@ -16,7 +16,6 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.util.PBUtil;
-import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 
 /**
@@ -27,16 +26,12 @@ import com.pblabs.util.ReflectUtil;
 * @see IEntity
 */
 class EntityComponent 
-	implements IEntityComponent//, implements haxe.rtti.Infos
-	// #if cpp
-	// ,implements haxe.rtti.Infos
-	// #end
+	implements IEntityComponent
 {
 	/** Key for hashing. Don't modify. */
 	public var key :Int;
 	
 	@editorData({ignore :"true"})
-	@inject("com.pblabs.engine.core.IPBContext")
 	public var context (get_context, set_context) :IPBContext;
  
 	@editorData({ignore :"true"})
@@ -60,13 +55,12 @@ class EntityComponent
    
    function get_context():IPBContext
    {
-	   // Preconditions.checkNotNull(_context, ReflectUtil.getClassName(this) + " does not have context set! Did you use context.allocate() to create it?");
 	   return _context;
    }
    
    function set_context(value:IPBContext):IPBContext
    {
-	   Preconditions.checkArgument(_context == null || _context == value, ReflectUtil.getClassName(this) + " already registered in another context.");
+   	   com.pblabs.util.Assert.isTrue(_context == null || _context == value, ReflectUtil.getClassName(this) + " already registered in another context.");
 	   _context = value;
 	   return value;
    }
@@ -78,8 +72,8 @@ class EntityComponent
   
    function set_owner(value:IEntity):IEntity
    {
-	  Preconditions.checkNotNull(value, "Cannot set an Entity owner to null.  This can only happen on unRegister");
-	  Preconditions.checkArgument(_owner == null, "Cannot change the owner");
+	  com.pblabs.util.Assert.isNotNull(value, "Cannot set an Entity owner to null.  This can only happen on unRegister");
+	  com.pblabs.util.Assert.isTrue(_owner == null, "Cannot change the owner");
 	  _owner = value;
 	  return value;
    }
@@ -91,7 +85,7 @@ class EntityComponent
   
   function set_name (name :String) :String
   {
-	  Preconditions.checkArgument(_name == null, ReflectUtil.getClassName(this) + " already has a name");
+	  com.pblabs.util.Assert.isTrue(_name == null, ReflectUtil.getClassName(this) + " already has a name");
 	  _name = name;
 	  return name;
   }
@@ -103,23 +97,23 @@ class EntityComponent
   
   public function register(owner :IEntity, ?name:String):Void
   {
-	  Preconditions.checkArgument(!isRegistered, "Trying to register an already-registered component!");
+	  com.pblabs.util.Assert.isTrue(!isRegistered, "Trying to register an already-registered component!");
 	 _context = owner.context;
 	 _name = name;
 	 _owner = owner;
 	 _sanityCheck = false;
 	 _isRegistered = true;
 	 onAdd();
-	 Preconditions.checkArgument(_sanityCheck, "Forgot to call super.onAdd(); in " + this + "!");
+	 com.pblabs.util.Assert.isTrue(_sanityCheck, "Forgot to call super.onAdd(); in " + this + "!");
   }
   
   public function unregister():Void
   {
-	  Preconditions.checkArgument(isRegistered, "Trying to unregister an unregistered component!");
+	  com.pblabs.util.Assert.isTrue(isRegistered, "Trying to unregister an unregistered component!");
 	 _isRegistered = false;
 	 _sanityCheck = false;
 	 onRemove();
-	 Preconditions.checkArgument(_sanityCheck, "Forgot to call super.onRemove(); in " + this + "!");
+	 com.pblabs.util.Assert.isTrue(_sanityCheck, "Forgot to call super.onRemove(); in " + this + "!");
 	 _owner = null;
 	 _name = null;
 	 _context = null;
@@ -129,7 +123,7 @@ class EntityComponent
   {
   	  _sanityCheck = false;
   	  onReset();
-  	  Preconditions.checkArgument(_sanityCheck, "Forgot to call super.onReset(); in " + this + "!");
+  	  com.pblabs.util.Assert.isTrue(_sanityCheck, "Forgot to call super.onReset(); in " + this + "!");
   }
   
   /**
