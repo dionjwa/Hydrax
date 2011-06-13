@@ -92,7 +92,7 @@ class StringUtil
 	{
 		#if js
 		try {
-			return js.externs.JSON.stringify(obj);
+			return JSON.stringify(obj);
 		} catch (e :Dynamic) {
 			return objectToString(obj, fields);
 		}
