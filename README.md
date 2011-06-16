@@ -18,13 +18,13 @@ Currently, Hydrax will (mostly) keep the PBE package structure of the core class
 
 #Differences (detailed differences are listed below)
 
-Due to the extra features and multi-platform capability of HaXe (or just personal motivation), some components and features underwent more modifications than others.  Also, the package structure outside of the core engine modified: almost everything outside of the core engine is grouped under com.pblabs.components.
+Due to the extra features and multi-platform capability of HaXe (or just personal motivation), some components and features underwent more modifications than others.  Also, the package structure outside of the core engine are slightly modified: almost everything outside of the core engine is grouped under com.pblabs.components instead of com.pblabs.
 
 Major differences:
 
-- Hxhsl signals used instead of as3 events.  The SignalBondManager provides a safe way to register listeners that handles removing the listeners upon object destruction.
-- Rendering has been heavily modified to simplify cross-platform 2D rendering.  The Flash API has *not* been duplicated, nor do I intend to.
-- Input.  Again, heavy rewrite to handle cross-platform input (mouse, touch screens, etc).
+- Hxhsl signals instead of as3 events.  The SignalBondManager provides listener registration on Entity and Component objects with automatic listener  removal upon object destruction.
+- Rendering has been modified to simplify cross-platform 2D rendering.  The Flash API has *not* been duplicated, nor do I intend to.
+- Input.  Rewritten to handle cross-platform input (mouse, touch screens, etc).
 - A very simple form of field injection is available, as Robotlegs/SwiftSuspenders is not ported to HaXe.
 - Screens.  I use IPBContexts in the place of screens.
 
