@@ -6,7 +6,8 @@
 
 # Gettings started
 
-1. Install [HaXe][haxe].  
+1. Install [HaXe][haxe].
+2. At the terminal, type *haxelib install hydrax*
 2. Go to the folder demo/basicEngineDemo01 in a terminal or dos prompt.
 3. Create a folder there called 'build' if one doesn't already exist.
 4. type *haxe buildflash.hxml*
