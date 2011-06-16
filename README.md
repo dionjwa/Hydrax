@@ -41,7 +41,7 @@ Complete or functional:
 
 Extra features (not available in PBE):
 
-- Multiplatform: flash and HTML5 (js) rendering, c++ for standalone, iOs, and android.  Tested with PBE so far: flash, HTML5, node.js (server side platform), c++ (preliminary).
+- Multiplatform: flash and HTML5 (js) rendering, c++ for standalone, iOs, and android.  Tested so far: flash, HTML5, node.js (server side platform), c++ (preliminary).
 - SVG support.
 - Flash < - > javascript remoting (including special HTML5 localStorage service).
 - Client/server remoting (from HaXe).
