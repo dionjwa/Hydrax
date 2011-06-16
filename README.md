@@ -9,8 +9,7 @@
 1. Install [HaXe][haxe].  
 2. Go to the folder demo/basicEngineDemo01 in a terminal or dos prompt.
 3. Create a folder there called 'build' if one doesn't already exist.
-4. type 
-	haxe buildflash.hxml
+4. type *haxe buildflash.hxml*
 5. Open the swf in *demo/basicEngineDemo01/build/demo.swf*
 
 
