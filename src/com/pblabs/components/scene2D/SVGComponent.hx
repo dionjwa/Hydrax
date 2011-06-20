@@ -104,7 +104,6 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		_bounds = _unscaledBounds.clone();
 		
 		#if (flash || cpp)
-		
 		/**
 		  * svgweb has 2 issues:
 		  *  1) It takes a number of frames to (asynchronously) render the svg
@@ -199,6 +198,28 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		#end
 	}
 	
+	// public function getElementWithLabel (label :String) :#if flash DisplayObject #else HtmlDom #end
+	// {
+	// 	var result :DisplayObject = null;
+	//     com.pblabs.util.DisplayUtils.applyToHierarchy(_displayObject, function (d :flash.display.DisplayObject) :Bool {
+	// 		if (Std.is(d, org.svgweb.core.SVGSprite)) {
+	// 			var s :org.svgweb.core.SVGSprite = cast d;
+	// 			var node = s.svgNode;
+	// 			var attrs = node.getAttrs();
+	// 			var r = ~/.*inkscape:label="([A-Za-z0-9 ]*)".*/;
+	// 			if (r.match(attrs)) {
+	// 				if (label == r.matched(1)) {
+	// 					result = d;
+	// 					return true;
+	// 				}
+	// 				// trace(r.matched(1));
+	// 			}
+	// 		}
+	// 		return false;
+	// 	});
+	// 	return result;
+	// }
+	
 	#if js
 	override public function updateTransform () :Void
 	{
@@ -255,6 +276,11 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	override function onRemove () :Void
 	{
 		super.onRemove();
+		#if (flash && debug)
+		if (displayObject != null && displayObject.parent != null) {
+			trace("WTF, still attached");
+		}
+		#end
 		_svgData = null;
 	}
 	
@@ -310,7 +336,13 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			}
 			Reflect.setField(args, "scaleWidth", width);
 			Reflect.setField(args, "scaleHeight", height);
-			untyped canvg(ctx.canvas, svg, args);
+			try {
+				untyped canvg(ctx.canvas, svg, args);
+			} catch (e :Dynamic) {
+				com.pblabs.util.Log.error(resources[ii]);
+				com.pblabs.util.Log.error("Error rendering svg from canvg: " + e);
+				com.pblabs.util.Log.error(com.pblabs.util.Log.getStackTrace());
+			}
 		}
 	}
 	
@@ -319,7 +351,6 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		if (_backBuffer == null) {
 			_backBuffer = cast js.Lib.document.createElement("canvas");
 			com.pblabs.util.Assert.isNotNull(div);
-			div.appendChild(_backBuffer);
 		}
 		super.redrawBackBuffer();
 	}
