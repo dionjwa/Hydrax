@@ -198,28 +198,6 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		#end
 	}
 	
-	// public function getElementWithLabel (label :String) :#if flash DisplayObject #else HtmlDom #end
-	// {
-	// 	var result :DisplayObject = null;
-	//     com.pblabs.util.DisplayUtils.applyToHierarchy(_displayObject, function (d :flash.display.DisplayObject) :Bool {
-	// 		if (Std.is(d, org.svgweb.core.SVGSprite)) {
-	// 			var s :org.svgweb.core.SVGSprite = cast d;
-	// 			var node = s.svgNode;
-	// 			var attrs = node.getAttrs();
-	// 			var r = ~/.*inkscape:label="([A-Za-z0-9 ]*)".*/;
-	// 			if (r.match(attrs)) {
-	// 				if (label == r.matched(1)) {
-	// 					result = d;
-	// 					return true;
-	// 				}
-	// 				// trace(r.matched(1));
-	// 			}
-	// 		}
-	// 		return false;
-	// 	});
-	// 	return result;
-	// }
-	
 	#if js
 	override public function updateTransform () :Void
 	{
