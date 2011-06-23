@@ -1,47 +1,61 @@
 #!/usr/bin/env python
 
 #Creates the haxelib package
-import os, os.path, string, sys, shutil
+import os, os.path, string, sys, shutil, tempfile, re, zipfile
+from xml.dom import minidom
 
-hydraxroot = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+if len(sys.argv) <= 1:
+	print "Usage: createhaxelib.py <haxelib.etc> [srcFolder1] [srcFolder2, ...]"
+	sys.exit(0)
 
-#Apply license headers
-execfile(os.path.join(hydraxroot, "bin", "applyLicenseHeaders.py"))
+etcFile = sys.argv[1]
+srcFolders = sys.argv[2:] if len (sys.argv) > 2 else None
+if not srcFolders:
+	srcFolders = [os.getcwd()]
 
-#Copy all the src folders
-tmp = os.path.join(hydraxroot, "tmp")
-if os.path.exists(tmp):
-	shutil.rmtree(tmp);
-haxelibroot = os.path.join(tmp, "hydrax")
+if not os.path.exists(etcFile):
+	print etcFile + " doesn't exist."
+	sys.exit(0)
 
-if os.path.exists(haxelibroot):
-	shutil.rmtree(haxelibroot);
-os.makedirs(haxelibroot)
 
-src = os.path.join(hydraxroot, "src")
+dom = minidom.parse(etcFile)
+projectName = dom.documentElement.attributes["name"].value.strip()
+print "Project name: " + projectName
 
-for f in os.listdir(src):
-	srcfolder = os.path.join(src, f)
-	if os.path.isdir(srcfolder):
-		print "Copying " + srcfolder + " to " + haxelibroot  
-		shutil.copytree(srcfolder, os.path.join(haxelibroot, f), ignore=shutil.ignore_patterns(".DS_Store", ".git", ".svn", "*.xml"))
-	
-#Copy the modified signaling code
-# lib = os.path.join(hydraxroot, "lib")
-# hsl = os.path.join(lib, "hsl")
-# hslpico = os.path.join(lib, "hsl-pico")
-# command = "rsync -r --exclude=*.svn --exclude=*.xml '" + hsl + "/' " + haxelibroot
-# os.system(command)
-# command = "rsync -r --exclude=*.svn --exclude=*.xml  '" + hslpico + "/' " + haxelibroot
-# os.system(command)
+for srcFolder in srcFolders:
+	if not os.path.exists(srcFolder):
+		print srcFolder + " doesn't exist."
+		sys.exit(0)
 
-#Copy the haxelib.xml file
-etc = os.path.join(hydraxroot, "etc")
-shutil.copy(os.path.join(etc, "haxelib.xml"), haxelibroot)
+tmpfolder = tempfile.mkdtemp()
 
-#Go to the folder
-os.chdir(tmp)
-os.system("zip -r hydrax.zip hydrax")
-os.system("haxelib test hydrax.zip")
-	
+# print "tmp folder: " + tmpfolder
+def nodot (item):
+	return item[0] != '.'
+
+for src in srcFolders:
+	for f in filter(nodot, os.listdir(src)):
+		
+		fullfilepath = os.path.join(src, f);
+		if os.path.isdir(fullfilepath):
+			# print "Copying " + fullfilepath + " to " + os.path.join(tmpfolder, f)  
+			shutil.copytree(fullfilepath, os.path.join(tmpfolder, f), ignore=shutil.ignore_patterns(".DS_Store", ".git", ".svn", "*.xml", "*.zip", "*.sh"))
+		elif re.match(".*(haxelib\.xml|\.hx|\.hxml)$", f):
+			shutil.copyfile(fullfilepath, os.path.join(tmpfolder, f))
+			
+shutil.copyfile(etcFile, os.path.join(tmpfolder, os.path.basename(etcFile)))
+
+zipFileName = os.path.join(tmpfolder, projectName + ".zip")
+z = zipfile.ZipFile(zipFileName, "w")
+
+for root, dirnames, files in os.walk(tmpfolder, followlinks=True):
+	for file in files:
+		if file != projectName + ".zip":
+			print file
+			z.write(os.path.join(root, file), os.path.join(root, file).replace(tmpfolder, ""), zipfile.ZIP_DEFLATED )
+
+# print os.path.join(tmpfolder, projectName + ".zip")
+
+shutil.move(zipFileName, os.path.join(os.getcwd(), projectName + ".zip"));
+shutil.rmtree(tmpfolder)
 

@@ -85,5 +85,9 @@ interface IPBObject
 	 * are set to null manually.</p>
 	 */
 	function destroy():Void;
+	
+	#if debug
+	function toString () :String;
+	#end
 }
 

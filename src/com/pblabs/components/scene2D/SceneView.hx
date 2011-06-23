@@ -265,21 +265,17 @@ class SceneView
 	
 	function get_mouseOffset () :XY
 	{
-		#if js
+		#if debug
+			var jQueryLoadedMissing :Bool = untyped __js__("typeof jQuery == 'undefined'");
+			if (jQueryLoadedMissing) {
+				throw "JQuery missing, please add to html";
+			}
+		#end
 		var os :{top:Float, left:Float} = new JQuery("#" + layerId).offset();
 		var v = new Vector2(os.left, os.top);
 		v.x += Std.parseFloat(_layer.style.borderWidth);
 		v.y += Std.parseFloat(_layer.style.borderWidth);
-		// trace('v=' + v);
 		return v;
-		// trace(new JQuery("#" + layerId).offset());
-		#end
-		// return layer.offsetLeft + Std.parseFloat(_layer.style.borderWidth) * 2;
 	}
-	
-	// function get_mouseOffsetY () :Float
-	// {
-	// 	return layer.offsetTop + Std.parseFloat(_layer.style.borderWidth) * 2;
-	// }
 	#end
 }

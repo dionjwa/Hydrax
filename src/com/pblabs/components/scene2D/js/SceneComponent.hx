@@ -38,6 +38,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		return div;
 	}
 	
+	public var priority :Int;
 	/** Set this when added to the parent */
 	public var isOnCanvas(default, null) :Bool;
 	public var div (default, null) :HtmlDom;
@@ -51,6 +52,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 	public function new () :Void
 	{
 		super();
+		priority = 0;
 		isOnCanvas = false;
 		_isContentsDirty = true;
 		//Create the image and containing div element

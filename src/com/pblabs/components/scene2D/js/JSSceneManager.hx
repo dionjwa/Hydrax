@@ -17,11 +17,13 @@ using Lambda;
 class JSSceneManager extends BaseSceneManager<JSLayer>,
 	implements IAnimatedObject
 {
+	public var priority :Int;
 	public var container (get_container, null) :js.Dom.HtmlDom;
 	
 	public function new ()
 	{
 		super();
+		priority = 0;
 	}
 	
 	override public function addLayer (?layerName :String = null, ?cls :Class<Dynamic> = null, ?registerAsManager :Bool = false) :BaseSceneLayer<Dynamic, Dynamic>

@@ -22,11 +22,11 @@ class CircleShape extends ShapeComponent
 	public var radius (get_radius, set_radius) :Float;
 	public var showAngleLine :Bool;
 	var _radius :Float;
-	public function new ()
+	public function new (?rad :Float = 20)
 	{
 		super();
 		
-		_radius = 20.0;
+		_radius = rad;
 		showAngleLine = true;
 		#if js
 		_svgContainer = untyped js.Lib.document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -44,12 +44,13 @@ class CircleShape extends ShapeComponent
 		_unscaledBounds.ymin = -_radius;
 		_unscaledBounds.ymax = _radius;
 		_bounds = _unscaledBounds.clone();
-		
-		// radius = r;
 	}
 	
 	override public function containsWorldPoint (pos :XY, mask :ObjectType) :Bool
 	{
+		if (!objectMask.and(mask)) {
+			return false;
+		}
 		return CircleUtil.isWithinCircle(pos, x + (- _registrationPoint.x * _scaleX) - _locationOffset.x, y + (- _registrationPoint.y * _scaleY) - _locationOffset.y, radius * _scaleX);
 	}
 	
@@ -73,18 +74,17 @@ class CircleShape extends ShapeComponent
 		com.pblabs.engine.debug.Profiler.enter("redraw");
 		var r = _radius;
 		#if (flash || cpp)
-		var zoom = parent != null && parent.parent != null ? parent.parent.zoom : 1.0;
-		var g = cast(_displayObject, flash.display.Sprite).graphics;
+		var g = cast(_displayObject, flash.display.Shape).graphics;
 		g.clear();
 		if (fillColor >= 0) {
 			g.beginFill(fillColor);
 			g.drawCircle(0, 0, r);
 			g.endFill();
 		}
-		g.lineStyle(0.0, borderColor);
+		g.lineStyle(borderStroke, borderColor);
 		g.drawCircle(0, 0, r);
 		if (showAngleLine) {
-			g.lineStyle(0.0, borderColor);
+			g.lineStyle(borderStroke, borderColor);
 			g.moveTo(0, 0);
 			g.lineTo(r, 0);
 		}
@@ -96,7 +96,6 @@ class CircleShape extends ShapeComponent
 		_svg.setAttribute("fill", StringUtil.toColorString(fillColor, "#"));
 		_svg.setAttribute( "stroke",  StringUtil.toColorString(borderColor, "#"));
 		_svg.setAttribute( "stroke-width",  "" + borderStroke);
-		
 		_svgContainer.setAttribute("width", (r * 2) + "px");
 		_svgContainer.setAttribute("height", (r * 2) + "px");
 		#end
@@ -112,10 +111,12 @@ class CircleShape extends ShapeComponent
 		ctx.fill();
 		ctx.closePath();
 		ctx.strokeStyle = StringUtil.toColorString(borderColor, "#");
-		ctx.lineWidth = borderStroke;
-		ctx.beginPath();
-		ctx.arc(0, 0, radius, 0, Math.PI*2, true);
-		ctx.stroke();
+		if (borderStroke > 0) {
+			ctx.lineWidth = borderStroke;
+			ctx.beginPath();
+			ctx.arc(0, 0, radius, 0, Math.PI*2, true);
+			ctx.stroke();
+		}
 	}
 	#end
 	
@@ -153,8 +154,12 @@ class CircleShape extends ShapeComponent
 	
 	function set_radius (val :Float) :Float
 	{
+		if (_radius == val) {
+			return val;
+		}
 		_radius = val;
 		_isTransformDirty = true;
+		redraw();
 		return val;
 	}
 	

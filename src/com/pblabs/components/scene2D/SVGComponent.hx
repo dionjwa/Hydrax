@@ -42,7 +42,7 @@ import de.polygonal.core.math.Mathematics;
   * will be interpreted as svg elements to be attached to 
   * svg parent (the first resource) elements starting with the label "anchor".
   */
-class SVGComponent 
+class SVGComponent
 #if js
 extends com.pblabs.components.scene2D.js.SceneComponent
 #elseif (flash || cpp)
@@ -128,7 +128,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			var svgString = svgData[ii];
 			//Transform it
 			var svg = new org.svgweb.SVGViewerFlash();
-			INVISIBLE_STAGE.addChild(svg);
+			INVISIBLE_STAGEsm.addChild(svg);
 			
 			svg.xml = new flash.xml.XML(svgString);
 			if (ii > 0) {
@@ -142,19 +142,16 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			var finishedRendering = false;
 			com.pblabs.util.EventDispatcherUtil.addOnceListener(svg.svgRoot, org.svgweb.events.SVGEvent.SVGLoad, 
 				function (ignored :Dynamic) :Void {
+					var sprite = cast(self._displayObject, flash.display.Sprite);
+					sprite.addChildAt(svg, Mathematics.clamp(ii, 0, sprite.numChildren));
 					toRender--;
 					if (toRender <= 0) {
 						finishedRendering = true;
-						var sprite = cast(self._displayObject, flash.display.Sprite);
-						sprite.addChildAt(svg, Mathematics.clamp(ii, 0, sprite.numChildren));
 						self.recomputeBounds();
 						self.renderCompleteSignal.dispatch();
 					}
 				});
 		}
-		com.pblabs.util.DebugUtil.drawDot(cast _displayObject, 0xff0000, 30);
-		com.pblabs.util.DebugUtil.fillBoundingRect(cast _displayObject, cast _displayObject);
-		renderCompleteSignal.dispatch();
 		#else
 		//TODO: Is the js renderer asynchronous???
 		#end
@@ -192,7 +189,6 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		#if (flash || cpp)
 		renderCompleteSignal = new DirectSignaler(this);
 		var s = new flash.display.Sprite();
-		com.pblabs.util.DebugUtil.drawDot(s, 0xff0000, 20);
 		s.mouseEnabled = s.mouseChildren = false;
 		_displayObject = s;
 		#end

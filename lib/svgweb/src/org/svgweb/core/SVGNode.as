@@ -363,7 +363,7 @@ package org.svgweb.core
                     break;
                     
                 default:
-                    trace("Unknown Element: " + nodeName);
+                    // trace("Unknown Element: " + nodeName);
                     childNode = new SVGUnknownNode(this.svgRoot, childXML);
                     break;    
             }

@@ -22,9 +22,12 @@ import com.pblabs.engine.time.ITickedObject;
 class TaskComponentTicked extends TaskComponent, 
 	implements ITickedObject
 {
+	public var priority :Int;
+	
 	public function new() 
 	{ 
 		super();
+		priority = 0;
 		_tasksFinished = true;
 	}
 	
@@ -56,7 +59,7 @@ class TaskComponentTicked extends TaskComponent,
 	function updatingCheck () :Void
 	{
 		if (owner == null) {
-			return;
+			return;                                                                                   
 		}
 		if (!_tasksFinished && !_addedToProcessManager) {
 			context.getManager(IProcessManager).addTickedObject(this);

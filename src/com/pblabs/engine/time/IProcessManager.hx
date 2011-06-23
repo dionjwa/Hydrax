@@ -56,7 +56,7 @@ interface IProcessManager
 	 * (first-processed) priority is Number.MAX_VALUE. The lowest (last-processed) 
 	 * priority is -Number.MAX_VALUE.
 	 */
-	function addAnimatedObject(object:IAnimatedObject, ?priority:Int = 0):Void;
+	function addAnimatedObject(object:IAnimatedObject):Void;
 
 	/**
 	 * Unregisters an object from receiving frame callbacks.
@@ -74,7 +74,7 @@ interface IProcessManager
 	 * (first-processed) priority is Number.MAX_VALUE. The lowest (last-processed) 
 	 * priority is -Number.MAX_VALUE.
 	 */
-	function addTickedObject(object:ITickedObject, ?priority:Int = 0):Void;
+	function addTickedObject(object:ITickedObject):Void;
 
 	/**
 	 * Unregisters an object from receiving tick callbacks.

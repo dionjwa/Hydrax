@@ -20,11 +20,13 @@ import js.Lib;
 class SceneLayer extends JSLayer,
 	implements IAnimatedObject
 {
+	public var priority :Int;
 	var _tempPoint :Vector2;
 	
 	public function new ()
 	{
 		super();
+		priority = 0;
 		_tempPoint = new Vector2();
 	}
 	

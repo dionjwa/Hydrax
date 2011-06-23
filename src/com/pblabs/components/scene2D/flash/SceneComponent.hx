@@ -26,12 +26,14 @@ using com.pblabs.util.MathUtil;
 class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	implements com.pblabs.engine.time.IAnimatedObject
 {
+	public var priority :Int;
 	public var displayObject(get_displayObject, set_displayObject) :DisplayObject;
 	
 	public function new ()
 	{
 		_transformMatrix = new Matrix();
 		super();
+		priority = 0;
 	}
 	
 	public function onFrame (dt :Float) :Void

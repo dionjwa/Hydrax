@@ -68,7 +68,7 @@ class RectangleShape extends ShapeComponent
 	{
 		#if (flash || cpp)
 		var zoom = parent != null && parent.parent != null ? parent.parent.zoom : 1.0;
-		var g = cast(_displayObject, flash.display.Sprite).graphics;
+		var g = cast(_displayObject, flash.display.Shape).graphics;
 		g.clear();
 		g.beginFill(this.fillColor, 1);
 		g.drawRect(0, 0, width, height);
@@ -86,11 +86,13 @@ class RectangleShape extends ShapeComponent
 	{
 		ctx.fillStyle = StringUtil.toColorString(fillColor, "#");
 		ctx.fillRect(0, 0, width, height);
-		ctx.strokeStyle = StringUtil.toColorString(borderColor, "#");
-		ctx.lineWidth = borderStroke;
-		ctx.beginPath();
-		ctx.rect(0, 0, width, height);
-		ctx.stroke();
+		if (borderStroke > 0) {
+			ctx.strokeStyle = StringUtil.toColorString(borderColor, "#");
+			ctx.lineWidth = borderStroke;
+			ctx.beginPath();
+			ctx.rect(0, 0, width, height);
+			ctx.stroke();
+		}
 	}
 	
 	var _rect :js.Dom.HtmlDom;

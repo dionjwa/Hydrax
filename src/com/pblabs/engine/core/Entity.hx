@@ -86,12 +86,10 @@ class Entity extends PBObject,
 				
 				//Add the timed components here rather than forcing
 				//each implementing class to add itself.
-				com.pblabs.util.Log.debug("Is pc.item=" + pc.item + " a ITickedObject?: " + Std.is(pc.item, ITickedObject));  
 				if (Std.is(pc.item, ITickedObject)) {
 					_context.processManager.addTickedObject(cast(pc.item));
 				}
 				
-				com.pblabs.util.Log.debug("Is pc.item=" + pc.item + " a IAnimatedObject?: " + Std.is(pc.item, IAnimatedObject));
 				if (Std.is(pc.item, IAnimatedObject)) {
 					_context.processManager.addAnimatedObject(cast(pc.item));
 				}
@@ -123,6 +121,9 @@ class Entity extends PBObject,
 	
 	public override function destroy():Void
 	{
+		if (!isLiveObject) {
+			com.pblabs.util.Log.error("Calling destroy on a dead Entity");
+		}
 		// Give listeners a chance to act before we start destroying stuff.
 		destroyedSignal.dispatch(this);
 		//The context destruction dispatcher
@@ -163,7 +164,9 @@ class Entity extends PBObject,
 		
 		// Get out of the NameManager and other general cleanup stuff.
 		super.destroy();
+		#if debug
 		com.pblabs.util.Assert.isFalse(destroyedSignal.isListenedTo);
+		#end
 		_deferring = false;
 		_components.clear();
 		_deferredComponents = [];
@@ -500,6 +503,13 @@ class Entity extends PBObject,
 		 	 com.pblabs.util.Log.warn("No SetManager, cannot inject IEntityComponents into sets");
 		 }
 	}
+	
+	#if debug
+	override public function toString () :String
+	{
+		return "Entity[" + _name + ", components=" + (_components == null ? 0 : _components.size()) + "]";
+	}
+	#end
 }
 
 class PendingComponent

@@ -17,11 +17,8 @@ package com.pblabs.engine.core;
  * 
  * @see IPBObject
  */
-class PBObject 
-	implements IPBObject
-	// #if cpp
-	// ,implements haxe.rtti.Infos
-	// #end
+bclass PBObject 
+	implements IPBObject, implements haxe.rtti.Infos
 {
 	/** Key for hashing. Don't modify. */
 	public var key :Int;
@@ -126,7 +123,7 @@ class PBObject
 	#if debug
 	public function toString () :String
 	{
-		return name;
+		return "PBObject[" + _name + "]";
 	}
 	#end
 	

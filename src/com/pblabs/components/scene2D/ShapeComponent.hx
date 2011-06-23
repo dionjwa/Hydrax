@@ -20,6 +20,11 @@ class ShapeComponent
 	public var borderStroke (get_borderStroke, set_borderStroke) :Float;
 	public var borderAlpha (get_borderAlpha, set_borderAlpha) :Float;
 	
+	var _fillColor :Int;
+	var _borderColor :Int;
+	var _borderStroke :Float;
+	var _borderAlpha :Float;
+	
 	public function new ()
 	{
 		super();
@@ -28,23 +33,9 @@ class ShapeComponent
 		_borderStroke = 1;
 		_borderAlpha = 1;
 		#if (flash || cpp)
-		_displayObject = com.pblabs.util.SpriteUtil.create();
+		_displayObject = new flash.display.Shape();
 		#end
 	}
-	
-	// #if css
-	// override public function onFrame (dt :Float) :Void
-	// {
-	// 	com.pblabs.util.Assert.isNotNull(parent);
-		
-	// 	if (isTransformDirty) {
-	// 		isTransformDirty = false;
-	// 		var xOffset = parent.xOffset - (width / 2);
-	// 		var yOffset = parent.yOffset- (height / 2);
-	// 		untyped div.style.webkitTransform = "translate(" + (_x + xOffset) + "px, " + (_y + yOffset) + "px) rotate(" + _angle + "rad)";
-	// 	}
-	// }
-	// #end
 	
 	override function onReset () :Void
 	{
@@ -53,36 +44,6 @@ class ShapeComponent
 		redraw();
 		com.pblabs.util.Log.debug("finished");
 	}
-	
-	// override function get_width () :Float
-	// {
-	// 	return _width;
-	// }
-	
-	// override function set_width (val :Float) :Float
-	// {
-	// 	_width = val;
-	// 	isTransformDirty = true;
-	// 	_bounds.xmin = _x - _width / 2;
-	// 	_bounds.xmax = _x + _width / 2;
-	// 	redraw();
-	// 	return val;
-	// }
-	
-	// override function get_height () :Float
-	// {
-	// 	return _height;
-	// }
-	
-	// override function set_height (val :Float) :Float
-	// {
-	// 	_height = val;
-	// 	isTransformDirty = true;
-	// 	_bounds.ymin = _y - _height / 2;
-	// 	_bounds.ymax = _y + _height / 2;
-	// 	redraw();
-	// 	return val;
-	// }
 	
 	public function redraw () :Void
 	{
@@ -143,10 +104,4 @@ class ShapeComponent
 		redraw();
 		return val;
 	}
-	
-	var _fillColor :Int;
-	var _borderColor :Int;
-	var _borderStroke :Float;
-	var _borderAlpha :Float;
-
 }

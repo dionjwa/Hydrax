@@ -119,14 +119,12 @@ class Injector
 			var field = injectionTuple.v1;
 			
 			if (Type.typeof(Reflect.field(obj, field)) == ValueType.TFunction) {
-				com.pblabs.util.Log.debug("Not injecting into " + Type.getClassName(Type.getClass(obj)) + "." + field + ", field is a function");
 				continue;
 			}
 			
 			//Don't inject into fields with existing values
 			//TODO: check if the field is a function
 			if (Reflect.field(obj, field) != null) {
-				com.pblabs.util.Log.warn("Not injecting into " + Type.getClassName(Type.getClass(obj)) + "." + field + ", field is not null, " + field + "=" + Reflect.field(obj, field));
 				continue;
 			}
 			
@@ -134,7 +132,6 @@ class Injector
 				
 				var injectedValue :Dynamic = getMapping(null, injectionKey);
 				if (injectedValue == null) {
-					com.pblabs.util.Log.warn("No value set for injection key=" + injectionTuple.v2 + "  ->  " + cls.getClassName() + "." + field);
 					continue;
 				}
 				//Haxe doesn't property handle properties when using reflection
@@ -164,8 +161,8 @@ class Injector
 	 */
 	function updateRuntimeCache (cls :Class<Dynamic>) :Void
 	{
+		#if (nodejs && profiler) untyped __js__("debugger"); #end
 		if (instanceFieldInjections.exists(cls)) {
-			com.pblabs.util.Log.debug(cls.getClassName() + " already registered:" + instanceFieldInjections.get(cls));
 			return;
 		}
 		var m = haxe.rtti.Meta.getFields(cls);
@@ -189,9 +186,7 @@ class Injector
 								case CClass(name, params):
 									tup = new Tuple(field, [name]);
 									instanceFieldInjections.set(cls, tup);
-									com.pblabs.util.Log.debug("Binding field injection " + cls.getClassName() + "." + field + " <- " + name);
 								default:
-								com.pblabs.util.Log.error("@inject on " + cls.getClassName() + "." + field + ", not a class type: " + cls.getFieldType(field));
 							}
 						}
 					} else {
@@ -199,23 +194,18 @@ class Injector
 					}
 				} else {
 					var injectArr :Array<String> = cast(injectMeta);
-					com.pblabs.util.Log.debug("Binding field injection " + cls.getClassName() + "." + field + " -> " + injectArr);
 					tup = new Tuple(field, injectArr);
 					instanceFieldInjections.set(cls, tup);
 				}
 			}
-		} else {
-			com.pblabs.util.Log.debug("No injections");
-		}
+		} 
 		
 		#if !cpp
 		//In cpp, each class has all the fields and metadata, no need to drill down to all the superclasses.
 		var superCls = Type.getSuperClass(cls);
 		//Recursively inject superclass fields/listeners
 		if (superCls != null) {
-			com.pblabs.util.Log.debug("Caching injections on superclass=" + superCls.getClassName());
 			updateRuntimeCache(superCls);
-			
 			//Copy the inject metadata
 			for (tup in instanceFieldInjections.get(superCls)) {
 				if (tup != NULL_INJECTION) {

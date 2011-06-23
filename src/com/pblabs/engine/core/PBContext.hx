@@ -42,6 +42,7 @@ class PBContext
 	
 	public var signalEnter (default, null) :Signaler<Void>;
 	public var signalExit (default, null) :Signaler<Void>;
+	public var signalSetup (default, null) :Signaler<IPBContext>;
 	public var signalDestroyed (default, null) :Signaler<IPBContext>;
 	
 	public var isActive (get_isActive, never) :Bool;
@@ -55,7 +56,7 @@ class PBContext
 	var _currentGroup :IPBGroup;
 	var _nameManager :NameManager;
 	var _isSetup :Bool;
-	#if !disable_object_pooling
+	#if enable_object_pooling
 	var _objectPool :com.pblabs.engine.pooling.ObjectPoolMgr;
 	#end
 		
@@ -80,6 +81,7 @@ class PBContext
 		_tempPropertyInfo = new PropertyInfo();
 		signalObjectAdded = new DirectSignaler(this);
 		signalObjectRemoved = new DirectSignaler(this);
+		signalSetup = new DirectSignaler(this);
 		signalDestroyed = new DirectSignaler(this);
 		signalEnter = new DirectSignaler(this);
 		signalExit = new DirectSignaler(this);
@@ -130,11 +132,10 @@ class PBContext
 		if (type == IEntity) {
 			untyped type = Type.resolveClass("com.pblabs.engine.core.Entity");
 		}
-		#if disable_object_pooling
-		var i = Type.createInstance(type, EMPTY_ARRAY);
-		#else
-		// if (_objectPool == null) trace("no _objectPool");
+		#if enable_object_pooling
 		var i = _objectPool != null ? _objectPool.get(type) : Type.createInstance(type, EMPTY_ARRAY);
+		#else
+		var i = Type.createInstance(type, EMPTY_ARRAY);
 		#end
 		Assert.isNotNull(i, "allocated'd instance is null, type=" + type);
 		
@@ -198,13 +199,15 @@ class PBContext
 		com.pblabs.util.Log.debug("done set current group");
 		injector.mapValue(IPBGroup, rootGroup);
 		
-		#if !disable_object_pooling
+		#if enable_object_pooling
 		_objectPool = injector.getMapping(com.pblabs.engine.pooling.ObjectPoolMgr);
 		if (_objectPool == null) com.pblabs.util.Log.error("No _objectPool in setup");
 		#end
 		
 		// Do manager startup.
 		initializeManagers();
+		
+		signalSetup.dispatch();
 	}
 	
 	public function enter () :Void

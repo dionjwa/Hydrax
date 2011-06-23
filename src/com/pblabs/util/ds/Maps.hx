@@ -26,7 +26,7 @@ using Lambda;
 class Maps
 {
 	
-	public static var IS_OBJECT_DICTIONARY :Bool = #if (flash || cpp) true; #else false; #end
+	public static var IS_OBJECT_DICTIONARY :Bool = #if flash true; #else false; #end
 	/**
 	 * Create a new Map designed to hold keys of the specified class.
 	 * If the class is Hashable (but not an Enum) then a HashMap will be used, 

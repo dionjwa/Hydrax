@@ -393,7 +393,8 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	static var EMPTY_ARRAY :Array<Dynamic> = [];
 	
 	#if (debug || editor)
-	override public function toString () :String
+	#if debug override #end
+	public function toString () :String
 	{
 		return owner != null ? owner.name :name;
 	}

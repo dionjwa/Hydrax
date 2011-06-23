@@ -41,10 +41,12 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 	public var zoomSignal (default, null):Signaler<Float>;
 	public var displayContainer (get_displayContainer, null) :DisplayObjectContainer;
 	public var dirty :Bool;
+	public var priority :Int;
 
 	public function new ()
 	{
 		super();
+		priority = 0;
 		_rootSprite = new Sprite();
 		_rootSprite.mouseEnabled = false;
 		_rootSprite.mouseChildren = false;

@@ -413,7 +413,9 @@ class PolygonTools
 
 	public static function getBounds (p :Array<XY>) :Rectangle
 	{
-		
+		if (p == null || p.length == 0) {
+			return new Rectangle(0, 0, 0, 0);
+		}
 		var maxX = Math.NEGATIVE_INFINITY;
 		var minX = Math.POSITIVE_INFINITY;
 		var maxY = Math.NEGATIVE_INFINITY;
@@ -424,7 +426,6 @@ class PolygonTools
 			maxY = Math.max(maxY, v.y);
 			minY = Math.min(minY, v.y);
 		}
-
 		var width = maxX - minX;
 		var height = maxY - minY;
 		var rect = new Rectangle(minX, minY, width, height);

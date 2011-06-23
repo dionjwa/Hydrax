@@ -21,6 +21,8 @@ import easel.display.Context2d;
 class SceneLayer extends JSLayer,
 	implements IAnimatedObject
 {
+	public var priority :Int;
+	
 	/** Children mark this when they're modified*/
 	public var canvas (default, null) :Canvas;
 	public var ctx (default, null) :Context2d;
@@ -34,6 +36,7 @@ class SceneLayer extends JSLayer,
 	public function new ()
 	{
 		super();
+		priority = 0;
 		canvas = createCanvas();
 		div.appendChild(canvas);
 		_tempPoint = new Vector2();
@@ -111,7 +114,7 @@ class SceneLayer extends JSLayer,
 	function createCanvas () :Canvas
 	{
 		var canvas :Canvas = cast js.Lib.document.createElement("canvas");
-		canvas.style.position = "relative";
+		canvas.style.position = "absolute";
 		canvas.style.left = "0px";
 		canvas.style.top = "0px";
 		return canvas;

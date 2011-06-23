@@ -16,6 +16,8 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBGroup;
 
+import hsl.haxe.Signaler;
+
 /**
   * Base class of games.
   *
@@ -47,13 +49,28 @@ interface IPBContext
 	/** Is this context not destroyed? */
 	var isLive (get_isLive, never) :Bool;
 	
+	
+	/** Dispatched when an object is added to the context */
+	var signalObjectAdded (default, null) :Signaler<IPBObject>;
+	/** Dispatched when an object is removed (destroyed). */
+	var signalObjectRemoved (default, null) :Signaler<IPBObject>;
+	/** Dispatched when this becomes stops being the active IPBContext */
+	var signalEnter (default, null) :Signaler<Void>;
+	/** Dispatched when this becomes stops being the active IPBContext */
+	var signalExit (default, null) :Signaler<Void>;
+	/** Dispatched by the PBGameBase once when initialized  */
+	var signalSetup (default, null) :Signaler<IPBContext>;
+	/** Dispatched by the PBGameBase once just before destruction */
+	var signalDestroyed (default, null) :Signaler<IPBContext>;
+	
+	
 	/** Called by the PBGameBase once to initialize  */
 	function setup () :Void;
-	/** Called when destroyed */
+	// /** Called when destroyed */
 	function shutdown():Void;
-	/** Called when this becomes the active IPBContext */
+	// /** Called when this becomes the active IPBContext */
 	function enter () :Void;
-	/** Called when this becomes stops being the active IPBContext */
+	// /** Called when this becomes stops being the active IPBContext */
 	function exit () :Void;
 	
 	function registerManager <T>(clazz:Class<T>, ?instance:T = null, ?optionalName:String = null, ?suppressInject:Bool = false):T;
@@ -66,5 +83,3 @@ interface IPBContext
 	function lookup (name :String):IPBObject;
 	function lookupEntity (name :String):IEntity;
 }
-
-

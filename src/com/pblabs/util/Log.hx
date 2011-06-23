@@ -17,7 +17,7 @@ import haxe.Stack;
  * transparently using any logger without a giant refactor.
  * Just replace the dynamic functions with your chosen logger.
  */
-#if no_logging extern #end 
+#if (!cpp && no_logging) extern #end 
 class Log
 {
 	#if no_logging
@@ -61,7 +61,6 @@ class Log
 	
 	public static dynamic function setLevel (key :Dynamic, level :LogLevel) :Void
 	{
-		//
 	}
 	
 	inline public static function getStackTrace () :String

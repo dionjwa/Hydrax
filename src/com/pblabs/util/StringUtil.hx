@@ -90,15 +90,15 @@ class StringUtil
 	
 	public static function stringify (obj :Dynamic, ?fields :Array<String>) :String
 	{
-		#if js
-		try {
-			return JSON.stringify(obj);
-		} catch (e :Dynamic) {
-			return objectToString(obj, fields);
-		}
-		#else
+		// #if js
+		// try {
+		// 	return JSON.stringify(obj);
+		// } catch (e :Dynamic) {
+		// 	return objectToString(obj, fields);
+		// }
+		// #else
 		return objectToString(obj, fields);
-		#end
+		// #end
 	}
 	
 	 

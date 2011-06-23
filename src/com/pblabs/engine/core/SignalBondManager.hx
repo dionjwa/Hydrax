@@ -212,9 +212,6 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		//And remove the context specific listeners when the context goes pop
 		var bond :Bond = null;
 		bond = bind(ctx, ctx.signalDestroyed, function (c :IPBContext) {
-			// com.pblabs.util.Log.debug("Destroying bonds on PBContext");
-			// haxe.Timer.delay(function () {
-			// }, 40);
 			self.destroyBonds(c);
 		}, true);
 	}

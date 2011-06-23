@@ -59,7 +59,7 @@ class ObjectPoolMgr extends PBManagerBase
 	public function add<T> (o :T) :Void
 	{
 		if (o == null) {
-			com.pblabs.util.Log.warn(["addObject", "object", null]);
+			com.pblabs.util.Log.warn("ObjectPoolMgr.add(null)");
 			return;
 		}
 		_tempPool.push(o);
@@ -77,8 +77,8 @@ class ObjectPoolMgr extends PBManagerBase
 		if (pool != null) {
 			return pool.getObject();
 		} else {
-			com.pblabs.util.Log.debug(["getObject", "class not registered ", ReflectUtil.getClassName(clazz)]);
-			com.pblabs.util.Log.debug("registered classes:" +  _classes);
+			// com.pblabs.util.Log.debug(["getObject", "class not registered ", ReflectUtil.getClassName(clazz)]);
+			// com.pblabs.util.Log.debug("registered classes:" + _classes);
 		}
 		return Type.createInstance(clazz, EMPTY_ARRAY);
 	}
@@ -148,7 +148,6 @@ class ObjectPoolMgr extends PBManagerBase
 			var o = _tempPool.pop();
 			var pool :ObjectPool<Dynamic> = cast( _pools.get(ReflectUtil.getClassName(o)));
 			if (pool == null) {
-				com.pblabs.util.Log.debug(["addObject", "class not registered", o]);
 				return;
 			}
 			pool.addObject(o);

@@ -216,7 +216,8 @@ class HealthComponent extends EntityComponent,
 	}
 	#end
 	#if (debug || editor)
-	override public function toString () :String
+	#if debug override #end
+	public function toString () :String
 	{
 		return "Health=" + health + " / " + healthMax; 
 	}

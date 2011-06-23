@@ -127,7 +127,7 @@ class Enumerable<T>
 	/**
 	  * Deserializes all Enumerables of the class
 	  */
-	public static function deserializeEnumerable (xml :Xml) :Dynamic
+	public static function deserializeEnumerable (xml :Xml) :Void
 	{
 		com.pblabs.util.Assert.isNotNull(_enums);
 		com.pblabs.util.Assert.isNotNull(xml);
@@ -239,6 +239,9 @@ class Enumerable<T>
 				Reflect.setField(this, fieldName, Std.parseFloat(data));
 			}
 		}
+		#if cpp
+		return null;
+		#end
 	}
 	
 	public function toString () :String

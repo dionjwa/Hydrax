@@ -1,15 +1,13 @@
 <project name="hydrax" url="https://github.com/dionjwa/Hydrax" license="BSD">
         <user name="dionjwa"/>
         <description>A port of the Pushbutton Game Engine.</description>
-        <version name="1.0.9">Jeash dependency added.</version>
+        <version name="1.0.9">Bugfix release</version>
         <depends name="feffects"/>
         <depends name="ArrayTools"/>
         <depends name="IterTools"/>
         <depends name="ListTools"/>
         <depends name="polygonal"/>
         <depends name="hsl-1"/>
-        <depends name="jQueryExtern"/>
-        <depends name="jeash"/>
         <tag v="flash"/>
         <tag v="canvas"/>
         <tag v="html5"/>

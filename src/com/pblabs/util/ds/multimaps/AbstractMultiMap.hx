@@ -11,9 +11,6 @@ package com.pblabs.util.ds.multimaps;
 using com.pblabs.util.StringUtil;
 
 class AbstractMultiMap <K, V>
-// #if cpp
-// 	implements haxe.rtti.Infos
-// #end
 {
 	public var length (get_length, null) :Int;
 	

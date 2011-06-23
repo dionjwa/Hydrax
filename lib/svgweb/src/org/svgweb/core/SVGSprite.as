@@ -28,7 +28,7 @@ package org.svgweb.core
         public var svgNode:SVGNode;
 
         public function SVGSprite(ownerSVGNode:SVGNode) {
-            this.svgNode = ownerSVGNode;;
+            this.svgNode = ownerSVGNode;
             super();
         }
     }

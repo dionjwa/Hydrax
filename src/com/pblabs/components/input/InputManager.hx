@@ -60,6 +60,8 @@ class InputManager extends BaseInputManager,
 	
 	public var isDeviceDown (get_isDeviceDown, null) :Bool;
 	
+	public var priority :Int;
+	
 	/** Is the mouse button down, or the device touched */
 	var _isDeviceDown :Bool;
 	var _startingAngle :Float;//Radians
@@ -90,6 +92,7 @@ class InputManager extends BaseInputManager,
 	public function new ()
 	{
 		super();
+		priority = 0;
 		deviceDown = new DirectSignaler(this);
 		deviceMove = new DirectSignaler(this);
 		deviceUp = new DirectSignaler(this);

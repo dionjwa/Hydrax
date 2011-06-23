@@ -26,7 +26,7 @@ import com.pblabs.util.ReflectUtil;
 * @see IEntity
 */
 class EntityComponent 
-	implements IEntityComponent
+	implements IEntityComponent, implements haxe.rtti.Infos
 {
 	/** Key for hashing. Don't modify. */
 	public var key :Int;
@@ -172,7 +172,7 @@ class EntityComponent
   
   public function toString () :String
   {
-      return com.pblabs.util.ReflectUtil.tinyClassName(Type.getClass(this)) + key;
+  	  return "EntityComponent(" + _name + ")";
   }
   #end
   

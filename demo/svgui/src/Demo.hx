@@ -63,6 +63,7 @@ class Demo
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/icon.svg", "button_icon");
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/text_center.svg", "text");
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/tiger.svg", "tiger");
+		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/ui_complete.svg", "ui_complete");
 		
 		// com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/text_left.svg", "text");
 		// com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/text_right.svg", "text");
@@ -85,9 +86,15 @@ class Demo
 		// var layer :BaseSceneLayer<Dynamic, Dynamic> = scene.addLayer(null, com.pblabs.components.scene2D.js.canvas.SceneLayer);
 		#end
 		
+		
+		
+		
+		
 		context.registerManager(SvgCache, new SvgCache());
 		//The hierarchy manager
 		var hm :HierarchyManager = context.addSingletonComponent(HierarchyManager);
+		
+		
 		
 		//Create some widget that is automatically placed relative
 		var uiblob = SceneUtil.createBaseSceneEntity(cast context);
@@ -106,16 +113,15 @@ class Demo
 		uiblob.initialize("uilblob");
 		// c.removeFromParent();
 		// c.addToParent();
-		uiblob.setLocation(uiblob.getWidth() / 2 + 30 + 300, uiblob.getHeight() / 2);
+		// uiblob.setLocation(uiblob.getWidth() / 2 + 30 + 300, uiblob.getHeight() / 2);
+		uiblob.setLocation(uiblob.getWidth() / 2, uiblob.getHeight() / 2);
 		// c.visible = true;
-		
-		
 		
 		
 		var button1 = layer.createTwoStateSVGButton([svg1, svg3], [svg2, svg3], "testButton1", function () :Void {});
 		hm.setAsChild(c, "anchor1", button1.getComponent(BaseSceneComponent));
 		
-		var button2 = layer.createTwoStateSVGButton([svg1], [svg2], "testButton2", function () :Void {});
+		var button2 = layer.createTwoStateSVGButton([svg1, svg3], [svg2], "testButton2", function () :Void {});
 		hm.setAsChild(c, "anchor2", button2.getComponent(BaseSceneComponent));
 		
 		var button3 = layer.createTwoStateSVGButton([svg1], [svg2], "testButton3", function () :Void {});

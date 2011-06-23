@@ -33,7 +33,7 @@ package com.pblabs.engine.time;
 * @see ProcessManager
 * @see ITickedObject
 */
-interface IAnimatedObject
+interface IAnimatedObject implements Prioritizable
 {
 	/**
 	  * This method is called every frame by the ProcessManager on any objects

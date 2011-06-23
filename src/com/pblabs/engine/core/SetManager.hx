@@ -38,6 +38,7 @@ class SetManager extends PBManager
 	
 	static var EMPTY_STRING_ARRAY :Array<String> = [];
 	static var EMPTY_OBJECT_ARRAY :Array<IPBObject> = [];
+	static var EMPTY_ENTITY_ARRAY :Array<IEntity> = [];
 	
 	//The static functions are for "using" 
 	public static function getAllInSet(context :IPBContext, set :String) :Iterable<IPBObject>
@@ -98,19 +99,35 @@ class SetManager extends PBManager
 			return;
 		}
 		_sets.set(set, obj);
-		_objects.set(obj, set);		
+		
+		var foundInSet = false;
+		for (e in _sets.get(set)) {
+			if (e == obj) {
+				foundInSet = true;
+			}
+		}
+		_objects.set(obj, set);
 	}
 	
 	public function getObjectsInSet(set :String) :Iterable<IPBObject>
 	{
 		var it = _sets.get(set);
 		return it == null ? EMPTY_OBJECT_ARRAY : it;
-	}
+	}                                                                                                                                                               
 	
 	public function getEntitiesInSet(set :String) :Iterable<IEntity>
 	{
 		var it = _sets.get(set);
-		return cast(it == null ? EMPTY_OBJECT_ARRAY : it);
+		if (it == null) {
+			return EMPTY_ENTITY_ARRAY;
+		}
+		var arr :Array<IEntity> = [];
+		for (e in it) {
+			if (Std.is(e, IEntity)) {
+				arr.push(cast(e, IEntity));
+			}
+		}
+		return arr;
 	}
 	
 	public function getObjectSets (obj :IPBObject) :Iterable<String>
@@ -131,7 +148,7 @@ class SetManager extends PBManager
 	
 	public function removeSet (set :String) :Iterable<IPBObject>
 	{
-		var objs = _sets.get(set).array();
+		var objs = _sets.get(set);
 		for (o in objs) {
 			_objects.removeEntry(o, set);
 		}

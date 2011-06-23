@@ -12,9 +12,11 @@ import com.pblabs.components.base.AlphaComponent;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.components.tasks.TaskComponentTicked;
 import com.pblabs.engine.core.IEntity;
+import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.ObjectType;
+import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.geom.Vector2;
 
@@ -40,11 +42,14 @@ class SceneUtil
 	public static var LAYER_CLASS :Class<BaseSceneLayer<Dynamic, Dynamic>> = 
 		#if (flash || cpp)
 		com.pblabs.components.scene2D.flash.SceneLayer;
-		#else
+		#elseif js
 		/**
 		  * Note, this class should not be instantiated, use the subclasses instead.
 		  */
 		com.pblabs.components.scene2D.js.JSLayer;
+		#else
+		#error
+		null;
 		#end
 
 	public static function createBaseScene (context :IPBContext, ?name :String = null, ?addDefaultLayer :Bool = false, 
@@ -241,7 +246,7 @@ class SceneUtil
 		}
 	}
 	
-	public static function setBackgroundColor (layer :BaseSceneLayer<Dynamic, Dynamic>, color :Int) :RectangleShape
+	public static function setLayerColor (layer :BaseSceneLayer<Dynamic, Dynamic>, color :Int) :RectangleShape
 	{
 	    var background = createBaseSceneEntity(layer.context, false);
 		var rect = layer.context.allocate(RectangleShape);
@@ -258,6 +263,24 @@ class SceneUtil
 		setLocation(background, center.x, center.y);
 		
 		return rect;
+	}
+	
+	public static function addImage (layer :BaseSceneLayer<Dynamic, Dynamic>, resource :ResourceToken<Dynamic>) :BaseSceneComponent<Dynamic>
+	{
+		var e = layer.context.allocate(IEntity);
+		var image = layer.context.allocate(com.pblabs.components.scene2D.ImageComponent);
+		image.parentProperty = layer.entityProp();
+		image.resource = resource;
+		image.spatialProperty = null;
+		
+		e.addComponent(image);
+		e.initialize(layer.context.getManager(NameManager).validateName("image" + image));
+		
+		var center = getAlignedPoint(layer.scene, SceneAlignment.CENTER);
+		image.x = center.x;
+		image.y = center.y;
+		
+		return image;
 	}
 	
 	#if js

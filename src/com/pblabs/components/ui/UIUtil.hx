@@ -110,8 +110,9 @@ class UIUtil
 		text = text == null ? "" : text;
 		com.pblabs.util.Assert.isNotNull(svg1);
 		com.pblabs.util.Assert.isTrue(svg1.length > 0);
-		com.pblabs.util.Assert.isNotNull(svg2);
-		com.pblabs.util.Assert.isTrue(svg2.length > 0);
+		
+		// com.pblabs.util.Assert.isNotNull(svg2);
+		// com.pblabs.util.Assert.isTrue(svg2.length > 0);
 		
 		var s1 = layer.context.allocate(SVGComponent);
 		s1.resources = cast svg1;
@@ -121,12 +122,15 @@ class UIUtil
 			s1.svgRegexReplacements = s1.svgRegexReplacements.concat(svgRegex1);
 		}
 
-		var s2 = layer.context.allocate(SVGComponent);
-		s2.resources = cast svg2;
-		s2.parentProperty = layer.entityProp();
-		s2.text = text;
-		if (svgRegex2 != null) {
-			s2.svgRegexReplacements = s2.svgRegexReplacements.concat(svgRegex2);
+		var s2 = null;
+		if (svg2 != null) {
+			s2 = layer.context.allocate(SVGComponent);
+			s2.resources = cast svg2;
+			s2.parentProperty = layer.entityProp();
+			s2.text = text;
+			if (svgRegex2 != null) {
+				s2.svgRegexReplacements = s2.svgRegexReplacements.concat(svgRegex2);
+			}
 		}
 		
 		return createTwoStateButton(layer, s1, s2, 
@@ -143,13 +147,16 @@ class UIUtil
 	{
 		var so = layer.context.createBaseSceneEntity();
 		com.pblabs.util.Assert.isFalse(state1.isRegistered);
-		com.pblabs.util.Assert.isFalse(state2.isRegistered);
-		//Add 2 before 1 to get the z-order right.
-		so.addComponent(state2, IMAGE2);
-		so.addComponent(state1, IMAGE1);
 		
-		//Don't allow mouse events on the second image.
-		state2.objectMask = ObjectType.NONE;
+		if (state2 != null) {
+			com.pblabs.util.Assert.isFalse(state2.isRegistered);
+			//Add 2 before 1 to get the z-order right.
+			so.addComponent(state2, IMAGE2);
+			
+			//Don't allow mouse events on the second image.
+			state2.objectMask = ObjectType.NONE;
+		}
+		so.addComponent(state1, IMAGE1);
 		
 		var mouse = layer.context.allocate(MouseInputComponent);
 		//Explicitly bind the mouse events to the first image, so the 
@@ -161,32 +168,37 @@ class UIUtil
 		
 		so.addComponent(mouse);
 		so.initialize(layer.context.getManager(NameManager).validateName(name));
-		state1.visible = true;
-		state2.visible = false;
+		
 		if (onClick != null) {
 			mouse.bindDeviceClick(onClick);
 		}
 		if (onDown != null) {
 			mouse.bindDeviceDown(onDown);
 		}
-		var sm = layer.context.getManager(com.pblabs.engine.core.SignalBondManager);
-		com.pblabs.util.Assert.isNotNull(sm);
-		if (isToggle) {
-			mouse.bindDeviceDown(function () :Void {
-				state1.visible = state2.visible;
-				state2.visible = !state1.visible;
-			});
-		} else {
-			mouse.bindDeviceDown(function () :Void {
-				state1.visible = false;
-				state2.visible = true;
-				var bond = layer.context.getManager(com.pblabs.components.input.InputManager).deviceUp.bind(function (?e :Dynamic) :Void {
-					state1.visible = true;
-					state2.visible = false;
-				}).destroyOnUse();
-				
-				sm.set(mouse.key, bond);
-			});
+		
+		if (state2 != null) {
+			state1.visible = true;
+			state2.visible = false;
+			
+			var sm = layer.context.getManager(com.pblabs.engine.core.SignalBondManager);
+			com.pblabs.util.Assert.isNotNull(sm);
+			if (isToggle) {
+				mouse.bindDeviceDown(function () :Void {
+					state1.visible = state2.visible;
+					state2.visible = !state1.visible;
+				});
+			} else {
+				mouse.bindDeviceDown(function () :Void {
+					state1.visible = false;
+					state2.visible = true;
+					var bond = layer.context.getManager(com.pblabs.components.input.InputManager).deviceUp.bind(function (?e :Dynamic) :Void {
+						state1.visible = true;
+						state2.visible = false;
+					}).destroyOnUse();
+					
+					sm.set(mouse.key, bond);
+				});
+			}
 		}
 		return so;
 	}
