@@ -37,6 +37,10 @@ import js.Dom;
 class SceneView 
 	implements IPBManager, implements haxe.rtti.Infos
 {
+	#if js
+	public static var isWebkitBrowser :Bool = true;
+	#end
+	
 	public var maxWidth (get_maxWidth, set_maxWidth) :Int;
 	var _maxWidth :Int;
 	public var maxHeight (get_maxHeight, set_maxHeight) :Int;
@@ -72,10 +76,16 @@ class SceneView
 		fullScreen = true;
 		_maxWidth = 960;
 		_maxHeight = 640;
-		// if (_layerId == null) {
 		//Default div id
 		layerId = "haxeSceneView";
-		// }
+		//Check for browser type (for css transform strings)
+			#if debug
+				var jQueryLoadedMissing :Bool = untyped __js__("typeof jQuery == 'undefined'");
+				if (jQueryLoadedMissing) {
+					throw "JQuery missing, please add to html";
+				}
+			#end
+		isWebkitBrowser = JQuery._static.browser.webkit == true;
 		#elseif (flash || cpp)
 		_layer = new flash.display.Sprite();
 		_layer.mouseChildren = false;

@@ -71,12 +71,11 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 			// com.pblabs.util.Assert.isNotNull(parent);
 			if (parent != null && isTransformDirty) {
 				updateTransform();
-				//TODO: switch depending on browser
-				untyped div.style.webkitTransform = _transformMatrix.toString();
-				untyped div.style.MozTransform = _transformMatrix.toMozString();
-				// untyped div.style.msTransform = _transformMatrix.toString();
-				//Future
-				// untyped div.style.transform = _transformMatrix.toString();
+				if (SceneView.isWebkitBrowser) {
+					untyped div.style.webkitTransform = _transformMatrix.toString();
+				} else {
+					untyped div.style.MozTransform = _transformMatrix.toMozString();
+				}
 			}
 		}
 	}
