@@ -128,7 +128,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			var svgString = svgData[ii];
 			//Transform it
 			var svg = new org.svgweb.SVGViewerFlash();
-			INVISIBLE_STAGEsm.addChild(svg);
+			INVISIBLE_STAGE.addChild(svg);
 			
 			svg.xml = new flash.xml.XML(svgString);
 			if (ii > 0) {
