@@ -76,7 +76,12 @@ class RectangleShape extends ShapeComponent
 		g.lineStyle(borderStroke, borderColor, 1.0);
 		g.drawRect(0, 0, width - borderStroke, height - borderStroke);
 		#elseif js
-		_rect.style.cssText = "left:0px;top:0px;width:" + width + "px; height:" + height + "px; background-color:" + StringUtil.toColorString(fillColor, "#") + "; border-color:" + StringUtil.toColorString(borderColor, "#") + "; border-style:solid; border-width:" + borderStroke + "px;-webkit-transform:translateZ(0px)";
+		_rect.style.cssText = "left:0px;top:0px;width:" + width 
+			+ "px; height:" + height
+			+ "px; opacity:" + alpha
+			+ "; background-color:" + StringUtil.toColorString(fillColor, "#") 
+			+ "; border-color:" + StringUtil.toColorString(borderColor, "#") 
+			+ "; border-style:solid; border-width:" + borderStroke + "px";//;-webkit-transform:translateZ(0px)
 		#end
 		registrationPoint = new Vector2(width / 2, height / 2);
 	}

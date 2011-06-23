@@ -92,6 +92,7 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 
 		
 		_rootContainer = cast js.Lib.document.createElement("div");
+		_rootContainer.id = name;
 		// sceneView.layer.appendChild(_rootContainer);
 		_rootContainer.style.cssText = "position:absolute";
 		#if debug

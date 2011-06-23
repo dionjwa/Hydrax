@@ -182,22 +182,6 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		// if(updateProps)
 		//	 updateProperties();
 		
-		// If size is active, it always takes precedence over scale.
-		// var tmpScaleX:Float = _scale.x;
-		// var tmpScaleY:Float = _scale.y;
-		// if(_size)
-		// {
-		// 	var localDimensions:Rectangle = displayObject.getBounds(displayObject);
-		// 	tmpScaleX = _scale.x * (_size.x / localDimensions.width);
-		// 	tmpScaleY = _scale.y * (_size.y / localDimensions.height);
-		// }
-		
-		// _transformMatrix.identity();
-		// _transformMatrix.scale(_scaleX, _scaleY);
-		// _transformMatrix.translate(-registrationPoint.x * _scaleX, - registrationPoint.y * _scaleY);
-		// _transformMatrix.rotate(_angle + _angleOffset);
-		// _transformMatrix.translate(_x + _locationOffset.x, _y + _locationOffset.y);
-		
 		_displayObject.transform.matrix = _transformMatrix;
 		_displayObject.alpha = _alpha;
 		// _displayObject.blendMode = _blendMode;

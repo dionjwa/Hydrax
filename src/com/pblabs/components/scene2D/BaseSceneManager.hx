@@ -6,7 +6,6 @@
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
- #if !nodejs
 package com.pblabs.components.scene2D;
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene2D.BaseSceneLayer;
@@ -402,4 +401,3 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	var _debugcontext :com.pblabs.engine.core.IPBContext;
 	#end
 }
-#end

@@ -37,6 +37,9 @@ class CircleShape extends ShapeComponent
 
 		_svg = untyped js.Lib.document.createElementNS("http://www.w3.org/2000/svg", "circle");
 		_svgContainer.appendChild(_svg);
+		_svg.setAttribute("r", "10");
+		_svg.setAttribute("cx", "0");
+		_svg.setAttribute("cy", "0");
 		#end
 		
 		_unscaledBounds.xmin = -_radius;
@@ -92,13 +95,24 @@ class CircleShape extends ShapeComponent
 		#elseif js
 		_svg.setAttribute("cx", r + "px");
 		_svg.setAttribute("cy", r + "px");
+		// _svg.setAttribute("cx", "0px");
+		// _svg.setAttribute("cy", "0px");
 		_svg.setAttribute( "r",  r + "px");
 		_svg.setAttribute("fill", StringUtil.toColorString(fillColor, "#"));
-		_svg.setAttribute( "stroke",  StringUtil.toColorString(borderColor, "#"));
-		_svg.setAttribute( "stroke-width",  "" + borderStroke);
+		_svg.setAttribute("fill-opacity", "1");
+		// if (borderStroke > 0) {
+		// 	_svg.setAttribute( "stroke",  StringUtil.toColorString(borderColor, "#"));
+		// 	_svg.setAttribute( "stroke-width",  "" + borderStroke);
+		// }
 		_svgContainer.setAttribute("width", (r * 2) + "px");
 		_svgContainer.setAttribute("height", (r * 2) + "px");
 		#end
+		registrationPoint = new com.pblabs.geom.Vector2(_radius, _radius);
+		_unscaledBounds.xmin = -_radius;
+		_unscaledBounds.xmax = _radius;
+		_unscaledBounds.ymin = -_radius;
+		_unscaledBounds.ymax = _radius;
+		_bounds = _unscaledBounds.clone();
 		com.pblabs.engine.debug.Profiler.exit("redraw");
 	}
 	

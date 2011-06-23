@@ -37,7 +37,7 @@ class JSLayer extends BaseSceneLayer<JSSceneManager, SceneComponent>
 			offsetWidth += sib.offsetWidth;
 			sib = sib.previousSibling;
 		}
-		// untyped div.style.webkitTransform = "translate(0px, -" + offsetHeight + "px)";
+		untyped div.style.webkitTransform = "translate(0px, -" + offsetHeight + "px)";
 	}
 	
 	override function addedToParent () :Void
@@ -64,6 +64,8 @@ class JSLayer extends BaseSceneLayer<JSSceneManager, SceneComponent>
 	override function onAdd () :Void
 	{
 		super.onAdd();
-		div.style.cssText = "position:absolute;left:0px;top:0px;position:relative;-webkit-transform:translateZ(0px)";
+		div.id = name;
+		div.style.cssText = "position:absolute;left:0px;top:0px;";//-webkit-transform:translateZ(0px)
+		//relative
 	}
 }

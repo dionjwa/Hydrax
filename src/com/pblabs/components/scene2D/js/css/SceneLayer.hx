@@ -34,6 +34,7 @@ class SceneLayer extends JSLayer,
 	{
 	    if (isTransformDirty) {
 	    	updateTransform();
+	    	isTransformDirty = false;
 	    }
 	}
 	
@@ -47,11 +48,14 @@ class SceneLayer extends JSLayer,
 		_transformMatrix.identity();
 		//Adjust for SceneView center			
 		SceneUtil.calculateOutPoint(_tempPoint, scene.sceneAlignment, scene.sceneView.width, scene.sceneView.height);
-		_transformMatrix.translate(_tempPoint.x, _tempPoint.y);
 		_transformMatrix.rotate(scene.rotation);
 		_transformMatrix.scale(scene.zoom, scene.zoom);
-		_transformMatrix.translate(scene.x *_parallaxFactor, scene.y *_parallaxFactor);
-		untyped div.style.webkitTransform = _transformMatrix.toString();
-		isTransformDirty = false;
+		_transformMatrix.translate(_tempPoint.x, _tempPoint.y);
+		_transformMatrix.translate(scene.x *_parallaxFactor * scene.zoom, scene.y *_parallaxFactor * scene.zoom);
+		if (SceneView.isWebkitBrowser) {
+			untyped div.style.webkitTransform = _transformMatrix.toString();
+		} else {
+			untyped div.style.MozTransform = _transformMatrix.toMozString();
+		}
 	}
 }

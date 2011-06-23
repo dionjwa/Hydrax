@@ -249,7 +249,8 @@ class DragManager extends EntityComponent,
 			if (_isEasing) {
 				_framesWithoutMovement = Std.int(Math.max(_framesWithoutMovement - 1, 0));
 			}
-			if (_sceneComponent == null) {//Pan the scene
+			//Pan the scene
+			if (_sceneComponent == null) {
 				var diff = e.inputLocation.subtract(_startMouse);
 				diff.scaleLocal(1 / _scene.zoom);
 				diff.rotateLocal(-_scene.rotation);
