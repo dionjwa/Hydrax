@@ -55,7 +55,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			_isContentsDirty = true;
 			return;
 		}
-		ctx.drawImage(image, 0, 0);//, -image.width / 2, -image.height / 2);
+		ctx.drawImage(image, 0, 0);
 	}
 	#end
 	
@@ -96,22 +96,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		}
 		super.onAdd();
 		#end
-		
-		// #if css
-		// _width = image.width;
-		// _height = image.height;
-		// div.appendChild(displayObject);
-		// #elseif (flash || cpp)
-		
-		// updateTransform();
-		// #end
 	}
-	
-	// override function onReset () :Void
-	// {
-	// 	trace("resetting ImageComponent");
-	// 	super.onReset();
-	// }
 	
 	#if (flash || cpp)
 	override function onRemove () :Void
@@ -126,48 +111,15 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	{
 		//Get the DomResource, this makes sure the inline image is loaded
 		image = context.get(resource);
-		// trace("image=" + image);
 		com.pblabs.util.Assert.isNotNull(image, "Image loaded from " + resource + " is null");
 		Preconditions.checkNotNull(image, "image from resource is null " +resource);
-		// trace("adding image to div");
 		_unscaledBounds.xmin = -image.width / 2;
 		_unscaledBounds.xmax = image.width / 2;
 		_unscaledBounds.ymin = image.height / 2;
 		_unscaledBounds.ymax = image.height / 2;
-		// _width = image.width;
-		// _height = image.height;
-		_registrationPoint.x = width / 2;
-		_registrationPoint.y = height / 2;
+		_registrationPoint.x = image.width / 2;
+		_registrationPoint.y = image.height / 2;
 		div.appendChild(image);
-		// displayObject = image;
 	}
-#end	
-
-	// #if css
-	// override public function onFrame (dt :Float) :Void
-	// {
-	// 	if (isTransformDirty) {
-	// 		isTransformDirty = false;
-	// 		var xOffset = parent.xOffset - width / 2;
-	// 		var yOffset = parent.yOffset - height / 2;
-	// 		untyped div.style.webkitTransform = "translate(" + (_x + xOffset) + "px, " + (_y + yOffset) + "px) rotate(" + _angle + "rad)";
-	// 	}
-	// }
-	
-	// override function set_width (val :Float) :Float
-	// {
-	// 	if (displayObject != null) { 
-	// 		displayObject.setAttribute("width", val + "px");
-	// 	}
-	// 	return super.set_width(val);
-	// }
-	
-	// override function set_height (val :Float) :Float
-	// {
-	// 	if (displayObject != null) {
-	// 		displayObject.setAttribute("height", val + "px");
-	// 	}
-	// 	return super.set_height(val);
-	// }
-	// #end
+	#end	
 }
