@@ -17,7 +17,7 @@ package com.pblabs.engine.core;
  * 
  * @see IPBObject
  */
-bclass PBObject 
+class PBObject 
 	implements IPBObject, implements haxe.rtti.Infos
 {
 	/** Key for hashing. Don't modify. */
