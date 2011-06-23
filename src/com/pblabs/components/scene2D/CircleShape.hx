@@ -176,9 +176,4 @@ class CircleShape extends ShapeComponent
 		redraw();
 		return val;
 	}
-	
-	#if js
-	var _svgContainer :js.Dom.HtmlDom;
-	var _svg :js.Dom.HtmlDom;
-	#end
 }

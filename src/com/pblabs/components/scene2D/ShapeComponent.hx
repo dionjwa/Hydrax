@@ -25,6 +25,11 @@ class ShapeComponent
 	var _borderStroke :Float;
 	var _borderAlpha :Float;
 	
+	#if js
+	var _svgContainer :js.Dom.HtmlDom;
+	var _svg :js.Dom.HtmlDom;
+	#end
+	
 	public function new ()
 	{
 		super();

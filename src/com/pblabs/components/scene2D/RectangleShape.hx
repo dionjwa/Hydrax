@@ -15,14 +15,28 @@ using com.pblabs.components.scene2D.SceneUtil;
 
 class RectangleShape extends ShapeComponent
 {
-	public function new ()
+	public function new (?w :Float = 20, ?h :Float = 10)
 	{
 		super();
-		var w :Float = 20;
-		var h :Float = 10;
 		#if js
-		_rect = cast js.Lib.document.createElement("div");
-		div.appendChild(_rect);
+		_svgContainer = untyped js.Lib.document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		div.appendChild(_svgContainer);
+		_svgContainer.setAttribute("width", w + "px");
+		_svgContainer.setAttribute("height", h + "px");
+		_svgContainer.setAttribute("version", "1.1");
+
+		_svg = untyped js.Lib.document.createElementNS("http://www.w3.org/2000/svg", "rect");
+		_svgContainer.appendChild(_svg);
+		_svg.setAttribute("r", "10");
+		// _svg.setAttribute("x", -w / 2);
+		// _svg.setAttribute("y", -h / 2);
+		_svg.setAttribute("x", "0");
+		_svg.setAttribute("y", "0");
+		_svg.setAttribute("width", width);
+		_svg.setAttribute("height", height);
+		
+		// _rect = cast js.Lib.document.createElement("div");
+		// div.appendChild(_rect);
 		#end
 		_unscaledBounds.xmin = -w / 2;
 		_unscaledBounds.xmax = w / 2;
@@ -76,12 +90,28 @@ class RectangleShape extends ShapeComponent
 		g.lineStyle(borderStroke, borderColor, 1.0);
 		g.drawRect(0, 0, width - borderStroke, height - borderStroke);
 		#elseif js
-		_rect.style.cssText = "left:0px;top:0px;width:" + width 
-			+ "px; height:" + height
-			+ "px; opacity:" + alpha
-			+ "; background-color:" + StringUtil.toColorString(fillColor, "#") 
-			+ "; border-color:" + StringUtil.toColorString(borderColor, "#") 
-			+ "; border-style:solid; border-width:" + borderStroke + "px";//;-webkit-transform:translateZ(0px)
+		
+		_svg.setAttribute("width", width + "px");
+		_svg.setAttribute("height", height + "px");
+		
+		_svg.setAttribute("x", "0px");
+		_svg.setAttribute("y", "0px");
+		_svg.setAttribute("fill", StringUtil.toColorString(fillColor, "#"));
+		_svg.setAttribute("fill-opacity", "1");
+		// if (borderStroke > 0) {
+		// 	_svg.setAttribute( "stroke",  StringUtil.toColorString(borderColor, "#"));
+		// 	_svg.setAttribute( "stroke-width",  "" + borderStroke);
+		// }
+		_svgContainer.setAttribute("width", width + "px");
+		_svgContainer.setAttribute("height", height + "px");
+		
+		
+		// _rect.style.cssText = "left:0px;top:0px;width:" + width 
+		// 	+ "px; height:" + height
+		// 	+ "px; opacity:" + alpha
+		// 	+ "; background-color:" + StringUtil.toColorString(fillColor, "#") 
+		// 	+ "; border-color:" + StringUtil.toColorString(borderColor, "#") 
+		// 	+ "; border-style:solid; border-width:" + borderStroke + "px";//;-webkit-transform:translateZ(0px)
 		#end
 		registrationPoint = new Vector2(width / 2, height / 2);
 	}
