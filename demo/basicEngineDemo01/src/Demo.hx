@@ -40,8 +40,9 @@ class Demo
 		var blob  = context.allocate(com.pblabs.components.scene2D.RectangleShape);
 		// var blob  = context.allocate(com.pblabs.components.scene2D.CircleShape);
 		// blob.radius = 30;
-		blob.width = 30;
-		blob.height = 20;
+		
+		blob.width = 100;
+		blob.height = 300;
 		blob.parentProperty = layer.entityProp();
 		so.addComponent(blob);
 		so.initialize("SomeSceneObj");

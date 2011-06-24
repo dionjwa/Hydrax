@@ -29,13 +29,13 @@ class CircleShape extends ShapeComponent
 		_radius = rad;
 		showAngleLine = true;
 		#if js
-		_svgContainer = untyped js.Lib.document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		_svgContainer = untyped js.Lib.document.createElementNS(SceneUtil.SVG_NAMESPACE, "svg");
 		div.appendChild(_svgContainer);
 		_svgContainer.setAttribute("width", (_radius * 2) + "px");
 		_svgContainer.setAttribute("height", (_radius * 2) + "px");
 		_svgContainer.setAttribute("version", "1.1");
 
-		_svg = untyped js.Lib.document.createElementNS("http://www.w3.org/2000/svg", "circle");
+		_svg = untyped js.Lib.document.createElementNS(SceneUtil.SVG_NAMESPACE, "circle");
 		_svgContainer.appendChild(_svg);
 		_svg.setAttribute("r", "10");
 		_svg.setAttribute("cx", "0");
@@ -95,15 +95,13 @@ class CircleShape extends ShapeComponent
 		#elseif js
 		_svg.setAttribute("cx", r + "px");
 		_svg.setAttribute("cy", r + "px");
-		// _svg.setAttribute("cx", "0px");
-		// _svg.setAttribute("cy", "0px");
 		_svg.setAttribute( "r",  r + "px");
 		_svg.setAttribute("fill", StringUtil.toColorString(fillColor, "#"));
 		_svg.setAttribute("fill-opacity", "1");
-		// if (borderStroke > 0) {
-		// 	_svg.setAttribute( "stroke",  StringUtil.toColorString(borderColor, "#"));
-		// 	_svg.setAttribute( "stroke-width",  "" + borderStroke);
-		// }
+		if (borderStroke > 0) {
+			_svg.setAttribute( "stroke",  StringUtil.toColorString(borderColor, "#"));
+			_svg.setAttribute( "stroke-width",  "" + borderStroke);
+		}
 		_svgContainer.setAttribute("width", (r * 2) + "px");
 		_svgContainer.setAttribute("height", (r * 2) + "px");
 		#end

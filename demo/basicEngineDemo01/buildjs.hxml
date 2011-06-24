@@ -1,6 +1,6 @@
 #build file
 -D debug
--D use_html5_canvas_as_default_scene_layer
+# -D use_html5_canvas_as_default_scene_layer
 
 -lib hydrax
 -lib jQueryExtern

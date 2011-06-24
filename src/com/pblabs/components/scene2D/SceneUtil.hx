@@ -29,6 +29,8 @@ using com.pblabs.geom.VectorTools;
 class SceneUtil
 {
 	public static var DEFAULT_LAYER_NAME :String = "defaultLayer";
+	public static var SVG_NAMESPACE = "http://www.w3.org/2000/svg";
+	
 	public static var MANAGER_CLASS :Class<BaseSceneManager<Dynamic>> = 
 		#if (flash || cpp)
 		com.pblabs.components.scene2D.flash.SceneManager;
