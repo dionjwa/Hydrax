@@ -30,6 +30,18 @@ class SceneUtil
 {
 	public static var DEFAULT_LAYER_NAME :String = "defaultLayer";
 	public static var SVG_NAMESPACE = "http://www.w3.org/2000/svg";
+
+	#if js
+	inline public static function applyTransform (element :js.Dom.HtmlDom, transform :flash.geom.Matrix) :Void
+	{
+	    if (SceneView.isWebkitBrowser) {
+			untyped element.style.webkitTransform = transform.toString();
+		} else {
+			untyped element.style.MozTransform = transform.toMozString();
+		}
+	}
+	#end
+	
 	
 	public static var MANAGER_CLASS :Class<BaseSceneManager<Dynamic>> = 
 		#if (flash || cpp)

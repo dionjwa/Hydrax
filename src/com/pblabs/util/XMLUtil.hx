@@ -15,6 +15,29 @@ using com.pblabs.util.XMLUtil;
 
 class XMLUtil
 {
+	public static function findElement (xml :Xml, elementName :String, ?attribute :String, ?attributeValue :String) :Xml
+	{
+	    for (e in xml.elements()) {
+	    	if (e.nodeName == elementName) {
+	    		if (attribute != null) {
+	    			if (e.get(attribute) == attributeValue) {
+	    				return e;
+	    			}
+	    		} else {
+	    			return e;
+	    		}
+	    	} else {//Keep looking
+	    		var found = findElement(e, elementName, attribute, attributeValue);
+	    		if (found != null) {
+	    			return found;
+	    		}
+	    	}
+	    }
+	    return null;
+	}
+	
+	
+	
 	/**
 	  * From flash docs:
 	  * An XML object contains complex content if it has child elements. 

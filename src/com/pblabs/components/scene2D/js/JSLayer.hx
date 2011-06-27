@@ -37,7 +37,12 @@ class JSLayer extends BaseSceneLayer<JSSceneManager, SceneComponent>
 			offsetWidth += sib.offsetWidth;
 			sib = sib.previousSibling;
 		}
-		untyped div.style.webkitTransform = "translate(0px, -" + offsetHeight + "px)";
+		if (SceneView.isWebkitBrowser) {
+			untyped div.style.webkitTransform = "translate(0px, -" + offsetHeight + "px)";
+		} else {
+			untyped div.style.MozTransform = "translate(0px, -" + offsetHeight + "px)";
+		}
+		
 	}
 	
 	override function addedToParent () :Void

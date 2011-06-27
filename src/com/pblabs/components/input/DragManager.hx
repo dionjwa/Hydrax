@@ -92,6 +92,8 @@ class DragManager extends EntityComponent,
 	var _inputManager :InputManager;
 	var _startMouse :XY;
 	var _startObj :XY;
+	/** The SceneComponent might internally scale coordinates.  Correct with this factor. */
+	var _zoomFactor :Float;
 	var _xProp :PropertyReference<Float>;
 	var _yProp :PropertyReference<Float>;
 	var _constraint :Constraint;
@@ -103,6 +105,7 @@ class DragManager extends EntityComponent,
 		dragEndedSignaler = new DirectSignaler(this);
 		_startMouse = new Vector2();
 		_startObj = new Vector2();
+		_zoomFactor = 1;
 		
 		_isEasing = true;
 		_isPanning = false;
@@ -176,7 +179,7 @@ class DragManager extends EntityComponent,
 		}
 		
 		_sceneComponent = c;
-		_scene = null;//c.layer.scene2D.
+		_scene = null;
 		
 		_xProp = xProp;
 		_yProp = yProp;
@@ -200,6 +203,9 @@ class DragManager extends EntityComponent,
 		
 		_startObj.x = _sceneComponent.owner.getProperty(_xProp);
 		_startObj.y = _sceneComponent.owner.getProperty(_yProp);
+		
+		//If the sceneComponent internally scales the spatial location, correct with this factor
+		_zoomFactor = _startObj.x / _sceneComponent.x;
 		
 		beginPanning();
 	}
@@ -233,6 +239,7 @@ class DragManager extends EntityComponent,
 		_sceneComponent = null;
 		_constraint = null;
 		_pauseProcessManagerOnPan = false;
+		_zoomFactor = 1;
 	}
 	
 	override function onRemove () :Void
@@ -263,7 +270,7 @@ class DragManager extends EntityComponent,
 			} else {//Pan the _sceneComponent
 				var worldStart = SceneUtil.translateScreenToWorld(_sceneComponent.layer.parent, _startMouse);
 				var worldNow = SceneUtil.translateScreenToWorld(_sceneComponent.layer.parent, e.inputLocation);
-				var worldDiff = worldNow.subtract(worldStart);
+				var worldDiff = worldNow.subtract(worldStart).scaleLocal(_zoomFactor);
 				
 				if (_constraint != null) {
 					

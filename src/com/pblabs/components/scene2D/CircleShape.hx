@@ -81,15 +81,15 @@ class CircleShape extends ShapeComponent
 		g.clear();
 		if (fillColor >= 0) {
 			g.beginFill(fillColor);
-			g.drawCircle(0, 0, r);
+			g.drawCircle(r, r, r);
 			g.endFill();
 		}
 		g.lineStyle(borderStroke, borderColor);
-		g.drawCircle(0, 0, r);
+		g.drawCircle(r, r, r);
 		if (showAngleLine) {
 			g.lineStyle(borderStroke, borderColor);
-			g.moveTo(0, 0);
-			g.lineTo(r, 0);
+			g.moveTo(r, r);
+			g.lineTo(r * 2, r);
 		}
 		recomputeBounds();
 		#elseif js
@@ -97,20 +97,15 @@ class CircleShape extends ShapeComponent
 		_svg.setAttribute("cy", r + "px");
 		_svg.setAttribute( "r",  r + "px");
 		_svg.setAttribute("fill", StringUtil.toColorString(fillColor, "#"));
-		_svg.setAttribute("fill-opacity", "1");
-		if (borderStroke > 0) {
+		_svg.setAttribute("fill-opacity", "" + alpha);
+		// if (borderStroke > 0) {
 			_svg.setAttribute( "stroke",  StringUtil.toColorString(borderColor, "#"));
 			_svg.setAttribute( "stroke-width",  "" + borderStroke);
-		}
+		// }
 		_svgContainer.setAttribute("width", (r * 2) + "px");
 		_svgContainer.setAttribute("height", (r * 2) + "px");
 		#end
-		registrationPoint = new com.pblabs.geom.Vector2(_radius, _radius);
-		_unscaledBounds.xmin = -_radius;
-		_unscaledBounds.xmax = _radius;
-		_unscaledBounds.ymin = -_radius;
-		_unscaledBounds.ymax = _radius;
-		_bounds = _unscaledBounds.clone();
+		
 		com.pblabs.engine.debug.Profiler.exit("redraw");
 	}
 	
@@ -118,7 +113,7 @@ class CircleShape extends ShapeComponent
 	override public function draw (ctx :easel.display.Context2d)
 	{
 		ctx.beginPath();
-		ctx.arc(0, 0, radius, 0, Math.PI*2, true);
+		ctx.arc(radius, radius, radius, 0, Math.PI*2, true);
 		ctx.fillStyle = StringUtil.toColorString(fillColor, "#");
 		ctx.fill();
 		ctx.closePath();
@@ -126,7 +121,7 @@ class CircleShape extends ShapeComponent
 		if (borderStroke > 0) {
 			ctx.lineWidth = borderStroke;
 			ctx.beginPath();
-			ctx.arc(0, 0, radius, 0, Math.PI*2, true);
+			ctx.arc(radius, radius, radius, 0, Math.PI*2, true);
 			ctx.stroke();
 		}
 	}
@@ -141,22 +136,22 @@ class CircleShape extends ShapeComponent
 	
 	override function get_height () :Float
 	{
-		return get_radius();
+		return get_radius() * 2;
 	}
 	
 	override function set_height (val :Float) :Float
 	{
-		return set_radius(val);
+		return set_radius(val / 2);
 	}
 	
 	override function get_width () :Float
 	{
-		return get_radius();
+		return get_radius() * 2;
 	}
 	
 	override function set_width (val :Float) :Float
 	{
-		return set_radius(val);
+		return set_radius(val / 2);
 	}
 	
 	function get_radius () :Float
@@ -170,6 +165,19 @@ class CircleShape extends ShapeComponent
 			return val;
 		}
 		_radius = val;
+		
+		_unscaledBounds.xmin = -_radius;
+		_unscaledBounds.xmax = _radius;
+		_unscaledBounds.ymin = -_radius;
+		_unscaledBounds.ymax = _radius;
+		
+		_bounds = _unscaledBounds.clone();
+		
+		_scaleX = 1;
+		_scaleY = 1;
+		
+		registrationPoint.x = _radius;
+		registrationPoint.y = _radius;
 		_isTransformDirty = true;
 		redraw();
 		return val;

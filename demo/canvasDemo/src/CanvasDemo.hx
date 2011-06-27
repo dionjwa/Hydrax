@@ -35,10 +35,9 @@ class CanvasDemo
 	
 	function onLoad () :Void
 	{
-		var ctx = app.allocate(PBContext);
+		var ctx : PBContext = app.pushContext(PBContext);
 		Assert.isNotNull(ctx, "WTF, ctx is null");
 		Assert.isNotNull(ctx.injector.parent, "Parent injector null");
-		app.pushContext(ctx);
 		var canvas = ctx.createBaseScene();
 		
 		var backLayer = canvas.addLayer("backlayer");

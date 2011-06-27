@@ -8,8 +8,7 @@ import com.pblabs.components.scene2D.ImageComponent;
 import com.pblabs.components.scene2D.SceneAlignment;
 import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.scene2D.SceneView;
-import com.pblabs.components.scene2D.flash.BitmapDataScene;
-import com.pblabs.components.scene2D.flash.BitmapRenderer;
+import com.pblabs.components.scene2D.BitmapRenderer;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.components.tasks.AngleTask;
 import com.pblabs.components.tasks.FunctionTask;
@@ -44,7 +43,11 @@ class Demo
 		game.registerManager(com.pblabs.components.input.GestureInputManager, new com.pblabs.components.input.GestureInputManager());
 		#end
 		
+		#if flash
 		game.getManager(IResourceManager).addResource(new ImageResource("avatar", Source.url("../rsrc/avatar.png")));
+		#elseif js
+		game.getManager(IResourceManager).addResource(new ImageResource("avatar", Source.url("rsrc/avatar.png")));
+		#end
 		
 		game.registerManager(InputManager, new InputManager());
 		game.getManager(IResourceManager).addResource(new com.pblabs.engine.resource.EmbeddedResource());
@@ -56,11 +59,14 @@ class Demo
 	{
 		var input = game.getManager(InputManager);
 		
-		var context = game.allocate(PBContext);
-		game.pushContext(context);
+		var context :PBContext = game.pushContext(PBContext);
 		
 		//Scene for game elements
-		var gamescene = context.addSingletonComponent(BitmapDataScene, null, true);
+		#if flash
+		var gamescene = context.addSingletonComponent(com.pblabs.components.scene2D.flash.BitmapDataScene, null, true);
+		#elseif js
+		var gamescene = context.addSingletonComponent(SceneUtil.MANAGER_CLASS, null, true);
+		#end
 		// var gamescene = context.addSingletonComponent(com.pblabs.components.scene2D.flash.SceneManager, null, true);
 		context.registerManager(SceneUtil.MANAGER_CLASS, gamescene, null, true);
 		//The spatial component is for panning control
@@ -88,9 +94,13 @@ class Demo
 	{
 		var context = layer.context;
 		var e = context.createBaseSceneEntity();
-		var c = context.allocate(BitmapRenderer);
-		var image :flash.display.Bitmap= cast context.getManager(IResourceManager).get(new ResourceToken("avatar"));
+		var c = context.allocate(com.pblabs.components.scene2D.BitmapRenderer);
+		var image :com.pblabs.components.scene2D.Image = cast context.getManager(IResourceManager).get(new ResourceToken("avatar"));
+		#if flash
 		c.bitmapData = image.bitmapData;
+		#elseif js
+		c.bitmapData = image;
+		#end
 		c.parentProperty = layer.entityProp();
 		e.addComponent(c);
 		e.initialize(name);

@@ -8,7 +8,6 @@
 ******************************************************************************/
 package com.pblabs.components.scene2D.flash;
 
-import flash.display.BitmapData;
 import flash.geom.Matrix;
 
 /**
@@ -30,5 +29,9 @@ interface ICopyPixelsRenderer
 	 * @param objectToScreen Transform from object space to renderTarget space.
 	 * @param renderTarget Bitmap to which to draw.
 	 */
-	function drawPixels(objectToScreen :Matrix, renderTarget :BitmapData):Void;
+	#if flash 
+	function drawPixels(objectToScreen :Matrix, renderTarget :flash.display.BitmapData):Void;
+	#elseif js
+	function drawPixels(ctx :easel.display.Context2d):Void;
+	#end
 }

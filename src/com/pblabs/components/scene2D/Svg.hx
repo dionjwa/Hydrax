@@ -25,16 +25,16 @@ using Lambda;
 using StringTools;
 
 using com.pblabs.components.scene2D.SceneUtil;
-using com.pblabs.components.scene2D.SvgUtil;
 using com.pblabs.engine.resource.ResourceToken;
 using com.pblabs.util.StringUtil;
+using com.pblabs.util.SvgUtil;
 using com.pblabs.util.XMLUtil;
 #if flash
 using com.pblabs.util.DisplayUtils;
 import de.polygonal.core.math.Mathematics;
 #end
 
-
+/** This will eventually be a single svg */
 /**
   * Cross platform SVG based Scene2D component.
   * Currently supports Flash, JS canvas, and JS CSS.
@@ -50,7 +50,9 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 #end
 {
 	public static var TEXT_REPLACE :EReg = ~/\$T/;
-	
+	#if flash
+	static var INVISIBLE_STAGE :flash.display.Sprite;
+	#end
 	
 	#if (flash || cpp)
 	/** Fired when the svgweb renderer completes */
@@ -118,50 +120,53 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		#end
 		
 		#if (flash || cpp)
+		/**
+		  * svgweb has 2 issues:
+		  *  1) It takes a number of frames to (asynchronously) render the svg
+		  *  2) It cancels the rendering if the sprite is removed from the stage
+		  *      before the rendering is finished (recieves a Event.REMOVED_FROM_STAGE).
+		  * To deal with this, we create a hidden sprite attached to the stage, 
+		  * and use that as our sprite parent until the svg has finished rendering
+		  * and dispatched the render finish event.
+		  * http://code.google.com/p/svgweb/issues/detail?id=265
+		  */
+		  if (INVISIBLE_STAGE == null) {
+		  	  INVISIBLE_STAGE = new flash.display.Sprite();
+		  	  INVISIBLE_STAGE.mouseChildren = INVISIBLE_STAGE.mouseEnabled = false;
+		  	  flash.Lib.current.stage.addChild(INVISIBLE_STAGE);
+		  	  INVISIBLE_STAGE.visible = false;
+		  	  INVISIBLE_STAGE.x = 5000;
+		  }
+		
 		_displayObject.removeAllChildren();
 		var toRender :Int = svgData.length;
-		var self = this;
-		var finishedRendering = false;
 		for (ii in 0...svgData.length) {
 			var svgString = svgData[ii];
-			var index = ii;
-			SvgUtil.renderSvg(svgData[ii], function (renderedSvg :flash.display.DisplayObject) :Void {
-				if (index > 0) {
-					var v = self._relativeTransforms[index];
-					if (v != null && v.x != 0 && v.y != 0) {
-						renderedSvg.x = v.x;
-						renderedSvg.y = v.y;
-					}
-				}
-				var sprite = cast(self._displayObject, flash.display.Sprite);
-				sprite.addChildAt(renderedSvg, Mathematics.clamp(ii, 0, sprite.numChildren));
-				toRender--;
-				if (toRender <= 0) {
-					finishedRendering = true;
-					self.recomputeBounds();
-					self.renderCompleteSignal.dispatch();
-				}
-			});
-			
 			//Transform it
-			// var svg = new org.svgweb.SVGViewerFlash();
-			// INVISIBLE_STAGE.addChild(svg);
+			var svg = new org.svgweb.SVGViewerFlash();
+			INVISIBLE_STAGE.addChild(svg);
 			
-			// svg.xml = new flash.xml.XML(svgString);
-			
-			
-			
-			// com.pblabs.util.EventDispatcherUtil.addOnceListener(svg.svgRoot, org.svgweb.events.SVGEvent.SVGLoad, 
-			// 	function (ignored :Dynamic) :Void {
-			// 		var sprite = cast(self._displayObject, flash.display.Sprite);
-			// 		sprite.addChildAt(svg, Mathematics.clamp(ii, 0, sprite.numChildren));
-			// 		toRender--;
-			// 		if (toRender <= 0) {
-			// 			finishedRendering = true;
-			// 			self.recomputeBounds();
-			// 			self.renderCompleteSignal.dispatch();
-			// 		}
-			// 	});
+			svg.xml = new flash.xml.XML(svgString);
+			if (ii > 0) {
+				var v = _relativeTransforms[ii];
+				if (v != null && v.x != 0 && v.y != 0) {
+					svg.x = v.x;
+					svg.y = v.y;
+				}
+			}
+			var self = this;
+			var finishedRendering = false;
+			com.pblabs.util.EventDispatcherUtil.addOnceListener(svg.svgRoot, org.svgweb.events.SVGEvent.SVGLoad, 
+				function (ignored :Dynamic) :Void {
+					var sprite = cast(self._displayObject, flash.display.Sprite);
+					sprite.addChildAt(svg, Mathematics.clamp(ii, 0, sprite.numChildren));
+					toRender--;
+					if (toRender <= 0) {
+						finishedRendering = true;
+						self.recomputeBounds();
+						self.renderCompleteSignal.dispatch();
+					}
+				});
 		}
 		#else
 		//TODO: Is the js renderer asynchronous???
@@ -278,9 +283,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			//Render the SVG to the backbuffer to then render to the canvas
 			cacheAsBitmap = true;
 		} else {
-			if (svgData != null) {
-				insertSvgsIntoDiv();
-			}
+			insertSvgsIntoDiv();
 		}
 	}
 	
@@ -330,26 +333,23 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		}
 		//Temporary hack: use canvg library for rendering SVGs to canvas
 		for (ii in 0...svgData.length) {
-			SvgUtil.renderSvg(svgData[ii], ctx.canvas, _relativeTransforms[ii]);
-			// var svg = svgData[ii];
-			// var args = { ignoreMouse: true, ignoreAnimation: true, ignoreDimensions: false, ignoreClear: true };
+			var svg = svgData[ii];
+			var args = { ignoreMouse: true, ignoreAnimation: true, ignoreDimensions: true, ignoreClear: true };
 			//Transform it
-			// var v = _relativeTransforms[ii];
-			
-			
-			// if (v != null && v.x != 0 && v.y != 0) {
-			// 	Reflect.setField(args, "offsetX", v.x);
-			// 	Reflect.setField(args, "offsetY", v.y);
-			// }
-			// Reflect.setField(args, "scaleWidth", width * scaleX);
-			// Reflect.setField(args, "scaleHeight", height * scaleY);
-			// try {
-			// 	untyped canvg(ctx.canvas, svg, args);
-			// } catch (e :Dynamic) {
-			// 	com.pblabs.util.Log.error(resources[ii]);
-			// 	com.pblabs.util.Log.error("Error rendering svg from canvg: " + e);
-			// 	com.pblabs.util.Log.error(com.pblabs.util.Log.getStackTrace());
-			// }
+			var v = _relativeTransforms[ii];
+			if (v != null && v.x != 0 && v.y != 0) {
+				Reflect.setField(args, "offsetX", v.x);
+				Reflect.setField(args, "offsetY", v.y);
+			}
+			Reflect.setField(args, "scaleWidth", width);
+			Reflect.setField(args, "scaleHeight", height);
+			try {
+				untyped canvg(ctx.canvas, svg, args);
+			} catch (e :Dynamic) {
+				com.pblabs.util.Log.error(resources[ii]);
+				com.pblabs.util.Log.error("Error rendering svg from canvg: " + e);
+				com.pblabs.util.Log.error(com.pblabs.util.Log.getStackTrace());
+			}
 		}
 	}
 	

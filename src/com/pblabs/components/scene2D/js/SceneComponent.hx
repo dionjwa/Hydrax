@@ -34,7 +34,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		//http://sebleedelisle.com/2011/04/html5javascript-platform-game-optimised-for-ipad/
 		//But then the image is cached, and looks blurry if scaled.
 		//;-webkit-transform:translateZ(0px)
-		div.style.cssText = "position:absolute;-webkit-transform-origin:0% 0%;-moz-transform-origin:0% 0%;cursor:default";
+		div.style.cssText = "overflow:visible;position:absolute;-webkit-transform-origin:0% 0%;-moz-transform-origin:0% 0%;cursor:default";
 		return div;
 	}
 	
@@ -42,7 +42,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 	/** Set this when added to the parent */
 	public var isOnCanvas(default, null) :Bool;
 	public var div (default, null) :HtmlDom;
-	public var displayObject (get_displayObject, set_displayObject) :HtmlDom;
+	// public var displayObject (get_displayObject, set_displayObject) :HtmlDom;
 	public var cacheAsBitmap (get_cacheAsBitmap, set_cacheAsBitmap) :Bool;
 	var _displayObject :HtmlDom;
 	
@@ -71,11 +71,13 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 			// com.pblabs.util.Assert.isNotNull(parent);
 			if (parent != null && isTransformDirty) {
 				updateTransform();
-				if (SceneView.isWebkitBrowser) {
-					untyped div.style.webkitTransform = _transformMatrix.toString();
-				} else {
-					untyped div.style.MozTransform = _transformMatrix.toMozString();
-				}
+				isTransformDirty = false;
+				SceneUtil.applyTransform(div, _transformMatrix);
+				// if (SceneView.isWebkitBrowser) {
+				// 	untyped div.style.webkitTransform = _transformMatrix.toString();
+				// } else {
+				// 	untyped div.style.MozTransform = _transformMatrix.toMozString();
+				// }
 			}
 		}
 	}
@@ -124,54 +126,54 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		return super.set_isTransformDirty(val);
 	}
 	
-	function get_displayObject () :HtmlDom
-	{
-		return _displayObject;
-	}
+	// function get_displayObject () :HtmlDom
+	// {
+	// 	return _displayObject;
+	// }
 	
-	function set_displayObject (val :HtmlDom) :HtmlDom
-	{
-		if (isOnCanvas) {
-			trace("?");
-			return val;
-		}
-		if (_displayObject != null) {
-			if (_displayObject.parentNode != null) {
-				_displayObject.parentNode.removeChild(_displayObject);
-			}
-		}
-		_displayObject = val;
-		if (_displayObject != null) {
-			if (_displayObject.parentNode != null) {
-				_displayObject.parentNode.removeChild(_displayObject);
-			}
-			if (div != null) {
-				div.appendChild(_displayObject);
-			}
-			if (Reflect.hasField(displayObject, "width")) {
-				var w = Std.parseInt(Reflect.field(displayObject, "width"));
-				_unscaledBounds.xmin = -w / 2;
-				_unscaledBounds.xmax = w / 2;
-			}
-			if (Reflect.hasField(displayObject, "height")) {
-				var h = Std.parseInt(Reflect.field(displayObject, "height"));
-				_unscaledBounds.ymin = -h / 2;
-				_unscaledBounds.ymax = h / 2;
-			}
-			if (width == 0 || Math.isNaN(width)) {
-				var w = Std.parseFloat(displayObject.getAttribute("width"));
-				_unscaledBounds.xmin = -w / 2;
-				_unscaledBounds.xmax = w / 2;
-			} 
-			if (height == 0 || Math.isNaN(height)) {
-				var h = Std.parseFloat(displayObject.getAttribute("height"));
-				_unscaledBounds.ymin = -h / 2;
-				_unscaledBounds.ymax = h / 2;
-			}
-		}
-		isTransformDirty = true;
-		return val;
-	}
+	// function set_displayObject (val :HtmlDom) :HtmlDom
+	// {
+	// 	if (isOnCanvas) {
+	// 		trace("?");
+	// 		return val;
+	// 	}
+	// 	if (_displayObject != null) {
+	// 		if (_displayObject.parentNode != null) {
+	// 			_displayObject.parentNode.removeChild(_displayObject);
+	// 		}
+	// 	}
+	// 	_displayObject = val;
+	// 	if (_displayObject != null) {
+	// 		if (_displayObject.parentNode != null) {
+	// 			_displayObject.parentNode.removeChild(_displayObject);
+	// 		}
+	// 		if (div != null) {
+	// 			div.appendChild(_displayObject);
+	// 		}
+	// 		if (Reflect.hasField(displayObject, "width")) {
+	// 			var w = Std.parseInt(Reflect.field(displayObject, "width"));
+	// 			_unscaledBounds.xmin = -w / 2;
+	// 			_unscaledBounds.xmax = w / 2;
+	// 		}
+	// 		if (Reflect.hasField(displayObject, "height")) {
+	// 			var h = Std.parseInt(Reflect.field(displayObject, "height"));
+	// 			_unscaledBounds.ymin = -h / 2;
+	// 			_unscaledBounds.ymax = h / 2;
+	// 		}
+	// 		if (width == 0 || Math.isNaN(width)) {
+	// 			var w = Std.parseFloat(displayObject.getAttribute("width"));
+	// 			_unscaledBounds.xmin = -w / 2;
+	// 			_unscaledBounds.xmax = w / 2;
+	// 		} 
+	// 		if (height == 0 || Math.isNaN(height)) {
+	// 			var h = Std.parseFloat(displayObject.getAttribute("height"));
+	// 			_unscaledBounds.ymin = -h / 2;
+	// 			_unscaledBounds.ymax = h / 2;
+	// 		}
+	// 	}
+	// 	isTransformDirty = true;
+	// 	return val;
+	// }
 	
 	function createCanvas () :Canvas
 	{
@@ -214,7 +216,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		ctx.setTransform(1, 0, 0, 1, 0, 0);
 		ctx.save();
 		_isContentsDirty = false;
-		draw(ctx);
+		drawPixels(ctx);
 		ctx.restore();
 	}
 	
@@ -244,13 +246,13 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 			if (cacheAsBitmap) {
 				ctx.drawImage(_backBuffer, 0, 0);
 			} else {
-				draw(ctx);
+				drawPixels(ctx);
 			}
 			ctx.restore();
 		}
 	}
 	
-	public function draw (ctx :Context2d)
+	public function drawPixels (ctx :Context2d)
 	{
 		throw "Subclasses must override";	
 	}

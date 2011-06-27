@@ -212,5 +212,12 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		return val;
 	}
 	
+	override function set_visible (val :Bool) :Bool
+	{
+		_visible = val;
+		_displayObject.visible = _visible;
+		return val;
+	}
+	
 	var _displayObject :DisplayObject;
 }

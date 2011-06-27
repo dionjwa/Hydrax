@@ -22,42 +22,13 @@ import de.polygonal.motor2.geom.math.XY;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.resource.ResourceToken;
 
-typedef ImageData = 
-#if (flash || cpp)
-flash.display.BitmapData;
-#else
-js.Dom.Image;
-#end
-
 /**
-  * Cross platform Image using Scene2D component.
+  * BitmapRenderer with automatically loading resource.
   */
-class ImageComponent 
-#if js
-extends com.pblabs.components.scene2D.js.SceneComponent
-#elseif (flash || cpp)
-extends com.pblabs.components.scene2D.flash.SceneComponent  
-#end
+class ImageComponent extends BitmapRenderer
 {
 	/** The IResource name and item id.  Id can be null */
 	public var resource :ResourceToken<Dynamic>;
-	
-	#if js
-	public var image (default, set_image) :js.Dom.Image;
-	function set_image (val :js.Dom.Image) :js.Dom.Image
-	{
-		this.image = val;
-		return val;
-	}
-	override public function draw (ctx :easel.display.Context2d) :Void
-	{
-		if (image == null) {
-			_isContentsDirty = true;
-			return;
-		}
-		ctx.drawImage(image, 0, 0);
-	}
-	#end
 	
 	public function new () :Void
 	{
@@ -82,13 +53,9 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		com.pblabs.util.Assert.isNotNull(image, "Image loaded from " + resource + " is null");
 		com.pblabs.util.Assert.isNotNull(image, "null image for " + resource);
 		if (Std.is(image, flash.display.BitmapData)) {
-			displayObject = new flash.display.Bitmap(cast(image, flash.display.BitmapData));
-			_registrationPoint.x = _displayObject.width / 2;
-			_registrationPoint.y = _displayObject.height / 2;
+			this.bitmapData = cast image;
 		} else if (Std.is(image, flash.display.Bitmap)) {
-			displayObject = cast image;
-			_registrationPoint.x = _displayObject.width / 2;
-			_registrationPoint.y = _displayObject.height / 2;
+			this.bitmapData = cast(image, flash.display.Bitmap).bitmapData;
 		} else if (Std.is(image, flash.display.DisplayObject)) {
 			displayObject = cast image;
 		} else {
@@ -109,17 +76,14 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	#if js
 	function loadFromResource () :Void
 	{
-		//Get the DomResource, this makes sure the inline image is loaded
-		image = context.get(resource);
-		com.pblabs.util.Assert.isNotNull(image, "Image loaded from " + resource + " is null");
+		var image = context.get(resource);
 		Preconditions.checkNotNull(image, "image from resource is null " +resource);
-		_unscaledBounds.xmin = -image.width / 2;
-		_unscaledBounds.xmax = image.width / 2;
-		_unscaledBounds.ymin = image.height / 2;
-		_unscaledBounds.ymax = image.height / 2;
-		_registrationPoint.x = image.width / 2;
-		_registrationPoint.y = image.height / 2;
-		div.appendChild(image);
+		var canvas :easel.display.Canvas = cast js.Lib.document.createElement("canvas");
+		canvas.width = image.width;
+		canvas.height = image.height;
+		var ctx = canvas.getContext("2d");
+		ctx.drawImage(image, 0, 0);
+		bitmapData = canvas;
 	}
 	#end	
 }

@@ -37,12 +37,12 @@ class Demo
 		
 		//Create our blob that we will move around.
 		var so = context.createBaseSceneEntity();
-		var blob  = context.allocate(com.pblabs.components.scene2D.RectangleShape);
-		// var blob  = context.allocate(com.pblabs.components.scene2D.CircleShape);
-		// blob.radius = 30;
+		// var blob  = context.allocate(com.pblabs.components.scene2D.RectangleShape);
+		var blob  = context.allocate(com.pblabs.components.scene2D.CircleShape);
+		blob.radius = 30;
 		
-		blob.width = 100;
-		blob.height = 300;
+		// blob.width = 100;
+		// blob.height = 300;
 		blob.parentProperty = layer.entityProp();
 		so.addComponent(blob);
 		so.initialize("SomeSceneObj");
@@ -57,10 +57,16 @@ class Demo
 		//This method is via 'using' TaskUtil
 		so.addTask(new RepeatingTask(
 			new SerialTask(
-				LocationTask.CreateEaseOut(topLeft.x + blob.width / 2, topLeft.y + blob.height / 2, 2),
-				LocationTask.CreateEaseOut(topRight.x - blob.width / 2, topRight.y + blob.height / 2, 2),
-				LocationTask.CreateEaseOut(bottomRight.x - blob.width / 2, bottomRight.y - blob.height / 2, 2),
-				LocationTask.CreateEaseOut(bottomLeft.x + blob.width / 2, bottomLeft.y - blob.height / 2, 2)
+				// LocationTask.CreateEaseOut(topLeft.x + blob.width / 2, topLeft.y + blob.height / 2, 2),
+				// LocationTask.CreateEaseOut(topRight.x - blob.width / 2, topRight.y + blob.height / 2, 2),
+				// LocationTask.CreateEaseOut(bottomRight.x - blob.width / 2, bottomRight.y - blob.height / 2, 2),
+				// LocationTask.CreateEaseOut(bottomLeft.x + blob.width / 2, bottomLeft.y - blob.height / 2, 2)
+				
+				LocationTask.CreateEaseOut(topLeft.x, topLeft.y , 2),
+				LocationTask.CreateEaseOut(topRight.x, topRight.y, 2),
+				LocationTask.CreateEaseOut(bottomRight.x, bottomRight.y, 2),
+				LocationTask.CreateEaseOut(bottomLeft.x, bottomLeft.y, 2)
+				
 			)
 			));
 			
