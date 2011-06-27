@@ -21,7 +21,7 @@ import com.pblabs.util.ReflectUtil;
 using Lambda;
 
 using com.pblabs.util.ArrayUtil;
-using com.pblabs.util.XMLUtil;
+using com.pblabs.util.XmlUtil;
 
 /**
 	Useful for managing components and setting up tree structures.

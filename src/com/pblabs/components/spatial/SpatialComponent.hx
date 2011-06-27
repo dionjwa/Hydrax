@@ -25,7 +25,7 @@ import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
 using com.pblabs.geom.VectorTools;
-using com.pblabs.util.XMLUtil;
+using com.pblabs.util.XmlUtil;
 
 /**
  * Very basic spatial component that exists at a position. 

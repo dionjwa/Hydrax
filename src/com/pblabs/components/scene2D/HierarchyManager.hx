@@ -19,7 +19,7 @@ using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.geom.VectorTools;
 using com.pblabs.util.StringUtil;
-using com.pblabs.util.XMLUtil;
+using com.pblabs.util.XmlUtil;
 
 /**
   * Manages the display anchors (MovieClips in Flash, SVGs in JS).

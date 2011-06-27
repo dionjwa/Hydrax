@@ -18,7 +18,7 @@ using StringTools;
 
 using com.pblabs.geom.VectorTools;
 using com.pblabs.util.StringUtil;
-using com.pblabs.util.XMLUtil;
+using com.pblabs.util.XmlUtil;
 using com.pblabs.util.IterUtil;
 
 /**

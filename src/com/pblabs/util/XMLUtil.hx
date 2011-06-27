@@ -11,9 +11,9 @@ package com.pblabs.util;
 using StringTools;
 
 using com.pblabs.util.StringUtil;
-using com.pblabs.util.XMLUtil;
+using com.pblabs.util.XmlUtil;
 
-class XMLUtil
+class XmlUtil
 {
 	public static function findElement (xml :Xml, elementName :String, ?attribute :String, ?attributeValue :String) :Xml
 	{
@@ -131,8 +131,8 @@ class XMLUtil
 	
 	public static function parseFloat (xml :Xml, childName :String) :Float
 	{
-		if (XMLUtil.child(xml, childName) != null) {
-			return Std.parseFloat(XMLUtil.child(xml, childName).firstChild().nodeValue);
+		if (XmlUtil.child(xml, childName) != null) {
+			return Std.parseFloat(XmlUtil.child(xml, childName).firstChild().nodeValue);
 		} else {
 				com.pblabs.util.Log.info("No child property to parse=" + childName);
 			}

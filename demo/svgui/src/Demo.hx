@@ -34,7 +34,7 @@ using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.components.ui.UIUtil;
 using com.pblabs.engine.util.PBUtil;
 using com.pblabs.util.StringUtil;
-using com.pblabs.util.XMLUtil;
+using com.pblabs.util.XmlUtil;
 
 class Demo  
 {

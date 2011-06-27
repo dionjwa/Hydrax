@@ -23,7 +23,7 @@ import com.pblabs.util.Enumerable;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.StringUtil;
-import com.pblabs.util.XMLUtil;
+import com.pblabs.util.XmlUtil;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 import com.pblabs.util.ds.Set;
@@ -35,7 +35,7 @@ using StringTools;
 
 using com.pblabs.util.IterUtil;
 using com.pblabs.util.StringUtil;
-using com.pblabs.util.XMLUtil;
+using com.pblabs.util.XmlUtil;
 
 /**
  * Singleton class for serializing and deserializing objects. This class 
@@ -255,7 +255,7 @@ class Serializer extends PBManagerBase
 		com.pblabs.util.Log.error("No deserializer found for " + xml + ", typeHint=" + typeHint);
 		//Fall back to deserializing complex
 		// deserializeComplex(context, object, xml, typeHint);
-		return XMLUtil.parseString(xml);
+		return XmlUtil.parseString(xml);
 		
 		
 		// com.pblabs.util.Log.warn("Currently all deserializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object));
@@ -709,13 +709,13 @@ class Serializer extends PBManagerBase
 	public static function parsePropertyReference <T>(xml :Xml, childName :String) :PropertyReference<T>
 	{
 		try {
-			if (XMLUtil.child(xml, childName) != null) {
-				return new PropertyReference(XMLUtil.parseString(XMLUtil.child(xml, childName)));
+			if (XmlUtil.child(xml, childName) != null) {
+				return new PropertyReference(XmlUtil.parseString(XmlUtil.child(xml, childName)));
 			} else {
 				com.pblabs.util.Log.info("No child property to parse=" + childName);
 			}
 		} catch (e :Dynamic) {
-			com.pblabs.util.Log.error("Cannot parse PropertyReference from " + XMLUtil.child(xml, childName).toString()); 
+			com.pblabs.util.Log.error("Cannot parse PropertyReference from " + XmlUtil.child(xml, childName).toString()); 
 		}
 		return null;
 	}

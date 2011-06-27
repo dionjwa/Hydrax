@@ -28,7 +28,7 @@ using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.scene2D.SvgUtil;
 using com.pblabs.engine.resource.ResourceToken;
 using com.pblabs.util.StringUtil;
-using com.pblabs.util.XMLUtil;
+using com.pblabs.util.XmlUtil;
 #if flash
 using com.pblabs.util.DisplayUtils;
 import de.polygonal.core.math.Mathematics;
