@@ -14,6 +14,8 @@ import com.pblabs.util.ds.multimaps.SetMultiMap;
 
 import hsl.haxe.Bond;
 
+import Type;
+
 using Lambda;
 
 using com.pblabs.util.IterUtil;
@@ -85,8 +87,8 @@ class SetManager extends PBManager
 	public function new ()
 	{
 		super();
-		_sets = SetMultiMap.create(String);
-		_objects = SetMultiMap.create(PBObject);
+		_sets = SetMultiMap.create(ValueType.TClass(String));
+		_objects = SetMultiMap.create(ValueType.TClass(PBObject));
 	}
 	
 	public function addObjectToSet (obj :IPBObject, set :String) :Void

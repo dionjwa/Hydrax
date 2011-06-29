@@ -15,6 +15,9 @@ package com.pblabs.engine.core;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
+
+import Type;
+
 using com.pblabs.util.StringUtil;
 
 /**
@@ -25,7 +28,7 @@ class NameManager
 {
 	public function new() 
 	{ 
-		_objects = Maps.newHashMap(String);
+		_objects = Maps.newHashMap(ValueType.TClass(String));
 	}
 	
 	public function iterator (): Iterator<IPBObject>

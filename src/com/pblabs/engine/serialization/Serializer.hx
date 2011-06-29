@@ -29,6 +29,8 @@ import com.pblabs.util.ds.Maps;
 import com.pblabs.util.ds.Set;
 import com.pblabs.util.ds.Sets;
 
+import Type;
+
 using Lambda;
 
 using StringTools;
@@ -58,10 +60,10 @@ class Serializer extends PBManagerBase
 	public function new()
 	{
 		super();
-		_deserializers = Maps.newHashMap(String);
-		_serializers = Maps.newHashMap(String);
+		_deserializers = Maps.newHashMap(ValueType.TClass(String));
+		_serializers = Maps.newHashMap(ValueType.TClass(String));
 		_deferredReferences = [];
-		_resources = Maps.newHashMap(String);
+		_resources = Maps.newHashMap(ValueType.TClass(String));
 		
 		// initialize our default Serializers. Note "special" cases get a double
 		// colon so there can be no overlap w/ any real type.
@@ -95,7 +97,7 @@ class Serializer extends PBManagerBase
 		_serializers.set("com.pblabs.geom.Vector2", serializeVector2);
 		
 		
-		ignoredTypes = Sets.newSetOf(Class);
+		ignoredTypes = Sets.newSetOf(ValueType.TObject);
 		
 		ignoredTypes.add(hsl.haxe.DirectSignaler);
 		ignoredTypes.add(hsl.haxe.Signaler);

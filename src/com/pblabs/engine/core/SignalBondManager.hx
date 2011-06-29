@@ -17,6 +17,8 @@ import de.polygonal.ds.Hashable;
 import hsl.haxe.Bond;
 import hsl.haxe.Signaler;
 
+import Type;
+
 using com.pblabs.engine.util.PBUtil;
 using com.pblabs.util.StringUtil;
 
@@ -74,7 +76,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	
 	public function new ()
 	{
-		super(Int);
+		super(ValueType.TInt);
 		key = com.pblabs.engine.util.PBUtil.KEY_COUNT++;
 	}
 

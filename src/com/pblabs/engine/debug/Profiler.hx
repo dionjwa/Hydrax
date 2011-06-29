@@ -323,7 +323,7 @@ import de.polygonal.core.math.Limits;
 	
 		public function new (n :String, ?p :ProfileInfo)
 		{
-			children = Maps.newHashMap(String);
+			children = Maps.newHashMap(ValueType.TClass(String));
 			name = n;
 			parent = p;
 			wipe();

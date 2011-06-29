@@ -25,6 +25,8 @@ import com.pblabs.util.ds.Maps;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
+import Type;
+
 class PBContext
 	implements IPBContext
 {
@@ -72,7 +74,7 @@ class PBContext
 		}
 		
 		injector = createInjector();
-		_managers = Maps.newHashMap(String);
+		_managers = Maps.newHashMap(ValueType.TClass(String));
 		_processManager = registerManager(IProcessManager, createProcessManager(), true);
 		#if debug
 		cast(_processManager, ProcessManager).name = this.name;

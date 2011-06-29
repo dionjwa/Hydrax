@@ -17,6 +17,7 @@ import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
+import Type;
 /**
   * Usage:
   *
@@ -45,7 +46,7 @@ class ObjectPoolMgr extends PBManagerBase
 	{
 		super();
 		_classes = [];
-		_pools = Maps.newHashMap(String);
+		_pools = Maps.newHashMap(ValueType.TClass(String));
 		_tempPool = [];
 		_isCallingLater = false;
 	}

@@ -44,7 +44,7 @@ class BitmapCacheResource extends ResourceBase<ImageData>
 	public function new (manager :IResourceManager)
 	{
 		super(NAME);
-		_cache = Maps.newHashMap(String);
+		_cache = Maps.newHashMap(ValueType.TClass(String));
 		com.pblabs.util.Assert.isNotNull(manager);
 		_manager = manager;
 	}

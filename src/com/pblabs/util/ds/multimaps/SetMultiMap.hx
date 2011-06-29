@@ -15,41 +15,44 @@ import com.pblabs.util.ds.Set;
 import com.pblabs.util.ds.Sets;
 import com.pblabs.util.ds.multimaps.AbstractMultiMap;
 
+import Type;
+
 using Lambda;
 
 class SetMultiMap<K, V> extends AbstractMultiMap<K, V>,
 	implements MultiMap<K, V>
 {
-	public static function create <K, V>(keyClass :Class<Dynamic>, ?valueClass :Class<Dynamic>) :SetMultiMap<K, V>
+	public static function create <K, V>(keyType :ValueType, ?valueType :ValueType) :SetMultiMap<K, V>
 	{
-		return new SetMultiMap<K, V>(keyClass, valueClass);
+		return new SetMultiMap<K, V>(keyType, valueType);
 	}
 	
 	var _map :Map<K, Set<V>>;
-	var _keyClass :Class<Dynamic>;
-	var _valueClass :Class<Dynamic>;
+	var _keyType :ValueType;
+	var _valueType :ValueType;
 	
-	public function new (keyClass :Class<Dynamic>, ?valueClass :Class<Dynamic> = null)
+	public function new (keyType :ValueType, ?valueType :ValueType)
 	{
 		super();
-		_map = Maps.newHashMap(keyClass);
-		_keyClass = keyClass;
-		_valueClass = valueClass;
+		_map = Maps.newHashMap(keyType);
+		_keyType = keyType;
+		_valueType = valueType;
 	}
 	
 	override public function set (key :K, value :V) :Void
 	{
 		
-		if (_valueClass == null) {
-			_valueClass = Type.getClass(value);
-			if (_valueClass == null) {
-				_valueClass = Dynamic;
-			}
+		if (_valueType == null) {
+			_valueType = Type.typeof(value);
+			com.pblabs.util.Assert.isNotNull(_valueType, "Cannot get type of value=" + value);
+			// if (_valueType == null) {
+			// 	_valueType = Dynamic;
+			// }
 		}
 		super.set(key, value);
 		var set :Set<V> = _map.get(key);
 		if (set == null) {
-			set = Sets.newSetOf(_valueClass);
+			set = Sets.newSetOf(_valueType);
 			_map.set(key, set);
 		}
 		set.add(value);
@@ -59,7 +62,7 @@ class SetMultiMap<K, V> extends AbstractMultiMap<K, V>,
 	{
 		var set :Set<V> = _map.get(key);
 		if (set == null) {
-			set = Sets.newSetOf(_keyClass);
+			set = Sets.newSetOf(_keyType);
 			_map.set(key, set);
 		}
 		

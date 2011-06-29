@@ -15,6 +15,8 @@ package com.pblabs.engine.core;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
+import Type;
+
 /**
  * WARNING: this code does not currently work, conversion is still a work in progress. 
  * The ObjectTypeManager, together with the ObjectType class, is essentially an abstraction
@@ -42,7 +44,7 @@ class ObjectTypeManager
 	public function new() 
 	{ 
 		_typeCount = 0;
-		_typeList = Maps.newHashMap(String);
+		_typeList = Maps.newHashMap(ValueType.TClass(String));
 		_bitList = new Array();
 	}
 	

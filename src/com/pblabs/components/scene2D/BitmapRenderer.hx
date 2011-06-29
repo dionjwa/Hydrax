@@ -72,6 +72,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		#if flash
 		com.pblabs.util.Assert.isNotNull(_bitmap);
 		_bitmap.bitmapData = val;
+		// updateTransform();
 		#elseif js
 		if (_bitmap != null) {
 			div.removeChild(_bitmap);
@@ -80,7 +81,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		div.appendChild(_bitmap);
 		#end
 		// bitmapDirty = true;
-		recomputeBounds();
+		// recomputeBounds();
 		return val;
 	}
 	

@@ -35,6 +35,8 @@ import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 import hsl.haxe.data.mouse.MouseLocation;
 
+import Type;
+
 using IterTools;
 
 using Lambda;
@@ -101,7 +103,7 @@ class InputManager extends BaseInputManager,
 		rotate = new DirectSignaler(this);
 		scale = new DirectSignaler(this);
 		
-		_checked = Sets.newSetOf(String);
+		_checked = Sets.newSetOf(ValueType.TClass(String));
 		_deviceLoc = new Vector2();
 		_isDeviceDown = false;
 		_isGesturing = false;
@@ -109,8 +111,8 @@ class InputManager extends BaseInputManager,
 		_fingersTouching = 0;
 		
 		_sceneManagers = null;
-		_displayObjectsUnderPoint = Maps.newHashMap(Int);
-		_displayObjectFirstUnderPoint = Maps.newHashMap(Int);
+		_displayObjectsUnderPoint = Maps.newHashMap(ValueType.TInt);
+		_displayObjectFirstUnderPoint = Maps.newHashMap(ValueType.TInt);
 	}
 	
 	public function onFrame (dt :Float) :Void

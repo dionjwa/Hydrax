@@ -51,23 +51,32 @@ class Comparators
 	}
 
 	/**
-	 * Create a Comparator appropriate for comparing objects of the specified class.
+	 * Create a Comparator appropriate for comparing objects of the specified type.
 	 * If an appropriate comparator cannot be determined, compareUnknowns is returned.
 	 */
-	public static function createFor<T> (clazz :Class<Dynamic>) :Dynamic -> Dynamic ->Int
+	public static function createFor<T> (type :ValueType) :Dynamic -> Dynamic ->Int
 	{
-		if (Std.is(clazz, String)) {
-			return compareStrings;
-		} else if (Std.is(clazz, Int)) {
-			return compareInts;
-		} else if (Std.is(clazz, Float)) {
-			return compareFloats;
-		} else if (Std.is(clazz, Bool)) {
-			return compareBooleans;
-		} else if (Std.is(clazz, Comparable)) {
-			return compareComparables;
-		}	
-		return compareUnknowns;
+		switch (type) {
+			case TNull: return compareUnknowns;
+			case TInt: return compareInts;
+			case TFloat: return compareFloats;
+			case TBool: return compareBooleans;
+			case TObject: return compareUnknowns;
+			case TFunction: return compareUnknowns;
+			case TClass(c):
+				if (c == String) {
+					return compareStrings;
+				} else {
+					var k = Type.createEmptyInstance(c);
+					if (Std.is(k, Comparable)) {
+						return compareComparables;
+					} else {
+						return compareUnknowns;
+					}
+				}
+			case TEnum(e): return compareEnums;
+			case TUnknown: return compareUnknowns;
+		}
 	}
 
 	/**
@@ -147,6 +156,12 @@ class Comparators
 	{
 		return compareStrings(Std.string(s1).toLowerCase(), Std.string(s2).toLowerCase());
 	}
+	
+	inline public static function compareEnums (e1 :Enum<Dynamic>, e2 :Enum<Dynamic>) :Int
+	{
+	    return compareStrings(Type.enumConstructor(e1), Type.enumConstructor(e2));
+	}
+	
 
 	/**
 	 * Compare two values whose type is not known at compile type. Tries to figure it out.
@@ -188,7 +203,7 @@ class Comparators
 	{
 		return if (v1 == v2) 0 else if (v1) 1 else -1;
 	}
-
+	
 	/**
 	 * Compares two int values in an overflow safe manner.
 	 */

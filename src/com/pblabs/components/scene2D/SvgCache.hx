@@ -12,6 +12,8 @@ import com.pblabs.util.ds.maps.SortedMap;
 
 import de.polygonal.motor2.geom.math.XY;
 
+import Type;
+
 using Lambda;
 
 using StringTools;
@@ -42,7 +44,7 @@ class SvgCache
 			return null;
 		}
 		
-		var clipData :Map<String, XY> = new SortedMap(Maps.newHashMap(String), Comparators.compareStrings);
+		var clipData :Map<String, XY> = new SortedMap(Maps.newHashMap(ValueType.TClass(String)), Comparators.compareStrings);
 		com.pblabs.util.DisplayUtils.applyToHierarchy(clip, function (d :flash.display.DisplayObject) :Dynamic {
 			if (d.name.startsWith("anchor")) {
 				clipData.set(d.name, new Vector2(d.x, d.y));
@@ -58,7 +60,7 @@ class SvgCache
 		svg = svg.ensureNotDocument();
 		// var width = Std.parseFloat(svg.get("width"));
 		// var height = Std.parseFloat(svg.get("height"));
-		var anchors :Map<String, XY> = new SortedMap(Maps.newHashMap(String), Comparators.compareStrings);
+		var anchors :Map<String, XY> = new SortedMap(Maps.newHashMap(ValueType.TClass(String)), Comparators.compareStrings);
 		for (element in svg.elements()) {
 			// trace('element=' + Std.string(element));
 			// trace('    element.nodeName=' +     element.nodeName);
@@ -131,7 +133,7 @@ class SvgCache
 	
 	public function new ()
 	{
-		_anchors = Maps.newHashMap(String);
+		_anchors = Maps.newHashMap(ValueType.TClass(String));
 	}
 	
 	public function getAnchors (s :BaseSceneComponent<Dynamic>) :Map<String, XY>

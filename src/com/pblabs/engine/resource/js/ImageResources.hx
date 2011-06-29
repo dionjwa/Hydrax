@@ -25,7 +25,7 @@ class ImageResources extends ResourceBase<js.Dom.Image>
 	{
 		super(name);
 		_imageRefs = imageRefs;
-		_images = Maps.newHashMap(String);
+		_images = Maps.newHashMap(ValueType.TClass(String));
 		_baseLocation = baseLoc;
 	}
 	

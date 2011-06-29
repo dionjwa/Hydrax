@@ -13,6 +13,8 @@ import com.pblabs.util.Preconditions;
 import com.pblabs.util.ds.Set;
 import com.pblabs.util.ds.Sets;
 
+import Type;
+
 /**
   * Generic embedded resources.
   * 
@@ -36,7 +38,7 @@ class EmbeddedResource extends ResourceBase<Dynamic>
 	public function new (?name :String = null)
 	{
 		super(name == null ? NAME : name);
-		_haxeResources = Sets.fromArray(Sets.newSetOf(String), haxe.Resource.listNames());
+		_haxeResources = Sets.fromArray(Sets.newSetOf(ValueType.TClass(String)), haxe.Resource.listNames());
 	}
 	
 	override public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void

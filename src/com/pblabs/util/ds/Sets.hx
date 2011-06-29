@@ -12,6 +12,8 @@ import com.pblabs.util.ds.Maps;
 import com.pblabs.util.ds.Set;
 import com.pblabs.util.ds.sets.MapSet;
 
+import Type;
+
 /**
  * Factory for creating Sets.
  *
@@ -21,17 +23,21 @@ class Sets
 	/**
 	 * Create a new Set for storing values of the specified class.
 	 */
-	public static function newSetOf <T>(valueClazz :Class<Dynamic>) :Set<T>
+	public static function newSetOf <T>(valueType :ValueType) :Set<T>
 	{
 		#if js
-		if (valueClazz == String || valueClazz == Int) {
-			return new MapSet<T>(Maps.newHashMap(valueClazz));
-		} else {
-			//js doesn't have Object sets
-			return new com.pblabs.util.ds.sets.ArraySet<T>();
+		switch (valueType) {
+			case TInt: return new MapSet<T>(Maps.newHashMap(valueType));
+			case TClass(c): 
+				if (c == String) {
+					return new MapSet<T>(Maps.newHashMap(valueType));
+				}
+			default:
+				//js doesn't have Object sets
+				return new com.pblabs.util.ds.sets.ArraySet<T>();
 		}
 		#else
-		return new MapSet<T>(Maps.newHashMap(valueClazz));
+		return new MapSet<T>(Maps.newHashMap(valueType));
 		#end
 	}
 	

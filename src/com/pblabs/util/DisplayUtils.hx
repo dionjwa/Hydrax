@@ -8,6 +8,7 @@
  ******************************************************************************/
 package com.pblabs.util;
 
+import de.polygonal.core.math.Mathematics;
 
 import flash.display.Bitmap;
 import flash.display.BitmapData;
@@ -28,6 +29,7 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 
 using Lambda;
+
 using com.pblabs.util.ArrayUtil;
 using com.pblabs.util.IterUtil;
 
@@ -237,8 +239,6 @@ class DisplayUtils
 		startY += yInc;
 		return new Point(startX + index * xInc, startY + index * yInc);
 	}
-
-
 
 	public static function getBoundsCenter (d :DisplayObject) :Point
 	{
@@ -548,20 +548,43 @@ class DisplayUtils
 			com.pblabs.util.Log.error(["d", d, "d.name", d.name, "bounds", bounds]);
 			return null;
 		}
+		// trace('bounds=' + bounds);
+		// bounds.x = Mathematics.ceil(bounds.x);
+		// bounds.y = Mathematics.ceil(bounds.y);
+		// bounds.width = Mathematics.ceil(bounds.width);
+		// bounds.height = Mathematics.ceil(bounds.height);
 	
+		// var dispBitmapDiffX = Mathematics.ceil(bounds.width * scale) - (bounds.width * scale);
+		// var dispBitmapDiffY = Mathematics.ceil(bounds.height * scale) - (bounds.height * scale);
+		// trace('dispBitmapDiffY=' + dispBitmapDiffY);
+		
 		if (center != null) {
-			center.x = -bounds.x * scale;
-			center.y = -bounds.y * scale;
+			center.x = -bounds.x * scale;// + dispBitmapDiffX;
+			center.y = -bounds.y * scale;// + dispBitmapDiffY;
+			// center.x = Std.int(-bounds.x * scale);
+			// center.y = Std.int(-bounds.y * scale);
 		}
 		
+		// center.x = Mathematics.ceil(center.x);
+		// center.y = Mathematics.ceil(center.y);
+		
 		#if flash
-		var bd = new BitmapData(Std.int(bounds.width * scale), Std.int(bounds.height * scale), true, toARGB(0xffffff, 0));
+		var bd = new BitmapData(Mathematics.ceil(bounds.width * scale), Mathematics.ceil(bounds.height * scale), true, toARGB(0xffffff, 0));
 		#else
-		var bd = new BitmapData(Std.int(bounds.width * scale), Std.int(bounds.height * scale), true, 0xffffff);
+		var bd = new BitmapData(Mathematics.ceil(bounds.width * scale), Std.int(bounds.height * scale), true, 0xffffff);
 		#end
 
-		// bd.draw(d, new Matrix(scale, 0, 0, scale, -bounds.left * scale, -bounds.top * scale), null, null, null, true);
 		bd.draw(d, new Matrix(scale, 0, 0, scale, -bounds.left * scale, -bounds.top * scale), null, null, null, true);
+		// bd.draw(d, new Matrix(scale, 0, 0, scale, -bounds.left * scale - dispBitmapDiffX, -bounds.top * scale - dispBitmapDiffY), null, null, null, true);
+		
+		#if graphics_debug
+		var shape = new flash.display.Shape();
+		var g = shape.graphics;
+		g.lineStyle(1, 0);
+		g.drawRect(0, 0, bd.width - 1, bd.height - 1);
+		bd.draw(shape);
+		#end
+		
 		return bd;
 	}
 	
@@ -605,5 +628,3 @@ class DisplayUtils
 	}
 	#end
 }
-
-

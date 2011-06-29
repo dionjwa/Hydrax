@@ -45,7 +45,7 @@ class HierarchyManager extends EntityComponent
 	public function new ()
 	{
 		super();
-		_anchors = Maps.newHashMap(String);
+		_anchors = Maps.newHashMap(ValueType.TClass(String));
 		_links = [];
 	}
 	

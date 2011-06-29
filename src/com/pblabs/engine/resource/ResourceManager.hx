@@ -19,6 +19,8 @@ import com.pblabs.util.ds.Maps;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
+import Type;
+
 using Lambda;
 
 using com.pblabs.util.IterUtil;
@@ -40,9 +42,9 @@ class ResourceManager
 	
 	public function new ()
 	{
-		_loadedResources = Maps.newHashMap(String);
-		_pendingResources = Maps.newHashMap(String);
-		_loadingResources = Maps.newHashMap(String);
+		_loadedResources = Maps.newHashMap(ValueType.TClass(String));
+		_pendingResources = Maps.newHashMap(ValueType.TClass(String));
+		_loadingResources = Maps.newHashMap(ValueType.TClass(String));
 		
 		_onLoadCallbacks = new Array();
 		_onErrorCallbacks = new Array();

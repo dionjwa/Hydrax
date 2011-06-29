@@ -36,6 +36,8 @@ import com.pblabs.util.ds.maps.DynamicMap;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
+import Type;
+
 using com.pblabs.util.IterUtil;
 using com.pblabs.util.StringUtil;
 
@@ -102,7 +104,7 @@ class TemplateManager
 	{
 		_inGroup = false;
 		_entityType = null;
-		_things = Maps.newHashMap(String);
+		_things = Maps.newHashMap(ValueType.TClass(String));
 		signalLoaded = new DirectSignaler(this);
 		signalFailed = new DirectSignaler(this);
 		signalGroupLoaded = new DirectSignaler(this); 

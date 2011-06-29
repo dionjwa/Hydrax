@@ -31,6 +31,9 @@ import com.pblabs.util.Comparators;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
+
+import Type;
+
 using com.pblabs.util.ds.MapUtil;
 
 /**
@@ -51,15 +54,15 @@ using com.pblabs.util.ds.MapUtil;
 // TODO: (probably not) "externally hashable" maps, like our old HashMap. Bleah.
 class MapBuilder<K, V>
 {
-	public function new (?keyClazz :Class<K>)
+	public function new (keyType :ValueType)
 	{
-		_keyClazz = keyClazz;
+		_keyType = keyType;
 		_keyVals = new Array<Dynamic>();
 	}
 
 	/**
 	 * Make the Map sorted. If no Comparator is specified, then one is
-	 * picked based on the keyClazz, falling back to Comparators.compareUnknowns.
+	 * picked based on the keyType, falling back to Comparators.compareUnknowns.
 	 *
 	 * @return this MapBuilder, for chaining.
 	 */
@@ -173,7 +176,7 @@ class MapBuilder<K, V>
 		var isLR:Bool = (_maxSizeLR > 0);
 		var isExpiring:Bool = _createExpiringMap != null;
 		Preconditions.checkArgument(!isLR || !isExpiring, "Cannot be both LR and Expiring");
-		var map :Map<K, V> = Maps.newHashMap(_keyClazz);
+		var map :Map<K, V> = Maps.newHashMap(_keyType);
 		if (isLR) {
 			map = new LRMap<K, V>(map, _maxSizeLR, _accessOrderLR);
 		} 
@@ -182,7 +185,7 @@ class MapBuilder<K, V>
 		}
 		if (_sorted) {
 			map = new SortedMap<K, V>(map,
-				_comp != null ? _comp : Comparators.createNullSafe(Comparators.createFor(_keyClazz)));
+				_comp != null ? _comp : Comparators.createNullSafe(Comparators.createFor(_keyType)));
 		}
 		// Do Computing before DefaultValue to let the computing function try to come up with a
 		// value first
@@ -204,7 +207,7 @@ class MapBuilder<K, V>
 	}
 
 	/** @private */
-	var _keyClazz:Class<K>;
+	var _keyType:ValueType;
 
 	/** @private */
 	var _keyVals:Array<Dynamic>;

@@ -30,6 +30,8 @@ package com.pblabs.util;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 
+import Type;
+
 #if nodejs
 import js.Node;
 #end
@@ -64,6 +66,23 @@ class StringUtil
 		if (obj == null ) {
 			return "null";
 		}
+		
+		switch (Type.typeof(obj)) {
+			case TNull: return "null";
+			case TInt: return Std.string(obj);
+			case TFloat: return Std.string(obj);
+			case TBool: return Std.string(obj);
+			case TObject: Type.getClassName(obj);//Assume it's a class
+			case TClass(c):
+				if (c == String) {
+					return Std.string(obj);
+				}
+			case TEnum(e): return Type.enumConstructor(e).substr(Type.enumConstructor(e).lastIndexOf(".") + 1);
+			case TUnknown: Std.string(obj);
+			default://Keep going
+		}
+		
+		
 		var s :StringBuf = new StringBuf();
 		var clsName = "";
 		
@@ -121,7 +140,8 @@ class StringUtil
 					case TObject://We assume it's a class or interface
 						Type.getClassName(obj);
 					case TEnum (e)://We assume it's a class or interface
-						Type.getEnumName(e) + "." + Type.enumConstructor(obj);
+						// Type.getEnumName(e) + "." + 
+						Type.enumConstructor(obj);
 					default :
 						Std.string(obj);
 				 }

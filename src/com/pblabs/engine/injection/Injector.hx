@@ -44,7 +44,7 @@ class Injector
 	var _parentInjector :Injector;
 	
 	/** Maps class names to <fieldname, injection member key> */
-	public static var instanceFieldInjections :MultiMap<Class<Dynamic>, Tuple<String, Array<String>>> = SetMultiMap.create(Class, Tuple);
+	public static var instanceFieldInjections :MultiMap<Class<Dynamic>, Tuple<String, Array<String>>> = SetMultiMap.create(ValueType.TObject, ValueType.TClass(Tuple));
 	public static var NULL_INJECTION :Tuple<String, Array<String>> = new Tuple(null, null);
 	static var SINGLE_VALUE_ARRAY :Array<Dynamic> = [null];
 	

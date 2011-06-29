@@ -1,5 +1,7 @@
 package com.pblabs.components.scene2D;
 
+import de.polygonal.core.math.Mathematics;
+
 #if flash
 enum RenderLib {
 	SVGWEB;
@@ -95,5 +97,4 @@ class SvgUtil
 		}
 	}
 	#end
-	
 }

@@ -81,17 +81,21 @@ class CircleShape extends ShapeComponent
 		g.clear();
 		if (fillColor >= 0) {
 			g.beginFill(fillColor);
-			g.drawCircle(r, r, r);
+			// g.drawCircle(r, r, r);
+			g.drawCircle(0, 0, r);
 			g.endFill();
 		}
 		g.lineStyle(borderStroke, borderColor);
-		g.drawCircle(r, r, r);
+		// g.drawCircle(r, r, r);
+		g.drawCircle(0, 0, r);
 		if (showAngleLine) {
 			g.lineStyle(borderStroke, borderColor);
-			g.moveTo(r, r);
-			g.lineTo(r * 2, r);
+			// g.moveTo(r, r);
+			g.moveTo(0, 0);
+			// g.lineTo(r * 2, r);
+			g.lineTo(r, 0);
 		}
-		recomputeBounds();
+		// recomputeBounds();
 		#elseif js
 		_svg.setAttribute("cx", r + "px");
 		_svg.setAttribute("cy", r + "px");

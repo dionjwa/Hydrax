@@ -23,6 +23,8 @@ import com.pblabs.util.ds.Maps;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
+import Type;
+
 using Lambda;
 
 using com.pblabs.util.ArrayUtil;
@@ -376,7 +378,7 @@ class PBGameBase
 		signalContextExit = new DirectSignaler(this);
 		signalContextSetup = new DirectSignaler(this);
 		signalContextShutdown = new DirectSignaler(this);
-		_managers = Maps.newHashMap(String);
+		_managers = Maps.newHashMap(ValueType.TClass(String));
 
 		injector = createInjector();
 		_contexts = new Array();

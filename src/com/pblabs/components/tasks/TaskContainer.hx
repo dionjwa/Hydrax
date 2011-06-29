@@ -34,6 +34,10 @@ import com.pblabs.util.Assert;
 class TaskContainer
 	implements IEntityTask 
 {
+	// #if debug
+	// var key :Int;
+	// #end
+	
 	public static var TYPE__LIMIT:Int = 3;
 	public static var TYPE_PARALLEL:Int = 0;
 	public static var TYPE_REPEATING:Int = 2;
@@ -48,6 +52,7 @@ class TaskContainer
 	
 	public function new (type :Int, ?subtasks :Array<IEntityTask> = null)
 	{
+		// key = com.pblabs.engine.util.PBUtil.KEY_COUNT++;
 		if (type >= TYPE__LIMIT) {
 			throw "invalid 'type' parameter";
 		}
@@ -109,8 +114,11 @@ class TaskContainer
 
 	public function update (dt :Float, obj :IEntity) :Bool
 	{
+		// trace("update " + key);
+		// var key1 = key;
 		var result :Bool = applyFunction(
 			function (task :IEntityTask) :Bool {
+				// trace("updating " + key1 + " task " + task);
 				return task.update(dt, obj);
 			});
 

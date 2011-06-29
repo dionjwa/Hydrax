@@ -12,21 +12,23 @@ import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 import com.pblabs.util.ds.MultiMap;
 
+import Type;
+
 using com.pblabs.util.ArrayUtil;
 
 class ArrayMultiMap<K, V> extends AbstractMultiMap<K, V>,
 	implements MultiMap<K, V>
 {
-	public static function create <K, V>(keyClass :Class<Dynamic>) :ArrayMultiMap<K, V>
+	public static function create <K, V>(keyType :ValueType) :ArrayMultiMap<K, V>
 	{
-		com.pblabs.util.Assert.isNotNull(keyClass);
-		return new ArrayMultiMap<K, V>(keyClass);
+		com.pblabs.util.Assert.isNotNull(keyType);
+		return new ArrayMultiMap<K, V>(keyType);
 	}
 	
-	public function new (keyClass :Class<Dynamic>)
+	public function new (keyType :ValueType)
 	{
 		super();
-		_map = Maps.newHashMap(keyClass);
+		_map = Maps.newHashMap(keyType);
 		com.pblabs.util.Assert.isNotNull(_map);
 	}
 	

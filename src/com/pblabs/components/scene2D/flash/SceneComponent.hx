@@ -62,6 +62,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		}
 		if (_isTransformDirty) {
 			updateTransform();
+			_isTransformDirty =false;
 		}
 	}
 	
@@ -185,7 +186,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		_displayObject.transform.matrix = _transformMatrix;
 		_displayObject.alpha = _alpha;
 		// _displayObject.blendMode = _blendMode;
-		_displayObject.visible = (alpha > 0);
+		// _displayObject.visible = (alpha > 0);
 		
 		isTransformDirty = false;
 	}
