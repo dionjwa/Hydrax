@@ -171,7 +171,7 @@ class DisplayUtils
 		if (d == null) {
 			return null;
 		}
-		var bd = createBitmapData(d, scale);
+		var bd = BitmapUtil.createBitmapData(d, scale);
 		return bd != null ? new Bitmap(bd) : null;
 	}
 	
@@ -335,7 +335,7 @@ class DisplayUtils
 
 			function () :Void {
 				if (imageLoader.content != null && Std.is( imageLoader.content, DisplayObject)) {
-					var bd:BitmapData = createBitmapData(cast( imageLoader.content, DisplayObject));
+					var bd:BitmapData = BitmapUtil.createBitmapData(cast( imageLoader.content, DisplayObject));
 					bm.bitmapData = bd;
 					if (loadedBitmapDataCallback != null) {
 						loadedBitmapDataCallback(bd);
@@ -536,57 +536,42 @@ class DisplayUtils
 	}
 	#end
 
-	#if (flash || cpp)
-	public static function createBitmapData (d :DisplayObject, ?scale :Float = 1.0, ?center :Point) :BitmapData
-	{
-		#if flash
-		var bounds = d.getBounds(d);
-		#elseif cpp
-		var bounds = d.nmeGetPixelBounds();
-		#end
-		if (bounds.width <= 0 && bounds.height <= 0) {
-			com.pblabs.util.Log.error(["d", d, "d.name", d.name, "bounds", bounds]);
-			return null;
-		}
-		// trace('bounds=' + bounds);
-		// bounds.x = Mathematics.ceil(bounds.x);
-		// bounds.y = Mathematics.ceil(bounds.y);
-		// bounds.width = Mathematics.ceil(bounds.width);
-		// bounds.height = Mathematics.ceil(bounds.height);
-	
-		// var dispBitmapDiffX = Mathematics.ceil(bounds.width * scale) - (bounds.width * scale);
-		// var dispBitmapDiffY = Mathematics.ceil(bounds.height * scale) - (bounds.height * scale);
-		// trace('dispBitmapDiffY=' + dispBitmapDiffY);
+	// #if (flash || cpp)
+	// public static function createBitmapData (d :DisplayObject, ?scale :Float = 1.0, ?center :Point) :BitmapData
+	// {
+	// 	#if flash
+	// 	var bounds = d.getBounds(d);
+	// 	#elseif cpp
+	// 	var bounds = d.nmeGetPixelBounds();
+	// 	#end
+	// 	if (bounds.width <= 0 && bounds.height <= 0) {
+	// 		com.pblabs.util.Log.error(["d", d, "d.name", d.name, "bounds", bounds]);
+	// 		return null;
+	// 	}
 		
-		if (center != null) {
-			center.x = -bounds.x * scale;// + dispBitmapDiffX;
-			center.y = -bounds.y * scale;// + dispBitmapDiffY;
-			// center.x = Std.int(-bounds.x * scale);
-			// center.y = Std.int(-bounds.y * scale);
-		}
+	// 	if (center != null) {
+	// 		center.x = Mathematics.ceil(-bounds.x * scale);
+	// 		center.y = Mathematics.ceil(-bounds.y * scale);
+	// 	}
 		
-		// center.x = Mathematics.ceil(center.x);
-		// center.y = Mathematics.ceil(center.y);
-		
-		#if flash
-		var bd = new BitmapData(Mathematics.ceil(bounds.width * scale), Mathematics.ceil(bounds.height * scale), true, toARGB(0xffffff, 0));
-		#else
-		var bd = new BitmapData(Mathematics.ceil(bounds.width * scale), Std.int(bounds.height * scale), true, 0xffffff);
-		#end
+	// 	#if flash
+	// 	var bd = new BitmapData(Mathematics.ceil(bounds.width * scale), Mathematics.ceil(bounds.height * scale), true, toARGB(0xffffff, 0));
+	// 	#else
+	// 	var bd = new BitmapData(Mathematics.ceil(bounds.width * scale), Mathematics.ceil(bounds.height * scale), true, 0xffffff);
+	// 	#end
 
-		bd.draw(d, new Matrix(scale, 0, 0, scale, -bounds.left * scale, -bounds.top * scale), null, null, null, true);
-		// bd.draw(d, new Matrix(scale, 0, 0, scale, -bounds.left * scale - dispBitmapDiffX, -bounds.top * scale - dispBitmapDiffY), null, null, null, true);
+	// 	bd.draw(d, new Matrix(scale, 0, 0, scale, center.x, center.y), null, null, null, false);
 		
-		#if graphics_debug
-		var shape = new flash.display.Shape();
-		var g = shape.graphics;
-		g.lineStyle(1, 0);
-		g.drawRect(0, 0, bd.width - 1, bd.height - 1);
-		bd.draw(shape);
-		#end
+	// 	#if graphics_debug
+	// 	var shape = new flash.display.Shape();
+	// 	var g = shape.graphics;
+	// 	g.lineStyle(1, 0);
+	// 	g.drawRect(0, 0, bd.width - 1, bd.height - 1);
+	// 	bd.draw(shape);
+	// 	#end
 		
-		return bd;
-	}
+	// 	return bd;
+	// }
 	
 	// public static function createBitmapDataCentered (d :DisplayObject, ?scale :Float = 1.0, ?center :Point) :BitmapData
 	// {
@@ -615,16 +600,7 @@ class DisplayUtils
 	// 	return bd;
 	// }
 	
-	#end
+	// #end
 	
-	#if flash
-	public static function toARGB (rgb :UInt, newAlpha :UInt) :UInt
-	{
-		//newAlpha has to be in the 0 to 255 range
-		var argb :UInt = 0;
-		argb += (newAlpha<<24);
-		argb += (rgb);
-		return argb;
-	}
-	#end
+	
 }
