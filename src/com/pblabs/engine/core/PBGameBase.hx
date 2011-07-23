@@ -152,9 +152,9 @@ class PBGameBase
 			var self = this;
 			var bond :hsl.haxe.Bond = null;
 			bond = cast(ctx, PBContext).signalDestroyed.bind(function (c :IPBContext) :Void {
-				self.callLater(function () :Void {
+				// self.callLater(function () :Void {
 					self.signalContextShutdown.dispatch(ctx);
-				});
+				// });
 			}).destroyOnUse();
 			//Fire setup
 			signalContextSetup.dispatch(ctx);
@@ -338,6 +338,9 @@ class PBGameBase
 						removeCurrentContext();
 						_contexts.push(allocate(c));
 					} else {
+						if (_currentContext != null) {
+							removeCurrentContext();
+						}
 						while (_contexts.length > 0) {
 							var ctx = _contexts.pop();
 							ctx.shutdown();

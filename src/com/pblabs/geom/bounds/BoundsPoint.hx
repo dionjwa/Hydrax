@@ -121,7 +121,7 @@ class BoundsPoint extends AbstractBounds<BoundsPoint>
 
 	public function toString () :String
 	{
-		return ReflectUtil.tinyClassName(BoundsPoint) + "[" + _center + "]";
+		return ReflectUtil.tinyName(BoundsPoint) + "[" + _center + "]";
 	}
 
 }

@@ -192,7 +192,8 @@ class Vector2 extends XY,
 	/** Returns a string representation of the Vector2. */
 	public function toString () :String
 	{
-		return "[" + com.pblabs.util.NumberUtil.toFixed(x, 3) + ", " + com.pblabs.util.NumberUtil.toFixed(y, 3) + "]";
+		// return "[" + com.pblabs.util.NumberUtil.toFixed(x, 3) + ", " + com.pblabs.util.NumberUtil.toFixed(y, 3) + "]";
+		return "[" + x + ", " + y + "]";
 	}
 	#end
 }

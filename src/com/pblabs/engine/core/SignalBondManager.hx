@@ -100,6 +100,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		set(owner.key, bond);
 		
 		#if debug_hxhsl
+		com.pblabs.util.Assert.isNotNull(infos, " infos is null");
 		bond.infos = infos;
 		bond.debugInfo = infos == null ? "no infos @SignalBondManager.bind" : ""; 
 		com.pblabs.util.Log.debug("New " + bond);

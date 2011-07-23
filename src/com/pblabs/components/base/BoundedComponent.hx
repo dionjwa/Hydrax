@@ -17,7 +17,7 @@ class BoundedComponent extends EntityComponent
 	
 	public var bounds(get_bounds, set_bounds) :IBounds<Dynamic>;
 	
-	public static var NAME:String = ReflectUtil.tinyClassName(BoundedComponent);
+	public static var NAME:String = ReflectUtil.tinyName(BoundedComponent);
 
 	public function new (?bounds :IBounds<Dynamic> = null)
 	{

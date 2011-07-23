@@ -47,7 +47,7 @@ class PBContext
 	public var signalSetup (default, null) :Signaler<IPBContext>;
 	public var signalDestroyed (default, null) :Signaler<IPBContext>;
 	
-	public var isActive (get_isActive, never) :Bool;
+	public var isTopContext (get_isTopContext, never) :Bool;
 	public var isLive (get_isLive, never) :Bool;
 	
 	public var injector :Injector;
@@ -228,9 +228,18 @@ class PBContext
 		registerManager(SetManager, new SetManager());
 	}
 
-	public function getManager <T>(cls :Class<T>, ?name :String = null):T
+	public function getManager <T>(cls :Class<T>, ?name :String = null, ?createIfMissing :Bool = false):T
 	{
-		return injector.getMapping(cls, name);
+		if (createIfMissing) {
+			com.pblabs.util.Assert.isNotNull(injector, " injector is null" + com.pblabs.util.Log.getStackTrace());
+			var mng = injector.getMapping(cls, name);
+			if (mng == null) {
+				mng = registerManager(cls, null, name);
+			}
+			return mng;
+		} else {
+			return injector.getMapping(cls, name);
+		}
 	}
 	
 	public function unregisterManager (clazz :Class<Dynamic>, ?name :String = null) :Void
@@ -299,7 +308,7 @@ class PBContext
 	function initializeName():Void
 	{
 		contextNameCounter++;
-		name = ReflectUtil.tinyClassName(Type.getClass(this)) + contextNameCounter;
+		name = ReflectUtil.tinyClassName(this) + contextNameCounter;
 	}
 	
 	function get_currentGroup () :IPBGroup
@@ -605,7 +614,7 @@ class PBContext
 		return new ProcessManager(30, false);	
 	}
 
-	function get_isActive () :Bool
+	function get_isTopContext () :Bool
 	{
 		return getManager(PBGameBase).currentContext == this;
 	}

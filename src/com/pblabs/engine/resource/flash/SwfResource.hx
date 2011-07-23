@@ -38,7 +38,14 @@ class SwfResource extends ResourceBase<Dynamic>
 		super(name);
 		_source = source;
 		_xorKey = xorkey;
-		
+		// createLoader();
+	}
+	
+	function createLoader () :Void
+	{
+		if (_loader != null) {
+			return;
+		}
 		_loader = new flash.display.Loader();
 		var loader = _loader;
 		var self = this;
@@ -48,7 +55,11 @@ class SwfResource extends ResourceBase<Dynamic>
 			loader.contentLoaderInfo.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
 			self.loaded();
 			//Don't keep the source bytes hanging around.
-			self._source = null;
+			switch (self._source) {
+				case bytes(b): self._source = null;
+				default: //Do nothing
+			}
+			
 		}
 		
 		loader.contentLoaderInfo.addOnceListener(flash.events.Event.COMPLETE, onComplete);
@@ -65,9 +76,11 @@ class SwfResource extends ResourceBase<Dynamic>
 	
 	override public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
 	{
+		com.pblabs.util.Assert.isNotNull(_source, "Null sourc. Reloading Source.bytes fails.");
 		com.pblabs.util.Log.debug("load " + _source);
 		super.load(onLoad, onError);
 		var self = this;
+		createLoader();
 		switch (_source) {
 			case url (u) :loadFromUrl(u);
 			case bytes (b) :loadFromBytes(b);
@@ -155,7 +168,9 @@ class SwfResource extends ResourceBase<Dynamic>
 		}
 
 		_loader = null;
+		#if !(debug || editor)
 		_source = null;
+		#end
 	}
 	
 	public function getSymbol (name :String) :Dynamic

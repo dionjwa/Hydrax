@@ -45,7 +45,7 @@ interface IPBContext
 	var started (default, null):Bool;
 	
 	/** Is this context the top context (thus updating)? */
-	var isActive (get_isActive, never) :Bool;
+	var isTopContext (get_isTopContext, never) :Bool;
 	/** Is this context not destroyed? */
 	var isLive (get_isLive, never) :Bool;
 	
@@ -74,7 +74,7 @@ interface IPBContext
 	function exit () :Void;
 	
 	function registerManager <T>(clazz:Class<T>, ?instance:T = null, ?optionalName:String = null, ?suppressInject:Bool = false):T;
-	function getManager <T>(clazz:Class<T>, ?optionalName:String = null):T;
+	function getManager <T>(clazz:Class<T>, ?optionalName:String = null, ?createIfMissing :Bool = false):T;
 
 	function allocate <T>(type:Class<T>):T;
 	function injectInto (instance:Dynamic):Void;

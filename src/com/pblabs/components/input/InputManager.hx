@@ -58,11 +58,12 @@ class InputManager extends BaseInputManager,
 	public var deviceHeldDown(default, null) :Signaler<IInputData>;
 	
 	public var rotate (default, null) :Signaler<IInputData>;
-	public var scale (default, null) :Signaler<IInputData>;
+	public var deviceZoomDelta (default, null) :Signaler<IInputData>;
 	
 	public var isDeviceDown (get_isDeviceDown, null) :Bool;
 	
 	public var priority :Int;
+	public var zoomIncrement :Float;
 	
 	/** Is the mouse button down, or the device touched */
 	var _isDeviceDown :Bool;
@@ -89,7 +90,7 @@ class InputManager extends BaseInputManager,
 	var _deviceLoc :Vector2;
 	var _isGesturing :Bool;
 	var _tempVec :Vector2;
-	static var INPUT_SET :String = ReflectUtil.tinyClassName(IInteractiveComponent);
+	static var INPUT_SET :String = ReflectUtil.tinyName(IInteractiveComponent);
 	
 	public function new ()
 	{
@@ -101,7 +102,7 @@ class InputManager extends BaseInputManager,
 		deviceClick = new DirectSignaler(this);
 		deviceHeldDown = new DirectSignaler(this);
 		rotate = new DirectSignaler(this);
-		scale = new DirectSignaler(this);
+		deviceZoomDelta = new DirectSignaler(this);
 		
 		_checked = Sets.newSetOf(ValueType.TClass(String));
 		_deviceLoc = new Vector2();
@@ -113,6 +114,7 @@ class InputManager extends BaseInputManager,
 		_sceneManagers = null;
 		_displayObjectsUnderPoint = Maps.newHashMap(ValueType.TInt);
 		_displayObjectFirstUnderPoint = Maps.newHashMap(ValueType.TInt);
+		zoomIncrement = 0.1;
 	}
 	
 	public function onFrame (dt :Float) :Void
@@ -141,7 +143,7 @@ class InputManager extends BaseInputManager,
 		deviceClick = null;
 		deviceHeldDown = null;
 		rotate = null;
-		scale = null;
+		deviceZoomDelta = null;
 	}
 	
 	override function onContextRemoval () :Void
@@ -191,6 +193,9 @@ class InputManager extends BaseInputManager,
 		_mouse.mouseMove.bind(onMouseMove);
 		_mouse.mouseUp.bind(onMouseUp);
 		_mouse.mouseClick.bind(onMouseClick);
+		#if flash
+		_mouse.mouseWheel.bind(onMouseDelta);
+		#end
 	 
 		#if js
 		if (gestures != null) {
@@ -265,6 +270,9 @@ class InputManager extends BaseInputManager,
 			_mouse.mouseMove.unbind(onMouseMove);
 			_mouse.mouseUp.unbind(onMouseUp);
 			_mouse.mouseClick.unbind(onMouseClick);
+			#if flash
+			_mouse.mouseWheel.unbind(onMouseDelta);
+			#end
 		}
 	}
 
@@ -335,6 +343,16 @@ class InputManager extends BaseInputManager,
 		deviceMove.dispatch(this);
 	}
 	
+	function onMouseDelta (delta :Int) :Void
+	{
+		if (delta <= 0) {
+			delta -= 1;
+		}
+		clearInputDataCache();
+		_zoomDelta = zoomIncrement * delta;
+		deviceZoomDelta.dispatch(this);
+	}
+	
 	function isWithinSceneView (mouse :Vector2) :Bool
 	{
 	    return !(mouse.x < 0 || mouse.x > sceneView.width || mouse.y < 0 || mouse.y > sceneView.height);
@@ -395,6 +413,7 @@ class InputManager extends BaseInputManager,
 				layerIndex--;
 				//If the layer doesn't match the mask, ignore all the children.  Saves iterations
 				if (!layer.objectMask.and(mask)) {
+					// trace("ignoring layer " + layer);
 					continue;
 				}
 				var childIndex = layer.children.length -1;
@@ -422,7 +441,7 @@ class InputManager extends BaseInputManager,
 		}
 		
 		if (getSceneManagers() == null) {
-			com.pblabs.util.Log.warn("No object under point because getSceneManagers() == null"); 
+			com.pblabs.util.Log.info("No object under point because getSceneManagers() == null"); 
 			return null;
 		}
 		com.pblabs.util.Assert.isNotNull(getSceneManagers());
@@ -462,6 +481,7 @@ class InputManager extends BaseInputManager,
 	
 	function clearInputDataCache () :Void
 	{
+		_zoomDelta = 0;
 		_displayObjectFirstUnderPoint.clear();
 		_displayObjectsUnderPoint.clear();
 	}
@@ -473,13 +493,14 @@ class InputManager extends BaseInputManager,
 	{
 		return 0;
 	}
-	
-	public var inputScale (get_inputScale, null) :Float;
-	function get_inputScale () :Float
-	{
-		return 0;
-	}
 	#end
+	
+	public var zoomDelta (get_zoomDelta, null) :Float;
+	var _zoomDelta :Float;
+	inline function get_zoomDelta () :Float
+	{
+		return _zoomDelta;
+	}
 	/** End Methods from IInputData */
 	
 }

@@ -103,21 +103,21 @@ class NameManager
 	
 	/**
 	 * Looks up a component on an entity that has been registered. The same
-	 * conditions apply as with the getComponentByType method on IEntity.
+	 * conditions apply as with the getComponent method on IEntity.
 	 * 
 	 * @param The name of the entity on which the component exists.
 	 * @param componentType The type of the component to get.
 	 * 
-	 * @see com.pblabs.engine.core.IEntity#getComponentByType()
+	 * @see com.pblabs.engine.core.IEntity#getComponent()
 	 */
-	public function getComponentByType <T> (name :String, componentType :Class<T>) :T
+	public function getComponent <T> (name :String, componentType :Class<T>) :T
 	{
 		var entity :IEntity = cast(get(name));
 		if (entity == null) {
 			return null;
 		}
 		
-		return cast(entity.getComponentByType(componentType));
+		return cast(entity.getComponent(componentType));
 	}
 	
 	/**
@@ -127,17 +127,17 @@ class NameManager
 	 * @param The name of the entity on which the component exists.
 	 * @param componentType The type of the components to get.
 	 * 
-	 * @see com.pblabs.engine.core.IEntity#getComponentByType()
+	 * @see com.pblabs.engine.core.IEntity#getComponent()
 	 */
-	public function getComponentsByType <T>(name :String, componentType :Class<T>) :Iterable<T>
-	{
-		var entity:IEntity = cast(get(name));
-		if (entity == null) {
-			return null;
-		}
+	// public function getComponentsByType <T>(name :String, componentType :Class<T>) :Iterable<T>
+	// {
+	// 	var entity:IEntity = cast(get(name));
+	// 	if (entity == null) {
+	// 		return null;
+	// 	}
 		
-		return entity.getComponentsByType(componentType);
-	}	  
+	// 	return entity.getComponents(componentType);
+	// }	  
 	
 	/**
 	 * Looks up a component on an entity that has been registered. The same

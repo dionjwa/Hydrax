@@ -121,7 +121,7 @@ class DragManager extends EntityComponent,
 	public function startup():Void
 	{
 		var e = context.allocate(IEntity);
-		e.initialize(ReflectUtil.tinyClassName(Type.getClass(this)));
+		e.initialize(ReflectUtil.tinyClassName(this));
 		e.deferring = true;
 		e.addComponent(this);
 		e.addComponent(context.allocate(TaskComponentTicked), TaskComponent.NAME);
@@ -162,7 +162,8 @@ class DragManager extends EntityComponent,
 	public function panComponent (c :BaseSceneComponent<Dynamic>, ?easing :Bool = false, ?pauseScene :Bool = false, 
 		?xProp :PropertyReference<Float> = null, 
 		?yProp :PropertyReference<Float> = null,
-		?constraint :Constraint = null) :Void
+		?constraint :Constraint = null,
+		?spatialDisplayScaleFactor :Float = 1) :Void
 	{
 		endPanning();
 		Preconditions.checkNotNull(c);
@@ -205,7 +206,7 @@ class DragManager extends EntityComponent,
 		_startObj.y = _sceneComponent.owner.getProperty(_yProp);
 		
 		//If the sceneComponent internally scales the spatial location, correct with this factor
-		_zoomFactor = _startObj.x / _sceneComponent.x;
+		_zoomFactor = spatialDisplayScaleFactor;
 		
 		beginPanning();
 	}

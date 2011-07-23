@@ -122,7 +122,7 @@ interface IEntity implements IPropertyBag, implements IPBObject
 	* 
 	* @see #getComponentsByType()
 	*/
-	function getComponentByType <T>(componentType:Class<T>):T;
+	// function getComponent <T>(componentType:Class<T>):T;
 	
 	function getComponent <T>(componentType:Class<T>):T;
 	
@@ -139,7 +139,7 @@ interface IEntity implements IPropertyBag, implements IPBObject
 	* @return An array containing all the components of the specified type on
 	* this entity.
 	*/
-	function getComponentsByType <T>(componentType:Class<T>):Array<T>;
+	function getComponents <T>(componentType:Class<T>):Array<T>;
 	
 	/**
 	* Gets a component that was registered with a specific name on this entity.

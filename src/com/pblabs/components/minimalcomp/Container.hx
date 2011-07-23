@@ -40,7 +40,7 @@ class Container extends Component
 		super.onReset();
 		com.pblabs.util.Assert.isNotNull(_spatial);
 		//Listen for location changes so we can redraw
-		com.pblabs.util.Assert.isTrue(owner.getComponentsByType(SpatialComponent).length == 1);
+		com.pblabs.util.Assert.isTrue(owner.getComponents(SpatialComponent).length == 1);
 		bindSignal(_spatial.signalerLocation, onLocationChanged);
 		invalidate();
 	}
@@ -81,8 +81,8 @@ class Container extends Component
 		if (children == null || children.length == 0) {
 			return 0;
 		}
-		var left :Float = Limits.INT32MAX;
-		var right :Float = Limits.INT32MIN;
+		var left :Float = Limits.INT32_MAX;
+		var right :Float = Limits.INT32_MIN;
 		for (c in children) {
 			left = Math.min(left, c.x - c.width / 2);
 			right = Math.max(right, c.x + c.width / 2);
@@ -92,8 +92,8 @@ class Container extends Component
 	
 	override function get_height () :Float
 	{
-		var top :Float = Limits.INT32MAX;
-		var bottom :Float = Limits.INT32MIN;
+		var top :Float = Limits.INT32_MAX;
+		var bottom :Float = Limits.INT32_MIN;
 		for (c in children) {
 			var spatial = c.owner.getComponent(SpatialComponent);
 			if (spatial != null) {
@@ -101,7 +101,7 @@ class Container extends Component
 				bottom = Math.max(bottom, spatial.worldExtents.ymax);
 			}
 		}
-		if (top == Limits.INT32MAX) {
+		if (top == Limits.INT32_MAX) {
 			return 0;
 		}
 		return bottom - top;

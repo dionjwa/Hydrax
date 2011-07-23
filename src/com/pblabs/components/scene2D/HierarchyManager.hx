@@ -13,6 +13,8 @@ import com.pblabs.util.ds.maps.SortedMap;
 
 import de.polygonal.motor2.geom.math.XY;
 
+import Type;
+
 using StringTools;
 
 using com.pblabs.components.scene2D.SceneUtil;
@@ -153,7 +155,7 @@ class HierarchyManager extends EntityComponent
 	override public function toString () :String
 	{
 		var sb = new StringBuf();
-		sb.add(com.pblabs.util.ReflectUtil.tinyClassName(Type.getClass(this)));
+		sb.add(com.pblabs.util.ReflectUtil.tinyClassName(this));
 		if (_anchors != null) {
 			for (key in _anchors.keys()) {
 				sb.add("\n  " + key + "==>" + com.pblabs.util.ds.MapUtil.toString(_anchors.get(key)));

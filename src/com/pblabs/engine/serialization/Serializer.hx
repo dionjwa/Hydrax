@@ -1074,7 +1074,7 @@ private class ReferenceNote
 			}
 			else {
 				var componentType = ReflectUtil.getVarFieldType(ReflectUtil.getClass(owner), fieldName);//TypeUtility.getFieldType(owner, fieldName);
-				component = componentObject.getComponentByType(componentType);
+				component = componentObject.getComponent(componentType);
 				if (null == component)
 					return false;
 			}

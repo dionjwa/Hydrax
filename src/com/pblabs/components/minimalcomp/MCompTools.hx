@@ -28,8 +28,8 @@ class MCompTools
 		com.pblabs.util.Assert.isNotNull(container);
 		com.pblabs.util.Assert.isNotNull(child);
 		
-		var containerComp = container.getComponentByType(Container);
-		var childComp = child.getComponentByType(Component);
+		var containerComp = container.getComponent(Container);
+		var childComp = child.getComponent(Component);
 		
 		if (childComp == null) {
 			childComp = child.context.allocate(Component);

@@ -16,21 +16,21 @@ import haxe.io.BytesData;
 interface IResource<T>
 {
 	var name (get_name, never) :String;
-	
 	/**
 	  * Create/get the resource mapped to the name.
 	  * The returned object may be generated or it may 
 	  * an unchanging object, such as Xml.
 	  */
 	function get (?resourceName :String) :T;
-	
 	/**
 	  * Loads resources managed by this instance.
 	  */
 	function load (onLoad :Void->Void, onError :Dynamic->Void) :Void;
-	
 	function unload () :Void;
-	
 	function isLoaded () :Bool;
+	
+	// #if (editor || debug)
+	// function reload (onLoad :Void->Void, onError :Dynamic->Void) :Void;  
+	// #end
 }
 

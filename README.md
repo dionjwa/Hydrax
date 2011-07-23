@@ -1,24 +1,26 @@
 [pushbutton]: http://pushbuttonengine.com/
 [haxe]: http://http://haxe.org
+[nme]: http://haxe.org/doc/start/cpp
 
 
-# Hydrax: a [HaXe][haxe] port of the [PushButton Engine (PBE)][pushbutton]
+# PBE-Haxe (Hydrax): a [HaXe][haxe] port of the [PushButton Engine (PBE)][pushbutton]
 
 # Gettings started
 
 1. Install [HaXe][haxe].
-2. At the terminal, type *haxelib install hydrax*
-2. Go to the folder demo/basicEngineDemo01 in a terminal or dos prompt.
+2. At the terminal/dos prompt, type *haxelib install hydrax*
+3. Download this repository.
+2. Go to the repository folder *demo/basicEngineDemo01* in a terminal or dos prompt.
 3. Create a folder there called 'build' if one doesn't already exist.
 4. type *haxe buildflash.hxml*
 5. Open the swf in *demo/basicEngineDemo01/build/demo.swf*
-
+6. You should see a circle or rectangle moving around the screen border.
 
 # Why
 
 HaXe and the PBE are a natural fit.  
 
-PBE is a good engine for building games, as the component plug-in architecture eases building of complex game objects with a minimum of code rewriting.  This component architecture also makes it easier to write games for different platforms, as different components can be used for different platforms in a natural way.
+PBE is an excellent engine for building games, as the component plug-in architecture eases building of complex game objects with a minimum of code rewriting.  This component architecture also makes it easier to write games for different platforms, as different components can be used for different platforms in a natural way.
 
 HaXe provides an outright performance boost for games running in Flash, compared to games written in AS3.
 
@@ -26,24 +28,12 @@ Many games require server side functionality.  HaXe compiles to several server-s
 
 Currently, Hydrax will (mostly) keep the PBE package structure of the core classes (with permission from Ben Garney, PB Labs).  This may change if Hydrax diverges sufficiently.  Community contributions are encouraged.
 
-#Differences (detailed differences are listed below)
-
-Due to the extra features and multi-platform capability of HaXe (or just personal motivation), some components and features underwent more modifications than others.  Also, the package structure outside of the core engine are slightly modified: almost everything outside of the core engine is grouped under com.pblabs.components instead of com.pblabs.
-
-Major differences:
-
-- Hxhsl signals instead of as3 events.  The SignalBondManager provides listener registration on Entity and Component objects with automatic listener  removal upon object destruction.
-- Rendering has been modified to simplify cross-platform 2D rendering.  The Flash API has *not* been duplicated, nor do I intend to.
-- Input.  Rewritten to handle cross-platform input (mouse, touch screens, etc).
-- A very simple form of field injection is available, as Robotlegs/SwiftSuspenders is not ported to HaXe.
-- Screens.  I use IPBContexts in the place of screens.
-
 # What's done
 
 Complete or functional:
 
 - Core engine.
-- Rendering (Flash and HTML5).  Modified the AS3 to handle different platforms.
+- Rendering (Flash and HTML5).  Modified the original as3 pbe code to handle different platforms.
 - Xml Template system and PBE serialization.
 - Resources.  Rebuilt to handle multi-platform and haxe-only resources.
 - Tasks/tweens.
@@ -59,21 +49,37 @@ Extra features (not available in PBE):
 Incomplete or not working:
 
 - Sound.  Cross platform sound is definitely needed.
-- PBE animations
+- PBE animations.
 - PBE sets.  Hydrax uses a context-specific SetManager (optional).
 - Box2D.  (Coming soon).
-- State machine.
-- The PBE static class.
+- State machine (very low priority).
+- The PBE static class (not needed or useful with Haxe 'using' functionality).
 - Debugging.  
 
-# Detailed differences:
+# Differences
 
+Due to the extra features and multi-platform capability of HaXe (or just personal motivation), some components and features underwent more modifications than others.  Also, the package structure outside of the core engine are slightly modified: almost everything outside of the core engine is grouped under com.pblabs.components instead of com.pblabs.
+
+## Major differences:
+
+- Hxhsl signals instead of as3 events.  The SignalBondManager provides listener registration on Entity and Component objects with automatic listener  removal upon object destruction.
+- Rendering has been modified to simplify cross-platform 2D rendering.  The Flash API has *not* been duplicated (as in [NME][nme]), nor do I intend to. 
+- Input.  Rewritten to handle cross-platform input (mouse, touch screens, etc).
+- A very simple form of field injection is available, as Robotlegs/SwiftSuspenders is not yet ported to HaXe.
+- Screens.  IPBContexts are used in the place of Screens.
+
+## Minor differences
+
+Standardized some method names:
+
+- IEntity.lookupComponentsByType -> IEntity.getComponents
+- IEntity.lookupComponentByType -> IEntity.getComponent
+- IEntity.lookupComponentByName -> IEntity.getComponentByName
 - Hydrax IPBObjects don't have internal lists of game object sets.  That functionality is managed entirely by the SetManager.
 - A lightweight custom injection system is used instead of robolegs.  I'll endevour to incorporate a more robust injection system in the near future.
 - Signals are used instead of flash specific event dispatchers.  
 - Haxe cannot property deserialize dynamic objects.  Currently, Haxe cannot check if an object implements Dynamic (where you can add arbitrary fields) so cannot decide if assigning such a field is a valid operation.
-- Property getters and setters must be in the form 'get_value', 'set_value' to work with PropertyReferences and ReflectUtil.
-
+- Property getters and setters must be in the form 'get_fieldName', 'set_fieldName' to work with PropertyReferences and ReflectUtil.  ReflectUtil adds duplicate methods from Reflect, checking getters/setters
 
 # License
 

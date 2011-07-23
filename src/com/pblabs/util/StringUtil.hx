@@ -91,7 +91,7 @@ class StringUtil
 		fields = fields == null && isDynamic ? Reflect.fields(obj) : fields;
 		try {
 			if (!isDynamic) {
-				clsName = Type.getClass(obj) != null ? ReflectUtil.tinyClassName(Type.getClass(obj)) : "Dynamic";
+				clsName = Type.getClass(obj) != null ? ReflectUtil.tinyClassName(obj) : "Dynamic";
 				fields = fields == null && Type.getClass(obj) != null ? Type.getInstanceFields(Type.getClass(obj)) : fields;
 			}
 		} catch (e :Dynamic) {
@@ -109,15 +109,15 @@ class StringUtil
 	
 	public static function stringify (obj :Dynamic, ?fields :Array<String>) :String
 	{
-		// #if js
-		// try {
-		// 	return JSON.stringify(obj);
-		// } catch (e :Dynamic) {
-		// 	return objectToString(obj, fields);
-		// }
-		// #else
+		#if js
+		try {
+			return untyped JSON.stringify(obj);
+		} catch (e :Dynamic) {
+			return objectToString(obj, fields);
+		}
+		#else
 		return objectToString(obj, fields);
-		// #end
+		#end
 	}
 	
 	 

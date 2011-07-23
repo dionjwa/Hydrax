@@ -35,7 +35,7 @@ class VBox extends Container
 			c.x = curX;
 			c.y = curY;
 			
-			for (sc in c.owner.getComponentsByType(com.pblabs.components.scene2D.BaseSceneComponent)) {
+			for (sc in c.owner.getComponents(com.pblabs.components.scene2D.BaseSceneComponent)) {
 				if (Std.is(sc, IAnimatedObject)) {
 					cast(sc, IAnimatedObject).onFrame(0);
 				}
@@ -44,6 +44,7 @@ class VBox extends Container
 			switch (alignment) {
 				case LEFT: c.x = curX + c.width / 2;
 				case RIGHT: c.x = curX - c.width / 2;
+				case MIDDLE: c.x = curX;
 				default:
 			}
 			

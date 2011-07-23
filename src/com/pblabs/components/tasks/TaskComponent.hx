@@ -24,7 +24,7 @@ import com.pblabs.components.tasks.ParallelTask;
 
 class TaskComponent extends EntityComponent 
 {
-	public static var NAME :String = ReflectUtil.tinyClassName(TaskComponent);
+	public static var NAME :String = ReflectUtil.tinyName(TaskComponent);
 
 	var _tasks :Tasks;
 	

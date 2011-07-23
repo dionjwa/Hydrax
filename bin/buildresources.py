@@ -134,7 +134,7 @@ for resourceFolder in resourceFolders:
 						fileList.append(os.path.join(root,file))
 						break
 
-print "create_swf=", create_swf
+# print "create_swf=", create_swf
 
 swffile = open(swfas3FileName, 'w')
 # print "fileList=", fileList

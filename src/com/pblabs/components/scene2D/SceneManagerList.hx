@@ -13,7 +13,7 @@ import com.pblabs.util.ReflectUtil;
 
 class SceneManagerList extends NodeComponent<Dynamic, BaseSceneManager<Dynamic>>
 {
-	inline public static var NAME :String = ReflectUtil.tinyClassName(SceneManagerList);
+	inline public static var NAME :String = ReflectUtil.tinyName(SceneManagerList);
 	inline public static var PROP = new PropertyReference<SceneManagerList>("#" + NAME + "." + NAME);
 	
 	public function new ()

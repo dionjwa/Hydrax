@@ -54,7 +54,7 @@ class CircleShape extends ShapeComponent
 		if (!objectMask.and(mask)) {
 			return false;
 		}
-		return CircleUtil.isWithinCircle(pos, x + (- _registrationPoint.x * _scaleX) - _locationOffset.x, y + (- _registrationPoint.y * _scaleY) - _locationOffset.y, radius * _scaleX);
+		return CircleUtil.isWithinCircle(pos, x - _locationOffset.x, y - _locationOffset.y, radius);
 	}
 	
 	#if js
@@ -81,19 +81,15 @@ class CircleShape extends ShapeComponent
 		g.clear();
 		if (fillColor >= 0) {
 			g.beginFill(fillColor);
-			// g.drawCircle(r, r, r);
-			g.drawCircle(0, 0, r);
+			g.drawCircle(r, r, r);
 			g.endFill();
 		}
 		g.lineStyle(borderStroke, borderColor);
-		// g.drawCircle(r, r, r);
-		g.drawCircle(0, 0, r);
+		g.drawCircle(r, r, r);
 		if (showAngleLine) {
 			g.lineStyle(borderStroke, borderColor);
-			// g.moveTo(r, r);
-			g.moveTo(0, 0);
-			// g.lineTo(r * 2, r);
-			g.lineTo(r, 0);
+			g.moveTo(r, r);
+			g.lineTo(r * 2, r);
 		}
 		// recomputeBounds();
 		#elseif js
@@ -114,7 +110,7 @@ class CircleShape extends ShapeComponent
 	}
 	
 	#if js
-	override public function draw (ctx :easel.display.Context2d)
+	override public function drawPixels (ctx :easel.display.Context2d)
 	{
 		ctx.beginPath();
 		ctx.arc(radius, radius, radius, 0, Math.PI*2, true);

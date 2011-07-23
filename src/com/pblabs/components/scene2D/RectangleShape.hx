@@ -15,14 +15,12 @@ using com.pblabs.components.scene2D.SceneUtil;
 
 class RectangleShape extends ShapeComponent
 {
-	public function new (?w :Float = 200.0, ?h :Float = 100.0)
+	#if js
+	var _svgFill :js.Dom.HtmlDom;
+	#end
+	public function new (?w :Float = 20.0, ?h :Float = 100.0)
 	{
 		super();
-		_unscaledBounds.xmin = -w / 2;
-		_unscaledBounds.xmax = w / 2;
-		_unscaledBounds.ymin = -h / 2;
-		_unscaledBounds.ymax = h / 2;
-		_bounds = _unscaledBounds.clone();
 		
 		#if js
 		_svgContainer = untyped js.Lib.document.createElementNS(SceneUtil.SVG_NAMESPACE, "svg");
@@ -34,43 +32,17 @@ class RectangleShape extends ShapeComponent
 		_svgContainer.setAttribute("x", "0px");
 		_svgContainer.setAttribute("y", "0px");
 		_svgContainer.setAttribute("version", "1.1");
+		
+		_svgFill = untyped js.Lib.document.createElementNS(SceneUtil.SVG_NAMESPACE, "rect");
+		_svgContainer.appendChild(_svgFill);
+		
 		_svg = untyped js.Lib.document.createElementNS(SceneUtil.SVG_NAMESPACE, "rect");
 		_svgContainer.appendChild(_svg);
-		redraw();
 		#end
-		 
-	}
-	
-	// // /** Don't scale, rather resize and redraw */
-	// override public function updateTransform () :Void
-	// {
-	// 	if (!isTransformDirty) {
-	// 		return;
-	// 	}
-	// 	_transformMatrix.identity();
-	// 	_transformMatrix.translate(-registrationPoint.x, - registrationPoint.y);
-	// 	_transformMatrix.rotate(_angle + _angleOffset);
-	// 	_transformMatrix.translate(_x + _locationOffset.x, _y + _locationOffset.y);
 		
-	// 	#if flash
-	// 	_displayObject.transform.matrix = _transformMatrix;
-	// 	_displayObject.alpha = _alpha;
-	// 	_displayObject.visible = (alpha > 0);
-	// 	#end
-		
-	// 	isTransformDirty = false;
-	// }
-	
-	override function onAdd () :Void
-	{
-		super.onAdd();
-		context.getManager(com.pblabs.engine.time.IProcessManager).callLater(redraw);
-	}
-	
-	override function onReset () :Void
-	{
-		super.onReset();
-		redraw();
+		_bounds = _unscaledBounds.clone();
+		width = w;
+		height = h;
 	}
 	
 	override function redraw () :Void
@@ -87,15 +59,24 @@ class RectangleShape extends ShapeComponent
 		#elseif js
 		_svg.setAttribute("width", Std.string(width));
 		_svg.setAttribute("height", Std.string(height));
-		_svg.setAttribute("fill", StringUtil.toColorString(fillColor, "#"));
-		_svg.setAttribute("fill-opacity", "" + alpha);
+		_svg.setAttribute("fill", "#000000");
+		_svg.setAttribute("fill-opacity", "0");
+		_svg.setAttribute("stroke-opacity", "" + alpha);
 		_svg.setAttribute( "stroke",  StringUtil.toColorString(borderColor, "#"));
 		_svg.setAttribute( "stroke-width",  "" + borderStroke);
+		
+		_svgFill.setAttribute("width", Std.string(width));
+		_svgFill.setAttribute("height", Std.string(height));
+		_svgFill.setAttribute("fill", StringUtil.toColorString(fillColor, "#"));
+		_svgFill.setAttribute("fill-opacity", "" + alpha);
+		_svgFill.setAttribute( "stroke",  "#000000");
+		_svgFill.setAttribute( "stroke-width",  "0");
+		_svgFill.setAttribute("stroke-opacity", "0");
+		
 		_svgContainer.setAttribute("width", width + "px");
 		_svgContainer.setAttribute("height", height + "px");
 		_svgContainer.setAttribute("viewBox", "0 0 " + width + " " + height);
 		#end
-		// registrationPoint = new com.pblabs.geom.Vector2(width / 2, height / 2);
 	}
 	
 	#if js
@@ -111,6 +92,7 @@ class RectangleShape extends ShapeComponent
 			ctx.stroke();
 		}
 	}
+	#end
 	
 	override function set_width (val :Float) :Float
 	{
@@ -120,7 +102,8 @@ class RectangleShape extends ShapeComponent
 		_unscaledBounds.xmax = _x + unscaledWidth / 2;
 		_bounds.xmin = _x - val / 2;
 		_bounds.xmax = _x + val / 2;
-		_scaleX = val / unscaledWidth; 
+		_scaleX = val / unscaledWidth;
+		registrationPoint.x = _bounds.intervalX / 2;
 		isTransformDirty = true;
 		redraw();
 		return val;
@@ -135,9 +118,10 @@ class RectangleShape extends ShapeComponent
 		_bounds.ymin = _y - val / 2;
 		_bounds.ymax = _y + val / 2;
 		_scaleY = val / unscaledHeight;
+		registrationPoint.y = _bounds.intervalY / 2;
 		isTransformDirty = true;
 		redraw();
 		return val;
 	}
-	#end
+	
 }

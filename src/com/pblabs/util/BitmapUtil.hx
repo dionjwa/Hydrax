@@ -23,10 +23,11 @@ class BitmapUtil
 			return null;
 		}
 		
-		if (center != null) {
-			center.x = Mathematics.ceil(-bounds.x * scale);
-			center.y = Mathematics.ceil(-bounds.y * scale);
+		if (center == null) {
+			center = new flash.geom.Point();
 		}
+		center.x = Mathematics.ceil(-bounds.x * scale);
+		center.y = Mathematics.ceil(-bounds.y * scale);
 		
 		#if flash
 		var bd = new BitmapData(Mathematics.ceil(bounds.width * scale), Mathematics.ceil(bounds.height * scale), true, ColorUtil.toARGB(0xffffff, 0));

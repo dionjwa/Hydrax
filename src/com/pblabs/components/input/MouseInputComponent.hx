@@ -208,7 +208,7 @@ class MouseInputComponent extends EntityComponent
 			_bounds = owner.getProperty(boundsProperty);
 		}
 		
-		_bounds = _bounds == null ? owner.getComponentByType(IInteractiveComponent) : _bounds;
+		_bounds = _bounds == null ? owner.getComponent(IInteractiveComponent) : _bounds;
 		// trace('_bounds=' + _bounds.name);
 		
 		com.pblabs.util.Assert.isNotNull(_bounds, "bounds is null, There's no IInteractiveComponent by type and the boundsProperty is null.  How are we supposed to work?");

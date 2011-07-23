@@ -8,7 +8,6 @@
  ******************************************************************************/
 package com.pblabs.util.ds.maps;
 import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.MapUtil;
 
 /**
   * A map that implements Dynamic, so you can set key/values

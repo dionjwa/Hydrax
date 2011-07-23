@@ -40,7 +40,7 @@ class PBUtil
 		Preconditions.checkNotNull(context, "Null context");
 		Preconditions.checkNotNull(compClass, "Null compClass");
 		if (compName == null) {
-			compName = ReflectUtil.tinyClassName(compClass);
+			compName = ReflectUtil.tinyName(compClass);
 		}
 		
 		var component = context.allocate(compClass);
@@ -61,7 +61,7 @@ class PBUtil
 		Preconditions.checkNotNull(context, "Null context");
 		Preconditions.checkNotNull(component, "Null comp");
 		if (compName == null) {
-			compName = ReflectUtil.tinyClassName(Type.getClass(component));
+			compName = ReflectUtil.tinyClassName(component);
 		}
 		compName = context.getManager(NameManager).validateName(compName);
 		
@@ -73,17 +73,22 @@ class PBUtil
 		Assert.isTrue(cast(component, IEntityComponent).isRegistered, "addsingle, not registered");
 	}
 	
-	public static function getSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null) :T
+	public static function getSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null, 
+		?createIfMissing :Bool = false) :T
 	{
 		Preconditions.checkNotNull(context, "Null context");
 		Preconditions.checkNotNull(compClass, "Null compClass");
 		if (compName == null) {
-			compName = ReflectUtil.tinyClassName(compClass);
+			compName = ReflectUtil.tinyName(compClass);
 		}
 		
 		var nm = context.getManager(NameManager);
 		if (nm.get(compName) != null) {
 			return cast(nm.get(compName), IEntity).getComponentByName(compName);
+		}
+		
+		if (createIfMissing) {
+			return addSingletonComponent(context, compClass, compName);
 		}
 		return null;
 	}
@@ -128,12 +133,12 @@ class PBUtil
 	
 	inline public static function classToComponentProp <T>(cls :Class<Dynamic>, ?fieldName :String = null) :PropertyReference<T>
 	{
-		return new PropertyReference("@" + ReflectUtil.tinyClassName(cls) + fieldToken(fieldName));
+		return new PropertyReference("@" + ReflectUtil.tinyName(cls) + fieldToken(fieldName));
 	}
 	
-	inline public static function getDefaultComponentName <T>(componentClass :Class<Dynamic>) :String
+	inline public static function getDefaultComponentName <T>(componentClass :Class<Dynamic>, ?type :Class<T>) :String
 	{
-		return ReflectUtil.tinyClassName(componentClass);
+		return ReflectUtil.tinyName(componentClass);
 	}
 
 	public static function entityProp <T> (c :IEntityComponent, ?fieldName :String) :PropertyReference<T>
@@ -148,7 +153,7 @@ class PBUtil
 	
 	public static function singletonProp <T> (componentClass :Class<Dynamic>, ?fieldName :String) :PropertyReference<T>
 	{
-		var compName = ReflectUtil.tinyClassName(componentClass);
+		var compName = ReflectUtil.tinyName(componentClass);
 		return new PropertyReference("#" + compName + "." + compName + fieldToken(fieldName));
 	}
 	
@@ -159,9 +164,14 @@ class PBUtil
 		return "#" + c.owner.name + "." + componentName(c) + fieldToken(fieldName);
 	}
 
-	inline public static function componentClassToSingletonProp <T> (entityComponentClass :Class<Dynamic>, ?field :String = null) :PropertyReference<T>
+	// inline public static function componentClassToSingletonProp <T> (entityComponentClass :Class<Dynamic>, ?field :String = null) :PropertyReference<T>
+	// {
+	// 	var compName = ReflectUtil.tinyClassName(entityComponentClass);
+	// 	return new PropertyReference("#" + compName + "." + compName + fieldToken(field));
+	// }
+	inline public static function componentClassToSingletonProp <T>(entityComponentClass :Class<Dynamic>, ?field :String = null) :PropertyReference<T>
 	{
-		var compName = ReflectUtil.tinyClassName(entityComponentClass);
+		var compName = ReflectUtil.tinyName(entityComponentClass);
 		return new PropertyReference("#" + compName + "." + compName + fieldToken(field));
 	}
 	
@@ -196,7 +206,7 @@ class PBUtil
 	
 	inline public static function classToEntityName (cls :Class<IEntityComponent>) :String
 	{
-		return ReflectUtil.tinyClassName(cls);
+		return ReflectUtil.tinyName(cls);
 	}
 	
 	inline static function fieldToken (fieldName :String) :String
@@ -209,7 +219,7 @@ class PBUtil
 		if (c.isRegistered) {
 			return c.name;
 		} else {
-			return ReflectUtil.tinyClassName(Type.getClass(c));
+			return ReflectUtil.tinyClassName(c);
 		}
 	}
 }

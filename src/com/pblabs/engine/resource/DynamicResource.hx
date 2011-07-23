@@ -44,7 +44,6 @@ class DynamicResource extends ResourceBase<Dynamic>
 	override public function unload () :Void
 	{
 		super.unload();
-		_source = null;
 		_data = null;
 		
 		#if flash
@@ -56,6 +55,10 @@ class DynamicResource extends ResourceBase<Dynamic>
 			}
 			_loader = null;
 		}
+		#end
+		
+		#if !(debug || editor)
+		_source = null;
 		#end
 	}
 	

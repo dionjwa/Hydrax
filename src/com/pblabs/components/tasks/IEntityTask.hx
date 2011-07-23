@@ -13,7 +13,6 @@ import com.pblabs.engine.core.IEntity;
 
 interface IEntityTask
 {
-
 	/**
 	  * Returns true if the task is finished.
 	  */

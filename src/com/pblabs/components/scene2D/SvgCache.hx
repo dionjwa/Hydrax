@@ -195,7 +195,7 @@ class SvgCache
 	public function toString () :String
 	{
 		var sb = new StringBuf();
-		sb.add(com.pblabs.util.ReflectUtil.tinyClassName(Type.getClass(this)));
+		sb.add(com.pblabs.util.ReflectUtil.tinyClassName(this));
 		if (_anchors != null) {
 			for (key in _anchors.keys()) {
 				sb.add("\n  " + key + "==>" + com.pblabs.util.ds.MapUtil.toString(_anchors.get(key)));

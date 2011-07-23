@@ -26,16 +26,19 @@ class Sets
 	public static function newSetOf <T>(valueType :ValueType) :Set<T>
 	{
 		#if js
-		switch (valueType) {
-			case TInt: return new MapSet<T>(Maps.newHashMap(valueType));
-			case TClass(c): 
-				if (c == String) {
-					return new MapSet<T>(Maps.newHashMap(valueType));
-				}
-			default:
-				//js doesn't have Object sets
-				return new com.pblabs.util.ds.sets.ArraySet<T>();
-		}
+		return new MapSet<T>(Maps.newHashMap(valueType));
+		// switch (valueType) {
+		// 	case TInt: return new MapSet<T>(Maps.newHashMap(valueType));
+		// 	case TClass(c): 
+		// 		if (c == String) {
+		// 			return new MapSet<T>(Maps.newHashMap(valueType));
+		// 		} else {
+		// 			return new com.pblabs.util.ds.sets.ArraySet<T>();
+		// 		}
+		// 	default:
+		// 		//js doesn't have Object sets
+		// 		return new com.pblabs.util.ds.sets.ArraySet<T>();
+		// }
 		#else
 		return new MapSet<T>(Maps.newHashMap(valueType));
 		#end

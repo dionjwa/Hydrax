@@ -125,23 +125,33 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		for (ii in 0...svgData.length) {
 			var svgString = svgData[ii];
 			var index = ii;
-			SvgUtil.renderSvg(svgData[ii], function (renderedSvg :flash.display.DisplayObject) :Void {
-				if (index > 0) {
-					var v = self._relativeTransforms[index];
-					if (v != null && v.x != 0 && v.y != 0) {
-						renderedSvg.x = v.x;
-						renderedSvg.y = v.y;
+			try {
+				SvgUtil.renderSvg(svgData[ii], function (renderedSvg :flash.display.DisplayObject) :Void {
+					if (index > 0) {
+						var v = self._relativeTransforms[index];
+						if (v != null && v.x != 0 && v.y != 0) {
+							renderedSvg.x = v.x;
+							renderedSvg.y = v.y;
+						}
 					}
-				}
-				var sprite = cast(self._displayObject, flash.display.Sprite);
-				sprite.addChildAt(renderedSvg, Mathematics.clamp(ii, 0, sprite.numChildren));
+					var sprite = cast(self._displayObject, flash.display.Sprite);
+					sprite.addChildAt(renderedSvg, Mathematics.clamp(ii, 0, sprite.numChildren));
+					toRender--;
+					if (toRender <= 0) {
+						finishedRendering = true;
+						self.recomputeBounds();
+						self.renderCompleteSignal.dispatch();
+					}
+				});
+			} catch (e :Dynamic) {
+				com.pblabs.util.Log.error("Problem rendering " + resources[ii]);
 				toRender--;
 				if (toRender <= 0) {
 					finishedRendering = true;
 					self.recomputeBounds();
 					self.renderCompleteSignal.dispatch();
 				}
-			});
+			}
 			
 			//Transform it
 			// var svg = new org.svgweb.SVGViewerFlash();
@@ -320,7 +330,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		}
 	}
 	
-	override public function draw (ctx :easel.display.Context2d)
+	override public function drawPixels (ctx :easel.display.Context2d)
 	{
 		com.pblabs.util.Assert.isNotNull(ctx);
 		if (svgData == null) {

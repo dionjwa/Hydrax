@@ -36,7 +36,7 @@ class NodeJSHTMLConnection
 		_context = ctx;
 	}
 	
-	public function handleRequest (req :ServerRequest, res :ServerResponse) :Bool 
+	public function handleRequest (req :NodeHttpServerReq, res :NodeHttpServerResp) :Bool 
 	{
 		if (req.headers == null || Reflect.field(req.headers, "x-haxe-remoting") == null) {
 			return false;

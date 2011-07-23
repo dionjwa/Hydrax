@@ -56,9 +56,10 @@ class PBMacros
 	  * Adds all the instance and class fields to an Enumerable class.
 	  */
 	@:macro 
-	public static function buildEnumerableFromEmbeddedXML() 
+	public static function buildEnumerableFromEmbeddedXML() :Array<Field>
 	{
 		var pos = haxe.macro.Context.currentPos();
+		var fields = haxe.macro.Context.getBuildFields();
 		
 		var p = function (d :ExprDef) :Expr {
 			return {expr :d, pos :pos};
@@ -72,22 +73,31 @@ class PBMacros
 		var tFloat = TPath({ pack : [], name : "Float", params : [], sub : null });
 		var tData = TPath({ pack : clsType.pack, name : clsType.name, params : [], sub : null });
 		
-		var fields = [];
-		
 		var data = haxe.Resource.getString(className);
 		var root = Xml.parse(data).firstChild();
 		
 		var doneInstanceFields = false;
 		for (childXML in root) {
 			if (childXML.nodeType == Xml.Element) {
+				//Create the static fields of instances of this class
 				var typePath = {sub :null, params :[], pack :clsType.pack, name :clsType.name};
 				var contructorArgs = new Array<Expr>();
-				
+
 				//enum name to pass to the contructor
 				contructorArgs.push(p(EConst(haxe.macro.Constant.CString(childXML.nodeName))));
 				var newexpr = p(ENew(typePath, contructorArgs));
-				var evar  = { name : "public__static__" + childXML.nodeName, type : tData, expr : newexpr};
-				fields.push(p(EVars([evar])));
+				
+				var staticClassInstance :Field = {
+					name : childXML.nodeName, 
+					doc :null,
+					access:[Access.APublic, Access.AStatic],
+					kind :FVar(TPath(typePath), newexpr),
+					pos : pos,
+					meta :[]
+				};
+				
+				
+				fields.push(staticClassInstance);
 				
 				//Instance fields
 				if (!doneInstanceFields) {
@@ -104,21 +114,31 @@ class PBMacros
 						}
 						
 						var instanceFieldExpr = { name : "public__" + fieldChild.nodeName, type : type, expr : null};
-						fields.push(p(EVars([instanceFieldExpr])));
+						
+						var instanceField :Field = {
+							name : fieldChild.nodeName, 
+							doc :null,
+							access:[Access.APublic],
+							kind :FVar(type, null),
+							pos : pos,
+							meta :[]
+						};
+						
+						fields.push(instanceField);
 					}
 					doneInstanceFields = true;
 				}
 			}
 		}
 		
-		return { expr : EBlock(fields), pos : pos };
+		return fields;
 	}
 	
 	/**
 	  * Builds the corresponding enum for Enumerables that use enums
 	  */
 	@:macro 
-	public static function buildEnumerableEnumFromEmbeddedXML(classNameExpr : Expr) 
+	public static function buildEnumerableEnumFromEmbeddedXML(classNameExpr : Expr) :Array<Field>
 	{
 		var pos = haxe.macro.Context.currentPos();
 		
@@ -138,31 +158,27 @@ class PBMacros
 		
 		var data = haxe.Resource.getString(className);
 		var root = Xml.parse(data).firstChild();
+		var fields = [];
 		
 		var carr = new Array();
 		for (childXML in root) {
 			if (childXML.nodeType == Xml.Element) {
-				carr.push({ expr : EConst(CIdent(childXML.nodeName)), pos : pos });
+				fields.push({ name : childXML.nodeName, doc : null, meta : [], access : [], kind : FVar(null,null), pos : pos });
 			}
 		}
 		
-		return p(EBlock(carr));
+		return fields;
 	}
 	
 	/**
 	  */
 	@:macro 
-	public static function buildPropertiesClass(resourceId :String) 
+	public static function buildPropertiesClass(resourceId :String) :Array<Field>
 	{
 		var pos = haxe.macro.Context.currentPos();
-		
-		var p = function (d :ExprDef) :Expr {
-			return {expr :d, pos :pos};
-		}
-		
+		var fields = haxe.macro.Context.getBuildFields();
+        
 		var data = haxe.Resource.getString(resourceId);
-		var fields = [];
-		
 		for (l in data.split("\n")) {
 			var line = l.trim();
 			if (line.startsWith("#") || line == "") {
@@ -172,12 +188,20 @@ class PBMacros
 			var id = tokens.shift();
 			var val = tokens.join("=");
 			var tString = TPath({ pack : [], name : "String", params : [], sub : null });
-			var eval = p(EConst(haxe.macro.Constant.CString(val)));
-			var evar  = { name : "public__static__" + id, type : tString, expr : eval};
-			fields.push(p(EVars([evar])));
+			var expr = {expr :EConst(haxe.macro.Constant.CString(val)), pos :pos};
+			var field :Field = {
+				name : id, 
+				doc :null,
+				access:[Access.APublic, Access.AStatic],
+				kind :FVar(tString, expr),
+				pos : pos,
+				meta :[]
+			};
+			
+			fields.push(field);
 		}
 		
-		return { expr : EBlock(fields), pos : pos };
+		return fields;
 	}
 	
 	/**
@@ -225,18 +249,28 @@ class PBMacros
 	  *  </resources>
 	  */
 	@:macro
-	public static function embedResourceXml(resourceXmlPath :String)
+	public static function embedResourceXml(resourceXmlPath :String, allowedTypes :Array<String>)
 	{
 		var pos = haxe.macro.Context.currentPos();
 		var xml = Xml.parse(neko.io.File.getContent(resourceXmlPath));
 		for (resources in xml.elementsNamed("resources")) {
 			for (e in resources.elements()) {
-				var bytes = neko.io.File.getBytes(e.get("url"));
-				haxe.macro.Context.addResource(e.get("id"), bytes);
+				if (allowedTypes.exists(callback(StringTools.endsWith, e.nodeName))) {
+					var bytes = neko.io.File.getBytes(e.get("url"));
+					haxe.macro.Context.addResource(e.get("id"), bytes);
+				}
 				
 			}
 		}
 		//I have to return something?  
 		return { expr :EConst(CString("null")), pos : pos };
 	}
+	
+	#if (debug && macro)
+	@macro
+	public static function warn (pos :Position, msg :String) :Void
+	{
+	    haxe.macro.Context.warning(msg, pos);
+	}
+	#end
 }

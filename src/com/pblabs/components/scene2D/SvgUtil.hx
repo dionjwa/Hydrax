@@ -1,6 +1,18 @@
 package com.pblabs.components.scene2D;
 
 import de.polygonal.core.math.Mathematics;
+import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor2.geom.primitive.AABB2;
+
+import flash.geom.Matrix;
+
+using StringTools;
+
+using com.pblabs.util.NumberUtil;
+using com.pblabs.util.StringUtil;
+using com.pblabs.util.XmlUtil;
+
+using de.polygonal.core.math.Mathematics;
 
 #if flash
 enum RenderLib {
@@ -11,6 +23,10 @@ enum RenderLib {
 
 class SvgUtil
 {
+	static var mTranslateMatch = ~/translate\((.*),(.*)\)/;
+    static var mScaleMatch = ~/scale\((.*)\)/;
+    static var mMatrixMatch = ~/matrix\((.*),(.*),(.*),(.*),(.*),(.*)\)/;
+    
 	#if flash
 	static var INVISIBLE_STAGE :flash.display.Sprite;
 	#end
@@ -26,13 +42,16 @@ class SvgUtil
 	#end
 	
 	#if flash
-	public static function renderSvg (svgData :String, cb :flash.display.DisplayObject->Void, ?renderLib :RenderLib) :Void
+	public static function renderSvg (svgData :String, cb :flash.display.DisplayObject->Void, ?renderLib :RenderLib = null) :Void
 	{
-		renderLib = renderLib == null ? RenderLib.GM2D : renderLib;
+		com.pblabs.util.Assert.isNotNull(svgData);
+		com.pblabs.util.Assert.isNotNull(cb);
+		renderLib = renderLib == null ? RenderLib.SVGWEB : renderLib;
 		if (renderLib ==  SVGWEB) {
 			renderSvgWithSvgWeb(svgData, cb);
 		} else {
-			cb(renderSvgWithGM2D(svgData));
+			var disp = renderSvgWithGM2D(svgData);
+			cb(disp);
 		}
 	}
 	
@@ -68,7 +87,8 @@ class SvgUtil
 	
 	public static function renderSvgWithGM2D (svgData :String) :flash.display.DisplayObject
 	{
-		var xml:Xml = Xml.parse(svgData);
+		com.pblabs.util.Assert.isFalse(svgData.isBlank());
+		var xml = Xml.parse(svgData);
 		var svg = new gm2d.svg.SVG2Gfx(xml);
 		
 		var shape = svg.CreateShape();
@@ -76,7 +96,7 @@ class SvgUtil
 		return shape;
 	}
 	#elseif js
-	public static function renderSvg (svgData :String, canvas :easel.easel.display.Canvas, ?offset :XY, ?cb :Void->Void) :Void
+	public static function renderSvg (svgData :String, canvas :easel.display.Canvas, ?offset :XY, ?cb :Void->Void) :Void
 	{
 		com.pblabs.util.Assert.isNotNull(svgData);
 		com.pblabs.util.Assert.isNotNull(canvas);
@@ -97,4 +117,98 @@ class SvgUtil
 		}
 	}
 	#end
+	
+	inline public static function matrixToString(matrix :flash.geom.Matrix) :String
+	{
+		return "matrix(" + matrix.a.maxPrecision(4) + ", " + matrix.b.maxPrecision(4) + ", " + matrix.c.maxPrecision(4) + ", " + matrix.d.maxPrecision(4) + ", " + matrix.tx.maxPrecision(4) + ", " + matrix.ty.maxPrecision(4) + ")";
+	}
+	
+	public static function parseRectBounds(rect :Xml) :AABB2
+	{
+		var bounds = new AABB2();
+		bounds.xmin = Std.parseFloat(rect.get("x"));
+		bounds.ymin = Std.parseFloat(rect.get("y"));
+		bounds.xmax = bounds.xmin + Std.parseFloat(rect.get("width"));
+		bounds.ymax = bounds.ymin + Std.parseFloat(rect.get("height"));
+		return bounds;
+	}
+	
+	public static function getAbsoluteTransform (svgElement :Xml) :Matrix
+	{
+		if (svgElement == null) {
+			return new Matrix();
+		}
+	    var m = parseTransform(svgElement.get("transform"));
+	    svgElement = svgElement.parent;
+	    while (svgElement != null && svgElement.nodeType == Xml.Element && svgElement.nodeName != "svg:svg") {
+	    	m.concat(parseTransform(svgElement.get("transform")));
+	    	svgElement = svgElement.parent;
+	    }
+	    return m;
+	}
+	
+	
+	public static function parseTransform (inTrans:String) :Matrix
+	{
+		var ioMatrix = new Matrix();
+       var scale = 1.0;
+       if (mTranslateMatch.match(inTrans))
+       {
+          // TODO: Pre-translate
+          ioMatrix.translate(
+                  Std.parseFloat( mTranslateMatch.matched(1) ),
+                  Std.parseFloat( mTranslateMatch.matched(2) ));
+       }
+       else if (mScaleMatch.match(inTrans))
+       {
+          // TODO: Pre-scale
+          var s = Std.parseFloat( mScaleMatch.matched(1) );
+          ioMatrix.scale(s,s);
+          scale = s;
+       }
+       else if (mMatrixMatch.match(inTrans))
+       {
+          var m = new Matrix(
+                  Std.parseFloat( mMatrixMatch.matched(1) ),
+                  Std.parseFloat( mMatrixMatch.matched(2) ),
+                  Std.parseFloat( mMatrixMatch.matched(3) ),
+                  Std.parseFloat( mMatrixMatch.matched(4) ),
+                  Std.parseFloat( mMatrixMatch.matched(5) ),
+                  Std.parseFloat( mMatrixMatch.matched(6) ) );
+          m.concat(ioMatrix);
+          ioMatrix.a = m.a;
+          ioMatrix.b = m.b;
+          ioMatrix.c = m.c;
+          ioMatrix.d = m.d;
+          ioMatrix.tx = m.tx;
+          ioMatrix.ty = m.ty;
+          scale = Math.sqrt( ioMatrix.a*ioMatrix.a + ioMatrix.c*ioMatrix.c );
+       }
+       else {
+          // trace("Warning, unknown transform:" + inTrans);
+       }
+       return ioMatrix;
+    }
+    
+    
+    
+    public static function setStyle (xml :Xml, name :String, value :String) :Void
+    {
+        if (xml.get("style") == null) {
+        	xml.set("style", name + ":" + value);
+        } else {
+        	var style = xml.get("style");
+        	var styleTokens = style.split(";");
+        	for (ii in 0...styleTokens.length) {
+        		if (styleTokens[ii].split(":")[0].trim() == name) {
+        			styleTokens[ii] = name + ":" + value;
+        			xml.set("style", styleTokens.join(";"));
+        			return;
+        		}
+        	}
+        	xml.set("style", style + ";" + name + ":" + value);
+        }
+    }
+    
+	
 }

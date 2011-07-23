@@ -13,6 +13,8 @@ import com.pblabs.util.ds.Maps;
 import com.pblabs.util.ds.MultiMap;
 import com.pblabs.util.ds.multimaps.AbstractMultiMap;
 
+import Type;
+
 using Lambda;
 
 using com.pblabs.util.ArrayUtil;
@@ -21,15 +23,15 @@ using com.pblabs.util.ArrayUtil;
 class ListMultiMap<K, V> extends AbstractMultiMap<K, V>,
 	implements MultiMap<K, V>
 {
-	public static function create <K, V>(keyClass :Class<Dynamic>) :ListMultiMap<K, V>
+	public static function create <K, V>(keyType :ValueType) :ListMultiMap<K, V>
 	{
-		return new ListMultiMap<K, V>(keyClass);
+		return new ListMultiMap<K, V>(keyType);
 	}
 	
-	public function new (keyClass :Class<Dynamic>)
+	public function new (keyType :ValueType)
 	{
 		super();
-		_map = Maps.newHashMap(keyClass);
+		_map = Maps.newHashMap(keyType);
 	}
 	
 	override public function set (key :K, value :V) :Void

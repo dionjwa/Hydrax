@@ -64,7 +64,7 @@ class ArrayUtil
 	{
 		var randFunc = rando != null ? 
 			function (n :Int) :Int {
-				return rando.randIntRange(0, n); 
+				return rando.randomRange(0, n); 
 			}:
 			function (n :Int) :Int {
 				return Std.int(Math.random() * n);

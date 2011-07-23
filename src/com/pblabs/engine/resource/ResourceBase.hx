@@ -74,7 +74,16 @@ class ResourceBase<T>
 	{
 		return StringUtil.objectToString(this, ["name"]);
 	}
+	
 	#end
+	
+	// #if (editor || debug)
+	// public function reload (onLoad :Void->Void, onError :Dynamic->Void) :Void
+	// {
+	// 	unload();
+	// 	load(onLoad, onError);
+	// }
+	// #end
 }
 
 

@@ -32,26 +32,6 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	public var bitmap (get_bitmap, never) :Image;
 	var _bitmap :Image;
 	inline function get_bitmap () :Image { return _bitmap; }
-	// function set_bitmap (val :Image) :Image 
-	// {
-	// 	#if flash
-	// 	//Dispose of the old bitmapData?
-	// 	var sprite :flash.display.Sprite = cast displayObject;
-	// 	if (_bitmap != null) {
-	// 		sprite.removeChild(_bitmap);
-	// 	}
-	// 	_bitmap = val;
-	// 	sprite.addChild(_bitmap);
-	// 	#elseif js
-	// 	if (_bitmap != null) {
-	// 		div.removeChild(_bitmap);
-	// 	}
-	// 	_bitmap = val;
-	// 	div.appendChild(_bitmap);
-	// 	#end
-	// 	recomputeBounds();
-	// 	return val; 
-	// }
 	#elseif js
 	var _bitmap :ImageData;
 	#end
@@ -162,7 +142,9 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	
 	override function onRemove () :Void
 	{
-		super.onRemove();
+		var keepDisp = _displayObject;
+		super.onRemove();//Superclass nulls _displayObject
+		_displayObject = keepDisp;
 		#if flash
 		//Where is bitmapData.dispose to be called? Subclasses will be caching the BitmapData. 
 		_bitmap.bitmapData = null;

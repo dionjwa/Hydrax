@@ -15,6 +15,12 @@ using com.pblabs.util.XmlUtil;
 
 class XmlUtil
 {
+	
+	public static function clone (xml :Xml) :Xml
+	{
+		return ensureNotDocument(Xml.parse(xml.toString()));
+	}
+		
 	public static function findElement (xml :Xml, elementName :String, ?attribute :String, ?attributeValue :String) :Xml
 	{
 	    for (e in xml.elements()) {
@@ -34,6 +40,25 @@ class XmlUtil
 	    	}
 	    }
 	    return null;
+	}
+	
+	public static function findElements (xml :Xml, elementName :String, ?attribute :String, ?attributeValue :String, 
+		?found :Array<Xml> = null) :Array<Xml>
+	{
+		found = found == null ? [] : found;
+	    for (e in xml.elements()) {
+	    	if (e.nodeName == elementName) {
+	    		if (attribute != null) {
+	    			if (e.get(attribute) == attributeValue) {
+	    				found.push(e);
+	    			}
+	    		} else {
+	    			found.push(e);
+	    		}
+	    	} 
+			findElements(e, elementName, attribute, attributeValue, found);
+	    }
+	    return found;
 	}
 	
 	

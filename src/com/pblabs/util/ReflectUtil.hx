@@ -25,13 +25,23 @@ class ReflectUtil
 	// static var classDefParser = new haxe.rtti.XmlParser();
 	static var fieldTypes = new Hash<CType>();
 	
-	public static function tinyClassName (cls :Class<Dynamic>) :String
+	public static function tinyClassName (obj :Dynamic) :String
 	{
+		return tinyName(Type.getClass(obj));
+	}
+	
+	inline public static function tinyName (cls :Class<Dynamic>) :String
+	{
+		#if debug
 		com.pblabs.util.Assert.isNotNull(cls);
-		var name = Type.getClassName(cls);//getClassName(obj);
+		var name = Type.getClassName(cls);
 		com.pblabs.util.Assert.isNotNull(name, "null class name from class object");
 		var tokens = name.split(".");
 		return tokens[tokens.length - 1];
+		#else
+		var tokens = Type.getClassName(cls).split(".");
+		return tokens[tokens.length - 1];
+		#end
 	}
 	
 	public static function getClassName (obj :Dynamic) :String

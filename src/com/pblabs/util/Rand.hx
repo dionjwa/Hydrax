@@ -29,7 +29,7 @@ package com.pblabs.util;
 
 import com.pblabs.util.ArrayUtil;
 
-import de.polygonal.core.math.random.PRNG;
+import de.polygonal.core.math.random.RNG;
 import de.polygonal.core.math.random.ParkMiller;
 
 class Rand
@@ -38,7 +38,8 @@ class Rand
 	
 	inline public static var STREAM_GAME :Int = 0;
 	inline public static var STREAM_COSMETIC :Int = 1;
-	public static var DEFAULT_PRNG_CLASS :Class<Dynamic> = ParkMiller;
+	public static var DEFAULT_RNG_CLASS :Class<Dynamic> = ParkMiller;
+	public static var CHARPOOL :String = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 	/** The compiler doesn't like constant defined function default arguments */
 	inline public static var STREAM_UNSPECIFIED :Int = 0xffffff;//==MathUtil.UINT32_MAX;
@@ -51,17 +52,17 @@ class Rand
 	public static var errorOnUnspecifiedStreamId :Bool = false;
 	
 	// We always have the STREAM_GAME and STREAM_COSMETIC streams
-	static var _randStreams :Array<PRNG> = cast [ new ParkMiller(), new ParkMiller() ];
+	static var _randStreams :Array<RNG> = cast [ new ParkMiller(), new ParkMiller() ];
 
 	/** Adds a new random stream, and returns its streamId. */
-	public static function addStream (?seed :Int = 0, ?generator :PRNG) :Int
+	public static function addStream (?seed :Int = 0, ?generator :RNG) :Int
 	{
-		_randStreams.push(generator != null ? generator : Type.createInstance(DEFAULT_PRNG_CLASS, [seed]));
+		_randStreams.push(generator != null ? generator : Type.createInstance(DEFAULT_RNG_CLASS, [seed]));
 		return (_randStreams.length - 1);
 	}
 
 	/** Returns the Random object associated with the given streamId. */
-	public static function getStream (?streamId :Int = 0xffffff) :PRNG
+	public static function getStream (?streamId :Int = 0xffffff) :RNG
 	{
 		if (streamId == STREAM_UNSPECIFIED) {
 			if (errorOnUnspecifiedStreamId) {
@@ -86,30 +87,32 @@ class Rand
 		return (arr.length > 0 ? arr[nextIntInRange(0, arr.length - 1, streamId)] :null);
 	}
 
-	/** Returns an integer in the range [0, MAX) */
-	public static function nextInt (?streamId :Int = 0xffffff) :Int
+	public static function nextId (length :Int, ?alphabet :String = null, ?streamId :Int = 0xffffff) :String
 	{
-		return getStream(streamId).randInt();
+		alphabet = alphabet == null ? CHARPOOL : alphabet;
+		var text = "";
+		for (i in 0...length) {
+			text += alphabet.charAt(nextIntInRange(0, alphabet.length - 1, streamId));
+		}
+		return text;
 	}
+
+	/** Returns an integer in the range [0, MAX) */
+	// public static function nextInt (?streamId :Int = 0xffffff) :Int
+	// {
+	// 	return getStream(streamId).randInt();
+	// }
 
 	/** Returns an int in the range [min, max] */
 	public static function nextIntInRange (min :Int, max :Int, ?streamId :Int = 0xffffff) :Int
 	{
-		// return min + getStream(streamId).nextInt() % (max - min + 1);
-		// trace("getting stream");
-		// trace('getStream(streamId)=' + getStream(streamId));
-		// trace('(max - min + 1)=' + (max - min + 1));
-		// var val = min + getStream(streamId).nextInt(max - min + 1);
-		// trace("returning " + val);
-		// return val;
-		return getStream(streamId).randIntRange(min, max);
-		// return min + getStream(streamId).nextInt(max - min + 1);
+		return getStream(streamId).randomRange(min, max);
 	}
 
 	/** Returns a Boolean. */
 	public static function nextBoolean (?streamId :Int = 0xffffff) :Bool
 	{
-		return getStream(streamId).randIntRange(0, 1) > 0;//nextBool();
+		return getStream(streamId).randomRange(0, 1) > 0;//nextBool();
 	}
 
 	/**
@@ -124,14 +127,13 @@ class Rand
 	/** Returns a Number in the range [0.0, 1.0) */
 	public static function nextFloat (?streamId :Int = 0xffffff) :Float
 	{
-		return getStream(streamId).randDouble();
+		return getStream(streamId).randomFloat();
 	}
 
 	/** Returns a Number in the range [low, high) */
 	public static function nextFloatInRange (low :Float, high :Float, ?streamId :Int = 0xffffff) :Float
 	{
-		return getStream(streamId).randDoubleRange(low, high);
-		// return low + (getStream(streamId).nextFloat() * (high - low));
+		return getStream(streamId).randomFloatRange(low, high);
 	}
 
 	/** Randomizes the order of the elements in the given Array, in place. */

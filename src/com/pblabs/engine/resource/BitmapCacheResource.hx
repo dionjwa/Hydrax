@@ -12,6 +12,8 @@ import com.pblabs.util.Preconditions;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
+import Type;
+
 typedef ImageData = 
 #if (flash || cpp)
 flash.display.BitmapData;

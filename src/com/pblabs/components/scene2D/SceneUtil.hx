@@ -121,15 +121,15 @@ class SceneUtil
 	
 	public static function getWidth (e :IEntity) :Float
 	{
-		// com.pblabs.util.Assert.isNotNull(e.getComponentByType(BaseSceneComponent));
-		return e.getComponentByType(SpatialComponent).worldExtents.intervalX;
+		// com.pblabs.util.Assert.isNotNull(e.getComponent(BaseSceneComponent));
+		return e.getComponent(SpatialComponent).worldExtents.intervalX;
 	}
 	
 	public static function getHeight (e :IEntity) :Float
 	{
-		// com.pblabs.util.Assert.isNotNull(e.getComponentByType(BaseSceneComponent));
-		// return e.getComponentByType(BaseSceneComponent).height;
-		return e.getComponentByType(SpatialComponent).worldExtents.intervalY;
+		// com.pblabs.util.Assert.isNotNull(e.getComponent(BaseSceneComponent));
+		// return e.getComponent(BaseSceneComponent).height;
+		return e.getComponent(SpatialComponent).worldExtents.intervalY;
 	}
 	
 	

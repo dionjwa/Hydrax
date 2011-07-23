@@ -62,9 +62,11 @@ class XMLResource extends ResourceBase<Xml>
 	override public function unload () :Void
 	{
 		super.unload();
-		_source = null;
 		_xml = null;
 		_data = null;
+		#if !(debug || editor)
+		_source = null;
+		#end
 	}
 	
 	#if debug

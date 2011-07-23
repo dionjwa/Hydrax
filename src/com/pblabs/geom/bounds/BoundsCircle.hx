@@ -128,7 +128,7 @@ class BoundsCircle extends AbstractBounds<BoundsCircle>
 
 	public function toString () :String
 	{
-		return ReflectUtil.tinyClassName(Type.getClass(this)) + "[" + _boundsCircle + "]";
+		return ReflectUtil.tinyClassName(this) + "[" + _boundsCircle + "]";
 	}
 	
 }

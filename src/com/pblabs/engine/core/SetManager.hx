@@ -8,13 +8,16 @@
  ******************************************************************************/
 package com.pblabs.engine.core;
 
+import Type;
+
 import com.pblabs.util.Preconditions;
+import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.MultiMap;
+import com.pblabs.util.ds.maps.MapBuilder;
+import com.pblabs.util.ds.multimaps.ArrayMultiMap;
 import com.pblabs.util.ds.multimaps.SetMultiMap;
 
 import hsl.haxe.Bond;
-
-import Type;
 
 using Lambda;
 
@@ -35,12 +38,21 @@ class SetManager extends PBManager
 {
 	/** Maps set names to objects */
 	var _sets :MultiMap<String, IPBObject>;
+	/** Maps set names to objects */
+	var _componentSets :MultiMap<String, IEntityComponent>;
+	var _components :MultiMap<IEntityComponent, String>;
 	/** Maps objects to sets */
 	var _objects :MultiMap<IPBObject, String>;
+	// static var COMPONENTS_MARKED_SET :Map<Class<Dynamic>, Bool> = 
+	// 	new MapBuilder(ValueType.TClass(IEntityComponent)).makeComputing(isInSet).build();
 	
+	// static var COMPONENTS_SETS :Map<Class<Dynamic>, Array<String>> = 
+	// 	new MapBuilder(ValueType.TClass(IEntityComponent)).makeComputing(getClassSets).build();
+		
 	static var EMPTY_STRING_ARRAY :Array<String> = [];
 	static var EMPTY_OBJECT_ARRAY :Array<IPBObject> = [];
 	static var EMPTY_ENTITY_ARRAY :Array<IEntity> = [];
+	static var EMPTY_COMPONENT_ARRAY :Array<IEntityComponent> = [];
 	
 	//The static functions are for "using" 
 	public static function getAllInSet(context :IPBContext, set :String) :Iterable<IPBObject>
@@ -89,6 +101,9 @@ class SetManager extends PBManager
 		super();
 		_sets = SetMultiMap.create(ValueType.TClass(String));
 		_objects = SetMultiMap.create(ValueType.TClass(PBObject));
+		
+		_components = SetMultiMap.create(ValueType.TClass(EntityComponent));
+		_componentSets = ArrayMultiMap.create(ValueType.TClass(String));
 	}
 	
 	public function addObjectToSet (obj :IPBObject, set :String) :Void
@@ -102,20 +117,35 @@ class SetManager extends PBManager
 		}
 		_sets.set(set, obj);
 		
-		var foundInSet = false;
-		for (e in _sets.get(set)) {
-			if (e == obj) {
-				foundInSet = true;
-			}
-		}
+		// var foundInSet = false;
+		// for (e in _sets.get(set)) {
+		// 	if (e == obj) {
+		// 		foundInSet = true;
+		// 	}
+		// }
 		_objects.set(obj, set);
 	}
+	
+	// public function addComponentToSet (obj :IEntityComponent, set :String) :Void
+	// {
+	// 	Preconditions.checkNotNull(obj);
+	// 	Preconditions.checkNotNull(set);
+		
+	// 	//Add object to set
+	// 	_componentSets.set(set, obj);
+	// }
 	
 	public function getObjectsInSet(set :String) :Iterable<IPBObject>
 	{
 		var it = _sets.get(set);
 		return it == null ? EMPTY_OBJECT_ARRAY : it;
-	}                                                                                                                                                               
+	}
+	
+	public function getComponentsInSet (set :String) :Iterable<IEntityComponent>
+	{
+		var it = _componentSets.get(set);
+		return it == null ? EMPTY_COMPONENT_ARRAY : it;
+	}
 	
 	public function getEntitiesInSet(set :String) :Iterable<IEntity>
 	{
@@ -158,6 +188,18 @@ class SetManager extends PBManager
 		return objs;
 	}
 	
+	public function removeComponentSet (set :String) :Iterable<IEntityComponent>
+	{
+		var objs = _componentSets.get(set);
+		if (objs != null) {
+			for (o in objs) {
+				_components.removeEntry(o, set);
+			}
+		}
+		_componentSets.remove(set);
+		return objs;
+	}
+	
 	public function removeObjectFromAll (obj :IPBObject) :Void
 	{
 		var objectSets = _objects.get(obj);
@@ -167,16 +209,58 @@ class SetManager extends PBManager
 			}
 		}
 		_objects.remove(obj);
+		// removeComponentSets(obj);
 	}
+	
+	public function addComponentToSet (component :IEntityComponent, set :String) :Void
+	{
+		_componentSets.set(set, component);
+		_components.set(component, set);
+		
+		// var cls = Type.getClass(component);
+	    // if (COMPONENTS_MARKED_SET.get(cls)) {
+		// 	_componentSets.set(cls, component);
+		// }
+	}
+	
+	public function removeComponentFromSets (component :IEntityComponent) :Void
+	{
+		for (set in _components.get(component)) {
+			_componentSets.removeEntry(set, component);
+		}
+		_components.remove(component);
+		// var cls = Type.getClass(component);
+	    // if (COMPONENTS_MARKED_SET.get(cls)) {
+		// 	_componentSets.removeEntry(cls, component);
+		// }
+	}
+	
+	// public function removeComponentSets (obj :IPBObject) :Void
+	// {
+	//     if (Std.is(obj, IEntity) {
+	//     	var e :IEntity = cast obj;
+	//     	for (c in e) {
+	//     		var cls = Type.getClass(obj);
+	//     		if (COMPONENTS_MARKED_SET.get(cls)) {
+	//     			_componentSets.removeEntry(cls, obj);
+	// 			}
+	//     	}
+	//     }
+	// }
 	
 	public function destroySet (set :String) :Void
 	{
-		if (!_sets.exists(set)) {
+		if (!_sets.exists(set) && !_componentSets.exists(set)) {
 			return;
 		}
 		for (obj in removeSet(set)) {
 			if (obj != null && obj.isLiveObject) {
 				obj.destroy();
+			}
+		}
+		for (comp in removeComponentSet(set)) {
+			if (comp != null && comp.isRegistered) {
+				comp.owner.destroy();
 			}
 		}
 	}
@@ -205,27 +289,74 @@ class SetManager extends PBManager
 		_objects.clear();
 	}
 	
-	public function injectSets (obj :IEntityComponent, ?cls :Class<Dynamic>) :Void
+	// public function injectSets (obj :IEntityComponent, ?cls :Class<Dynamic>) :Void
+	// {
+	// 	cls = cls == null ? obj.getClass() : cls;
+		
+	// 	for (set in COMPONENTS_SETS.get(cls)) {
+	// 		addObjectToSet(obj.owner, set);
+	// 	}
+		
+	// 	if (COMPONENTS_MARKED_SET.get(cls)) {
+	// 		_componentSets.set(cls, obj);
+	// 		// addObjectToSet(obj, Type.getClassName(cls));
+	// 	}
+		
+	// 	// var m = haxe.rtti.Meta.getType(cls);
+		
+	// 	// if (m != null) {
+	// 	// 	for (field in Reflect.fields(m)) {
+	// 	// 		if (field == "sets") {
+	// 	// 			for (s in cast(Reflect.field(m, field), Array<Dynamic>)) {
+	// 	// 				if (Std.is(s, Array)) {
+	// 	// 					for (ss in cast(s, Array<Dynamic>)) {
+	// 	// 						addObjectToSet(obj.owner, ss);
+	// 	// 					}
+	// 	// 				} else {
+	// 	// 					addObjectToSet(obj.owner, s);
+							
+	// 	// 				}
+	// 	// 			}
+	// 	// 		} else if (field == "set") {
+	// 	// 			addComponentToSet(obj, ss);
+	// 	// 		}
+	// 	// 	}
+	// 	// }
+	// }
+	
+	/**
+	  * Mark a component class with the @set class attribute, and it will be automatically added to component sets
+	  */
+	static function isInSet (cls :Class<Dynamic>) :Bool
 	{
-		cls = cls == null ? obj.getClass() : cls;
-		
 		var m = haxe.rtti.Meta.getType(cls);
-		
+		if (m != null) {
+			return Reflect.fields(m).has("set");
+		} else {
+			return false;
+		}
+	}
+	
+	static function getClassSets (cls :Class<Dynamic>) :Array<String>
+	{
+		var sets = [];
+		var m = haxe.rtti.Meta.getType(cls);
 		if (m != null) {
 			for (field in Reflect.fields(m)) {
 				if (field == "sets") {
 					for (s in cast(Reflect.field(m, field), Array<Dynamic>)) {
 						if (Std.is(s, Array)) {
 							for (ss in cast(s, Array<Dynamic>)) {
-								addObjectToSet(obj.owner, ss);
+								sets.push(ss);
 							}
 						} else {
-							addObjectToSet(obj.owner, s);
+							sets.push(s);
 						}
 					}
-				}
+				} 
 			}
-		}
+		} 
+		return sets;
 	}
 	
 	static function getSetManager (context :IPBContext) :SetManager

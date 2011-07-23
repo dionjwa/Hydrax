@@ -28,7 +28,7 @@ import Type;
 
 using Lambda;
 
-using com.pblabs.engine.core.SetManager;
+// using com.pblabs.engine.core.SetManager;
 using com.pblabs.util.StringUtil;
 
 /**
@@ -254,20 +254,20 @@ class Entity extends PBObject,
 		}
 		
 		// Deal with set membership.
-		var setsAttr = xml.get("sets");
-		if (!setsAttr.isBlank()) {
-			// The entity wants to be in some sets.
-			var setNames = setsAttr.split(",").map(StringTools.trim);
-			if (setNames != null) {
-				// There's a valid-ish set string, let's loop through the entries
-				var sets = context.getManager(SetManager);
-				for (set in setNames) {
-					if (!set.isBlank()) {
-						this.addToSet(set);
-					}
-				}
-			}
-		}			
+		// var setsAttr = xml.get("sets");
+		// if (!setsAttr.isBlank()) {
+		// 	// The entity wants to be in some sets.
+		// 	var setNames = setsAttr.split(",").map(StringTools.trim);
+		// 	if (setNames != null) {
+		// 		// There's a valid-ish set string, let's loop through the entries
+		// 		var sets = context.getManager(SetManager);
+		// 		for (set in setNames) {
+		// 			if (!set.isBlank()) {
+		// 				this.addToSet(set);
+		// 			}
+		// 		}
+		// 	}
+		// }			
 		
 		// Restore deferred state.
 		deferring = oldDefer;
@@ -355,7 +355,7 @@ class Entity extends PBObject,
 		}
 	}
 	
-	public function getComponentByType <T>(componentType:Class<T>):T
+	public function getComponent <T>(componentType:Class<T>):T
 	{
 		for (c in _components)
 		{
@@ -369,12 +369,7 @@ class Entity extends PBObject,
 		return null;
 	}
 	
-	public function getComponent <T>(componentType:Class<T>):T
-	{
-		return getComponentByType(componentType);
-	}
-	
-	public function getComponentsByType <T>(componentType:Class<T>):Array<T>
+	public function getComponents <T>(componentType:Class<T>):Array<T>
 	{
 		var list = new Array();
 		
@@ -495,15 +490,15 @@ class Entity extends PBObject,
 	
 	function injectComponent (c :IEntityComponent, ?sets :SetManager = null) :Void
 	{
-		sets = sets == null ? context.getManager(SetManager) : sets;
+		// sets = sets == null ? context.getManager(SetManager) : sets;
 		//Inject the component fields
 		 _context.injectInto(c);
 		 //Inject the sets (components annotated with @sets("set1", "set2") at the constructor
-		 if (sets != null) {
-		 	 sets.injectSets(c);
-		 } else {
-		 	 com.pblabs.util.Log.warn("No SetManager, cannot inject IEntityComponents into sets");
-		 }
+		 // if (sets != null) {
+		 // 	 sets.injectSets(c);
+		 // } else {
+		 // 	 com.pblabs.util.Log.warn("No SetManager, cannot inject IEntityComponents into sets");
+		 // }
 	}
 	
 	#if debug

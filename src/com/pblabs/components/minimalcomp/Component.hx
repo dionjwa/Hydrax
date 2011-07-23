@@ -3,6 +3,7 @@ package com.pblabs.components.minimalcomp;
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.spatial.SpatialComponent;
+import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.time.IAnimatedObject;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.util.PBUtil;
@@ -19,6 +20,7 @@ class Component extends NodeComponent<Component, Component>
 	public var y (get_y, set_y) :Float;
 	public var width (get_width, never) :Float;
 	public var height (get_height, never) :Float;
+	public var spatialProperty :PropertyReference<SpatialComponent>;
 	var _spatial :SpatialComponent;
 	var _isHidden :Bool;
 		
@@ -34,7 +36,7 @@ class Component extends NodeComponent<Component, Component>
 			return;
 		}
 		_isHidden = false;
-		for (disp in owner.getComponentsByType(com.pblabs.components.scene2D.BaseSceneComponent)) {
+		for (disp in owner.getComponents(com.pblabs.components.scene2D.BaseSceneComponent)) {
 			if (!disp.hasParent()) {
 				disp.addToParent();
 				if (Std.is(disp, IAnimatedObject)) {
@@ -52,7 +54,7 @@ class Component extends NodeComponent<Component, Component>
 			return;
 		}
 		_isHidden = true;
-		for (disp in owner.getComponentsByType(com.pblabs.components.scene2D.BaseSceneComponent)) {
+		for (disp in owner.getComponents(com.pblabs.components.scene2D.BaseSceneComponent)) {
 			disp.removeFromParent();
 		}
 	}
@@ -68,7 +70,7 @@ class Component extends NodeComponent<Component, Component>
 	
 	public function redraw () :Void
 	{
-		for (disp in owner.getComponentsByType(com.pblabs.components.scene2D.BaseSceneComponent)) {
+		for (disp in owner.getComponents(com.pblabs.components.scene2D.BaseSceneComponent)) {
 			disp.isTransformDirty = true;
 			disp.updateIfUpdatable();
 		}

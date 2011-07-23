@@ -45,9 +45,6 @@ class SetMultiMap<K, V> extends AbstractMultiMap<K, V>,
 		if (_valueType == null) {
 			_valueType = Type.typeof(value);
 			com.pblabs.util.Assert.isNotNull(_valueType, "Cannot get type of value=" + value);
-			// if (_valueType == null) {
-			// 	_valueType = Dynamic;
-			// }
 		}
 		super.set(key, value);
 		var set :Set<V> = _map.get(key);

@@ -94,7 +94,7 @@ class ResourceManager
 		}
 		
 		var self = this;
-		for (key in _pendingResources.keys().toArray()) {//Keys copied to avoid since the map is modified in the loop
+		for (key in _pendingResources.keys().toArray()) {//Keys copied since the map is modified in the loop
 			var rsrc = _pendingResources.get(key);
 			_pendingResources.remove(key);
 			_loadingResources.set(key, rsrc);
@@ -232,6 +232,18 @@ class ResourceManager
 			}
 		}
 	}
+	
+	#if (editor || debug)
+	public function reload (onLoad :Void->Void, ?onError :Dynamic->Void) :Void
+	{
+		for (rsrc in _loadedResources) {
+			_pendingResources.set(rsrc.name, rsrc);
+			rsrc.unload();
+		}
+		_loadedResources.clear();
+		load(onLoad, onError);
+	}
+	#end
 	
 	var _pendingResources :Map<String, IResource<Dynamic>>;
 	var _loadingResources :Map<String, IResource<Dynamic>>;

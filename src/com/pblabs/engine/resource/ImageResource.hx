@@ -87,8 +87,11 @@ class ImageResource extends ResourceBase
 		}
 		#end
 		
-		_source = null;
 		_image = null;
+		
+		#if !(debug || editor)
+		_source = null;
+		#end
 	}
 	
 	#if debug

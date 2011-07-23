@@ -1,9 +1,11 @@
 package com.pblabs.util;
 
+import de.polygonal.gl.color.ColorMatrix;
+
 class ColorUtil
 {
 	#if flash
-	inline public static function toARGB (rgb :UInt, newAlpha :UInt) :UInt
+	public static function toARGB (rgb :UInt, newAlpha :UInt) :UInt
 	{
 		//newAlpha has to be in the 0 to 255 range
 		var argb :UInt = 0;
@@ -11,6 +13,16 @@ class ColorUtil
 		argb += (rgb);
 		return argb;
 	}
-	#end
-
+	
+	public static function createColorFilter (color :Int) :flash.filters.ColorMatrixFilter
+    {
+        return new ColorMatrix().colorize(color).getFilter();
+    }
+    
+    public static function createHueFilter (angle :Float) :flash.filters.ColorMatrixFilter
+    {
+        return new ColorMatrix().adjustHue(angle).getFilter();
+    }
+    #end
+    
 }

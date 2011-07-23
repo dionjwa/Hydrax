@@ -99,6 +99,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		if (_displayObject != null) {
 			_displayObject.detach();
 			com.pblabs.util.Assert.isNull(_displayObject.parent);
+			_displayObject = null;
 		}
 	}
 	

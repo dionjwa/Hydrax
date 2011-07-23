@@ -20,6 +20,8 @@ import com.pblabs.util.ds.Maps;
 
 import de.polygonal.motor2.geom.math.XY;
 
+import Type;
+
 using com.pblabs.geom.Geometry;
 using com.pblabs.geom.PolygonTools;
 using com.pblabs.geom.VectorTools;
@@ -686,7 +688,7 @@ class PolygonTools
 
 		//New simpler sorting
 		//Rotate so the angle is zero
-		var vvMap :Map<XY, XY> = Maps.newHashMap(XY);
+		var vvMap :Map<XY, XY> = Maps.newHashMap(ValueType.TClass(XY));
 		for (v in initialLocations) {
 			vvMap.set(v.subtract(center), v);
 		}

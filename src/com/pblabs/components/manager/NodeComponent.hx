@@ -86,7 +86,7 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 			return list;
 		}
 		list.add(e);
-		for (c in e.getComponentsByType(nodeTypeClass)) {
+		for (c in e.getComponents(nodeTypeClass)) {
 			var n :NodeComponent<Dynamic, Dynamic> = cast(c);
 			if (n.parent != null) {
 				getEntityAndAllParents(cast(n.parent, IEntityComponent).owner, nodeTypeClass, list);
@@ -107,7 +107,7 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 			return list;
 		}
 		list.add(e);
-		for (c in e.getComponentsByType(nodeTypeClass)) {
+		for (c in e.getComponents(nodeTypeClass)) {
 			var n :NodeComponent<Dynamic, Dynamic> = cast(c);
 			if (n._children != null) {
 				if (!n.children.isEmpty()) {

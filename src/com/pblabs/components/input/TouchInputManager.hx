@@ -136,7 +136,6 @@ class TouchInputManager extends BaseInputManager
     override public function shutdown () :Void
     {
         super.shutdown();
-        // freeSignals();
         
         #if js
         #if debug
@@ -160,19 +159,6 @@ class TouchInputManager extends BaseInputManager
         com.pblabs.util.Log.error("Platform gestures are not yet implemented.  Currently JS only.");
         #end
     }
-    
-    // function freeSignals () :Void
-    // {
-    //     #if js
-    //     // touchStart.unbindAll();
-    //     // touchMove.unbindAll();
-    //     // touchEnd.unbindAll();
-        
-    //     touchStart = null;
-    //     touchMove = null;
-    //     touchEnd = null;
-    //     #end
-    // }
     
     var _firstTouchId :Int;
 }

@@ -35,20 +35,37 @@ class ImageComponent extends BitmapRenderer
 		super();
 	}
 	
-	#if debug
-	override public function toString () :String
-	{
-		return com.pblabs.util.StringUtil.objectToString(this, ["x", "y", "width", "height"]);
-	}
-	#end
-	
 	override function onAdd () :Void
 	{
 		com.pblabs.util.Assert.isNotNull(resource, "resource is null for #" + owner.name + "." + name);
 		#if js
 		super.onAdd();
-		loadFromResource();
+		loadJSImage();
 		#elseif (flash || cpp)
+		loadFlashImage();
+		super.onAdd();
+		#end
+	}
+	
+	#if js
+	function loadJSImage () :Void
+	{
+		var image = context.get(resource);
+		Preconditions.checkNotNull(image, "image from resource is null " +resource);
+		var canvas :easel.display.Canvas = cast js.Lib.document.createElement("canvas");
+		canvas.width = image.width;
+		canvas.height = image.height;
+		var ctx = canvas.getContext("2d");
+		ctx.drawImage(image, 0, 0);
+		bitmapData = canvas;
+		//Assume you want the image centered.
+		registrationPoint = new com.pblabs.geom.Vector2(image.width / 2, image.height / 2);
+	}
+	#end
+	
+	#if (flash || cpp)
+	function loadFlashImage () :Void
+	{
 		var image :Dynamic = context.get(resource);
 		com.pblabs.util.Assert.isNotNull(image, "Image loaded from " + resource + " is null");
 		com.pblabs.util.Assert.isNotNull(image, "null image for " + resource);
@@ -61,29 +78,15 @@ class ImageComponent extends BitmapRenderer
 		} else {
 			com.pblabs.util.Log.error("Unrecognized image type=" + com.pblabs.util.ReflectUtil.getClassName(image)); 
 		}
-		super.onAdd();
-		#end
-	}
-	
-	#if (flash || cpp)
-	override function onRemove () :Void
-	{
-		super.onRemove();
-		_displayObject = null;
+		//Assume you want the image centered.
+		registrationPoint = new com.pblabs.geom.Vector2(image.width / 2, image.height / 2);
 	}
 	#end
 	
-	#if js
-	function loadFromResource () :Void
+	#if debug
+	override public function toString () :String
 	{
-		var image = context.get(resource);
-		Preconditions.checkNotNull(image, "image from resource is null " +resource);
-		var canvas :easel.display.Canvas = cast js.Lib.document.createElement("canvas");
-		canvas.width = image.width;
-		canvas.height = image.height;
-		var ctx = canvas.getContext("2d");
-		ctx.drawImage(image, 0, 0);
-		bitmapData = canvas;
+		return com.pblabs.util.StringUtil.objectToString(this, ["x", "y", "width", "height"]);
 	}
-	#end	
+	#end
 }

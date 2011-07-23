@@ -25,7 +25,7 @@ interface IInputData
 	
 	#if js
 	var inputAngle (get_inputAngle, null) :Float;
-	
-	var inputScale (get_inputScale, null) :Float;
 	#end
+	
+	var zoomDelta (get_zoomDelta, null) :Float;
 }

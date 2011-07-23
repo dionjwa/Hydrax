@@ -30,8 +30,9 @@ class EqualableUtil
 			return (cast(obj1, Equalable<Dynamic>)).equals(obj2);
 		} else if ((Std.is(obj1, Array)) || (Std.is(obj2, Array))) {
 			return isArraysEqual(cast obj1, cast obj2);
-		} 
-		return false;
+		} else {
+			return false;
+		}
 	}
 	
 	public static function isArraysEqual (a1 :Array<Dynamic>, a2 :Array<Dynamic>) :Bool
@@ -50,7 +51,7 @@ class EqualableUtil
 					return false;
 				}
 			}
-		}
-		return true;
+			return true;
+		} 
 	}
 }
