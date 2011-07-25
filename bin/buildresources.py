@@ -28,6 +28,9 @@ def readProperties(filename):
 		props[name] = value
 	return props
 	
+print sys.argv
+props = readProperties(sys.argv[1]) if len(sys.argv) > 1 else readProperties("resources.properties")
+
 props = readProperties("resources.properties")
 flex_sdk = props["flex_sdk"]
 resourceFolders = [s.strip() for s in props["resources"].split(",")]
