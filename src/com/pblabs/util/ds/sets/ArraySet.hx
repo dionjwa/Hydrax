@@ -58,7 +58,7 @@ class ArraySet<T> implements Set<T>
 	#if debug
 	public function toString () :String
 	{
-		return com.pblabs.util.ArrayUtil.join(_arr);
+		return "(" + Lambda.array(this).join(", ") + ")";
 	}
 	#end
 }
