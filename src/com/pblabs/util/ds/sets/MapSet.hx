@@ -70,7 +70,7 @@ class MapSet<T> implements Set<T>
 	#if debug
 	public function toString () :String
 	{
-		return com.pblabs.util.IterUtil.join(com.pblabs.util.IterUtil.toArray(_source.keys()), ", ");
+		return "(" + Lambda.array(this).join(", ") + ")";
 	}
 	#end
 	
