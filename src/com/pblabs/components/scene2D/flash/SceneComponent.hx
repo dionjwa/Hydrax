@@ -140,13 +140,10 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		_unscaledBounds.xmax = localDimensions.right;
 		_unscaledBounds.ymin = localDimensions.top;
 		_unscaledBounds.ymax = localDimensions.bottom;
-		// _width = localDimensions.width;
-		// _height = localDimensions.height;
 		
-		// _bounds.xmin = _x - width / 2;
-		// _bounds.xmax = _x + width / 2;
-		// _bounds.ymin = _y - height / 2;
-		// _bounds.ymax = _y + height / 2;
+		width = _unscaledBounds.intervalX * scaleX;
+		height = _unscaledBounds.intervalY * scaleY;
+		
 		_isTransformDirty = true;
 	}
 	
