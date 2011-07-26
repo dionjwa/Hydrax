@@ -73,9 +73,6 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			_svgData.push(processReplacements(new String(svg), svgRegexReplacements));
 		}
 		
-		// _individualBounds = [];
-		// var boundsUnion = new AABB2();
-		
 		for (ii in 0..._svgData.length) {
 			#if js
 			//SVG documents added to the dom via innerHTML are *not* allowed to have any preamble.
@@ -83,11 +80,9 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			#end
 			var svgXml = Xml.parse(_svgData[ii]).ensureNotDocument();
 			var b = parseBounds(svgXml);
-			// _individualBounds.push(b);
 			
 			//Parse the first image for anchor elements, and only use the first element for mouse bounds
 			if (ii == 0) {
-				// boundsUnion.addAABB(b);
 				_relativeTransforms = SvgCache.parseAnchors(svgXml).array();
 				_relativeTransforms.unshift(new Vector2());
 				//Only the first Svg defines the bounds
@@ -100,19 +95,8 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 				_relativeTransforms[ii].y -= b.intervalY / 2;
 			}
 		}
-		//Set the identity transform to the first svg
-		// registrationPoint.x = boundsUnion.intervalX / 2;
-		// registrationPoint.y = boundsUnion.intervalY / 2;
-		// _unscaledBounds = boundsUnion;
-		// _bounds = _unscaledBounds.clone();
-		// trace(owner.name + " reg=" + registrationPoint);
 		#if js
 		if (hasParent() && !isOnCanvas) {
-			// // removeFromParent();
-			// addToParent();
-			
-			// Reflect.setField(div, "width", _bounds.intervalX + "px");
-			// Reflect.setField(div, "height", _bounds.intervalY + "px");
 			insertSvgsIntoDiv();
 		}
 		#end
@@ -125,53 +109,23 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		for (ii in 0...svgData.length) {
 			var svgString = svgData[ii];
 			var index = ii;
-			try {
-				SvgUtil.renderSvg(svgData[ii], function (renderedSvg :flash.display.DisplayObject) :Void {
-					if (index > 0) {
-						var v = self._relativeTransforms[index];
-						if (v != null && v.x != 0 && v.y != 0) {
-							renderedSvg.x = v.x;
-							renderedSvg.y = v.y;
-						}
+			SvgUtil.renderSvg(svgData[ii], function (renderedSvg :flash.display.DisplayObject) :Void {
+				if (index > 0) {
+					var v = self._relativeTransforms[index];
+					if (v != null && v.x != 0 && v.y != 0) {
+						renderedSvg.x = v.x;
+						renderedSvg.y = v.y;
 					}
-					var sprite = cast(self._displayObject, flash.display.Sprite);
-					sprite.addChildAt(renderedSvg, Mathematics.clamp(ii, 0, sprite.numChildren));
-					toRender--;
-					if (toRender <= 0) {
-						finishedRendering = true;
-						self.recomputeBounds();
-						self.renderCompleteSignal.dispatch();
-					}
-				});
-			} catch (e :Dynamic) {
-				com.pblabs.util.Log.error("Problem rendering " + resources[ii]);
+				}
+				var sprite = cast(self._displayObject, flash.display.Sprite);
+				sprite.addChildAt(renderedSvg, Mathematics.clamp(ii, 0, sprite.numChildren));
 				toRender--;
 				if (toRender <= 0) {
 					finishedRendering = true;
 					self.recomputeBounds();
 					self.renderCompleteSignal.dispatch();
 				}
-			}
-			
-			//Transform it
-			// var svg = new org.svgweb.SVGViewerFlash();
-			// INVISIBLE_STAGE.addChild(svg);
-			
-			// svg.xml = new flash.xml.XML(svgString);
-			
-			
-			
-			// com.pblabs.util.EventDispatcherUtil.addOnceListener(svg.svgRoot, org.svgweb.events.SVGEvent.SVGLoad, 
-			// 	function (ignored :Dynamic) :Void {
-			// 		var sprite = cast(self._displayObject, flash.display.Sprite);
-			// 		sprite.addChildAt(svg, Mathematics.clamp(ii, 0, sprite.numChildren));
-			// 		toRender--;
-			// 		if (toRender <= 0) {
-			// 			finishedRendering = true;
-			// 			self.recomputeBounds();
-			// 			self.renderCompleteSignal.dispatch();
-			// 		}
-			// 	});
+			});
 		}
 		#else
 		//TODO: Is the js renderer asynchronous???
@@ -304,23 +258,11 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			div.removeChild(div.lastChild);
 		}
 		
-		// var p = div.parentNode;
-		// div.parentNode.removeChild(div);
-		// div = com.pblabs.components.scene2D.js.SceneComponent.createDiv();
-		// p.appendChild(div);
-		
-		// div.style.width = "0px";
-		// div.style.height = "0px";
-			
 		//Create a div for each svg
 		for (ii in 0...svgData.length) {
 			var svg = svgData[ii];
 			var d = com.pblabs.components.scene2D.js.SceneComponent.createDiv();
 			div.appendChild(d);
-			// d.style.width = "0px";
-			// d.style.height = "0px";
-			// Reflect.setField(d, "width", width + "px");
-			// Reflect.setField(d, "height", height + "px");
 			d.innerHTML = svg;
 			//Transform it
 			var v = _relativeTransforms[ii];
@@ -338,28 +280,8 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			ctx.fillRect(0, 0, 30, 30);
 			return;
 		}
-		//Temporary hack: use canvg library for rendering SVGs to canvas
 		for (ii in 0...svgData.length) {
 			SvgUtil.renderSvg(svgData[ii], ctx.canvas, _relativeTransforms[ii]);
-			// var svg = svgData[ii];
-			// var args = { ignoreMouse: true, ignoreAnimation: true, ignoreDimensions: false, ignoreClear: true };
-			//Transform it
-			// var v = _relativeTransforms[ii];
-			
-			
-			// if (v != null && v.x != 0 && v.y != 0) {
-			// 	Reflect.setField(args, "offsetX", v.x);
-			// 	Reflect.setField(args, "offsetY", v.y);
-			// }
-			// Reflect.setField(args, "scaleWidth", width * scaleX);
-			// Reflect.setField(args, "scaleHeight", height * scaleY);
-			// try {
-			// 	untyped canvg(ctx.canvas, svg, args);
-			// } catch (e :Dynamic) {
-			// 	com.pblabs.util.Log.error(resources[ii]);
-			// 	com.pblabs.util.Log.error("Error rendering svg from canvg: " + e);
-			// 	com.pblabs.util.Log.error(com.pblabs.util.Log.getStackTrace());
-			// }
 		}
 	}
 	

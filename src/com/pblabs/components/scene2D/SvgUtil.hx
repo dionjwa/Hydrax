@@ -47,14 +47,20 @@ class SvgUtil
 		com.pblabs.util.Assert.isNotNull(svgData);
 		com.pblabs.util.Assert.isNotNull(cb);
 		renderLib = renderLib == null ? RenderLib.SVGWEB : renderLib;
-		if (renderLib ==  SVGWEB) {
+		if (renderLib == SVGWEB) {
+			#if enable_svgweb
 			renderSvgWithSvgWeb(svgData, cb);
+			#else
+			trace("throwing missing svgweb stuff");
+			throw "You must add the compiler switch -D enable_svgweb and add the swf lib 'hydrax/lib/svgweb/svgweb.swf'";
+			#end
 		} else {
 			var disp = renderSvgWithGM2D(svgData);
 			cb(disp);
 		}
 	}
 	
+	#if enable_svgweb
 	public static function renderSvgWithSvgWeb (svgData :String, cb :flash.display.DisplayObject->Void) :Void
 	{
 		/**
@@ -84,6 +90,7 @@ class SvgUtil
 				cb(svg);
 			});
 	}
+	#end
 	
 	public static function renderSvgWithGM2D (svgData :String) :flash.display.DisplayObject
 	{
