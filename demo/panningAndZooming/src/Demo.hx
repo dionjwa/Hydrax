@@ -12,8 +12,8 @@ import com.pblabs.components.scene2D.CircleShape;
 import com.pblabs.components.scene2D.ImageComponent;
 import com.pblabs.components.scene2D.RectangleShape;
 import com.pblabs.components.scene2D.SceneAlignment;
-import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.scene2D.SceneView;
+import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.tasks.AngleTask;
 import com.pblabs.components.tasks.FunctionTask;
 import com.pblabs.components.tasks.LocationTask;
@@ -40,7 +40,6 @@ import com.pblabs.util.ds.MultiMap;
 import com.pblabs.util.ds.Tuple;
 import com.pblabs.util.ds.multimaps.ArrayMultiMap;
 using com.pblabs.components.input.InputUtil;
-using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.components.ui.UIUtil;
 using com.pblabs.engine.util.PBUtil;
@@ -53,7 +52,7 @@ class Demo
 		game = new PBGame();
 		
 		#if js
-		game.getManager(SceneView).layerId = "haxe:screen";
+		game.getManager(SceneView).layerId = "haxeSceneView";
 		#end
 		
 		
@@ -73,23 +72,21 @@ class Demo
 	function startGame () :Void
 	{
 		var input = game.getManager(InputManager);
-		
-		var context = game.allocate(PBContext);
-		game.pushContext(context);
+		var context = game.pushContext(PBContext);
 		
 		#if flash
 		//Lets use the Bitmap renderer for flash.
 		// var gamescene = context.createBaseScene(null, false, true, com.pblabs.components.scene2D.flash.BitmapDataScene);
-		var gamescene = context.createBaseScene();
+		var gamescene = SceneUtil.createBaseScene(context);
 		#else
-		var gamescene = context.createBaseScene();
+		var gamescene = SceneUtil.createBaseScene(context);
 		#end
 		var lowerLayer = gamescene.addLayer("lowerLayer");
 		lowerLayer.parallaxFactor = 0.5;
 		var layer = gamescene.addLayer("defaultLayer");
 		
 		//Scene for the UI
-		var uiscene = context.createBaseScene("UIScene");
+		var uiscene = SceneUtil.createBaseScene(context, "UIScene");
 		uiscene.sceneAlignment = SceneAlignment.TOP_LEFT;
 		var uilayer = uiscene.addLayer("uilayer");
 		
@@ -124,7 +121,7 @@ class Demo
 		serial.addTask(LocationTask.CreateEaseOut(rect.right, rect.bottom, 3));
 		serial.addTask(LocationTask.CreateEaseOut(rect.left, rect.bottom, 3));
 		man.addTask(serial);
-		man.setAngle(0.4);
+		SceneUtil.setAngle(man, 0.4);
 		man.addTask(AngleTask.CreateLinear(3, 4));
 		
 		

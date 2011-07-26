@@ -1,26 +1,18 @@
 -D use_rtti_doc
 -D debug
+-D use_html5_canvas_as_default_scene_layer
 
 -lib hydrax
+-lib jQueryExtern
 
 -cp src
 
+--remap flash:jeash
 -js canvas/haxe.js
 
 -main Demo
 
+-cmd cp *.js canvas/
 -cmd cp indexcanvas.xhtml canvas/index.xhtml
 -cmd open canvas/index.xhtml
-
-
-#For local testing
-# -lib IterTools
-# -lib ArrayTools
-# -lib ListTools
-# -lib feffects
-# -cp ../../../hydrax/src
-# -cp ../../../hydrax/lib/hsl
-# -cp ../../../hydrax/lib/hsl-pico
-# -cp ../../../libdamago/lib/polygonal/src/lib
-
 

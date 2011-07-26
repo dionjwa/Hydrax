@@ -1,25 +1,19 @@
 -D use_rtti_doc
 -D debug
--D css
 
 -cp src
 
 -lib hydrax
-        
+-lib jQueryExtern
+
+--remap flash:jeash
 -js css/haxe.js
 
 -main Demo
 
 -cmd cp indexcss.xhtml css/index.xhtml
+--next
+-cmd cp *.js css/
+--next
 -cmd open css/index.xhtml
-
-#For local testing
-# -lib IterTools
-# -lib ArrayTools
-# -lib ListTools
-# -lib feffects
-# -cp ../../../hydrax/src
-# -cp ../../../hydrax/lib/hsl
-# -cp ../../../hydrax/lib/hsl-pico
-# -cp ../../../libdamago/lib/polygonal/src/lib
 

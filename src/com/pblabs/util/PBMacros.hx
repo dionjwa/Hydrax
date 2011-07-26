@@ -179,6 +179,11 @@ class PBMacros
 		var fields = haxe.macro.Context.getBuildFields();
         
 		var data = haxe.Resource.getString(resourceId);
+		
+		if (data == null) {
+			haxe.macro.Context.error("Missing resource=" + resourceId, pos);
+			return fields;
+		}
 		for (l in data.split("\n")) {
 			var line = l.trim();
 			if (line.startsWith("#") || line == "") {

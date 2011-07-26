@@ -100,9 +100,11 @@ class SvgUtil
 	{
 		com.pblabs.util.Assert.isNotNull(svgData);
 		com.pblabs.util.Assert.isNotNull(canvas);
-		com.pblabs.util.Assert.isNotNull(cb);
+		// com.pblabs.util.Assert.isNotNull(cb);
 		var args = { ignoreMouse: true, ignoreAnimation: true, ignoreDimensions: false, ignoreClear: true, renderCallback :function (?_) :Void {
-			cb();
+			if (cb != null) {
+				cb();
+			}
 		}};
 		
 		if (offset != null && offset.x != 0 && offset.y != 0) {

@@ -232,17 +232,9 @@ class SceneView
 		if (_layer == null) {
 			Preconditions.checkNotNull(_layerId, "no layer, and layerId is null");
 			_layer = cast js.Lib.document.getElementById(_layerId);
-			
-			// if (fullScreen) {
-			// 	var dim = SceneUtil.getFullScreenDimensions(true);
-			// 	width = Std.int(dim.x);
-			// 	height = Std.int(dim.y);
-			// } else {
-				//Get the dimensions from the div
-				//?
-				_width = Std.parseInt(_layer.style.width.replace("px", ""));
-				_height = Std.parseInt(_layer.style.height.replace("px", ""));
-			// }
+			com.pblabs.util.Assert.isNotNull(_layer, "No element with id=" + _layerId);
+			_width = Std.parseInt(_layer.style.width.replace("px", ""));
+			_height = Std.parseInt(_layer.style.height.replace("px", ""));
 			#if debug
 			_layer.style.borderColor = "#0000ff";
 			var border = 3;
