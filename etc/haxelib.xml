@@ -1,7 +1,7 @@
 <project name="hydrax" url="https://github.com/dionjwa/Hydrax" license="BSD">
         <user name="dionjwa"/>
         <description>A port of the Pushbutton Game Engine.</description>
-        <version name="1.1.2">Typo fix.</version>
+        <version name="1.1.2">Svg rendering used gm2d by default.  Maps now use Type.ValueType.  More fixes.</version>
         <depends name="feffects"/>
         <depends name="ArrayTools"/>
         <depends name="IterTools"/>
