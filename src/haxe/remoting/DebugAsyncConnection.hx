@@ -43,7 +43,7 @@ class DebugAsyncConnection
 	
 	static function doCall(path : Array<String>, params : String, cb :String->Void) : Void 
 	{
-		try {
+		// try {
 			var params :Array<Dynamic> = new haxe.Unserializer(params).unserialize();
 			var isCallback :Bool = params.pop();
 			if (isCallback) {
@@ -56,12 +56,12 @@ class DebugAsyncConnection
 			}
 			com.pblabs.util.Assert.isNotNull(serverContext, "No serverContext??");
 			serverContext.call(path, params);
-		} catch( e : Dynamic ) {
-			trace(e + " path=" + path + " " + com.pblabs.util.Log.getStackTrace());
-			trace('serverContext=' + serverContext);
-			var s = new haxe.Serializer();
-			s.serializeException(e);
-			cb(s.toString());
-		}
+		// } catch( e : Dynamic ) {
+		// 	trace(e + " path=" + path + " " + com.pblabs.util.Log.getStackTrace());
+		// 	trace('serverContext=' + serverContext);
+		// 	var s = new haxe.Serializer();
+		// 	s.serializeException(e);
+		// 	cb(s.toString());
+		// }
 	}
 }

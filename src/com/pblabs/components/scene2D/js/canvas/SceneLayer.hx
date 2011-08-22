@@ -15,29 +15,23 @@ import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.ReflectUtil;
 
-import easel.display.Canvas;
-import easel.display.Context2d;
+import js.Dom;
 
-class SceneLayer extends JSLayer,
-	implements IAnimatedObject
+class SceneLayer extends JSLayer
 {
-	public var priority :Int;
-	
 	/** Children mark this when they're modified*/
 	public var canvas (default, null) :Canvas;
-	public var ctx (default, null) :Context2d;
+	public var ctx (default, null) :CanvasRenderingContext2D;
 	
 	public function new ()
 	{
 		super();
-		priority = 0;
-		canvas = createCanvas();
-		div.appendChild(canvas);
 		_tempPoint = new Vector2();
 	}
 	
-	public function onFrame (dt :Float) :Void
+	override public function onFrame (dt :Float) :Void
 	{
+		super.onFrame(dt);
 		if (!isDirty && !isTransformDirty) {
 			return;
 		}
@@ -78,13 +72,23 @@ class SceneLayer extends JSLayer,
 		isTransformDirty = false;
 	}
 	
+	override function checkZOrder () :Void
+	{
+		//Just re-render
+		isDirty = true;
+	}
+	
 	override function addedToParent () :Void
 	{
-		canvas.width = Std.int(parent.sceneView.width);
-		canvas.height = Std.int(parent.sceneView.height);
-		ctx = canvas.getContext("2d");
-		isDirty = true;
 		super.addedToParent();
+		if (ctx == null) {
+			canvas = createCanvas();
+			canvas.width = Std.int(parent.sceneView.width);
+			canvas.height = Std.int(parent.sceneView.height);
+			ctx = canvas.getContext("2d");
+		}
+		
+		isDirty = true;
 	}
 	
 	override function onRemove () :Void
@@ -108,10 +112,11 @@ class SceneLayer extends JSLayer,
 	function createCanvas () :Canvas
 	{
 		var canvas :Canvas = cast js.Lib.document.createElement("canvas");
+		div.appendChild(canvas);
 		canvas.style.position = "absolute";
 		canvas.style.left = "0px";
 		canvas.style.top = "0px";
-		return canvas;
+		return cast canvas;
 	}
 	
 	var _tempPoint :Vector2;

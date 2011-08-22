@@ -80,7 +80,7 @@ class RectangleShape extends ShapeComponent
 	}
 	
 	#if js
-	override public function drawPixels (ctx :easel.display.Context2d)
+	override public function drawPixels (ctx :CanvasRenderingContext2D)
 	{
 		ctx.fillStyle = StringUtil.toColorString(fillColor, "#");
 		ctx.fillRect(0, 0, width, height);

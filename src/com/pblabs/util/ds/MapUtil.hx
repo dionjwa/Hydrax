@@ -12,19 +12,31 @@ import com.pblabs.util.Constants;
 import com.pblabs.util.StringUtil;
 import com.pblabs.util.ds.Map;
 
+import Type;
+
 typedef MapType = {
 	function keys () :Iterator<Dynamic>;
 	function get (key :Dynamic) :Dynamic;
 }
-// #end
 
 /**
  *Use using com.pblabs.util.ds.MapUtil 
  */
 class MapUtil
 {
+	public static function copyFrom (destination :Map<Dynamic, Dynamic>, source :Map<Dynamic, Dynamic>) :Map<Dynamic, Dynamic>
+	{
+		for (k in source.keys()) {
+			destination.set(k, source.get(k));
+		}
+		return destination;
+	}
+	
+	
 	public static function forEach (map :Map<Dynamic, Dynamic>, fn :Dynamic->Dynamic->Dynamic) :Void
 	{
+		com.pblabs.util.Assert.isNotNull(map, " map is null");
+		com.pblabs.util.Assert.isNotNull(fn, " fn is null");
 		for (k in map.keys()) {
 			//If the function returns true, stop looping
 			if (fn(k, map.get(k))) {
@@ -32,6 +44,34 @@ class MapUtil
 			}
 		}
 	}
+	
+	public static function fromArray <T>(arr :Array<Dynamic>, type :ValueType) :T
+	{
+		if (arr == null) {
+			return null;
+		}
+		var map = Maps.newHashMap(type);
+		var ii = 0;
+		while (ii < arr.length) {
+			map.set(arr[ii], arr[ii + 1]);
+			ii += 2;
+		}
+		return cast map;
+	}
+	
+	public static function toArray (map :Map<Dynamic, Dynamic>) :Array<Dynamic>
+	{
+		if (map == null) {
+			return null;
+		}
+		var arr :Array<Dynamic> = [];
+		for (k in map.keys()) {
+			arr.push(k);
+			arr.push(map.get(k));
+		}
+		return arr;
+	}
+	
 	
 	public static function isEmpty (map :Map<Dynamic, Dynamic>) :Bool
 	{

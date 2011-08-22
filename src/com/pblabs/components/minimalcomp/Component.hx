@@ -14,12 +14,21 @@ using com.pblabs.engine.util.PBUtil;
   * set the children locations, e.g. as relative to the parent or 
   * arranged in a row.
   */
-class Component extends NodeComponent<Component, Component>
+class Component extends NodeComponent<Container, Component>
 {
+	/** Used by containers that map locations to component ids */
+	public var id :String;
 	public var x (get_x, set_x) :Float;
 	public var y (get_y, set_y) :Float;
 	public var width (get_width, never) :Float;
 	public var height (get_height, never) :Float;
+	public var root (get_root, never) :Component;
+	function get_root () :Component
+	{
+		// return parent == null || !Std.is(this, Container)? null : parent.root;
+		return parent == null ? this : parent.root;
+	}
+	
 	public var spatialProperty :PropertyReference<SpatialComponent>;
 	var _spatial :SpatialComponent;
 	var _isHidden :Bool;
@@ -27,7 +36,7 @@ class Component extends NodeComponent<Component, Component>
 	public function new ()
 	{
 		super();
-		_isHidden = false;
+		setDefaultVars();
 	}
 	
 	public function show () :Void
@@ -66,6 +75,11 @@ class Component extends NodeComponent<Component, Component>
 		} else {
 			redraw();
 		}
+		if (owner != null && owner.getComponent(BaseSceneComponent) != null) {
+			if (owner.getComponent(BaseSceneComponent).layer != null) {
+				owner.getComponent(BaseSceneComponent).layer.zOrderDirty = true;
+			}
+		}
 	}
 	
 	public function redraw () :Void
@@ -94,6 +108,19 @@ class Component extends NodeComponent<Component, Component>
 		com.pblabs.util.Assert.isNotNull(_spatial);
 		super.onReset();
 		invalidate();
+	}
+	
+	override function onRemove () :Void
+	{
+		super.onRemove();
+		setDefaultVars();
+	}
+	
+	inline function setDefaultVars () :Void
+	{
+		id = null;
+		_spatial = null;
+		_isHidden = false;
 	}
 	
 	function get_x () :Float
@@ -141,4 +168,11 @@ class Component extends NodeComponent<Component, Component>
 		com.pblabs.util.Assert.isNotNull(_spatial.worldExtents);
 		return _spatial.worldExtents.intervalY;
 	}
+	
+	#if debug
+	override public function toString () :String
+	{
+		return owner != null ? owner.name : "";
+	}
+	#end
 }

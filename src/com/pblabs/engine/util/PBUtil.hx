@@ -34,6 +34,13 @@ class PBUtil
 		return StringUtil.isBlank(name) ? StringUtil.getStringKey(cls) :  StringUtil.getStringKey(cls) + "|" + name;
 	}
 	
+	public static function initializeEntity (e :IEntity, ?name :String) :IEntity
+	{
+		e.initialize(e.context.getManager(NameManager).validateName(name != null ? name : "entity"));
+		return e;
+	}
+	
+	
 	public static function addSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null, 
 		?deferring :Bool = false) :T
 	{
@@ -56,7 +63,7 @@ class PBUtil
 		return component;
 	}
 	
-	public static function addSingleComponent (context :IPBContext, component :IEntityComponent, ?compName :String = null) :Void
+	public static function addSingleComponent (context :IPBContext, component :IEntityComponent, ?compName :String = null) :IEntityComponent
 	{
 		Preconditions.checkNotNull(context, "Null context");
 		Preconditions.checkNotNull(component, "Null comp");
@@ -71,6 +78,24 @@ class PBUtil
 		e.addComponent(component, compName);
 		e.deferring = false;
 		Assert.isTrue(cast(component, IEntityComponent).isRegistered, "addsingle, not registered");
+		return component;
+	}
+	
+	public static function addComponent <T>(context :IPBContext, compClass :Class<T>, ?entityName :String) :T
+	{
+		Preconditions.checkNotNull(context, "Null context");
+		Preconditions.checkNotNull(compClass, "Null compClass");
+		entityName = entityName == null ? getDefaultComponentName(compClass) : entityName;
+		entityName = context.getManager(NameManager).validateName(entityName);
+		var component = context.allocate(compClass);
+		com.pblabs.util.Assert.isNotNull(component, "allocate returned null for compClass=" + compClass);
+		
+		var e = context.allocate(IEntity);
+		e.initialize(entityName);
+		e.deferring = true;
+		e.addComponent(cast(component, IEntityComponent));
+		e.deferring = false;
+		return component;
 	}
 	
 	public static function getSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null, 
@@ -136,7 +161,7 @@ class PBUtil
 		return new PropertyReference("@" + ReflectUtil.tinyName(cls) + fieldToken(fieldName));
 	}
 	
-	inline public static function getDefaultComponentName <T>(componentClass :Class<Dynamic>, ?type :Class<T>) :String
+	inline public static function getDefaultComponentName <T>(componentClass :Class<Dynamic>) :String
 	{
 		return ReflectUtil.tinyName(componentClass);
 	}

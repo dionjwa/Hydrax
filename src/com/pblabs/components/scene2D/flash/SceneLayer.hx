@@ -20,6 +20,8 @@ import flash.display.Sprite;
 
 import flash.geom.Matrix;
 
+using Lambda;
+
 class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 {
 	public var dirty :Bool;
@@ -51,7 +53,10 @@ class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 		// matrix = _rootTransform;
 	}
 	
-	public function updateZOrder () :Void
+	/**
+	  * Matches the DisplayObject index with the array index.
+	  */
+	override function checkZOrder () :Void
 	{
 		var ok = false;
 		while (!ok) {
@@ -60,10 +65,13 @@ class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 				if (_displayContainer.getChildIndex(children[i].displayObject) != i) {
 					_displayContainer.setChildIndex(children[i].displayObject, i);
 					ok = false;
-					break;
+					// break;
 				}
 			}
 		}
+		// trace(owner.name + "\n   " + children.map(com.pblabs.engine.util.Mapping.componentToEntity)
+		// 	.map(com.pblabs.engine.util.Mapping.entityToName) 
+		// 	.array().join("\n   "));
 	}
 	
 	override function childAdded (c :SceneComponent) :Void

@@ -19,7 +19,9 @@ import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PropertyReference;
+import com.pblabs.engine.resource.BitmapCacheResource;
 import com.pblabs.engine.resource.EmbeddedResource;
+import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Preconditions;
@@ -27,7 +29,6 @@ import com.pblabs.util.ds.Tuple;
 
 import de.polygonal.motor2.geom.math.XY;
 
-using com.pblabs.components.input.InputUtil;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.ui.UIUtil;
 using com.pblabs.engine.core.SignalBondManager;
@@ -39,24 +40,59 @@ class UIUtil
 	/** Component names for multi-image buttons, in case you need to modify them */
 	public static var IMAGE1 = "image1";
 	public static var IMAGE2 = "image2";
-	// public static function createSimpleButton (layer :BaseSceneLayer<Dynamic, Dynamic>, name :String, text :String, loc :XY, onInputDown :Void->Void) :IEntity
-	// {
-	//	 var so = layer.context.createBaseSceneEntity();
-	//	 var blob  = layer.context.allocate(CircleShape);
-	//	 blob.parentProperty = layer.entityProp();
-	//	 // blob.text = text;
-	//	 so.addComponent(blob);
-	//	 var mouse = layer.context.allocate(MouseInputComponent);
-	//	 so.addComponent(mouse);
-	//	 so.initialize(name);
-	//	 so.setDeviceHeldDown(onInputDown);
-	//	 so.setDeviceDown(onInputDown);
-	//	 so.setLocation(loc.x, loc.y);
-	//	 return so;
-	// }
+	
+	/** Massages any compatible ResourceToken into the proper SceneComponent.  */
+	public static function createImage (layer :BaseSceneLayer<Dynamic, Dynamic>, resource :ResourceToken, ?name :String) :IEntity
+	{
+		var e = layer.context.createBaseSceneEntity();
+		addImage(e, layer, resource);
+		e.initialize(layer.context.getManager(NameManager).validateName(name == null ? resource.id : name));
+		return e;
+	}
+	/** Massages any compatible ResourceToken into the proper SceneComponent.  */
+	public static function addImage (e :IEntity, layer :BaseSceneLayer<Dynamic, Dynamic>, resource :ResourceToken) :IEntity
+	{
+		var addImageComponent = function (cacheToken :ResourceToken) :Void {
+			var image = layer.context.allocate(com.pblabs.components.scene2D.ImageComponent);
+			image.parentProperty = layer.entityProp();
+			image.resource = cacheToken;
+			e.addComponent(image);
+		}
+		
+		switch (resource.type) {
+			case IMAGE:
+				addImageComponent(resource);
+			case BITMAP_CACHE(other):
+				addImageComponent(resource);
+			case SVG:
+				var rsrc = layer.context.getManager(IResourceManager);
+				var bitmapToken = BitmapCacheResource.createCachedToken(resource);
+				if (rsrc.get(bitmapToken) != null) {
+					addImageComponent(bitmapToken);
+				} else {
+					var svg = layer.context.allocate(com.pblabs.components.scene2D.Svg);
+					svg.parentProperty = layer.entityProp();
+					svg.svgData = rsrc.get(resource);
+					e.addComponent(svg);
+				}
+			case STRING:
+			#if flash
+			case CLASS:
+				var rsrc = layer.context.getManager(IResourceManager);
+				var bitmapToken = BitmapCacheResource.createCachedToken(resource);
+				if (rsrc.get(bitmapToken) != null) {
+					addImageComponent(bitmapToken);
+				} else {
+					addImageComponent(resource);
+				}
+			case SWF: throw "Not image from ";
+			#end
+		}
+		return e;
+	}
 	
 	public static function createSVGButton (layer :BaseSceneLayer<Dynamic, Dynamic>, 
-		svg1 :Array<ResourceToken<Dynamic>>, ?onClick :Void->Void, ?onDown :Void->Void, ?name :String) :IEntity
+		svg1 :Array<ResourceToken>, ?onClick :Void->Void, ?onDown :Void->Void, ?name :String) :IEntity
 	{
 		var so = layer.context.createBaseSceneEntity();
 		
@@ -80,8 +116,8 @@ class UIUtil
 	}
 	
 	public static function createTwoStateSVGToggle (layer :BaseSceneLayer<Dynamic, Dynamic>, 
-		svg1 :Array<ResourceToken<Dynamic>>, 
-		svg2 :Array<ResourceToken<Dynamic>>,
+		svg1 :Array<ResourceToken>, 
+		svg2 :Array<ResourceToken>,
 		onDown :Void->Void,
 		?name :String) :IEntity
 	{
@@ -97,8 +133,8 @@ class UIUtil
 	}
 	
 	public static function createTwoStateSVGButton (layer :BaseSceneLayer<Dynamic, Dynamic>, 
-		svg1 :Array<ResourceToken<Dynamic>>, 
-		svg2 :Array<ResourceToken<Dynamic>>,
+		svg1 :Array<ResourceToken>, 
+		svg2 :Array<ResourceToken>,
 		text :String, 
 		onClick :Void->Void,
 		?onDown :Void->Void,
@@ -210,7 +246,7 @@ class UIUtil
 		sc.objectMask = mask;
 	}
 	
-	public static function createText (layer :BaseSceneLayer<Dynamic, Dynamic>, svg :ResourceToken<Dynamic>, 
+	public static function createText (layer :BaseSceneLayer<Dynamic, Dynamic>, svg :ResourceToken, 
 		text :String, ?align :String) :IEntity
 	{
 		var so = layer.context.createBaseSceneEntity();
@@ -230,7 +266,7 @@ class UIUtil
 	}
 	
 	// public static function createButton (layer :BaseSceneLayer<Dynamic, Dynamic>, name :String, imageClass :Class<Dynamic>,
-	// 	resource :ResourceToken<Dynamic>, ?loc :XY = null, ?onInputDown :Void->Void = null) :IEntity
+	// 	resource :ResourceToken, ?loc :XY = null, ?onInputDown :Void->Void = null) :IEntity
 	// {
 	// 	var so = layer.context.createBaseSceneEntity();
 		

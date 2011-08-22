@@ -18,6 +18,7 @@ interface MultiMap <K, V>
 	public function existsEntry (key :K, value :V) :Bool;
 	public function get (key :K) :Iterable<V>;
 	public function keys () :Iterator<K>;
+	// public function iterator () :Iterator<K>;
 	public function remove (key :K) :Bool;
 	public function removeEntry (key :K, value :V) :Bool;
 	public function set (key :K, value :V) :Void;

@@ -53,9 +53,11 @@ class ImageResource extends ResourceBase
 	}
 	
 #if (flash || cpp)
-	override public function get (?name :String) :flash.display.Bitmap
+	override public function get (token :ResourceToken) :flash.display.Bitmap
+	// override public function get (?name :String) :flash.display.Bitmap
 #elseif js
-	override public function get (?name :String) :js.Dom.Image
+	override public function get (token :ResourceToken) :js.Dom.Image
+	// override public function get (?name :String) :js.Dom.Image
 #end
 	{
 		if (name != null) {

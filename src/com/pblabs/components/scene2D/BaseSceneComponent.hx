@@ -18,6 +18,7 @@ import com.pblabs.geom.RectangleTools;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Preconditions;
 
+import de.polygonal.core.math.Mathematics;
 import de.polygonal.motor2.geom.math.XY;
 import de.polygonal.motor2.geom.primitive.AABB2;
 
@@ -27,6 +28,7 @@ using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
 using com.pblabs.geom.VectorTools;
+using com.pblabs.util.ArrayUtil;
 using com.pblabs.util.StringUtil;
 
 class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComponent<Layer, Dynamic>,
@@ -73,7 +75,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	var _angleOffset :Float;
 	var _locationOffset :XY;
 	var _layerIndexDirty :Bool;
-	var _zIndexDirty :Bool;
+	// var _zIndexDirty :Bool;
 	var _registrationPoint :XY;
 	var _objectMask :ObjectType;
 	var _bounds :AABB2;
@@ -97,13 +99,13 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		_scaleY = 1;
 		_alpha = 1;
 		_layerIndex = 0;
-		_zIndex = 0;
+		_zIndex = -1;
 		_visible = true;
 		isTransformDirty = true;
 		_locationOffset = new Vector2();
 		_angleOffset = 0;
 		_layerIndexDirty = false;
-		_zIndexDirty = false;
+		// _zIndexDirty = false;
 		_registrationPoint = new Vector2(0, 0);
 		//Sensible default
 		spatialProperty = SpatialComponent.P_SPATIAL;
@@ -347,14 +349,29 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	function get_zIndex () :Int
 	{
-		return _zIndex;
+		return layer == null ? _zIndex : layer.children.indexOf(this);
 	}
 	
 	function set_zIndex (val :Int) :Int
 	{
-		_zIndex = val;
-		_zIndexDirty = true;
+		if (layer == null) {
+			_zIndex = val;
+			// _zIndexDirty = true;
+		} else {
+			val = Mathematics.clamp(val, 0, layer.children.length - 1);
+			var curIndex = layer.children.indexOf(this);
+			if (curIndex != val) {
+				layer.children.remove(this);
+				layer.children.insert(val, this);
+				layer.zOrderDirty = true;
+				// _zIndexDirty = true;
+			}
+		}
 		return val;
+		
+		// _zIndex = val;
+		// _zIndexDirty = true;
+		// return val;
 	}
 	
 	function get_layerIndex () :Int

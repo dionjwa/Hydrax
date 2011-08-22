@@ -62,7 +62,7 @@ class Predicates
 			return item != null && EqualableUtil.equals(ReflectUtil.field(item, propName), value); 
 		};
 	}
-
+	
 	/**
 	 * Create a predicate that returns true if the item is in the specified Array.
 	 */

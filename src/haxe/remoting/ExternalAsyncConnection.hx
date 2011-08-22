@@ -132,12 +132,16 @@ class ExternalAsyncConnection implements AsyncConnection
 					try	fobj.externalRemotingCallback(cnx.__data.name, callbackId, s.toString()+"#") catch( e : Dynamic ) {trace(e);};
 				#end
 			});
+			#if flash
+			cnx.__data.ctx.call(path.split("."), params);
+			#elseif js
 			//Call later, so flash doesn't hang
 			//http://www.calypso88.com/?p=25
 			var f = function () :Void {
 				cnx.__data.ctx.call(path.split("."), params);
 			}
 			untyped __js__("setTimeout(f, 0)");
+			#end
 		} catch( e : Dynamic ) {
 			trace(e);
 			throw e;

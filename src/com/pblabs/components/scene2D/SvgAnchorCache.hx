@@ -30,7 +30,7 @@ using com.pblabs.util.IterUtil;
   *
   * This manager is an alternative to extending existing components.
   */
-class SvgCache
+class SvgAnchorCacheDelete
 	implements IPBManager
 {
 	public static var ANCHOR_PREFIX = "anchor";
@@ -46,7 +46,7 @@ class SvgCache
 		
 		var clipData :Map<String, XY> = new SortedMap(Maps.newHashMap(ValueType.TClass(String)), Comparators.compareStrings);
 		com.pblabs.util.DisplayUtils.applyToHierarchy(clip, function (d :flash.display.DisplayObject) :Dynamic {
-			if (d.name.startsWith("anchor")) {
+			if (d.name.toLowerCase().startsWith("anchor")) {
 				clipData.set(d.name, new Vector2(d.x, d.y));
 			}
 		});
@@ -66,7 +66,7 @@ class SvgCache
 			// trace('    element.nodeName=' +     element.nodeName);
 			if (element.nodeName.endsWith("rect")) {
 				// trace("...found rect");
-				if (element.get(INKSCAPE_LABEL) != null && element.get(INKSCAPE_LABEL).startsWith(ANCHOR_PREFIX)) {
+				if (element.get(INKSCAPE_LABEL) != null && element.get(INKSCAPE_LABEL).toLowerCase().startsWith(ANCHOR_PREFIX)) {
 					// trace('found anchor');
 					var x = Std.parseFloat(element.get("x"));
 					var y = Std.parseFloat(element.get("y"));

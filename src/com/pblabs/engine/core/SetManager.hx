@@ -188,6 +188,11 @@ class SetManager extends PBManager
 		return objs;
 	}
 	
+	public function getComponentSets () :Iterable<String>
+	{
+		return _componentSets.keys().toArray();
+	}
+	
 	public function removeComponentSet (set :String) :Iterable<IEntityComponent>
 	{
 		var objs = _componentSets.get(set);
@@ -217,6 +222,8 @@ class SetManager extends PBManager
 		_componentSets.set(set, component);
 		_components.set(component, set);
 		
+		addObjectToSet(component.owner, set);
+		
 		// var cls = Type.getClass(component);
 	    // if (COMPONENTS_MARKED_SET.get(cls)) {
 		// 	_componentSets.set(cls, component);
@@ -227,6 +234,7 @@ class SetManager extends PBManager
 	{
 		for (set in _components.get(component)) {
 			_componentSets.removeEntry(set, component);
+			removeObjectFromSet(component.owner, set);
 		}
 		_components.remove(component);
 		// var cls = Type.getClass(component);

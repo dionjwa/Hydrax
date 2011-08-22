@@ -13,4 +13,7 @@ enum Source {
 	bytes (b :haxe.io.Bytes);
 	text (t :String);
 	embedded (name :String);
+	#if flash
+	swf(swfName :String);
+	#end
 }

@@ -80,7 +80,6 @@ class MouseInputComponent extends EntityComponent
 		return mouse;
 	}
 	
-	
 	/**
 	  * If there is an IInteractiveComponent in the Entity, you don't have to explicity set the properties.
 	  */
@@ -152,10 +151,7 @@ class MouseInputComponent extends EntityComponent
 	public function new ()
 	{
 		super();
-		//The default is not movable, rotatable, or scalable.
-		isScalable = isRotatable = isTranslatable = false;
-		_bonds = [];
-		_mouseDownThis = false;
+		setDefaults();
 	}
 	
 	public function bindDeviceDown (callBack :Void->Void) :MouseInputComponent
@@ -223,11 +219,9 @@ class MouseInputComponent extends EntityComponent
 	override function onRemove () :Void
 	{
 		super.onRemove();
-		isScalable = isRotatable = isTranslatable = false;
-		boundsProperty = null;
-		_bounds = null;
-		_mouseDownThis = false;
+		destroyDeviceHeldBond();
 		clearListeners();
+		setDefaults();
 	}
 	
 	function get_bounds () :IInteractiveComponent
@@ -303,6 +297,15 @@ class MouseInputComponent extends EntityComponent
 			_deviceHeldDownBond.destroy();
 			_deviceHeldDownBond = null;
 		}
+	}
+	
+	function setDefaults () :Void
+	{
+		//The default is not movable, rotatable, or scalable.
+		isScalable = isRotatable = isTranslatable = false;
+		_bonds = [];
+		_mouseDownThis = false;
+		_bounds = null;		
 	}
 	
 	// function destroyDeviceMoveBond () :Void

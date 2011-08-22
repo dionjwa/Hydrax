@@ -32,6 +32,6 @@ interface ICopyPixelsRenderer
 	#if flash 
 	function drawPixels(objectToScreen :Matrix, renderTarget :flash.display.BitmapData):Void;
 	#elseif js
-	function drawPixels(ctx :easel.display.Context2d):Void;
+	function drawPixels(ctx :CanvasRenderingContext2D):Void;
 	#end
 }

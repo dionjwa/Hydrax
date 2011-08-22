@@ -28,9 +28,9 @@ class EmbeddedResource extends ResourceBase<Dynamic>
 {
 	public static var NAME :String = "embedded";
 
-	public static function token <T>(key :String) :ResourceToken<T>
+	public static function token <T>(key :String, type :ResourceType) :ResourceToken
 	{
-	    return new ResourceToken(NAME, key);
+	    return new ResourceToken(key, Source.embedded(key), type);
 	}
 	
 	var _haxeResources :Set<String>;
@@ -47,46 +47,47 @@ class EmbeddedResource extends ResourceBase<Dynamic>
 		loaded();
 	}
 	
-	override public function get (?elementName :String) :Dynamic
+	override public function get (token :ResourceToken) :Dynamic
+	// override public function get (?elementName :String) :Dynamic
 	{
-		Preconditions.checkNotNull(elementName, "element name cannot be null" + com.pblabs.util.Log.getStackTrace());
+		Preconditions.checkNotNull(token, "token cannot be null" + com.pblabs.util.Log.getStackTrace());
 		
 		//Check haxe embedded resources first
-		if (_haxeResources.exists(elementName)) {
-			return haxe.Resource.getBytes(elementName);
+		if (_haxeResources.exists(token.id)) {
+			return haxe.Resource.getBytes(token.id);
 		}
 		
 		//If no haxe embedded resources, check platform specific embedding
 		#if flash
-		var cls :Class<Dynamic> = resolveEmbeddedClassName(elementName);
-		Preconditions.checkNotNull(cls, "No embedded resource class SWFResources_" + elementName + " or " + elementName);
+		var cls :Class<Dynamic> = ResourceTools.resolveEmbeddedClassName(token.id);
+		Preconditions.checkNotNull(cls, "No embedded resource class SWFResources_" + token.id + " or " + token.id);
 		return Type.createInstance(cls, com.pblabs.util.Constants.EMPTY_ARRAY);
 		#end
-		com.pblabs.util.Log.error("No embedded resource found: " + elementName);
+		com.pblabs.util.Log.error("No embedded resource found: " + token.id);
 		return null;
 	}
 	
-	#if flash
-	public static function resolveEmbeddedClassName (id :String) :Class<Dynamic>
-	{
-		var cls :Class<Dynamic> = Type.resolveClass(id.toUpperCase());
-		if (cls != null)
-			return cls;
+	// #if flash
+	// public static function resolveEmbeddedClassName (id :String) :Class<Dynamic>
+	// {
+	// 	var cls :Class<Dynamic> = Type.resolveClass(id.toUpperCase());
+	// 	if (cls != null)
+	// 		return cls;
 
-		cls = Type.resolveClass("SWFResources_" + id);
-		if (cls != null)
-			return cls;
+	// 	cls = Type.resolveClass("SWFResources_" + id);
+	// 	if (cls != null)
+	// 		return cls;
 			
-		cls = Type.resolveClass(id);
-		if (cls != null)
-			return cls;
+	// 	cls = Type.resolveClass(id);
+	// 	if (cls != null)
+	// 		return cls;
 			
-		cls = Type.resolveClass("SWFResources_" + id.toUpperCase());
-		if (cls == null) {
-			com.pblabs.util.Log.error("Failed to resolve embedded class: " + id);
-		}
-		return cls;
-	}
-	#end
+	// 	cls = Type.resolveClass("SWFResources_" + id.toUpperCase());
+	// 	if (cls == null) {
+	// 		com.pblabs.util.Log.error("Failed to resolve embedded class: " + id);
+	// 	}
+	// 	return cls;
+	// }
+	// #end
 	
 }

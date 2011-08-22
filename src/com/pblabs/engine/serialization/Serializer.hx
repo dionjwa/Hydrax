@@ -40,7 +40,7 @@ using com.pblabs.util.StringUtil;
 using com.pblabs.util.XmlUtil;
 
 /**
- * Singleton class for serializing and deserializing objects. This class 
+ * Singleton class for serializing and deserializing objects into Xml. This class 
  * implements a default serialization behavior based on the format described
  * in the XMLFormat reference. This default behavior can be replaced on a class
  * by class basis by implementing the ISerializable interface.

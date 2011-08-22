@@ -453,6 +453,7 @@ class InputManager extends BaseInputManager,
 				layerIndex--;
 				//If the layer doesn't match the mask, ignore all the children.  Saves iterations
 				if (!layer.objectMask.and(mask)) {
+					// trace("ignoring layer=" + layer);
 					continue;
 				}
 				var childIndex = layer.children.length -1;
@@ -463,6 +464,7 @@ class InputManager extends BaseInputManager,
 					_tempVec.x = worldLoc.x;
 					_tempVec.y = worldLoc.y;
 					if (so.containsWorldPoint(_tempVec, mask)) {
+						// trace(so.owner);
 						_displayObjectFirstUnderPoint.set(mask.bits, so);
 						return so;
 					}

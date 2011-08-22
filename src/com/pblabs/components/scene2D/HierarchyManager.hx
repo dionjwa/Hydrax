@@ -1,19 +1,18 @@
 package com.pblabs.components.scene2D;
 
-import com.pblabs.components.scene2D.SvgCache;
+import Type;
+
+import com.pblabs.components.scene2D.SvgAnchorCache;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntity;
+import com.pblabs.engine.resource.IResourceManager;
+import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Comparators;
 import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
-import com.pblabs.util.ds.maps.DynamicMap;
-import com.pblabs.util.ds.maps.SortedMap;
 
 import de.polygonal.motor2.geom.math.XY;
-
-import Type;
 
 using StringTools;
 
@@ -35,26 +34,32 @@ class HierarchyManager extends EntityComponent
 	public static var ANCHOR_PREFIX = "anchor";
 	public static var INKSCAPE_LABEL = "inkscape:label";
 	
-	@inject("com.pblabs.components.scene2D.SvgCache")
-	var svgCache :SvgCache;
+	// @inject("com.pblabs.components.scene2D.SvgAnchorCache")
+	// var svgCache :SvgAnchorCache;
+	
+	@inject("com.pblabs.engine.resource.IResourceManager")
+	var _rsrc :IResourceManager;
 	
 	/**
 	  * Maps <svg id or DisplayObject.name, map of <anchor name, relative location>>  
 	  */
-	var _anchors :Map<String, Map<String, XY>>;
+	// var _anchors :Map<String, Map<String, XY>>;
 	var _links :Array<Link>;
 	
 	public function new ()
 	{
 		super();
-		_anchors = Maps.newHashMap(ValueType.TClass(String));
+		// _anchors = Maps.newHashMap(ValueType.TClass(String));
 		_links = [];
 	}
 	
-	inline public function getAnchors (s :BaseSceneComponent<Dynamic>) :Map<String, XY>
+	public function getAnchors (token :ResourceToken) :Map<String, XY>
 	{
-		com.pblabs.util.Assert.isNotNull(svgCache, "Missing SvgCache");
-		return svgCache.getAnchors(s);
+		com.pblabs.util.Assert.isNotNull(token, ' token is null');
+		token = SvgTools.getSvgResource(token);
+		var svg = _rsrc.get(token);
+		com.pblabs.util.Assert.isNotNull(svg, ' svg is null');
+		return SvgAnchors.getAnchors(svg);
 	}
 	
 	function updateLink (link :Link) :Void
@@ -74,20 +79,24 @@ class HierarchyManager extends EntityComponent
 		link.child.owner.setLocation(locX, locY);
 	}
 	
-	public function setAsChild (parent :BaseSceneComponent<Dynamic>, childKey :String, child :BaseSceneComponent<Dynamic>) :Void
+	public function setAsChild (parent :BaseSceneComponent<Dynamic>, parentResource :ResourceToken, 
+		childKey :String, child :BaseSceneComponent<Dynamic>) :Void
 	{
 		com.pblabs.util.Assert.isNotNull(parent);
 		com.pblabs.util.Assert.isNotNull(childKey);
 		com.pblabs.util.Assert.isNotNull(child);
+		com.pblabs.util.Assert.isNotNull(parentResource);
+		parentResource = SvgTools.getSvgResource(parentResource);
 		
 		removeChild(child);
 		
-		var anchorId = SvgCache.getAnchorIdentifier(parent);
-		var anchors = _anchors.get(anchorId);
-		if (anchors == null) {
-			anchors = getAnchors(parent);
-			_anchors.set(anchorId, anchors);
-		}
+		// var anchorId = SvgAnchorCache.getAnchorIdentifier(parent);
+		var anchors = getAnchors(parentResource); 
+		// _anchors.get(anchorId);
+		// if (anchors == null) {
+		// 	anchors = getAnchors(parent);
+		// 	_anchors.set(anchorId, anchors);
+		// }
 		
 		for (key in anchors.keys()) {
 			if (key.startsWith(childKey)) {
@@ -98,7 +107,7 @@ class HierarchyManager extends EntityComponent
 		var link = new Link();
 		link.child = child;
 		link.parent = parent;
-		link.parentDisplayType = anchorId;
+		link.parentDisplayType = parentResource;
 		link.childKey = childKey;
 		link.childEntityName = child.owner.name;
 		_links.push(link);
@@ -115,8 +124,9 @@ class HierarchyManager extends EntityComponent
 	override function onRemove () :Void
 	{
 		super.onRemove();
-		_anchors.clear();
-		_anchors = null;
+		// _anchors.clear();
+		// _anchors = null;
+		_rsrc = null;
 		_links = null;
 	}
 	
@@ -138,32 +148,32 @@ class HierarchyManager extends EntityComponent
 		}
 	}
 	
-	function getOffset (parent :String, child :String) :XY
+	function getOffset (parent :ResourceToken, child :String) :XY
 	{
-		if (_anchors.get(parent) == null) {
+		if (getAnchors(parent) == null) {
 			com.pblabs.util.Log.error("missing in _anchors: " + parent);
 			return null;
 		}
-		if (_anchors.get(parent).get(child) == null) {
-			com.pblabs.util.Log.error("Missing child=" + child + " from anchors from parent=" + parent + ", anchors=" + com.pblabs.util.ds.MapUtil.toString(_anchors.get(parent)));
+		if (getAnchors(parent).get(child) == null) {
+			com.pblabs.util.Log.error("Missing child=" + child + " from anchors from parent=" + parent + ", anchors=" + com.pblabs.util.ds.MapUtil.toString(getAnchors(parent)));
 			return new Vector2();
 		}
-		return _anchors.get(parent).get(child).clone();
+		return getAnchors(parent).get(child).clone();
 	}
 	
-	#if debug
-	override public function toString () :String
-	{
-		var sb = new StringBuf();
-		sb.add(com.pblabs.util.ReflectUtil.tinyClassName(this));
-		if (_anchors != null) {
-			for (key in _anchors.keys()) {
-				sb.add("\n  " + key + "==>" + com.pblabs.util.ds.MapUtil.toString(_anchors.get(key)));
-			}
-		}
-		return sb.toString();
-	}
-	#end
+	// #if debug
+	// override public function toString () :String
+	// {
+	// 	var sb = new StringBuf();
+	// 	sb.add(com.pblabs.util.ReflectUtil.tinyClassName(this));
+	// 	if (_anchors != null) {
+	// 		for (key in _anchors.keys()) {
+	// 			sb.add("\n  " + key + "==>" + com.pblabs.util.ds.MapUtil.toString(_anchors.get(key)));
+	// 		}
+	// 	}
+	// 	return sb.toString();
+	// }
+	// #end
 }
 
 class Link
@@ -172,7 +182,7 @@ class Link
 	public var childEntityName :String;
 	public var parent :BaseSceneComponent<Dynamic>;
 	public var childKey :String;
-	public var parentDisplayType :String;
+	public var parentDisplayType :ResourceToken;
 	
 	public function new () {}
 }

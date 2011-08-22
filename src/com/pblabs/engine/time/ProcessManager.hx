@@ -535,13 +535,13 @@ class ProcessManager implements IProcessManager
 				if(object == null)
 					continue;
 				
-				#if profiler 
-				com.pblabs.engine.debug.Profiler.enter(object.key);
-				#end
+				// #if profiler 
+				// com.pblabs.engine.debug.Profiler.enter(object.key);
+				// #end
 				object.onTick(SECONDS_PER_TICK);
-				#if profiler
-				com.pblabs.engine.debug.Profiler.exit(object.key);
-				#end
+				// #if profiler
+				// com.pblabs.engine.debug.Profiler.exit(object.key);
+				// #end
 			}
 			_duringAdvance = false;
 			
@@ -583,13 +583,13 @@ class ProcessManager implements IProcessManager
 			if(animatedObject == null)
 				continue;
 			
-			#if profiler
-			com.pblabs.engine.debug.Profiler.enter(animatedObject.key);
-			#end
+			// #if profiler
+			// com.pblabs.engine.debug.Profiler.enter(animatedObject.key);
+			// #end
 			animatedObject.onFrame(deltaTime);
-			#if profiler
-			com.pblabs.engine.debug.Profiler.exit(animatedObject.key);
-			#end
+			// #if profiler
+			// com.pblabs.engine.debug.Profiler.exit(animatedObject.key);
+			// #end
 		}
 		_duringAdvance = false;
 		com.pblabs.engine.debug.Profiler.exit("frame");

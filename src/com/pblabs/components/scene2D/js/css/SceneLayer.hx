@@ -17,21 +17,22 @@ import js.Dom;
 
 import js.Lib;
 
-class SceneLayer extends JSLayer,
-	implements IAnimatedObject
+class SceneLayer extends JSLayer
+	// ,implements IAnimatedObject
 {
-	public var priority :Int;
+	// public var priority :Int;
 	var _tempPoint :Vector2;
 	
 	public function new ()
 	{
 		super();
-		priority = 0;
+		// priority = 0;
 		_tempPoint = new Vector2();
 	}
 	
-	public function onFrame (dt :Float) :Void
+	override public function onFrame (dt :Float) :Void
 	{
+		super.onFrame(dt);
 	    if (isTransformDirty) {
 	    	updateTransform();
 	    	isTransformDirty = false;
@@ -56,6 +57,14 @@ class SceneLayer extends JSLayer,
 			untyped div.style.webkitTransform = _transformMatrix.toString();
 		} else {
 			untyped div.style.MozTransform = _transformMatrix.toMozString();
+		}
+	}
+	
+	//Untested
+	override function checkZOrder () :Void
+	{
+		for (ii in 1...children.length) {
+			div.insertBefore(children[ii].div, children[ii - 1].div);
 		}
 	}
 }

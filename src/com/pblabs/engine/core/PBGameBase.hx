@@ -118,15 +118,16 @@ class PBGameBase
 		injector.mapValue(clazz, instance, optionalName);
 		
 		if (Std.is(instance, IPBManager)) {
-			try {
-				cast(instance, IPBManager).startup();
-			#if flash
-			} catch (e :flash.errors.TypeError) {
-			#else
-			#end
-			} catch (e :Dynamic) {
-				trace("Fuck, error casting " + instance + "::" + com.pblabs.util.ReflectUtil.getClassName(instance) +" to a IPBManager, even though it says it's one: " + Std.is(instance, IPBManager) + "\n" + e);  
-			}
+			cast(instance, IPBManager).startup();
+			// try {
+			// 	cast(instance, IPBManager).startup();
+			// #if flash
+			// } catch (e :flash.errors.TypeError) {
+			// #else
+			// #end
+			// } catch (e :Dynamic) {
+			// 	trace("Fuck, error casting " + instance + "::" + com.pblabs.util.ReflectUtil.getClassName(instance) +" to a IPBManager, even though it says it's one: " + Std.is(instance, IPBManager) + "\n" + e);  
+			// }
 		}
 		return instance;
 	}

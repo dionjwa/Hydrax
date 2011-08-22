@@ -10,7 +10,7 @@ import com.pblabs.components.scene2D.ImageComponent;
 import com.pblabs.components.scene2D.SVGComponent;
 import com.pblabs.components.scene2D.SceneAlignment;
 import com.pblabs.components.scene2D.SceneUtil;
-import com.pblabs.components.scene2D.SvgCache;
+import com.pblabs.components.scene2D.SvgAnchorCache;
 import com.pblabs.components.tasks.AngleTask;
 import com.pblabs.components.tasks.LocationTask;
 import com.pblabs.components.tasks.RepeatingTask;
@@ -90,7 +90,7 @@ class Demo
 		
 		
 		
-		context.registerManager(SvgCache, new SvgCache());
+		context.registerManager(SvgAnchorCache, new SvgAnchorCache());
 		//The hierarchy manager
 		var hm :HierarchyManager = context.addSingletonComponent(HierarchyManager);
 		

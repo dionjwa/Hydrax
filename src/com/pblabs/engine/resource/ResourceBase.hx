@@ -8,16 +8,16 @@
  ******************************************************************************/
 package com.pblabs.engine.resource;
 
-import com.pblabs.engine.resource.IResource;
-
 import com.pblabs.util.StringUtil;
 
 /**
   * Base class for extending to more specific Resource types.
   */
 class ResourceBase<T>
-	implements IResource<T> 
+	implements IResource<T>
 {
+	public var manager :IResourceManager;
+	
 	public var name (get_name, never) :String;
 	
 	public function new (name :String)
@@ -26,7 +26,13 @@ class ResourceBase<T>
 		_isLoaded = false;
 	}
 	
-	public function get (?name :String) :T
+	public function add (resourceToken :ResourceToken) :Void
+	{
+		//Subclasses must override this to be useful.
+		throw Type.getClassName(Type.getClass(this)) + " must override";
+	}
+	
+	public function get (resourceToken :ResourceToken) :T
 	{
 		//Subclasses must override this to be useful.
 		throw "Override";
@@ -44,6 +50,7 @@ class ResourceBase<T>
 		_onLoad = null;
 		_onError = null;
 		_isLoaded = false;
+		manager = null;
 	}
 	
 	public function isLoaded () :Bool
@@ -72,9 +79,8 @@ class ResourceBase<T>
 	#if debug
 	public function toString () :String
 	{
-		return StringUtil.objectToString(this, ["name"]);
+		return "[" + Type.getClassName(Type.getClass(this)) + ", name=" + name + "]";
 	}
-	
 	#end
 	
 	// #if (editor || debug)

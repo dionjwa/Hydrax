@@ -8,6 +8,7 @@
  ******************************************************************************/
 package com.pblabs.components.scene2D;
 
+import com.pblabs.components.scene2D.SvgAnchors;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.ds.Tuple;
@@ -25,8 +26,8 @@ using Lambda;
 using StringTools;
 
 using com.pblabs.components.scene2D.SceneUtil;
-using com.pblabs.components.scene2D.SvgUtil;
-using com.pblabs.engine.resource.ResourceToken;
+using com.pblabs.components.scene2D.SvgRenderTools;
+using com.pblabs.engine.resource.ResourceManager;
 using com.pblabs.util.StringUtil;
 using com.pblabs.util.XmlUtil;
 #if flash
@@ -34,6 +35,17 @@ using com.pblabs.util.DisplayUtils;
 import de.polygonal.core.math.Mathematics;
 #end
 
+#if flash
+#end
+
+#if flash
+#end
+
+#if flash
+#end
+
+#if flash
+#end
 
 /**
   * Cross platform SVG based Scene2D component.
@@ -58,7 +70,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	#end
 	/** The IResources */
 	/** Load the svg(s) as a raw strings.  They're inserted in the dom, or parsed and rendered to the canvas. */
-	public var resources :Array<ResourceToken<Dynamic>>;
+	public var resources :Array<ResourceToken>;
 	public var svgData (get_svgData, set_svgData) :Array<String>;
 	var _svgData :Array<String>;
 	var _svgDataUnmodified :Array<String>;
@@ -83,7 +95,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			
 			//Parse the first image for anchor elements, and only use the first element for mouse bounds
 			if (ii == 0) {
-				_relativeTransforms = SvgCache.parseAnchors(svgXml).array();
+				_relativeTransforms = SvgAnchors.getAnchors(_svgData[ii]).array();
 				_relativeTransforms.unshift(new Vector2());
 				//Only the first Svg defines the bounds
 				_unscaledBounds = b;
@@ -109,7 +121,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		for (ii in 0...svgData.length) {
 			var svgString = svgData[ii];
 			var index = ii;
-			SvgUtil.renderSvg(svgData[ii], function (renderedSvg :flash.display.DisplayObject) :Void {
+			SvgRenderTools.renderSvg(svgData[ii], function (renderedSvg :flash.display.DisplayObject) :Void {
 				if (index > 0) {
 					var v = self._relativeTransforms[index];
 					if (v != null && v.x != 0 && v.y != 0) {
@@ -201,7 +213,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		com.pblabs.util.Assert.isNotNull(resources);
 		var svgs = [];
 		for (rs in resources) {
-			var svg = context.get(rs);
+			var svg = context.getTokenResource(rs);
 			com.pblabs.util.Assert.isNotNull(svg, "Missing svg resource from " + rs);
 			
 			#if flash
@@ -272,7 +284,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		}
 	}
 	
-	override public function drawPixels (ctx :easel.display.Context2d)
+	override public function drawPixels (ctx :CanvasRenderingContext2D)
 	{
 		com.pblabs.util.Assert.isNotNull(ctx);
 		if (svgData == null) {
@@ -281,7 +293,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			return;
 		}
 		for (ii in 0...svgData.length) {
-			SvgUtil.renderSvg(svgData[ii], ctx.canvas, _relativeTransforms[ii]);
+			SvgRenderTools.renderSvg(svgData[ii], ctx.canvas, _relativeTransforms[ii]);
 		}
 	}
 	
@@ -339,12 +351,12 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		return result;
 	}
 	
-	#if debug
-	override public function toString () :String
-	{
-		return com.pblabs.util.StringUtil.objectToString(this, ["x", "y", "width", "height"]);
-	}
-	#end
+	// #if debug
+	// override public function toString () :String
+	// {
+	// 	return com.pblabs.util.StringUtil.objectToString(this, ["x", "y", "width", "height"]);
+	// }
+	// #end
 	
 	#if (debug_hxhsl && flash)
 	override public function postDestructionCheck () :Void

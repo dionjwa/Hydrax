@@ -49,17 +49,17 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 				this.removeFromParent();
 				parentProperty = newlayer.entityProp();
 				addToParent(newlayer);
-				_zIndexDirty = true;
+				// _zIndexDirty = true;
 			}
 			_layerIndexDirty = false;
 			_layerIndex = scene.getLayerIndex(parent);
 		}
-		if (_zIndexDirty) {
-			com.pblabs.util.Assert.isNotNull(parent);
-			parent.updateZOrder();
-			_zIndexDirty = false;
-			_isTransformDirty = true;
-		}
+		// if (_zIndexDirty) {
+		// 	com.pblabs.util.Assert.isNotNull(parent);
+		// 	parent.updateZOrder();
+		// 	_zIndexDirty = false;
+		// 	_isTransformDirty = true;
+		// }
 		if (_isTransformDirty) {
 			updateTransform();
 			_isTransformDirty =false;
@@ -198,14 +198,15 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	{
 		if (layer == null) {
 			_zIndex = val;
-			_zIndexDirty = true;
+			// _zIndexDirty = true;
 		} else {
 			val = Mathematics.clamp(val, 0, layer.children.length - 1);
 			var curIndex = layer.children.indexOf(this);
 			if (curIndex != val) {
 				layer.children.remove(this);
 				layer.children.insert(val, this);
-				_zIndexDirty = true;
+				layer.zOrderDirty = true;
+				// _zIndexDirty = true;
 			}
 		}
 		return val;

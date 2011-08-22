@@ -261,7 +261,7 @@ for filetype,classdatalist in classTypes.items():
 		if filepath.endswith(swfname):
 			continue
 		if filetype == "png" or filetype == "jpg":
-			child = doc.createElement("img")
+			child = doc.createElement("image")
 			# imageCodeList  = imageCodeList + "\tinline public static var " + fileid + ' = "' + fileid + '";\n' 
 		elif filetype == "svg":
 			child = doc.createElement("svg")

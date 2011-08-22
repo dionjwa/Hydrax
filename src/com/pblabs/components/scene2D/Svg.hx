@@ -25,149 +25,96 @@ using Lambda;
 using StringTools;
 
 using com.pblabs.components.scene2D.SceneUtil;
+using com.pblabs.components.scene2D.SvgRenderTools;
 using com.pblabs.engine.resource.ResourceToken;
 using com.pblabs.util.StringUtil;
-using com.pblabs.util.SvgUtil;
 using com.pblabs.util.XmlUtil;
 #if flash
 using com.pblabs.util.DisplayUtils;
 import de.polygonal.core.math.Mathematics;
 #end
 
-/** This will eventually be a single svg */
+
 /**
   * Cross platform SVG based Scene2D component.
+  * Renders a single svg image.
   * Currently supports Flash, JS canvas, and JS CSS.
-  * Supports multiple svg resources.  More than one resource
-  * will be interpreted as svg elements to be attached to 
-  * svg parent (the first resource) elements starting with the label "anchor".
   */
-class SVGComponent
+class Svg
 #if js
 extends com.pblabs.components.scene2D.js.SceneComponent
 #elseif (flash || cpp)
 extends com.pblabs.components.scene2D.flash.SceneComponent 
 #end
 {
-	public static var TEXT_REPLACE :EReg = ~/\$T/;
-	#if flash
-	static var INVISIBLE_STAGE :flash.display.Sprite;
-	#end
-	
 	#if (flash || cpp)
 	/** Fired when the svgweb renderer completes */
 	public var renderCompleteSignal (default, null):Signaler<Void>;
+	/** New svg data may be set before the render call from a previous update is finished.  Track the render calls. */
+	public static var RENDER_CALLBACK_ID :Int = 1;
+	var _renderId :Int;
 	#end
-	/** The IResources */
-	/** Load the svg(s) as a raw strings.  They're inserted in the dom, or parsed and rendered to the canvas. */
-	public var resources :Array<ResourceToken<Dynamic>>;
-	public var svgData (get_svgData, set_svgData) :Array<String>;
-	var _svgData :Array<String>;
-	var _svgDataUnmodified :Array<String>;
-	function get_svgData () :Array<String> { return _svgData; }
-	function set_svgData (val :Array<String>) :Array<String>
+	public var svgData (get_svgData, set_svgData) :String;
+	var _svgData :String;
+	function get_svgData () :String { return _svgData; }
+	function set_svgData (val :String) :String
 	{
-		com.pblabs.util.Assert.isNotNull(val, "SVG data is null");
-		//Create copies
-		_svgDataUnmodified = val;
-		_svgData = [];
-		for (svg in val) {
-			_svgData.push(processReplacements(new String(svg), svgRegexReplacements));
-		}
-		
-		// _individualBounds = [];
-		// var boundsUnion = new AABB2();
-		
-		for (ii in 0..._svgData.length) {
-			#if js
-			//SVG documents added to the dom via innerHTML are *not* allowed to have any preamble.
-			_svgData[ii] = _svgData[ii].cleanSvgForInnerHtml();
-			#end
-			var svgXml = Xml.parse(_svgData[ii]).ensureNotDocument();
-			var b = parseBounds(svgXml);
-			// _individualBounds.push(b);
-			
-			//Parse the first image for anchor elements, and only use the first element for mouse bounds
-			if (ii == 0) {
-				// boundsUnion.addAABB(b);
-				_relativeTransforms = SvgCache.parseAnchors(svgXml).array();
-				_relativeTransforms.unshift(new Vector2());
-				//Only the first Svg defines the bounds
-				_unscaledBounds = b;
-				_bounds = _unscaledBounds.clone();
-				registrationPoint.x = _bounds.intervalX / 2;
-				registrationPoint.y = _bounds.intervalY / 2;
-			} else if (_relativeTransforms[ii] != null) {
-				_relativeTransforms[ii].x -= b.intervalX / 2;
-				_relativeTransforms[ii].y -= b.intervalY / 2;
+		_svgData = val;
+		 
+		#if flash
+		_renderId = ++RENDER_CALLBACK_ID;
+		var localRenderId =_renderId;
+		_displayObject.removeAllChildren();
+		#elseif js
+		if (!isOnCanvas) {
+			com.pblabs.util.Assert.isNotNull(div);
+			//Remove previous children
+			while (div.hasChildNodes()) {
+				div.removeChild(div.lastChild);
 			}
+		} else {
+			canvas.getContext("2d").clearRect(0, 0, width, height);
+			// com.pblabs.util.Log.error("Setting svg null should clear the display component, but this is not yet implemented in canvas js");
 		}
-		//Set the identity transform to the first svg
-		// registrationPoint.x = boundsUnion.intervalX / 2;
-		// registrationPoint.y = boundsUnion.intervalY / 2;
-		// _unscaledBounds = boundsUnion;
-		// _bounds = _unscaledBounds.clone();
-		// trace(owner.name + " reg=" + registrationPoint);
+		#end
+		
+		if (val == null) {
+			_unscaledBounds.xmin = _unscaledBounds.ymin = 0;
+			_unscaledBounds.xmax = _unscaledBounds.ymax = 0.001;
+			registrationPoint.x = registrationPoint.y = 0;
+			_bounds = _unscaledBounds.clone();
+			isTransformDirty = true;
+			return val;
+		}
+		#if js
+		//SVG documents added to the dom via innerHTML are *not* allowed to have any preamble.
+		_svgData = _svgData.cleanSvgForInnerHtml();
+		#end
+		
+		var svgXml = Xml.parse(_svgData).ensureNotDocument();
+		
+		var b = parseBounds(svgXml);
+		_unscaledBounds = b;
+		_bounds = _unscaledBounds.clone();
+		registrationPoint.x = _bounds.intervalX / 2;
+		registrationPoint.y = _bounds.intervalY / 2;
 		#if js
 		if (hasParent() && !isOnCanvas) {
-			// // removeFromParent();
-			// addToParent();
-			
-			// Reflect.setField(div, "width", _bounds.intervalX + "px");
-			// Reflect.setField(div, "height", _bounds.intervalY + "px");
 			insertSvgsIntoDiv();
 		}
 		#end
 		
 		#if (flash || cpp)
-		/**
-		  * svgweb has 2 issues:
-		  *  1) It takes a number of frames to (asynchronously) render the svg
-		  *  2) It cancels the rendering if the sprite is removed from the stage
-		  *      before the rendering is finished (recieves a Event.REMOVED_FROM_STAGE).
-		  * To deal with this, we create a hidden sprite attached to the stage, 
-		  * and use that as our sprite parent until the svg has finished rendering
-		  * and dispatched the render finish event.
-		  * http://code.google.com/p/svgweb/issues/detail?id=265
-		  */
-		  if (INVISIBLE_STAGE == null) {
-		  	  INVISIBLE_STAGE = new flash.display.Sprite();
-		  	  INVISIBLE_STAGE.mouseChildren = INVISIBLE_STAGE.mouseEnabled = false;
-		  	  flash.Lib.current.stage.addChild(INVISIBLE_STAGE);
-		  	  INVISIBLE_STAGE.visible = false;
-		  	  INVISIBLE_STAGE.x = 5000;
-		  }
-		
 		_displayObject.removeAllChildren();
-		var toRender :Int = svgData.length;
-		for (ii in 0...svgData.length) {
-			var svgString = svgData[ii];
-			//Transform it
-			var svg = new org.svgweb.SVGViewerFlash();
-			INVISIBLE_STAGE.addChild(svg);
-			
-			svg.xml = new flash.xml.XML(svgString);
-			if (ii > 0) {
-				var v = _relativeTransforms[ii];
-				if (v != null && v.x != 0 && v.y != 0) {
-					svg.x = v.x;
-					svg.y = v.y;
-				}
-			}
-			var self = this;
-			var finishedRendering = false;
-			com.pblabs.util.EventDispatcherUtil.addOnceListener(svg.svgRoot, org.svgweb.events.SVGEvent.SVGLoad, 
-				function (ignored :Dynamic) :Void {
-					var sprite = cast(self._displayObject, flash.display.Sprite);
-					sprite.addChildAt(svg, Mathematics.clamp(ii, 0, sprite.numChildren));
-					toRender--;
-					if (toRender <= 0) {
-						finishedRendering = true;
-						self.recomputeBounds();
-						self.renderCompleteSignal.dispatch();
-					}
-				});
-		}
+		var self = this;
+		SvgRenderTools.renderSvg(_svgData, function (renderedSvg :flash.display.DisplayObject) :Void {
+			if (!self.isRegistered) return;
+			if (localRenderId != self._renderId) return;//Another render call supercedes this render
+			var sprite = cast(self._displayObject, flash.display.Sprite);
+			sprite.addChild(renderedSvg);
+			self.recomputeBounds();
+			self.renderCompleteSignal.dispatch();
+		});
 		#else
 		//TODO: Is the js renderer asynchronous???
 		#end
@@ -175,34 +122,9 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		return val;
 	}
 	
-	public var text (get_text, set_text) :String;
-	var _text :String;
-	function get_text () :String
-	{
-		return _text;
-	}
-	
-	function set_text (val :String) :String
-	{
-		_text = val;
-		svgRegexReplacements.unshift(new Tuple(TEXT_REPLACE, _text));
-		if (isRegistered) {
-			svgData = _svgDataUnmodified;
-		}
-		return val;
-	}
-	
-	/** Dynamically replace text in the svg string.  Allows e.g. custom text */
-	public var svgRegexReplacements :Array<Tuple<EReg, String>>;
-	
-	var _relativeTransforms :Array<XY>;
-	var _individualBounds :Array<AABB2>;
-	
 	public function new () :Void
 	{
 		super();
-		svgRegexReplacements = [];
-		_relativeTransforms = [];
 		#if (flash || cpp)
 		renderCompleteSignal = new DirectSignaler(this);
 		var s = new flash.display.Sprite();
@@ -229,41 +151,6 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	}
 	#end
 	
-	override function onAdd () :Void
-	{
-		super.onAdd();
-		if (resources != null) {
-			loadFromResource();
-		}
-	}
-	
-	function loadFromResource () :Void
-	{
-		com.pblabs.util.Assert.isNotNull(resources);
-		var svgs = [];
-		for (rs in resources) {
-			var svg = context.get(rs);
-			com.pblabs.util.Assert.isNotNull(svg, "Missing svg resource from " + rs);
-			
-			#if flash
-			if (Std.is(svg, flash.display.DisplayObject)) {
-				cast(_displayObject, flash.display.Sprite).addChild(cast svg);
-				registrationPoint = new com.pblabs.geom.Vector2(_displayObject.width / 2, _displayObject.height / 2);
-				_bounds = new AABB2();
-				_bounds.xmin = 0;
-				_bounds.xmax = _displayObject.width;
-				_bounds.ymin = 0;
-				_bounds.ymax = _displayObject.height;
-				recomputeBounds();
-				return;
-			}
-			#end
-			
-			svgs.push(Std.string(svg));
-		}
-		svgData = svgs;
-	}
-	
 	override function onRemove () :Void
 	{
 		super.onRemove();
@@ -272,7 +159,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			trace("WTF, still attached");
 		}
 		#end
-		_svgData = null;
+		svgData = null;
 	}
 	
 	#if js
@@ -283,7 +170,9 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			//Render the SVG to the backbuffer to then render to the canvas
 			cacheAsBitmap = true;
 		} else {
-			insertSvgsIntoDiv();
+			if (svgData != null) {
+				insertSvgsIntoDiv();
+			}
 		}
 	}
 	
@@ -297,33 +186,13 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			div.removeChild(div.lastChild);
 		}
 		
-		// var p = div.parentNode;
-		// div.parentNode.removeChild(div);
-		// div = com.pblabs.components.scene2D.js.SceneComponent.createDiv();
-		// p.appendChild(div);
-		
-		// div.style.width = "0px";
-		// div.style.height = "0px";
-			
 		//Create a div for each svg
-		for (ii in 0...svgData.length) {
-			var svg = svgData[ii];
-			var d = com.pblabs.components.scene2D.js.SceneComponent.createDiv();
-			div.appendChild(d);
-			// d.style.width = "0px";
-			// d.style.height = "0px";
-			// Reflect.setField(d, "width", width + "px");
-			// Reflect.setField(d, "height", height + "px");
-			d.innerHTML = svg;
-			//Transform it
-			var v = _relativeTransforms[ii];
-			if (v != null && v.x != 0 && v.y != 0) {
-				SceneUtil.applyTransform(d, new Matrix(1, 0, 0, 1, v.x, v.y));
-			}
-		}
+		var d = com.pblabs.components.scene2D.js.SceneComponent.createDiv();
+		div.appendChild(d);
+		d.innerHTML = _svgData;
 	}
 	
-	override public function draw (ctx :easel.display.Context2d)
+	override public function drawPixels (ctx :easel.display.Context2d)
 	{
 		com.pblabs.util.Assert.isNotNull(ctx);
 		if (svgData == null) {
@@ -331,26 +200,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			ctx.fillRect(0, 0, 30, 30);
 			return;
 		}
-		//Temporary hack: use canvg library for rendering SVGs to canvas
-		for (ii in 0...svgData.length) {
-			var svg = svgData[ii];
-			var args = { ignoreMouse: true, ignoreAnimation: true, ignoreDimensions: true, ignoreClear: true };
-			//Transform it
-			var v = _relativeTransforms[ii];
-			if (v != null && v.x != 0 && v.y != 0) {
-				Reflect.setField(args, "offsetX", v.x);
-				Reflect.setField(args, "offsetY", v.y);
-			}
-			Reflect.setField(args, "scaleWidth", width);
-			Reflect.setField(args, "scaleHeight", height);
-			try {
-				untyped canvg(ctx.canvas, svg, args);
-			} catch (e :Dynamic) {
-				com.pblabs.util.Log.error(resources[ii]);
-				com.pblabs.util.Log.error("Error rendering svg from canvg: " + e);
-				com.pblabs.util.Log.error(com.pblabs.util.Log.getStackTrace());
-			}
-		}
+		SvgRenderTools.renderSvg(svgData, ctx.canvas);
 	}
 	
 	override private function redrawBackBuffer ()
@@ -392,19 +242,6 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			bounds.ymax = h;
 		}
 		return bounds;
-	}
-	
-	static function processReplacements(svg :String, replacements :Array<Tuple<EReg, String>>) :String
-	{
-		if (replacements == null || replacements.length == 0) {
-			//Clone the String anyway
-			return new String(svg);
-		}
-		var result = new String(svg.toString());
-		for (r in replacements) {
-   			result = r.v1.replace(result, r.v2);
-		}
-		return result;
 	}
 	
 	#if debug

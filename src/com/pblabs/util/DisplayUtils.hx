@@ -455,7 +455,7 @@ class DisplayUtils
 
 	public static function removeAllChildren (parent :DisplayObject) :Void
 	{
-		if (parent == null || !(Std.is( parent, DisplayObjectContainer))) {
+		if (parent == null || !(Std.is(parent, DisplayObjectContainer))) {
 			return;
 		}
 		while (cast(parent, DisplayObjectContainer).numChildren > 0) {

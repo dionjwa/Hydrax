@@ -1,7 +1,8 @@
 package com.pblabs.services.html5storage;
 
 /**
-  * Requires the Modernizr script executed before this.
+  * Js implementation of a remoting service that uses HTML5 localStorage.
+  * If Modernizr is available, it's used to detect localStorage
   * http://www.modernizr.com/
   */
 class Html5StorageManager
@@ -17,11 +18,17 @@ class Html5StorageManager
 	
 	public function new ()
 	{
+		//Attempt localStorage detection
 		_isAvailable = false;
-		try {
-			_isAvailable = untyped __js__('Modernizr.localstorage');
-		} catch (e :Dynamic) {
-			com.pblabs.util.Log.error(ERR_MSG + "\n" + e);
+		
+		if (untyped __js__("typeof Modernizr == 'undefined'") ) {
+			try {
+				_isAvailable = untyped __js__("!!localStorage.getItem");
+			} catch(e :Dynamic) {}//Swallow
+		} else {
+			try {
+				_isAvailable = untyped __js__("Modernizr.localstorage");
+			} catch (e :Dynamic) {}
 		}
 	}
 	

@@ -112,13 +112,13 @@ class TemplateManager
 	
 	public function startup () :Void
 	{
-		signalLoaded.bind(onLoaded);
+		// signalLoaded.bind(onLoaded);
 		signalFailed.bind(onFailed);	
 	}
 	
 	public function shutdown () :Void
 	{
-		signalLoaded.unbind(onLoaded);
+		// signalLoaded.unbind(onLoaded);
 		signalFailed.unbind(onFailed);
 		
 		_inGroup = false;
@@ -153,35 +153,35 @@ class TemplateManager
 	 *
 	 * @param filename The file to load.
 	 */
-	public function loadFile(filename :String, ?forceReload :Bool = false) :Void
-	{
-		if (!forceReload && resourceManager.isResource(filename)) {
-			//Already present
-			return;
-		}
+	// public function loadFile(filename :String, ?forceReload :Bool = false) :Void
+	// {
+	// 	if (!forceReload && resourceManager.isResource(filename)) {
+	// 		//Already present
+	// 		return;
+	// 	}
 		
-		var rsrc = new XMLResource(filename, Source.url(filename));
-		// resourceManager.unload(filename);
-		// resourceManager.addResource(new XMLResource(filename, Source.url(filename)));
+	// 	var rsrc = new XMLResource(filename, Source.url(filename));
+	// 	// resourceManager.unload(filename);
+	// 	// resourceManager.addResource(new XMLResource(filename, Source.url(filename)));
 		
-		var self = this;
-		var onLoaded = function () :Void {
-			self.signalLoaded.dispatch(rsrc);
-			// resourceManager.addResource(rsrc);
-			// signalLoaded.
-		}
+	// 	var self = this;
+	// 	var onLoaded = function () :Void {
+	// 		self.signalLoaded.dispatch(rsrc);
+	// 		// resourceManager.addResource(rsrc);
+	// 		// signalLoaded.
+	// 	}
 		
-		var onError = function (e :Dynamic) :Void {
-			com.pblabs.util.Log.error("Failed to load " + filename + ", error=" + e);
-			self.signalFailed.dispatch(rsrc);
-		}
+	// 	var onError = function (e :Dynamic) :Void {
+	// 		com.pblabs.util.Log.error("Failed to load " + filename + ", error=" + e);
+	// 		self.signalFailed.dispatch(rsrc);
+	// 	}
 		
-		rsrc.load(onLoaded, onError);
+	// 	rsrc.load(onLoaded, onError);
 		
-		// resourceManager.load
+	// 	// resourceManager.load
 		
-		// resourceManager.load(filename, XMLResource, onLoaded, onFailed, forceReload);
-	}
+	// 	// resourceManager.load(filename, XMLResource, onLoaded, onFailed, forceReload);
+	// }
 	
 	/**
 	 * Unloads a level file and removes its contents from the template manager.
@@ -224,14 +224,14 @@ class TemplateManager
 					com.pblabs.util.Log.debug("creating entity from a callback");
 					var thing :ThingReference = _things.get(name);
 					var instantiated = null;
-					try {
+					// try {
 						instantiated = thing.createEntity();
 						com.pblabs.util.Log.debug("entity created from callback");
-					}
-					catch (e :Dynamic) {
-						com.pblabs.util.Log.error("createEntity callback failed,  name=" + name + ", error :" + e + "\n" + com.pblabs.util.Log.getStackTrace());
-						throw e;
-					}
+					// }
+					// catch (e :Dynamic) {
+					// 	com.pblabs.util.Log.error("createEntity callback failed,  name=" + name + ", error :" + e);
+					// 	throw e;
+					// }
 					
 					if(instantiated == null) {
 						throw "entityCallback returned NULL!";
@@ -319,7 +319,7 @@ class TemplateManager
 		
 		var entity :IEntity;
 		var name = null;
-		try {
+		// try {
 			// Get at the name...
 			name = xml.get("name");
 			if (xml.nodeName == "template") {
@@ -379,13 +379,13 @@ class TemplateManager
 			// }
 			
 			Profiler.exit("instantiateEntityFromXML");
-		}
-		catch (e :Dynamic) {
-			com.pblabs.util.Log.error("Failed instantiating xml due to "  + e + " xml=" + xml.toString());//'" + name + "' from XML due to :" + e + "\n" + com.pblabs.util.Log.getStackTrace());
-			entity = null;
-			Profiler.exit("instantiateEntityFromXML");
-			throw e;
-		}
+	// 	}
+	// 	catch (e :Dynamic) {
+	// 		com.pblabs.util.Log.error("Failed instantiating xml due to "  + e + " xml=" + xml.toString());//'" + name + "' from XML due to :" + e + "\n" + com.pblabs.util.Log.getStackTrace());
+	// 		entity = null;
+	// 		Profiler.exit("instantiateEntityFromXML");
+	// 		throw e;
+	// 	}
 		
 		return entity;
 	}
@@ -730,20 +730,20 @@ class TemplateManager
 		com.pblabs.util.Log.info("Loaded " + thingCount + " from " + sourceName);			
 	}
 	
-	function onLoaded(resource :XMLResource) :Void
-	{
-		var xml = resource.get();
-		var version = Std.parseInt(xml.get("version"));
-		var thingCount :Int=0;
-		for (childxml in xml.elements()) {
-			thingCount++;
-			addXML(childxml, resource.name, version);
-		}
+	// function onLoaded(resource :XMLResource) :Void
+	// {
+	// 	var xml = resourceManager.get(resource);
+	// 	var version = Std.parseInt(xml.get("version"));
+	// 	var thingCount :Int=0;
+	// 	for (childxml in xml.elements()) {
+	// 		thingCount++;
+	// 		addXML(childxml, resource.name, version);
+	// 	}
 		
-		com.pblabs.util.Log.info("Loaded " + thingCount + " from " + resource.name);
+	// 	com.pblabs.util.Log.info("Loaded " + thingCount + " from " + resource.name);
 		
-		// signalLoaded.dispatch(resource);
-	}
+	// 	// signalLoaded.dispatch(resource);
+	// }
 	
 	function onFailed(resource :XMLResource) :Void
 	{

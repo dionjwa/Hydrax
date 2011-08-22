@@ -335,7 +335,7 @@ class VectorTools
 		return v;
 	}
 	
-	#if (flash || cpp)
+	// #if (flash || cpp)
 	/**
 	 * Converts Point p to a Vector2.
 	 */
@@ -348,5 +348,5 @@ class VectorTools
 	{
 		return new flash.geom.Point(v.x, v.y);
 	}
-	#end
+	// #end
 }

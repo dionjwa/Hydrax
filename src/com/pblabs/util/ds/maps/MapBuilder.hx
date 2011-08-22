@@ -72,7 +72,7 @@ class MapBuilder<K, V>
 		_comp = comp;
 		return this;
 	}
-
+	
 	/**
 	 * Make the Map have weakly-held values.
 	 *

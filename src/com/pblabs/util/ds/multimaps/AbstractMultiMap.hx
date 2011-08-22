@@ -29,6 +29,11 @@ class AbstractMultiMap <K, V>
 		return null;
 	}
 	
+	public function iterator () :Iterator<K>
+	{
+		return keys();
+	}
+	
 	public function get (key :K) :Iterable<V>
 	{
 		return null;

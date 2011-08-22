@@ -20,7 +20,7 @@ using Lambda;
   */
 class ReflectUtil
 {
-	static var cacheXml = new Hash<Xml>();
+	static var rttiTypeTree = new Hash<haxe.rtti.TypeTree>();
 	static var cacheClassdef = new Hash<Classdef>();
 	// static var classDefParser = new haxe.rtti.XmlParser();
 	static var fieldTypes = new Hash<CType>();
@@ -126,27 +126,29 @@ class ReflectUtil
 		}
 	}
 	
-	public static function getRttiXml(cls : Class <Dynamic> ) :Xml
+	public static function getRttiTypeTree(cls : Class <Dynamic> ) :haxe.rtti.TypeTree
 	{
 		var name = Type.getClassName(cls);
-		if (cacheXml.exists(name)) {
-			return cacheXml.get(name);
+		if (rttiTypeTree.exists(name)) {
+			return rttiTypeTree.get(name);
 		}
 		// #if cpp
 		// //If you don't check for the field first, in cpp an error is thrown.
 		// if (!Type.getClassFields(cls).has("__rtti")) {//untyped cls.__rtti == null
-		// 	cacheXml.set(name, null);
+		// 	rttiTypeTree.set(name, null);
 		// 	return null;
 		// }
 		// #end
 		var rtti = Reflect.field(cls, "__rtti");
 		if (rtti == null) {
-			cacheXml.set(name, null);
+			rttiTypeTree.set(name, null);
 			return null;
 		}
 		
-		var x = Xml.parse(rtti).firstChild();//untyped cls.__rtti
-		cacheXml.set(name, x);
+		var x = new haxe.rtti.XmlParser().processElement(Xml.parse(rtti).firstElement());
+		
+		// var x = Xml.parse(rtti).firstChild();//untyped cls.__rtti
+		rttiTypeTree.set(name, x);
 		return x;
 	}
 	
@@ -156,12 +158,16 @@ class ReflectUtil
 		if (cacheClassdef.exists(name)) {
 			return cacheClassdef.get(name);
 		}
-		var x :Xml = getRttiXml(cls);
-		if (x == null) {
+		// var x :Xml = getRttiXml(cls);
+		// if (x == null) {
+		// 	return null;
+		// }
+
+		var typeTree = getRttiTypeTree(cls);
+		if (typeTree == null) {
 			return null;
 		}
-
-		var typeTree = new haxe.rtti.XmlParser().processElement(x);
+		// new haxe.rtti.XmlParser().processElement(x);
 		
 		var cdef :Classdef = switch (typeTree) {
 			case TClassdecl(c): c;

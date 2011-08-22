@@ -132,8 +132,10 @@ class Entity extends PBObject,
 		cast(context, PBContext).dispatchObjectDestroyed(this);
 		
 		// Unregister our components.
+		com.pblabs.util.Assert.isNotNull(_components, " _components is null");
 		for (c in _components)
 		{
+			com.pblabs.util.Assert.isNotNull(c, " c is null");
 			if(c.isRegistered) {
 				c.unregister();
 			}
@@ -350,6 +352,7 @@ class Entity extends PBObject,
 		}
 		
 		component.unregister();
+		
 		if (!deferring) {
 			doResetComponents();
 		}
@@ -430,14 +433,12 @@ class Entity extends PBObject,
 	
 	function doRemoveComponent(c:IEntityComponent):Bool
 	{
-		if (c.owner != this)
-		{
+		if (c.owner != this) {
 			com.pblabs.util.Log.error(["doRemoveComponent", "The component " + c.name + " is not owned by this entity. (" + name + ")"]);
 			return false;
 		}
 		
-		if (_components.get(c.name) == null)
-		{
+		if (_components.get(c.name) == null) {
 			com.pblabs.util.Log.error(["doRemoveComponent", "The component " + c.name + " was not found on this entity. (" + name + ")"]);
 			return false;
 		}
@@ -451,6 +452,9 @@ class Entity extends PBObject,
 		if (Std.is(c, IAnimatedObject)) {
 			_context.processManager.removeAnimatedObject(cast(c));
 		}
+		
+		context.getManager(SignalBondManager).destroyBonds(c);
+		
 		return true;
 	}
 	

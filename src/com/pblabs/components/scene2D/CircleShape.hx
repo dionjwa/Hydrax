@@ -110,7 +110,7 @@ class CircleShape extends ShapeComponent
 	}
 	
 	#if js
-	override public function drawPixels (ctx :easel.display.Context2d)
+	override public function drawPixels (ctx :CanvasRenderingContext2D)
 	{
 		ctx.beginPath();
 		ctx.arc(radius, radius, radius, 0, Math.PI*2, true);

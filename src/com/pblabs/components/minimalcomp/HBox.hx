@@ -3,21 +3,15 @@ package com.pblabs.components.minimalcomp;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.engine.time.IAnimatedObject;
 
-enum HorizontalDirection {
-	LEFT;
-	RIGHT;
-}
-
 class HBox extends Container
 {
 	public var gap (default, set_gap) :Float;
-	public var flowDirection (default, set_flowDirection) :HorizontalDirection;
+	public var flowDirection (default, set_flowDirection) :Direction;
 	
 	public function new ()
 	{
 		super();
-		this.gap = 2;
-		this.flowDirection = RIGHT;
+		setDefaults();
 	}
 	
 	override public function redraw () :Void
@@ -32,6 +26,7 @@ class HBox extends Container
 			switch (flowDirection) {
 				case LEFT: curX -= c.width / 2;
 				case RIGHT: curX += c.width / 2;
+				default: throw "Should never be here";
 			}
 			c.x = curX;
 			c.y = curY;
@@ -50,8 +45,22 @@ class HBox extends Container
 			switch (flowDirection) {
 				case LEFT: curX -= c.width / 2 + gap;
 				case RIGHT: curX += c.width / 2 + gap;
+				default:
 			}
 		}
+	}
+	
+	override function onRemove () :Void
+	{
+		super.onRemove();
+		setDefaults();
+	}
+	
+	
+	function setDefaults () :Void
+	{
+		gap = 2;
+		flowDirection = Direction.RIGHT;
 	}
 	
 	function set_gap (val :Float) :Float
@@ -61,8 +70,12 @@ class HBox extends Container
 		return val;
 	}
 	
-	function set_flowDirection (val :HorizontalDirection) :HorizontalDirection
+	function set_flowDirection (val :Direction) :Direction
 	{
+		switch (val) {
+			case LEFT,RIGHT://ok
+			default: throw "Invalid flow direction " + val;
+		}
 		this.flowDirection = val;
 		invalidate();
 		return val;

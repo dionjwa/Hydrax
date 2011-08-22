@@ -9,12 +9,14 @@
 package com.pblabs.components.util;
 
 import com.pblabs.engine.core.EntityComponent;
+import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.serialization.ISerializable;
 
 import haxe.Serializer;
 
 import haxe.Unserializer;
 
+using Lambda;
 /**
 * Container for arbitrary data. As it is dynamic, you can set whatever
 * fields you want. Useful for storing general purpose data.
@@ -23,6 +25,27 @@ import haxe.Unserializer;
 class DataComponent<T> extends EntityComponent, 
 	implements Dynamic<T>, implements ISerializable
 {
+	public static function setEntityData (e :IEntity, key :String, val :Dynamic) :IEntity
+	{
+		Reflect.setField(ensureComponent(e), key, val);
+		return e;
+	}
+	
+	public static function getEntityData <DataType>(e :IEntity, key :String) :DataType
+	{
+		return Reflect.field(ensureComponent(e), key);
+	}
+	
+	public static function ensureComponent (e :IEntity) :DataComponent<Dynamic>
+	{
+		if (e.getComponent(DataComponent) == null) {
+			e.addComponent(e.context.allocate(DataComponent));
+			return e.getComponent(DataComponent);
+		} else {
+			return e.getComponent(DataComponent);
+		}
+	}
+	
 	public function new() 
 	{
 		super();
@@ -47,4 +70,13 @@ class DataComponent<T> extends EntityComponent,
 			Reflect.setField(this, key, map.get(key));
 		}
 	}
+	
+	override function onRemove () :Void
+	{
+		super.onRemove();
+		for (f in Reflect.fields(this).array()) {
+			Reflect.deleteField(this, f);
+		}
+	}
+	
 }

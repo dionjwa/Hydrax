@@ -111,6 +111,11 @@ class SetMultiMap<K, V> extends AbstractMultiMap<K, V>,
 		return present;
 	}
 	
+	public function sizeOf (key :K) :Int
+	{
+	    return _map.exists(key) && _map.get(key) != null ? _map.get(key).size() : 0;
+	}
+	
 	override public function keys () :Iterator<K>
 	{
 		return _map.keys();

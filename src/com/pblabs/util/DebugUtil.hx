@@ -49,7 +49,7 @@ class DebugUtil
 	    return svg;
 	}
 	
-	public static function drawSvg (layer :BaseSceneLayer<Dynamic, Dynamic>, svgResource :ResourceToken<Dynamic>, ?loc :XY) :SVGComponent
+	public static function drawSvg (layer :BaseSceneLayer<Dynamic, Dynamic>, svgResource :ResourceToken, ?loc :XY) :SVGComponent
 	{
 	    var svg = layer.context.allocate(SVGComponent);
 	    svg.parentProperty = layer.entityProp();

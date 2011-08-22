@@ -75,6 +75,16 @@ class IterUtil
 		return result;
 	}
 	
+	public static function size (it :Iterator<Dynamic>) :Int
+	{
+		var count = 0;
+		while (it.hasNext()) {
+			count++;
+			it.next();
+		}
+		return count;
+	}
+	
 	public static function const <T> (val :T) :Dynamic->T
 	{
 		return function (ignore :Dynamic) :T {

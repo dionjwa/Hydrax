@@ -171,19 +171,31 @@ class PBMacros
 	}
 	
 	/**
+	  * Create an app specific class called e.g. Properties:
+	  *  @:build(com.pblabs.util.PBMacros.buildPropertiesClass(["etc/build.properties"])) class Properties {}
+	  * The local "etc/build.propertis" file will be added.  This can parse Strings, Ints, and Floats.  
+	  * More than one properties file can be added.
 	  */
 	@:macro 
-	public static function buildPropertiesClass(resourceId :String) :Array<Field>
+	public static function buildPropertiesClass(resourcePaths :Array<String>) :Array<Field>
 	{
 		var pos = haxe.macro.Context.currentPos();
 		var fields = haxe.macro.Context.getBuildFields();
         
-		var data = haxe.Resource.getString(resourceId);
-		
-		if (data == null) {
-			haxe.macro.Context.error("Missing resource=" + resourceId, pos);
-			return fields;
+		var data = "";
+		for (resourcePath in resourcePaths) {
+			data += neko.io.File.getContent(resourcePath);
 		}
+		
+		var intRE :EReg = ~/^[0-9]+$/;
+		var floatRE :EReg = ~/^[0-9]*\.[0-9]+$/;
+		var boolRE :EReg = ~/^(true|false)$/;
+		
+		var tString = TPath({ pack : [], name : "String", params : [], sub : null });
+		var tInt = TPath({ pack : [], name : "Int", params : [], sub : null });
+		var tFloat = TPath({ pack : [], name : "Float", params : [], sub : null });
+		var tBool = TPath({ pack : [], name : "Bool", params : [], sub : null });
+		
 		for (l in data.split("\n")) {
 			var line = l.trim();
 			if (line.startsWith("#") || line == "") {
@@ -192,13 +204,29 @@ class PBMacros
 			var tokens = line.split("=");
 			var id = tokens.shift();
 			var val = tokens.join("=");
-			var tString = TPath({ pack : [], name : "String", params : [], sub : null });
-			var expr = {expr :EConst(haxe.macro.Constant.CString(val)), pos :pos};
+			
+			//Decide if it's a Int, Float, or String
+			var expr = null;
+			var type = null;
+			if (intRE.match(val) && val.length <= 10) {
+				expr = {expr :EConst(haxe.macro.Constant.CInt(val)), pos :pos};
+				type = tInt;
+			} else if (floatRE.match(val)) {
+				expr = {expr :EConst(haxe.macro.Constant.CFloat(val)), pos :pos};
+				type = tFloat;
+			} else if (boolRE.match(val)) {
+				expr = {expr :EConst(haxe.macro.Constant.CType(val)), pos :pos};
+				type = tBool;
+			} else {
+				expr = {expr :EConst(haxe.macro.Constant.CString(val)), pos :pos};
+				type = tString;
+			}
+			
 			var field :Field = {
 				name : id, 
 				doc :null,
 				access:[Access.APublic, Access.AStatic],
-				kind :FVar(tString, expr),
+				kind :FVar(type, expr),
 				pos : pos,
 				meta :[]
 			};

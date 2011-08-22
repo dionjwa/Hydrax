@@ -1,8 +1,11 @@
 package com.pblabs.components.minimalcomp;
 
+import Type;
+
+import com.pblabs.components.scene2D.BaseSceneLayer;
 import com.pblabs.components.spatial.SpatialComponent;
-import com.pblabs.engine.time.IAnimatedObject;
-import com.pblabs.geom.Vector2;
+import com.pblabs.util.ds.Map;
+import com.pblabs.util.ds.Maps;
 
 import de.polygonal.core.math.Limits;
 
@@ -11,7 +14,21 @@ using com.pblabs.engine.util.PBUtil;
 
 class Container extends Component
 {
+	public var sceneLayer :BaseSceneLayer<Dynamic, Dynamic>;
 	public var alignment :Alignment;
+	// public var childDisplayOrder (get_childDisplayOrder, null) :Map<Component, Int>;
+	// var _childDisplayOrder :Map<Component, Int>;
+	// function get_childDisplayOrder () :Map<Component, Int>
+	// {
+	// 	if (parent != null) {
+	// 		return parent.childDisplayOrder;
+	// 	} else {
+	// 		if (_childDisplayOrder == null) {
+	// 			_childDisplayOrder = Maps.newHashMap(ValueType.TClass(Component));
+	// 		}
+	// 		return _childDisplayOrder;
+	// 	}
+	// }
 	
 	public function new ()
 	{
@@ -45,9 +62,25 @@ class Container extends Component
 		invalidate();
 	}
 	
+	override function onRemove () :Void
+	{
+		super.onRemove();
+		// if (_childDisplayOrder != null) {
+		// 	_childDisplayOrder.clear();
+		// }
+		alignment = Alignment.NONE;
+	}
+	
+	
 	override function childAdded (c :Component) :Void
 	{
 		invalidate();
+		// computeChildDisplayOrder();
+		// com.pblabs.util.Assert.isNotNull(sceneLayer, ' sceneLayer is null');
+		if (sceneLayer != null) {
+			sceneLayer.zOrderDirty = true;
+		}
+		// validateLayerIndices();
 	}
 	
 	override function childRemoved (c :Component) :Void
@@ -73,6 +106,22 @@ class Container extends Component
 				case BOTTOM: c.y = y + c.height / 2;  c.x = x;
 				default: c.y = y; c.x = x;
 			}
+			c.redraw();
+		}
+		
+		// com.pblabs.util.Assert.isNotNull(sceneLayer, ' sceneLayer is null');
+		//Trigger the sceneLayer to resort the display children on it's next update
+		//This assumes we've set sceneLayer.sorter to MCompTools.compareComponentRenderOrder
+		// sceneLayer.zOrderDirty = true;
+		
+	}
+	
+	override public function invalidate () :Void
+	{
+		if (parent != null) {
+			parent.invalidate();
+		} else {
+			redraw();
 		}
 	}
 	
@@ -111,4 +160,27 @@ class Container extends Component
 	{
 		redraw();
 	}
+	
+	/** Makes sure that the children BaseSceneComponent layer indices are above the parent.  Assumes only one SceneComponent */
+	// function computeChildDisplayOrder () :Void
+	// {
+	// 	//We're the top parent
+	// 	var index = 0;
+	// 	var self = this;
+	// 	var addToDisplayOrder = function (c :Component) :Void {
+	// 		if (c == null) return;
+	// 		self.childDisplayOrder.set(c, index++);
+	// 	}
+		
+	// 	var recurseIntoStructure = null;
+	// 	recurseIntoStructure = function (c :Component) :Void {
+	// 		addToDisplayOrder(c);
+	// 		if (Std.is(c, Container)) {
+	// 			for (child in cast(c, Container).children) {
+	// 				recurseIntoStructure(child);
+	// 			}
+	// 		}
+	// 	}
+	// 	recurseIntoStructure(this);
+	// }
 }

@@ -10,6 +10,7 @@ package com.pblabs.components.scene2D;
 
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.engine.core.ObjectType;
+import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.util.Preconditions;
 
 import flash.geom.Matrix;
@@ -18,8 +19,10 @@ import flash.geom.Matrix;
   * A 2D layer holding 2DSceneComponents.
   */
 class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneComponent<Dynamic>> extends NodeComponent<Scene, Component>,
-	implements haxe.rtti.Infos
+	implements IAnimatedObject, implements haxe.rtti.Infos
 {
+	public var priority :Int;
+	
 	/** For ignoring all objects in a layer */
 	public var objectMask :ObjectType;
 	@editor({ui:"UpdatingLabel"})
@@ -28,7 +31,11 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 	public var index (get_index, set_index) :Int;
 	@editor({ui:"HUISlider", min:0.0, max:3.0})
 	public var parallaxFactor (get_parallaxFactor, set_parallaxFactor) :Float;
-
+	public var zOrderDirty :Bool;
+	
+	/** Optionally sort the display children when children are added */
+	public var sorter :Array<BaseSceneComponent<Dynamic>>->Void;
+	
 	#if editor
 	@editor({ui:"UpdatingLabel"})
 	public var childCount (get_childCount, never) :Int;
@@ -39,25 +46,51 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 	#end
 	
 	/** If true, scene objects in this layer ignore mouse/input events */
-	public var ignoreInput :Bool;
+	// public var ignoreInput :Bool;
 	
 	var _transformMatrix :Matrix;
 	
 	public function new ()
 	{
 		super();
+		setDefaultVars();
+	}
+	
+	public function onFrame (dt :Float) :Void
+	{
+		if (!zOrderDirty) {
+			return;
+		}
+		if (sorter != null) {
+			sorter(cast children);
+		}
+		checkZOrder();
+		zOrderDirty = false;
+	}
+	
+	override function childAdded (c :Component) :Void
+	{
+		super.childAdded(c);
+		zOrderDirty = true;
+	}
+	
+	/** Sets the sceneComponent zOrder with the actual z order.  Extended by platform specific subclasses */
+	function checkZOrder () :Void
+	{
+		throw "Subclasses override";
+	}
+	
+	function setDefaultVars () :Void
+	{
+		priority = 0;
 		//By default, searches all children
 		objectMask = ObjectType.ALL;
-		ignoreInput = false;
+		// ignoreInput = false;
+		zOrderDirty = true;
 		_parallaxFactor = 1.0;
 		_transformMatrix = new Matrix();
 	}
 	
-	dynamic public function sortChildren (c1 :Component, c2 :Component) :Int
-	{
-		return 0;
-	}
-
 	function get_scene () :BaseSceneManager<Dynamic>
 	{
 		return cast parent;
@@ -87,6 +120,7 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 	    return val;
 	}
 	
-	var _needsSort :Bool;
+	
+	// var _needsSort :Bool;
 	var _parallaxFactor :Float;
 }

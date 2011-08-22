@@ -78,14 +78,16 @@ class SceneView
 		_maxHeight = 640;
 		//Default div id
 		layerId = "haxeSceneView";
-		//Check for browser type (for css transform strings)
-			#if debug
-				var jQueryLoadedMissing :Bool = untyped __js__("typeof jQuery == 'undefined'");
-				if (jQueryLoadedMissing) {
-					throw "JQuery missing, please add to html";
-				}
-			#end
-		isWebkitBrowser = JQuery._static.browser.webkit == true;
+		var webkitRE :EReg = ~/.*AppleWebKit.*/;
+		isWebkitBrowser = webkitRE.match(js.Lib.window.navigator.userAgent);
+		// //Check for browser type (for css transform strings)
+		// 	#if debug
+		// 		var jQueryLoadedMissing :Bool = untyped __js__("typeof jQuery == 'undefined'");
+		// 		if (jQueryLoadedMissing) {
+		// 			throw "JQuery missing, please add to html";
+		// 		}
+		// 	#end
+		// isWebkitBrowser = JQuery._static.browser.webkit == true;
 		#elseif (flash || cpp)
 		_layer = new flash.display.Sprite();
 		_layer.mouseChildren = false;
@@ -267,6 +269,8 @@ class SceneView
 	
 	function get_mouseOffset () :XY
 	{
+		// com.pblabs.util.Log.warn("Currently disabled");
+		// return new Vector2();
 		#if debug
 			var jQueryLoadedMissing :Bool = untyped __js__("typeof jQuery == 'undefined'");
 			if (jQueryLoadedMissing) {

@@ -194,7 +194,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		}
 	}
 	
-	inline public function destroyBonds (c :Hashable) :Void
+	public function destroyBonds (c :Hashable) :Void
 	{
 		com.pblabs.util.Assert.isNotNull(c, "??owner is null??");
 		#if debug

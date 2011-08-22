@@ -237,11 +237,9 @@ class SceneUtil
 		while (layerIndex >= 0) {
 			var layer :BaseSceneLayer<Dynamic, BaseSceneComponent<Dynamic>> = scene.getLayerAt(layerIndex);
 			layerIndex--;
-			#if !editor
-			if (layer.ignoreInput) {
+			if (!layer.objectMask.and(mask)) {
 				continue;
 			}
-			#end
 			var dispIndex :Int = layer.children.length - 1;
 			while (dispIndex >= 0) {
 				if (layer.children[dispIndex].containsScreenPoint(screenPoint, mask)) {
@@ -279,7 +277,7 @@ class SceneUtil
 		return rect;
 	}
 	
-	public static function addImage (layer :BaseSceneLayer<Dynamic, Dynamic>, resource :ResourceToken<Dynamic>) :BaseSceneComponent<Dynamic>
+	public static function addImage (layer :BaseSceneLayer<Dynamic, Dynamic>, resource :ResourceToken) :BaseSceneComponent<Dynamic>
 	{
 		var e = layer.context.allocate(IEntity);
 		var image = layer.context.allocate(com.pblabs.components.scene2D.ImageComponent);

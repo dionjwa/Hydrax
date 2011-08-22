@@ -51,7 +51,8 @@ class XMLResource extends ResourceBase<Xml>
 		_source = null;
 	}
 	
-	override public function get (?name :String) :Xml
+	override public function get (token :ResourceToken) :Xml
+	// override public function get (?name :String) :Xml
 	{
 		if (name != null) {
 			com.pblabs.util.Log.error("get(name): name argument is ignored");

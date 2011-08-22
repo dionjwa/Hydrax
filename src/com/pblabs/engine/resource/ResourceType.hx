@@ -3,21 +3,24 @@
  * Copyright (C) 2010 Dion Amago
  * For more information see http://github.com/dionjwa/Hydrax
  *
- * This file was derived from source code from the easel library:
- * http://github.com/aduros/easel
- * Copyright (C) 2010 Bruno Garcia
- *
- * Currently no license is listed for the easel library, so for now, this 
- * code takes on the project default license.
- *
  * This file is licensed under the terms of the MIT license, which is included
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
-package easel.display;
+package com.pblabs.engine.resource;
 
-typedef Canvas = {#if js > js.Dom.HtmlDom, #end
-	var width :Int;
-	var height :Int;
-
-	function getContext (type :String) :Context2d;
+enum ResourceType {
+	/** A Bitmap image in a swf, downloaded, or embedded */
+	IMAGE;
+	/** Points to an Svg (Xml) String */
+	SVG;
+	/** String data */
+	STRING;
+	#if flash
+	/** A MovieClip or Bitmap DisplayObject */
+	CLASS;
+	/** An external Swf */
+	SWF;
+	#end
+	/** A bitmap created from a different resource, such as an Svg */
+	BITMAP_CACHE(other :ResourceToken);
 }

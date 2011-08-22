@@ -26,9 +26,6 @@ import Type;
  * @see ObjectType
  */
 class ObjectTypeManager
-// #if cpp
-// 	implements haxe.rtti.Infos
-// #end
 {
 	/**
 	* The number of object types that have been registered.

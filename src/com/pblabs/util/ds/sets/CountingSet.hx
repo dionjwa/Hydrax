@@ -15,15 +15,17 @@ import com.pblabs.util.ds.Set;
 import com.pblabs.util.Preconditions;
 using com.pblabs.util.ds.MapUtil;
 
+import Type;
+
 /**
- * A MultiSet for keeping counts of objects.
+ * A Set for keeping counts of objects.
  */
-class MultiMapSet<T> implements MultiSet<T> 
+class CountingSet<T> implements MultiSet<T> 
 {
-	public static function create <T>(keyClass :Class<T>) :MultiMapSet<T>
+	public static function create <T>(type :ValueType) :CountingSet<T>
 	{
-		var map :Map<T, Int> = Maps.newHashMap(keyClass);
-		return new MultiMapSet<T>(map);
+		var map :Map<T, Int> = Maps.newHashMap(type);
+		return new CountingSet<T>(map);
 	}
 	
 	public function new (source :Map<T, Int>)

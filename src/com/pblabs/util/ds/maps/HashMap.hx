@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Hydrax: haXe port of the PushButton Engine
+ * Hydrax :haXe port of the PushButton Engine
  * Copyright (C) 2010 Dion Amago
- * For more information see http://github.com/dionjwa/Hydrax
+ * For more information see http ://github.com/dionjwa/Hydrax
  *
- * Portions derived from Haxe std code.  Haxe std library license and copyright:
+ * Portions derived from Haxe std code.  Haxe std library license and copyright :
  *
  * Copyright (c) 2005, The haXe Project Contributors
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * modification, are permitted provided that the following conditions are met :
  *
  *   - Redistributions of source code must retain the above copyright
  *	 notice, this list of conditions and the following disclaimer.
@@ -40,7 +40,7 @@ import com.pblabs.util.StringUtil;
 	Hashtable over a set of elements, using Objects as keys.
 	Don't instatiate directly, use Maps.createNewHashMap().
 **/
-//TODO: This map shouldn't be created on platforms that don't support object (non-string) 
+//TODO :This map shouldn't be created on platforms that don't support object (non-string) 
 //dictionary maps.  Those platforms should use a String,IntMap, or HashableMap instead.
 #if flash
 class HashMap<K, V> implements Map<K, V>
@@ -52,7 +52,7 @@ class HashMap<K, V> implements Map<K, V>
 	/**
 		Creates a new empty hashtable.
 	**/
-	public function new() : Void 
+	public function new() :Void 
 	{
 		createDictionary();
 	}
@@ -71,7 +71,7 @@ class HashMap<K, V> implements Map<K, V>
 	/**
 		Set a value for the given key.
 	**/
-	public function set( key : K, value : V ) : V 
+	public function set(key :K, value :V ) :V 
 	{
 		var previous = get(key);
 		if (!exists(key)) {
@@ -84,7 +84,7 @@ class HashMap<K, V> implements Map<K, V>
 	/**
 		Get a value for the given key.
 	**/
-	public function get( key : K ) : Null<V> 
+	public function get(key :K ) :Null<V> 
 	{
 		return untyped h[key];
 	}
@@ -94,7 +94,7 @@ class HashMap<K, V> implements Map<K, V>
 		In particular, it's useful to tells if a key has
 		a [null] value versus no value.
 	**/
-	public function exists( key : K ) : Bool 
+	public function exists(key :K ) :Bool 
 	{
 		return untyped __in__(key, h);
 	}
@@ -103,9 +103,9 @@ class HashMap<K, V> implements Map<K, V>
 		Removes a hashtable entry. Returns [true] if
 		there was such entry.
 	**/
-	public function remove( key : K ) : V
+	public function remove(key :K ) :V
 	{
-		if( untyped !__in__(key, h)) return null;
+		if(untyped !__in__(key, h)) return null;
 		_size--;
 		var previous = get(key);
 		untyped __delete__(h,key);
@@ -115,7 +115,7 @@ class HashMap<K, V> implements Map<K, V>
 	/**
 		Returns an iterator of all keys in the hashtable.
 	**/
-	public function keys() : Iterator<K> 
+	public function keys() :Iterator<K> 
 	{
 		return untyped __keys__(h).iterator();
 	}
@@ -123,26 +123,33 @@ class HashMap<K, V> implements Map<K, V>
 	/**
 		Returns an iterator of all values in the hashtable.
 	**/
-	public function iterator() : Iterator<V> {
+	public function iterator() :Iterator<V> {
 		return untyped {
-			ref : h,
-			it : __keys__(h).iterator(),
-			hasNext : function() { return this.it.hasNext(); },
-			next : function() { var i : Dynamic = this.it.next(); return this.ref[i]; }
+			ref :h,
+			it :__keys__(h).iterator(),
+			hasNext :function() { return __this__.it.hasNext(); },
+			next :function() { var i :Dynamic = __this__.it.next(); return __this__.ref[i]; }
 		};
 	}
 
 	public function size () :Int
 	{
-	    return _size;
+		return _size;
 	}
 	
 	public function forEach (fn :K->V->Dynamic) :Void
-    {
-        for (k in keys()) {
-        	fn(k, get(k));
-        }
-    }
+	{
+		for (k in keys()) {
+			fn(k, get(k));
+		}
+	}
+	
+	#if debug
+	public function toString () :String
+	{
+		return com.pblabs.util.ds.MapUtil.toString(this);
+	}
+	#end
 }
 
 #else
@@ -154,7 +161,7 @@ class HashMap<V> implements Map<String, V>
 	/**
 		Creates a new empty hashtable.
 	**/
-	public function new() : Void 
+	public function new() :Void 
 	{
 		createDictionary();
 	}
@@ -173,7 +180,7 @@ class HashMap<V> implements Map<String, V>
 	/**
 		Set a value for the given key.
 	**/
-	public function set( key : String, value : V ) : V 
+	public function set(key :String, value :V ) :V 
 	{
 		com.pblabs.util.Assert.isNotNull(key);
 		if (!exists(key)) {
@@ -187,7 +194,7 @@ class HashMap<V> implements Map<String, V>
 	/**
 		Get a value for the given key.
 	**/
-	public function get( key : String ) : Null<V> 
+	public function get(key :String ) :Null<V> 
 	{
 		// com.pblabs.util.Assert.isNotNull(key);
 		return _hash.get(key);	
@@ -198,7 +205,7 @@ class HashMap<V> implements Map<String, V>
 		In particular, it's useful to tells if a key has
 		a [null] value versus no value.
 	**/
-	public function exists( key : String ) : Bool 
+	public function exists(key :String ) :Bool 
 	{
 		return _hash.exists(key);
 	}
@@ -207,7 +214,7 @@ class HashMap<V> implements Map<String, V>
 		Removes a hashtable entry. Returns [true] if
 		there was such entry.
 	**/
-	public function remove( key : String ) : V
+	public function remove(key :String ) :V
 	{
 		if (exists(key)) {
 			_size--;
@@ -220,7 +227,7 @@ class HashMap<V> implements Map<String, V>
 	/**
 		Returns an iterator of all keys in the hashtable.
 	**/
-	public function keys() : Iterator<String>
+	public function keys() :Iterator<String>
 	{
 		return _hash.keys();
 	}
@@ -228,22 +235,29 @@ class HashMap<V> implements Map<String, V>
 	/**
 		Returns an iterator of all values in the hashtable.
 	**/
-	public function iterator() : Iterator<V> 
+	public function iterator() :Iterator<V> 
 	{
 		return _hash.iterator();
 	}
 
 	public function size () :Int
 	{
-	    return _size;
+		return _size;
 	}
 	
 	public function forEach (fn :String->V->Dynamic) :Void
-    {
-        for (k in keys()) {
-        	fn(k, get(k));
-        }
-    }
+	{
+		for (k in keys()) {
+			fn(k, get(k));
+		}
+	}
+	
+	#if debug
+	public function toString () :String
+	{
+		return com.pblabs.util.ds.MapUtil.toString(this);
+	}
+	#end
 	
 }
 #end

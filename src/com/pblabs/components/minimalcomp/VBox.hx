@@ -3,21 +3,15 @@ package com.pblabs.components.minimalcomp;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.engine.time.IAnimatedObject;
 
-enum VerticalDirection {
-	UP;
-	DOWN;
-}
-
 class VBox extends Container
 {
-	public var vGap (default, set_vGap) :Float;
-	public var flowDirection (default, set_flowDirection) :VerticalDirection;
+	public var gap (default, set_gap) :Float;
+	public var flowDirection (default, set_flowDirection) :Direction;
 	
 	public function new ()
 	{
 		super();
-		this.vGap = 2;
-		this.flowDirection = DOWN;
+		setDefaults();
 	}
 	
 	override public function redraw () :Void
@@ -31,6 +25,7 @@ class VBox extends Container
 			switch (flowDirection) {
 				case UP: curY -= c.height / 2;
 				case DOWN: curY += c.height / 2;
+				default: throw "Should never be here";
 			}
 			c.x = curX;
 			c.y = curY;
@@ -49,21 +44,32 @@ class VBox extends Container
 			}
 			
 			switch (flowDirection) {
-				case UP: curY -= c.height / 2 + vGap;
-				case DOWN: curY += c.height / 2 + vGap;
+				case UP: curY -= c.height / 2 + gap;
+				case DOWN: curY += c.height / 2 + gap;
+				default:
 			}
 		}
 	}
 	
-	function set_vGap (val :Float) :Float
+	function setDefaults () :Void
 	{
-		this.vGap = val;
+		gap = 2;
+		flowDirection = Direction.DOWN;
+	}
+	
+	function set_gap (val :Float) :Float
+	{
+		this.gap = val;
 		invalidate();
 		return val;
 	}
 	
-	function set_flowDirection (val :VerticalDirection) :VerticalDirection
+	function set_flowDirection (val :Direction) :Direction
 	{
+		switch (val) {
+			case UP,DOWN://ok
+			default: throw "Invalid flow direction " + val;
+		}
 		this.flowDirection = val;
 		invalidate();
 		return val;

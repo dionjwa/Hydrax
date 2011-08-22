@@ -143,5 +143,12 @@ class IntHashMap<V> implements Map<Int, V>
 		}
 	}
 	
+	#if debug
+	public function toString () :String
+	{
+		return com.pblabs.util.ds.MapUtil.toString(this);
+	}
+	#end
+	
 }
 #end

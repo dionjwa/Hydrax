@@ -38,7 +38,6 @@ class SwfResource extends ResourceBase<Dynamic>
 		super(name);
 		_source = source;
 		_xorKey = xorkey;
-		// createLoader();
 	}
 	
 	function createLoader () :Void
@@ -68,10 +67,14 @@ class SwfResource extends ResourceBase<Dynamic>
 	}
 	
 	/** Assume we want to instantiate a class */
-	override public function get (?name :String) :Dynamic
+	// override public function get (?name :String) :Dynamic
+	override public function get (token :ResourceToken) :Dynamic
 	{
-		com.pblabs.util.Assert.isNotNull(name, "Must supply an argument for SwfResources.get");
-		return createInstance(name);
+		com.pblabs.util.Assert.isNotNull(token, "Must supply a token for SwfResources.get");
+		switch (token.type) {
+			// case IMAGE_DATA:
+			default: return createInstance(token.id);
+		}
 	}
 	
 	override public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
@@ -176,16 +179,21 @@ class SwfResource extends ResourceBase<Dynamic>
 	public function getSymbol (name :String) :Dynamic
 	{
 		try {
-			return _loader.contentLoaderInfo.applicationDomain.getDefinition(name);
+			return _loader.contentLoaderInfo.applicationDomain.getDefinition("SWFResources_" + name);
 		} catch (e :Error) {
 			// swallow the exception and return null
+			try {
+				return _loader.contentLoaderInfo.applicationDomain.getDefinition(name);
+			} catch (e :Error) {
+				// swallow the exception and return null
+			}
 		}
 		return null;
 	}
 
 	public function hasSymbol (name :String) :Bool
 	{
-		return _loader.contentLoaderInfo.applicationDomain.hasDefinition(name);
+		return _loader.contentLoaderInfo.applicationDomain.hasDefinition(name) || _loader.contentLoaderInfo.applicationDomain.hasDefinition("SWFResources_" + name);
 	}
 
 	public function getClass (name :String) :Class<Dynamic>
@@ -196,7 +204,7 @@ class SwfResource extends ResourceBase<Dynamic>
 	public function createInstance (name :String) :Dynamic
 	{
 		var cls = getClass(name);
-		com.pblabs.util.Assert.isNotNull(cls);
+		com.pblabs.util.Assert.isNotNull(cls, name + " is not defined in " + this);
 		return Type.createInstance(cls, Constants.EMPTY_ARRAY);
 	}
 }

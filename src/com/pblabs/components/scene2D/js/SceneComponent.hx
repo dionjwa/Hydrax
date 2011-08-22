@@ -13,9 +13,6 @@ import com.pblabs.components.scene2D.BaseSceneLayer;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.util.ReflectUtil;
 
-import easel.display.Canvas;
-import easel.display.Context2d;
-
 import js.Dom;
 
 /**
@@ -220,7 +217,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		ctx.restore();
 	}
 	
-	public function render (ctx :Context2d) :Void
+	public function render (ctx :CanvasRenderingContext2D) :Void
 	{
 		com.pblabs.util.Assert.isNotNull(ctx, "Null Context2d?");
 		if (visible && alpha > 0) {
@@ -252,7 +249,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		}
 	}
 	
-	public function drawPixels (ctx :Context2d)
+	public function drawPixels (ctx :CanvasRenderingContext2D)
 	{
 		throw "Subclasses must override";	
 	}

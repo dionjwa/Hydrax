@@ -15,13 +15,21 @@ import haxe.io.BytesData;
   */
 interface IResource<T>
 {
+	/** Set by the manager. */
+	var manager :IResourceManager;
+	
 	var name (get_name, never) :String;
+	/**
+	  * Queue the token for loading
+	  */
+	function add (token :ResourceToken) :Void;
 	/**
 	  * Create/get the resource mapped to the name.
 	  * The returned object may be generated or it may 
 	  * an unchanging object, such as Xml.
 	  */
-	function get (?resourceName :String) :T;
+	function get (token :ResourceToken) :T;
+	// function get (?resourceName :String) :T;
 	/**
 	  * Loads resources managed by this instance.
 	  */

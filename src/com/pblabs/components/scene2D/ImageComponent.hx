@@ -20,7 +20,7 @@ import com.pblabs.util.Preconditions;
 import de.polygonal.motor2.geom.math.XY;
 
 using com.pblabs.components.scene2D.SceneUtil;
-using com.pblabs.engine.resource.ResourceToken;
+using com.pblabs.engine.resource.ResourceManager;
 
 /**
   * BitmapRenderer with automatically loading resource.
@@ -28,7 +28,7 @@ using com.pblabs.engine.resource.ResourceToken;
 class ImageComponent extends BitmapRenderer
 {
 	/** The IResource name and item id.  Id can be null */
-	public var resource :ResourceToken<Dynamic>;
+	public var resource :ResourceToken;
 	
 	public function new () :Void
 	{
@@ -50,23 +50,31 @@ class ImageComponent extends BitmapRenderer
 	#if js
 	function loadJSImage () :Void
 	{
-		var image = context.get(resource);
+		var image :js.Dom.Image = context.getTokenResource(resource);
+		width = image.width;
+		height = image.height;
+		// trace('image.width=' + image.width);
+		// trace('image.height=' + image.height);
 		Preconditions.checkNotNull(image, "image from resource is null " +resource);
-		var canvas :easel.display.Canvas = cast js.Lib.document.createElement("canvas");
-		canvas.width = image.width;
-		canvas.height = image.height;
-		var ctx = canvas.getContext("2d");
-		ctx.drawImage(image, 0, 0);
-		bitmapData = canvas;
+		_bitmap.width = image.width;
+		_bitmap.height = image.height;
+		_bitmap.getContext("2d").drawImage(image , 0, 0);
+		// var canvas :easel.display.Canvas = cast js.Lib.document.createElement("canvas");
+		// canvas.width = image.width;
+		// canvas.height = image.height;
+		// var ctx = canvas.getContext("2d");
+		// ctx.drawImage(image, 0, 0);
+		// bitmapData = canvas;
 		//Assume you want the image centered.
-		registrationPoint = new com.pblabs.geom.Vector2(image.width / 2, image.height / 2);
+		// registrationPoint = new com.pblabs.geom.Vector2(image.width / 2, image.height / 2);
 	}
 	#end
 	
 	#if (flash || cpp)
 	function loadFlashImage () :Void
 	{
-		var image :Dynamic = context.get(resource);
+		var image :Dynamic = context.getTokenResource(resource);
+		// trace(resource + "=" + image); 
 		com.pblabs.util.Assert.isNotNull(image, "Image loaded from " + resource + " is null");
 		com.pblabs.util.Assert.isNotNull(image, "null image for " + resource);
 		if (Std.is(image, flash.display.BitmapData)) {

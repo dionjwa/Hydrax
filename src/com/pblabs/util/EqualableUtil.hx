@@ -10,6 +10,8 @@ package com.pblabs.util;
 
 import com.pblabs.util.ArrayUtil;
 
+import haxe.io.BytesData;
+
 /**
  * Tests objects for equality, using the Equalable interface if present.
  */
@@ -30,6 +32,8 @@ class EqualableUtil
 			return (cast(obj1, Equalable<Dynamic>)).equals(obj2);
 		} else if ((Std.is(obj1, Array)) || (Std.is(obj2, Array))) {
 			return isArraysEqual(cast obj1, cast obj2);
+		} else if ((Std.is(obj1, BytesData)) || (Std.is(obj2, BytesData))) {
+			return isBytesDataEqual(cast obj1, cast obj2);
 		} else {
 			return false;
 		}
@@ -52,6 +56,36 @@ class EqualableUtil
 				}
 			}
 			return true;
+		} 
+	}
+	
+	public static function isBytesDataEqual (a1 :BytesData, a2 :BytesData) :Bool
+	{
+		if (a1 == null && a2 == null) {
+			return true;
+		} else if (a1 == null && a2 != null) {
+			return false;
+		} else if (a1 != null && a2 == null) {
+			return false;
+		} else if (a1.length != a2.length) {
+			return false;
+		} else {
+			#if flash
+			a1.position = a2.position = 0;
+			for (ii in 0...a1.length) {
+				if (a1.readByte() != a2.readByte()) {
+					return false;
+				}
+			}
+			return true;
+			#else
+			for (ii in 0...a1.length) {
+				if (a1[0] != a2[0]) {
+					return false;
+				}
+			}
+			return true;
+			#end
 		} 
 	}
 }

@@ -28,22 +28,22 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 #end
 		,implements com.pblabs.components.scene2D.flash.ICopyPixelsRenderer
 {
-	#if flash
+	// #if flash
 	public var bitmap (get_bitmap, never) :Image;
 	var _bitmap :Image;
 	inline function get_bitmap () :Image { return _bitmap; }
-	#elseif js
-	var _bitmap :ImageData;
-	#end
+	// #elseif js
+	// var _bitmap :ImageData;
+	// #end
 	
 	public var bitmapData (get_bitmapData, set_bitmapData) :ImageData;
 	inline function get_bitmapData () :ImageData
 	{
-		#if flash
 		com.pblabs.util.Assert.isNotNull(_bitmap);
+		#if flash
 		return _bitmap.bitmapData;
 		#elseif js
-		return _bitmap;
+		return _bitmap.getContext("2d").getImageData(0, 0, _bitmap.width, _bitmap.height);
 		#end
 	}
 	
@@ -54,11 +54,12 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		_bitmap.bitmapData = val;
 		// updateTransform();
 		#elseif js
-		if (_bitmap != null) {
-			div.removeChild(_bitmap);
-		}
-		_bitmap = val;
-		div.appendChild(_bitmap);
+		_bitmap.getContext("2d").putImageData(val, val.width, val.height);
+		// if (_bitmap != null) {
+		// 	div.removeChild(_bitmap);
+		// }
+		// _bitmap = val;
+		// div.appendChild(_bitmap);
 		#end
 		// bitmapDirty = true;
 		// recomputeBounds();
@@ -75,7 +76,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		}
 	}
 	#elseif js 
-	override public function drawPixels (ctx :easel.display.Context2d) :Void 
+	override public function drawPixels (ctx :CanvasRenderingContext2D) :Void 
 	{
 		if (_bitmap == null) {
 			_isContentsDirty = true;
@@ -115,10 +116,11 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		_displayObject = sprite;
 		// _bitmap.bitmapData.floodFill(10, 10, 0xff0000);
 		#elseif js
-		// var canvas :easel.display.Canvas = cast js.Lib.document.createElement("canvas");
-		// canvas.width = width;
-		// canvas.height = height;
-		// _bitmap = canvas; 
+		var canvas :easel.display.Canvas = cast js.Lib.document.createElement("canvas");
+		canvas.width = width;
+		canvas.height = height;
+		_bitmap = canvas;
+		div.appendChild(_bitmap);
 		#end
 		 
 	}
@@ -150,6 +152,26 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		_bitmap.bitmapData = null;
 		#end
 	}
+	
+	#if js
+	override function set_width (val :Float) :Float
+	{
+		if (_bitmap.width != val) {
+			_bitmap.width = Std.int(val);
+			recomputeBounds();
+		}
+		return super.set_width(val);
+	}
+	
+	override function set_height (val :Float) :Float
+	{
+		if (_bitmap.height != val) {
+			_bitmap.height = Std.int(val);
+			recomputeBounds();
+		}
+		return super.set_height(val);
+	}
+	#end
 	
 	#if flash override #end 
 	function recomputeBounds () :Void
