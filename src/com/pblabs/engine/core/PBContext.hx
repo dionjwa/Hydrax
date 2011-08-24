@@ -34,7 +34,7 @@ class PBContext
 	public var key :Int;
 	
 	public var name (default, null) :String;
-	public var started (default, null) :Bool;
+	public var isSetup :Bool;
 	public var rootGroup (default, null) :IPBGroup;
 	public var currentGroup(get_currentGroup, set_currentGroup) : IPBGroup;
 	public var processManager (get_processManager, null) :IProcessManager;
@@ -66,7 +66,7 @@ class PBContext
 	{
 		key = com.pblabs.engine.util.PBUtil.KEY_COUNT++;
 		
-		_isSetup = false;
+		isSetup = false;
 		if (name == null) {
 			initializeName();
 		} else {
@@ -175,8 +175,8 @@ class PBContext
 	
 	public function setup () :Void
 	{
-		com.pblabs.util.Assert.isFalse(_isSetup, "Only call setup once");
-		_isSetup = true;
+		com.pblabs.util.Assert.isFalse(isSetup, "Only call setup once");
+		isSetup = true;
 		Preconditions.checkNotNull(injector, "WTF is the injector null?");
 		
 		// _nameManager = getManager(NameManager);

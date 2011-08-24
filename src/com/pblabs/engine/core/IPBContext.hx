@@ -42,7 +42,7 @@ interface IPBContext
 	var name (default, null):String;
 	var rootGroup(default, null):IPBGroup;
 	var currentGroup (get_currentGroup, set_currentGroup) :IPBGroup;
-	var started (default, null):Bool;
+	var isSetup :Bool;
 	
 	/** Is this context the top context (thus updating)? */
 	var isTopContext (get_isTopContext, never) :Bool;

@@ -157,9 +157,9 @@ class PBGameBase
 					self.signalContextShutdown.dispatch(ctx);
 				// });
 			}).destroyOnUse();
-			//Fire setup
-			signalContextSetup.dispatch(ctx);
-			ctx.setup();
+			// //Fire setup
+			// signalContextSetup.dispatch(ctx);
+			// ctx.setup();
 			
 			com.pblabs.util.Assert.isTrue(ctx.injector.getMapping(IPBContext) == ctx);
 			
@@ -359,6 +359,12 @@ class PBGameBase
 		_contextProcessManager = null;
 		
 		if (_currentContext != null) {
+			if (!_currentContext.isSetup) {
+				//Fire setup
+				signalContextSetup.dispatch(_currentContext);
+				_currentContext.setup();
+			}
+			
 			//Dispatch the signaller first, so that managers are notified.
 			com.pblabs.util.Log.debug("New current context=" + _currentContext);
 			signalContextEnter.dispatch(_currentContext);
