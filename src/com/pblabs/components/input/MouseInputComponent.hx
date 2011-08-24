@@ -193,7 +193,6 @@ class MouseInputComponent extends EntityComponent
 		}
 		_bonds = [];
 		destroyDeviceHeldBond();
-		// destroyDeviceMoveBond();
 	}
 	
 	override function onReset () :Void
@@ -205,8 +204,6 @@ class MouseInputComponent extends EntityComponent
 		}
 		
 		_bounds = _bounds == null ? owner.getComponent(IInteractiveComponent) : _bounds;
-		// trace('_bounds=' + _bounds.name);
-		
 		com.pblabs.util.Assert.isNotNull(_bounds, "bounds is null, There's no IInteractiveComponent by type and the boundsProperty is null.  How are we supposed to work?");
 		
 		var input = context.getManager(InputManager);

@@ -1,76 +1,49 @@
 package com.pblabs.engine.resource;
 
+import Type;
+
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
-import Type;
+import haxe.io.Bytes;
 
 using Lambda;
+
 /**
   * Loads and stores String resources
   */
-class DynamicResources<T> extends ResourceBase<T>
+class DynamicResources<T> extends LoadingResources<T>
 {
-	var _pending :Array<ResourceToken>;
-	var _loading :Array<ResourceToken>;
-	var _data :Map<ResourceToken, T>;
-	
 	#if flash
 	var _loaders :Map<ResourceToken, flash.net.URLLoader>;
 	#end
 	
-	public function new (source :Source)
+	public function new (name :String)
 	{
-		super(Type.enumConstructor(source));
-		_data = Maps.newHashMap(ValueType.TClass(ResourceToken));
-		_pending = [];
-		_loading = [];
-		
+		super(name);
 		#if flash
 		_loaders = Maps.newHashMap(ValueType.TClass(ResourceToken));
 		#end
 	}
 	
-	override public function add (token :ResourceToken) :Void
-	{
-		_pending.push(token);
-	}
-	
 	override public function get (token :ResourceToken) :T
 	{
-		return _data.get(token);
-	}
-	
-	override public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
-	{
-		// com.pblabs.util.Log.debug("load " + _source);
-		super.load(onLoad, onError);
-		
-		for (token in _pending.copy()) {
-			_pending.remove(token);
-			_loading.push(token);
-			
-			switch (token.source) {
-				case url (u): loadFromUrl(token, url);
-				case bytes (b): loadFromBytes(token, b); 
-				case text (t): loadFromString(token, t)
-				case embedded (name): loadFromEmbedded(token);
-				#if flash
-				case swf (swfId): loadFromSwf(token, swfId);
-				#end
-			}
+		#if flash
+		//Load swf resources directly from the Swf, since by default they are not cached.
+		switch (token.source) {
+			case swf(swfName): return ResourceTools.instantiateEmbeddedClass(token.id); 
+			//loadFromSwf(token, swfName);
+			default:
 		}
+		#end
+		
+		return super.get(token);
 	}
 	
 	override public function unload () :Void
 	{
 		super.unload();
-		_data.clear();
-		_data = null;
-		_pending = [];
-		_loading = [];
-		
 		#if flash
 		for (loader in _loaders) {
 			if (loader != null) {
@@ -85,11 +58,11 @@ class DynamicResources<T> extends ResourceBase<T>
 		#end
 	}
 	
-	function loadFromUrl (token :ResourceToken, url :String) :Void
+	override function loadFromUrl (token :ResourceToken, url :String) :Void
 	{
 		Preconditions.checkNotNull(token.url, "token.url is null");
 		#if flash
-		var loader = createLoader();
+		var loader = createLoader(token);
 		try {
 			loader.load(new flash.net.URLRequest(url));
 		} catch (e :flash.errors.SecurityError) {
@@ -117,45 +90,13 @@ class DynamicResources<T> extends ResourceBase<T>
 		#end
 	}
 	
-	function loadFromBytes (token :ResourceToken, bytes :Bytes) :Void
+	#if flash
+	override function loadFromSwf (token :ResourceToken, swfId :String) :T
 	{
-		throw "Subclasses override";
-	}
-	
-	function loadFromString (token :ResourceToken, s :String) :Void
-	{
-		throw "Subclasses override";
-	}
-	
-	function loadFromEmbedded (token :ResourceToken) :Void
-	{
-		throw "Subclasses override";
-		//Check haxe embedded resources first
-		if (haxe.Resource.listNames().has(token.id)) {
-			_data.set(token, haxe.Resource.getString(token.id));
-		} else {
-			com.pblabs.util.Log.error("No embedded resource found: " + token.id);
-		}
+		//We don't need to preload swf assets. Load them as needed
 		_loading.remove(token);
 		maybeFinish();
-	}
-	
-	function onLoadError (e :Dynamic) :Void
-	{
-		_onError(e);
-	}
-	
-	function maybeFinish () :Void
-	{
-		if (_loading.length == 0 && _pending.length == 0) {
-			loaded();
-		}
-	}
-	
-	#if flash
-	function loadFromSwf (token :ResourceToken, swfId :String) :Void
-	{
-		throw "Subclasses override";
+		return null;
 	}
 	
 	function createLoader (token :ResourceToken) :flash.net.URLLoader
@@ -166,12 +107,12 @@ class DynamicResources<T> extends ResourceBase<T>
 		var self = this;
 		var onComplete = function (e :flash.events.Event) :Void {
 			com.pblabs.util.Log.debug("onComplete");
-			_loading.remove(token);
+			self._loading.remove(token);
 			loader.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
 			loader.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
-			_data.set(token, loader.data);
-			_loaders.remove(token);
-			maybeFinish();
+			self._data.set(token, loader.data);
+			self._loaders.remove(token);
+			self.maybeFinish();
 		}
 		
 		com.pblabs.util.EventDispatcherUtil.addOnceListener(loader, flash.events.Event.COMPLETE, onComplete);

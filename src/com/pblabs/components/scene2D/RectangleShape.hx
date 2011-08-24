@@ -11,6 +11,9 @@ package com.pblabs.components.scene2D;
 import com.pblabs.geom.RectangleTools;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.StringUtil;
+
+import de.polygonal.motor2.geom.primitive.AABB2;
+
 using com.pblabs.components.scene2D.SceneUtil;
 
 class RectangleShape extends ShapeComponent
@@ -40,7 +43,13 @@ class RectangleShape extends ShapeComponent
 		_svgContainer.appendChild(_svg);
 		#end
 		
-		_bounds = _unscaledBounds.clone();
+		_unscaledBounds.x = w;
+		_unscaledBounds.y = h;
+		_bounds = new AABB2();
+		_bounds.xmin = -_unscaledBounds.x / 2;
+		_bounds.xmax = _unscaledBounds.x / 2;
+		_bounds.ymin = -_unscaledBounds.y / 2;
+		_bounds.ymax = _unscaledBounds.y / 2;
 		width = w;
 		height = h;
 	}
@@ -98,8 +107,7 @@ class RectangleShape extends ShapeComponent
 	{
 		com.pblabs.util.Assert.isTrue(val >= 0, "val=" + val + " " + com.pblabs.util.Log.getStackTrace());
 		var unscaledWidth = val / _scaleX;
-		_unscaledBounds.xmin = _x - unscaledWidth / 2;
-		_unscaledBounds.xmax = _x + unscaledWidth / 2;
+		_unscaledBounds.x = unscaledWidth;
 		_bounds.xmin = _x - val / 2;
 		_bounds.xmax = _x + val / 2;
 		_scaleX = val / unscaledWidth;
@@ -113,8 +121,7 @@ class RectangleShape extends ShapeComponent
 	{
 		com.pblabs.util.Assert.isTrue(val >= 0, "val=" + val + " " + com.pblabs.util.Log.getStackTrace());
 		var unscaledHeight = val / _scaleY;
-		_unscaledBounds.ymin = _y - unscaledHeight / 2;
-		_unscaledBounds.ymax = _y + unscaledHeight / 2;
+		_unscaledBounds.y = unscaledHeight;
 		_bounds.ymin = _y - val / 2;
 		_bounds.ymax = _y + val / 2;
 		_scaleY = val / unscaledHeight;

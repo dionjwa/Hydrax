@@ -130,8 +130,10 @@ class MCompTools
 		
 		//Assign the parent property as well as actually adding the parent
 		//This way, we can detach and attach without having to explicity get the parent again
-		childComp.parentProperty = containerComp.entityProp(); 
-		containerComp.addChild(childComp);
+		childComp.parentProperty = containerComp.entityProp();
+		if (childComp.isRegistered) {
+			containerComp.addChild(childComp);
+		}
 		return child;
 	}
 	

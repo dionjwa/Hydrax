@@ -157,7 +157,7 @@ class SpatialComponent extends EntityComponent,
 		return val;
    }
 
-	public function setLocation (xLoc :Float, yLoc :Float) :Void
+	inline public function setLocation (xLoc :Float, yLoc :Float) :Void
 	{
 		// com.pblabs.util.Assert.isFalse(Math.isNaN(xLoc), com.pblabs.util.Log.getStackTrace());
 		// com.pblabs.util.Assert.isFalse(Math.isNaN(yLoc), com.pblabs.util.Log.getStackTrace());
@@ -200,14 +200,14 @@ class SpatialComponent extends EntityComponent,
 		super.onRemove();
 	}
 	
-	public function dispatchAngle () :Void
+	inline public function dispatchAngle () :Void
 	{
 		if (signalerAngle.isListenedTo) {
 			signalerAngle.dispatch(_angle);
 		}
 	}
 	
-	public function dispatchLocation () :Void
+	inline public function dispatchLocation () :Void
 	{
 		if ( signalerLocation.isListenedTo) {
 			_vecForSignalling.x = _vec.x;
@@ -216,7 +216,7 @@ class SpatialComponent extends EntityComponent,
 		}
 	}
 	
-	public function dispatchAll () :Void
+	inline public function dispatchAll () :Void
 	{
 		dispatchAngle();
 		dispatchLocation();

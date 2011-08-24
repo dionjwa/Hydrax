@@ -298,7 +298,9 @@ class Entity extends PBObject,
 			_deferredComponents.push(p);
 			return true;
 		}
+		com.pblabs.engine.debug.Profiler.enter("injecting " + c.name);
 		injectComponent(c);
+		com.pblabs.engine.debug.Profiler.exit("injecting " + c.name);
 		
 		if (Std.is(c, ITickedObject)) {
 			_context.processManager.addTickedObject(cast(c));
@@ -307,8 +309,10 @@ class Entity extends PBObject,
 		if (Std.is(c, IAnimatedObject)) {
 			_context.processManager.addAnimatedObject(cast(c));
 		}
+		com.pblabs.engine.debug.Profiler.enter("register " + c.name);
 		// We have to be careful w.r.t. adding components from another component.
 		c.register(this, componentName);
+		com.pblabs.engine.debug.Profiler.exit("register " + c.name);
 		// Fire off the reset.
 		doResetComponents();
 		
@@ -481,11 +485,11 @@ class Entity extends PBObject,
 			}
 			
 			//Reset it!
-			com.pblabs.util.Log.debug("    reseting " + component.name);
-			com.pblabs.engine.debug.Profiler.enter("reseting " + component.name);
+			// com.pblabs.util.Log.debug("    reseting " + component.name);
+			#if profiler com.pblabs.engine.debug.Profiler.enter("reseting " + com.pblabs.util.ReflectUtil.getClassName(component)); #end
 			component.reset();
-			com.pblabs.engine.debug.Profiler.exit("reseting " + component.name);
-			com.pblabs.util.Log.debug("    done reseting " + component.name);
+			#if profiler com.pblabs.engine.debug.Profiler.exit("reseting " + com.pblabs.util.ReflectUtil.getClassName(component)); #end
+			// com.pblabs.util.Log.debug("    done reseting " + component.name);
 		}
 		com.pblabs.util.Log.debug("  finished reseting");
 		com.pblabs.engine.debug.Profiler.exit("doResetComponents");

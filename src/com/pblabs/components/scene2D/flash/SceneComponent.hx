@@ -136,13 +136,15 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		#elseif cpp
 		var localDimensions = _displayObject.nmeGetPixelBounds();
 		#end
-		_unscaledBounds.xmin = localDimensions.left;
-		_unscaledBounds.xmax = localDimensions.right;
-		_unscaledBounds.ymin = localDimensions.top;
-		_unscaledBounds.ymax = localDimensions.bottom;
+		_unscaledBounds.x = localDimensions.width;
+		_unscaledBounds.y = localDimensions.height;
+		// _unscaledBounds.xmin = localDimensions.left;
+		// _unscaledBounds.xmax = localDimensions.right;
+		// _unscaledBounds.ymin = localDimensions.top;
+		// _unscaledBounds.ymax = localDimensions.bottom;
 		
-		width = _unscaledBounds.intervalX * scaleX;
-		height = _unscaledBounds.intervalY * scaleY;
+		width = _unscaledBounds.x * scaleX;
+		height = _unscaledBounds.y * scaleY;
 		
 		_isTransformDirty = true;
 	}

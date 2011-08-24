@@ -17,7 +17,7 @@ class Preconditions
 	 * Checks that the argument is not null, and returns the validated argument.
 	 * @return the validated reference.
 	 */
-	inline public static function checkNotNull <T> (ref :T, ?message :String = null, ?info :haxe.PosInfos) :T
+	public static function checkNotNull <T> (ref :T, ?message :String = null, ?info :haxe.PosInfos) :T
 	{
 		if (ref == null) {
 			fail(if (message != null) message else "Argument is null in file " + info.fileName + ", line " + info.lineNumber + ", " + info.className + "::" + info.methodName);

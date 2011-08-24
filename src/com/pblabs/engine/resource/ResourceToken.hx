@@ -12,8 +12,9 @@ import com.pblabs.engine.core.IPBContext;
 import com.pblabs.util.Equalable;
 
 class ResourceToken
-	implements Equalable<ResourceToken>, implements com.pblabs.util.ds.Hashable
+	implements Equalable<ResourceToken>, implements com.pblabs.util.ds.Hashable, implements de.polygonal.ds.Hashable
 {
+	public var key :Int;
 	// public var resourceId (default, null) :String;
 	public var source :Source;
 	/** Set by the ResourceManager */
@@ -26,7 +27,6 @@ class ResourceToken
 
 	var _hashCode :Int;
 	
-	// public function new (resourceId :String, ?id :String = null, ?type :ResourceType, ?url :String)
 	public function new (id :String, source :Source, type :ResourceType)
 	{
 		// this.resourceId = resourceId;
@@ -34,7 +34,33 @@ class ResourceToken
 		this.id = id;
 		this.type = type;
 		// this.url = url;
-		_hashCode = com.pblabs.util.StringUtil.hashCode(id + "::" + source + "::" + type);
+		//Only hash the id and the type.  The source should not matter for hashing.
+		_hashCode = com.pblabs.util.StringUtil.hashCode("Resource[id=" + id + ", type=" + Type.enumConstructor(type) +"]");
+		
+		
+		// ", source=" + Type.enumConstructor(source) + ", type=" + Type.enumConstructor(type) +"]";//+ ", resourceId=" + resourceId
+		// + ", source=" + sourceStr
+		
+		
+		// id + "::" + 
+		// 	switch (source) {
+		// 		case url (u): u;
+		// 		case bytes (b): "bytes";
+		// 		case text (t): haxe.Md5.encode(t);
+		// 		case embedded (name): name;
+		// 		case swf(swfName): swfName;
+		// 	} + 
+		// 	switch (type) {
+		// 		case IMAGE: 
+		// 		case SVG: 
+		// 		case STRING: 
+		// 		case CLASS: 
+		// 		case SWF: 
+		// 		case BITMAP_CACHE(other :ResourceToken): 
+		// 	});
+			
+			
+			
 		// resourceId = null;
 		
 		// #if flash
@@ -58,7 +84,21 @@ class ResourceToken
 	
 	public function toString () :String
 	{
-	    return "Resource[id=" + id + ", source=" + source + ", type=" + type +"]";//+ ", resourceId=" + resourceId
+		var sourceStr :String = switch (source) {
+			//The compiler doesn't like the 'u'.  Why???
+			// case url (u): "url:";// + u;
+			case bytes (b): "bytes";
+			case text (t): "texthash:" + haxe.Md5.encode(t);
+			case embedded (name): "embedded:" + name;
+			case swf(swfName): "swf:" + swfName;
+			default: Std.string(source);
+		} 
+		
+		
+		return "Resource[id=" + id
+		// ", source=" + Type.enumConstructor(source) + ", type=" + Type.enumConstructor(type) +"]";//+ ", resourceId=" + resourceId
+		// + ", source=" + sourceStr
+		+ ", type=" + 	Type.enumConstructor(type) +"]";
 	}
 	
 	function get_url () :String

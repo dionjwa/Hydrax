@@ -16,6 +16,22 @@ class F
 		}
 	}
 	
+	public static function id2 <T>(x :T) :Dynamic->T
+	{
+		return function (?_) :T {
+			return x;
+		}
+	}
+	
+	/**
+	  * Haxe's strict typing means you can't use a function :Void->Dynamic in the 
+	  * place of Void->Void, and just ignore the return type.
+	  */
+	public static function ignoreReturn(f :Void->Dynamic) :Void->Void
+	{
+		return function () :Void {f();}
+	}
+	
 	public static function adapt (func :Dynamic, ?args :Array<Dynamic>, ?owner :Dynamic) :Dynamic->Void
 	{
 		return function (?ignored :Dynamic) :Void {

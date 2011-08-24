@@ -79,10 +79,11 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		#end
 		
 		if (val == null) {
-			_unscaledBounds.xmin = _unscaledBounds.ymin = 0;
-			_unscaledBounds.xmax = _unscaledBounds.ymax = 0.001;
+			_unscaledBounds.x = _unscaledBounds.y = 0.0001;
+			// _unscaledBounds.xmax = _unscaledBounds.ymax = 0.001;
 			registrationPoint.x = registrationPoint.y = 0;
-			_bounds = _unscaledBounds.clone();
+			_bounds.xmin = _bounds.ymin = 0;
+			_bounds.xmax = _bounds.ymax = _unscaledBounds.x;
 			isTransformDirty = true;
 			return val;
 		}
@@ -93,9 +94,10 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		
 		var svgXml = Xml.parse(_svgData).ensureNotDocument();
 		
-		var b = parseBounds(svgXml);
-		_unscaledBounds = b;
-		_bounds = _unscaledBounds.clone();
+		var b = svgXml.parseElementBounds();
+		_unscaledBounds.x = b.intervalX;
+		_unscaledBounds.y = b.intervalY;
+		_bounds = b.clone();
 		registrationPoint.x = _bounds.intervalX / 2;
 		registrationPoint.y = _bounds.intervalY / 2;
 		#if js
@@ -107,6 +109,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		#if (flash || cpp)
 		_displayObject.removeAllChildren();
 		var self = this;
+		trace("Rendering svg from Svg");
 		SvgRenderTools.renderSvg(_svgData, function (renderedSvg :flash.display.DisplayObject) :Void {
 			if (!self.isRegistered) return;
 			if (localRenderId != self._renderId) return;//Another render call supercedes this render
@@ -222,27 +225,26 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	}
 	#end
 	
-	public static function parseBounds (svg :Xml) :AABB2
-	{
-		com.pblabs.util.Assert.isNotNull(svg);
-		var bounds = new AABB2();
-		svg = svg.ensureNotDocument();
-		if (svg.get('viewBox') != null) {
-			var tokens = svg.get("viewBox").split(" ");
-			bounds.xmin = Std.parseFloat(tokens[0]);
-			bounds.ymin = Std.parseFloat(tokens[1]);
-			bounds.xmax = Std.parseFloat(tokens[2]);
-			bounds.ymax = Std.parseFloat(tokens[3]);
-		} else {
-			var w = Std.parseFloat(svg.get("width"));
-			var h = Std.parseFloat(svg.get("height"));
-			bounds.xmin = 0;
-			bounds.xmax = w;
-			bounds.ymin = 0;
-			bounds.ymax = h;
-		}
-		return bounds;
-	}
+	// public static function parseBounds (svg :Xml) :AABB2
+	// {
+	// 	com.pblabs.util.Assert.isNotNull(svg);
+	// 	var bounds = new AABB2();
+	// 	svg = svg.ensureNotDocument();
+	// 	if (svg.get('viewBox') != null) {
+	// 		var tokens = svg.get("viewBox").split(" ");
+	// 		bounds.xmin = Std.parseFloat(tokens[0]);
+	// 		bounds.ymin = Std.parseFloat(tokens[1]);
+	// 		bounds.xmax = Std.parseFloat(tokens[2]);
+	// 		bounds.ymax = Std.parseFloat(tokens[3]);
+	// 	} else {
+			
+	// 		bounds.xmin = svg.get("x") != null ? Std.parseFloat(svg.get("x")) :0.0;
+	// 		bounds.ymin = svg.get("y") != null ? Std.parseFloat(svg.get("y")) :0.0;
+	// 		bounds.xmax = bounds.xmin + Std.parseFloat(svg.get("width"));
+	// 		bounds.ymax = bounds.ymin + Std.parseFloat(svg.get("height"));
+	// 	}
+	// 	return bounds;
+	// }
 	
 	#if debug
 	override public function toString () :String

@@ -12,7 +12,6 @@ import com.pblabs.components.input.IInteractiveComponent;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.resource.IResource;
 import com.pblabs.engine.resource.IResourceManager;
-import com.pblabs.engine.resource.ImageResource;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.geom.RectangleTools;
 import com.pblabs.util.Preconditions;
@@ -86,8 +85,10 @@ class ImageComponent extends BitmapRenderer
 		} else {
 			com.pblabs.util.Log.error("Unrecognized image type=" + com.pblabs.util.ReflectUtil.getClassName(image)); 
 		}
+		recomputeBounds();
+		// trace("after loading flash image, _unscaledBounds=" + _unscaledBounds + ", _bounds=" + _bounds);
 		//Assume you want the image centered.
-		registrationPoint = new com.pblabs.geom.Vector2(image.width / 2, image.height / 2);
+		// registrationPoint = new com.pblabs.geom.Vector2(image.width / 2, image.height / 2);
 	}
 	#end
 	

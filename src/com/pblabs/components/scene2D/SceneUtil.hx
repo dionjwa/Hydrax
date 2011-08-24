@@ -93,7 +93,6 @@ class SceneUtil
 		}
 		e.deferring = true;
 		e.addComponent(context.allocate(SpatialComponent), SpatialComponent.NAME);
-		// e.addComponent(context.allocate(AlphaComponent));
 		if (addTasks) {
 			e.addComponent(context.allocate(TaskComponentTicked), com.pblabs.components.tasks.TaskComponent.NAME);
 		}
@@ -119,16 +118,21 @@ class SceneUtil
 		return e;
 	}
 	
+	public static function setScale (e :IEntity, scale :Float) :IEntity
+	{
+		for (c in e.getComponents(BaseSceneComponent)) {
+			c.scaleX = c.scaleY = scale; 
+		}
+		return e;
+	}
+	
 	public static function getWidth (e :IEntity) :Float
 	{
-		// com.pblabs.util.Assert.isNotNull(e.getComponent(BaseSceneComponent));
 		return e.getComponent(SpatialComponent).worldExtents.intervalX;
 	}
 	
 	public static function getHeight (e :IEntity) :Float
 	{
-		// com.pblabs.util.Assert.isNotNull(e.getComponent(BaseSceneComponent));
-		// return e.getComponent(BaseSceneComponent).height;
 		return e.getComponent(SpatialComponent).worldExtents.intervalY;
 	}
 	

@@ -515,8 +515,8 @@ class ProcessManager implements IProcessManager
 		
 		// Perform ticks, respecting tick caps.
 		var tickCount:Int = 0;
-		while (_elapsed >= MS_PER_TICK && (suppressSafety || tickCount < MAX_TICKS_PER_FRAME))
-		{
+		com.pblabs.engine.debug.Profiler.enter("tick");
+		while (_elapsed >= MS_PER_TICK && (suppressSafety || tickCount < MAX_TICKS_PER_FRAME)) {
 			// Ticks always happen on interpolation boundary.
 			_interpolationFactor = 0.0;
 			
@@ -525,37 +525,31 @@ class ProcessManager implements IProcessManager
 			// processScheduledObjects();
 			
 			// Do the onTick callbacks, noting time in profiler appropriately.
-			com.pblabs.engine.debug.Profiler.enter("Tick");
+			
 			
 			_duringAdvance = true;
 			var object :ITickedObject;
-			for(ii in 0..._tickedObjects.length)
-			{
+			for(ii in 0..._tickedObjects.length) {
 				object = _tickedObjects[ii];
 				if(object == null)
 					continue;
 				
-				// #if profiler 
-				// com.pblabs.engine.debug.Profiler.enter(object.key);
-				// #end
+				#if profiler com.pblabs.engine.debug.Profiler.enter(com.pblabs.util.ReflectUtil.getClassName(object));#end
 				object.onTick(SECONDS_PER_TICK);
-				// #if profiler
-				// com.pblabs.engine.debug.Profiler.exit(object.key);
-				// #end
+				#if profiler com.pblabs.engine.debug.Profiler.exit(com.pblabs.util.ReflectUtil.getClassName(object));#end
 			}
 			_duringAdvance = false;
 			
-			com.pblabs.engine.debug.Profiler.exit("Tick");
 			
 			// Update virtual time by subtracting from accumulator.
 			_virtualTime += MS_PER_TICK;
 			_elapsed -= MS_PER_TICK;
 			tickCount++;
 		}
+		com.pblabs.engine.debug.Profiler.exit("tick");
 		
 		// Safety net - don't do more than a few ticks per frame to avoid death spirals.
-		if (tickCount >= MAX_TICKS_PER_FRAME && !suppressSafety && !disableSlowWarning)
-		{
+		if (tickCount >= MAX_TICKS_PER_FRAME && !suppressSafety && !disableSlowWarning) {
 			// By default, only show when profiling.
 			com.pblabs.util.Log.warn(["advance", "Exceeded maximum number of ticks for frame (" + _elapsed.toFixed(1) + "ms dropped) ."]);
 		}
@@ -583,13 +577,9 @@ class ProcessManager implements IProcessManager
 			if(animatedObject == null)
 				continue;
 			
-			// #if profiler
-			// com.pblabs.engine.debug.Profiler.enter(animatedObject.key);
-			// #end
+			#if profiler com.pblabs.engine.debug.Profiler.enter(com.pblabs.util.ReflectUtil.getClassName(animatedObject)); #end
 			animatedObject.onFrame(deltaTime);
-			// #if profiler
-			// com.pblabs.engine.debug.Profiler.exit(animatedObject.key);
-			// #end
+			#if profiler com.pblabs.engine.debug.Profiler.exit(com.pblabs.util.ReflectUtil.getClassName(animatedObject));#end
 		}
 		_duringAdvance = false;
 		com.pblabs.engine.debug.Profiler.exit("frame");

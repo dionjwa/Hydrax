@@ -17,7 +17,6 @@ class ResourceBase<T>
 	implements IResource<T>
 {
 	public var manager :IResourceManager;
-	
 	public var name (get_name, never) :String;
 	
 	public function new (name :String)
@@ -66,7 +65,9 @@ class ResourceBase<T>
 	function loaded () :Void
 	{
 		_isLoaded = true;
-		_onLoad();
+		if (_onLoad != null) {
+			_onLoad();
+		}
 		_onLoad = null;
 		_onError = null;
 	}

@@ -38,6 +38,8 @@ class DynamicResource extends ResourceBase<Dynamic>
 			case bytes (b): com.pblabs.util.Log.error("Resource source type not handled: " + _source); 
 			case text (t): com.pblabs.util.Log.error("Resource source type not handled: " + _source);
 			case embedded (name): com.pblabs.util.Log.error("Resource source type not handled: " + _source);
+			case derived (other): //Do nothing
+			case imageData(data): com.pblabs.util.Log.error("Resource source type not handled: " + _source);
 			#if flash
 			case swf(id): com.pblabs.util.Log.error("Resource source type not handled: " + _source);
 			#end

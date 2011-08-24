@@ -260,6 +260,7 @@ class PBContext
 	
 	public function shutdown () :Void
 	{
+		com.pblabs.engine.debug.Profiler.enter("PBContext.shutdown");
 		rootGroup.destroy();
 		signalDestroyed.dispatch(this);
 		
@@ -283,6 +284,7 @@ class PBContext
 		injector = null;
 		_tempPropertyInfo = null;
 		
+		com.pblabs.engine.debug.Profiler.exit("PBContext.shutdown");
 		#if (debug_hxhsl && !neko)
 		var sigs :Hash<Signaler<Dynamic>> = new Hash();
 		sigs.set("signalEnter", signalEnter);

@@ -224,6 +224,7 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 	
 	public function addToParent (?newParent :P) :Void
 	{
+		#if profiler com.pblabs.engine.debug.Profiler.enter("addToParent " + com.pblabs.util.ReflectUtil.getClassName(this)); #end
 		if (hasParent()) {
 			removeFromParent();
 		}
@@ -238,6 +239,7 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 			return;
 		}
 		newParent.addChild(this);
+		#if profiler com.pblabs.engine.debug.Profiler.exit("addToParent " + com.pblabs.util.ReflectUtil.getClassName(this)); #end
 	}
 	
 	public function removeFromParent () :Void

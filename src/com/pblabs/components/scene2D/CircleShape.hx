@@ -42,11 +42,12 @@ class CircleShape extends ShapeComponent
 		_svg.setAttribute("cy", "0");
 		#end
 		
-		_unscaledBounds.xmin = -_radius;
-		_unscaledBounds.xmax = _radius;
-		_unscaledBounds.ymin = -_radius;
-		_unscaledBounds.ymax = _radius;
-		_bounds = _unscaledBounds.clone();
+		radius = rad;
+		// _unscaledBounds.xmin = -_radius;
+		// _unscaledBounds.xmax = _radius;
+		// _unscaledBounds.ymin = -_radius;
+		// _unscaledBounds.ymax = _radius;
+		// _bounds = _unscaledBounds.clone();
 	}
 	
 	override public function containsWorldPoint (pos :XY, mask :ObjectType) :Bool
@@ -166,12 +167,13 @@ class CircleShape extends ShapeComponent
 		}
 		_radius = val;
 		
-		_unscaledBounds.xmin = -_radius;
-		_unscaledBounds.xmax = _radius;
-		_unscaledBounds.ymin = -_radius;
-		_unscaledBounds.ymax = _radius;
+		_unscaledBounds.x = _unscaledBounds.y = _radius * 2;
+		_bounds.xmin = -_radius;
+		_bounds.xmax = _radius;
+		_bounds.ymin = -_radius;
+		_bounds.ymax = _radius;
 		
-		_bounds = _unscaledBounds.clone();
+		// _bounds = _unscaledBounds.clone();
 		
 		_scaleX = 1;
 		_scaleY = 1;

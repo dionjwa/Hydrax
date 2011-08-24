@@ -49,7 +49,11 @@ class SvgRenderTools
 	#if flash
 	public static function renderSvg (svgData :String, cb :flash.display.DisplayObject->Void, ?renderLib :RenderLib = null) :Void
 	{
-		trace("flash rendering svg=" + svgData.substr(0, 100));
+		com.pblabs.util.Assert.isNotNull(svgData, ' svgData is null');
+		// #if debug
+		// trace("Rendering " + Xml.parse(svgData).ensureNotDocument().get("id"));
+		// #end
+		// trace("!!!!!!!!!!!!!!!!!!!flash rendering svg=" + svgData + "\n" + com.pblabs.util.Log.getStackTrace());
 		com.pblabs.util.Assert.isNotNull(svgData);
 		com.pblabs.util.Assert.isNotNull(cb);
 		renderLib = renderLib == null ? RenderLib.SVGWEB :renderLib;
@@ -138,13 +142,21 @@ class SvgRenderTools
 		return "matrix(" + matrix.a.maxPrecision(4) + ", " + matrix.b.maxPrecision(4) + ", " + matrix.c.maxPrecision(4) + ", " + matrix.d.maxPrecision(4) + ", " + matrix.tx.maxPrecision(4) + ", " + matrix.ty.maxPrecision(4) + ")";
 	}
 	
-	public static function parseRectBounds(rect :Xml) :AABB2
+	public static function parseElementBounds(svg :Xml) :AABB2
 	{
 		var bounds = new AABB2();
-		bounds.xmin = rect.get("x") != null ? Std.parseFloat(rect.get("x")) :0.0;
-		bounds.ymin = rect.get("y") != null ? Std.parseFloat(rect.get("y")) :0.0;
-		bounds.xmax = bounds.xmin + Std.parseFloat(rect.get("width"));
-		bounds.ymax = bounds.ymin + Std.parseFloat(rect.get("height"));
+		if (svg.get('viewBox') != null) {
+			var tokens = svg.get("viewBox").split(" ");
+			bounds.xmin = Std.parseFloat(tokens[0]);
+			bounds.ymin = Std.parseFloat(tokens[1]);
+			bounds.xmax = Std.parseFloat(tokens[2]);
+			bounds.ymax = Std.parseFloat(tokens[3]);
+		} else {
+			bounds.xmin = svg.get("x") != null ? Std.parseFloat(svg.get("x")) :0.0;
+			bounds.ymin = svg.get("y") != null ? Std.parseFloat(svg.get("y")) :0.0;
+			bounds.xmax = bounds.xmin + Std.parseFloat(svg.get("width"));
+			bounds.ymax = bounds.ymin + Std.parseFloat(svg.get("height"));
+		}
 		return bounds;
 	}
 	
@@ -153,9 +165,8 @@ class SvgRenderTools
 		if (svgElement == null) {
 			return new AABB2();
 		}
-		
 		if (svgElement.nodeName == "svg:svg") {
-			return parseRectBounds(svgElement);
+			return parseElementBounds(svgElement);
 		} else {
 			return getSvgBounds(svgElement.parent);
 		}

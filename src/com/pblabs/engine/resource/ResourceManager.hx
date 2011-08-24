@@ -42,6 +42,11 @@ class ResourceManager
 	public var signalerFractionComplete :Signaler<Float>;
 	/** The number of resources in this load batch */
 	var _numResources :Int;
+	var _pendingResources :Map<String, IResource<Dynamic>>;
+	var _loadingResources :Map<String, IResource<Dynamic>>;
+	var _loadedResources :Map<String, IResource<Dynamic>>;
+	var _onLoadCallbacks :Array<Void->Void>;
+	var _onErrorCallbacks :Array<Dynamic->Void>;
 	
 	public function new ()
 	{
@@ -60,118 +65,23 @@ class ResourceManager
 	    return _loadedResources.array().concat(_pendingResources.array()).concat(_loadingResources.array()).iterator();
 	}
 	
-	// public function get <T>(resourceToken :ResourceToken) :T
-	// {
-	// 	com.pblabs.util.Log.debug(resourceToken);
-	// 	com.pblabs.util.Assert.isNotNull(resourceToken);
-	// 	return getFromName(resourceToken.resourceId, resourceToken.key);
-	// }
-	
-	
 	public function add (token :ResourceToken) :Void
 	{
-		// trace("adding " + token);
-		// trace('token.type=' + token.type);
-		// trace('ensureResource(com.pblabs.engine.resource.DynamicResources)=' + ensureResource(com.pblabs.engine.resource.DynamicResources));
-		// var resource :IResource<Dynamic> = null;
-		// switch (token.type) {
-		// 	case IMAGE:
-		// 		// trace("image");
-		// 		#if flash
-		// 		#elseif js
-		// 		resource = ensureResource(com.pblabs.engine.resource.js.ImageResources);
-		// 		#end
-		// 	case SVG,STRING:
-		// 		// trace("svg,string");
-		// 		#if flash
-		// 		#elseif js
-		// 		// trace("ensuring com.pblabs.engine.resource.DynamicResources");
-		// 		resource = ensureResource(com.pblabs.engine.resource.DynamicResources);
-		// 		// ensureResource(com.pblabs.engine.resource.StringResources);
-		// 		#end
-		// 	case BITMAP_CACHE(other): throw "TODO";
-		// 	// trace("bm cache");
-		// 	#if flash
-		// 	case CLASS:
-		// 	case SWF:
-		// 	#end
-		// 	case NONE:
-		// 	// trace("none");
-		// }
-		// trace('resource=' + Std.string(resource));
-		
-		// #if flash
-		// switch (token.source) {
-		// 	case swf(swfName):
-		// 		token.resourceId = swfName;
-		// 		return;
-		// 	default:
-		// }
-		// #end
-		
-		
-		com.pblabs.util.Assert.isNotNull(getResourceForToken(token), ' resource is null from ' + token);
+		com.pblabs.util.Assert.isNotNull(getResourceForToken(token), ' resource is null from ' + token + ', resource ids=' + this.map(
+		function (r :IResource<Dynamic>) :String {
+			return r.name;
+		}).array());
 		getResourceForToken(token).add(token);
-		// token.resourceId = getResourceForToken(token).name;
 	}
 	
 	inline function getResourceForToken (token :ResourceToken) :IResource<Dynamic>
 	{
-		// #if flash
-		// switch (token.source) {
-		// 	case swf(swfName): return getResource(swfName);
-		// 	default:
-		// }
-		// #end
 		return getResource(Type.enumConstructor(token.type));
-		
-		// var resource :IResource<Dynamic> = null;
-		
-		// #if flash
-		// switch (token.type) {
-		// 	case SVG,STRING,IMAGE,CLASS: 
-		// 		resource = switch (token.source) {
-		// 			case url (u): null;
-		// 			case bytes (b): null;
-		// 			case text (t): null;
-		// 			case embedded (name): null; 
-		// 			case swf(swfName): getResource(swfName); 
-		// 		}
-		// 		com.pblabs.util.Assert.isNotNull(resource, 'resource is null for ' + token + "\n Resources=\n" + this.array().join("\n"));
-		// 	case BITMAP_CACHE(other): throw "TODO";
-		// 	case SWF: resource = getResource(token.id); 
-		// }
-		// #elseif js
-		// switch (token.type) {
-		// 	case IMAGE:
-		// 		resource = ensureResource(com.pblabs.engine.resource.js.ImageResources);
-		// 	case SVG,STRING:
-		// 		resource = ensureResource(com.pblabs.engine.resource.DynamicResources);
-		// 	case BITMAP_CACHE(other): throw "TODO";
-		// }
-		// #end
-		// return resource;
 	}
-	
-	// function ensureResource (cls :Class<Dynamic>, ?name :String) :IResource<Dynamic>
-	// {
-	// 	// trace('cls=' + Type.getClassName(cls));
-	// 	// trace('name=' + name);
-	// 	var id = name == null ? Type.getClassName(cls) : name;
-	// 	// trace('id=' + id);
-	// 	if (getResource(id) == null) {
-	// 		addResource(Type.createInstance(cls, name == null ? [] : [name]));
-	// 	}
-	// 	com.pblabs.util.Assert.isNotNull(getResource(id), '  getResource(' + id + ') is null');
-	// 	return getResource(id);
-	// }
 	
 	public function get <T>(token :ResourceToken) :T
 	{
-		// if (token.resourceId == null) {
-		// 	token.resourceId = getResourceForToken(token).name;
-		// }
-		// Preconditions.checkArgument(isResource(token.resourceId), "No IResource with id=" + token.resourceId + ", resourceIds=" + com.pblabs.util.IterUtil.toArray(_loadedResources.keys()).join(", "));
+		com.pblabs.util.Assert.isNotNull(token, ' token is null');
 		com.pblabs.util.Assert.isNotNull(getResourceForToken(token), ' getResource(' + token + ') is null');
 		return getResourceForToken(token).get(token);
 	}
@@ -180,14 +90,12 @@ class ResourceManager
 	{
 		com.pblabs.util.Log.info("");
 		Preconditions.checkNotNull(onLoad);
-		// Preconditions.checkNotNull(onError);
 		
 		if (_pendingResources.size() == 0 && _loadingResources.size() == 0) {
 			com.pblabs.util.Log.info("No resources to load, calling onLoad");
 			com.pblabs.util.Assert.isTrue(_onLoadCallbacks.length == 0);
 			_numResources = 0;
 			onLoad();
-			// allResourcesLoaded();
 			return;
 		}
 		
@@ -231,8 +139,6 @@ class ResourceManager
 	public function getResource (resourceName :String) :IResource<Dynamic>
 	{
 		com.pblabs.util.Assert.isNotNull(resourceName, ' resourceName is null');
-		// com.pblabs.util.Assert.isNotNull(type, ' type is null');
-		// var resourceName = Type.enumConstructor(type);
 		if (_loadedResources.exists(resourceName)) {
 			return cast _loadedResources.get(resourceName);
 		} else if (_pendingResources.exists(resourceName)) {
@@ -357,10 +263,4 @@ class ResourceManager
 		load(onLoad, onError);
 	}
 	#end
-	
-	var _pendingResources :Map<String, IResource<Dynamic>>;
-	var _loadingResources :Map<String, IResource<Dynamic>>;
-	var _loadedResources :Map<String, IResource<Dynamic>>;
-	var _onLoadCallbacks :Array<Void->Void>;
-	var _onErrorCallbacks :Array<Dynamic->Void>;
 }

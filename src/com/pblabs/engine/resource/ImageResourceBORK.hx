@@ -8,20 +8,17 @@
  ******************************************************************************/
 package com.pblabs.engine.resource;
 
+import com.pblabs.components.scene2D.Image;
 import com.pblabs.engine.resource.ResourceBase;
 import com.pblabs.engine.resource.Source;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.StringUtil;
+
 /**
 * Represents a single image resource.
 */
 
-class ImageResource extends ResourceBase
-#if (flash || cpp)
-<flash.display.Bitmap>
-#elseif js
-<js.Dom.Image>
-#end
+class ImageResource extends DynamicResources<Image>
 {
 	#if (flash || cpp)
 	var _image :flash.display.Bitmap;
@@ -39,18 +36,19 @@ class ImageResource extends ResourceBase
 		_source = source;
 	}
 	
-	override public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
-	{
-		com.pblabs.util.Log.debug("load " + _source);
-		super.load(onLoad, onError);
-		var self = this;
-		switch (_source) {
-			case url (u): loadFromUrl(u);
-			case embedded (n): loadFromEmbedded(n);
-			default:
-				com.pblabs.util.Log.error("Resource source type not handled: " + _source);
-		}
-	}
+	// override public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
+	// {
+	// 	com.pblabs.util.Log.debug("load " + _source);
+	// 	super.load(onLoad, onError);
+	// 	var self = this;
+	// 	switch (_source) {
+	// 		case url (u): loadFromUrl(u);
+	// 		case url (u): loadFromUrl(u);
+	// 		// case embedded (n): loadFromEmbedded(n);
+	// 		default:
+	// 			com.pblabs.util.Log.error("Resource source type not handled: " + _source);
+	// 	}
+	// }
 	
 #if (flash || cpp)
 	override public function get (token :ResourceToken) :flash.display.Bitmap
@@ -134,53 +132,49 @@ class ImageResource extends ResourceBase
 		
 	}
 	
-	function loadFromEmbedded (embeddedName :String) :Void
-	{
-		var bytes = haxe.Resource.getBytes(embeddedName);
+	// function loadFromEmbedded (embeddedName :String) :Void
+	// {
+	// 	var bytes = haxe.Resource.getBytes(embeddedName);
 		
-		com.pblabs.util.Log.debug("loadFromEmbedded");
-		#if flash
-		if (bytes == null) {
-			var cls :Class<Dynamic> = Type.resolveClass("SWFResources_" + embeddedName);
-			if (cls == null) {
-				cls = Type.resolveClass(embeddedName);
-			}
-			Preconditions.checkNotNull(cls, "No embedded resource class SWFResources_" + embeddedName + " or " + embeddedName + ", or haxe embedded bytes");
-			_image = cast Type.createInstance(cls, []);
-			loaded();
-		} else {
-			createLoader();
-			_loader.loadBytes(bytes.getData());
-		}
-		#elseif cpp
-		Preconditions.checkNotNull(bytes, "Embedded bytes null, name=" + embeddedName);
-		var nmeBitmapData = nme.display.BitmapData.loadFromHaxeBytes(bytes);
-		com.pblabs.util.Assert.isNotNull(nmeBitmapData, "nmeBitmapData is null");
-		_image = new nme.display.Bitmap(nmeBitmapData);
-		loaded();
-		#elseif js
-		onLoadError("Don't use Source.embedded for JS, use Source.url instead");
-		#end
-	}
-	
-	function onLoadError (e :Dynamic) :Void
-	{
-		_onError(e);
-	}
+	// 	com.pblabs.util.Log.debug("loadFromEmbedded");
+	// 	#if flash
+	// 	if (bytes == null) {
+	// 		var cls :Class<Dynamic> = Type.resolveClass("SWFResources_" + embeddedName);
+	// 		if (cls == null) {
+	// 			cls = Type.resolveClass(embeddedName);
+	// 		}
+	// 		Preconditions.checkNotNull(cls, "No embedded resource class SWFResources_" + embeddedName + " or " + embeddedName + ", or haxe embedded bytes");
+	// 		_image = cast Type.createInstance(cls, []);
+	// 		loaded();
+	// 	} else {
+	// 		createLoader();
+	// 		_loader.loadBytes(bytes.getData());
+	// 	}
+	// 	#elseif cpp
+	// 	Preconditions.checkNotNull(bytes, "Embedded bytes null, name=" + embeddedName);
+	// 	var nmeBitmapData = nme.display.BitmapData.loadFromHaxeBytes(bytes);
+	// 	com.pblabs.util.Assert.isNotNull(nmeBitmapData, "nmeBitmapData is null");
+	// 	_image = new nme.display.Bitmap(nmeBitmapData);
+	// 	loaded();
+	// 	#elseif js
+	// 	onLoadError("Don't use Source.embedded for JS, use Source.url instead");
+	// 	#end
+	// }
 	
 	#if flash
-	function createLoader () :Void
+	override function createLoader (token :ResourceToken) :Void
 	{
 		com.pblabs.util.Assert.isNull(_loader);
-		_loader = new flash.display.Loader();
-		var loader = _loader;
+		var loader = new flash.display.Loader();
+		_loaders.set(token, loader);
 		var self = this;
 		var onComplete = function (e :flash.events.Event) :Void {
 			com.pblabs.util.Log.debug("onComplete");
 			loader.contentLoaderInfo.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
 			loader.contentLoaderInfo.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
-			self._image = cast loader.content;
-			self.loaded();
+			self._data.set(token, cast loader.content);
+			self._loaders.remove(token);
+			self.maybeFinish();
 		}
 		
 		com.pblabs.util.EventDispatcherUtil.addOnceListener(loader.contentLoaderInfo, flash.events.Event.COMPLETE, onComplete);

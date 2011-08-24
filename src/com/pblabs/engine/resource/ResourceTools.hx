@@ -1,5 +1,7 @@
 package com.pblabs.engine.resource;
 
+import com.pblabs.util.Constants;
+
 class ResourceTools
 {
 	#if flash
@@ -23,5 +25,15 @@ class ResourceTools
 		}
 		return cls;
 	}
+	
+	public static function instantiateEmbeddedClass (id :String) :Dynamic
+	{
+		var cls :Class<Dynamic> = resolveEmbeddedClassName(id);
+		if (cls == null) {
+			return null;
+		}
+		return Type.createInstance(cls, Constants.EMPTY_ARRAY);
+	}
+	
 	#end
 }

@@ -34,49 +34,62 @@ class HierarchyManager extends EntityComponent
 	public static var ANCHOR_PREFIX = "anchor";
 	public static var INKSCAPE_LABEL = "inkscape:label";
 	
-	// @inject("com.pblabs.components.scene2D.SvgAnchorCache")
-	// var svgCache :SvgAnchorCache;
-	
 	@inject("com.pblabs.engine.resource.IResourceManager")
 	var _rsrc :IResourceManager;
 	
 	/**
 	  * Maps <svg id or DisplayObject.name, map of <anchor name, relative location>>  
 	  */
-	// var _anchors :Map<String, Map<String, XY>>;
 	var _links :Array<Link>;
+	var _temp :XY;
 	
 	public function new ()
 	{
 		super();
-		// _anchors = Maps.newHashMap(ValueType.TClass(String));
 		_links = [];
+		_temp = new Vector2();
 	}
 	
 	public function getAnchors (token :ResourceToken) :Map<String, XY>
 	{
 		com.pblabs.util.Assert.isNotNull(token, ' token is null');
-		token = SvgTools.getSvgResource(token);
+		com.pblabs.engine.debug.Profiler.enter("getSvgResource");
+		// token = SvgTools.getSvgResource(token);
+		com.pblabs.engine.debug.Profiler.exit("getSvgResource");
+		com.pblabs.engine.debug.Profiler.enter("_rsrc.get(");
 		var svg = _rsrc.get(token);
+		com.pblabs.engine.debug.Profiler.exit("_rsrc.get(");
 		com.pblabs.util.Assert.isNotNull(svg, ' svg is null');
-		return SvgAnchors.getAnchors(svg);
+		com.pblabs.engine.debug.Profiler.enter("SvgAnchors.getAnchors");
+		var val = SvgAnchors.getAnchors(token.id, svg);
+		com.pblabs.engine.debug.Profiler.exit("SvgAnchors.getAnchors");
+		return val;
+		
+		// return SvgAnchors.getAnchors(svg);
 	}
 	
 	function updateLink (link :Link) :Void
 	{
+		com.pblabs.engine.debug.Profiler.enter("updateLink");
 		com.pblabs.util.Assert.isNotNull(link);
+		com.pblabs.engine.debug.Profiler.enter("getOffset");
 		var offset = getOffset(link.parentDisplayType, link.childKey);
+		com.pblabs.engine.debug.Profiler.exit("getOffset");
 		if (offset == null) {
 			com.pblabs.util.Log.warn("Not a valid match " + link.parentDisplayType + "." + link.childKey);
+			com.pblabs.engine.debug.Profiler.exit("updateLink");
 			return;
 		}
+		com.pblabs.engine.debug.Profiler.enter("rest");
 		var parentCoords = link.parent.owner.getComponent(SpatialComponent);
 		com.pblabs.util.Assert.isNotNull(parentCoords);
 		var locX = parentCoords.x + offset.x - link.parent.registrationPoint.x;
 		var locY = parentCoords.y + offset.y - link.parent.registrationPoint.y;
-		locX = Std.int(locX) + 0.5;
-		locY = Std.int(locY) + 0.5;
+		// locX = Std.int(locX) + 0.5;
+		// locY = Std.int(locY) + 0.5;
 		link.child.owner.setLocation(locX, locY);
+		com.pblabs.engine.debug.Profiler.exit("rest");
+		com.pblabs.engine.debug.Profiler.exit("updateLink");
 	}
 	
 	public function setAsChild (parent :BaseSceneComponent<Dynamic>, parentResource :ResourceToken, 
@@ -86,17 +99,11 @@ class HierarchyManager extends EntityComponent
 		com.pblabs.util.Assert.isNotNull(childKey);
 		com.pblabs.util.Assert.isNotNull(child);
 		com.pblabs.util.Assert.isNotNull(parentResource);
-		parentResource = SvgTools.getSvgResource(parentResource);
+		// parentResource = SvgTools.getSvgResource(parentResource);
 		
 		removeChild(child);
 		
-		// var anchorId = SvgAnchorCache.getAnchorIdentifier(parent);
 		var anchors = getAnchors(parentResource); 
-		// _anchors.get(anchorId);
-		// if (anchors == null) {
-		// 	anchors = getAnchors(parent);
-		// 	_anchors.set(anchorId, anchors);
-		// }
 		
 		for (key in anchors.keys()) {
 			if (key.startsWith(childKey)) {
@@ -124,8 +131,6 @@ class HierarchyManager extends EntityComponent
 	override function onRemove () :Void
 	{
 		super.onRemove();
-		// _anchors.clear();
-		// _anchors = null;
 		_rsrc = null;
 		_links = null;
 	}
@@ -150,15 +155,22 @@ class HierarchyManager extends EntityComponent
 	
 	function getOffset (parent :ResourceToken, child :String) :XY
 	{
+		_temp.x = _temp.y = 0;
+		
 		if (getAnchors(parent) == null) {
-			com.pblabs.util.Log.error("missing in _anchors: " + parent);
-			return null;
+			// com.pblabs.util.Log.error("missing in _anchors: " + parent);
+			return _temp;
 		}
 		if (getAnchors(parent).get(child) == null) {
-			com.pblabs.util.Log.error("Missing child=" + child + " from anchors from parent=" + parent + ", anchors=" + com.pblabs.util.ds.MapUtil.toString(getAnchors(parent)));
-			return new Vector2();
+			// com.pblabs.util.Log.error("Missing child=" + child + " from anchors from parent=" + parent + ", anchors=" + com.pblabs.util.ds.MapUtil.toString(getAnchors(parent)));
+			// com.pblabs.util.Log.error("Missing child=" + child + " from anchors from parent=" + parent);
+			return _temp;
 		}
-		return getAnchors(parent).get(child).clone();
+		var val = getAnchors(parent).get(child);
+		_temp.x = val.x;
+		_temp.y = val.y;
+		return _temp;
+		// return getAnchors(parent).get(child).clone();
 	}
 	
 	// #if debug

@@ -9,9 +9,11 @@
 package com.pblabs.components.scene2D;
 
 import com.pblabs.components.scene2D.SvgAnchors;
+import com.pblabs.components.ui.SvgButtonTools;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.ds.Tuple;
+import com.pblabs.util.svg.SvgReplace;
 
 import de.polygonal.motor2.geom.math.XY;
 import de.polygonal.motor2.geom.primitive.AABB2;
@@ -41,12 +43,6 @@ import de.polygonal.core.math.Mathematics;
 #if flash
 #end
 
-#if flash
-#end
-
-#if flash
-#end
-
 /**
   * Cross platform SVG based Scene2D component.
   * Currently supports Flash, JS canvas, and JS CSS.
@@ -61,7 +57,7 @@ extends com.pblabs.components.scene2D.js.SceneComponent
 extends com.pblabs.components.scene2D.flash.SceneComponent 
 #end
 {
-	public static var TEXT_REPLACE :EReg = ~/\$T/;
+	// public static var TEXT_REPLACE :EReg = ~/\$T/;
 	
 	
 	#if (flash || cpp)
@@ -82,7 +78,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		_svgDataUnmodified = val;
 		_svgData = [];
 		for (svg in val) {
-			_svgData.push(processReplacements(new String(svg), svgRegexReplacements));
+			// _svgData.push(processReplacements(new String(svg), svgRegexReplacements));
 		}
 		
 		for (ii in 0..._svgData.length) {
@@ -95,11 +91,11 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			
 			//Parse the first image for anchor elements, and only use the first element for mouse bounds
 			if (ii == 0) {
-				_relativeTransforms = SvgAnchors.getAnchors(_svgData[ii]).array();
+				_relativeTransforms = SvgAnchors.getAnchors(_svgData[ii], haxe.Md5.encode(_svgData[ii])).array();
 				_relativeTransforms.unshift(new Vector2());
 				//Only the first Svg defines the bounds
-				_unscaledBounds = b;
-				_bounds = _unscaledBounds.clone();
+				_unscaledBounds = new Vector2(b.intervalX, b.intervalY);
+				_bounds = b.clone();
 				registrationPoint.x = _bounds.intervalX / 2;
 				registrationPoint.y = _bounds.intervalY / 2;
 			} else if (_relativeTransforms[ii] != null) {
@@ -156,7 +152,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	function set_text (val :String) :String
 	{
 		_text = val;
-		svgRegexReplacements.unshift(new Tuple(TEXT_REPLACE, _text));
+		svgRegexReplacements.unshift(new Tuple(new EReg(SvgReplace.TEXT_REPLACE, null), _text));
 		if (isRegistered) {
 			svgData = _svgDataUnmodified;
 		}
@@ -338,18 +334,6 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		return bounds;
 	}
 	
-	static function processReplacements(svg :String, replacements :Array<Tuple<EReg, String>>) :String
-	{
-		if (replacements == null || replacements.length == 0) {
-			//Clone the String anyway
-			return new String(svg);
-		}
-		var result = new String(svg.toString());
-		for (r in replacements) {
-   			result = r.v1.replace(result, r.v2);
-		}
-		return result;
-	}
 	
 	// #if debug
 	// override public function toString () :String

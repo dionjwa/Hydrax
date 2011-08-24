@@ -293,5 +293,4 @@ class StringUtil
 		}
 		return sb.toString();
 	}
-	
 }

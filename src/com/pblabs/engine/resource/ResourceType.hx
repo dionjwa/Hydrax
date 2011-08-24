@@ -8,10 +8,16 @@
  ******************************************************************************/
 package com.pblabs.engine.resource;
 
+
+/**
+  * Defines a type of external resource, so that the engine knows how to retrieve, process, and possibly cache it.
+  */
 enum ResourceType {
-	/** A Bitmap image in a swf, downloaded, or embedded */
+	/** A Bitmap image in a swf, downloaded, embedded, or cached.  In Flash, resolves to a DisplayObject. */
 	IMAGE;
-	/** Points to an Svg (Xml) String */
+	/** Raw BitmapData, defined as the platform dependent ImageData type */
+	IMAGE_DATA;
+	/** Points to an Svg (Xml) String (NOT the embedded Svg DisplayObject in Flash) */
 	SVG;
 	/** String data */
 	STRING;
@@ -21,6 +27,4 @@ enum ResourceType {
 	/** An external Swf */
 	SWF;
 	#end
-	/** A bitmap created from a different resource, such as an Svg */
-	BITMAP_CACHE(other :ResourceToken);
 }

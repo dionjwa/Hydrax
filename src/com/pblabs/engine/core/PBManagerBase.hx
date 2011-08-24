@@ -13,9 +13,6 @@ package com.pblabs.engine.core;
   * Designed to be initialized in the PBGame, not the PBContext 
   */
 class PBManagerBase
-	#if flash
-	extends flash.display.Sprite,
-	#end
 	implements IPBManager, implements haxe.rtti.Infos, implements de.polygonal.ds.Hashable
 {
 	var context :IPBContext;
@@ -28,9 +25,6 @@ class PBManagerBase
 	
 	public function new () 
 	{
-		#if flash
-		super();
-		#end
 		key = com.pblabs.engine.util.PBUtil.KEY_COUNT++;
 	}
 	

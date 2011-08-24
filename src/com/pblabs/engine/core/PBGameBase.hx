@@ -276,6 +276,7 @@ class PBGameBase
 	  */
 	function updateContextTransitions () :Void
 	{
+		
 		com.pblabs.util.Log.debug("updateContextTransitions");
 		com.pblabs.util.Log.debug("_contextTransitions.length=" + _contextTransitions.length);
 		com.pblabs.util.Log.debug('_isUpdatingContextTransition=' + _isUpdatingContextTransition);
@@ -283,8 +284,7 @@ class PBGameBase
 		if (_isUpdatingContextTransition || _contextTransitions.length == 0) {
 			return;
 		}
-		
-		com.pblabs.engine.debug.Profiler.enter("updateContexts");
+		com.pblabs.engine.debug.Profiler.enter("updateContextTransitions");
 		var self = this;
 		var removeCurrentContext = function () :Void {
 			var c = self._currentContext;
@@ -369,10 +369,11 @@ class PBGameBase
 			com.pblabs.util.Log.debug("No current context");
 		}
 		
-		com.pblabs.engine.debug.Profiler.exit("updateContexts");
-		#if (debug && profiler)
-		com.pblabs.engine.debug.Profiler.report();
-		#end
+		com.pblabs.engine.debug.Profiler.exit("updateContextTransitions");
+		// #if (debug && profiler)
+		// trace("Profiling context transition:");
+		// com.pblabs.engine.debug.Profiler.report();
+		// #end
 	}
 	
 	function init () :Void

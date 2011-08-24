@@ -60,10 +60,10 @@ class UIUtil
 		}
 		
 		switch (resource.type) {
-			case IMAGE:
+			case IMAGE, IMAGE_DATA:
 				addImageComponent(resource);
-			case BITMAP_CACHE(other):
-				addImageComponent(resource);
+			// case BITMAP_CACHE(other):
+			// 	addImageComponent(resource);
 			case SVG:
 				var rsrc = layer.context.getManager(IResourceManager);
 				var bitmapToken = BitmapCacheResource.createCachedToken(resource);

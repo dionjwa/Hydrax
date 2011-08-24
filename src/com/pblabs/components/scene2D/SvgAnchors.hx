@@ -37,11 +37,13 @@ class SvgAnchors
 	
 	static var _anchors :Map<String, Map<String, XY>> = Maps.newHashMap(ValueType.TClass(String)); 
 	
-	public static function getAnchors (svg :String) :Map<String, XY>
+	public static function getAnchors (id :String, svg :String) :Map<String, XY>
 	{
-		var md5 = haxe.Md5.encode(svg);
-	    if (_anchors.exists(md5)) {
-	    	return _anchors.get(md5);
+		com.pblabs.util.Assert.isNotNull(id, ' id is null');
+		com.pblabs.util.Assert.isNotNull(svg, ' svg is null');
+		// var md5 = haxe.Md5.encode(svg);
+	    if (_anchors.exists(id)) {
+	    	return _anchors.get(id);
 	    } else {
 	    	#if js
 			/** SVG documents added to the dom via innerHTML are *not* allowed to have any preamble. */
@@ -49,7 +51,13 @@ class SvgAnchors
 			#end
 			var svgXml = Xml.parse(svg).ensureNotDocument();
 			var map = parseAnchors(svgXml);
-			_anchors.set(md5, map);
+			//Display objects are by default centered, but Svgs are not. Adjust for this.
+			var bounds = svgXml.getSvgBounds();
+			// for (offset in map) {
+			// 	offset.x += bounds.intervalX / 2;
+			// 	offset.y += bounds.intervalY / 2;
+			// }
+			_anchors.set(id, map);
 			return map;
 	    }
 	}

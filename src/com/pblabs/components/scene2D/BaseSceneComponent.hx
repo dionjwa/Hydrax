@@ -79,7 +79,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	var _registrationPoint :XY;
 	var _objectMask :ObjectType;
 	var _bounds :AABB2;
-	var _unscaledBounds :AABB2;
+	var _unscaledBounds :XY;
 	var _visible :Bool;
 	
 	var _transformMatrix :Matrix;
@@ -111,7 +111,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		spatialProperty = SpatialComponent.P_SPATIAL;
 		objectMask = ObjectType.ALL;
 		_bounds = new AABB2(0, 0, 1, 1);
-		_unscaledBounds = new AABB2(0, 0, 1, 1);
+		_unscaledBounds = new Vector2(1, 1);
 		autoAddToScene = true;
 		_transformMatrix = new Matrix();
 	}
@@ -273,8 +273,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	{
 		_scaleX = val;
 		_isTransformDirty = true;
-		_bounds.xmin = _x - (_scaleX * _unscaledBounds.intervalX) / 2;
-		_bounds.xmax = _x + (_scaleX * _unscaledBounds.intervalX) / 2;
+		_bounds.xmin = _x - (_scaleX * _unscaledBounds.x) / 2;
+		_bounds.xmax = _x + (_scaleX * _unscaledBounds.x) / 2;
 		return val;
 	}
 	
@@ -287,8 +287,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	{
 		_scaleY = val;
 		_isTransformDirty = true;
-		_bounds.ymin = _y - (_scaleY * _unscaledBounds.intervalY) / 2;
-		_bounds.ymax = _y + (_scaleY * _unscaledBounds.intervalY) / 2;
+		_bounds.ymin = _y - (_scaleY * _unscaledBounds.y) / 2;
+		_bounds.ymax = _y + (_scaleY * _unscaledBounds.y) / 2;
 		return val;
 	}
 	
@@ -314,8 +314,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		isTransformDirty = true;
 		_bounds.xmin = _x - val / 2;
 		_bounds.xmax = _x + val / 2;
-		com.pblabs.util.Assert.isTrue(_unscaledBounds.intervalX > 0, com.pblabs.util.Log.getStackTrace());
-		_scaleX =_bounds.intervalX / _unscaledBounds.intervalX;
+		com.pblabs.util.Assert.isTrue(_unscaledBounds.x > 0, com.pblabs.util.Log.getStackTrace());
+		_scaleX =_bounds.intervalX / _unscaledBounds.x;
 		return val;
 	}
 	
@@ -330,8 +330,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		isTransformDirty = true;
 		_bounds.ymin = _y - val / 2;
 		_bounds.ymax = _y + val / 2;
-		com.pblabs.util.Assert.isTrue(_unscaledBounds.intervalY > 0);
-		_scaleY =_bounds.intervalY / _unscaledBounds.intervalY;
+		com.pblabs.util.Assert.isTrue(_unscaledBounds.y > 0);
+		_scaleY =_bounds.intervalY / _unscaledBounds.y;
 		return val;
 	}
 	

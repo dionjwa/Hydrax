@@ -305,7 +305,7 @@ class InputManager extends BaseInputManager,
 		}
 		clearInputDataCache();
 		deviceDown.dispatch(this);
-	} 
+	}
 	
 	function onMouseUp (m :MouseLocation) :Void
 	{

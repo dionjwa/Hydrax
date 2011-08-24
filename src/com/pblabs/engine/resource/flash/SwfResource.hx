@@ -40,6 +40,11 @@ class SwfResource extends ResourceBase<Dynamic>
 		_xorKey = xorkey;
 	}
 	
+	override public function add (resourceToken :ResourceToken) :Void
+	{
+		//Ignore adding resource tokens.
+	}
+	
 	function createLoader () :Void
 	{
 		if (_loader != null) {
@@ -143,7 +148,7 @@ class SwfResource extends ResourceBase<Dynamic>
 			loadFromBytes(haxe.Resource.getBytes(id));
 			return;
 		}
-		var cls :Class<Dynamic> = com.pblabs.engine.resource.EmbeddedResource.resolveEmbeddedClassName(id);
+		var cls :Class<Dynamic> = ResourceTools.resolveEmbeddedClassName(id);
 		if (cls == null) {
 			if (_onError != null) {
 				_onError("No embedded class: " + id);

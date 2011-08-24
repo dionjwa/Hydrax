@@ -181,18 +181,17 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		}
 		var halfWidth = _bitmap.width / 2;
 		var halfHeight = _bitmap.height / 2;
-		_unscaledBounds.xmin = -halfWidth;
-		_unscaledBounds.xmax = halfWidth;
-		_unscaledBounds.ymin = -halfHeight;
-		_unscaledBounds.ymax = halfHeight;
+		_unscaledBounds.x = _bitmap.width;
+		_unscaledBounds.y = _bitmap.height;
 		
 		_bounds.xmin = _x - halfWidth * _scaleX;
-		_bounds.xmax = _x * halfWidth * _scaleX;
+		_bounds.xmax = _x + halfWidth * _scaleX;
 		_bounds.ymin = _y - halfHeight * _scaleY;
-		_bounds.ymin = _y + halfHeight * _scaleY;
+		_bounds.ymax = _y + halfHeight * _scaleY;
 		
 		_registrationPoint.x = halfWidth;
 		_registrationPoint.y = halfHeight;
+		_scaleX = _scaleY = 1.0;
 		
 		isTransformDirty = true;
 	}
