@@ -6,7 +6,7 @@ using Lambda;
 /**
   * Loads and stores String resources
   */
-class StringResources extends DynamicResources<String>
+class StringResources extends LoadingResources<String>
 {
 	public function new (?name :String)
 	{

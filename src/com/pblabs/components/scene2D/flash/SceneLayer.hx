@@ -58,17 +58,25 @@ class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 	  */
 	override function checkZOrder () :Void
 	{
-		var ok = false;
-		while (!ok) {
-			ok = true;
-			for (i in 0...children.length) {
-				if (_displayContainer.getChildIndex(children[i].displayObject) != i) {
-					_displayContainer.setChildIndex(children[i].displayObject, i);
-					ok = false;
-					// break;
-				}
+		// trace("checkZOrder for " + name);
+		// trace("  before children=" + children.map(com.pblabs.engine.util.Mapping.componentToEntityName).array());
+		// com.pblabs.engine.debug.Profiler.enter("checkZorder");
+		// var sb = new StringBuf();
+		// sb.add("\n  before display ");
+		// for (ii in 0..._displayContainer.numChildren) {
+		// 	sb.add(_displayContainer.getChildAt(ii).name + ", ");
+		// }
+		for (i in 0...children.length) {
+			if (_displayContainer.getChildIndex(children[i].displayObject) != i) {
+				_displayContainer.setChildIndex(children[i].displayObject, i);
 			}
 		}
+		// sb.add("\n  after display ");
+		// for (ii in 0..._displayContainer.numChildren) {
+		// 	sb.add(_displayContainer.getChildAt(ii).name + ", ");
+		// }
+		// trace("  after children=" + children.map(com.pblabs.engine.util.Mapping.componentToEntityName).array());
+		// com.pblabs.engine.debug.Profiler.exit("checkZorder");
 		// trace(owner.name + "\n   " + children.map(com.pblabs.engine.util.Mapping.componentToEntity)
 		// 	.map(com.pblabs.engine.util.Mapping.entityToName) 
 		// 	.array().join("\n   "));
@@ -76,8 +84,10 @@ class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 	
 	override function childAdded (c :SceneComponent) :Void
 	{
+		com.pblabs.engine.debug.Profiler.enter("flashSceneLayer.childAdded");
 		super.childAdded(c);
 		_displayContainer.addChild(c.displayObject);
+		com.pblabs.engine.debug.Profiler.exit("flashSceneLayer.childAdded");
 	}
 	
 	override function childRemoved (c :SceneComponent) :Void

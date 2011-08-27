@@ -31,7 +31,6 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	
 	public function new ()
 	{
-		_transformMatrix = new Matrix();
 		super();
 		priority = 0;
 	}
@@ -66,8 +65,12 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		}
 	}
 	
+	
+	
+	
 	override function addedToParent () :Void
 	{
+		com.pblabs.engine.debug.Profiler.enter("sc.addedToParent");
 		super.addedToParent();
 		if (parent.parent != null) {
 			com.pblabs.util.Assert.isNotNull(parent.parent);
@@ -75,12 +78,13 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		} else {
 			com.pblabs.util.Log.warn("Layer " + parent.name + " has no scene parent");
 		}
+		com.pblabs.engine.debug.Profiler.exit("sc.addedToParent");
 	}
 	
 	override function setDefaultVars () :Void
 	{
 		super.setDefaultVars();
-		_transformMatrix.identity();
+		priority = 0;
 	}
 	
 	override function onAdd () :Void

@@ -58,14 +58,14 @@ class ObjectPool<T>
 	 */
 	public function getObject () :T
 	{
-		com.pblabs.util.Log.debug("Get/create " +  _clazz);
+		// com.pblabs.util.Log.debug("Get/create " +  _clazz);
 		var obj = _objects.pop();
 		if (obj == null) {
 			obj = Type.createInstance(_clazz, ObjectPoolMgr.EMPTY_ARRAY);
-			com.pblabs.util.Log.debug("no objects in pool, creating " +  _clazz);
+			// com.pblabs.util.Log.debug("no objects in pool, creating " +  _clazz);
 			return obj;
 		} else {
-			com.pblabs.util.Log.debug("from pool " +  _clazz);
+			// com.pblabs.util.Log.debug("from pool " +  _clazz);
 			return obj;
 		}
 	}

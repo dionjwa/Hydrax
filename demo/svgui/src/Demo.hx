@@ -1,40 +1,32 @@
 package ;
 
 import com.pblabs.components.input.InputManager;
-import com.pblabs.components.input.MouseInputComponent;
 import com.pblabs.components.input.MouseInputManager;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.scene2D.BaseSceneLayer;
-import com.pblabs.components.scene2D.HierarchyManager;
-import com.pblabs.components.scene2D.ImageComponent;
-import com.pblabs.components.scene2D.SVGComponent;
 import com.pblabs.components.scene2D.SceneAlignment;
 import com.pblabs.components.scene2D.SceneUtil;
-import com.pblabs.components.scene2D.SvgAnchorCache;
-import com.pblabs.components.tasks.AngleTask;
-import com.pblabs.components.tasks.LocationTask;
-import com.pblabs.components.tasks.RepeatingTask;
-import com.pblabs.components.tasks.SerialTask;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
 import com.pblabs.engine.core.PBGameBase;
-import com.pblabs.engine.resource.EmbeddedResource;
+import com.pblabs.engine.resource.BitmapCacheResource;
 import com.pblabs.engine.resource.IResourceManager;
-import com.pblabs.engine.resource.ImageResource;
 import com.pblabs.engine.resource.ResourceToken;
+import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
-import com.pblabs.util.ds.Tuple;
+import com.pblabs.engine.resource.SvgResources;
+import com.pblabs.util.svg.SvgReplace;
 
 using StringTools;
 
-using com.pblabs.components.input.InputUtil;
+using com.pblabs.components.input.InputTools;
+using com.pblabs.components.scene2D.HierarchyManager;
+using com.pblabs.components.scene2D.ImageTools;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
-using com.pblabs.components.ui.UIUtil;
 using com.pblabs.engine.util.PBUtil;
 using com.pblabs.util.StringUtil;
-using com.pblabs.util.XmlUtil;
 
 class Demo  
 {
@@ -52,24 +44,34 @@ class Demo
 		game.registerManager(InputManager, new InputManager());
 		var input = game.getManager(InputManager);
 		
-		game.getManager(IResourceManager).addResource(new com.pblabs.engine.resource.EmbeddedResource());
+		var svgs = game.allocate(SvgResources);
+		game.getManager(IResourceManager).addResource(svgs);
+		game.getManager(IResourceManager).addResource(game.allocate(BitmapCacheResource));
 		
 		//Add the embedded resources
 		// com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/anchors.svg", "anchors");
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/anchors.svg", "anchors");
+		svgs.add(new ResourceToken("anchors", Source.embedded("anchors"), ResourceType.SVG));
 		
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/button_01.svg", "button");
+		svgs.add(new ResourceToken("button", Source.embedded("button"), ResourceType.SVG));
+
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/button_01_down.svg", "button_down");
+		svgs.add(new ResourceToken("button_down", Source.embedded("button_down"), ResourceType.SVG));
+
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/icon.svg", "button_icon");
+		svgs.add(new ResourceToken("button_icon", Source.embedded("button_icon"), ResourceType.SVG));
+
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/text_center.svg", "text");
+		svgs.add(new ResourceToken("text", Source.embedded("text"), ResourceType.SVG));
+
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/tiger.svg", "tiger");
+		svgs.add(new ResourceToken("tiger", Source.embedded("tiger"), ResourceType.SVG));
+
 		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/ui_complete.svg", "ui_complete");
-		
-		// com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/text_left.svg", "text");
-		// com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/text_right.svg", "text");
+		svgs.add(new ResourceToken("ui_complete", Source.embedded("ui_complete"), ResourceType.SVG));
 		
 		game.getManager(IResourceManager).load(startGame, function (e :Dynamic) {trace(e);});
-		
 	}
 	
 	function startGame () :Void
@@ -86,55 +88,26 @@ class Demo
 		// var layer :BaseSceneLayer<Dynamic, Dynamic> = scene.addLayer(null, com.pblabs.components.scene2D.js.canvas.SceneLayer);
 		#end
 		
+		var rootSvgToken = new ResourceToken("anchors", Source.embedded("anchors"), ResourceType.SVG);
+		var uiblob = context.createBaseSceneEntity()
+			.addImage(layer, rootSvgToken)
+			.setObjectMask(ObjectType.NONE)
+			.initializeEntity("uiblob")
+			.setSceneAlignment(SceneAlignment.CENTER);
+			
+		for (ii in 1...4) {
+			context.createBaseSceneEntity()
+				.addSvg(layer, new ResourceToken("button", Source.embedded("button"), ResourceType.SVG), [new SvgReplace("\\$T", "Test" + ii)])
+				.addSvg(layer, new ResourceToken("button_down", Source.embedded("button_down"), ResourceType.SVG), [new SvgReplace("\\$T", "Test" + ii + " Down")])
+				.makeTwoStateButton()
+				.initializeEntity("button" + ii)
+				.setEntityAsDisplayChildOf(uiblob, rootSvgToken, "anchor" + ii);
+		}
+			
 		
-		
-		
-		
-		context.registerManager(SvgAnchorCache, new SvgAnchorCache());
-		//The hierarchy manager
-		var hm :HierarchyManager = context.addSingletonComponent(HierarchyManager);
-		
-		
-		
-		//Create some widget that is automatically placed relative
-		var uiblob = SceneUtil.createBaseSceneEntity(cast context);
-		var c = context.allocate(SVGComponent);
-		c.objectMask = ObjectType.NONE;
-		c.resources = [EmbeddedResource.token("anchors")];
-		
-		
-		var svg1 = EmbeddedResource.token("button");
-		var svg2 = EmbeddedResource.token("button_down");
-		var svg3 = EmbeddedResource.token("button_icon");
-		var svgtext = EmbeddedResource.token("text");
-		
-		c.parentProperty = layer.entityProp();
-		uiblob.addComponent(c);
-		uiblob.initialize("uilblob");
-		// c.removeFromParent();
-		// c.addToParent();
-		// uiblob.setLocation(uiblob.getWidth() / 2 + 30 + 300, uiblob.getHeight() / 2);
-		uiblob.setLocation(uiblob.getWidth() / 2, uiblob.getHeight() / 2);
-		// c.visible = true;
-		
-		
-		var button1 = layer.createTwoStateSVGButton([svg1, svg3], [svg2, svg3], "testButton1", function () :Void {});
-		hm.setAsChild(c, "anchor1", button1.getComponent(BaseSceneComponent));
-		
-		var button2 = layer.createTwoStateSVGButton([svg1, svg3], [svg2], "testButton2", function () :Void {});
-		hm.setAsChild(c, "anchor2", button2.getComponent(BaseSceneComponent));
-		
-		var button3 = layer.createTwoStateSVGButton([svg1], [svg2], "testButton3", function () :Void {});
-		hm.setAsChild(c, "anchor3", button3.getComponent(BaseSceneComponent));
-		
-		// var button3 = layer.createText(svgtext, "testButtonfockmen");
-		
-		// #if flash
-		// drawGrid(flash.Lib.current.graphics, 100);
-		// #end
-		// hm.setAsChild(c, "anchor3", button3.getComponent(BaseSceneComponent));
-		
-		// c.owner.addTask(LocationTask.CreateLinear(c.x + 100, c.y + 100, 5));
+		#if flash
+		drawGrid(flash.Lib.current.graphics, 100);
+		#end
 	}
 	
 	public static function main() 

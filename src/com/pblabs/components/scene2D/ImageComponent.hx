@@ -10,7 +10,7 @@ package com.pblabs.components.scene2D;
 
 import com.pblabs.components.input.IInteractiveComponent;
 import com.pblabs.engine.core.ObjectType;
-import com.pblabs.engine.resource.IResource;
+import com.pblabs.engine.resource.IResources;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.geom.RectangleTools;
@@ -49,7 +49,7 @@ class ImageComponent extends BitmapRenderer
 	#if js
 	function loadJSImage () :Void
 	{
-		var image :js.Dom.Image = context.getTokenResource(resource);
+		var image :Image = context.getTokenResource(resource);
 		width = image.width;
 		height = image.height;
 		// trace('image.width=' + image.width);

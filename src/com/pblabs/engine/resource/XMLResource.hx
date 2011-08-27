@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.engine.resource;
 
-import com.pblabs.engine.resource.ResourceBase;
+import com.pblabs.engine.resource.ResourcesBase;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.StringUtil;
@@ -23,7 +23,7 @@ using com.pblabs.util.EventDispatcherUtil;
   * Represents an XML blob loaded from somewhere.
   * Most, but not all, targets/Source types are implemented.  
   */
-class XMLResource extends ResourceBase<Xml>
+class XMLResource extends ResourcesBase<Xml>
 {
 	public function new (name :String, source :Source)
 	{

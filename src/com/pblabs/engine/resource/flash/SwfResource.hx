@@ -9,7 +9,7 @@
 package com.pblabs.engine.resource.flash;
 
 import com.pblabs.components.Constants;
-import com.pblabs.engine.resource.ResourceBase;
+import com.pblabs.engine.resource.ResourcesBase;
 import com.pblabs.engine.resource.Source;
 import com.pblabs.util.Preconditions;
 
@@ -24,7 +24,7 @@ import flash.system.LoaderContext;
 using com.pblabs.util.EventDispatcherUtil;
 using Lambda;
 
-class SwfResource extends ResourceBase<Dynamic> 
+class SwfResource extends ResourcesBase<Dynamic> 
 {
 	public var applicationDomain (get_applicationDomain, never) :ApplicationDomain; function get_applicationDomain () :ApplicationDomain { return _loader.contentLoaderInfo.applicationDomain; }
 	public var displayRoot (get_displayRoot, never) :DisplayObject; function get_displayRoot () :DisplayObject { return _loader.content; }

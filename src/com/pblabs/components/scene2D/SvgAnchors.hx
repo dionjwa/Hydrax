@@ -7,6 +7,7 @@ import com.pblabs.util.Comparators;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 import com.pblabs.util.ds.maps.SortedMap;
+import com.pblabs.util.svg.SvgData;
 
 import de.polygonal.motor2.geom.math.XY;
 
@@ -35,29 +36,29 @@ class SvgAnchors
 	public static var ANCHOR_PREFIX = "anchor";
 	public static var INKSCAPE_LABEL = "inkscape:label";
 	
-	static var _anchors :Map<String, Map<String, XY>> = Maps.newHashMap(ValueType.TClass(String)); 
+	static var _anchors :Map<SvgData, Map<String, XY>> = Maps.newHashMap(ValueType.TClass(SvgData)); 
 	
-	public static function getAnchors (id :String, svg :String) :Map<String, XY>
+	public static function getAnchors (svgData :SvgData) :Map<String, XY>
 	{
-		com.pblabs.util.Assert.isNotNull(id, ' id is null');
-		com.pblabs.util.Assert.isNotNull(svg, ' svg is null');
+		// com.pblabs.util.Assert.isNotNull(id, ' id is null');
+		// com.pblabs.util.Assert.isNotNull(svg, ' svg is null');
 		// var md5 = haxe.Md5.encode(svg);
-	    if (_anchors.exists(id)) {
-	    	return _anchors.get(id);
+	    if (_anchors.exists(svgData)) {
+	    	return _anchors.get(svgData);
 	    } else {
-	    	#if js
-			/** SVG documents added to the dom via innerHTML are *not* allowed to have any preamble. */
-			svg = svg.cleanSvgForInnerHtml();
-			#end
-			var svgXml = Xml.parse(svg).ensureNotDocument();
-			var map = parseAnchors(svgXml);
+	    	// #if js
+			// /** SVG documents added to the dom via innerHTML are *not* allowed to have any preamble. */
+			// svg = svg.cleanSvgForInnerHtml();
+			// #end
+			// var svgXml = Xml.parse(svg).ensureNotDocument();
+			var map = parseAnchors(svgData.xml);
 			//Display objects are by default centered, but Svgs are not. Adjust for this.
-			var bounds = svgXml.getSvgBounds();
-			// for (offset in map) {
-			// 	offset.x += bounds.intervalX / 2;
-			// 	offset.y += bounds.intervalY / 2;
-			// }
-			_anchors.set(id, map);
+			var bounds = svgData.xml.getSvgBounds();
+			for (offset in map) {
+				offset.x -= bounds.intervalX / 2;
+				offset.y -= bounds.intervalY / 2;
+			}
+			_anchors.set(svgData, map);
 			return map;
 	    }
 	}
@@ -89,7 +90,8 @@ class SvgAnchors
 				//Reverse the y axis, the origin of svg documents is the bottom left.
 				var label = isFromInkscapeLabel ? element.get(INKSCAPE_LABEL) : element.get("id").split("_")[0];
 				// trace(label + "=>" + anchor.toVector2());
-				anchors.set(label, anchor.toVector2().subtractLocal(new Vector2(svgBounds.intervalX / 2, svgBounds.intervalY / 2)));
+				// anchors.set(label, anchor.toVector2().subtractLocal(new Vector2(svgBounds.intervalX / 2, svgBounds.intervalY / 2)));
+				anchors.set(label, anchor.toVector2());
 			}
 		} else {
 			if (element.nodeType == Xml.Element) {

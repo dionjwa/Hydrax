@@ -8,16 +8,20 @@
  ******************************************************************************/
 package com.pblabs.engine.pooling;
 
+import Type;
+
 import com.pblabs.engine.core.IEntity;
+import com.pblabs.engine.core.IPBContext;
+import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.IPBObject;
 import com.pblabs.engine.core.PBContext;
-import com.pblabs.engine.core.PBManagerBase;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
-import Type;
+import hsl.haxe.Bond;
+
 /**
   * Usage:
   *
@@ -35,16 +39,20 @@ import Type;
   *		pool.register(com.pblabs.components.base.AlphaComponent);
   *		pool.register(com.pblabs.components.tasks.TaskComponent);
   */
-class ObjectPoolMgr extends PBManagerBase
+class ObjectPoolMgr //extends PBManagerBase
+	implements IPBManager
 {
+	@inject("com.pblabs.engine.core.PBGameBase")
+	var game :com.pblabs.engine.core.PBGameBase;
+	
  	var _classes:Array<Class<Dynamic>> ;
 	var _pools:Map<String, ObjectPool<Dynamic>>;
 	var _tempPool :Array<Dynamic>;
 	var _isCallingLater :Bool;
+	var _contextSetupBond :Bond;
 	
 	public function new() 
 	{
-		super();
 		_classes = [];
 		_pools = Maps.newHashMap(ValueType.TClass(String));
 		_tempPool = [];
@@ -77,9 +85,6 @@ class ObjectPoolMgr extends PBManagerBase
 		var pool :ObjectPool<T> = cast( _pools.get(ReflectUtil.getClassName(clazz)));
 		if (pool != null) {
 			return pool.getObject();
-		} else {
-			// com.pblabs.util.Log.debug(["getObject", "class not registered ", ReflectUtil.getClassName(clazz)]);
-			// com.pblabs.util.Log.debug("registered classes:" + _classes);
 		}
 		return Type.createInstance(clazz, EMPTY_ARRAY);
 	}
@@ -95,9 +100,15 @@ class ObjectPoolMgr extends PBManagerBase
 		_classes.push(clazz);
 	}
 
-	override public function shutdown () :Void
+	public function startup () :Void
 	{
-		super.shutdown();
+		_contextSetupBond = game.signalContextSetup.bind(onNewContext);
+	}
+	
+	public function shutdown () :Void
+	{
+		_contextSetupBond.destroy();
+		_contextSetupBond = null;
 		for (p in _pools) {
 			p.shutdown();
 		}
@@ -105,18 +116,15 @@ class ObjectPoolMgr extends PBManagerBase
 		_pools = null;
 		_classes = null;
 		_tempPool = null;
+		game = null;
 	}
 	
-	override function onContextRemoval () :Void
+	function onNewContext (c :IPBContext) :Void
 	{
-		super.onContextRemoval();
-		cast(context, PBContext).signalObjectRemoved.unbind(onObjectDestroyed);
-	}
-	
-	override function onNewContext () :Void
-	{
-		super.onNewContext();
-		cast(context, PBContext).signalObjectRemoved.bind(onObjectDestroyed);
+		var objectRemovedBond = cast(c, PBContext).signalObjectRemoved.bind(onObjectDestroyed);
+		cast(c, PBContext).signalDestroyed.bind(function (c :IPBContext) :Void {
+			objectRemovedBond.destroy();
+		}).destroyOnUse();
 	}
 	
 	function onObjectDestroyed (obj :IPBObject) :Void
@@ -144,12 +152,12 @@ class ObjectPoolMgr extends PBManagerBase
 		var i = 0;
 		//No more than 50 objects per frame to avoid big lags when destroying 
 		//entire scenes.
-		while (_tempPool.length > 0 && i < 50) {
+		while (_tempPool.length > 0 && i < 5000) {
 			i++;
 			var o = _tempPool.pop();
 			var pool :ObjectPool<Dynamic> = cast( _pools.get(ReflectUtil.getClassName(o)));
 			if (pool == null) {
-				return;
+				continue;
 			}
 			pool.addObject(o);
 		}

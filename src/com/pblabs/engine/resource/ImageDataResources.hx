@@ -10,9 +10,9 @@ package com.pblabs.engine.resource;
 
 import Type;
 
-import com.pblabs.components.scene2D.Image;
+import com.pblabs.components.scene2D.ImageType;
 import com.pblabs.components.scene2D.ImageData;
-import com.pblabs.engine.resource.ResourceBase;
+import com.pblabs.engine.resource.ResourcesBase;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;

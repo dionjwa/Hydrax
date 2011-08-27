@@ -1,6 +1,7 @@
 -D debug
 
 -lib hydrax
+-cp ../../lib/hx.html5
 -lib jQueryExtern
 -cp src
 

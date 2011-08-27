@@ -2,6 +2,8 @@
 -D use_html5_canvas_as_default_scene_layer
 
 -lib hydrax
+-lib jQueryExtern
+-cp ../../lib/hx.html5
 
 -cp src
 

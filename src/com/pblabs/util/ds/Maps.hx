@@ -186,7 +186,7 @@ class Maps
 		// }
 	}
 	
-	public static function createMapFromClass <K, V>(cls :Class<Dynamic>) :Map<K, V>
+	static function createMapFromClass <K, V>(cls :Class<Dynamic>) :Map<K, V>
 	{
 		var classname :String = Type.getClassName(cls);
 		if (classname == "com.pblabs.util.ds.Hashable") {

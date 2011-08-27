@@ -13,6 +13,7 @@ import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBObject;
 import com.pblabs.engine.core.NameManager;
+import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.util.Assert;
 import com.pblabs.util.Preconditions;
@@ -40,6 +41,23 @@ class PBUtil
 		return e;
 	}
 	
+	public static function ensureManager <T> (context :IPBContext, mng :Class<T>) :T
+	{
+		var inst = context.getManager(mng);
+		if (inst == null) {
+			inst = context.registerManager(mng, context.allocate(mng));
+		} 
+		return inst;
+	}
+	
+	public static function ensureGameManager <T> (game :PBGameBase, mng :Class<T>) :T
+	{
+		var inst = game.getManager(mng);
+		if (inst == null) {
+			inst = game.registerManager(mng, game.allocate(mng));
+		} 
+		return inst;
+	}
 	
 	public static function addSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null, 
 		?deferring :Bool = false) :T
@@ -96,6 +114,14 @@ class PBUtil
 		e.addComponent(cast(component, IEntityComponent));
 		e.deferring = false;
 		return component;
+	}
+	
+	public static function addComponentToEntity (e :IEntity, compClass :Class<Dynamic>, ?entityName :String) :IEntity
+	{
+		com.pblabs.util.Assert.isNotNull(e, ' e is null');
+		com.pblabs.util.Assert.isNotNull(compClass, ' compClass is null');
+		e.addComponent(cast(e.context.allocate(compClass), IEntityComponent), entityName);
+		return e;
 	}
 	
 	public static function getSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null, 

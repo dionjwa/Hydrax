@@ -19,22 +19,19 @@ using com.pblabs.components.scene2D.SceneUtil;
 
 /**
   * Cross platform bitmap renderer.  The parent class for other more complex renderers.
+  * Flash: there is an issue with ObjectPooling and bitmap caching.  Don't pool this class yet.
   */
 class BitmapRenderer 
-#if js
-extends com.pblabs.components.scene2D.js.SceneComponent
-#elseif (flash || cpp)
-extends com.pblabs.components.scene2D.flash.SceneComponent  
-#end
-		,implements com.pblabs.components.scene2D.flash.ICopyPixelsRenderer
+	#if js
+	extends com.pblabs.components.scene2D.js.SceneComponent,
+	#elseif (flash || cpp)
+	extends com.pblabs.components.scene2D.flash.SceneComponent,  
+	#end
+	implements com.pblabs.components.scene2D.flash.ICopyPixelsRenderer
 {
-	// #if flash
-	public var bitmap (get_bitmap, never) :Image;
-	var _bitmap :Image;
-	inline function get_bitmap () :Image { return _bitmap; }
-	// #elseif js
-	// var _bitmap :ImageData;
-	// #end
+	public var bitmap (get_bitmap, never) :BitmapType;
+	var _bitmap :BitmapType;
+	inline function get_bitmap () :BitmapType { return _bitmap; }
 	
 	public var bitmapData (get_bitmapData, set_bitmapData) :ImageData;
 	inline function get_bitmapData () :ImageData
@@ -43,7 +40,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		#if flash
 		return _bitmap.bitmapData;
 		#elseif js
-		return _bitmap.getContext("2d").getImageData(0, 0, _bitmap.width, _bitmap.height);
+		return _bitmap;
 		#end
 	}
 	
@@ -52,20 +49,88 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		#if flash
 		com.pblabs.util.Assert.isNotNull(_bitmap);
 		_bitmap.bitmapData = val;
-		// updateTransform();
 		#elseif js
-		_bitmap.getContext("2d").putImageData(val, val.width, val.height);
-		// if (_bitmap != null) {
-		// 	div.removeChild(_bitmap);
-		// }
-		// _bitmap = val;
-		// div.appendChild(_bitmap);
+		if (val != null) {
+			_bitmap.width = val.width;
+			_bitmap.height = val.height;
+			_bitmap.getContext("2d").drawImage(val , 0, 0);
+		}
 		#end
-		// bitmapDirty = true;
-		// recomputeBounds();
+		
+		if (val != null) {
+			recomputeBounds();
+		} else {
+			_unscaledBounds.x = 1;
+			_unscaledBounds.y = 1;
+			
+			_bounds.xmin = _x;
+			_bounds.xmax = _x + _unscaledBounds.x * _scaleX;
+			_bounds.ymin = _y;
+			_bounds.ymax = _y + _unscaledBounds.y * _scaleY;
+			
+			_registrationPoint.x = 0;
+			_registrationPoint.y = 0;
+			#if js
+			_bitmap.width = _bitmap.height = 1;
+			#end
+			
+			isTransformDirty = true;
+		}
 		return val;
 	}
 	
+	#if js
+	/** Can also render a js.Image */
+	override function set_cacheAsBitmap (val :Bool) :Bool
+	{
+		cacheAsBitmap = false;
+		return false;
+	}
+	#end
+	
+	#if flash
+	public var smoothing (get_smoothing, set_smoothing) :Bool;
+	var _smoothing :Bool;
+	function get_smoothing () :Bool
+	{
+		return _smoothing;
+	}
+	
+	function set_smoothing (val :Bool) :Bool
+	{
+		_smoothing = val;
+		_bitmap.smoothing = val;
+		return val;
+	}
+	#end
+	
+	public function new (?width :Int = 1, ?height :Int = 1) :Void
+	{
+		#if flash
+		var sprite = com.pblabs.util.SpriteUtil.create();
+		_bitmap = new flash.display.Bitmap(new flash.display.BitmapData(width, height, true, 0xff0000), flash.display.PixelSnapping.NEVER);
+		sprite.addChild(_bitmap);
+		_displayObject = sprite;
+		super();
+		#elseif js
+		super();
+		cacheAsBitmap = false;
+		var canvas :Canvas = cast js.Lib.document.createElement("canvas");
+		canvas.width = width;
+		canvas.height = height;
+		_bitmap = canvas;
+		div.appendChild(_bitmap);
+		#end
+	}
+	
+	public function setImage (image :ImageType) :Void
+	{
+		#if flash
+		bitmapData = image.bitmapData;
+		#elseif js
+		bitmapData = com.pblabs.util.BitmapUtil.toCanvas(image);
+		#end
+	}
 	
 	#if flash
 	public function drawPixels (objectToScreen :Matrix, renderTarget :flash.display.BitmapData) :Void
@@ -84,51 +149,18 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		}
 		ctx.drawImage(_bitmap, 0, 0);
 	}
-	#end
-	
-	
-	#if flash
-	public var smoothing (get_smoothing, set_smoothing) :Bool;
-	var _smoothing :Bool;
-	function get_smoothing () :Bool
+	public function drawImage (image :Image) :Void
 	{
-		return _smoothing;
-	}
-	
-	function set_smoothing (val :Bool) :Bool
-	{
-		_smoothing = val;
-		_bitmap.smoothing = val;
-		return val;
+		_bitmap.width = image.width;
+		_bitmap.height = image.height;
+		_bitmap.getContext("2d").drawImage(image , 0, 0);
+		recomputeBounds();
 	}
 	#end
-	
-	/** Used by the BitmapSceneRenderer */
-	// public var bitmapDirty :Bool;
-	
-	public function new (?width :Int = 100, ?height :Int = 100) :Void
-	{
-		super();
-		#if flash
-		var sprite = com.pblabs.util.SpriteUtil.create();
-		_bitmap = new flash.display.Bitmap(new flash.display.BitmapData(width, height, true, 0xff0000), flash.display.PixelSnapping.NEVER);
-		sprite.addChild(_bitmap);
-		_displayObject = sprite;
-		// _bitmap.bitmapData.floodFill(10, 10, 0xff0000);
-		#elseif js
-		var canvas :easel.display.Canvas = cast js.Lib.document.createElement("canvas");
-		canvas.width = width;
-		canvas.height = height;
-		_bitmap = canvas;
-		div.appendChild(_bitmap);
-		#end
-		 
-	}
 	
 	public function isPixelPathActive(objectToScreen :Matrix) :Bool
 	{
 		// No rotation/scaling/translucency/blend modes
-		// return (objectToScreen.a == 1 && objectToScreen.b == 0 && objectToScreen.c == 0 && objectToScreen.d == 1 && alpha == 1 && blendMode == flash.display.BlendMode.NORMAL && (displayObject.filters.length == 0));
 		return (objectToScreen.a == 1 && objectToScreen.b == 0 && objectToScreen.c == 0 && objectToScreen.d == 1 && alpha == 1
 		#if flash
 		&& (displayObject.filters.length == 0)
@@ -136,20 +168,15 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		);
 	}
 	
-	override function onAdd () :Void
-	{
-		super.onAdd();
-		// updateTransform();
-	}
-	
 	override function onRemove () :Void
 	{
+		//Where is bitmapData.dispose to be called? Subclasses will be caching the BitmapData. 
+		bitmapData = null;
 		var keepDisp = _displayObject;
 		super.onRemove();//Superclass nulls _displayObject
 		_displayObject = keepDisp;
 		#if flash
-		//Where is bitmapData.dispose to be called? Subclasses will be caching the BitmapData. 
-		_bitmap.bitmapData = null;
+		_smoothing = false;
 		#end
 	}
 	
@@ -179,10 +206,13 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		if (_bitmap == null) {
 			return;
 		}
+		
 		var halfWidth = _bitmap.width / 2;
 		var halfHeight = _bitmap.height / 2;
 		_unscaledBounds.x = _bitmap.width;
 		_unscaledBounds.y = _bitmap.height;
+		
+		_scaleX = _scaleY = 1.0;
 		
 		_bounds.xmin = _x - halfWidth * _scaleX;
 		_bounds.xmax = _x + halfWidth * _scaleX;
@@ -191,12 +221,19 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		
 		_registrationPoint.x = halfWidth;
 		_registrationPoint.y = halfHeight;
-		_scaleX = _scaleY = 1.0;
 		
 		isTransformDirty = true;
 	}
 	
 	#if flash
+	override function setDefaultVars () :Void
+	{
+		super.setDefaultVars();
+		if (_bitmap != null) {
+			smoothing = false;
+		}
+	}
+	
 	static var zeroPoint = new Point();
 	#end
 	

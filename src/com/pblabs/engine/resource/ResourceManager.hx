@@ -12,7 +12,7 @@ import Type;
 
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBManager;
-import com.pblabs.engine.resource.IResource;
+import com.pblabs.engine.resource.IResources;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.util.Assert;
 import com.pblabs.util.Preconditions;
@@ -42,9 +42,9 @@ class ResourceManager
 	public var signalerFractionComplete :Signaler<Float>;
 	/** The number of resources in this load batch */
 	var _numResources :Int;
-	var _pendingResources :Map<String, IResource<Dynamic>>;
-	var _loadingResources :Map<String, IResource<Dynamic>>;
-	var _loadedResources :Map<String, IResource<Dynamic>>;
+	var _pendingResources :Map<String, IResources<Dynamic>>;
+	var _loadingResources :Map<String, IResources<Dynamic>>;
+	var _loadedResources :Map<String, IResources<Dynamic>>;
 	var _onLoadCallbacks :Array<Void->Void>;
 	var _onErrorCallbacks :Array<Dynamic->Void>;
 	
@@ -60,7 +60,7 @@ class ResourceManager
 		signalerFractionComplete = new DirectSignaler(this);
 	}
 	
-	public function iterator () :Iterator<IResource<Dynamic>>
+	public function iterator () :Iterator<IResources<Dynamic>>
 	{
 	    return _loadedResources.array().concat(_pendingResources.array()).concat(_loadingResources.array()).iterator();
 	}
@@ -68,13 +68,13 @@ class ResourceManager
 	public function add (token :ResourceToken) :Void
 	{
 		com.pblabs.util.Assert.isNotNull(getResourceForToken(token), ' resource is null from ' + token + ', resource ids=' + this.map(
-		function (r :IResource<Dynamic>) :String {
+		function (r :IResources<Dynamic>) :String {
 			return r.name;
 		}).array());
 		getResourceForToken(token).add(token);
 	}
 	
-	inline function getResourceForToken (token :ResourceToken) :IResource<Dynamic>
+	inline function getResourceForToken (token :ResourceToken) :IResources<Dynamic>
 	{
 		return getResource(Type.enumConstructor(token.type));
 	}
@@ -136,7 +136,7 @@ class ResourceManager
 		return getResource(resourceName) != null;
 	}
 	
-	public function getResource (resourceName :String) :IResource<Dynamic>
+	public function getResource (resourceName :String) :IResources<Dynamic>
 	{
 		com.pblabs.util.Assert.isNotNull(resourceName, ' resourceName is null');
 		if (_loadedResources.exists(resourceName)) {
@@ -148,8 +148,9 @@ class ResourceManager
 		}  
 	}
 	
-	public function addResource (rsrc :IResource<Dynamic>) :Void
+	public function addResource (rsrc :IResources<Dynamic>) :Void
 	{
+		com.pblabs.util.Log.info("addResource " + com.pblabs.util.ReflectUtil.getClassName(rsrc));
 		Preconditions.checkNotNull(rsrc, "Resource is null");
 		Preconditions.checkNotNull(rsrc.name, "Resource must have a name");
 		Preconditions.checkArgument(!isResource(rsrc.name), "Resource with name=" + rsrc.name  + " alrady exists");
@@ -207,7 +208,7 @@ class ResourceManager
 	}
 	#end
 	
-	function resourceLoaded (rsrc :IResource<Dynamic>) :Void
+	function resourceLoaded (rsrc :IResources<Dynamic>) :Void
 	{
 		com.pblabs.util.Log.info(rsrc);
 		_loadingResources.remove(rsrc.name);

@@ -8,10 +8,11 @@
  ******************************************************************************/
 package com.pblabs.util;
 
-
 import haxe.rtti.CType;
 
 using Lambda;
+
+using StringTools;
 
 /**
   * Will get/set fields with accessor methods, as long as 
@@ -22,7 +23,6 @@ class ReflectUtil
 {
 	static var rttiTypeTree = new Hash<haxe.rtti.TypeTree>();
 	static var cacheClassdef = new Hash<Classdef>();
-	// static var classDefParser = new haxe.rtti.XmlParser();
 	static var fieldTypes = new Hash<CType>();
 	
 	public static function tinyClassName (obj :Dynamic) :String
@@ -132,13 +132,6 @@ class ReflectUtil
 		if (rttiTypeTree.exists(name)) {
 			return rttiTypeTree.get(name);
 		}
-		// #if cpp
-		// //If you don't check for the field first, in cpp an error is thrown.
-		// if (!Type.getClassFields(cls).has("__rtti")) {//untyped cls.__rtti == null
-		// 	rttiTypeTree.set(name, null);
-		// 	return null;
-		// }
-		// #end
 		var rtti = Reflect.field(cls, "__rtti");
 		if (rtti == null) {
 			rttiTypeTree.set(name, null);
@@ -147,7 +140,6 @@ class ReflectUtil
 		
 		var x = new haxe.rtti.XmlParser().processElement(Xml.parse(rtti).firstElement());
 		
-		// var x = Xml.parse(rtti).firstChild();//untyped cls.__rtti
 		rttiTypeTree.set(name, x);
 		return x;
 	}
@@ -158,16 +150,11 @@ class ReflectUtil
 		if (cacheClassdef.exists(name)) {
 			return cacheClassdef.get(name);
 		}
-		// var x :Xml = getRttiXml(cls);
-		// if (x == null) {
-		// 	return null;
-		// }
 
 		var typeTree = getRttiTypeTree(cls);
 		if (typeTree == null) {
 			return null;
 		}
-		// new haxe.rtti.XmlParser().processElement(x);
 		
 		var cdef :Classdef = switch (typeTree) {
 			case TClassdecl(c): c;
@@ -221,10 +208,8 @@ class ReflectUtil
 	
 	public static function field (obj :Dynamic, field :String) :Dynamic
 	{
-		if (Lambda.has(Type.getInstanceFields(Type.getClass(obj)), "get_" + field)) {
-		//Probably faster, but sometimes doesn't work
-		// if (Reflect.field(obj, "get_" + field) != null) {cg
-			return Reflect.callMethod(obj, Reflect.field(obj, "get_" + field), EMPTY_ARRAY);
+		if (field.startsWith("get_")) {
+			return Reflect.callMethod(obj, Reflect.field(obj, field), EMPTY_ARRAY);
 		} else {
 			return Reflect.field(obj, field);
 		}
@@ -232,9 +217,8 @@ class ReflectUtil
 	
 	public static function setField (obj :Dynamic, field :String, val :Dynamic) :Void
 	{
-		// if (Reflect.field(obj, "set_" + field) != null) {
-		if (Reflect.hasField(obj, "set_" + field)) {
-			Reflect.callMethod(obj, Reflect.field(obj, "set_" + field), [val]);
+		if (field.startsWith("set_")) {
+			Reflect.callMethod(obj, Reflect.field(obj, field), [val]);
 		} else {
 			Reflect.setField(obj, field, val);
 		}
@@ -242,5 +226,3 @@ class ReflectUtil
 	
 	static var EMPTY_ARRAY :Array<Dynamic> = new Array();
 }
-
-

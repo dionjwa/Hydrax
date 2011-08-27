@@ -1,6 +1,7 @@
 package com.pblabs.components.scene2D;
 
 import com.pblabs.engine.resource.ResourceToken;
+import com.pblabs.util.svg.SvgData;
 
 import de.polygonal.core.math.Mathematics;
 import de.polygonal.motor2.geom.math.XY;
@@ -47,7 +48,7 @@ class SvgRenderTools
 	#end
 	
 	#if flash
-	public static function renderSvg (svgData :String, cb :flash.display.DisplayObject->Void, ?renderLib :RenderLib = null) :Void
+	public static function renderSvg (svgData :SvgData, cb :flash.display.DisplayObject->Void, ?renderLib :RenderLib = null) :Void
 	{
 		com.pblabs.util.Assert.isNotNull(svgData, ' svgData is null');
 		// #if debug
@@ -61,8 +62,10 @@ class SvgRenderTools
 			#if enable_svgweb
 			renderSvgWithSvgWeb(svgData, cb);
 			#else
-			trace("throwing missing svgweb stuff");
-			throw "You must add the compiler switch -D enable_svgweb and add the swf lib 'hydrax/lib/svgweb/svgweb.swf'";
+			com.pblabs.util.Log.warn("You must add the compiler switch -D enable_svgweb and add the swf lib 'hydrax/lib/svgweb/svgweb.swf.\n Falling back to gm2d'");
+			cb(renderSvgWithGM2D(svgData));
+			// trace("throwing missing svgweb stuff");
+			// throw "You must add the compiler switch -D enable_svgweb and add the swf lib 'hydrax/lib/svgweb/svgweb.swf'";
 			#end
 		} else {
 			var disp = renderSvgWithGM2D(svgData);
@@ -71,7 +74,7 @@ class SvgRenderTools
 	}
 	
 	#if enable_svgweb
-	public static function renderSvgWithSvgWeb (svgData :String, cb :flash.display.DisplayObject->Void) :Void
+	public static function renderSvgWithSvgWeb (svgData :SvgData, cb :flash.display.DisplayObject->Void) :Void
 	{
 		/**
 		  * svgweb has 2 issues :
@@ -94,7 +97,7 @@ class SvgRenderTools
 		var svg = new org.svgweb.SVGViewerFlash();
 		INVISIBLE_STAGE.addChild(svg);
 		
-		svg.xml = new flash.xml.XML(svgData);
+		svg.xml = new flash.xml.XML(svgData.data);
 		com.pblabs.util.EventDispatcherUtil.addOnceListener(svg.svgRoot, org.svgweb.events.SVGEvent.SVGLoad, 
 			function (ignored :Dynamic) :Void {
 				cb(svg);
@@ -102,19 +105,20 @@ class SvgRenderTools
 	}
 	#end
 	
-	public static function renderSvgWithGM2D (svgData :String) :flash.display.DisplayObject
+	public static function renderSvgWithGM2D (svgData :SvgData) :flash.display.DisplayObject
 	{
-		com.pblabs.util.Assert.isFalse(svgData.isBlank());
-		var xml = Xml.parse(svgData);
-		var svg = new gm2d.svg.SVG2Gfx(xml);
-		
+		var svg = new gm2d.svg.SVG2Gfx(svgData.xml);
 		var shape = svg.CreateShape();
 		shape.cacheAsBitmap = true;
 		return shape;
 	}
 	#elseif js
-	public static function renderSvg (svgData :String, canvas :Canvas, ?offset :XY, ?cb :Void->Void) :Void
+	public static function renderSvg (svgData :SvgData, canvas :Canvas, ?offset :XY, ?cb :Void->Void) :Void
 	{
+		// trace("Rendering svgData=" + svgData);
+		if (svgData.xml.nodeType == Xml.Document) {
+			trace("document at root, " + com.pblabs.util.Log.getStackTrace());
+		}
 		com.pblabs.util.Assert.isNotNull(svgData);
 		com.pblabs.util.Assert.isNotNull(canvas);
 		// com.pblabs.util.Assert.isNotNull(cb);
@@ -129,7 +133,7 @@ class SvgRenderTools
 			Reflect.setField(args, "offsetY", offset.y);
 		}
 		try {
-			untyped canvg(canvas, svgData, args);
+			untyped canvg(canvas, svgData.data, args);
 		} catch (e :Dynamic) {
 			com.pblabs.util.Log.error("Error rendering svg from canvg");
 			com.pblabs.util.Log.error(com.pblabs.util.Log.getStackTrace());
@@ -165,7 +169,14 @@ class SvgRenderTools
 		if (svgElement == null) {
 			return new AABB2();
 		}
-		if (svgElement.nodeName == "svg:svg") {
+		
+		// svgElement = svgElement.ensureNotDocument();
+		// trace(svgElement.nodeType + "=" + Std.string(svgElement).substr(0, 50));
+		// if (svgElement.nodeType == Xml.Document) {
+		// 	trace(com.pblabs.util.Log.getStackTrace());
+		// }
+		// trace('svgElement.nodeName=' + svgElement.nodeName);
+		if (svgElement.nodeName == "svg:svg" || svgElement.nodeName == "svg") {
 			return parseElementBounds(svgElement);
 		} else {
 			return getSvgBounds(svgElement.parent);

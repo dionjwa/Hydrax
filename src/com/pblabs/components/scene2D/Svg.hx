@@ -11,6 +11,7 @@ package com.pblabs.components.scene2D;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.ds.Tuple;
+import com.pblabs.util.svg.SvgData;
 
 import de.polygonal.motor2.geom.math.XY;
 import de.polygonal.motor2.geom.primitive.AABB2;
@@ -34,6 +35,8 @@ using com.pblabs.util.DisplayUtils;
 import de.polygonal.core.math.Mathematics;
 #end
 
+#if flash
+#end
 
 /**
   * Cross platform SVG based Scene2D component.
@@ -54,10 +57,10 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	public static var RENDER_CALLBACK_ID :Int = 1;
 	var _renderId :Int;
 	#end
-	public var svgData (get_svgData, set_svgData) :String;
-	var _svgData :String;
-	function get_svgData () :String { return _svgData; }
-	function set_svgData (val :String) :String
+	public var svgData (get_svgData, set_svgData) :SvgData;
+	var _svgData :SvgData;
+	function get_svgData () :SvgData { return _svgData; }
+	function set_svgData (val :SvgData) :SvgData
 	{
 		_svgData = val;
 		 
@@ -73,7 +76,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 				div.removeChild(div.lastChild);
 			}
 		} else {
-			canvas.getContext("2d").clearRect(0, 0, width, height);
+			// canvas.getContext("2d").clearRect(0, 0, width, height);
 			// com.pblabs.util.Log.error("Setting svg null should clear the display component, but this is not yet implemented in canvas js");
 		}
 		#end
@@ -85,16 +88,20 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			_bounds.xmin = _bounds.ymin = 0;
 			_bounds.xmax = _bounds.ymax = _unscaledBounds.x;
 			isTransformDirty = true;
+			#if js
+			//Clears the buffer
+			_backBuffer.width = _backBuffer.width;
+			#end
 			return val;
 		}
-		#if js
-		//SVG documents added to the dom via innerHTML are *not* allowed to have any preamble.
-		_svgData = _svgData.cleanSvgForInnerHtml();
-		#end
+		// #if js
+		// //SVG documents added to the dom via innerHTML are *not* allowed to have any preamble.
+		// _svgData = _svgData.cleanSvgForInnerHtml();
+		// #end
 		
-		var svgXml = Xml.parse(_svgData).ensureNotDocument();
+		// var svgXml = Xml.parse(_svgData).ensureNotDocument();
 		
-		var b = svgXml.parseElementBounds();
+		var b = _svgData.xml.parseElementBounds();
 		_unscaledBounds.x = b.intervalX;
 		_unscaledBounds.y = b.intervalY;
 		_bounds = b.clone();
@@ -109,7 +116,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		#if (flash || cpp)
 		_displayObject.removeAllChildren();
 		var self = this;
-		trace("Rendering svg from Svg");
+		com.pblabs.util.Log.info("SvgRenderTools.renderSvg");
 		SvgRenderTools.renderSvg(_svgData, function (renderedSvg :flash.display.DisplayObject) :Void {
 			if (!self.isRegistered) return;
 			if (localRenderId != self._renderId) return;//Another render call supercedes this render
@@ -192,10 +199,10 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		//Create a div for each svg
 		var d = com.pblabs.components.scene2D.js.SceneComponent.createDiv();
 		div.appendChild(d);
-		d.innerHTML = _svgData;
+		d.innerHTML = _svgData.data;
 	}
 	
-	override public function drawPixels (ctx :easel.display.Context2d)
+	override public function drawPixels (ctx :CanvasRenderingContext2D)
 	{
 		com.pblabs.util.Assert.isNotNull(ctx);
 		if (svgData == null) {

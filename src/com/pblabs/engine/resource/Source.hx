@@ -15,12 +15,14 @@ package com.pblabs.engine.resource;
 enum Source {
 	url (u :String);
 	bytes (b :haxe.io.Bytes);
-	imageData (imageData :com.pblabs.components.scene2D.ImageData);
+	// imageData (imageData :com.pblabs.components.scene2D.ImageData);
 	text (t :String);
 	embedded (embedId :String);
 	/** A resource created from another resource, e.g. a bitmap created from an Svg */
 	derived(other :ResourceToken);
+	linked (resource :Dynamic);
 	#if flash
 	swf(swfId :String);
 	#end
+	none;//For resources manually added
 }

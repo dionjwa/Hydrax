@@ -648,6 +648,12 @@ class Serializer extends PBManagerBase
 		return Std.parseInt(xml.firstChild().nodeValue.trim());
 	}
 	
+	public static function deserializeString (xml :Xml) :String
+	{
+		com.pblabs.util.Assert.isNotNull(xml);
+		return xml.firstChild().nodeValue.trim();
+	}
+	
 	public static function serializeInt(val :Dynamic, xml :Xml) :Void
 	{
 		xml.addChild(Xml.createPCData(Std.string(val)));

@@ -10,8 +10,8 @@ package com.pblabs.engine.resource;
 
 import Type;
 
-import com.pblabs.components.scene2D.Image;
-import com.pblabs.engine.resource.ResourceBase;
+import com.pblabs.components.scene2D.ImageType;
+import com.pblabs.engine.resource.ResourcesBase;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
@@ -20,9 +20,9 @@ import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
 /**
-  * Image resources.
+  * Loads and stores images from URLs, embedded data, swfs etc.
   */
-class ImageResources extends DynamicResources<Image>
+class ImageResources extends LoadingResources<ImageType>
 {
 	public function new ()
 	{
@@ -32,53 +32,26 @@ class ImageResources extends DynamicResources<Image>
 	override function loadFromUrl (token :ResourceToken, url :String) :Void
 	{
 		#if flash
-		throw "Not yet implemented";
+		loadDisplayObjectFromUrl(token, url);
 		#elseif js
-		var image :js.Dom.Image = untyped __js__ ("new Image()");
-		image.onload = function (_) {
-			// trace("loaded " + imageToken.id);
-			//Format the href to something friendly
-			// var key = href.split("/")[href.split("/").length - 1];
-			// key = key.split(".")[0];
-			self._loading.remove(imageToken);
-			self._data.set(imageToken, image);
-			self.maybeFinish();
-			// complete += 1;
-			// if (complete == total) {
-			// 	onLoad();
-			// }
+		var image :Image = untyped __js__ ("new Image()");
+		image.onload = function () {
+			_loading.remove(token);
+			_data.set(token, image);
+			com.pblabs.util.Assert.isNotNull(_data.get(token), ' _data.get(token) is null');
+			maybeFinish();
 		}
-		image.onerror = function (_) {
-			trace("Error loading image");
-			onError("Error loading " + imageToken);
+		image.onerror = function (e :Dynamic) {
+			trace("Error loading token " + token "\n   " + e);
 		}
-		// trace("setting url=" + imageToken.url);
-		// image.src = "http://localhost:8000/" + imageToken.url;
 		image.src = url;
 		#end
 	}
 	
-	// override public function unload () :Void
-	// {
-	// 	#if (flash || cpp)
-	// 	for (bd in _data) {
-	// 		bd.dispose();
-	// 	}
-	// 	#end
-	// 	super.unload();
-	// }
-	
-	// #if flash
-	// override function loadFromSwf (token :ResourceToken, swfId :String) :Image
-	// {
-	// 	return ResourceTools.instantiateEmbeddedClass(token.id);
-	// }
-	// #end
-	
-	// #if debug
-	// override public function toString () :String
-	// {
-	// 	return "[ImageResources: " + _images + "]";
-	// }
-	// #end
+	#if flash
+	override function createResourceFromFlashLoaderData (token :ResourceToken, loaderData :Dynamic) :ImageType
+	{
+		return cast(loaderData, flash.display.Bitmap);
+	}
+	#end
 }

@@ -50,7 +50,6 @@ class PBGameBase
 		return _currentContext;
 	}
 	
-	
 	public var signalContextSetup (default, null) :Signaler<IPBContext>;
 	public var signalContextShutdown (default, null) :Signaler<IPBContext>;
 	public var signalContextEnter (default, null) :Signaler<IPBContext>;
@@ -158,8 +157,8 @@ class PBGameBase
 				// });
 			}).destroyOnUse();
 			// //Fire setup
-			// signalContextSetup.dispatch(ctx);
-			// ctx.setup();
+			signalContextSetup.dispatch(ctx);
+			ctx.setup();
 			
 			com.pblabs.util.Assert.isTrue(ctx.injector.getMapping(IPBContext) == ctx);
 			
@@ -276,7 +275,6 @@ class PBGameBase
 	  */
 	function updateContextTransitions () :Void
 	{
-		
 		com.pblabs.util.Log.debug("updateContextTransitions");
 		com.pblabs.util.Log.debug("_contextTransitions.length=" + _contextTransitions.length);
 		com.pblabs.util.Log.debug('_isUpdatingContextTransition=' + _isUpdatingContextTransition);
@@ -284,6 +282,9 @@ class PBGameBase
 		if (_isUpdatingContextTransition || _contextTransitions.length == 0) {
 			return;
 		}
+		
+		_isUpdatingContextTransition = true;
+		
 		com.pblabs.engine.debug.Profiler.enter("updateContextTransitions");
 		var self = this;
 		var removeCurrentContext = function () :Void {
@@ -294,10 +295,11 @@ class PBGameBase
 			self._contexts.remove(c);
 			c.exit();
 			self.signalContextExit.dispatch(c);
+			signalContextShutdown.dispatch(c);
 			c.shutdown();
 		}
 		
-		_isUpdatingContextTransition = true;
+		
 		
 		//Do the transitions, then set the _currentContext at the end
 		while (_contextTransitions.length > 0) {
@@ -326,6 +328,7 @@ class PBGameBase
 						var idx = _contexts.indexOf(oldContext);
 						com.pblabs.util.Assert.isWithinRange(idx, 0, _contexts.length);
 						_contexts[idx] = newContext;
+						signalContextShutdown.dispatch(oldContext);
 						oldContext.shutdown();
 					} 
 				case REMOVE(c):
@@ -344,6 +347,7 @@ class PBGameBase
 						}
 						while (_contexts.length > 0) {
 							var ctx = _contexts.pop();
+							signalContextShutdown.dispatch(ctx);
 							ctx.shutdown();
 							if (Std.is(ctx, c)) {
 								break;
@@ -359,11 +363,12 @@ class PBGameBase
 		_contextProcessManager = null;
 		
 		if (_currentContext != null) {
-			if (!_currentContext.isSetup) {
-				//Fire setup
-				signalContextSetup.dispatch(_currentContext);
-				_currentContext.setup();
-			}
+			com.pblabs.util.Assert.isNotNull(this.currentContext, ' this.currentContext is null');
+			// if (!_currentContext.isSetup) {
+			// 	//Fire setup
+			// 	signalContextSetup.dispatch(_currentContext);
+			// 	_currentContext.setup();
+			// }
 			
 			//Dispatch the signaller first, so that managers are notified.
 			com.pblabs.util.Log.debug("New current context=" + _currentContext);

@@ -18,15 +18,15 @@ interface IResourceManager implements IPBManager
 	// function getFromName <T>(resourceName :String, ?itemName :String) :T;
 	function add (token :ResourceToken) :Void;
 	function get <T>(token :ResourceToken) :T;
-	function addResource (rsrc :IResource<Dynamic>) :Void;
+	function addResource (rsrc :IResources<Dynamic>) :Void;
 	function load (onLoad :Void->Void, ?onError :Dynamic->Void) :Void;
 	function unload (resourceName :String) :Void;
 	/**
 	  * Returns true if the resource is available or pending.
 	  */
 	function isResource (resourceName :String) :Bool;
-	function getResource (resourceName :String) :IResource<Dynamic>;
-	function iterator () :Iterator<IResource<Dynamic>>;
+	function getResource (resourceName :String) :IResources<Dynamic>;
+	function iterator () :Iterator<IResources<Dynamic>>;
 	
 	#if (editor || debug)
 	function reload (onLoad :Void->Void, ?onError :Dynamic->Void) :Void;

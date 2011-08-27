@@ -2,16 +2,10 @@ package com.pblabs.util;
 
 import de.polygonal.core.math.Mathematics;
 
-import flash.display.BitmapData;
-import flash.display.DisplayObject;
-
-import flash.geom.Matrix;
-import flash.geom.Point;
-
 class BitmapUtil
 {
 	#if (flash || cpp)
-	public static function createBitmapData (d :DisplayObject, ?scale :Float = 1.0, ?center :Point) :BitmapData
+	public static function createBitmapData (d :flash.display.DisplayObject, ?scale :Float = 1.0, ?center :flash.geom.Point) :flash.display.BitmapData
 	{
 		#if flash
 		var bounds = d.getBounds(d);
@@ -30,12 +24,12 @@ class BitmapUtil
 		center.y = Mathematics.ceil(-bounds.y * scale);
 		
 		#if flash
-		var bd = new BitmapData(Mathematics.ceil(bounds.width * scale), Mathematics.ceil(bounds.height * scale), true, ColorUtil.toARGB(0xffffff, 0));
+		var bd = new flash.display.BitmapData(Mathematics.ceil(bounds.width * scale), Mathematics.ceil(bounds.height * scale), true, ColorUtil.toARGB(0xffffff, 0));
 		#else
-		var bd = new BitmapData(Mathematics.ceil(bounds.width * scale), Mathematics.ceil(bounds.height * scale), true, 0xffffff);
+		var bd = new flash.display.BitmapData(Mathematics.ceil(bounds.width * scale), Mathematics.ceil(bounds.height * scale), true, 0xffffff);
 		#end
 
-		bd.draw(d, new Matrix(scale, 0, 0, scale, center.x, center.y), null, null, null, false);
+		bd.draw(d, new flash.geom.Matrix(scale, 0, 0, scale, center.x, center.y), null, null, null, false);
 		
 		#if graphics_debug
 		var shape = new flash.display.Shape();
@@ -46,6 +40,23 @@ class BitmapUtil
 		#end
 		
 		return bd;
+	}
+	#end
+	
+	#if js
+	public static function createImageData (image :Image) :ImageData
+	{
+		var canvas :Canvas = toCanvas(image);
+		return canvas.getContext("2d").getImageData(0, 0, image.width, image.height);
+	}
+	
+	public static function toCanvas (image :Image) :Canvas
+	{
+		var canvas :Canvas = cast js.Lib.document.createElement("canvas");
+		canvas.width = image.width;
+		canvas.height = image.height;
+		canvas.getContext("2d").drawImage(image, 0, 0);
+		return canvas;
 	}
 	#end
 

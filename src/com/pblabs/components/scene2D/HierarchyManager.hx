@@ -2,7 +2,6 @@ package com.pblabs.components.scene2D;
 
 import Type;
 
-import com.pblabs.components.scene2D.SvgAnchorCache;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntity;
@@ -18,6 +17,7 @@ using StringTools;
 
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.core.SignalBondManager;
+using com.pblabs.engine.util.PBUtil;
 using com.pblabs.geom.VectorTools;
 using com.pblabs.util.StringUtil;
 using com.pblabs.util.XmlUtil;
@@ -31,6 +31,19 @@ using com.pblabs.util.XmlUtil;
   */
 class HierarchyManager extends EntityComponent
 {
+	/** For 'using' */
+	public static function setEntityAsDisplayChildOf (e :IEntity, parent :IEntity, parentResource :ResourceToken, 
+		childKey :String) :IEntity
+	{
+		var hierarchy = e.context.getSingletonComponent(HierarchyManager);
+		if (hierarchy == null) {
+			hierarchy = e.context.addSingletonComponent(HierarchyManager);
+		}
+		
+		hierarchy.setAsChild(parent, parentResource, childKey, e.getComponent(BaseSceneComponent));
+		return e;
+	}
+	
 	public static var ANCHOR_PREFIX = "anchor";
 	public static var INKSCAPE_LABEL = "inkscape:label";
 	
@@ -54,18 +67,15 @@ class HierarchyManager extends EntityComponent
 	{
 		com.pblabs.util.Assert.isNotNull(token, ' token is null');
 		com.pblabs.engine.debug.Profiler.enter("getSvgResource");
-		// token = SvgTools.getSvgResource(token);
 		com.pblabs.engine.debug.Profiler.exit("getSvgResource");
 		com.pblabs.engine.debug.Profiler.enter("_rsrc.get(");
 		var svg = _rsrc.get(token);
 		com.pblabs.engine.debug.Profiler.exit("_rsrc.get(");
 		com.pblabs.util.Assert.isNotNull(svg, ' svg is null');
 		com.pblabs.engine.debug.Profiler.enter("SvgAnchors.getAnchors");
-		var val = SvgAnchors.getAnchors(token.id, svg);
+		var val = SvgAnchors.getAnchors(svg);
 		com.pblabs.engine.debug.Profiler.exit("SvgAnchors.getAnchors");
 		return val;
-		
-		// return SvgAnchors.getAnchors(svg);
 	}
 	
 	function updateLink (link :Link) :Void
@@ -81,25 +91,22 @@ class HierarchyManager extends EntityComponent
 			return;
 		}
 		com.pblabs.engine.debug.Profiler.enter("rest");
-		var parentCoords = link.parent.owner.getComponent(SpatialComponent);
-		com.pblabs.util.Assert.isNotNull(parentCoords);
-		var locX = parentCoords.x + offset.x - link.parent.registrationPoint.x;
-		var locY = parentCoords.y + offset.y - link.parent.registrationPoint.y;
-		// locX = Std.int(locX) + 0.5;
-		// locY = Std.int(locY) + 0.5;
+		com.pblabs.util.Assert.isNotNull(link.parent);
+		var locX = link.parent.x + offset.x;
+		var locY = link.parent.y + offset.y;
+		
 		link.child.owner.setLocation(locX, locY);
 		com.pblabs.engine.debug.Profiler.exit("rest");
 		com.pblabs.engine.debug.Profiler.exit("updateLink");
 	}
 	
-	public function setAsChild (parent :BaseSceneComponent<Dynamic>, parentResource :ResourceToken, 
+	public function setAsChild (parent :IEntity, parentResource :ResourceToken, 
 		childKey :String, child :BaseSceneComponent<Dynamic>) :Void
 	{
 		com.pblabs.util.Assert.isNotNull(parent);
 		com.pblabs.util.Assert.isNotNull(childKey);
 		com.pblabs.util.Assert.isNotNull(child);
 		com.pblabs.util.Assert.isNotNull(parentResource);
-		// parentResource = SvgTools.getSvgResource(parentResource);
 		
 		removeChild(child);
 		
@@ -113,18 +120,19 @@ class HierarchyManager extends EntityComponent
 		}
 		var link = new Link();
 		link.child = child;
-		link.parent = parent;
+		link.parent = parent.getComponent(SpatialComponent);
 		link.parentDisplayType = parentResource;
 		link.childKey = childKey;
 		link.childEntityName = child.owner.name;
 		_links.push(link);
 		updateLink(link);
 		
-		var self = this;
-		if (parent.owner.getComponent(SpatialComponent) != null) {
-			child.bindSignal(parent.owner.getComponent(SpatialComponent).signalerLocation, function (loc :XY) :Void {
-				self.updateLink(link);
+		if (link.parent != null) {
+			child.bindSignal(link.parent.signalerLocation, function (loc :XY) :Void {
+				updateLink(link);
 			});
+		} else {
+			com.pblabs.util.Log.warn("Missing SpatialComponent on the parent");
 		}
 	}
 	
@@ -158,41 +166,23 @@ class HierarchyManager extends EntityComponent
 		_temp.x = _temp.y = 0;
 		
 		if (getAnchors(parent) == null) {
-			// com.pblabs.util.Log.error("missing in _anchors: " + parent);
 			return _temp;
 		}
 		if (getAnchors(parent).get(child) == null) {
-			// com.pblabs.util.Log.error("Missing child=" + child + " from anchors from parent=" + parent + ", anchors=" + com.pblabs.util.ds.MapUtil.toString(getAnchors(parent)));
-			// com.pblabs.util.Log.error("Missing child=" + child + " from anchors from parent=" + parent);
 			return _temp;
 		}
 		var val = getAnchors(parent).get(child);
 		_temp.x = val.x;
 		_temp.y = val.y;
 		return _temp;
-		// return getAnchors(parent).get(child).clone();
 	}
-	
-	// #if debug
-	// override public function toString () :String
-	// {
-	// 	var sb = new StringBuf();
-	// 	sb.add(com.pblabs.util.ReflectUtil.tinyClassName(this));
-	// 	if (_anchors != null) {
-	// 		for (key in _anchors.keys()) {
-	// 			sb.add("\n  " + key + "==>" + com.pblabs.util.ds.MapUtil.toString(_anchors.get(key)));
-	// 		}
-	// 	}
-	// 	return sb.toString();
-	// }
-	// #end
 }
 
 class Link
 {
 	public var child :BaseSceneComponent<Dynamic>;
 	public var childEntityName :String;
-	public var parent :BaseSceneComponent<Dynamic>;
+	public var parent :SpatialComponent;
 	public var childKey :String;
 	public var parentDisplayType :ResourceToken;
 	

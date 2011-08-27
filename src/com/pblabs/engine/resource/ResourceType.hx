@@ -21,10 +21,10 @@ enum ResourceType {
 	SVG;
 	/** String data */
 	STRING;
-	#if flash
+	// #if flash
 	/** A MovieClip or Bitmap DisplayObject */
 	CLASS;
 	/** An external Swf */
 	SWF;
-	#end
+	// #end
 }

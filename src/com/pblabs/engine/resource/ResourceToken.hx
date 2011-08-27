@@ -35,7 +35,7 @@ class ResourceToken
 		this.type = type;
 		// this.url = url;
 		//Only hash the id and the type.  The source should not matter for hashing.
-		_hashCode = com.pblabs.util.StringUtil.hashCode("Resource[id=" + id + ", type=" + Type.enumConstructor(type) +"]");
+		_hashCode = com.pblabs.util.StringUtil.hashCode(id + ":" + Type.enumConstructor(type));
 		
 		
 		// ", source=" + Type.enumConstructor(source) + ", type=" + Type.enumConstructor(type) +"]";//+ ", resourceId=" + resourceId
@@ -86,19 +86,22 @@ class ResourceToken
 	{
 		var sourceStr :String = switch (source) {
 			//The compiler doesn't like the 'u'.  Why???
-			// case url (u): "url:";// + u;
-			case bytes (b): "bytes";
+			// case url (ul): "url:" +ul;// + u;
+			// case bytes (b): "bytes";
 			case text (t): "texthash:" + haxe.Md5.encode(t);
 			case embedded (name): "embedded:" + name;
-			case swf(swfName): "swf:" + swfName;
+			case linked(data): "linked";
+			// case url (u): "url";
+			// case none (u): "none";
+			// case derived (other): "de
 			default: Std.string(source);
 		} 
 		
 		
 		return "Resource[id=" + id
 		// ", source=" + Type.enumConstructor(source) + ", type=" + Type.enumConstructor(type) +"]";//+ ", resourceId=" + resourceId
-		// + ", source=" + sourceStr
-		+ ", type=" + 	Type.enumConstructor(type) +"]";
+		+ ", source=" + sourceStr
+		+ ", type=" + 	Type.enumConstructor(type) +", hashCode=" + Std.string(Std.int(_hashCode)) + "]";
 	}
 	
 	function get_url () :String

@@ -58,7 +58,9 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 	
 	public function onFrame (dt :Float) :Void
 	{
+		com.pblabs.engine.debug.Profiler.enter("onFrame");
 		if (!zOrderDirty) {
+			com.pblabs.engine.debug.Profiler.exit("onFrame");
 			return;
 		}
 		if (sorter != null) {
@@ -66,6 +68,7 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 		}
 		checkZOrder();
 		zOrderDirty = false;
+		com.pblabs.engine.debug.Profiler.exit("onFrame");
 	}
 	
 	override function childAdded (c :Component) :Void

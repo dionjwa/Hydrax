@@ -22,7 +22,7 @@ import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.PBGroup;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.debug.Profiler;
-import com.pblabs.engine.resource.IResource;
+import com.pblabs.engine.resource.IResources;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.Source;
 import com.pblabs.engine.resource.XMLResource;

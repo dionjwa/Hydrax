@@ -37,12 +37,11 @@ using com.pblabs.util.DisplayUtils;
 import de.polygonal.core.math.Mathematics;
 #end
 
-#if flash
-#end
 
-#if flash
-#end
 
+/**
+  * DEPRECATED:will phase out in favour of simpler Svg class 
+  */
 /**
   * Cross platform SVG based Scene2D component.
   * Currently supports Flash, JS canvas, and JS CSS.
@@ -91,8 +90,8 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			
 			//Parse the first image for anchor elements, and only use the first element for mouse bounds
 			if (ii == 0) {
-				_relativeTransforms = SvgAnchors.getAnchors(_svgData[ii], haxe.Md5.encode(_svgData[ii])).array();
-				_relativeTransforms.unshift(new Vector2());
+				// _relativeTransforms = SvgAnchors.getAnchors(_svgData[ii], haxe.Md5.encode(_svgData[ii])).array();
+				// _relativeTransforms.unshift(new Vector2());
 				//Only the first Svg defines the bounds
 				_unscaledBounds = new Vector2(b.intervalX, b.intervalY);
 				_bounds = b.clone();
@@ -152,7 +151,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	function set_text (val :String) :String
 	{
 		_text = val;
-		svgRegexReplacements.unshift(new Tuple(new EReg(SvgReplace.TEXT_REPLACE, null), _text));
+		svgRegexReplacements.unshift(new Tuple(new EReg(SvgReplace.TEXT_REPLACE, ""), _text));
 		if (isRegistered) {
 			svgData = _svgDataUnmodified;
 		}
@@ -289,7 +288,8 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			return;
 		}
 		for (ii in 0...svgData.length) {
-			SvgRenderTools.renderSvg(svgData[ii], ctx.canvas, _relativeTransforms[ii]);
+			com.pblabs.util.Log.error("Missing implementation");
+			// SvgRenderTools.renderSvg(svgData[ii], ctx.canvas, _relativeTransforms[ii]);
 		}
 	}
 	

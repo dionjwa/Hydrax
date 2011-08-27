@@ -9,7 +9,7 @@ import com.pblabs.components.tasks.LocationTask;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
 import com.pblabs.engine.resource.IResourceManager;
-import com.pblabs.engine.resource.ImageResource;
+import com.pblabs.engine.resource.ImageResources;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
@@ -25,10 +25,10 @@ class CanvasDemo
 		com.pblabs.engine.debug.Log.setup();
 		app = new PBGame();
 		Assert.isNotNull(app.getManager(SceneView));
-		app.getManager(SceneView).layerId = "haxe:screen";
-		var man = new ImageResource("man", Source.url("man.png"));
-		var manResource = new ResourceToken("man", Source.url("man.png"), ResourceType.IMAGE, "man.png");
-		app.getManager(IResourceManager).add(manResource);
+		app.getManager(SceneView).layerId = "haxeSceneView";
+		var images = new ImageResources();
+		images.add(new ResourceToken("man", Source.url("man.png"), ResourceType.IMAGE));
+		app.getManager(IResourceManager).addResource(images);
 		
 		app.getManager(IResourceManager).load(onLoad, function (e :Dynamic) :Void {
 			trace("Error loading " + e);
@@ -55,7 +55,7 @@ class CanvasDemo
 		
 		var man  = SceneUtil.createBaseSceneEntity(ctx);
 		var image = ctx.allocate(ImageComponent);
-		image.resource = new ResourceToken("man", Source.url("man.png"), ResourceType.IMAGE, "man.png");
+		image.resource = new ResourceToken("man", Source.url("man.png"), ResourceType.IMAGE);
 		image.parentProperty = manLayer.entityProp();
 		man.addComponent(image);
 		man.initialize("man object");

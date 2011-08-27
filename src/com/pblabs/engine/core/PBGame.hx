@@ -38,7 +38,6 @@ class PBGame extends PBGameBase
 		// Bring in the global managers.
 		registerManager(SignalBondManager, new SignalBondManager());
 		
-		registerManager(com.pblabs.engine.pooling.ObjectPoolMgr, new com.pblabs.engine.pooling.ObjectPoolMgr());
 		#if (!nodejs && (flash || js || cpp)) 
 		registerManager(com.pblabs.components.scene2D.SceneView, new com.pblabs.components.scene2D.SceneView());
 		#end

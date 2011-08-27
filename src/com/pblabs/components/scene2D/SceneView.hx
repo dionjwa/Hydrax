@@ -237,6 +237,9 @@ class SceneView
 			com.pblabs.util.Assert.isNotNull(_layer, "No element with id=" + _layerId);
 			_width = Std.parseInt(_layer.style.width.replace("px", ""));
 			_height = Std.parseInt(_layer.style.height.replace("px", ""));
+			//Prevent text selection
+			untyped _layer.onselectstart = function () { return false; };//ie
+			untyped _layer.onmousedown = function () { return false; };//mozilla
 			#if debug
 			_layer.style.borderColor = "#0000ff";
 			var border = 3;

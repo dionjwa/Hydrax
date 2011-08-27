@@ -4,11 +4,11 @@ import com.pblabs.components.input.InputManager;
 import com.pblabs.components.input.MouseInputManager;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.scene2D.BaseSceneLayer;
+import com.pblabs.components.scene2D.BitmapRenderer;
 import com.pblabs.components.scene2D.ImageComponent;
 import com.pblabs.components.scene2D.SceneAlignment;
 import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.scene2D.SceneView;
-import com.pblabs.components.scene2D.BitmapRenderer;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.components.tasks.AngleTask;
 import com.pblabs.components.tasks.FunctionTask;
@@ -20,12 +20,14 @@ import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.resource.IResourceManager;
-import com.pblabs.engine.resource.ImageResource;
+import com.pblabs.engine.resource.ImageResources;
 import com.pblabs.engine.resource.ResourceToken;
+import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
 import com.pblabs.util.Rand;
 import com.pblabs.util.ReflectUtil;
-using com.pblabs.components.input.InputUtil;
+using com.pblabs.components.input.InputTools;
+using com.pblabs.components.scene2D.ImageTools;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
@@ -43,10 +45,13 @@ class Demo
 		game.registerManager(com.pblabs.components.input.GestureInputManager, new com.pblabs.components.input.GestureInputManager());
 		#end
 		
+		var images = new ImageResources();
+		game.getManager(IResourceManager).addResource(images);
+		
 		#if flash
-		game.getManager(IResourceManager).addResource(new ImageResource("avatar", Source.url("../rsrc/avatar.png")));
+		images.add(new ResourceToken("avatar", Source.url("../rsrc/avatar.png"), ResourceType.IMAGE));
 		#elseif js
-		game.getManager(IResourceManager).addResource(new ImageResource("avatar", Source.url("rsrc/avatar.png")));
+		images.add(new ResourceToken("avatar", Source.url("rsrc/avatar.png"), ResourceType.IMAGE));
 		#end
 		
 		game.registerManager(InputManager, new InputManager());
@@ -80,9 +85,11 @@ class Demo
 		uiscene.sceneAlignment = SceneAlignment.TOP_LEFT;
 		var uilayer = uiscene.addLayer("uilayer");
 		
-		
-		var dude = createImage("avatar", gamelayer);
-		
+		//Use "using" for creation-method chaining
+		var dude = context.createBaseSceneEntity()
+			.addImage(gamelayer, new ResourceToken("avatar", Source.none, ResourceType.IMAGE))
+			.initializeEntity("dude")
+			.setScale(2, 4);
 		randMove(dude);
 		
 		#if flash
@@ -90,26 +97,7 @@ class Demo
 		#end
 	}
 	
-	function createImage (name :String, layer :BaseSceneLayer<Dynamic, Dynamic>) :IEntity
-	{
-		var context = layer.context;
-		var e = context.createBaseSceneEntity();
-		var c = context.allocate(com.pblabs.components.scene2D.BitmapRenderer);
-		var image :com.pblabs.components.scene2D.Image = cast context.getManager(IResourceManager).get(new ResourceToken("avatar"));
-		#if flash
-		c.bitmapData = image.bitmapData;
-		#elseif js
-		c.bitmapData = image;
-		#end
-		c.parentProperty = layer.entityProp();
-		e.addComponent(c);
-		e.initialize(name);
-		c.scaleY = 2;
-		c.scaleX = 4;
-		return e;
-	}
-	
-	function randMove (e :IEntity) :Void 
+	function randMove (e :IEntity) :IEntity 
 	{
 		var sceneView = e.context.getManager(SceneView);
 		var serial = new SerialTask();
@@ -135,6 +123,7 @@ class Demo
 			self.randMove(e);
 		}));
 		e.addTask(serial);
+		return e;
 	}
 	
 	public static function main() 

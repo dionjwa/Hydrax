@@ -92,7 +92,7 @@ class RectangleShape extends ShapeComponent
 	override public function drawPixels (ctx :CanvasRenderingContext2D)
 	{
 		ctx.fillStyle = StringUtil.toColorString(fillColor, "#");
-		ctx.fillRect(0, 0, width, height);
+		ctx.fillRect(0, 0, Std.int(width), Std.int(height));
 		if (borderStroke > 0) {
 			ctx.strokeStyle = StringUtil.toColorString(borderColor, "#");
 			ctx.lineWidth = borderStroke;

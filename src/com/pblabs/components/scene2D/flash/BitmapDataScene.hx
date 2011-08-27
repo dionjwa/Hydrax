@@ -87,7 +87,7 @@ class BitmapDataScene extends com.pblabs.components.scene2D.flash.SceneManager
 			
 			// sceneView.width = PBE.mainStage.stageWidth;
 			// sceneView.height = PBE.mainStage.stageHeight;
-			
+			com.pblabs.engine.debug.Profiler.exit("bitmap onFrame");
 			return;
 		}
 		
@@ -111,8 +111,10 @@ class BitmapDataScene extends com.pblabs.components.scene2D.flash.SceneManager
 		// TODO :Be friendly towards caching layers.
 		var m :Matrix = new Matrix();
 		for(layer in children) {
-			
 			for (d in layer.children) {
+				if (!d.visible) {
+					continue;
+				}
 				var localMat :Matrix = d.displayObject.transform.matrix;
 				m.a = localMat.a;
 				m.b = localMat.b;

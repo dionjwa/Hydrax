@@ -27,13 +27,17 @@
  */
 package com.pblabs.util;
 
+import Type;
+
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 
-import Type;
-
+import haxe.Int32;
 #if nodejs
 import js.Node;
+#end
+
+#if nodejs
 #end
 /**
  * Contains useful static function for performing operations on Strings.
@@ -72,7 +76,7 @@ class StringUtil
 			case TInt: return Std.string(obj);
 			case TFloat: return Std.string(obj);
 			case TBool: return Std.string(obj);
-			case TObject: Type.getClassName(obj);//Assume it's a class
+			case TObject: return Std.string(obj);// Type.getClassName(obj);//Assume it's a class
 			case TClass(c):
 				if (c == String) {
 					return Std.string(obj);
@@ -158,11 +162,17 @@ class StringUtil
 	 */
 	public static function hashCode (str :String) :Int
 	{
-		var code:Int = 0;
-		if (str != null) {
-			for (ii in 0...str.length) {
-				code = 31 * code + str.charCodeAt(ii);
-			}
+		com.pblabs.util.Assert.isNotNull(str, ' str is null');
+		var code :Int = 0;
+		if (str.length == 0) return code;
+		for (ii in 0...str.length) {
+			#if js
+				code = ((code<<5)-code) + untyped str.cca(ii);
+				code = code & code; // Convert to 32bit integer
+			#else
+			//Flash, other platforms?
+				code = 31 * code + untyped str.cca(ii);
+			#end
 		}
 		return code;
 	}

@@ -22,64 +22,6 @@ import hsl.haxe.Signaler;
  */
 class MouseInputComponent extends EntityComponent
 {
-	public static function makeReactiveButton (mouse :MouseInputComponent) :MouseInputComponent
-	{
-		var spatial = mouse.owner.getComponent(com.pblabs.components.spatial.SpatialComponent);
-		var input = mouse.context.getManager(com.pblabs.components.input.InputManager);
-		com.pblabs.util.Assert.isNotNull(spatial);
-		com.pblabs.util.Assert.isNotNull(input);
-		var downOnThisButton = false;
-		var move :com.pblabs.components.input.IInputData->Void = null;
-		var bond :hsl.haxe.Bond = null;
-		var down = function () :Void {
-			if (!mouse.isRegistered) {
-				com.pblabs.util.Log.warn("Mouse not registered");
-				return;
-			}
-			spatial.y += 5;
-			if (bond != null) {
-				bond.destroy();
-			}
-			bond = input.deviceMove.bind(move);
-			downOnThisButton = true;
-		}
-		var up = function () :Void {
-			if (!mouse.isRegistered) {
-				return;
-			}
-			if (downOnThisButton) {
-				spatial.y -= 5;
-				if (bond != null) {
-					bond.destroy();
-				}
-				bond = null;
-				downOnThisButton = false;
-				// mouse.clicked();
-			}
-		}
-		move = function (data :com.pblabs.components.input.IInputData) :Void {
-			if (!mouse.isRegistered) {
-				return;
-			}
-			//Check if the mouse moves out
-			if (data.firstObjectUnderPoint(mouse.bounds.objectMask) != mouse.bounds) {
-				spatial.y -= 5;
-				input.deviceMove.unbind(move);
-				downOnThisButton = false;
-			}
-		}
-		mouse.bindDeviceDown(down);
-		mouse.bindDeviceUp(up);
-		
-		mouse.owner.destroyedSignal.bind(function (ignored :Dynamic) :Void {
-			if (bond != null) {
-				bond.destroy();
-			}
-		}).destroyOnUse();
-		
-		return mouse;
-	}
-	
 	/**
 	  * If there is an IInteractiveComponent in the Entity, you don't have to explicity set the properties.
 	  */
@@ -262,7 +204,7 @@ class MouseInputComponent extends EntityComponent
 	function onMouseUpInternal (data :IInputData) :Void
 	{
 		destroyDeviceHeldBond();
-		if (data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
+		if (bounds != null && data != null && data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
 			if (_deviceUpSignaler != null) {
 				_deviceUpSignaler.dispatch();
 			}
@@ -300,18 +242,17 @@ class MouseInputComponent extends EntityComponent
 	{
 		//The default is not movable, rotatable, or scalable.
 		isScalable = isRotatable = isTranslatable = false;
+		if (_bonds != null && _bonds.length > 0) {
+			for (bond in _bonds) {
+				bond.destroy();
+			}
+		}
 		_bonds = [];
 		_mouseDownThis = false;
-		_bounds = null;		
+		_bounds = null;
+		boundsProperty = null;
+		constraint = null;
 	}
-	
-	// function destroyDeviceMoveBond () :Void
-	// {
-	// 	if (_deviceMoveBond != null) {
-	// 		_deviceMoveBond.destroy();
-	// 		_deviceMoveBond = null;
-	// 	}
-	// }
 	
 	#if debug
 	override public function toString () :String

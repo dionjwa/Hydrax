@@ -34,7 +34,7 @@ class PBContext
 	public var key :Int;
 	
 	public var name (default, null) :String;
-	public var isSetup :Bool;
+	public var isSetup (default, null) :Bool;
 	public var rootGroup (default, null) :IPBGroup;
 	public var currentGroup(get_currentGroup, set_currentGroup) : IPBGroup;
 	public var processManager (get_processManager, null) :IProcessManager;
@@ -57,7 +57,7 @@ class PBContext
 	var _tempPropertyInfo :PropertyInfo;
 	var _currentGroup :IPBGroup;
 	var _nameManager :NameManager;
-	var _isSetup :Bool;
+	// var _isSetup :Bool;
 	#if enable_object_pooling
 	var _objectPool :com.pblabs.engine.pooling.ObjectPoolMgr;
 	#end
@@ -427,7 +427,7 @@ class PBContext
 		var path:Array<String> = propertyName.split(".");
 
 		// Distinguish if it is a component reference (@), named object ref (#), or
-		// an X ML reference (!), and look up the first element in the path.
+		// an XML reference (!), and look up the first element in the path.
 		var isTemplateXML :Bool = false;
 		var itemName :String = path[0];
 		var curIdx :Int = 1;
@@ -557,7 +557,9 @@ class PBContext
 	
 	public function getProperty<T> (property :PropertyReference<T>, ?defaultVal :T = null, ?entity :IEntity = null, ?suppressErrors :Bool = false) :T
 	{
+		com.pblabs.engine.debug.Profiler.enter("getProperty");
 		if (property == null) {
+			com.pblabs.engine.debug.Profiler.exit("getProperty");
 			return null;
 		}
 		// Look up the property.
@@ -576,7 +578,7 @@ class PBContext
 
 		// Clean up to avoid dangling references.
 		_tempPropertyInfo.clear();
-
+		com.pblabs.engine.debug.Profiler.exit("getProperty");
 		return result;
 	}
 	

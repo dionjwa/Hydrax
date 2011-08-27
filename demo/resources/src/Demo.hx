@@ -20,15 +20,19 @@ import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.core.SetManager;
 import com.pblabs.engine.core.SignalBondManager;
 import com.pblabs.engine.resource.IResourceManager;
-import com.pblabs.engine.resource.ImageResource;
+import com.pblabs.engine.resource.ImageResources;
 import com.pblabs.engine.resource.ResourceManager;
 import com.pblabs.engine.resource.ResourceToken;
+import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ProcessManager;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Rand;
 import com.pblabs.util.ds.Tuple;
+
+using com.pblabs.components.input.InputTools;
+using com.pblabs.components.scene2D.ImageTools;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
@@ -46,10 +50,13 @@ class Demo #if flash extends flash.display.Sprite #end
 		
 		game = new PBGame();
 		
+		var images = new ImageResources();
+		game.getManager(IResourceManager).addResource(images);
+		
 		#if flash
-		game.getManager(IResourceManager).addResource(new ImageResource("face", Source.url("../rsrc/face.png")));
+		images.add(new ResourceToken("face", Source.url("../rsrc/face.png"), ResourceType.IMAGE));
 		#elseif js
-		game.getManager(IResourceManager).addResource(new ImageResource("face", Source.url("rsrc/face.png")));
+		images.add(new ResourceToken("face", Source.url("rsrc/face.png"), ResourceType.IMAGE));
 		#end
 		game.getManager(IResourceManager).load(startGame, function (e :Dynamic) {trace("Error loading: " + e);});
 	}
@@ -64,8 +71,14 @@ class Demo #if flash extends flash.display.Sprite #end
 		var backgroundlayer = gamescene.addLayer("background");
 		var layer = gamescene.addLayer("defaultLayer");
 
-		randMove(createImage("image", layer));
-		randMove(createRect("rect", layer));
+		//Create image by loading a bitmap image		
+		randMove(context.createBaseSceneEntity()
+			.addImage(layer, new ResourceToken("face", Source.none, ResourceType.IMAGE))
+			.initializeEntity("image"));
+		
+		randMove(context.createBaseSceneEntity()
+			.addSceneComponentToEntity(RectangleShape, layer)
+			.initializeEntity("rect"));
 		
 		gamescene.update();
 	}
@@ -96,29 +109,6 @@ class Demo #if flash extends flash.display.Sprite #end
 			self.randMove(e);
 		}));
 		e.addTask(serial);
-	}
-	
-	function createRect (name :String, layer :BaseSceneLayer<Dynamic, Dynamic>) :IEntity
-	{
-		var context = layer.context;
-		var e = context.createBaseSceneEntity();
-		var c = context.allocate(RectangleShape);
-		c.parentProperty = layer.entityProp();
-		e.addComponent(c);
-		e.initialize(name);
-		return e;
-	}
-	
-	function createImage (name :String, layer :BaseSceneLayer<Dynamic, Dynamic>) :IEntity
-	{
-		var context = layer.context;
-		var e = context.createBaseSceneEntity();
-		var c = context.allocate(ImageComponent);
-		c.resource = cast new ResourceToken("face");
-		c.parentProperty = layer.entityProp();
-		e.addComponent(c);
-		e.initialize(name);
-		return e;
 	}
 	
 	public static function main() 

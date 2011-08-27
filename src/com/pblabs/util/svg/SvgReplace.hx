@@ -1,5 +1,8 @@
 package com.pblabs.util.svg;
 
+import com.pblabs.engine.resource.ResourceToken;
+import com.pblabs.engine.resource.ResourceType;
+import com.pblabs.engine.resource.Source;
 import com.pblabs.util.Comparators;
 import com.pblabs.util.StringUtil;
 
@@ -12,18 +15,17 @@ class SvgReplace
 {
 	public static function processReplacements(target :String, replacements :SvgReplacements) :String
 	{
+		com.pblabs.util.Assert.isNotNull(target, ' target is null');
 		if (replacements == null) {
 			return target;
 		}
 		for (r in replacements) {
+			// trace('r.ereg=' + r.ereg);
+			// trace('r.replacement=' + r.replacement);
+			com.pblabs.util.Assert.isNotNull(target, ' target is null');
 			target = r.ereg.replace(target, r.replacement);
 		}
 		return target;
-	}
-	
-	public static function createDerivedId (originalId :String, replacements :SvgReplacements) :String
-	{
-		return originalId + "+" + replacements.toString();
 	}
 	
 	/** Default replace pattern */
@@ -40,7 +42,7 @@ class SvgReplace
 		com.pblabs.util.Assert.isNotNull(replacement, ' replacement is null');
 		this.replacement = replacement;
 		eregString = eregString != null ? eregString : TEXT_REPLACE;
-		this.ereg = new EReg(eregString, null);
+		this.ereg = new EReg(eregString, "");
 		
 		_hashcode = StringUtil.hashCode(replacement + ":" + eregString);
 		_name = eregString + "->" + replacement;

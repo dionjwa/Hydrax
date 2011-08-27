@@ -46,6 +46,7 @@ class SceneUtil
 	public static var MANAGER_CLASS :Class<BaseSceneManager<Dynamic>> = 
 		#if (flash || cpp)
 		com.pblabs.components.scene2D.flash.SceneManager;
+		// com.pblabs.components.scene2D.flash.BitmapDataScene;
 		#elseif js
 		com.pblabs.components.scene2D.js.JSSceneManager;
 		#else
@@ -99,10 +100,32 @@ class SceneUtil
 		return e;
 	}
 	
+	public static function addSceneComponentToEntity (e :IEntity, compClass :Class<Dynamic>, 
+		layer :BaseSceneLayer<Dynamic, Dynamic>, ?entityName :String) :IEntity
+	{
+		com.pblabs.util.Assert.isNotNull(e, ' e is null');
+		com.pblabs.util.Assert.isNotNull(compClass, ' compClass is null');
+		com.pblabs.util.Assert.isNotNull(layer, ' layer is null');
+		var sc :BaseSceneComponent<Dynamic> = e.context.allocate(compClass);
+		sc.parentProperty = layer.entityProp();
+		e.addComponent(sc, entityName);
+		return e;
+	}
+	
 	public static function setLocation (e :IEntity, x :Float, y :Float) :IEntity
 	{
 		com.pblabs.util.Assert.isNotNull(e);
 		e.getComponent(SpatialComponent).setLocation(x, y);
+		return e;
+	}
+	
+	public static function setSceneAlignment (e :IEntity, a :SceneAlignment) :IEntity
+	{
+		var sc = e.getComponent(BaseSceneComponent);
+		com.pblabs.util.Assert.isNotNull(sc, ' sc is null');
+		com.pblabs.util.Assert.isNotNull(e.getComponent(SpatialComponent), ' e.getComponent(SpatialComponent) is null');
+		var p = getAlignedPoint(sc.layer.scene, a);
+		e.getComponent(SpatialComponent).setLocation(p.x, p.y);
 		return e;
 	}
 	
@@ -118,10 +141,19 @@ class SceneUtil
 		return e;
 	}
 	
-	public static function setScale (e :IEntity, scale :Float) :IEntity
+	public static function setObjectMask (e :IEntity, mask :ObjectType) :IEntity
+	{
+		for (sc in e.getComponents(BaseSceneComponent)) {
+			sc.objectMask = mask;
+		}
+		return e;
+	}
+	
+	public static function setScale (e :IEntity, scaleX :Float, scaleY :Float) :IEntity
 	{
 		for (c in e.getComponents(BaseSceneComponent)) {
-			c.scaleX = c.scaleY = scale; 
+			c.scaleX = scaleX;
+			c.scaleY = scaleY;
 		}
 		return e;
 	}
@@ -134,6 +166,22 @@ class SceneUtil
 	public static function getHeight (e :IEntity) :Float
 	{
 		return e.getComponent(SpatialComponent).worldExtents.intervalY;
+	}
+	
+	public static function setHeight (e :IEntity, val :Float) :IEntity
+	{
+		for (c in e.getComponents(BaseSceneComponent)) {
+			c.height = val; 
+		}
+		return e;
+	}
+	
+	public static function setWidth (e :IEntity, val :Float) :IEntity
+	{
+		for (c in e.getComponents(BaseSceneComponent)) {
+			c.width = val; 
+		}
+		return e;
 	}
 	
 	
@@ -281,23 +329,23 @@ class SceneUtil
 		return rect;
 	}
 	
-	public static function addImage (layer :BaseSceneLayer<Dynamic, Dynamic>, resource :ResourceToken) :BaseSceneComponent<Dynamic>
-	{
-		var e = layer.context.allocate(IEntity);
-		var image = layer.context.allocate(com.pblabs.components.scene2D.ImageComponent);
-		image.parentProperty = layer.entityProp();
-		image.resource = resource;
-		image.spatialProperty = null;
+	// public static function addImage (layer :BaseSceneLayer<Dynamic, Dynamic>, resource :ResourceToken) :BaseSceneComponent<Dynamic>
+	// {
+	// 	var e = layer.context.allocate(IEntity);
+	// 	var image = layer.context.allocate(com.pblabs.components.scene2D.ImageComponent);
+	// 	image.parentProperty = layer.entityProp();
+	// 	image.resource = resource;
+	// 	image.spatialProperty = null;
 		
-		e.addComponent(image);
-		e.initialize(layer.context.getManager(NameManager).validateName("image" + image));
+	// 	e.addComponent(image);
+	// 	e.initialize(layer.context.getManager(NameManager).validateName("image" + image));
 		
-		var center = getAlignedPoint(layer.scene, SceneAlignment.CENTER);
-		image.x = center.x;
-		image.y = center.y;
+	// 	var center = getAlignedPoint(layer.scene, SceneAlignment.CENTER);
+	// 	image.x = center.x;
+	// 	image.y = center.y;
 		
-		return image;
-	}
+	// 	return image;
+	// }
 	
 	#if js
 	/**

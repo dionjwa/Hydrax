@@ -224,22 +224,31 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 	
 	public function addToParent (?newParent :P) :Void
 	{
-		#if profiler com.pblabs.engine.debug.Profiler.enter("addToParent " + com.pblabs.util.ReflectUtil.getClassName(this)); #end
-		if (hasParent()) {
+		#if profiler com.pblabs.engine.debug.Profiler.enter("addToParent"); #end
+		if (hasParent() && newParent != parent) {
+			com.pblabs.engine.debug.Profiler.enter("removeFromParent");
 			removeFromParent();
+			com.pblabs.engine.debug.Profiler.exit("removeFromParent");
 		}
-		Preconditions.checkArgument(isRegistered, "Component must first be registered ::" + com.pblabs.util.ReflectUtil.getClassName(this));
-		Preconditions.checkArgument(newParent != null || parentProperty != null, "No parent or parent property provided ::" + com.pblabs.util.ReflectUtil.getClassName(this));
-		newParent = newParent == null ? owner.getProperty(parentProperty) : newParent;
-		Preconditions.checkNotNull(newParent, "Parent cannot be null, parentProperty=" + parentProperty);
-		Preconditions.checkArgument(Std.is(newParent, NodeComponent), "Parent must be of type NodeComponent, parent is type=" + ReflectUtil.getClassName(newParent));
-		Preconditions.checkArgument(newParent.isRegistered, "Parent not registered: " + com.pblabs.util.ReflectUtil.getClassName(newParent));
-		if (hasParent()) {
-			com.pblabs.util.Log.warn(" but " + name + ".hasParent " + ReflectUtil.getClassName(parent));
-			return;
+		
+		if (!hasParent() && (newParent != null || parentProperty != null)) {
+			Preconditions.checkArgument(isRegistered, "Component must first be registered ::" + com.pblabs.util.ReflectUtil.getClassName(this));
+			Preconditions.checkArgument(newParent != null || parentProperty != null, "No parent or parent property provided ::" + com.pblabs.util.ReflectUtil.getClassName(this));
+			com.pblabs.engine.debug.Profiler.enter("getParentFromProp");
+			newParent = newParent == null ? owner.getProperty(parentProperty) : newParent;
+			com.pblabs.engine.debug.Profiler.exit("getParentFromProp");
+			Preconditions.checkNotNull(newParent, "Parent cannot be null, parentProperty=" + parentProperty);
+			Preconditions.checkArgument(Std.is(newParent, NodeComponent), "Parent must be of type NodeComponent, parent is type=" + ReflectUtil.getClassName(newParent));
+			Preconditions.checkArgument(newParent.isRegistered, "Parent not registered: " + com.pblabs.util.ReflectUtil.getClassName(newParent));
+			// if (hasParent()) {
+			// 	// com.pblabs.util.Log.warn(" but " + name + ".hasParent " + ReflectUtil.getClassName(parent));
+			// 	return;
+			// }
+			com.pblabs.engine.debug.Profiler.enter("addChild");
+			newParent.addChild(this);
+			com.pblabs.engine.debug.Profiler.exit("addChild");
 		}
-		newParent.addChild(this);
-		#if profiler com.pblabs.engine.debug.Profiler.exit("addToParent " + com.pblabs.util.ReflectUtil.getClassName(this)); #end
+		#if profiler com.pblabs.engine.debug.Profiler.exit("addToParent"); #end
 	}
 	
 	public function removeFromParent () :Void

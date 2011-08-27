@@ -80,9 +80,10 @@ class SetManager extends PBManager
 		return getSetManager(context).getEntitiesInSet(set).filter(com.pblabs.util.Predicates.notNull);
 	}
 	
-	public static function addToSet (obj :IPBObject, set :String) :Void
+	public static function addToSet (obj :IEntity, set :String) :IEntity
 	{
 		getSetManager(obj.context).addObjectToSet(obj , set);
+		return obj;
 	}
 	
 	public static function getSets (obj :IPBObject) :Iterable<String>

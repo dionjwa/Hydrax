@@ -53,13 +53,14 @@ class BitmapCacheResource extends ImageDataResources,
 		// super(Type.enumConstructor(ResourceType.IMAGE));
 	}
 	
-	override public function add (token :ResourceToken) :Void
-	{
-		switch (token.source) {
-			case imageData (imageData): _data.set(token, imageData);
-			default: super.add(token);
-		}
-	}
+	// override public function add (token :ResourceToken) :Void
+	// {
+	// 	switch (token.source) {
+	// 		case linked (imageData): _data.set(token, imageData);
+	// 		default: 
+	// 	}
+	// 	return super.add(token);
+	// }
 	
 	override public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
 	{
@@ -93,7 +94,7 @@ class BitmapCacheResource extends ImageDataResources,
 	// 	}
 	// }
 	
-	override public function get (token :ResourceToken) :ImageData
+	override public function get (token :ResourceToken) :com.pblabs.components.scene2D.ImageData
 	{
 		// switch(token.type) {
 		// 	case BITMAP_CACHE(source)://Ok
@@ -205,7 +206,6 @@ class BitmapCacheResource extends ImageDataResources,
 				com.pblabs.util.Assert.isNotNull(svgData, ' svgData is null sourceToken=' + sourceToken);
 				#if flash
 				var self = this;
-				trace("Rendering svg from " + token);
 				SvgRenderTools.renderSvg(svgData, function (renderedSvg :flash.display.DisplayObject) :Void {
 					var bm = com.pblabs.util.DisplayUtils.convertToBitmap(renderedSvg); 
 					var bd = bm.bitmapData;
@@ -217,7 +217,7 @@ class BitmapCacheResource extends ImageDataResources,
 				#elseif js
 				var canvas :Canvas = cast js.Lib.document.createElement("canvas");
 				SvgRenderTools.renderSvg(svgData, canvas);
-				_data.set(token, canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height));
+				_data.set(token, canvas);
 				_loading.remove(token);
 				maybeFinish();
 				#end

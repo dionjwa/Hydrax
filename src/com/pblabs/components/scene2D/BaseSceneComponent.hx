@@ -92,28 +92,26 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	function setDefaultVars () :Void
 	{
-		_x = 0;
-		_y = 0;
+		_alpha = 1;
 		_angle = 0;
+		_angleOffset = 0;
+		_bounds = new AABB2(0, 0, 1, 1);
+		isTransformDirty = true;
+		_layerIndex = 0;
+		_layerIndexDirty = false;
+		_locationOffset = new Vector2();
+		objectMask = ObjectType.ALL;
+		_registrationPoint = new Vector2(0, 0);
 		_scaleX = 1;
 		_scaleY = 1;
-		_alpha = 1;
-		_layerIndex = 0;
-		_zIndex = -1;
-		_visible = true;
-		isTransformDirty = true;
-		_locationOffset = new Vector2();
-		_angleOffset = 0;
-		_layerIndexDirty = false;
-		// _zIndexDirty = false;
-		_registrationPoint = new Vector2(0, 0);
-		//Sensible default
-		spatialProperty = SpatialComponent.P_SPATIAL;
-		objectMask = ObjectType.ALL;
-		_bounds = new AABB2(0, 0, 1, 1);
-		_unscaledBounds = new Vector2(1, 1);
-		autoAddToScene = true;
 		_transformMatrix = new Matrix();
+		_unscaledBounds = new Vector2(1, 1);
+		_visible = true;
+		_x = 0;
+		_y = 0;
+		_zIndex = -1;
+		spatialProperty = SpatialComponent.P_SPATIAL;
+		autoAddToScene = true;
 	}
 	
 	/**
@@ -356,22 +354,17 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	{
 		if (layer == null) {
 			_zIndex = val;
-			// _zIndexDirty = true;
 		} else {
-			val = Mathematics.clamp(val, 0, layer.children.length - 1);
+			_zIndex = Mathematics.clamp(val, 0, layer.children.length - 1);
 			var curIndex = layer.children.indexOf(this);
-			if (curIndex != val) {
-				layer.children.remove(this);
-				layer.children.insert(val, this);
+			com.pblabs.util.Assert.isTrue(curIndex > -1);
+			if (curIndex != _zIndex) {
+				layer.children.splice(curIndex, 1);
+				layer.children.insert(_zIndex, this);
 				layer.zOrderDirty = true;
-				// _zIndexDirty = true;
 			}
 		}
 		return val;
-		
-		// _zIndex = val;
-		// _zIndexDirty = true;
-		// return val;
 	}
 	
 	function get_layerIndex () :Int
@@ -446,7 +439,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	function get_visible () :Bool
 	{
-		return _visible;
+		return _visible && alpha > 0;
 	}
 	
 	function set_visible (val :Bool) :Bool
