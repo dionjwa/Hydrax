@@ -42,7 +42,7 @@ class ImageResources extends LoadingResources<ImageType>
 			maybeFinish();
 		}
 		image.onerror = function (e :Dynamic) {
-			trace("Error loading token " + token "\n   " + e);
+			trace("Error loading token " + token  + "\n   " + e);
 		}
 		image.src = url;
 		#end
