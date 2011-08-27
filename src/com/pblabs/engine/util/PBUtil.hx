@@ -59,6 +59,15 @@ class PBUtil
 		return inst;
 	}
 	
+	public static function ensureSingleton <T> (context :IPBContext, mng :Class<T>, ?name :String) :T
+	{
+		var inst = getSingletonComponent(context, mng, name);
+		if (inst == null) {
+			inst = addSingletonComponent(context, mng, name);
+		} 
+		return inst;
+	}
+	
 	public static function addSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null, 
 		?deferring :Bool = false) :T
 	{
