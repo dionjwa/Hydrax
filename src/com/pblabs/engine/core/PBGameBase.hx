@@ -194,10 +194,10 @@ class PBGameBase
 	// 	_contextTransitions.push(ContextTransition.REMOVE(c));
 	// }
 	
-	public function pushContext (c :Class<Dynamic>) :Dynamic
+	public function pushContext <T>(c :Class<T>) :T
 	{
-		var ctx :IPBContext = allocate(c);
-		_contextTransitions.push(ContextTransition.PUSH(ctx));
+		var ctx = allocate(c);
+		_contextTransitions.push(ContextTransition.PUSH(cast ctx));
 		return ctx;
 	}
 	
