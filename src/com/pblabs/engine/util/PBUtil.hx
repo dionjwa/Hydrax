@@ -50,10 +50,12 @@ class PBUtil
 		return inst;
 	}
 	
-	public static function ensureGameManager <T> (game :PBGameBase, mng :Class<T>) :T
+	public static function ensureGameManager <T> (context :IPBContext, mng :Class<T>) :T
 	{
-		var inst = game.getManager(mng);
+		var inst = context.getManager(mng);
 		if (inst == null) {
+			var game = context.getManager(PBGameBase);
+			com.pblabs.util.Assert.isNotNull(game, ' game is null');
 			inst = game.registerManager(mng, game.allocate(mng));
 		} 
 		return inst;
