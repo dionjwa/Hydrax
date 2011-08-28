@@ -26,7 +26,7 @@ class SvgRenderQueueManager
 	public static function getBitmapData (context :IPBContext, token :ResourceToken, replacements :Array<SvgReplace>, cb :ImageData->Void) :Void
 	{
 		com.pblabs.util.Assert.isNotNull(context, ' context is null');
-		var queue = context.getManager(PBGameBase).ensureGameManager(SvgRenderQueueManager);
+		var queue = context.ensureGameManager(SvgRenderQueueManager);
 		queue.getBitmapDataInternal(context, token, replacements, cb);
 	}
 	
