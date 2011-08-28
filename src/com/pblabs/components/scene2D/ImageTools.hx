@@ -8,6 +8,7 @@ import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.ResourceType;
+import com.pblabs.engine.resource.SvgResources;
 import com.pblabs.util.Comparators;
 import com.pblabs.util.svg.SvgData;
 import com.pblabs.util.svg.SvgReplace;
@@ -19,6 +20,26 @@ using com.pblabs.engine.util.PBUtil;
   */
 class ImageTools
 {
+	static var SVG_TEXT = '
+		<svg
+	   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+	   xmlns:svg="http://www.w3.org/2000/svg"
+	   xmlns="http://www.w3.org/2000/svg"
+	   version="1.1"
+	   width="300"
+	   height="100"
+	   id="svg3759">
+	  <text
+			x="0"
+			y="0"
+			id="text3767"
+			xml:space="preserve"
+			style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"><tspan
+			 x="05"
+			 y="0"
+			 id="tspan3769">$T</tspan></text>
+	</svg>';
+	
 	public static function getImageComponentForResourceType (type :ResourceType) :Class<Dynamic>
 	{
 		var compCls :Class<Dynamic> = null;
@@ -61,21 +82,32 @@ class ImageTools
 	
 	/** Converts Svg to Bitmap */
 	public static function addSvg (e :IEntity, layer :BaseSceneLayer<Dynamic, Dynamic>, token :ResourceToken, 
-		?replacements :Array<SvgReplace>, ?componentName :String) :IEntity 
+		?replacements :Array<SvgReplace>, ?componentName :String, ?cache :Bool = true) :IEntity 
 	{
-		var svgComp = e.context.allocate(BitmapRenderer);
-		componentName = componentName != null ? componentName : token.id + "_" + svgComp.key;
-		svgComp.parentProperty = layer.entityProp();
-		e.addComponent(svgComp, componentName);
-		
-		com.pblabs.util.svg.SvgRenderQueueManager.getBitmapData(e.context, token, replacements, 
-			function (image :com.pblabs.components.scene2D.ImageData) :Void {
-				svgComp.bitmapData = image;
-				//Notify the display hierarchy that our dimensions may have changed
-				if (e.getComponent(com.pblabs.components.minimalcomp.Component) != null) {
-					e.getComponent(com.pblabs.components.minimalcomp.Component).invalidate();
-				}
-			});
+		if (cache) {
+			var svgComp = e.context.allocate(BitmapRenderer);
+			componentName = componentName != null ? componentName : token.id + "_" + svgComp.key;
+			svgComp.parentProperty = layer.entityProp();
+			e.addComponent(svgComp, componentName);
+			
+			com.pblabs.util.svg.SvgRenderQueueManager.getBitmapData(e.context, token, replacements, 
+				function (image :com.pblabs.components.scene2D.ImageData) :Void {
+					svgComp.bitmapData = image;
+					//Notify the display hierarchy that our dimensions may have changed
+					if (e.getComponent(com.pblabs.components.minimalcomp.Component) != null) {
+						e.getComponent(com.pblabs.components.minimalcomp.Component).invalidate();
+					}
+				});
+		} else {
+			
+			var svgToken = SvgResources.getSvgResourceToken(e.context, token, replacements);
+			var svgData = e.context.getManager(IResourceManager).get(svgToken);
+			com.pblabs.util.Assert.isNotNull(svgData, ' svgData is null for ' + svgToken);
+			var svgComp = e.context.allocate(Svg);
+			svgComp.svgData = svgData;
+			svgComp.parentProperty = layer.entityProp();
+			e.addComponent(svgComp);
+		}
 		
 		return e;
 	}
@@ -156,6 +188,15 @@ class ImageTools
 		var svgComp = e.getComponent(Svg);
 		com.pblabs.util.Assert.isNotNull(svgComp, ' svgComp is null');
 		svgComp.svgData = svgData;
+		return e;
+	}
+	
+	public static function addText (e :IEntity, layer :BaseSceneLayer<Dynamic, Dynamic>, text :String, ?align :String) :IEntity
+	{
+		var svgComp = e.context.allocate(Svg);
+		svgComp.svgData = new SvgData(null, SVG_TEXT, [new SvgReplace("$T", text)]);
+		svgComp.parentProperty = layer.entityProp();
+		e.addComponent(svgComp);
 		return e;
 	}
 }
