@@ -9,7 +9,6 @@
 package com.pblabs.util;
 
 import com.pblabs.components.scene2D.BaseSceneLayer;
-import com.pblabs.components.scene2D.SVGComponent;
 import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.resource.ResourceToken;
@@ -35,33 +34,6 @@ using com.pblabs.engine.util.PBUtil;
 
 class DebugUtil
 {
-
-	public static function drawSvgString (layer :BaseSceneLayer<Dynamic, Dynamic>, svgData :String, ?loc :XY) :SVGComponent
-	{
-	    var svg = layer.context.allocate(SVGComponent);
-	    svg.parentProperty = layer.entityProp();
-	    var e = SceneUtil.createBaseSceneEntity(layer.context);
-	    e.addComponent(svg);
-	    e.initialize(layer.context.getManager(NameManager).validateName("svg"));
-	    svg.svgData = [svgData];
-	    loc = loc == null ? new Vector2() : loc;
-	    SceneUtil.setLocation(e, loc.x, loc.y);
-	    return svg;
-	}
-	
-	public static function drawSvg (layer :BaseSceneLayer<Dynamic, Dynamic>, svgResource :ResourceToken, ?loc :XY) :SVGComponent
-	{
-	    var svg = layer.context.allocate(SVGComponent);
-	    svg.parentProperty = layer.entityProp();
-	    svg.resources = [svgResource];
-	    var e = SceneUtil.createBaseSceneEntity(layer.context);
-	    e.addComponent(svg);
-	    e.initialize(layer.context.getManager(NameManager).validateName("svg"));
-	    loc = loc == null ? new Vector2() : loc;
-	    SceneUtil.setLocation(e, loc.x, loc.y);
-	    return svg;
-	}
-	
 	public static function traceClassName (obj :Dynamic) :Void
 	{
 		trace(ReflectUtil.getClassName(obj));
