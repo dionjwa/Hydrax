@@ -12,6 +12,8 @@ package com.pblabs.util.ds.maps;
 import com.pblabs.util.ds.Collection;
 import com.pblabs.util.ds.Hashable;
 
+import de.polygonal.ds.Map;
+
 import haxe.FastList;
 
 /**
