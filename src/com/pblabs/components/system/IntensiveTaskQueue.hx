@@ -1,0 +1,140 @@
+package com.pblabs.components.system;
+
+import com.pblabs.engine.core.PBManager;
+import com.pblabs.engine.time.IAnimatedObject;
+import com.pblabs.engine.time.IProcessManager;
+
+import de.polygonal.ds.Prioritizable;
+import de.polygonal.ds.PriorityQueue;
+
+/**
+  * For queuing tasks or functions that are processer intensive.
+  * Each task is executed sequentially, by onFrame calls, since the 
+  * task likely spreads the load over multiple frames.
+  */
+class IntensiveTaskQueue extends PBManager,
+	implements IAnimatedObject
+{
+	public var priority :Int;
+	public var timeAllowedPerTick :Float;
+	public var maxUpdatesPerTick :Int;
+	var _queue :PriorityQueue<IntensiveTask>;
+	var _tempTask :IntensiveTask;
+	
+	public function new ()
+	{
+		super();
+		priority = 0;
+		_queue = new PriorityQueue();
+		timeAllowedPerTick = 0.020;
+		maxUpdatesPerTick = 1;
+	}
+
+	override public function startup () :Void
+	{
+		super.startup();
+		context.getManager(IProcessManager).addAnimatedObject(this);
+	}
+	
+	override public function shutdown () :Void
+	{
+		context.getManager(IProcessManager).removeAnimatedObject(this);
+		super.shutdown();
+		clear();
+		_queue = null;
+	}
+	
+	public function clear () :Void
+	{
+		for (q in _queue) {
+			q.shutdown();
+		}
+		_queue.free();
+	}
+	
+	public function onFrame (dt :Float) :Void
+	{
+		if (_queue.size() == 0) {
+			return;
+		}
+		var begin :Float = haxe.Timer.stamp();
+		var ticks :Int = 0;
+		while (_queue.size() > 0 && ticks < maxUpdatesPerTick && haxe.Timer.stamp() - begin < timeAllowedPerTick) {
+			_tempTask = _queue.peek();
+			com.pblabs.util.Log.debug("doing task: " + _tempTask); 
+			if (_tempTask.onFrame(dt)) {
+				_queue.remove(_tempTask);
+				com.pblabs.util.Log.info("Finished " + _tempTask + "\nremaining " + _queue.size());
+				_tempTask.finish();
+			}
+			_tempTask = null;
+			ticks++;
+		}
+	}
+	
+	public function queueIntensiveTask (doALittleBit :Float->Bool, ?onFinish :Bool->Void, ?priority :Int = 0) :IntensiveTask
+	{
+		var task = new IntensiveTask(priority, doALittleBit, onFinish);
+		return queue(task);
+	}
+	
+	public function queue (task :IntensiveTask) :IntensiveTask
+	{
+		_queue.enqueue(task);
+		return task;
+	}
+	
+	public function removeTask (task :IntensiveTask) :Bool
+	{
+		com.pblabs.util.Assert.isNotNull(task, " task is null");
+		task.shutdown();
+	    return _queue.remove(task);
+	}
+}
+
+class IntensiveTask
+	implements Prioritizable
+{
+	public var priority :Float;
+	public var position :Int;
+	public var k :Int;
+	
+	/** Returns true if finished */
+	var _onFrame :Float->Bool;
+	var _onFinish :Bool->Void;
+	
+	public function new (priority:Int, ?doALittleBit :Float->Bool, ?onFinish :Bool->Void) :Void
+	{
+		k = com.pblabs.engine.util.PBUtil.KEY_COUNT++;
+		this.priority = priority;
+		_onFrame = doALittleBit;
+		_onFinish = onFinish;
+	}
+	
+	/** Returns true if finished */
+	public function onFrame (dt :Float) :Bool
+	{
+		if (_onFrame != null) {
+			return _onFrame(dt);
+		}
+		return true;
+	}
+	
+	public function shutdown () :Void
+	{
+		if (_onFinish != null) {
+			_onFinish(false);
+		}
+		_onFrame = null;
+		_onFinish = null;
+	}
+	
+	public function finish () :Void
+	{
+		if (_onFinish != null) {
+			_onFinish(true);
+			_onFinish = null;
+		}
+		shutdown();
+	}
+}
