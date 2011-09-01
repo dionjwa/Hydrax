@@ -61,7 +61,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	public var autoAddToScene :Bool;
 	
 	/** We will listen to the signals of this coordinates component. */
-	public var spatialProperty :PropertyReference<SpatialComponent>;
+	public var spatialProperty :PropertyReference<SpatialComponent<Dynamic>>;
 	
 	var _x :Float;
 	var _y :Float;
@@ -81,6 +81,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	var _bounds :AABB2;
 	var _unscaledBounds :XY;
 	var _visible :Bool;
+	/** For physics engines and the like, where the x and y need to be translated  */
+	public var localZoom :Float;
 	
 	var _transformMatrix :Matrix;
 	
@@ -92,6 +94,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	function setDefaultVars () :Void
 	{
+		localZoom = 1;
 		_alpha = 1;
 		_angle = 0;
 		_angleOffset = 0;
@@ -128,7 +131,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		_transformMatrix.scale(_scaleX, _scaleY);
 		_transformMatrix.translate(-registrationPoint.x * _scaleX, - registrationPoint.y * _scaleY);
 		_transformMatrix.rotate(_angle + _angleOffset);
-		_transformMatrix.translate(_x + _locationOffset.x, _y + _locationOffset.y);
+		_transformMatrix.translate(_x * localZoom + _locationOffset.x * localZoom, _y * localZoom + _locationOffset.y * localZoom);
 		isTransformDirty = false;
 	}
 	
