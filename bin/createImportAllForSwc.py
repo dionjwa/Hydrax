@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#Create the rsrc/audio.swf containing all mp3s in the rsrc folder
+#Create a class that imports all project classes
 import os, os.path, string, sys, shutil
 
 if len(sys.argv) <= 1:
@@ -23,6 +23,9 @@ fileList = []
 for srcfolder in srcfolders:
 	print "srcfolder " + srcfolder
 	for root, subFolders, files in os.walk(srcfolder):
+		if root.find("js") > -1 || root.find("JS") > -1 || root.find("jeash") > -1:
+			print "excluding " + root
+			continue
 		for file in files:
 			for filetype in filetypes:
 				if file.endswith("." + filetype):
