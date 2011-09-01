@@ -23,7 +23,7 @@ fileList = []
 for srcfolder in srcfolders:
 	print "srcfolder " + srcfolder
 	for root, subFolders, files in os.walk(srcfolder):
-		if root.find("js") > -1 || root.find("JS") > -1 || root.find("jeash") > -1:
+		if root.find("js") > -1 or root.find("JS") > -1 or root.find("jeash") > -1:
 			print "excluding " + root
 			continue
 		for file in files:
