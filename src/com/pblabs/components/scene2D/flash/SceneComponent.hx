@@ -68,7 +68,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	
 	
 	
-	override function addedToParent () :Void
+	override public function addedToParent () :Void
 	{
 		com.pblabs.engine.debug.Profiler.enter("sc.addedToParent");
 		super.addedToParent();

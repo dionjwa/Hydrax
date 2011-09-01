@@ -19,7 +19,8 @@ import com.pblabs.util.Assert;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.StringUtil;
-
+using com.pblabs.util.StringUtil;
+using Lambda;
 /**
  * Useful functions relating to Entity and EntityComponent objects.
  *
@@ -37,7 +38,14 @@ class PBUtil
 	
 	public static function initializeEntity (e :IEntity, ?name :String) :IEntity
 	{
-		e.initialize(e.context.getManager(NameManager).validateName(name != null ? name : "entity"));
+		e.initialize(e.context.getManager(NameManager).validateName(StringUtil.isBlank(name) ? "entity" : name));
+		return e;
+	}
+	
+	public static function createEntity (context :IPBContext) :IEntity
+	{
+		var e = context.allocate(IEntity);
+		e.deferring = true;
 		return e;
 	}
 	
@@ -68,6 +76,15 @@ class PBUtil
 			inst = addSingletonComponent(context, mng, name);
 		} 
 		return inst;
+	}
+	
+	public static function setComponentProperty <T> (c :IEntityComponent, field :String, value :Dynamic) :IEntity
+	{
+		if (!field.startsWith("set_") && Type.getInstanceFields(Type.getClass(c)).has("set_" + field)) {
+			field = "set_" + field;
+		}
+		ReflectUtil.setField(c, field, value);
+		return c.owner;
 	}
 	
 	public static function addSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null, 

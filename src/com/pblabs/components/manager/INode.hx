@@ -7,8 +7,9 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.manager;
-interface INode<Parent, Child>
-	implements INodeChild<Parent>
+interface INode<Child>
 {
 	var children (get_children, null) :Array<Child>;
+	function removeChild (c :Child) :Void;
+	function addChild (c :Child) :Void;
 }

@@ -7,7 +7,15 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.manager;
-interface INodeChild<Parent>
+
+import com.pblabs.engine.core.IEntityComponent;
+
+interface INodeChild<Parent:INodeParent<Dynamic>>
+	implements IEntityComponent
 {
 	var parent :Parent;
+	function removeFromParent () :Void;
+	function removingFromParent() :Void;
+	function addedToParent () :Void;
+	function hasParent () :Bool;
 }

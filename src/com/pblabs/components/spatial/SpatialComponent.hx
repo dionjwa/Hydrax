@@ -9,6 +9,8 @@
 package com.pblabs.components.spatial;
 
 import com.pblabs.components.manager.INodeChild;
+import com.pblabs.components.manager.NodeChild;
+import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.ObjectType;
@@ -30,22 +32,22 @@ using com.pblabs.util.XmlUtil;
 /**
  * Very basic spatial component that exists at a position. 
  */ 
-class SpatialComponent extends EntityComponent,
-	implements ISpatialObject2D, implements INodeChild<ISpatialManager2D>
+class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Manager>,
+	implements ISpatialObject2D<Manager>//, implements INodeChild<ISpatialManager2D>
 {
 	inline public static var NAME :String = "ISpatialObject2D";
 	public static var P_X :PropertyReference<Float> = new PropertyReference("@" + NAME + ".x");
 	public static var P_Y :PropertyReference<Float> = new PropertyReference("@" + NAME + ".y");
 	public static var P_POINT :PropertyReference<XY> = new PropertyReference("@" + NAME + ".position");
 	public static var P_ANGLE :PropertyReference<Float> = new PropertyReference("@" + NAME + ".angle");
-	public static var P_SPATIAL :PropertyReference<SpatialComponent> = new PropertyReference("@" + NAME);
+	public static var P_SPATIAL :PropertyReference<SpatialComponent<Dynamic>> = new PropertyReference("@" + NAME);
 	
 	public static function getLocation (c :IEntity) :XY
 	{
 	    return c.getComponent(SpatialComponent).position;
 	}
 	
-	public static function addToEntity (e :IEntity) :SpatialComponent
+	public static function addToEntity (e :IEntity) :SpatialComponent<Dynamic>
 	{
 		com.pblabs.util.Assert.isNotNull(e);
 		com.pblabs.util.Assert.isNotNull(e.context);
@@ -57,7 +59,7 @@ class SpatialComponent extends EntityComponent,
 	
 	public var position (get_point, set_point) :XY;
 	public var point (get_point, set_point) :XY;
-	public var parent :ISpatialManager2D;
+	// public var parent :ISpatialManager2D;
 	public var x (get_x, set_x) : Float;
 	public var y (get_y, set_y) : Float;
 	public var angle (get_angle, set_angle) : Float;
@@ -85,10 +87,10 @@ class SpatialComponent extends EntityComponent,
 		super();
 		signalerAngle = new DirectSignaler(this);
 		signalerLocation = new DirectSignaler(this);
-		initVars();
+		setDefaults();
 	}
 	
-	function initVars() :Void
+	function setDefaults() :Void
 	{
 		_vec = new Vector2();
 		_vecForSignalling = new Vector2();
@@ -159,28 +161,32 @@ class SpatialComponent extends EntityComponent,
 
 	inline public function setLocation (xLoc :Float, yLoc :Float) :Void
 	{
+		x = xLoc;
+		y = yLoc;
 		// com.pblabs.util.Assert.isFalse(Math.isNaN(xLoc), com.pblabs.util.Log.getStackTrace());
 		// com.pblabs.util.Assert.isFalse(Math.isNaN(yLoc), com.pblabs.util.Log.getStackTrace());
-		if (_vec.x != xLoc || _vec.y != yLoc) {
-			_vec.x = xLoc;
-			_vec.y = yLoc;
-			updateWorldAABB();
-			dispatchLocation();
-		}
+		// if (_vec.x != xLoc || _vec.y != yLoc) {
+		// 	_vec.x = xLoc;
+		// 	_vec.y = yLoc;
+		// 	updateWorldAABB();
+		// 	dispatchLocation();
+		// }
 	}
 	
-	public function serialize (xml :Xml) :Void
+	override public function serialize (xml :Xml) :Void
 	{
+		super.serialize(xml);
 		xml.createChild("x", _vec.x, Serializer.serializeFloat);
 		xml.createChild("y", _vec.y, Serializer.serializeFloat);
 		xml.createChild("angle", _angle, Serializer.serializeFloat);
 	}
 	
-	public function deserialize (xml :Xml) :Dynamic
+	override public function deserialize (xml :Xml) :Dynamic
 	{
 		_vec.x = xml.parseFloat("x");
 		_vec.y = xml.parseFloat("y");
 		_angle = xml.parseFloat("angle");
+		return super.deserialize(xml);
 	}
 	
 	override function onReset () :Void
@@ -196,7 +202,7 @@ class SpatialComponent extends EntityComponent,
 	
 	override function onRemove () :Void
 	{
-		initVars();
+		setDefaults();
 		super.onRemove();
 	}
 	

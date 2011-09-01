@@ -29,8 +29,8 @@ class Component extends NodeComponent<Container, Component>
 		return parent == null ? this : parent.root;
 	}
 	
-	public var spatialProperty :PropertyReference<SpatialComponent>;
-	var _spatial :SpatialComponent;
+	public var spatialProperty :PropertyReference<SpatialComponent<Dynamic>>;
+	var _spatial :SpatialComponent<Dynamic>;
 	var _isHidden :Bool;
 		
 	public function new ()

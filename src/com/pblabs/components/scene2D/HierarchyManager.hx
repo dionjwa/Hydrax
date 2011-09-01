@@ -182,7 +182,7 @@ class Link
 {
 	public var child :BaseSceneComponent<Dynamic>;
 	public var childEntityName :String;
-	public var parent :SpatialComponent;
+	public var parent :SpatialComponent<Dynamic>;
 	public var childKey :String;
 	public var parentDisplayType :ResourceToken;
 	

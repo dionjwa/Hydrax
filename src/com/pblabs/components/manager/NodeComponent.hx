@@ -43,8 +43,9 @@ using com.pblabs.util.XmlUtil;
 	Just implement ISerializable on the subclass and make sure you call the
 	super methods to get the parent reference serialized.
 */
-class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic, Dynamic>> extends EntityComponent,
-	implements INode<P, C>
+class NodeComponent<P :INodeParent<Dynamic>, C :INodeChild<Dynamic>> extends EntityComponent,
+	implements INodeParent<C>, implements INodeChild<P>
+	// implements INode<C>
 {
 	var _parentProperty :PropertyReference<P>;
 	public var parentProperty (get_parentProperty, set_parentProperty) :PropertyReference<P>;
@@ -73,61 +74,6 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 	@editorData({ignore :"true"})
 	/** Don't set this yourself, use addToParent(p); instead */
 	public var parent :P;
-	
-	public static function getEntityAndAllParents (e :IEntity, nodeTypeClass :Class<Dynamic>, ?list :List<IEntity>) :Iterable<IEntity>
-	{
-		Preconditions.checkNotNull(e, "Entity cannot be null");
-		nodeTypeClass = nodeTypeClass == null ? NodeComponent : nodeTypeClass;
-		
-		if (list == null) {
-			list = new List();
-		}
-		if (list.has(e)) {
-			return list;
-		}
-		list.add(e);
-		for (c in e.getComponents(nodeTypeClass)) {
-			var n :NodeComponent<Dynamic, Dynamic> = cast(c);
-			if (n.parent != null) {
-				getEntityAndAllParents(cast(n.parent, IEntityComponent).owner, nodeTypeClass, list);
-			}
-		}
-		return list;
-	}
-	
-	public static function getEntityAndAllChildren (e :IEntity, nodeTypeClass :Class<Dynamic>, ?list :List<IEntity>) :Iterable<IEntity>
-	{
-		Preconditions.checkNotNull(e, "Entity cannot be null");
-		nodeTypeClass = nodeTypeClass == null ? NodeComponent : nodeTypeClass;
-		
-		if (list == null) {
-			list = new List();
-		}
-		if (list.has(e)) {
-			return list;
-		}
-		list.add(e);
-		for (c in e.getComponents(nodeTypeClass)) {
-			var n :NodeComponent<Dynamic, Dynamic> = cast(c);
-			if (n._children != null) {
-				if (!n.children.isEmpty()) {
-					for (child in n.children) {
-						getEntityAndAllChildren(cast(child, IEntityComponent).owner, nodeTypeClass, list);
-					}
-				}
-			}
-		}
-		return list;
-	}
-	
-	public static function getAll (e :IEntity, nodeTypeClass :Class<Dynamic>) :Iterable<IEntity>
-	{
-		var list = new List<IEntity>();
-		getEntityAndAllParents(e, nodeTypeClass, list);
-		list.remove(e);
-		getEntityAndAllChildren(e, nodeTypeClass, list);
-		return list;
-	}
 	
 	public function new ()
 	{
@@ -212,12 +158,12 @@ class NodeComponent<P :NodeComponent<Dynamic, Dynamic>, C :NodeComponent<Dynamic
 		//Override
 	}
 	
-	function addedToParent () :Void
+	public function addedToParent () :Void
 	{
 		//Override
 	}
 	
-	function removingFromParent () :Void
+	public function removingFromParent () :Void
 	{
 		//Override
 	}

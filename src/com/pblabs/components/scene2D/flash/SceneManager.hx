@@ -42,6 +42,10 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 	public var displayContainer (get_displayContainer, null) :DisplayObjectContainer;
 	public var dirty :Bool;
 	public var priority :Int;
+	
+	var _rootSprite :Sprite;
+	var _rootTransform :Matrix;
+	var _tempPoint :Vector2;
 
 	public function new ()
 	{
@@ -173,10 +177,6 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 	{
 		return _rootSprite;
 	}
-
-	var _rootSprite :Sprite;
-	var _rootTransform :Matrix;
-	var _tempPoint :Vector2;
 	
 	#if editor
 	override public function toString () :String

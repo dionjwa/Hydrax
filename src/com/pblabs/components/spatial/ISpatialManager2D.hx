@@ -12,7 +12,7 @@
  ******************************************************************************/
 package com.pblabs.components.spatial;
 
-import com.pblabs.components.manager.INode;
+import com.pblabs.components.manager.INodeParent;
 import com.pblabs.engine.core.ObjectType;
 
 import de.polygonal.motor2.geom.math.XY;
@@ -27,8 +27,8 @@ import de.polygonal.motor2.geom.primitive.AABB2;
 * Most implementations (like ones using a physics library) will expose a
 * lot more functionality, but this is enough to do rendering and UI tasks.
 */ 
-interface ISpatialManager2D
-	implements INode<Dynamic, ISpatialObject2D>
+interface ISpatialManager2D<T:ISpatialObject2D<Dynamic>>
+	implements INodeParent<T>
 {
 	/**
 	* Return all the spatial objects that overlap with the specified box and match
@@ -41,14 +41,14 @@ interface ISpatialManager2D
 	* 
 	* @return True if one or more objects were found and push()'ed to results.
 	*/ 
-	function queryAABB2 (box:AABB2, mask :ObjectType, results :Array<ISpatialObject2D>) :Bool;
+	function queryAABB2 (box:AABB2, mask :ObjectType, results :Array<T>) :Bool;
 	
 	/**
 	* Return all the spatial objects that overlap the specified circle.
 	* 
 	* @see QueryAABB2
 	*/ 
-	function queryCircle(center :XY, radius :Float, mask :ObjectType, results :Array<ISpatialObject2D>) :Bool;
+	function queryCircle(center :XY, radius :Float, mask :ObjectType, results :Array<T>) :Bool;
 	
 	/**
 	* Cast a ray and (optionally) return information about what it hits in result.
@@ -64,5 +64,5 @@ interface ISpatialManager2D
 	* @param mask Only consider objects that match this ObjectType. Null uses all types.
 	* @return Found something under point or not.
 	*/
-	function getObjectsUndergetObjectsUnderPoint(worldPosition :XY, mask :ObjectType, results :Array<ISpatialObject2D>) :Bool;
+	function getObjectsUndergetObjectsUnderPoint(worldPosition :XY, mask :ObjectType, results :Array<T>) :Bool;
 }
