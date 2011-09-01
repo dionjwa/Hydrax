@@ -8,10 +8,7 @@
  ******************************************************************************/
 package haxe.remoting;
 
-#if !nodejs
-#error
-#end
-
+#if nodejs
 import haxe.remoting.Context;
 
 import js.Node;
@@ -97,3 +94,4 @@ class NodeJSHTMLConnection
 		}
 	}	
 }
+#end

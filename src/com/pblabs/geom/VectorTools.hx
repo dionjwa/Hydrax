@@ -19,7 +19,7 @@ using Lambda;
 
 using com.pblabs.geom.Geometry;
 using com.pblabs.geom.VectorTools;
-using com.pblabs.util.XmlUtil;
+using com.pblabs.util.XmlTools;
 
 /**
  * Use "using com.pblabs.geom.VectorTools" for code 

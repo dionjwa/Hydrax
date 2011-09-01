@@ -18,7 +18,7 @@ import de.polygonal.core.math.Mathematics;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
-using com.pblabs.util.XmlUtil;
+using com.pblabs.util.XmlTools;
 
 class HealthComponent extends EntityComponent,
 	implements ISerializable

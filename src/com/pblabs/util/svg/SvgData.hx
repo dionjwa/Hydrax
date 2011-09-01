@@ -2,7 +2,7 @@ package com.pblabs.util.svg;
 
 import com.pblabs.util.StringUtil;
 import com.pblabs.util.svg.SvgReplace;
-using com.pblabs.util.XmlUtil;
+using com.pblabs.util.XmlTools;
 
 /**
   * Caches important bits about the Svg data to avoid expensive repeated processing.

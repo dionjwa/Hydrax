@@ -21,7 +21,7 @@ using com.pblabs.components.scene2D.SvgRenderTools;
 using com.pblabs.geom.VectorTools;
 using com.pblabs.util.IterUtil;
 using com.pblabs.util.StringUtil;
-using com.pblabs.util.XmlUtil;
+using com.pblabs.util.XmlTools;
 
 /**
   * Parses svg Strings for anchor elements, and caches them.

@@ -20,7 +20,7 @@ using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
 using com.pblabs.geom.VectorTools;
 using com.pblabs.util.StringUtil;
-using com.pblabs.util.XmlUtil;
+using com.pblabs.util.XmlTools;
 
 /**
   * Manages the display anchors (MovieClips in Flash, SVGs in JS).

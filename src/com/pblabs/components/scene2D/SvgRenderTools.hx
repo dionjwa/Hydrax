@@ -13,7 +13,7 @@ using StringTools;
 
 using com.pblabs.util.NumberUtil;
 using com.pblabs.util.StringUtil;
-using com.pblabs.util.XmlUtil;
+using com.pblabs.util.XmlTools;
 
 using de.polygonal.core.math.Mathematics;
 

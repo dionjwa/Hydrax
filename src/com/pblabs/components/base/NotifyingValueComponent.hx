@@ -15,7 +15,7 @@ import com.pblabs.engine.serialization.Serializer;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
-using com.pblabs.util.XmlUtil;
+using com.pblabs.util.XmlTools;
 
 class NotifyingValueComponent extends EntityComponent,
 	implements ISerializable
