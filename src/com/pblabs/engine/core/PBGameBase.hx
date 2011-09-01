@@ -295,7 +295,7 @@ class PBGameBase
 			self._contexts.remove(c);
 			c.exit();
 			self.signalContextExit.dispatch(c);
-			signalContextShutdown.dispatch(c);
+			self.signalContextShutdown.dispatch(c);
 			c.shutdown();
 		}
 		

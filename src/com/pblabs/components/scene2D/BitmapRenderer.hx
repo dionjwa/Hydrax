@@ -53,7 +53,11 @@ class BitmapRenderer
 		if (val != null) {
 			_bitmap.width = val.width;
 			_bitmap.height = val.height;
+			#if haxedev
 			_bitmap.getContext("2d").drawImage(val , 0, 0);
+			#else
+			_bitmap.getContext("2d").drawImage(cast val , 0, 0);
+			#end
 		}
 		#end
 		
@@ -147,7 +151,11 @@ class BitmapRenderer
 			_isContentsDirty = true;
 			return;
 		}
+		#if haxedev
 		ctx.drawImage(_bitmap, 0, 0);
+		#else
+		ctx.drawImage(cast _bitmap, 0, 0);
+		#end
 	}
 	public function drawImage (image :Image) :Void
 	{

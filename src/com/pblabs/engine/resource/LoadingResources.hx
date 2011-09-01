@@ -137,17 +137,18 @@ class LoadingResources<T> extends ResourcesBase<T>
 		#else
 		com.pblabs.util.Log.debug("loading url:" + token.url);
 		var conn = new haxe.Http(token.url);
+		var self = this;
 		conn.onData = function (data :String) :Void {
-			_loading.remove(token);
-			com.pblabs.util.Assert.isFalse(_data.exists(token), "WTF? token already exists=" + token);
-			_data.set(token, createResourceFromJsUrlData(token, data));
-			maybeFinish();
+			self._loading.remove(token);
+			com.pblabs.util.Assert.isFalse(self._data.exists(token), "WTF? token already exists=" + token);
+			self._data.set(token, self.createResourceFromJsUrlData(token, data));
+			self.maybeFinish();
 			conn.onData = null;
 			conn.onError = null;
 		}
 		conn.onError = function (e :Dynamic) :Void {
-			if (_onError != null) {
-				_onError(e);
+			if (self._onError != null) {
+				self._onError(e);
 			} else {
 				com.pblabs.util.Log.error("Resource " + token + " failed to load " + e);
 			}

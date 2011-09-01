@@ -241,7 +241,11 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 				ctx.globalAlpha *= alpha;
 			}
 			if (cacheAsBitmap) {
+				#if haxedev
 				ctx.drawImage(_backBuffer, 0, 0);
+				#else
+				ctx.drawImage(cast _backBuffer, 0, 0);
+				#end
 			} else {
 				drawPixels(ctx);
 			}

@@ -35,11 +35,12 @@ class ImageResources extends LoadingResources<ImageType>
 		loadDisplayObjectFromUrl(token, url);
 		#elseif js
 		var image :Image = untyped __js__ ("new Image()");
+		var self = this;
 		image.onload = function () {
-			_loading.remove(token);
-			_data.set(token, image);
-			com.pblabs.util.Assert.isNotNull(_data.get(token), ' _data.get(token) is null');
-			maybeFinish();
+			self._loading.remove(token);
+			self._data.set(token, image);
+			com.pblabs.util.Assert.isNotNull(self._data.get(token), ' _data.get(token) is null');
+			self.maybeFinish();
 		}
 		image.onerror = function (e :Dynamic) {
 			trace("Error loading token " + token  + "\n   " + e);
