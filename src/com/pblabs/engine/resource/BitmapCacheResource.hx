@@ -70,9 +70,10 @@ class BitmapCacheResource extends ImageDataResources,
 		
 		//If the current context is destroyed, cancel all pending and current render calls
 		if (game.currentContext != null && (_pending.length > 0 || _loading.length > 0)) {
+			var self = this;
 			game.currentContext.signalDestroyed.bind(function (c :com.pblabs.engine.core.IPBContext) :Void {
-				_pending = [];
-				_loading = [];
+				self._pending = [];
+				self._loading = [];
 			}).destroyOnUse();
 		}
 	}
@@ -168,12 +169,13 @@ class BitmapCacheResource extends ImageDataResources,
 		// trace('taskQueue=' + taskQueue);
 		if (taskQueue != null) {
 			var added = false;
+			var self = this;
 			taskQueue.queueIntensiveTask(function (dt :Float) :Bool {
 				if (!added) {
-					loadTokenDataInternal(token);
+					self.loadTokenDataInternal(token);
 					added = true;
 				}
-				return isTokenRenderFinished(token);
+				return self.isTokenRenderFinished(token);
 			});
 		} else {
 			//Render all at once

@@ -215,14 +215,15 @@ class LoadingResources<T> extends ResourcesBase<T>
 		try {
 			var loader = new flash.display.Loader();
 			_loaders.set(token, loader);
+			var self = this;
 			var onComplete = function (e :flash.events.Event) :Void {
 				com.pblabs.util.Log.debug("onComplete " + token);
-				loader.contentLoaderInfo.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, onLoadError);
-				loader.contentLoaderInfo.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, onLoadError);
-				_loading.remove(token);
-				_data.set(token, createResourceFromFlashLoaderData(token, loader.content));
-				_loaders.remove(token);
-				maybeFinish();
+				loader.contentLoaderInfo.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
+				loader.contentLoaderInfo.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
+				self._loading.remove(token);
+				self._data.set(token, self.createResourceFromFlashLoaderData(token, loader.content));
+				self._loaders.remove(token);
+				self.maybeFinish();
 			}
 			
 			com.pblabs.util.EventDispatcherUtil.addOnceListener(loader.contentLoaderInfo, flash.events.Event.COMPLETE, onComplete);
@@ -241,14 +242,15 @@ class LoadingResources<T> extends ResourcesBase<T>
 			var loader = new flash.net.URLLoader();
 			loader.dataFormat = flash.net.URLLoaderDataFormat.TEXT;
 			_urlloaders.set(token, loader);
+			var self = this;
 			var onComplete = function (e :flash.events.Event) :Void {
 				com.pblabs.util.Log.debug("onComplete");
-				_loading.remove(token);
-				loader.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, onLoadError);
-				loader.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, onLoadError);
-				_data.set(token, createResourceFromFlashLoaderData(token, loader.data));
-				_urlloaders.remove(token);
-				maybeFinish();
+				self._loading.remove(token);
+				loader.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
+				loader.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
+				self._data.set(token, self.createResourceFromFlashLoaderData(token, loader.data));
+				self._urlloaders.remove(token);
+				self.maybeFinish();
 			}
 			
 			com.pblabs.util.EventDispatcherUtil.addOnceListener(loader, flash.events.Event.COMPLETE, onComplete);

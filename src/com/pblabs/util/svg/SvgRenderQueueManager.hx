@@ -14,6 +14,8 @@ import com.pblabs.engine.resource.SvgResources;
 import com.pblabs.util.ds.MultiMap;
 import com.pblabs.util.ds.multimaps.ArrayMultiMap;
 
+import Type;
+
 using com.pblabs.engine.util.PBUtil;
 
 /**
@@ -33,7 +35,7 @@ class SvgRenderQueueManager
 	
 	public function new ()
 	{
-		_callbacks = ArrayMultiMap.create(Type.ValueType.TClass(ResourceToken));
+		_callbacks = ArrayMultiMap.create(ValueType.TClass(ResourceToken));
 	}
 
 	/**
@@ -73,15 +75,16 @@ class SvgRenderQueueManager
 				var intensiveTasks = context.ensureManager(IntensiveTaskQueue);
 				var svgData = rsrc.get(svgToken);
 				com.pblabs.util.Assert.isNotNull(svgData, ' svgData is null for ' + svgToken);
+				var self = this;
 				intensiveTasks.queueIntensiveTask(createRenderCall(svgData, function (imageData :ImageData) :Void {
 					var bitmapCache :BitmapCacheResource = cast context.getManager(IResourceManager).getResource(Type.enumConstructor(ResourceType.IMAGE_DATA));
 					bitmapToken = new ResourceToken(svgToken.id, Source.linked(imageData), ResourceType.IMAGE_DATA);
 					bitmapCache.add(bitmapToken);
-					for (cachedCallback in _callbacks.get(svgToken)) {
+					for (cachedCallback in self._callbacks.get(svgToken)) {
 						com.pblabs.util.Assert.isNotNull(cachedCallback, ' cachedCallback is null');
 						cachedCallback(imageData);
 					}
-					 _callbacks.remove(svgToken);
+					 self._callbacks.remove(svgToken);
 					 context.getManager(Dispatcher).dispatch(com.pblabs.components.ui.ProgressEvent.TASK_COMPLETE("Svg rendering", svgToken.id));
 				}), null, 10);//High priority since these are UI images.
 			} else {

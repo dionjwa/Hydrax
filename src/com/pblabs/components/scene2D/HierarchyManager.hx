@@ -9,6 +9,7 @@ import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Comparators;
+import com.pblabs.util.F;
 import com.pblabs.util.ds.Map;
 
 import de.polygonal.motor2.geom.math.XY;
@@ -128,9 +129,8 @@ class HierarchyManager extends EntityComponent
 		updateLink(link);
 		
 		if (link.parent != null) {
-			child.bindSignal(link.parent.signalerLocation, function (loc :XY) :Void {
-				updateLink(link);
-			});
+			var self = this;
+			child.bindSignal(link.parent.signalerLocation, F.ignoreArg(callback(updateLink, link)));
 		} else {
 			com.pblabs.util.Log.warn("Missing SpatialComponent on the parent");
 		}

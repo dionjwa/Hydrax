@@ -37,8 +37,6 @@ import hsl.haxe.data.mouse.MouseLocation;
 
 import Type;
 
-using IterTools;
-
 using Lambda;
 
 using com.pblabs.components.scene2D.SceneUtil;
