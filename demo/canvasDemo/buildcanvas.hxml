@@ -3,7 +3,6 @@
 
 -lib hydrax
 -lib jQueryExtern
--cp ../../lib/hx.html5
 
 -cp src
 
