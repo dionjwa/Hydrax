@@ -5,7 +5,6 @@ import com.pblabs.components.scene2D.ImageData;
 import com.pblabs.components.scene2D.SvgRenderTools;
 import com.pblabs.components.system.IntensiveTaskQueue;
 import com.pblabs.engine.core.IPBContext;
-import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.resource.BitmapCacheResource;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceToken;
@@ -14,7 +13,7 @@ import com.pblabs.engine.resource.Source;
 import com.pblabs.engine.resource.SvgResources;
 import com.pblabs.util.ds.MultiMap;
 import com.pblabs.util.ds.multimaps.ArrayMultiMap;
-import com.pblabs.util.svg.SvgReplace;
+
 using com.pblabs.engine.util.PBUtil;
 
 /**
@@ -46,7 +45,6 @@ class SvgRenderQueueManager
 		com.pblabs.util.Assert.isNotNull(token, ' token is null');
 		com.pblabs.util.Assert.isNotNull(cb, ' cb is null');
 		com.pblabs.util.Assert.isNotNull(context, ' context is null');
-		// com.pblabs.util.Assert.isNotNull(context, ' context is null');
 		switch (token.type) {
 			default: throw "Must be of ResourceType.SVG";
 			case SVG://Ok
@@ -54,50 +52,27 @@ class SvgRenderQueueManager
 		
 		var rsrc = context.getManager(IResourceManager);
 		
-		
 		com.pblabs.util.Assert.isTrue(rsrc.getResource(Type.enumConstructor(ResourceType.IMAGE_DATA)) != null && 
 			Std.is(rsrc.getResource(Type.enumConstructor(ResourceType.IMAGE_DATA)), com.pblabs.engine.resource.BitmapCacheResource),
 			"Missing BitmapCacheResource, needed by the SvgRenderQueueManager.  Add to the IResourceManager");
 		
-		// trace("getBitmapDataInternal");
-		// trace('token=' + token);
-		// trace('replacements=' + replacements);
-		// trace('token.data=' + cast(rsrc.get(token), SvgData).data);
-		
-		// trace("getBitmapDataInternal");
 		var svgToken = SvgResources.getSvgResourceToken(context, token, replacements);
 		var bitmapToken = new ResourceToken(svgToken.id, Source.none, ResourceType.IMAGE_DATA);
-		// trace('   token=' +    token);
-		// trace('   rsrc.get(token)=' +    rsrc.get(token));
-		// trace('   svgToken=' +    svgToken);
-		// trace('   bitmapToken=' +    bitmapToken);
-		// trace('   rsrc.get(svgToken)=' +    rsrc.get(svgToken));
-		
-		// var id = SvgReplace.createDerivedResourceToken(token, new SvgReplacements(replacements));
-		// var cacheToken = new ResourceToken(id, Source.none, ResourceType.IMAGE_DATA);
-		// var cacheToken = SvgReplace.createDerivedResourceToken(token, replacements);
 		var imageData = rsrc.get(bitmapToken);
+		
 		if (imageData != null) {
-			// trace("       found imageData");
 			cb(imageData);
 		} else {
 			if (!_callbacks.exists(svgToken)) {
 				//Add to queue
 				_callbacks.set(svgToken, cb);
 				//Notify progressbar
-				// com.pblabs.util.Assert.isNotNull(context.getManager(Dispatcher), ' context.getManager(Dispatcher) is null');
 				var dispatcher = context.ensureManager(Dispatcher);
 				dispatcher.dispatch(com.pblabs.components.ui.ProgressEvent.TASK_STARTED("Svg rendering", svgToken.id));
 				//Create render call.
-				// com.pblabs.util.Assert.isNotNull(context.getManager(IntensiveTaskQueue), ' context.getManager(IntensiveTaskQueue) is null');
 				var intensiveTasks = context.ensureManager(IntensiveTaskQueue);
-				// var intensiveTasks = context.getManager(IntensiveTaskQueue);
-				// com.pblabs.util.Assert.isNotNull(context.getManager(SvgDataCache), ' context.getManager(SvgDataCache) is null');
-				// var svgDataCache = context.getManager(SvgDataCache);
-				
 				var svgData = rsrc.get(svgToken);
 				com.pblabs.util.Assert.isNotNull(svgData, ' svgData is null for ' + svgToken);
-				// var svgData = svgDataCache.get(token.id, replacements);
 				intensiveTasks.queueIntensiveTask(createRenderCall(svgData, function (imageData :ImageData) :Void {
 					var bitmapCache :BitmapCacheResource = cast context.getManager(IResourceManager).getResource(Type.enumConstructor(ResourceType.IMAGE_DATA));
 					bitmapToken = new ResourceToken(svgToken.id, Source.linked(imageData), ResourceType.IMAGE_DATA);
