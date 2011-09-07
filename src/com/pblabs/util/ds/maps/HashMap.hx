@@ -135,8 +135,8 @@ class HashMap<K, V> implements Map<K, V>
 		return untyped {
 			ref :h,
 			it :__keys__(h).iterator(),
-			hasNext :function() { return untyped this.it.hasNext(); },
-			next :function() { var i :Dynamic = untyped this.it.next(); return this.ref[i]; }
+			hasNext :function() { return untyped __this__.it.hasNext(); },
+			next :function() { var i :Dynamic = untyped __this__.it.next(); return __this__.ref[i]; }
 		};
 		#end
 	}
