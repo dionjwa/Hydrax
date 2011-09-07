@@ -31,6 +31,7 @@ import com.pblabs.engine.resource.BitmapCacheResource;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ImageResources;
 import com.pblabs.engine.resource.ResourceToken;
+import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
 import com.pblabs.geom.Rectangle;
 import com.pblabs.geom.Vector2;
@@ -62,8 +63,10 @@ class Demo
 		#if js
 		game.registerManager(com.pblabs.components.input.TouchInputManager, new com.pblabs.components.input.TouchInputManager());
 		game.registerManager(com.pblabs.components.input.GestureInputManager, new com.pblabs.components.input.GestureInputManager());
-		rsrc.addResource(new ImageResource("face", Source.url("../rsrc/face.png")));
+		rsrc.add(new Resource("face", Source.url("../rsrc/face.png"), ResourceType.IMAGE));
+		// rsrc.addResource(new ImageResource("face", Source.url("../rsrc/face.png")));
 		#elseif flash
+		rsrc.add(new Resource("face", Source.url("../rsrc/face.png"), ResourceType.IMAGE));
 		rsrc.addResource(new ImageResource("face", Source.embedded("FACE")));
 		#end
 		game.registerManager(InputManager, new InputManager());
