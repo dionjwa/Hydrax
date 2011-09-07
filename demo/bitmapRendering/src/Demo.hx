@@ -55,7 +55,6 @@ class Demo
 		#end
 		
 		game.registerManager(InputManager, new InputManager());
-		game.getManager(IResourceManager).addResource(new com.pblabs.engine.resource.EmbeddedResource());
 		
 		game.getManager(IResourceManager).load(startGame, function (e :Dynamic) {trace("Error loading: " + e);});
 	}

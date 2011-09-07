@@ -1,5 +1,6 @@
 -D use_rtti_doc
 -D debug
+-D haxedev
 
 -cp src
 

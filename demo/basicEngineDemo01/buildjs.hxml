@@ -1,5 +1,5 @@
-#build file
 -D debug
+-D haxedev
 -D use_html5_canvas_as_default_scene_layer
 
 -lib hydrax

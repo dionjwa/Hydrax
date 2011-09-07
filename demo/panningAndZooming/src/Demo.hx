@@ -12,8 +12,8 @@ import com.pblabs.components.scene2D.CircleShape;
 import com.pblabs.components.scene2D.ImageComponent;
 import com.pblabs.components.scene2D.RectangleShape;
 import com.pblabs.components.scene2D.SceneAlignment;
-import com.pblabs.components.scene2D.SceneView;
 import com.pblabs.components.scene2D.SceneUtil;
+import com.pblabs.components.scene2D.SceneView;
 import com.pblabs.components.tasks.AngleTask;
 import com.pblabs.components.tasks.FunctionTask;
 import com.pblabs.components.tasks.LocationTask;
@@ -27,9 +27,9 @@ import com.pblabs.engine.core.PBGame;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.core.SetManager;
 import com.pblabs.engine.injection.Injector;
-import com.pblabs.engine.resource.EmbeddedResource;
+import com.pblabs.engine.resource.BitmapCacheResource;
 import com.pblabs.engine.resource.IResourceManager;
-import com.pblabs.engine.resource.ImageResource;
+import com.pblabs.engine.resource.ImageResources;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.Source;
 import com.pblabs.geom.Rectangle;
@@ -39,9 +39,7 @@ import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.ds.MultiMap;
 import com.pblabs.util.ds.Tuple;
 import com.pblabs.util.ds.multimaps.ArrayMultiMap;
-using com.pblabs.components.input.InputUtil;
 using com.pblabs.components.tasks.TaskUtil;
-using com.pblabs.components.ui.UIUtil;
 using com.pblabs.engine.util.PBUtil;
 
 class Demo  
@@ -57,16 +55,20 @@ class Demo
 		
 		
 		game.registerManager(MouseInputManager, new MouseInputManager());
+		
+		var rsrc = game.getManager(IResourceManager);
+		rsrc.addResource(game.allocate(ImageResources));
+		rsrc.addResource(game.allocate(BitmapCacheResource));
 		#if js
 		game.registerManager(com.pblabs.components.input.TouchInputManager, new com.pblabs.components.input.TouchInputManager());
 		game.registerManager(com.pblabs.components.input.GestureInputManager, new com.pblabs.components.input.GestureInputManager());
-		game.getManager(IResourceManager).addResource(new ImageResource("face", Source.url("../rsrc/face.png")));
+		rsrc.addResource(new ImageResource("face", Source.url("../rsrc/face.png")));
 		#elseif flash
-		game.getManager(IResourceManager).addResource(new ImageResource("face", Source.embedded("FACE")));
+		rsrc.addResource(new ImageResource("face", Source.embedded("FACE")));
 		#end
 		game.registerManager(InputManager, new InputManager());
 		
-		game.getManager(IResourceManager).load(startGame, function (e :Dynamic) {trace("Error loading: " + e);});
+		rsrc.load(startGame, function (e :Dynamic) {trace("Error loading: " + e);});
 	}
 	
 	function startGame () :Void

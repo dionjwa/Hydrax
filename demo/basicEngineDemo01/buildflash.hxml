@@ -1,7 +1,5 @@
-#build file
-
 -D debug
-# -D debug_hxhsl
+-D haxedev
 
 -lib IterTools
 -lib ArrayTools
