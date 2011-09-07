@@ -15,12 +15,7 @@ class ResourceToken
 	implements Equalable<ResourceToken>, implements com.pblabs.util.ds.Hashable, implements de.polygonal.ds.Hashable
 {
 	public var key :Int;
-	// public var resourceId (default, null) :String;
 	public var source :Source;
-	/** Set by the ResourceManager */
-	// public var resourceId :String;
-	
-	/** The class name for swf embedded resources.  For stand alone resources, it's null */
 	public var id (default, null) :String;
 	public var type (default, null) :ResourceType;
 	public var url (get_url, null) :String;
@@ -29,47 +24,11 @@ class ResourceToken
 	
 	public function new (id :String, source :Source, type :ResourceType)
 	{
-		// this.resourceId = resourceId;
 		this.source = source;
 		this.id = id;
 		this.type = type;
-		// this.url = url;
 		//Only hash the id and the type.  The source should not matter for hashing.
 		_hashCode = com.pblabs.util.StringUtil.hashCode(id + ":" + Type.enumConstructor(type));
-		
-		
-		// ", source=" + Type.enumConstructor(source) + ", type=" + Type.enumConstructor(type) +"]";//+ ", resourceId=" + resourceId
-		// + ", source=" + sourceStr
-		
-		
-		// id + "::" + 
-		// 	switch (source) {
-		// 		case url (u): u;
-		// 		case bytes (b): "bytes";
-		// 		case text (t): haxe.Md5.encode(t);
-		// 		case embedded (name): name;
-		// 		case swf(swfName): swfName;
-		// 	} + 
-		// 	switch (type) {
-		// 		case IMAGE: 
-		// 		case SVG: 
-		// 		case STRING: 
-		// 		case CLASS: 
-		// 		case SWF: 
-		// 		case BITMAP_CACHE(other :ResourceToken): 
-		// 	});
-			
-			
-			
-		// resourceId = null;
-		
-		// #if flash
-		// switch (source) {
-		// 	case swf(swfName): resourceId = swfName;
-		// 	default:
-		// }
-		// #end
-		
 	}
 	
 	public function equals (other :ResourceToken) :Bool
@@ -99,7 +58,6 @@ class ResourceToken
 		
 		
 		return "Resource[id=" + id
-		// ", source=" + Type.enumConstructor(source) + ", type=" + Type.enumConstructor(type) +"]";//+ ", resourceId=" + resourceId
 		+ ", source=" + sourceStr
 		+ ", type=" + 	Type.enumConstructor(type) +", hashCode=" + Std.string(Std.int(_hashCode)) + "]";
 	}

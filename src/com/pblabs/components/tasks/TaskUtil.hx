@@ -33,16 +33,18 @@ class TaskUtil
 	
 	 /** Adds a named task to this IEntity. */
 	public static function addNamedTask (e :IEntity, name :String, task :IEntityTask, ?removeExistingTasks :Bool =
-		false) :Void
+		false) :IEntity
 	{
 		getTaskComponent(e).addNamedTask(name, task, removeExistingTasks);
+		return e;
 	}
 	
 	/** Adds an unnamed task to this IEntity. */
-	public static function addTask (e :IEntity, task :IEntityTask) :Void
+	public static function addTask (e :IEntity, task :IEntityTask) :IEntity
 	{
 		com.pblabs.util.Assert.isNotNull(e, "null entity");
 		getTaskComponent(e).addTask(task);
+		return e;
 	}
 
 	/** Returns true if the IEntity has any tasks. */
@@ -58,15 +60,17 @@ class TaskUtil
 	}
 
 	/** Removes all tasks from the IEntity. */
-	public static function removeAllTasks (e :IEntity) :Void
+	public static function removeAllTasks (e :IEntity) :IEntity
 	{
 		getTaskComponent(e).removeAllTasks();
+		return e;
 	}
 
 	/** Removes all tasks with the given name from the IEntity. */
-	public static function removeNamedTasks (e :IEntity, name :String) :Void
+	public static function removeNamedTasks (e :IEntity, name :String) :IEntity
 	{
 		getTaskComponent(e).removeNamedTasks(name);
+		return e;
 	}
 	
 	static function getTaskComponent (e :IEntity) :TaskComponent

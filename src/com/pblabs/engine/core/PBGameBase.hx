@@ -12,18 +12,19 @@
  ******************************************************************************/
 package com.pblabs.engine.core;
 
+import Type;
+
 import com.pblabs.engine.injection.Injector;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ProcessManager;
 import com.pblabs.engine.util.PBUtil;
+import com.pblabs.util.F;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
-
-import Type;
 
 using Lambda;
 
@@ -151,11 +152,12 @@ class PBGameBase
 			//Bind the context shutdown signal to ours
 			var self = this;
 			var bond :hsl.haxe.Bond = null;
-			bond = cast(ctx, PBContext).signalDestroyed.bind(function (c :IPBContext) :Void {
+			bond = cast(ctx, PBContext).signalDestroyed.bind(
+				function (c :IPBContext) :Void {
 				// self.callLater(function () :Void {
 					self.signalContextShutdown.dispatch(ctx);
 				// });
-			}).destroyOnUse();
+				}).destroyOnUse();
 			// //Fire setup
 			signalContextSetup.dispatch(ctx);
 			ctx.setup();

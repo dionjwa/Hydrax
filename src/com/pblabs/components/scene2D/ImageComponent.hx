@@ -49,15 +49,18 @@ class ImageComponent extends BitmapRenderer
 	#if js
 	function loadJSImage () :Void
 	{
+		com.pblabs.util.Assert.isNotNull(resource, ' resource is null');
 		var image :Image = context.getTokenResource(resource);
-		width = image.width;
-		height = image.height;
-		// trace('image.width=' + image.width);
-		// trace('image.height=' + image.height);
-		Preconditions.checkNotNull(image, "image from resource is null " +resource);
-		_bitmap.width = image.width;
-		_bitmap.height = image.height;
-		_bitmap.getContext("2d").drawImage(image , 0, 0);
+		com.pblabs.util.Assert.isNotNull(image, ' image is null');
+		setImage(image);
+		// width = image.width;
+		// height = image.height;
+		// // trace('image.width=' + image.width);
+		// // trace('image.height=' + image.height);
+		// Preconditions.checkNotNull(image, "image from resource is null " +resource);
+		// _bitmap.width = image.width;
+		// _bitmap.height = image.height;
+		// _bitmap.getContext("2d").drawImage(image , 0, 0);
 		// var canvas :easel.display.Canvas = cast js.Lib.document.createElement("canvas");
 		// canvas.width = image.width;
 		// canvas.height = image.height;

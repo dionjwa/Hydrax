@@ -107,7 +107,6 @@ class MapUtil
 		return index;
 	}
 	
-	// #if debug
 	public static function toString(map :MapType, ?sep :String = ":", ?stringifyValues :Bool = false) :String 
 	{
 		if (map == null) {
@@ -128,5 +127,4 @@ class MapUtil
 		s.add("}");
 		return s.toString();
 	}
-	// #end
 }

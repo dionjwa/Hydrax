@@ -65,16 +65,10 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		}
 		if (isOnCanvas) {
 		} else {
-			// com.pblabs.util.Assert.isNotNull(parent);
 			if (parent != null && isTransformDirty) {
 				updateTransform();
 				isTransformDirty = false;
 				SceneUtil.applyTransform(div, _transformMatrix);
-				// if (SceneView.isWebkitBrowser) {
-				// 	untyped div.style.webkitTransform = _transformMatrix.toString();
-				// } else {
-				// 	untyped div.style.MozTransform = _transformMatrix.toMozString();
-				// }
 			}
 		}
 	}
@@ -84,7 +78,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		_isContentsDirty = true;
 	}
 	
-	override function addedToParent () :Void
+	override public function addedToParent () :Void
 	{
 		super.addedToParent();
 		
@@ -102,7 +96,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		}
 	}
 	
-	override function removingFromParent () :Void
+	override public function removingFromParent () :Void
 	{
 		super.removingFromParent();
 		#if debug
@@ -122,55 +116,6 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		}
 		return super.set_isTransformDirty(val);
 	}
-	
-	// function get_displayObject () :HtmlDom
-	// {
-	// 	return _displayObject;
-	// }
-	
-	// function set_displayObject (val :HtmlDom) :HtmlDom
-	// {
-	// 	if (isOnCanvas) {
-	// 		trace("?");
-	// 		return val;
-	// 	}
-	// 	if (_displayObject != null) {
-	// 		if (_displayObject.parentNode != null) {
-	// 			_displayObject.parentNode.removeChild(_displayObject);
-	// 		}
-	// 	}
-	// 	_displayObject = val;
-	// 	if (_displayObject != null) {
-	// 		if (_displayObject.parentNode != null) {
-	// 			_displayObject.parentNode.removeChild(_displayObject);
-	// 		}
-	// 		if (div != null) {
-	// 			div.appendChild(_displayObject);
-	// 		}
-	// 		if (Reflect.hasField(displayObject, "width")) {
-	// 			var w = Std.parseInt(Reflect.field(displayObject, "width"));
-	// 			_unscaledBounds.xmin = -w / 2;
-	// 			_unscaledBounds.xmax = w / 2;
-	// 		}
-	// 		if (Reflect.hasField(displayObject, "height")) {
-	// 			var h = Std.parseInt(Reflect.field(displayObject, "height"));
-	// 			_unscaledBounds.ymin = -h / 2;
-	// 			_unscaledBounds.ymax = h / 2;
-	// 		}
-	// 		if (width == 0 || Math.isNaN(width)) {
-	// 			var w = Std.parseFloat(displayObject.getAttribute("width"));
-	// 			_unscaledBounds.xmin = -w / 2;
-	// 			_unscaledBounds.xmax = w / 2;
-	// 		} 
-	// 		if (height == 0 || Math.isNaN(height)) {
-	// 			var h = Std.parseFloat(displayObject.getAttribute("height"));
-	// 			_unscaledBounds.ymin = -h / 2;
-	// 			_unscaledBounds.ymax = h / 2;
-	// 		}
-	// 	}
-	// 	isTransformDirty = true;
-	// 	return val;
-	// }
 	
 	function createCanvas () :Canvas
 	{

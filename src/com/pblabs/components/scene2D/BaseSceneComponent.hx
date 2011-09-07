@@ -173,7 +173,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		var coords = spatialProperty != null ? owner.getProperty(spatialProperty) : null;
 		com.pblabs.engine.debug.Profiler.enter("bindsignals");
 		if (coords != null) {
-			#if debug_hxhsl
+			#if debug
 			var bond = bindSignal(coords.signalerLocation, setLocation);
 			bond.debugInfo = com.pblabs.util.ReflectUtil.tinyClassName(this);
 			#else

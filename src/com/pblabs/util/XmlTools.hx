@@ -15,50 +15,87 @@ using com.pblabs.util.XmlTools;
 
 class XmlTools
 {
-	
-	public static function clone (xml :Xml) :Xml
+	/** Recursive, avoids Xml.parse(xml.toString())) */
+	public static function clone (xml :Xml, ?filter :Xml->Bool) :Xml
 	{
-		return ensureNotDocument(Xml.parse(xml.toString()));
+		if (xml == null) return null;
+		
+		//Create
+		var newXml = switch (xml.nodeType) {
+			case Xml.CData: Xml.createCData(xml.nodeValue);
+			case Xml.Comment: Xml.createComment(xml.nodeValue);
+			case Xml.DocType: Xml.createDocType(xml.nodeValue);
+			case Xml.Document: Xml.createDocument();
+			case Xml.Element: Xml.createElement(xml.nodeName);
+			case Xml.PCData: Xml.createPCData(xml.nodeValue);
+			case Xml.Prolog: Xml.createProlog(xml.nodeValue);
+		}
+		
+		//Nodevalue, attributes
+		switch (xml.nodeType) {
+			case Xml.Element:
+				//Attributes
+				for (attributeName in xml.attributes()) {
+					newXml.set(attributeName, xml.get(attributeName));
+				}
+			case Xml.DocType:
+			default://Nothing
+		}
+		
+		//Children
+		switch (xml.nodeType) {
+			case Xml.Element, Xml.DocType:
+				for (child in xml) {
+					if (filter == null || filter(child)) {
+						newXml.addChild(clone(child));
+					}
+				}
+			default://Nothing
+		}
+		
+		return newXml;
 	}
 		
 	public static function findElement (xml :Xml, elementName :String, ?attribute :String, ?attributeValue :String) :Xml
 	{
-	    for (e in xml.elements()) {
-	    	if (e.nodeName == elementName) {
-	    		if (attribute != null) {
-	    			if (e.get(attribute) == attributeValue) {
-	    				return e;
-	    			}
-	    		} else {
-	    			return e;
-	    		}
-	    	} else {//Keep looking
-	    		var found = findElement(e, elementName, attribute, attributeValue);
-	    		if (found != null) {
-	    			return found;
-	    		}
-	    	}
-	    }
-	    return null;
+		if (xml.nodeName == elementName && (attribute == null || xml.get(attribute) == attributeValue)) return xml;
+		
+		for (e in xml.elements()) {
+			if (e.nodeName == elementName) {
+				if (attribute != null) {
+					if (e.get(attribute) == attributeValue) {
+						return e;
+					}
+				} else {
+					return e;
+				}
+			} else {//Keep looking
+				var found = findElement(e, elementName, attribute, attributeValue);
+				if (found != null) {
+					return found;
+				}
+			}
+		}
+		return null;
 	}
 	
 	public static function findElements (xml :Xml, elementName :String, ?attribute :String, ?attributeValue :String, 
 		?found :Array<Xml> = null) :Array<Xml>
 	{
 		found = found == null ? [] : found;
-	    for (e in xml.elements()) {
-	    	if (e.nodeName == elementName) {
-	    		if (attribute != null) {
-	    			if (e.get(attribute) == attributeValue) {
-	    				found.push(e);
-	    			}
-	    		} else {
-	    			found.push(e);
-	    		}
-	    	} 
+		for (e in xml.elements()) {
+			if (e.nodeName == elementName) {
+				if (attribute != null) {
+					if (e.get(attribute) == attributeValue) {
+						found.push(e);
+					}
+				} else {
+					found.push(e);
+				}
+			} 
 			findElements(e, elementName, attribute, attributeValue, found);
-	    }
-	    return found;
+		}
+		return found;
 	}
 	
 	
@@ -200,7 +237,7 @@ class XmlTools
 	
 	public static function getChildWithAttributeValue (xml :Xml, attributeName :String, val :String) :Xml
 	{
-	    for (child in xml.elements()) {
+		for (child in xml.elements()) {
 			if (child.exists(attributeName) && child.get(attributeName) == val) {
 				return child;
 			}
@@ -210,7 +247,7 @@ class XmlTools
 	
 	public static function elementNamedWithAttribute (xml :Xml, elementName :String, attributeName :String, val :String) :Xml
 	{
-	    for (child in xml.elementsNamed(elementName)) {
+		for (child in xml.elementsNamed(elementName)) {
 			if (child.exists(attributeName) && child.get(attributeName) == val) {
 				return child;
 			}

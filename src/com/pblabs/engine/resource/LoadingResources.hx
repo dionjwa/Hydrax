@@ -78,7 +78,6 @@ class LoadingResources<T> extends ResourcesBase<T>
 		for (token in _pending.copy()) {
 			_pending.remove(token);
 			_loading.push(token);
-			
 			switch (token.source) {
 				case url (u): loadFromUrl(token, u);
 				case bytes (b): loadFromBytes(token, b); 
@@ -133,7 +132,7 @@ class LoadingResources<T> extends ResourcesBase<T>
 	{
 		Preconditions.checkNotNull(token.url, "token.url is null");
 		#if flash
-		throw "Subclasses override";
+		throw Type.getClassName(Type.getClass(this)) + ":Subclasses override";
 		#else
 		com.pblabs.util.Log.debug("loading url:" + token.url);
 		var conn = new haxe.Http(token.url);
@@ -160,29 +159,29 @@ class LoadingResources<T> extends ResourcesBase<T>
 	#if js
 	function createResourceFromJsUrlData (token :ResourceToken, data :Dynamic) :T
 	{
-		throw "Subclasses overload";
+		throw Type.getClassName(Type.getClass(this)) + ":Subclasses override";
 		return null;
 	}
 	#end
 	
 	function loadFromBytes (token :ResourceToken, bytes :Bytes) :Void
 	{
-		throw "Subclasses override";
+		throw Type.getClassName(Type.getClass(this)) + ":Subclasses override";
 	}
 	
 	function loadFromString (token :ResourceToken, s :String) :Void
 	{
-		throw "Subclasses override";
+		throw Type.getClassName(Type.getClass(this)) + ":Subclasses override";
 	}
 	
 	function loadFromEmbedded (token :ResourceToken) :Void
 	{
-		throw "Subclasses override";
+		throw Type.getClassName(Type.getClass(this)) + ":Subclasses override";
 	}
 	
 	function processDerivedToken (token :ResourceToken, derivedFrom :ResourceToken) :Void
 	{
-		throw "Subclasses override";
+		throw Type.getClassName(Type.getClass(this)) + ":Subclasses override";
 	}
 	
 	function onLoadError (e :Dynamic) :Void
@@ -200,12 +199,18 @@ class LoadingResources<T> extends ResourcesBase<T>
 	#if flash
 	function loadFromSwf (token :ResourceToken, swfId :String) :Void
 	{
-		throw "Subclasses override";
+		//Do nothing, images are loaded/instantiated from swfs as needed
+		_loading.remove(token);
+		maybeFinish();
 	}
+	// function loadFromSwf (token :ResourceToken, swfId :String) :Void
+	// {
+	// 	throw Type.getClassName(Type.getClass(this)) + ":Subclasses override";
+	// }
 	
 	function createResourceFromFlashLoaderData (token :ResourceToken, loaderData :Dynamic) :T
 	{
-		throw "Subclasses override";
+		throw Type.getClassName(Type.getClass(this)) + ":Subclasses override";
 		return null;
 	}
 	

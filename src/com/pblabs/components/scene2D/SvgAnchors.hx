@@ -22,6 +22,7 @@ using com.pblabs.geom.VectorTools;
 using com.pblabs.util.IterUtil;
 using com.pblabs.util.StringUtil;
 using com.pblabs.util.XmlTools;
+using com.pblabs.util.svg.SvgTools;
 
 /**
   * Parses svg Strings for anchor elements, and caches them.
@@ -72,7 +73,7 @@ class SvgAnchors
 	
 	static function parseSvgAnchorsRecursive (element :Xml, anchors :Map<String, XY>) :Void
 	{
-		if (element.nodeName == "rect" || element.nodeName == "svg:rect") {
+		if (element.nodeName == "rect".svgId()) {
 			var isFromInkscapeLabel =  element.get(INKSCAPE_LABEL) != null && element.get(INKSCAPE_LABEL).toLowerCase().startsWith(ANCHOR_PREFIX);
 			//Don't look for the second possibility if we've found the first
 			var isFromId = !isFromInkscapeLabel && element.get("id").indexOf(ANCHOR_PREFIX) > -1;
@@ -95,7 +96,7 @@ class SvgAnchors
 			}
 		} else {
 			if (element.nodeType == Xml.Element) {
-				if (element.nodeName == "g" || element.nodeName == "svg:g" || element.nodeName == "svg" || element.nodeName == "svg:svg") {
+				if (element.nodeName == "g".svgId() || element.nodeName == "svg".svgId()) {
 					for (child in element.elements()) {
 						parseSvgAnchorsRecursive(child, anchors);
 					}

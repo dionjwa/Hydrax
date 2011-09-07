@@ -68,6 +68,11 @@ class IterUtil
 	
 	public static function toArray <T> (it :Iterator<T>) :Array<T>
 	{
+		return array(it);
+	}
+	
+	public static function array <T> (it :Iterator<T>) :Array<T>
+	{
 		var result = new Array<T>();
 		while (it.hasNext()) {
 			result.push(it.next());

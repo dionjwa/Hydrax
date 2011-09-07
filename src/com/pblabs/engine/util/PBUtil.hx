@@ -15,7 +15,6 @@ import com.pblabs.engine.core.IPBObject;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.util.Assert;
 import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 import com.pblabs.util.StringUtil;
@@ -90,8 +89,8 @@ class PBUtil
 	public static function addSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null, 
 		?deferring :Bool = false) :T
 	{
-		Preconditions.checkNotNull(context, "Null context");
-		Preconditions.checkNotNull(compClass, "Null compClass");
+		com.pblabs.util.Assert.isNotNull(context, ' context is null');
+		com.pblabs.util.Assert.isNotNull(compClass, "Null compClass");
 		if (compName == null) {
 			compName = ReflectUtil.tinyName(compClass);
 		}
@@ -101,11 +100,11 @@ class PBUtil
 		
 		// Preconditions.checkArgument(Std.is(component, IEntityComponent), "Singleton " + compClass + " is not an IEntityComponent");
 		var e = context.allocate(IEntity);
-		Assert.isNotNull(e.context, "How can the entity context be null? e.name=" +e.name + ", compClass=" + Type.getClassName(compClass));
+		com.pblabs.util.Assert.isNotNull(e.context, "How can the entity context be null? e.name=" +e.name + ", compClass=" + Type.getClassName(compClass));
 		e.initialize(compName);
 		e.deferring = deferring;
 		e.addComponent(cast(component, IEntityComponent), compName);
-		Assert.isTrue(deferring || cast(component, IEntityComponent).isRegistered, "addsingle, not registered");
+		com.pblabs.util.Assert.isTrue(deferring || cast(component, IEntityComponent).isRegistered, "addsingle, not registered");
 		return component;
 	}
 	
@@ -119,11 +118,11 @@ class PBUtil
 		compName = context.getManager(NameManager).validateName(compName);
 		
 		var e = context.allocate(IEntity);
-		Assert.isNotNull(e.context, "How can the entity context be null? e.name=" +e.name + ", compClass=" + ReflectUtil.getClassName(component));
+		com.pblabs.util.Assert.isNotNull(e.context, "How can the entity context be null? e.name=" +e.name + ", compClass=" + ReflectUtil.getClassName(component));
 		e.initialize(compName);
 		e.addComponent(component, compName);
 		e.deferring = false;
-		Assert.isTrue(cast(component, IEntityComponent).isRegistered, "addsingle, not registered");
+		com.pblabs.util.Assert.isTrue(cast(component, IEntityComponent).isRegistered, "addsingle, not registered");
 		return component;
 	}
 	
@@ -185,7 +184,7 @@ class PBUtil
 		
 		// Preconditions.checkArgument(Std.is(component, IEntityComponent), "Singleton " + compClass + " is not an IEntityComponent");
 		var e = context.allocate(IEntity);
-		Assert.isNotNull(e.context, "How can the entity context be null? e.name=" +e.name + ", compClass=" + Type.getClassName(compClass));
+		com.pblabs.util.Assert.isNotNull(e.context, "How can the entity context be null? e.name=" +e.name + ", compClass=" + Type.getClassName(compClass));
 		e.initialize(entityName);
 		e.deferring = true;
 		e.addComponent(cast(component, IEntityComponent), compName);

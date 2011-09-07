@@ -88,7 +88,7 @@ class TransformKeyMap<K, TransformedKey, V>
 	#if debug
 	public function toString () :String
 	{
-		return Std.string(_source);
+		return com.pblabs.util.ds.MapUtil.toString(this);
 	}
 	#end
 	

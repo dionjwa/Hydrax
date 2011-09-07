@@ -34,7 +34,7 @@ class SceneUtil
 	#if js
 	inline public static function applyTransform (element :js.Dom.HtmlDom, transform :flash.geom.Matrix) :Void
 	{
-	    if (SceneView.isWebkitBrowser) {
+		if (SceneView.isWebkitBrowser) {
 			untyped element.style.webkitTransform = transform.toString();
 		} else {
 			untyped element.style.MozTransform = transform.toMozString();
@@ -312,7 +312,7 @@ class SceneUtil
 	
 	public static function setLayerColor (layer :BaseSceneLayer<Dynamic, Dynamic>, color :Int) :RectangleShape
 	{
-	    var background = createBaseSceneEntity(layer.context, false);
+		var background = createBaseSceneEntity(layer.context, false);
 		var rect = layer.context.allocate(RectangleShape);
 		rect.parentProperty = layer.entityProp();
 		rect.width = layer.scene.sceneView.width;
@@ -353,8 +353,8 @@ class SceneUtil
 	  */
 	public static function getFullScreenDimensions (?landscape :Bool = false) :XY
 	{
-	    // trace('js.Lib.window.navigator.userAgent=' + js.Lib.window.navigator.userAgent);
-	    var screen = js.Lib.window.screen;
+		// trace('js.Lib.window.navigator.userAgent=' + js.Lib.window.navigator.userAgent);
+		var screen = js.Lib.window.screen;
 		var width = screen.width;
 		var height = screen.height;
 		

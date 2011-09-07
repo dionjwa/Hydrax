@@ -21,13 +21,6 @@ import haxe.io.Bytes;
 using Lambda;
 using com.pblabs.util.IterUtil;
 
-typedef ImageData = 
-#if (flash || cpp)
-flash.display.BitmapData;
-#else
-js.Dom.Image;
-#end
-	
 /**
   * Caches bitmap representations of other display types, e.g. Bitmaps of 
   * complex MovieClips in Flash, Svg images.
@@ -50,17 +43,7 @@ class BitmapCacheResource extends ImageDataResources,
 	public function new ()
 	{
 		super();
-		// super(Type.enumConstructor(ResourceType.IMAGE));
 	}
-	
-	// override public function add (token :ResourceToken) :Void
-	// {
-	// 	switch (token.source) {
-	// 		case linked (imageData): _data.set(token, imageData);
-	// 		default: 
-	// 	}
-	// 	return super.add(token);
-	// }
 	
 	override public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
 	{
@@ -78,46 +61,10 @@ class BitmapCacheResource extends ImageDataResources,
 		}
 	}
 	
-	/** Assumes this resource is immediately available */
-	// override public function add (token :ResourceToken) :Void
-	// {
-	// 	// switch (token.type) {
-	// 	// 	case IMAGE_DATA://Nothing
-	// 	// 	default: throw "Token must be of type IMAGE";//token = createCachedToken(token);
-	// 	// }
-	// 	//Wrap tokens in BITMAP_CACHE tokens
-	// 	// switch (token.type) {
-	// 	// 	case BITMAP_CACHE(other)://Nothing
-	// 	// 	default: throw "Token must be of type BITMAP_CACHE";//token = createCachedToken(token);
-	// 	// }
-	// 	if (!_data.exists(token)) {
-	// 		super.add(token);
-	// 	}
-	// }
-	
 	override public function get (token :ResourceToken) :com.pblabs.components.scene2D.ImageData
 	{
-		// switch(token.type) {
-		// 	case BITMAP_CACHE(source)://Ok
-		// 	default: throw "You must provide a token with type BITMAP_CACHE.  Your token is " + token;  
-		// }
-		
-		// if (!_data.exists(token)) {
-		// 	//This may not complete immediately, if in flash
-		// 	loadTokenData(token); 
-		// }
 		return _data.get(token); 
 	}
-	
-	// override public function unload () :Void
-	// {
-	// 	#if (flash || cpp)
-	// 	for (bd in _data) {
-	// 		bd.dispose();
-	// 	}
-	// 	#end
-	// 	super.unload();
-	// }
 	
 	public function prerenderResources (tokens :Array<ResourceToken>, onFinish :Void->Void) :Void
 	{
@@ -127,46 +74,16 @@ class BitmapCacheResource extends ImageDataResources,
 		load(onFinish, function (e :Dynamic) :Void { com.pblabs.util.Log.error(Std.string(e));});
 	}
 	
-	// override function loadFromUrl (token :ResourceToken, url :String) :Void
-	// {
-	// 	loadTokenData(token);
-	// }
-	
-	// override function loadFromBytes (token :ResourceToken, bytes :Bytes) :Void
-	// {
-	// 	loadTokenData(token);
-	// }
-	
-	// override function loadFromString (token :ResourceToken, s :String) :Void
-	// {
-	// 	loadTokenData(token);
-	// }
-	
-	// override function loadFromEmbedded (token :ResourceToken) :Void
-	// {
-	// 	loadTokenData(token);
-	// }
-	
 	override function processDerivedToken (token :ResourceToken, derivedFrom :ResourceToken) :Void
 	{
 		loadTokenData(token);
 	}
 	
-	// #if flash
-	// override function loadFromSwf (token :ResourceToken, swfId :String) :ImageData
-	// {
-	// 	loadTokenData(token);
-	// 	return null;
-	// }
-	// #end
-	
 	function loadTokenData (token :ResourceToken) :Void
 	{
-		// trace('loadTokenData=' + token);
 		//Is there an intensive task manager?
 		com.pblabs.util.Assert.isNotNull(game, ' game is null');
 		var taskQueue = game.currentContext != null ? game.currentContext.getManager(com.pblabs.components.system.IntensiveTaskQueue) : null;
-		// trace('taskQueue=' + taskQueue);
 		if (taskQueue != null) {
 			var added = false;
 			var self = this;
@@ -190,12 +107,6 @@ class BitmapCacheResource extends ImageDataResources,
 	/** Returns task for queueing */
 	function loadTokenDataInternal (token :ResourceToken) :Void
 	{
-		// trace('token=' + token);
-		// switch(token.type) {
-		// 	case BITMAP_CACHE(source)://Ok
-		// 	default: throw "You must provide a token with type BITMAP_CACHE.  Your token is " + token;  
-		// }
-		
 		var sourceToken = switch(token.source) {
 			case derived(source): source;
 			default: token; 
@@ -237,7 +148,6 @@ class BitmapCacheResource extends ImageDataResources,
 			default: throw "Invalid type for caching as Bitmap?";
 		}
 	}
-	
 	
 	#if debug
 	override public function toString () :String

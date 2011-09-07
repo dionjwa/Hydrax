@@ -285,7 +285,7 @@ class PBContext
 		_tempPropertyInfo = null;
 		
 		com.pblabs.engine.debug.Profiler.exit("PBContext.shutdown");
-		#if (debug_hxhsl && !neko)
+		#if (debug && !neko)
 		var sigs :Hash<Signaler<Dynamic>> = new Hash();
 		sigs.set("signalEnter", signalEnter);
 		sigs.set("signalExit", signalExit);

@@ -17,6 +17,7 @@ import com.pblabs.util.BitmapUtil;
 import com.pblabs.util.ds.multimaps.SetMultiMap;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.core.SignalBondManager;
+using com.pblabs.engine.util.PBUtil;
 using com.pblabs.util.IterUtil;
 using com.pblabs.util.StringUtil;
 
@@ -69,8 +70,7 @@ class ProgressBar extends EntityComponent
 		//Start NOT on the layer.
 		disp.removeFromParent();
 		
-		var dis = context.getManager(Dispatcher);
-		com.pblabs.util.Assert.isNotNull(dis, "Dispatcher required");
+		var dis = context.ensureManager(Dispatcher);
 		bindSignal(dis.dispatcher, onDispatcherSignal);
 		
 		//Center

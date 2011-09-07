@@ -81,7 +81,7 @@ class Entity extends PBObject,
 	{
 		if(_deferring == true && value == false) {
 			// Resolve everything, and everything that that resolution triggers.
-			var needReset:Bool = _deferredComponents.length > 0;
+			var needReset = _deferredComponents.length > 0;
 			var sets = context.getManager(SetManager);
 			while(_deferredComponents.length > 0) {
 				var pc = _deferredComponents.shift();
@@ -472,6 +472,7 @@ class Entity extends PBObject,
 		deferring = true;
 		
 		var sm = context.getManager(SignalBondManager);
+		
 		sm.destroyBondOnEntity(this);
 		
 		var sets = context.getManager(SetManager);
@@ -485,11 +486,9 @@ class Entity extends PBObject,
 			}
 			
 			//Reset it!
-			// com.pblabs.util.Log.debug("    reseting " + component.name);
 			#if profiler com.pblabs.engine.debug.Profiler.enter("reseting " + com.pblabs.util.ReflectUtil.getClassName(component)); #end
 			component.reset();
 			#if profiler com.pblabs.engine.debug.Profiler.exit("reseting " + com.pblabs.util.ReflectUtil.getClassName(component)); #end
-			// com.pblabs.util.Log.debug("    done reseting " + component.name);
 		}
 		com.pblabs.util.Log.debug("  finished reseting");
 		com.pblabs.engine.debug.Profiler.exit("doResetComponents");

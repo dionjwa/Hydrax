@@ -44,20 +44,33 @@ class BitmapUtil
 	#end
 	
 	#if js
-	public static function createImageData (image :Image) :ImageData
-	{
-		var canvas :Canvas = toCanvas(image);
-		return canvas.getContext("2d").getImageData(0, 0, image.width, image.height);
-	}
-	
 	public static function toCanvas (image :Image) :Canvas
 	{
-		var canvas :Canvas = cast js.Lib.document.createElement("canvas");
+		var canvas = createCanvas();
 		canvas.width = image.width;
 		canvas.height = image.height;
 		canvas.getContext("2d").drawImage(image, 0, 0);
 		return canvas;
 	}
+	
+	public static function clone (image :Canvas) :Canvas
+	{
+		var canvas = createCanvas();	
+		canvas.width = image.width;
+		canvas.height = image.height;
+		#if haxedev
+		canvas.getContext("2d").drawImage(image, 0, 0);
+		#else
+		canvas.getContext("2d").drawImage(cast image, 0, 0);
+		#end
+		return canvas;
+	}
+	
+	inline public static function createCanvas () :Canvas
+	{
+		return cast js.Lib.document.createElement("canvas");
+	}
+	
 	#end
 
 }

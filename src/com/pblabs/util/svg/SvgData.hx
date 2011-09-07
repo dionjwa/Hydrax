@@ -8,13 +8,11 @@ using com.pblabs.util.XmlTools;
   * Caches important bits about the Svg data to avoid expensive repeated processing.
   */
 class SvgData
-	implements com.pblabs.util.ds.Hashable
+	implements com.pblabs.util.ds.Hashable, implements Cloneable<SvgData>
 {
-	// public var data (default, null):String;
 	public var id (default, null):String;
 	var _replacements :SvgReplacements;
 	public var data (get_data, null):String;
-	// var _rawData :String;
 	var _data :String;
 	function get_data () :String
 	{
@@ -25,13 +23,9 @@ class SvgData
 			/** SVG documents added to the dom via innerHTML are *not* allowed to have any preamble. */
 			_data = cleanSvgForInnerHtml(_data);
 			#end
-			// com.pblabs.util.Assert.isNotNull(_rawData, ' _rawData is null');
-			// _data = SvgReplace.processReplacements(_rawData, replacements);
-			// com.pblabs.util.Assert.isNotNull(_data, ' _data is null after SvgReplace.processReplacements');
 		}
 		return _data;
 	}
-	// public var id (default, null) :String;
 	public var xml (get_xml, null) :Xml;
 	var _xml :Xml;
 	function get_xml () :Xml
@@ -45,9 +39,7 @@ class SvgData
 	
 	public function new (id :String, data :String, ?replacements :Array<SvgReplace>, ?xml :Xml)
 	{
-		// this.id = id;
-		// com.pblabs.util.Assert.isNotNull(id, ' id is null');
-		com.pblabs.util.Assert.isNotNull(data, ' data is null');
+		com.pblabs.util.Assert.isTrue(data != null || xml != null, ' data AND xml are null');
 		com.pblabs.util.Assert.isTrue(replacements == null || xml == null, "You cannot specify both xml and replacements. ");
 		
 		_data = data;
@@ -57,7 +49,7 @@ class SvgData
 			/** SVG documents added to the dom via innerHTML are *not* allowed to have any preamble. */
 			_data = cleanSvgForInnerHtml(_data);
 		}
-		#end                                                  
+		#end
 		
 		this.id = id;
 		_replacements = new SvgReplacements(replacements);
@@ -69,9 +61,12 @@ class SvgData
 			com.pblabs.util.Assert.isNotNull(this.data, ' this.data is null after replacements');
 		}
 		
-		// _rawData = data;
-		
 		_hashcode = StringUtil.hashCode(id + ":" + _replacements.hashCode());
+	}
+	
+	public function clone () :SvgData
+	{
+		return new SvgData(id, data);
 	}
 	
 	inline public function hashCode () :Int
@@ -83,7 +78,6 @@ class SvgData
 	{
 		_xml = null;
 		data = null;
-		// _rawData = null;
 		_replacements = null;
 	}
 	

@@ -34,7 +34,7 @@ class Dispatcher
 	
 	public function shutdown () :Void
 	{
-		#if (debug_hxhsl && !neko)
+		#if (debug && !neko)
 		var self = this;
 		var sig = dispatcher;
 		haxe.Timer.delay(function () :Void {

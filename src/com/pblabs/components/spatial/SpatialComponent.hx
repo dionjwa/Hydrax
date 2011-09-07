@@ -235,7 +235,7 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Man
 	}
 	#end
 	
-	#if debug_hxhsl
+	#if debug
 	override public function postDestructionCheck () :Void
 	{
 		super.postDestructionCheck();

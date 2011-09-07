@@ -26,13 +26,12 @@ class CircleShape extends ShapeComponent
 	{
 		super();
 		
-		_radius = rad;
 		showAngleLine = true;
 		#if js
 		_svgContainer = untyped js.Lib.document.createElementNS(SceneUtil.SVG_NAMESPACE, "svg");
 		div.appendChild(_svgContainer);
-		_svgContainer.setAttribute("width", (_radius * 2) + "px");
-		_svgContainer.setAttribute("height", (_radius * 2) + "px");
+		_svgContainer.setAttribute("width", (rad * 2) + "px");
+		_svgContainer.setAttribute("height", (rad * 2) + "px");
 		_svgContainer.setAttribute("version", "1.1");
 
 		_svg = untyped js.Lib.document.createElementNS(SceneUtil.SVG_NAMESPACE, "circle");
@@ -43,11 +42,6 @@ class CircleShape extends ShapeComponent
 		#end
 		
 		radius = rad;
-		// _unscaledBounds.xmin = -_radius;
-		// _unscaledBounds.xmax = _radius;
-		// _unscaledBounds.ymin = -_radius;
-		// _unscaledBounds.ymax = _radius;
-		// _bounds = _unscaledBounds.clone();
 	}
 	
 	override public function containsWorldPoint (pos :XY, mask :ObjectType) :Bool
@@ -92,21 +86,17 @@ class CircleShape extends ShapeComponent
 			g.moveTo(r, r);
 			g.lineTo(r * 2, r);
 		}
-		// recomputeBounds();
 		#elseif js
 		_svg.setAttribute("cx", r + "px");
 		_svg.setAttribute("cy", r + "px");
 		_svg.setAttribute( "r",  r + "px");
 		_svg.setAttribute("fill", StringUtil.toColorString(fillColor, "#"));
 		_svg.setAttribute("fill-opacity", "" + alpha);
-		// if (borderStroke > 0) {
-			_svg.setAttribute( "stroke",  StringUtil.toColorString(borderColor, "#"));
-			_svg.setAttribute( "stroke-width",  "" + borderStroke);
-		// }
+		_svg.setAttribute( "stroke",  StringUtil.toColorString(borderColor, "#"));
+		_svg.setAttribute( "stroke-width",  "" + borderStroke);
 		_svgContainer.setAttribute("width", (r * 2) + "px");
 		_svgContainer.setAttribute("height", (r * 2) + "px");
 		#end
-		
 		com.pblabs.engine.debug.Profiler.exit("redraw");
 	}
 	
@@ -127,7 +117,6 @@ class CircleShape extends ShapeComponent
 		}
 	}
 	#end
-	
 	
 	override function onRemove () :Void
 	{
@@ -172,8 +161,6 @@ class CircleShape extends ShapeComponent
 		_bounds.xmax = _radius;
 		_bounds.ymin = -_radius;
 		_bounds.ymax = _radius;
-		
-		// _bounds = _unscaledBounds.clone();
 		
 		_scaleX = 1;
 		_scaleY = 1;

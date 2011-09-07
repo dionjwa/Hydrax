@@ -13,19 +13,21 @@ import com.pblabs.util.ds.Map;
 /**
  * Used on platforms without (non-Int/String) object
  * associative arrays (dictionaries).  Converts the enum key to a 
- * int  via Type.enumIndex(K), so doesn't work with enums with contructor args.
+ * int via Type.enumIndex(K), so doesn't work with enums with contructor args.
  */
 class EnumMap<K, V> extends TransformKeyMap<K, Int, V>
 {
+	static function convert (key :Dynamic) :Int 
+	{
+		if (key == null) {
+			return -1;
+		} else {
+			return Type.enumIndex(key);
+		}
+	}
+		
 	public function new ()
 	{
-		var convert = function (key :K) :Int {
-			if (key == null) {
-				return -1;
-			} else {
-				return Type.enumIndex(key);
-			}
-		}
 		super(convert, new IntHashMap<V>());
 	}
 }

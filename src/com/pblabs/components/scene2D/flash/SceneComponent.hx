@@ -53,20 +53,11 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 			_layerIndexDirty = false;
 			_layerIndex = scene.getLayerIndex(parent);
 		}
-		// if (_zIndexDirty) {
-		// 	com.pblabs.util.Assert.isNotNull(parent);
-		// 	parent.updateZOrder();
-		// 	_zIndexDirty = false;
-		// 	_isTransformDirty = true;
-		// }
 		if (_isTransformDirty) {
 			updateTransform();
 			_isTransformDirty =false;
 		}
 	}
-	
-	
-	
 	
 	override public function addedToParent () :Void
 	{
@@ -94,7 +85,6 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		_displayObject.name = name;
 		_transformMatrix.identity();
 		_displayObject.transform.matrix = _transformMatrix;
-		// recomputeBounds();
 	}
 	
 	override function onRemove () :Void
@@ -107,32 +97,6 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		}
 	}
 	
-	// override function get_width () :Float
-	// {
-	// 	return _width * _scaleX;
-	// }
-	
-	// override function set_width (val :Float) :Float
-	// {
-	// 	com.pblabs.util.Assert.isTrue(val >= 0);
-	// 	scaleX = val / _width;
-	// 	// _width = val;
-	// 	return val;
-	// }
-	
-	// override function get_height () :Float
-	// {
-	// 	return _height * _scaleY;
-	// }
-	
-	// override function set_height (val :Float) :Float
-	// {
-	// 	com.pblabs.util.Assert.isTrue(val >= 0);
-	// 	scaleY = val / _height;
-	// 	// _height = val;
-	// 	return val;
-	// }
-	
 	function recomputeBounds () :Void
 	{
 		#if flash
@@ -142,11 +106,6 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		#end
 		_unscaledBounds.x = localDimensions.width;
 		_unscaledBounds.y = localDimensions.height;
-		// _unscaledBounds.xmin = localDimensions.left;
-		// _unscaledBounds.xmax = localDimensions.right;
-		// _unscaledBounds.ymin = localDimensions.top;
-		// _unscaledBounds.ymax = localDimensions.bottom;
-		
 		width = _unscaledBounds.x * scaleX;
 		height = _unscaledBounds.y * scaleY;
 		
@@ -160,12 +119,9 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	
 	function set_displayObject (d :DisplayObject) :DisplayObject
 	{
-		// Preconditions.checkArgument(_displayObject == null && !isRegistered);
 		Preconditions.checkArgument(parent == null);
 		_displayObject = d;
 		recomputeBounds();
-		// _width = _displayObject.width;
-		// _height = _displayObject.height;
 		return d;
 	}
 
@@ -184,9 +140,6 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		
 		super.updateTransform();
 		
-		// if(updateProps)
-		//	 updateProperties();
-		
 		_displayObject.transform.matrix = _transformMatrix;
 		_displayObject.alpha = _alpha;
 		// _displayObject.blendMode = _blendMode;
@@ -204,7 +157,6 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	{
 		if (layer == null) {
 			_zIndex = val;
-			// _zIndexDirty = true;
 		} else {
 			val = Mathematics.clamp(val, 0, layer.children.length - 1);
 			var curIndex = layer.children.indexOf(this);
@@ -212,7 +164,6 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 				layer.children.remove(this);
 				layer.children.insert(val, this);
 				layer.zOrderDirty = true;
-				// _zIndexDirty = true;
 			}
 		}
 		return val;

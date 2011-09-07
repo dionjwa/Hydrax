@@ -46,24 +46,7 @@ class BitmapRenderer
 	
 	function set_bitmapData (val :ImageData) :ImageData
 	{
-		#if flash
-		com.pblabs.util.Assert.isNotNull(_bitmap);
-		_bitmap.bitmapData = val;
-		#elseif js
-		if (val != null) {
-			_bitmap.width = val.width;
-			_bitmap.height = val.height;
-			#if haxedev
-			_bitmap.getContext("2d").drawImage(val , 0, 0);
-			#else
-			_bitmap.getContext("2d").drawImage(cast val , 0, 0);
-			#end
-		}
-		#end
-		
-		if (val != null) {
-			recomputeBounds();
-		} else {
+		if (val == null) {
 			_unscaledBounds.x = 1;
 			_unscaledBounds.y = 1;
 			
@@ -74,12 +57,29 @@ class BitmapRenderer
 			
 			_registrationPoint.x = 0;
 			_registrationPoint.y = 0;
-			#if js
-			_bitmap.width = _bitmap.height = 1;
+			#if flash
+			_bitmap.bitmapData = null;
+			#elseif js
+			_bitmap = null;
 			#end
-			
-			isTransformDirty = true;
+		} else {
+			#if flash
+			com.pblabs.util.Assert.isNotNull(_bitmap);
+			_bitmap.bitmapData = val;
+			#elseif js
+			_bitmap = val;
+			#end
+			_registrationPoint.x = _bitmap.width / 2;
+			_registrationPoint.y = _bitmap.height / 2;
+			recomputeBounds();
 		}
+
+		#if js	
+		if (!isOnCanvas) {
+			redrawBackBuffer();
+		}
+		_isContentsDirty = true;
+		#end
 		return val;
 	}
 	
@@ -87,9 +87,39 @@ class BitmapRenderer
 	/** Can also render a js.Image */
 	override function set_cacheAsBitmap (val :Bool) :Bool
 	{
-		cacheAsBitmap = false;
-		return false;
+		com.pblabs.util.Assert.isTrue(val, "You are not allowed to un-cacheAsBitmap a js BitmapRenderer");
+		return super.set_cacheAsBitmap(val);
 	}
+	
+	override private function redrawBackBuffer ()
+	{
+		if (_backBuffer == null) {
+			_backBuffer = cast js.Lib.document.createElement("canvas");
+			_backBuffer.width = 1;
+			_backBuffer.height = 1;
+			_backBuffer.style.position = "absolute";
+			// _backBuffer.style.visibility = "hidden";
+			_backBuffer.style.display = "block";
+			//Add to the div display object, so it can be rendered to either CSS or Canvas layers.
+			com.pblabs.util.Assert.isNotNull(div);
+			div.appendChild(_backBuffer);
+			isTransformDirty = true;
+		}
+		_backBuffer.getContext("2d").clearRect(0, 0, _backBuffer.width, _backBuffer.height);
+		if (_bitmap != null) {
+			if (_backBuffer.width != _bitmap.width || _backBuffer.height != _bitmap.height) {
+				_backBuffer.width = _bitmap.width;
+				_backBuffer.height = _bitmap.height;
+			}
+			#if haxedev
+			_backBuffer.getContext("2d").drawImage(_bitmap , 0, 0);
+			#else
+			_backBuffer.getContext("2d").drawImage(cast _bitmap , 0, 0);
+			#end
+		}
+		_isContentsDirty = false;
+	}
+	
 	#end
 	
 	#if flash
@@ -118,12 +148,7 @@ class BitmapRenderer
 		super();
 		#elseif js
 		super();
-		cacheAsBitmap = false;
-		var canvas :Canvas = cast js.Lib.document.createElement("canvas");
-		canvas.width = width;
-		canvas.height = height;
-		_bitmap = canvas;
-		div.appendChild(_bitmap);
+		cacheAsBitmap = true;
 		#end
 	}
 	
@@ -145,24 +170,9 @@ class BitmapRenderer
 		}
 	}
 	#elseif js 
-	override public function drawPixels (ctx :CanvasRenderingContext2D) :Void 
-	{
-		if (_bitmap == null) {
-			_isContentsDirty = true;
-			return;
-		}
-		#if haxedev
-		ctx.drawImage(_bitmap, 0, 0);
-		#else
-		ctx.drawImage(cast _bitmap, 0, 0);
-		#end
-	}
 	public function drawImage (image :Image) :Void
 	{
-		_bitmap.width = image.width;
-		_bitmap.height = image.height;
-		_bitmap.getContext("2d").drawImage(image , 0, 0);
-		recomputeBounds();
+		set_bitmapData(com.pblabs.util.BitmapUtil.toCanvas(image));
 	}
 	#end
 	
@@ -188,48 +198,33 @@ class BitmapRenderer
 		#end
 	}
 	
-	#if js
-	override function set_width (val :Float) :Float
-	{
-		if (_bitmap.width != val) {
-			_bitmap.width = Std.int(val);
-			recomputeBounds();
-		}
-		return super.set_width(val);
-	}
-	
-	override function set_height (val :Float) :Float
-	{
-		if (_bitmap.height != val) {
-			_bitmap.height = Std.int(val);
-			recomputeBounds();
-		}
-		return super.set_height(val);
-	}
-	#end
-	
 	#if flash override #end 
 	function recomputeBounds () :Void
 	{
-		if (_bitmap == null) {
-			return;
+		if (_bitmap != null) {
+			if (_bitmap.width != _unscaledBounds.x || _bitmap.height != _unscaledBounds.y) {
+				_unscaledBounds.x = _bitmap.width;
+				_unscaledBounds.y = _bitmap.height;
+				
+				_bounds.xmin = _x - _registrationPoint.x * _scaleX;
+				_bounds.xmax = _bounds.xmin + _bitmap.width * _scaleX;
+				_bounds.ymin = _y - _registrationPoint.y * _scaleY;
+				_bounds.ymax = _bounds.ymin + _bitmap.height * _scaleY;
+			}
+			// _registrationPoint.x = _bitmap.width / 2;
+			// _registrationPoint.y = _bitmap.height / 2;
+		
+		} else {
+			_unscaledBounds.x = 1;
+			_unscaledBounds.y = 1;
+			_registrationPoint.x = 0;
+			_registrationPoint.y = 0;
+			_bounds.xmin = _x;
+			_bounds.xmax = _x + 1;
+			_bounds.ymin = _y;
+			_bounds.ymax = _y + 1;
 		}
-		
-		var halfWidth = _bitmap.width / 2;
-		var halfHeight = _bitmap.height / 2;
-		_unscaledBounds.x = _bitmap.width;
-		_unscaledBounds.y = _bitmap.height;
-		
-		_scaleX = _scaleY = 1.0;
-		
-		_bounds.xmin = _x - halfWidth * _scaleX;
-		_bounds.xmax = _x + halfWidth * _scaleX;
-		_bounds.ymin = _y - halfHeight * _scaleY;
-		_bounds.ymax = _y + halfHeight * _scaleY;
-		
-		_registrationPoint.x = halfWidth;
-		_registrationPoint.y = halfHeight;
-		
+		// _scaleX = _scaleY = 1.0;
 		isTransformDirty = true;
 	}
 	

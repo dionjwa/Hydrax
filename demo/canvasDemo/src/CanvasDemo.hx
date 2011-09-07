@@ -13,6 +13,7 @@ import com.pblabs.engine.resource.ImageResources;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
+import com.pblabs.geom.Vector2;
 import com.pblabs.util.Assert;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
@@ -53,7 +54,7 @@ class CanvasDemo
 		black.addTask(LocationTask.CreateEaseIn(100,  -100,  3));
 		
 		
-		var man  = SceneUtil.createBaseSceneEntity(ctx);
+		var man  = ctx.createBaseSceneEntity();
 		var image = ctx.allocate(ImageComponent);
 		image.resource = new ResourceToken("man", Source.url("man.png"), ResourceType.IMAGE);
 		image.parentProperty = manLayer.entityProp();

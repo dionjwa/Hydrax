@@ -124,7 +124,7 @@ class HashMap<K, V> implements Map<K, V>
 		Returns an iterator of all values in the hashtable.
 	**/
 	public function iterator() :Iterator<V> {
-		#if haxedev
+		#if (haxedev || haxe_208)
 		return untyped {
 			ref :h,
 			it :__keys__(h).iterator(),

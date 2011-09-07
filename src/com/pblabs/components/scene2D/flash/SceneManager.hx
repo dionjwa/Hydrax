@@ -192,7 +192,7 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 	}
 	#end
 	
-	#if debug_hxhsl
+	#if debug
 	override public function postDestructionCheck () :Void
 	{
 		super.postDestructionCheck();

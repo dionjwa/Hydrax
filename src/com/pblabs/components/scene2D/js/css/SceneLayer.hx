@@ -18,25 +18,22 @@ import js.Dom;
 import js.Lib;
 
 class SceneLayer extends JSLayer
-	// ,implements IAnimatedObject
 {
-	// public var priority :Int;
 	var _tempPoint :Vector2;
 	
 	public function new ()
 	{
 		super();
-		// priority = 0;
 		_tempPoint = new Vector2();
 	}
 	
 	override public function onFrame (dt :Float) :Void
 	{
 		super.onFrame(dt);
-	    if (isTransformDirty) {
-	    	updateTransform();
-	    	isTransformDirty = false;
-	    }
+		if (isTransformDirty) {
+			updateTransform();
+			isTransformDirty = false;
+		}
 	}
 	
 	public function updateTransform () :Void

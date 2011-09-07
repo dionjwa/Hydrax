@@ -70,7 +70,6 @@ class JSLayer extends BaseSceneLayer<JSSceneManager, SceneComponent>
 	{
 		super.onAdd();
 		div.id = name;
-		div.style.cssText = "position:absolute;left:0px;top:0px;";//-webkit-transform:translateZ(0px)
-		//relative
+		div.style.cssText = "position:absolute;left:0px;top:0px;";
 	}
 }

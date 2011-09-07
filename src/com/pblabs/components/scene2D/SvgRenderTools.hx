@@ -14,6 +14,7 @@ using StringTools;
 using com.pblabs.util.NumberUtil;
 using com.pblabs.util.StringUtil;
 using com.pblabs.util.XmlTools;
+using com.pblabs.util.svg.SvgTools;
 
 using de.polygonal.core.math.Mathematics;
 
@@ -107,26 +108,34 @@ class SvgRenderTools
 	
 	public static function renderSvgWithGM2D (svgData :SvgData) :flash.display.DisplayObject
 	{
-		var svg = new gm2d.svg.SVG2Gfx(svgData.xml);
-		var shape = svg.CreateShape();
-		shape.cacheAsBitmap = true;
-		return shape;
+		try {
+			var svg = new gm2d.svg.SVG2Gfx(svgData.xml);
+			var shape = svg.CreateShape();
+			shape.cacheAsBitmap = true;
+			return shape;
+		} catch (e :Dynamic) {
+			trace("Problem rendering svg " + e);
+			trace(svgData.data);
+			throw e;
+			return null;
+		}
 	}
 	#elseif js
-	public static function renderSvg (svgData :SvgData, canvas :Canvas, ?offset :XY, ?cb :Void->Void) :Void
+	public static function renderSvg (svgData :SvgData, canvas :Canvas, ?offset :XY, ?cb :Void->Void, ?ignoreDimensions :Bool = false) :Void
 	{
-		// trace("Rendering svgData=" + svgData);
 		if (svgData.xml.nodeType == Xml.Document) {
 			trace("document at root, " + com.pblabs.util.Log.getStackTrace());
 		}
 		com.pblabs.util.Assert.isNotNull(svgData);
 		com.pblabs.util.Assert.isNotNull(canvas);
-		// com.pblabs.util.Assert.isNotNull(cb);
-		var args = { ignoreMouse :true, ignoreAnimation :true, ignoreDimensions :false, ignoreClear :true, renderCallback :function (?_) :Void {
+		var args = { ignoreMouse :true, ignoreAnimation :true, ignoreDimensions :ignoreDimensions, ignoreClear :true, renderCallback :function (?_) :Void {
 			if (cb != null) {
 				cb();
 			}
 		}};
+		
+		// var xml = svgData.xml;
+		// xml.findElements("g".svgId(), "inkscape:label", ?attributeValue , ?found )
 		
 		if (offset != null && offset.x != 0 && offset.y != 0) {
 			Reflect.setField(args, "offsetX", offset.x);
@@ -134,6 +143,23 @@ class SvgRenderTools
 		}
 		try {
 			untyped canvg(canvas, svgData.data, args);
+	
+			#if debug_graphics
+			var context = canvas.getContext("2d");
+			context.setTransform(1,0,0,1,0,0);
+			context.beginPath();
+			context.moveTo(0, 0);
+			context.lineTo(canvas.width, 0);
+			context.moveTo(canvas.width, 0);
+			context.lineTo(canvas.width, canvas.height);
+			context.moveTo(canvas.width, canvas.height);
+			context.lineTo(0, canvas.height);
+			context.moveTo(0, canvas.height);
+			context.lineTo(0, 0);
+			context.strokeStyle = "#000";
+			context.stroke();
+			#end
+			
 		} catch (e :Dynamic) {
 			com.pblabs.util.Log.error("Error rendering svg from canvg");
 			com.pblabs.util.Log.error(com.pblabs.util.Log.getStackTrace());
@@ -176,7 +202,7 @@ class SvgRenderTools
 		// 	trace(com.pblabs.util.Log.getStackTrace());
 		// }
 		// trace('svgElement.nodeName=' + svgElement.nodeName);
-		if (svgElement.nodeName == "svg:svg" || svgElement.nodeName == "svg") {
+		if (svgElement.nodeName == "svg".svgId()) {
 			return parseElementBounds(svgElement);
 		} else {
 			return getSvgBounds(svgElement.parent);
@@ -188,10 +214,10 @@ class SvgRenderTools
 		if (svgElement == null) {
 			return new Matrix();
 		}
-		var m = parseTransform(svgElement.get("transform"));
+		var m = svgElement.get("transform") == null ? new Matrix() : parseTransform(svgElement.get("transform"));
 		svgElement = svgElement.parent;
-		while (svgElement != null && svgElement.nodeType == Xml.Element && svgElement.nodeName != "svg:svg") {
-			m.concat(parseTransform(svgElement.get("transform")));
+		while (svgElement != null && svgElement.nodeType == Xml.Element && svgElement.nodeName != "svg".svgId()) {
+			m.concat(svgElement.get("transform") == null ? new Matrix() : parseTransform(svgElement.get("transform")));
 			svgElement = svgElement.parent;
 		}
 		return m;
@@ -234,7 +260,7 @@ class SvgRenderTools
 		  scale = Math.sqrt(ioMatrix.a*ioMatrix.a + ioMatrix.c*ioMatrix.c );
 	   }
 	   else {
-		  // trace("Warning, unknown transform :" + inTrans);
+	   	   com.pblabs.util.Log.warn("unknown transform :" + inTrans);
 	   }
 	   return ioMatrix;
 	}
