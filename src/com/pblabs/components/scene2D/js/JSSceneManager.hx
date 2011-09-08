@@ -55,7 +55,9 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 	{
 		com.pblabs.util.Assert.isNotNull(sceneView);
 		com.pblabs.util.Assert.isNotNull(sceneView.layer);
-		sceneView.layer.appendChild(_rootContainer);
+		if (_rootContainer.parentNode != sceneView.layer) { 
+			sceneView.layer.appendChild(_rootContainer);
+		}
 	}
 	
 	override public function detach () :Void
@@ -74,33 +76,25 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 	
 	public function updateTransform() :Void
 	{
-	    for (layer in children) {
-	    	layer.isTransformDirty = true;
-		    // layer.updateTransform();
+		for (layer in children) {
+			layer.isTransformDirty = true;
 		}
 		_transformDirty = false;
 	}
 	
 	override function onAdd () :Void
 	{
-		super.onAdd();
-
 		#if debug
 		com.pblabs.util.Assert.isNotNull(sceneView);
 		com.pblabs.util.Assert.isNotNull(sceneView.layer);
 		#end
-
-		
 		_rootContainer = cast js.Lib.document.createElement("div");
 		_rootContainer.id = name;
-		// sceneView.layer.appendChild(_rootContainer);
-		// var style :js.Dom.Style = {position:absolute};
-		// _rootContainer.style = style;
 		_rootContainer.style.cssText = "position:absolute";
 		#if debug
 		com.pblabs.util.Assert.isNotNull(_rootContainer);
-		// com.pblabs.util.Assert.isNotNull(_rootContainer.parentNode);
 		#end
+		super.onAdd();
 	}
 	
 	override function onRemove () :Void

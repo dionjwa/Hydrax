@@ -265,6 +265,8 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		super.onAdd();	  
 		sceneView = context.getManager(SceneView);
 		com.pblabs.util.Assert.isNotNull(sceneView, "No SceneView");
+		//Custom attachment
+		attach();
 	}
 	
 	override function onReset () :Void
