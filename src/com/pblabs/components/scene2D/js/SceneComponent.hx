@@ -134,7 +134,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		return val;
 	}
 	
-	inline function get_cacheAsBitmap () :Bool
+	function get_cacheAsBitmap () :Bool
 	{
 		return _backBuffer != null;
 	}
@@ -186,16 +186,21 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 				ctx.globalAlpha *= alpha;
 			}
 			if (cacheAsBitmap) {
-				#if haxedev
-				ctx.drawImage(_backBuffer, 0, 0);
-				#else
-				ctx.drawImage(cast _backBuffer, 0, 0);
-				#end
+				renderCachedBuffer(ctx);
 			} else {
 				drawPixels(ctx);
 			}
 			ctx.restore();
 		}
+	}
+	
+	function renderCachedBuffer (ctx :CanvasRenderingContext2D) :Void
+	{
+		#if haxedev
+		ctx.drawImage(_backBuffer, 0, 0);
+		#else
+		ctx.drawImage(cast _backBuffer, 0, 0);
+		#end
 	}
 	
 	public function drawPixels (ctx :CanvasRenderingContext2D)
