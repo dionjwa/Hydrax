@@ -3,12 +3,9 @@
 -cp lib/hsl-pico
 -cp src
 
--lib IterTools
--lib ArrayTools
--lib ListTools
 -lib feffects
 -lib polygonal
+-lib html5
 
 -swf9 build/hydrax.swf
 -D network-sandbox
-# -main AllClasses
