@@ -85,41 +85,48 @@ class BitmapRenderer
 	
 	#if js
 	/** Can also render a js.Image */
+	override function get_cacheAsBitmap () :Bool
+	{
+		return false;
+	}
 	override function set_cacheAsBitmap (val :Bool) :Bool
 	{
-		com.pblabs.util.Assert.isTrue(val, "You are not allowed to un-cacheAsBitmap a js BitmapRenderer");
-		return super.set_cacheAsBitmap(val);
+		return false;
 	}
 	
 	override private function redrawBackBuffer ()
 	{
-		if (_backBuffer == null) {
-			_backBuffer = cast js.Lib.document.createElement("canvas");
-			_backBuffer.width = 1;
-			_backBuffer.height = 1;
-			_backBuffer.style.position = "absolute";
-			// _backBuffer.style.visibility = "hidden";
-			_backBuffer.style.display = "block";
-			//Add to the div display object, so it can be rendered to either CSS or Canvas layers.
-			com.pblabs.util.Assert.isNotNull(div);
-			div.appendChild(_backBuffer);
-			isTransformDirty = true;
-		}
-		_backBuffer.getContext("2d").clearRect(0, 0, _backBuffer.width, _backBuffer.height);
+		com.pblabs.util.Assert.isNotNull(_backBuffer, ' _backBuffer is null');
+		
 		if (_bitmap != null) {
+			com.pblabs.util.Assert.isNotNull(_bitmap, ' _bitmap is null');
 			if (_backBuffer.width != _bitmap.width || _backBuffer.height != _bitmap.height) {
 				_backBuffer.width = _bitmap.width;
 				_backBuffer.height = _bitmap.height;
+			} else {
+				_backBuffer.getContext("2d").clearRect(0, 0, _backBuffer.width, _backBuffer.height);
 			}
 			#if haxedev
 			_backBuffer.getContext("2d").drawImage(_bitmap , 0, 0);
 			#else
 			_backBuffer.getContext("2d").drawImage(cast _bitmap , 0, 0);
 			#end
+		} else {
+			_backBuffer.width = _backBuffer.height = 1;
 		}
 		_isContentsDirty = false;
 	}
 	
+	override function renderCachedBuffer (ctx :CanvasRenderingContext2D) :Void
+	{
+		if (_bitmap != null) {
+			#if haxedev
+			ctx.drawImage(_bitmap, 0, 0);
+			#else
+			ctx.drawImage(cast _bitmap, 0, 0);
+			#end
+		}
+	}
 	#end
 	
 	#if flash
@@ -147,8 +154,18 @@ class BitmapRenderer
 		_displayObject = sprite;
 		super();
 		#elseif js
+		_backBuffer = cast js.Lib.document.createElement("canvas");
+		_backBuffer.width = 1;
+		_backBuffer.height = 1;
+		_backBuffer.style.position = "absolute";
+		// _backBuffer.style.visibility = "hidden";
+		_backBuffer.style.display = "block";
+		//Add to the div display object, so it can be rendered to either CSS or Canvas layers.
 		super();
-		cacheAsBitmap = true;
+		com.pblabs.util.Assert.isNotNull(div);
+		div.appendChild(_backBuffer);
+		isTransformDirty = true;
+		// cacheAsBitmap = false;
 		#end
 	}
 	
@@ -169,7 +186,12 @@ class BitmapRenderer
 			renderTarget.copyPixels(bitmap.bitmapData, bitmap.bitmapData.rect, objectToScreen.transformPoint(zeroPoint), null, null, true);
 		}
 	}
-	#elseif js 
+	#elseif js
+	override public function drawPixels (ctx :CanvasRenderingContext2D)
+	{
+		renderCachedBuffer(ctx);
+	}
+	
 	public function drawImage (image :Image) :Void
 	{
 		set_bitmapData(com.pblabs.util.BitmapUtil.toCanvas(image));
