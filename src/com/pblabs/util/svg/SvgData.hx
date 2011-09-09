@@ -32,6 +32,9 @@ class SvgData
 	{
 		if (_xml == null) {
 			_xml = Xml.parse(data).ensureNotDocument();
+			#if js
+			removeJunk(_xml);
+			#end
 		}
 		return _xml;
 	}
@@ -55,6 +58,9 @@ class SvgData
 		_replacements = new SvgReplacements(replacements);
 		if (xml != null && replacements == null) {
 			_xml = xml.ensureNotDocument();
+			#if js
+			removeJunk(_xml);
+			#end
 		}
 		if (_data != null && replacements != null && replacements.length > 0) {
 			_data = SvgReplace.processReplacements(_data, _replacements);
@@ -87,6 +93,19 @@ class SvgData
 	}
 	
 	#if js
+	/**
+	* If these elements are not removed, canvg fills up the log with errors.
+	*/
+	  static function removeJunk (xml :Xml) :Void
+	  {
+		for (junkElementName in ["metadata", "sodipodi:namedview"]) {
+			var junk = xml.findElement(junkElementName);
+			if (junk != null && junk.parent != null) {
+				junk.parent.removeChild(junk);
+			}
+		}
+	}
+	
 	/**
 	  * innerHTML does not allow the svg prelude junk.
 	  */
