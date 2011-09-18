@@ -1,4 +1,4 @@
-#Builds the flash swc fuck
+#Builds the flash swc
 -cp lib/hsl
 -cp lib/hsl-pico
 -cp src
