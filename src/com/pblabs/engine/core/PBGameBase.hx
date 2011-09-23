@@ -30,12 +30,21 @@ using Lambda;
 
 using com.pblabs.util.ArrayUtil;
 
+/**
+  * Defines transitions between contexts.  When the transition is finished, the callback is called.
+  * The first IPBContext is the currently inactive context (the previous). This can be null.
+  * The second is the currently active context (the new context).  This usually isn't null, but could be
+  * if it's the first context and should appear with a transition effect.
+  */
+typedef PBContextTransitionEffect = IPBContext->IPBContext->(Void->Void)->Void; 
+
 enum	ContextTransition {
-	PUSH(c :IPBContext);
-	POP(c :IPBContext);
-	CHANGE(oldContext :IPBContext, newContext :IPBContext);
-	REMOVE(c :IPBContext);
-	ROLL_BACK_UNTIL(cls :Class<Dynamic>);//Must be an IPBContext
+	PUSH(c :IPBContext, effect :PBContextTransitionEffect);
+	POP(c :IPBContext, effect :PBContextTransitionEffect);
+	PLACE_ON_TOP(c :IPBContext, effect :PBContextTransitionEffect);
+	CHANGE(oldContext :IPBContext, newContext :IPBContext, effect :PBContextTransitionEffect);
+	REMOVE(c :IPBContext, effect :PBContextTransitionEffect);
+	ROLL_BACK_UNTIL(cls :Class<Dynamic>, effect :PBContextTransitionEffect);//Must be an IPBContext
 }
 
 /**
@@ -57,6 +66,12 @@ class PBGameBase
 	public var signalContextExit (default, null) :Signaler<IPBContext>;
 	var injector :Injector;
 
+	public var contexts (get_contexts, never) :Array<IPBContext>;
+	function get_contexts () :Array<IPBContext>
+	{
+		return _contexts != null ? _contexts.copy() : [];
+	}
+	
 	var _contexts :Array<IPBContext>;
 	var _contextTransitions :Array<ContextTransition>;
 	var _isUpdatingContextTransition :Bool;
@@ -172,60 +187,43 @@ class PBGameBase
 		return i;
 	}
 	
-	// public function pushContext (ctx :IPBContext) :IPBContext
-	// {
-	// 	_contextTransitions.push(ContextTransition.PUSH(ctx));
-	// 	return ctx;
-	// }
-	
-	// public function popContext () :Void
-	// {
-	//     _contextTransitions.push(ContextTransition.POP(currentContext));
-	// }
-	
-	// public function changeContext (oldContext :IPBContext, newContext :IPBContext) :Void
-	// {
-	// 	com.pblabs.util.Assert.isNotNull(oldContext);
-	// 	com.pblabs.util.Assert.isNotNull(newContext);
-	// 	com.pblabs.util.Assert.isTrue(oldContext != newContext); 
-	//     _contextTransitions.push(ContextTransition.CHANGE(oldContext, newContext));
-	// }
-	
-	// public function removeContext (c :IPBContext) :Void
-	// {
-	// 	_contextTransitions.push(ContextTransition.REMOVE(c));
-	// }
-	
-	public function pushContext <T>(c :Class<T>) :T
+	public function pushContext <T>(c :Class<T>, ?effect :PBContextTransitionEffect) :T
 	{
 		var ctx = allocate(c);
-		_contextTransitions.push(ContextTransition.PUSH(cast ctx));
+		_contextTransitions.push(ContextTransition.PUSH(cast ctx, effect));
 		return ctx;
 	}
 	
-	public function popContext () :Void
+	public function setTopContext (ctx :IPBContext, ?effect :PBContextTransitionEffect) :IPBContext
 	{
-	    _contextTransitions.push(ContextTransition.POP(currentContext));
+		com.pblabs.util.Assert.isNotNull(ctx, ' ctx is null');
+		_contextTransitions.push(ContextTransition.PLACE_ON_TOP(ctx, effect));
+		return ctx;
 	}
 	
-	public function changeContext (oldContext :IPBContext, c :Class<Dynamic>) :Dynamic
+	public function popContext (?effect :PBContextTransitionEffect) :Void
+	{
+	    _contextTransitions.push(ContextTransition.POP(currentContext, effect));
+	}
+	
+	public function changeContext (oldContext :IPBContext, c :Class<Dynamic>, ?effect :PBContextTransitionEffect) :Dynamic
 	{
 		var newContext :IPBContext = allocate(c);
 		com.pblabs.util.Assert.isNotNull(oldContext);
 		com.pblabs.util.Assert.isNotNull(newContext);
 		com.pblabs.util.Assert.isTrue(oldContext != newContext); 
-	    _contextTransitions.push(ContextTransition.CHANGE(oldContext, newContext));
+	    _contextTransitions.push(ContextTransition.CHANGE(oldContext, newContext, effect));
 	    return newContext;
 	}
 	
-	public function removeContext (c :IPBContext) :Void
+	public function removeContext (c :IPBContext, ?effect :PBContextTransitionEffect) :Void
 	{
-		_contextTransitions.push(ContextTransition.REMOVE(c));
+		_contextTransitions.push(ContextTransition.REMOVE(c, effect));
 	}
 	
-	public function rollBackUntil (c :Class<Dynamic>) :Void
+	public function rollBackUntil (c :Class<Dynamic>, ?effect :PBContextTransitionEffect) :Void
 	{
-		_contextTransitions.push(ContextTransition.ROLL_BACK_UNTIL(c));
+		_contextTransitions.push(ContextTransition.ROLL_BACK_UNTIL(c, effect));
 	}
 	
 	public function callLater (f :Void->Dynamic) :Void
@@ -289,16 +287,34 @@ class PBGameBase
 		
 		com.pblabs.engine.debug.Profiler.enter("updateContextTransitions");
 		var self = this;
-		var removeCurrentContext = function () :Void {
-			var c = self._currentContext;
+		
+		if (_currentContext != null) {
+			_currentContext.getManager(IProcessManager).isRunning = false;
+		}
+		var previousContext = _currentContext;
+		var transition :PBContextTransitionEffect = null;
+		var functionStack :Array<Void->Void> = [];
+		
+		var exit = function (c :IPBContext) :Void->Void {
+			return function () :Void {
+				c.exit();
+				self.signalContextExit.dispatch(c);
+				c.getManager(IProcessManager).isRunning = false;
+			}
+		}
+		
+		var destroy = function (c :IPBContext) :Void->Void {
+			return function () :Void {
+				self.signalContextShutdown.dispatch(c);
+				c.shutdown();
+			}
+		}
+		
+		var destroyCurrentContext = function () :Void {
+			functionStack.push(exit(self._currentContext));
+			functionStack.push(destroy(self._currentContext));
+			self._contexts.remove(self._currentContext);
 			self._currentContext = null;
-			com.pblabs.util.Assert.isNotNull(c);
-			c.getManager(IProcessManager).isRunning = false;
-			self._contexts.remove(c);
-			c.exit();
-			self.signalContextExit.dispatch(c);
-			self.signalContextShutdown.dispatch(c);
-			c.shutdown();
 		}
 		
 		
@@ -307,71 +323,120 @@ class PBGameBase
 		while (_contextTransitions.length > 0) {
 			var nextTransition = _contextTransitions.shift();//Removes the first element and returns it.
 			switch (nextTransition) {
-				case PUSH(c):
+				case PUSH(c, effect):
+					transition = effect;
 					if (_currentContext != null) {
-						_currentContext.exit();
-						signalContextExit.dispatch(_currentContext);
+						functionStack.push(exit(_currentContext));
+						// toExit.pushIfNotIn(_currentContext);
+						// _currentContext.exit();
+						// signalContextExit.dispatch(_currentContext);
 						_currentContext = null;
 					}
 					_contexts.push(c);
-				case POP(c):
+				case POP(c, effect):
+					transition = effect;
 					if (_currentContext == c) {
-						removeCurrentContext();
-					} else {
-						_contexts.remove(c);
-						c.shutdown();
+						functionStack.push(exit(_currentContext));
+						// functionStack.push(destroy(_currentContext));
+						// toDestroy.pushIfNotIn(_currentContext);
+						_currentContext = null;
+						// removeCurrentContext();
+					// } else {
+						
+					// 	signalContextShutdown.dispatch(c);
+					// 	c.shutdown();
 					}
-				case CHANGE(oldContext, newContext):
+					functionStack.push(destroy(c));
+					_contexts.remove(c);
+					
+				case CHANGE(oldContext, newContext, effect):
+					transition = effect;
 					com.pblabs.util.Assert.isNotNull(oldContext);
 					if (_currentContext == oldContext) {
-						removeCurrentContext();
+						destroyCurrentContext();
+						// functionStack.push(exit(_currentContext));
+						// functionStack.push(destroy(_currentContext));
+						// _contexts.remove(_currentContext);
+						// _currentContext = null;
+						// removeCurrentContext();
 						_contexts.push(newContext);
 					} else {
 						var idx = _contexts.indexOf(oldContext);
 						com.pblabs.util.Assert.isWithinRange(idx, 0, _contexts.length);
 						_contexts[idx] = newContext;
-						signalContextShutdown.dispatch(oldContext);
-						oldContext.shutdown();
-					} 
-				case REMOVE(c):
+						functionStack.push(destroy(oldContext));
+						// signalContextShutdown.dispatch(oldContext);
+						// oldContext.shutdown();
+					}
+					
+				case REMOVE(c, effect):
+					transition = effect;
 					if (c == _currentContext) {
-						removeCurrentContext();
+						destroyCurrentContext();
+						// removeCurrentContext();
 					} else {
+						functionStack.push(destroy(c));
 						_contexts.remove(c);
 					}
-				case ROLL_BACK_UNTIL(c):
-					if (_currentContext != null && Std.is(_currentContext, c)) {
-						removeCurrentContext();
-						_contexts.push(allocate(c));
+				case ROLL_BACK_UNTIL(cls, effect):
+					transition = effect;
+					if (_currentContext != null && Std.is(_currentContext, cls)) {
+						functionStack.push(exit(_currentContext));
+						// removeCurrentContext();
+						// _contexts.push(allocate(c));
 					} else {
 						if (_currentContext != null) {
-							removeCurrentContext();
+							destroyCurrentContext();
 						}
-						while (_contexts.length > 0) {
+						while (_contexts.length > 0 && !Std.is(_contexts[_contexts.length - 1], cls)) {
 							var ctx = _contexts.pop();
-							signalContextShutdown.dispatch(ctx);
-							ctx.shutdown();
-							if (Std.is(ctx, c)) {
-								break;
-							}
+							functionStack.push(destroy(ctx));
+							// signalContextShutdown.dispatch(ctx);
+							// ctx.shutdown();
 						}
-						_contexts.push(allocate(c));
+						if (_contexts.length == 0) {
+							_contexts.push(allocate(cls));
+						}
 					}
+				case PLACE_ON_TOP(c, effect):
+					transition = effect;
+					
+					if (_currentContext != null) {
+						functionStack.push(exit(_currentContext));
+						_currentContext != null;
+					}
+					
+					_contexts.remove(c);
+					_contexts.push(c);
+					
+					// if (c != _currentContext) {
+					// 	removeCurrentContext();
+					// 	_contexts.remove(c);
+					// 	_contexts.push(c);
+					// } else {
+					// 	// c.exit();
+					// 	functionStack.push(exit(c));
+					// }
 			}
 		}
 		
+		//Define function for all the exiting/destroying
+		var doExitDestroyActions = function () :Void {
+			// trace("doExitDestroyActions");
+			while (functionStack.length > 0) {
+				functionStack.shift()();
+			}
+		}
+		
+		//Local function for new context
+		// var activateNewContext = function () :Void {
+			
 		_currentContext = _contexts[_contexts.length - 1];
 		_isUpdatingContextTransition = false;
 		_contextProcessManager = null;
-		
+	
 		if (_currentContext != null) {
 			com.pblabs.util.Assert.isNotNull(this.currentContext, ' this.currentContext is null');
-			// if (!_currentContext.isSetup) {
-			// 	//Fire setup
-			// 	signalContextSetup.dispatch(_currentContext);
-			// 	_currentContext.setup();
-			// }
-			
 			//Dispatch the signaller first, so that managers are notified.
 			com.pblabs.util.Log.debug("New current context=" + _currentContext);
 			signalContextEnter.dispatch(_currentContext);
@@ -381,12 +446,18 @@ class PBGameBase
 		} else {
 			com.pblabs.util.Log.debug("No current context");
 		}
+		// }
+	
+		//Now that the local functions are defined, do the scene transition if there
+		if (transition != null) {
+			// trace("doing transition ");
+			transition(previousContext, _currentContext, doExitDestroyActions);
+		} else {
+			doExitDestroyActions();
+			// activateNewContext();
+		}
 		
 		com.pblabs.engine.debug.Profiler.exit("updateContextTransitions");
-		// #if (debug && profiler)
-		// trace("Profiling context transition:");
-		// com.pblabs.engine.debug.Profiler.report();
-		// #end
 	}
 	
 	function init () :Void
