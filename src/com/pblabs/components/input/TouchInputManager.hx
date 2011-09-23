@@ -34,13 +34,17 @@ class TouchInputManager extends BaseInputManager
 	public var touchStart (default, null) :Signaler<TouchEvent>;
 	public var touchMove (default, null) :Signaler<TouchEvent>;
 	public var touchEnd (default, null) :Signaler<TouchEvent>;
+	/** Not yet implemented  http://www.netcu.de/jquery-touchwipe-iphone-ipad-library */
+	public var swipe (default, null) :Signaler<SwipeData>;
+	public var preventDefault :Bool;
 	
 	/** Currently not implemented */
 	public var convertTouchEventsToMouse :Bool;
 	
-	public function new (?convertToMouseEvents :Bool = true)
+	public function new (?convertToMouseEvents :Bool = true, ?preventDefault :Bool = true)
 	{
 		super();
+		this.preventDefault = preventDefault;
 		convertTouchEventsToMouse = convertToMouseEvents;
 	}
 	
@@ -56,7 +60,9 @@ class TouchInputManager extends BaseInputManager
 		if (convertTouchEventsToMouse && mouse != null) {
 			var self = this;
 			touchStart.bind(function (e :TouchEvent) :Void {
-				e.preventDefault();
+				if (preventDefault) {
+					e.preventDefault();
+				}
 				#if testing
 				var s = "";
 				for (touch in e.touches) {
@@ -91,7 +97,9 @@ class TouchInputManager extends BaseInputManager
 			});
 			
 			touchMove.bind(function (e :TouchEvent) :Void {
-				e.preventDefault();
+				if (preventDefault) {
+					e.preventDefault();
+				}
 				#if testing
 				var s = "";
 				for (touch in e.changedTouches) {
@@ -112,7 +120,9 @@ class TouchInputManager extends BaseInputManager
 			});
 			
 			touchEnd.bind(function (e :TouchEvent) :Void {
-				e.preventDefault();
+				if (preventDefault) {
+					e.preventDefault();
+				}
 				#if testing
 				var s = "";
 				for (touch in e.changedTouches) {
@@ -145,19 +155,21 @@ class TouchInputManager extends BaseInputManager
 		com.pblabs.util.Assert.isFalse(touchStart.isListenedTo);
 		com.pblabs.util.Assert.isFalse(touchMove.isListenedTo);
 		com.pblabs.util.Assert.isFalse(touchEnd.isListenedTo);
+		com.pblabs.util.Assert.isFalse(swipe.isListenedTo);
 		#end
 		touchStart = null;
 		touchMove = null;
 		touchEnd = null;
+		swipe = null;
 		#end
 	}
 	
 	function bindSignals () :Void
 	{
 		#if js
-		touchStart = new hsl.js.translating.JSSignaler(this, js.Lib.document, JSEventType.TOUCHSTART, new hsl.js.translation.touch.TouchTranslator());
-		touchMove = new hsl.js.translating.JSSignaler(this, js.Lib.document, JSEventType.TOUCHMOVE, new hsl.js.translation.touch.TouchTranslator());
-		touchEnd = new hsl.js.translating.JSSignaler(this, js.Lib.document, JSEventType.TOUCHEND, new hsl.js.translation.touch.TouchTranslator());
+		touchStart = new hsl.js.translating.JSSignaler(this, js.Lib.document, JSEventType.TOUCHSTART, new hsl.js.translation.touch.TouchTranslator(false));
+		touchMove = new hsl.js.translating.JSSignaler(this, js.Lib.document, JSEventType.TOUCHMOVE, new hsl.js.translation.touch.TouchTranslator(false));
+		touchEnd = new hsl.js.translating.JSSignaler(this, js.Lib.document, JSEventType.TOUCHEND, new hsl.js.translation.touch.TouchTranslator(false));
 		#else
 		com.pblabs.util.Log.error("Platform gestures are not yet implemented.  Currently JS only.");
 		#end
