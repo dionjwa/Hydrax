@@ -89,10 +89,10 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	public function new ()
 	{
 		super();
-		setDefaultVars();
+		setDefaults();
 	}
 	
-	function setDefaultVars () :Void
+	function setDefaults () :Void
 	{
 		localZoom = 1;
 		_alpha = 1;
@@ -207,7 +207,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	{
 		super.onRemove();
 		//Reset defaults in case we are pooled
-		setDefaultVars();
+		setDefaults();
 	}
 	
 	function get_layer () :BaseSceneLayer<Dynamic, Dynamic>
