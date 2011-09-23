@@ -16,7 +16,12 @@ import com.pblabs.util.Preconditions;
 import de.polygonal.core.math.Mathematics;
 import de.polygonal.motor2.geom.math.XY;
 
+import hsl.haxe.DirectSignaler;
+import hsl.haxe.Signaler;
+
 using StringTools;
+
+using com.pblabs.geom.VectorTools;
 #if js
 import js.Dom;
 #end
@@ -32,7 +37,8 @@ import js.Dom;
  *
  * In javascript, you theoretically
  * could have multiple HTML elements be different rendering
- * and input surfaces.
+ * and input surfaces, however currently this class assumes you
+ * only have one.  This is more important on mobile devices.
  */
 class SceneView 
 	implements IPBManager, implements haxe.rtti.Infos
@@ -48,6 +54,8 @@ class SceneView
 	public var height(get_height, set_height) : Int;
 	public var width(get_width, set_width) : Int;
 	public var fullScreen :Bool;
+	
+	public var sizeChangeSignaler (default, null) :Signaler<XY>;
 
 	#if (flash || cpp)	
 	public var layer (get_layer, null) :flash.display.Sprite;
@@ -70,24 +78,18 @@ class SceneView
 	public function new (?width :Int = 0, ?height :Int = 0)
 	#end
 	{
+		sizeChangeSignaler = new DirectSignaler(this);
 		#if js
 		_width = width;
 		_height = height;
 		fullScreen = true;
-		_maxWidth = 960;
+		_maxWidth =  960;
 		_maxHeight = 640;
 		//Default div id
 		layerId = "haxeSceneView";
+		//This is used by the transform operations.
 		var webkitRE :EReg = ~/.*AppleWebKit.*/;
 		isWebkitBrowser = webkitRE.match(js.Lib.window.navigator.userAgent);
-		// //Check for browser type (for css transform strings)
-		// 	#if debug
-		// 		var jQueryLoadedMissing :Bool = untyped __js__("typeof jQuery == 'undefined'");
-		// 		if (jQueryLoadedMissing) {
-		// 			throw "JQuery missing, please add to html";
-		// 		}
-		// 	#end
-		// isWebkitBrowser = JQuery._static.browser.webkit == true;
 		#elseif (flash || cpp)
 		_layer = new flash.display.Sprite();
 		_layer.mouseChildren = false;
@@ -123,6 +125,12 @@ class SceneView
 			_layer.parent.removeChild(_layer);
 		}
 		#end
+		
+		#if debug
+		haxe.Timer.delay(function () :Void {
+			com.pblabs.util.Assert.isFalse(sizeChangeSignaler.isListenedTo, "sizeChangeSignaler.isListenedTo == true");
+		}, 100);
+		#end
 	}
 	
 	function get_height ():Int{
@@ -139,6 +147,7 @@ class SceneView
 		#else
 		_height = value;
 		#end
+		sizeChangeSignaler.dispatch(new com.pblabs.geom.Vector2(width, height));
 		return value;
 	}
 
@@ -157,6 +166,7 @@ class SceneView
 		#else
 		_width = value;
 		#end
+		sizeChangeSignaler.dispatch(new com.pblabs.geom.Vector2(width, height));
 		return value;
 	}
 	
@@ -235,22 +245,64 @@ class SceneView
 			Preconditions.checkNotNull(_layerId, "no layer, and layerId is null");
 			_layer = cast js.Lib.document.getElementById(_layerId);
 			com.pblabs.util.Assert.isNotNull(_layer, "No element with id=" + _layerId);
-			_width = Std.parseInt(_layer.style.width.replace("px", ""));
-			_height = Std.parseInt(_layer.style.height.replace("px", ""));
-			//Prevent text selection
+			onOrientationChange(0);
+			
+			//Prevent text selection.  This may not be desired, but I'm not sure where to put this otherwise.
 			untyped _layer.onselectstart = function () { return false; };//ie
 			untyped _layer.onmousedown = function () { return false; };//mozilla
-			#if debug
-			_layer.style.borderColor = "#0000ff";
-			var border = 3;
-			_layer.style.borderWidth = border + "px";
-			width -= border * 2;
-			height -= border * 2;
-			#end
 		}
 		com.pblabs.util.Assert.isNotNull(_layer, "Could not find HTML element with id=" + _layerId);
 		
 		return _layer;
+	}
+	
+	/**
+	  * Adjust our screen dimensions, and notify listeners.
+	  * This is currently called by the OrientationManager, and assumes 
+	  * you want the screen to be adjusted by the new width/height.
+	  * For mobile devices, this assumes the SceneView is the full screen.
+	  */
+	public function onOrientationChange (degreesRotation :Int) :Void
+	{
+		if (com.pblabs.util.Device.isMobileBrowser) {
+			var rawScreenDimensions = if (com.pblabs.util.Device.browser == com.pblabs.util.Device.Browser.SAFARI_IOS) {
+				com.pblabs.util.Device.ScreenDimensions.iOs3g;
+			} else {//TODO: others?  Compute from javascript?
+				com.pblabs.util.Device.ScreenDimensions.iOs3g;
+			}
+			
+			var topMenuHeight = 20;
+			
+			var dimensions = switch (degreesRotation) {
+				case 0, 180:
+					if (com.pblabs.util.Device.browser == com.pblabs.util.Device.Browser.SAFARI_IOS) {
+						new Vector2(rawScreenDimensions.x, rawScreenDimensions.y - topMenuHeight);
+					} else {
+						new Vector2(rawScreenDimensions.x, rawScreenDimensions.y - topMenuHeight);
+					}
+				case 90, -90:
+					if (com.pblabs.util.Device.browser == com.pblabs.util.Device.Browser.SAFARI_IOS) {
+						new Vector2(rawScreenDimensions.y, rawScreenDimensions.x - topMenuHeight);
+					} else {
+						new Vector2(rawScreenDimensions.y, rawScreenDimensions.x - topMenuHeight);
+					}
+			}
+			width = Std.int(dimensions.x);
+			height = Std.int(dimensions.y);
+		} else {
+			//Change for desktop browsers?
+			//No firing scene change, because it doesn't
+			_width = Std.parseInt(_layer.style.width.replace("px", ""));
+			_height = Std.parseInt(_layer.style.height.replace("px", ""));
+		}
+		
+		#if debug
+		_layer.style.borderColor = "#0000ff";
+		var border = 1;
+		_layer.style.borderWidth = border + "px";
+		width -= border * 2;
+		height -= border * 2;
+		#end
 	}
 	
 	function set_layer (val :js.HtmlDom) :js.HtmlDom
@@ -275,8 +327,7 @@ class SceneView
 		// com.pblabs.util.Log.warn("Currently disabled");
 		// return new Vector2();
 		#if debug
-			var jQueryLoadedMissing :Bool = untyped __js__("typeof jQuery == 'undefined'");
-			if (jQueryLoadedMissing) {
+			if (!com.pblabs.util.JsLibs.isJQuery) {
 				throw "JQuery missing, please add to html";
 			}
 		#end
