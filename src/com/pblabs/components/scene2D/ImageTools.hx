@@ -12,8 +12,12 @@ import com.pblabs.engine.resource.SvgResources;
 import com.pblabs.util.Comparators;
 import com.pblabs.util.svg.SvgData;
 import com.pblabs.util.svg.SvgReplace;
+
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.util.PBUtil;
+using com.pblabs.components.util.DataComponent;
+
+using Lambda;
 
 /**
   * "using" methods for adding and setting image data and/or components.
@@ -39,6 +43,8 @@ class ImageTools
 			 y="0"
 			 id="tspan3769">$T</tspan></text>
 	</svg>';
+	
+	static var DEVICE_DOWN_LAYERS :String = "deviceDownLayers";
 	
 	public static function getImageComponentForResourceType (type :ResourceType) :Class<Dynamic>
 	{
@@ -82,13 +88,17 @@ class ImageTools
 	
 	/** Converts Svg to Bitmap */
 	public static function addSvg (e :IEntity, layer :BaseSceneLayer<Dynamic, Dynamic>, token :ResourceToken, 
-		?replacements :Array<SvgReplace>, ?componentName :String, ?cache :Bool = true) :IEntity 
+		?replacements :Array<SvgReplace>, ?componentName :String, ?cache :Bool = true, ?isForDeviceDown :Bool = false) :IEntity 
 	{
 		if (cache) {
 			var svgComp = e.context.allocate(BitmapRenderer);
 			componentName = componentName != null ? componentName : token.id + "_" + svgComp.key;
 			svgComp.parentProperty = layer.entityProp();
 			e.addComponent(svgComp, componentName);
+			
+			if (isForDeviceDown) {
+				setAsDeviceDownLayer(e, svgComp); 
+			}
 			
 			com.pblabs.util.svg.SvgRenderQueueManager.getBitmapData(e.context, token, replacements, 
 				function (image :com.pblabs.components.scene2D.ImageData) :Void {
@@ -99,21 +109,53 @@ class ImageTools
 					}
 				});
 		} else {
-			
 			var svgToken = SvgResources.getSvgResourceToken(e.context, token, replacements);
 			var svgData = e.context.getManager(IResourceManager).get(svgToken);
 			com.pblabs.util.Assert.isNotNull(svgData, ' svgData is null for ' + svgToken);
 			var svgComp = e.context.allocate(Svg);
 			svgComp.svgData = svgData;
 			svgComp.parentProperty = layer.entityProp();
-			e.addComponent(svgComp);
+			componentName = componentName != null ? componentName : token.id + "_" + svgComp.key;
+			e.addComponent(svgComp, componentName);
+			
+			if (isForDeviceDown) {
+				setAsDeviceDownLayer(e, svgComp); 
+			}
 		}
 		
 		return e;
 	}
 	
+	public static function setAsDeviceDownLayer (e :IEntity, comp :BaseSceneComponent<Dynamic>) :Void
+	{
+		var deviceDownLayers :Array<BaseSceneComponent<Dynamic>> = e.getEntityData(DEVICE_DOWN_LAYERS); 
+		if (deviceDownLayers == null) {
+			deviceDownLayers = [];
+			e.setEntityData(DEVICE_DOWN_LAYERS, deviceDownLayers);
+		}
+		deviceDownLayers.push(comp);
+	}
+	
+	public static function getDeviceDownLayers (e :IEntity) :Array<BaseSceneComponent<Dynamic>>
+	{
+		var deviceDownLayers :Array<BaseSceneComponent<Dynamic>> = e.getEntityData(DEVICE_DOWN_LAYERS); 
+		return deviceDownLayers != null ? deviceDownLayers : [];
+	}
+	
+	public static function getDeviceUpLayers (e :IEntity) :Array<BaseSceneComponent<Dynamic>>
+	{
+		var deviceDownLayers :Array<BaseSceneComponent<Dynamic>> = e.getEntityData(DEVICE_DOWN_LAYERS);
+		var deviceUpLayers = [];
+		for (sc in e.getComponents(BaseSceneComponent)) {
+			if (deviceDownLayers == null || !deviceDownLayers.has(sc)) {
+				deviceUpLayers.push(sc);
+			}
+		}
+		return deviceUpLayers;
+	}
+	
 	public static function addImage (e :IEntity, layer :BaseSceneLayer<Dynamic, Dynamic>, ?token :ResourceToken, 
-		?componentName :String) :IEntity 
+		?componentName :String, ?isForDeviceDown :Bool = false) :IEntity 
 	{
 		if (token != null) {
 			switch (token.type) {
@@ -127,6 +169,10 @@ class ImageTools
 		componentName = componentName != null  ? componentName : (token != null ? token.id + "_" + imageComp.key : "BitmapRenderer");
 		imageComp.parentProperty = layer.entityProp();
 		e.addComponent(imageComp, componentName);
+		
+		if (isForDeviceDown) {
+			setAsDeviceDownLayer(e, imageComp); 
+		}
 		
 		if (token != null) {
 			switch (token.type) {
