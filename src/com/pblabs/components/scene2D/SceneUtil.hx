@@ -100,7 +100,7 @@ class SceneUtil
 		return e;
 	}
 	
-	public static function addSceneComponentToEntity (e :IEntity, compClass :Class<Dynamic>, 
+	public static function addSceneComponent (e :IEntity, compClass :Class<Dynamic>, 
 		layer :BaseSceneLayer<Dynamic, Dynamic>, ?entityName :String) :IEntity
 	{
 		com.pblabs.util.Assert.isNotNull(e, ' e is null');
@@ -119,12 +119,15 @@ class SceneUtil
 		return e;
 	}
 	
-	public static function setSceneAlignment (e :IEntity, a :SceneAlignment) :IEntity
+	public static function setSceneAlignment (e :IEntity, a :SceneAlignment, ?layer :BaseSceneLayer<Dynamic, Dynamic>) :IEntity
 	{
-		var sc = e.getComponent(BaseSceneComponent);
-		com.pblabs.util.Assert.isNotNull(sc, ' sc is null');
+		if (layer == null) {
+			var sc = e.getComponent(BaseSceneComponent);
+			com.pblabs.util.Assert.isNotNull(sc, ' sc is null');
+			layer = sc.layer;
+		}
 		com.pblabs.util.Assert.isNotNull(e.getComponent(SpatialComponent), ' e.getComponent(SpatialComponent) is null');
-		var p = getAlignedPoint(sc.layer.scene, a);
+		var p = getAlignedPoint(layer.scene, a);
 		e.getComponent(SpatialComponent).setLocation(p.x, p.y);
 		return e;
 	}
@@ -212,6 +215,8 @@ class SceneUtil
 			case BOTTOM_RIGHT :
 				outPoint.x = sceneWidth;
 				outPoint.y = sceneHeight;
+			default:
+				throw "Not implemented";
 		}
 		return outPoint;
 	}
@@ -240,6 +245,11 @@ class SceneUtil
 					case BOTTOM_RIGHT :
 						borderPoint.x = sceneWidth / 2;
 						borderPoint.y = sceneHeight / 2;
+					case TOP_CENTER :
+						borderPoint.x = 0;
+						borderPoint.y = -sceneHeight / 2;
+					default :
+						throw "Not implemented";
 					}
 			case TOP_LEFT :
 				switch (borderAlignment) {
@@ -258,12 +268,13 @@ class SceneUtil
 					case BOTTOM_RIGHT :
 						borderPoint.x = sceneWidth;
 						borderPoint.y = sceneHeight;
+					case TOP_CENTER :
+						borderPoint.x = sceneWidth / 2;
+						borderPoint.y = 0;
+					default :
+						throw "Not implemented";
 					}
-			case TOP_RIGHT :
-				throw "Not implemented";
-			case BOTTOM_LEFT :
-				throw "Not implemented";
-			case BOTTOM_RIGHT :
+			default :
 				throw "Not implemented";
 		}
 		return borderPoint;
