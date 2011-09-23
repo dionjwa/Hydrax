@@ -117,7 +117,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		return super.set_isTransformDirty(val);
 	}
 	
-	function createCanvas () :Canvas
+	static function createCanvas () :Canvas
 	{
 		var canvas :Canvas = cast js.Lib.document.createElement("canvas");
 		canvas.style.cssText = "position:relative;left:0px;top:0px;-webkit-transform:translateZ(0px)";
