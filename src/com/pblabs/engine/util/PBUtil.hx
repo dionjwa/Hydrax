@@ -77,6 +77,16 @@ class PBUtil
 		return inst;
 	}
 	
+	public static function ensureComponent <T> (e :IEntity, cls :Class<T>, ?name :String) :T
+	{
+		var comp = e.getComponent(cls);
+		if (comp == null) {
+			comp = e.context.allocate(cls);
+			e.addComponent(cast comp, name);
+		}
+		return comp;
+	}
+	
 	public static function setComponentProperty <T> (c :IEntityComponent, field :String, value :Dynamic) :IEntity
 	{
 		if (!field.startsWith("set_") && Type.getInstanceFields(Type.getClass(c)).has("set_" + field)) {
