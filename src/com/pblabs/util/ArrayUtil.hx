@@ -44,6 +44,12 @@ class ArrayUtil
 	{
 		return removeIfImpl(arr, element, true);
 	}
+	
+	public static function pushIfNotIn (arr :Array<Dynamic>, element :Dynamic) :Void
+	{
+		arr.remove(element);
+		arr.push(element);
+	}
 
 	/**
 	 * Removes all instances of the specified element from the array.
