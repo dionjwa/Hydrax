@@ -5,6 +5,7 @@ import Type;
 import com.pblabs.components.minimalcomp.VBox;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.scene2D.BaseSceneLayer;
+import com.pblabs.components.scene2D.Direction;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
@@ -15,10 +16,11 @@ import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 import com.pblabs.util.ds.maps.MapBuilder;
 
-using Type;
-
 using Lambda;
 
+using Type;
+
+using com.pblabs.components.input.InputTools;
 using com.pblabs.engine.util.PBUtil;
 using com.pblabs.util.ArrayUtil;
 using com.pblabs.util.IterUtil;
@@ -145,6 +147,19 @@ class MCompTools
 		comp.id = id;
 		return e;
 	}
+	
+	public static function invalidateOnOrientationChange (e :IEntity) :IEntity
+	{
+		var comp = e.getComponent(Component);
+		if (comp != null) {
+			e.setOnOrientationChange(function(_) :Void {
+				// trace("invalidating because of orientation change");
+				comp.invalidate();
+			});
+		}
+		return e;
+	}
+	
 	
 	static function ensureComponent (e :IEntity) :Component
 	{
