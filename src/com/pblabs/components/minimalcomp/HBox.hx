@@ -1,6 +1,7 @@
 package com.pblabs.components.minimalcomp;
 
 import com.pblabs.components.scene2D.BaseSceneComponent;
+import com.pblabs.components.scene2D.Direction;
 import com.pblabs.engine.time.IAnimatedObject;
 
 class HBox extends Container
@@ -17,6 +18,7 @@ class HBox extends Container
 	override public function redraw () :Void
 	{
 		if (_children == null || children.length == 0) {
+			redrawSignal.dispatch(this);
 			return;
 		}
 		var curX :Float = x;
@@ -48,6 +50,7 @@ class HBox extends Container
 				default:
 			}
 		}
+		redrawSignal.dispatch(this);
 	}
 	
 	override function onRemove () :Void

@@ -28,6 +28,7 @@ class ContainerMappedChildren extends Container
 	override public function redraw () :Void
 	{
 		if (_children == null || children.length == 0) {
+			redrawSignal.dispatch(this);
 			return;
 		}
 		
@@ -62,6 +63,7 @@ class ContainerMappedChildren extends Container
 			}
 			c.redraw();
 		}
+		redrawSignal.dispatch(this);
 	}
 	
 	override function onRemove () :Void

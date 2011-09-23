@@ -16,24 +16,13 @@ class Container extends Component
 {
 	public var sceneLayer :BaseSceneLayer<Dynamic, Dynamic>;
 	public var alignment :Alignment;
-	// public var childDisplayOrder (get_childDisplayOrder, null) :Map<Component, Int>;
-	// var _childDisplayOrder :Map<Component, Int>;
-	// function get_childDisplayOrder () :Map<Component, Int>
-	// {
-	// 	if (parent != null) {
-	// 		return parent.childDisplayOrder;
-	// 	} else {
-	// 		if (_childDisplayOrder == null) {
-	// 			_childDisplayOrder = Maps.newHashMap(ValueType.TClass(Component));
-	// 		}
-	// 		return _childDisplayOrder;
-	// 	}
-	// }
+	public var destroyChildrenIfDestroyed :Bool;
 	
 	public function new ()
 	{
 		super();
 		alignment = Alignment.NONE;
+		destroyChildrenIfDestroyed = true;
 	}
 	
 	override public function show () :Void
@@ -64,6 +53,13 @@ class Container extends Component
 	
 	override function onRemove () :Void
 	{
+		if (destroyChildrenIfDestroyed) {
+			for (child in children.copy()) {
+				if (child != null && child.isRegistered) {
+					child.owner.destroy();
+				}
+			}
+		}
 		super.onRemove();
 		// if (_childDisplayOrder != null) {
 		// 	_childDisplayOrder.clear();
@@ -75,12 +71,9 @@ class Container extends Component
 	override function childAdded (c :Component) :Void
 	{
 		invalidate();
-		// computeChildDisplayOrder();
-		// com.pblabs.util.Assert.isNotNull(sceneLayer, ' sceneLayer is null');
 		if (sceneLayer != null) {
 			sceneLayer.zOrderDirty = true;
 		}
-		// validateLayerIndices();
 	}
 	
 	override function childRemoved (c :Component) :Void
@@ -91,6 +84,7 @@ class Container extends Component
 	override public function redraw () :Void
 	{
 		if (_children == null || children.length == 0) {
+			redrawSignal.dispatch(this);
 			return;
 		}
 		for (c in children) {
@@ -108,6 +102,8 @@ class Container extends Component
 			}
 			c.redraw();
 		}
+		
+		redrawSignal.dispatch(this);
 		
 		// com.pblabs.util.Assert.isNotNull(sceneLayer, ' sceneLayer is null');
 		//Trigger the sceneLayer to resort the display children on it's next update
@@ -160,27 +156,4 @@ class Container extends Component
 	{
 		redraw();
 	}
-	
-	/** Makes sure that the children BaseSceneComponent layer indices are above the parent.  Assumes only one SceneComponent */
-	// function computeChildDisplayOrder () :Void
-	// {
-	// 	//We're the top parent
-	// 	var index = 0;
-	// 	var self = this;
-	// 	var addToDisplayOrder = function (c :Component) :Void {
-	// 		if (c == null) return;
-	// 		self.childDisplayOrder.set(c, index++);
-	// 	}
-		
-	// 	var recurseIntoStructure = null;
-	// 	recurseIntoStructure = function (c :Component) :Void {
-	// 		addToDisplayOrder(c);
-	// 		if (Std.is(c, Container)) {
-	// 			for (child in cast(c, Container).children) {
-	// 				recurseIntoStructure(child);
-	// 			}
-	// 		}
-	// 	}
-	// 	recurseIntoStructure(this);
-	// }
 }
