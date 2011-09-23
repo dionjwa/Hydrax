@@ -20,6 +20,7 @@ enum Source {
 	embedded (embedId :String);
 	/** A resource created from another resource, e.g. a bitmap created from an Svg */
 	derived(other :ResourceToken);
+	/** The raw resource is referenced by this enum */
 	linked (resource :Dynamic);
 	#if flash
 	swf(swfId :String);
