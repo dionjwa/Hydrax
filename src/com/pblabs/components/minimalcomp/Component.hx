@@ -5,6 +5,10 @@ import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.time.IAnimatedObject;
+
+import hsl.haxe.DirectSignaler;
+import hsl.haxe.Signaler;
+
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.util.PBUtil;
 
@@ -22,6 +26,7 @@ class Component extends NodeComponent<Container, Component>
 	public var y (get_y, set_y) :Float;
 	public var width (get_width, never) :Float;
 	public var height (get_height, never) :Float;
+	public var redrawSignal :Signaler<Component>;
 	public var root (get_root, never) :Component;
 	function get_root () :Component
 	{
@@ -36,6 +41,7 @@ class Component extends NodeComponent<Container, Component>
 	public function new ()
 	{
 		super();
+		redrawSignal = new DirectSignaler(this);
 		setDefaultVars();
 	}
 	
@@ -84,6 +90,7 @@ class Component extends NodeComponent<Container, Component>
 	
 	public function redraw () :Void
 	{
+		redrawSignal.dispatch(this);
 		for (disp in owner.getComponents(com.pblabs.components.scene2D.BaseSceneComponent)) {
 			disp.isTransformDirty = true;
 			disp.updateIfUpdatable();
