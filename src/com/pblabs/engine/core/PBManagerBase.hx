@@ -65,10 +65,10 @@ class PBManagerBase
 	
 	function onContextRemovedInternal (c :IPBContext) :Void
 	{
-		com.pblabs.util.Assert.isNotNull(context, "onContextRemovedInternal, our current context should NOT be null");
-		com.pblabs.util.Assert.isTrue(context == c, "Our local context var should match the removed context");
-		onContextRemoval();
-		context = null;
+		if (context == c) {
+			onContextRemoval();
+			context = null;
+		}
 	}
 	
 	/** Subclasses override */
