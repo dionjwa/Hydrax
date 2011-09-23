@@ -8,7 +8,7 @@ build*
 *cpp*
 lib/polygonal/build/
 tmp
-*/Test.hx
+src/Test*
 demo/panningAndZooming/upload.sh
 tests/build
 demo/panningAndZooming/build
@@ -17,6 +17,11 @@ demo/canvasDemo/build
 demo/panningAndZooming/build
 demo/resources/build
 demo/svgui/build
+demo/screennavigation/css
+demo/screennavigation/flash
+demo/screennavigation/canvas
+demo/screennavigation/all
+demo/jquerymobile
 \#*#
 *AllClasses.hx
 src/AllClasses.hx
@@ -26,7 +31,9 @@ lib/canvg/test
 lib/as3svgrenderlib
 lib/jeash
 lib/hsl*
+lib/hxhsl
 lib/EaselJS
 lib/as3svgrendererlib
 lib/hx.html5
+lib/jo
 hydrax.zip
