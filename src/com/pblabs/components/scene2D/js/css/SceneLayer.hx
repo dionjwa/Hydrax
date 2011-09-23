@@ -61,7 +61,7 @@ class SceneLayer extends JSLayer
 	override function checkZOrder () :Void
 	{
 		for (ii in 1...children.length) {
-			div.insertBefore(children[ii].div, children[ii - 1].div);
+			div.insertBefore(children[ii - 1].div, children[ii].div);
 		}
 	}
 }
