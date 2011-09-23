@@ -14,16 +14,59 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PropertyReference;
+import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.util.Comparators;
 import com.pblabs.util.Preconditions;
 
 using Lambda;
+
+using com.pblabs.engine.util.PBUtil;
+
+using com.pblabs.components.scene2D.ImageTools;
 
 /**
   * "using" functions for input, e.g. mouse, touch.
   */
 class InputTools
 {
+	public static function setOnOrientationChange (e :IEntity, cb :Int->Void) :IEntity
+	{
+		e.context.ensureManager(OrientationManager);
+		var inputComponent = e.ensureComponent(InputListener);
+		inputComponent.bindOrientationChange(cb);
+		return e;
+	}
+	
+	public static function stretchToWidth (e :IEntity, ?widthFraction :Float = 1.0) :IEntity
+	{
+		var stretch = function (orientation :Int) :Void {
+			if (e.isLiveObject) {
+				for (sc in e.getComponents(BaseSceneComponent)) {
+					var width = sc.layer.scene.sceneView.width;
+					sc.width = width * widthFraction;
+				}
+			}
+		}
+		e.context.getManager(IProcessManager).callLater(callback(stretch, 0));
+		setOnOrientationChange(e, stretch);
+		return e;
+	}
+	
+	public static function setXToScreenProportion (e :IEntity, ?widthFraction :Float = 0.5) :IEntity
+	{
+		var cb = function (orientation :Int) :Void {
+			if (e.isLiveObject) {
+				for (sc in e.getComponents(BaseSceneComponent)) {
+					var width = sc.layer.scene.sceneView.width;
+					sc.x = width * widthFraction;
+				}
+			}
+		}
+		e.context.getManager(IProcessManager).callLater(callback(cb, 0));
+		setOnOrientationChange(e, cb);
+		return e;
+	}
+	
 	public static function makeReactiveButton (e :IEntity) :IEntity
 	{
 		ensureMouseInputComponent(e);
@@ -69,45 +112,88 @@ class InputTools
 		return e;
 	}
 	
-		/** Grabs two BaseSceneComponent components and makes them into the two button states */
+	/** Grabs two BaseSceneComponent components and makes them into the two button states */
 	public static function makeTwoStateButton (e :IEntity, ?isToggle = false) :IEntity
 	{
 		com.pblabs.util.Assert.isNotNull(e, ' e is null');
 		InputTools.ensureMouseInputComponent(e);
 		var mouse = e.getComponent(MouseInputComponent);
 		
-		var sceneComponents = e.getComponents(BaseSceneComponent).array();
+		var defaultComponents = e.getDeviceUpLayers();
+		com.pblabs.util.Assert.isTrue(defaultComponents.length > 0);
+		var deviceDownComponents = e.getDeviceDownLayers();
+		
+		// var sceneComponents = e.getComponents(BaseSceneComponent).array();
+		
 		// trace('sceneComponents=' + sceneComponents);
-		com.pblabs.util.Assert.isTrue(sceneComponents.length >= 2, "You need at least two BaseSceneComponent types");
-		sceneComponents.sort(function (c1 :IEntityComponent, c2 :IEntityComponent) :Int {
-			return Comparators.compareStrings(c1.name, c2.name);
-		});
+		// com.pblabs.util.Assert.isTrue(sceneComponents.length >= 2, "You need at least two BaseSceneComponent types");
+		// sceneComponents.sort(function (c1 :IEntityComponent, c2 :IEntityComponent) :Int {
+		// 	return Comparators.compareStrings(c1.name, c2.name);
+		// });
 		
-		var state1 = sceneComponents[0];
-		var state2 = sceneComponents[1];
+		// var state1 = sceneComponents[0];
+		// var state2 = sceneComponents[1];
 		
-		state2.objectMask = ObjectType.NONE;
+		for (bottom in defaultComponents) {
+			bottom.objectMask = ObjectType.NONE;	
+		}
+		
+		// state2.objectMask = ObjectType.NONE;
 		//Explicitly bind the mouse events to the first image, so the 
 		//MouseInputComponent doesn't get confused (and bind to the 2nd image)
-		mouse.boundsProperty = new PropertyReference("@" + state1.name);
+		mouse.boundsProperty = new PropertyReference("@" + defaultComponents[0].name);
 		
-		state1.visible = true;
-		state2.visible = false;
+		for (state1 in defaultComponents) {
+			state1.visible = true;	
+		}
+		for (state2 in deviceDownComponents) {
+			state2.visible = false;	
+		}
+		
+		// state1.visible = true;
+		// state2.visible = false;
+		
+		var toggleState = false;
 		
 		var sm = e.context.getManager(com.pblabs.engine.core.SignalBondManager);
 		com.pblabs.util.Assert.isNotNull(sm);
 		if (isToggle) {
 			mouse.bindDeviceDown(function () :Void {
-				state1.visible = state2.visible;
-				state2.visible = !state1.visible;
+				// state1.visible = state2.visible;
+				// state2.visible = !state1.visible;
+				toggleState = !toggleState;
+				for (state1 in defaultComponents) {
+					state1.visible = !toggleState;	
+				}
+				for (state2 in deviceDownComponents) {
+					state2.visible = toggleState;	
+				}
+				
+				
+				
 			});
 		} else {
 			mouse.bindDeviceDown(function () :Void {
-				state1.visible = false;
-				state2.visible = true;
+				
+				for (state1 in defaultComponents) {
+					state1.visible = false;	
+				}
+				for (state2 in deviceDownComponents) {
+					state2.visible = true;	
+				}
+				
+				
+				// state1.visible = false;
+				// state2.visible = true;
 				var bond = e.context.getManager(com.pblabs.components.input.InputManager).deviceUp.bind(function (?e :Dynamic) :Void {
-					state1.visible = true;
-					state2.visible = false;
+					for (state1 in defaultComponents) {
+						state1.visible = true;	
+					}
+					for (state2 in deviceDownComponents) {
+						state2.visible = false;	
+					}
+					// state1.visible = true;
+					// state2.visible = false;
 				}).destroyOnUse();
 				
 				sm.set(mouse.key, bond);
