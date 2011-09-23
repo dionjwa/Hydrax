@@ -10,7 +10,11 @@ package com.pblabs.components.scene2D;
 enum SceneAlignment {
 	BOTTOM_LEFT;
 	BOTTOM_RIGHT;
+	BOTTOM_CENTER;
 	CENTER;
+	CENTER_LEFT;
+	CENTER_RIGHT;
 	TOP_LEFT;
 	TOP_RIGHT;
+	TOP_CENTER;
 }
