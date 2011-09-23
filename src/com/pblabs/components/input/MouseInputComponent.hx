@@ -128,10 +128,18 @@ class MouseInputComponent extends EntityComponent
 		return this;
 	}
 	
+	/** For manually dispatching, useful for controlling from other components */
+	public function dispatchClick () :Void
+	{
+		deviceClickSignaler.dispatch();
+	}
+	
 	public function clearListeners () :Void
 	{
-		for (bond in _bonds) {
-			bond.destroy();
+		if (_bonds != null && _bonds.length > 0) {
+			for (bond in _bonds) {
+				bond.destroy();
+			}
 		}
 		_bonds = [];
 		destroyDeviceHeldBond();
@@ -242,12 +250,7 @@ class MouseInputComponent extends EntityComponent
 	{
 		//The default is not movable, rotatable, or scalable.
 		isScalable = isRotatable = isTranslatable = false;
-		if (_bonds != null && _bonds.length > 0) {
-			for (bond in _bonds) {
-				bond.destroy();
-			}
-		}
-		_bonds = [];
+		clearListeners();
 		_mouseDownThis = false;
 		_bounds = null;
 		boundsProperty = null;
