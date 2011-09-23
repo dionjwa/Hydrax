@@ -90,7 +90,9 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			isTransformDirty = true;
 			#if js
 			//Clears the buffer
-			_backBuffer.width = _backBuffer.width;
+			if (_backBuffer != null) {
+				_backBuffer.width = _backBuffer.width;
+			}
 			#end
 			return val;
 		}
@@ -196,10 +198,9 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			div.removeChild(div.lastChild);
 		}
 		
-		//Create a div for each svg
-		var d = com.pblabs.components.scene2D.js.SceneComponent.createDiv();
-		div.appendChild(d);
-		d.innerHTML = _svgData.data;
+		var uniquedIds = Std.string(com.pblabs.util.svg.SvgTools.makeIdsGloballyUnique(_svgData.xml.clone()));
+		
+		div.innerHTML = uniquedIds;//_svgData.data;
 	}
 	
 	override public function drawPixels (ctx :CanvasRenderingContext2D)
