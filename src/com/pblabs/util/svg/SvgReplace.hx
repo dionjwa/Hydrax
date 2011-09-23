@@ -6,6 +6,8 @@ import com.pblabs.engine.resource.Source;
 import com.pblabs.util.Comparators;
 import com.pblabs.util.StringUtil;
 
+using StringTools;
+
 /**
   * A text replacement for an Svg.  This class helps to identify and cache modified Svg data
   * so that repeated parsing and modifying is avoided.
@@ -20,10 +22,8 @@ class SvgReplace
 			return target;
 		}
 		for (r in replacements) {
-			// trace('r.ereg=' + r.ereg);
-			// trace('r.replacement=' + r.replacement);
 			com.pblabs.util.Assert.isNotNull(target, ' target is null');
-			target = r.ereg.replace(target, r.replacement);
+			target = target.replace(r.pattern, r.replacement);
 		}
 		return target;
 	}
@@ -32,20 +32,19 @@ class SvgReplace
 	public static var TEXT_REPLACE = "$T";
 	
 	public var replacement (default, null):String;
-	public var ereg (default, null):EReg;
+	public var pattern (default, null):String;
 	var _hashcode :Int;
 	var _name :String;
 	
-	public function new (eregString :String, replacement :String)
+	public function new (pattern :String, replacement :String)
 	{
-		com.pblabs.util.Assert.isNotNull(eregString, ' eregString is null');
+		com.pblabs.util.Assert.isNotNull(pattern, ' pattern is null');
 		com.pblabs.util.Assert.isNotNull(replacement, ' replacement is null');
+		this.pattern = pattern;
 		this.replacement = replacement;
-		eregString = eregString != null ? eregString : TEXT_REPLACE;
-		this.ereg = new EReg(eregString, "");
 		
-		_hashcode = StringUtil.hashCode(replacement + ":" + eregString);
-		_name = eregString + "->" + replacement;
+		_hashcode = StringUtil.hashCode(pattern + ":" + replacement);
+		_name = pattern + "->" + replacement;
 	}
 
 	inline public function hashCode () :Int
