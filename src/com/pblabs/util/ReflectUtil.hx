@@ -224,5 +224,25 @@ class ReflectUtil
 		}
 	}
 	
+	//Temporary hack until metadata is used to figure if the field is a getter/setter
+	public static function fieldGS (obj :Dynamic, field :String) :Dynamic
+	{
+		if (Type.getInstanceFields(Type.getClass(obj)).has("get_" + field)) {
+			return Reflect.callMethod(obj, Reflect.field(obj, "get_" + field), EMPTY_ARRAY);
+		} else {
+			return Reflect.field(obj, field);
+		}
+	}
+	
+	//Temporary hack until metadata is used to figure if the field is a getter/setter
+	public static function setFieldGS (obj :Dynamic, field :String, val) :Dynamic
+	{
+		if (Type.getInstanceFields(Type.getClass(obj)).has("set_" + field)) {
+			return Reflect.callMethod(obj, Reflect.field(obj, "set_" + field), [val]);
+		} else {
+			return Reflect.setField(obj, field, val);
+		}
+	}
+	
 	static var EMPTY_ARRAY :Array<Dynamic> = new Array();
 }
