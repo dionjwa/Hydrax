@@ -73,10 +73,20 @@ class TaskUtil
 		return e;
 	}
 	
-	static function getTaskComponent (e :IEntity) :TaskComponent
+	/**
+	  * Adds the TaskComponent if none is present.
+	  */
+	public static function getTaskComponent (e :IEntity) :TaskComponent
 	{
 		com.pblabs.util.Assert.isNotNull(e, "null entity");
-		return e.getComponentByName(TaskComponent.NAME);
+		var tasks = e.getComponentByName(TaskComponent.NAME) != null ? e.getComponentByName(TaskComponent.NAME) : 
+			e.getComponent(TaskComponent);
+			
+		if (tasks == null) {
+			tasks = e.context.allocate(TaskComponentTicked);
+			e.addComponent(tasks, TaskComponent.NAME);
+		}
+		return tasks;
 	}
 }
 
