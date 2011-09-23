@@ -40,10 +40,8 @@ class DataComponent<T> extends EntityComponent,
 	{
 		if (e.getComponent(DataComponent) == null) {
 			e.addComponent(e.context.allocate(DataComponent));
-			return e.getComponent(DataComponent);
-		} else {
-			return e.getComponent(DataComponent);
 		}
+		return e.getComponent(DataComponent);
 	}
 	
 	public function new() 
