@@ -7,6 +7,7 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.scene2D;
+
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene2D.BaseSceneLayer;
 import com.pblabs.components.scene2D.SceneUtil;
@@ -22,6 +23,8 @@ import com.pblabs.util.Preconditions;
 
 import de.polygonal.core.math.Mathematics;
 import de.polygonal.motor2.geom.math.XY;
+
+import hsl.haxe.Bond;
 
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
@@ -48,6 +51,39 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	public var y (get_y, set_y) :Float;
 	@editor({ui :"UpdatingLabel"})
 	public var rotation (get_rotation, set_rotation) :Float;
+	/** Default true.  Automatically  */
+	public var autoSceneViewAttach (default, set_autoSceneViewAttach) :Bool;
+	function set_autoSceneViewAttach (val :Bool) :Bool
+	{
+		this.autoSceneViewAttach = val;
+		if (_autoSceneViewAttachBonds == null) {
+			_autoSceneViewAttachBonds = [];
+		}
+		while (_autoSceneViewAttachBonds.length > 0) {
+			_autoSceneViewAttachBonds.pop().destroy();
+		}
+		if (autoSceneViewAttach && isRegistered) {
+			var pb :com.pblabs.engine.core.PBContext = cast context;
+				_autoSceneViewAttachBonds.push(bindVoidSignal(pb.signalEnter, attach));
+				_autoSceneViewAttachBonds.push(bindVoidSignal(pb.signalExit, detach));
+		}
+		return val;
+	}
+	var _autoSceneViewAttachBonds :Array<Bond>;
+	
+	public var visible (get_visible, set_visible) :Bool;
+	var _visible :Bool;
+	function get_visible () :Bool
+	{
+		return _visible;
+	}
+	
+	function set_visible (val :Bool) :Bool
+	{
+		_transformDirty = true;
+		_visible = val;
+		return val;
+	}
 	
 	public var index :Int;
 	
@@ -114,6 +150,16 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		parentProperty = SceneManagerList.PROP;
 		_sceneView = null;
 		_sceneBounds = null;
+		this.autoSceneViewAttach = true;
+		_autoSceneViewAttachBonds = [];
+		
+		
+		//Device specific
+		#if js
+		if (com.pblabs.util.Device.isRetinaDisplay) {
+			// _zoom = 2.0;
+		}
+		#end
 	}
 	
 	public function addLayer (?layerName :String = null, ?cls :Class<Dynamic> = null, ?registerAsManager :Bool = false) :BaseSceneLayer<Dynamic, Dynamic>
@@ -281,8 +327,12 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		#if debug
 		_debugcontext = pb;
 		#end
-		bindVoidSignal(pb.signalEnter, attach);
-		bindVoidSignal(pb.signalExit, detach);
+		set_autoSceneViewAttach(autoSceneViewAttach);
+		
+		// if (autoSceneViewAttach) {
+		// 	bindVoidSignal(pb.signalEnter, attach);
+		// 	bindVoidSignal(pb.signalExit, detach);
+		// }
 	}
 
 	override function onRemove () :Void
@@ -290,6 +340,9 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		super.onRemove();
 		detach();
 		initVars();
+		while (_autoSceneViewAttachBonds.length > 0) {
+			_autoSceneViewAttachBonds.pop().destroy();
+		}
 	}
 	
 	function get_layerCount () :Int
