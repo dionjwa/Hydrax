@@ -24,6 +24,9 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 	{
 		super();
 		priority = 0;
+		_rootContainer = cast js.Lib.document.createElement("div");
+		_rootContainer.style.width = "100%";
+		_rootContainer.style.height = "100%";
 	}
 	
 	override public function addLayer (?layerName :String = null, ?cls :Class<Dynamic> = null, ?registerAsManager :Bool = false) :BaseSceneLayer<Dynamic, Dynamic>
@@ -88,8 +91,7 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 		com.pblabs.util.Assert.isNotNull(sceneView);
 		com.pblabs.util.Assert.isNotNull(sceneView.layer);
 		#end
-		_rootContainer = cast js.Lib.document.createElement("div");
-		_rootContainer.id = name;
+		_rootContainer.id = owner.name + "_" + name;
 		_rootContainer.style.cssText = "position:absolute";
 		#if debug
 		com.pblabs.util.Assert.isNotNull(_rootContainer);
@@ -101,6 +103,16 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 	{
 		super.onRemove();
 		_rootContainer = null;
+	}
+	
+	override function set_visible (val :Bool) :Bool
+	{
+		if (val) {
+			attach();
+		} else {
+			detach();
+		}
+		return super.set_visible(val);
 	}
 	
 	function get_container () :js.Dom.HtmlDom
