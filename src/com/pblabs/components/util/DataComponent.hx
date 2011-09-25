@@ -25,6 +25,8 @@ using Lambda;
 class DataComponent<T> extends EntityComponent, 
 	implements Dynamic<T>, implements ISerializable
 {
+	static var COMPONENT_NAME = "DataComponent"; 
+	
 	public static function setEntityData (e :IEntity, key :String, val :Dynamic) :IEntity
 	{
 		Reflect.setField(ensureComponent(e), key, val);
@@ -39,9 +41,9 @@ class DataComponent<T> extends EntityComponent,
 	public static function ensureComponent (e :IEntity) :DataComponent<Dynamic>
 	{
 		if (e.getComponent(DataComponent) == null) {
-			e.addComponent(e.context.allocate(DataComponent));
+			e.addComponent(e.context.allocate(DataComponent), COMPONENT_NAME);
 		}
-		return e.getComponent(DataComponent);
+		return e.getComponentByName(COMPONENT_NAME);
 	}
 	
 	public function new() 
@@ -69,12 +71,11 @@ class DataComponent<T> extends EntityComponent,
 		}
 	}
 	
-	override function onRemove () :Void
+	override public function unregister():Void
 	{
-		super.onRemove();
+		super.unregister();
 		for (f in Reflect.fields(this).array()) {
 			Reflect.deleteField(this, f);
 		}
 	}
-	
 }
