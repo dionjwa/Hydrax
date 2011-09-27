@@ -123,25 +123,14 @@ class InputTools
 		com.pblabs.util.Assert.isTrue(defaultComponents.length > 0);
 		var deviceDownComponents = e.getDeviceDownLayers();
 		
-		// var sceneComponents = e.getComponents(BaseSceneComponent).array();
-		
-		// trace('sceneComponents=' + sceneComponents);
-		// com.pblabs.util.Assert.isTrue(sceneComponents.length >= 2, "You need at least two BaseSceneComponent types");
-		// sceneComponents.sort(function (c1 :IEntityComponent, c2 :IEntityComponent) :Int {
-		// 	return Comparators.compareStrings(c1.name, c2.name);
-		// });
-		
-		// var state1 = sceneComponents[0];
-		// var state2 = sceneComponents[1];
-		
-		for (bottom in defaultComponents) {
+		for (bottom in deviceDownComponents) {
 			bottom.objectMask = ObjectType.NONE;	
 		}
 		
-		// state2.objectMask = ObjectType.NONE;
 		//Explicitly bind the mouse events to the first image, so the 
 		//MouseInputComponent doesn't get confused (and bind to the 2nd image)
-		mouse.boundsProperty = new PropertyReference("@" + defaultComponents[0].name);
+		mouse.boundsProperty = null;
+		mouse.bounds = defaultComponents[defaultComponents.length - 1];
 		
 		for (state1 in defaultComponents) {
 			state1.visible = true;	
@@ -150,17 +139,12 @@ class InputTools
 			state2.visible = false;	
 		}
 		
-		// state1.visible = true;
-		// state2.visible = false;
-		
 		var toggleState = false;
 		
 		var sm = e.context.getManager(com.pblabs.engine.core.SignalBondManager);
 		com.pblabs.util.Assert.isNotNull(sm);
 		if (isToggle) {
 			mouse.bindDeviceDown(function () :Void {
-				// state1.visible = state2.visible;
-				// state2.visible = !state1.visible;
 				toggleState = !toggleState;
 				for (state1 in defaultComponents) {
 					state1.visible = !toggleState;	
@@ -168,23 +152,15 @@ class InputTools
 				for (state2 in deviceDownComponents) {
 					state2.visible = toggleState;	
 				}
-				
-				
-				
 			});
 		} else {
 			mouse.bindDeviceDown(function () :Void {
-				
 				for (state1 in defaultComponents) {
 					state1.visible = false;	
 				}
 				for (state2 in deviceDownComponents) {
 					state2.visible = true;	
 				}
-				
-				
-				// state1.visible = false;
-				// state2.visible = true;
 				var bond = e.context.getManager(com.pblabs.components.input.InputManager).deviceUp.bind(function (?e :Dynamic) :Void {
 					for (state1 in defaultComponents) {
 						state1.visible = true;	
@@ -192,8 +168,6 @@ class InputTools
 					for (state2 in deviceDownComponents) {
 						state2.visible = false;	
 					}
-					// state1.visible = true;
-					// state2.visible = false;
 				}).destroyOnUse();
 				
 				sm.set(mouse.key, bond);
