@@ -233,31 +233,10 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	}
 	#end
 	
-	// public static function parseBounds (svg :Xml) :AABB2
-	// {
-	// 	com.pblabs.util.Assert.isNotNull(svg);
-	// 	var bounds = new AABB2();
-	// 	svg = svg.ensureNotDocument();
-	// 	if (svg.get('viewBox') != null) {
-	// 		var tokens = svg.get("viewBox").split(" ");
-	// 		bounds.xmin = Std.parseFloat(tokens[0]);
-	// 		bounds.ymin = Std.parseFloat(tokens[1]);
-	// 		bounds.xmax = Std.parseFloat(tokens[2]);
-	// 		bounds.ymax = Std.parseFloat(tokens[3]);
-	// 	} else {
-			
-	// 		bounds.xmin = svg.get("x") != null ? Std.parseFloat(svg.get("x")) :0.0;
-	// 		bounds.ymin = svg.get("y") != null ? Std.parseFloat(svg.get("y")) :0.0;
-	// 		bounds.xmax = bounds.xmin + Std.parseFloat(svg.get("width"));
-	// 		bounds.ymax = bounds.ymin + Std.parseFloat(svg.get("height"));
-	// 	}
-	// 	return bounds;
-	// }
-	
 	#if debug
 	override public function toString () :String
 	{
-		return com.pblabs.util.StringUtil.objectToString(this, ["x", "y", "width", "height"]);
+		return "Svg " + key + " " + name + " Entity(" + (owner != null ? owner.name : "null") + ") " + com.pblabs.util.StringUtil.objectToString(this, ["x", "y", "width", "height"]);
 	}
 	#end
 	
