@@ -148,7 +148,6 @@ class MouseInputComponent extends EntityComponent
 	override function onReset () :Void
 	{
 		super.onReset();
-		_bounds = null;
 		if (boundsProperty != null) {
 			_bounds = owner.getProperty(boundsProperty);
 		}
@@ -186,10 +185,6 @@ class MouseInputComponent extends EntityComponent
 	{
 		_mouseDownThis = false;
 		if (isTranslatable || (_deviceDownSignaler != null || _deviceClickSignaler != null || _deviceDownSignaler != null)) {
-			
-			// if (data.firstObjectUnderPoint() == _bounds && data.firstObjectUnderPoint(bounds.objectMask) != _bounds) {
-			// 	trace("mouse down on " + owner.name + ", but the mask is invalid");
-			// }
 			
 			if (data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
 				_mouseDownThis = true;
