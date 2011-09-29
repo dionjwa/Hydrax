@@ -39,6 +39,7 @@ class NotifyingValueComponent extends EntityComponent,
 	public function deserialize (xml :Xml) :Dynamic
 	{
 		_value = xml.parseFloat("value");
+		//return this;
 	}
 	
 	public function dispatch () :Void
