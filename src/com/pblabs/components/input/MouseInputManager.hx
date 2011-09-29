@@ -26,16 +26,11 @@ import hsl.js.translating.JSSignaler;
  */
 class MouseInputManager extends BaseInputManager
 {
-	#if js
 	public var mouseDown (default, null) :Signaler<MouseLocation>;
 	public var mouseUp (default, null) :Signaler<MouseLocation>;
 	public var mouseMove (default, null) :Signaler<MouseLocation>;
 	public var mouseClick (default, null) :Signaler<MouseLocation>;
-	#elseif flash
-	public var mouseDown (default, null) :Signaler<MouseLocation>;
-	public var mouseUp (default, null) :Signaler<MouseLocation>;
-	public var mouseMove (default, null) :Signaler<MouseLocation>;
-	public var mouseClick (default, null) :Signaler<MouseLocation>;
+	#if (flash || cpp)
 	public var mouseWheel (default, null) :Signaler<Int>;
 	#end
 	/** Used if there is a TouchInputManager */

@@ -37,7 +37,7 @@ class BitmapRenderer
 	inline function get_bitmapData () :ImageData
 	{
 		com.pblabs.util.Assert.isNotNull(_bitmap);
-		#if flash
+		#if (flash || cpp)
 		return _bitmap.bitmapData;
 		#elseif js
 		return _bitmap;
@@ -140,7 +140,7 @@ class BitmapRenderer
 	
 	public function new (?width :Int = 1, ?height :Int = 1) :Void
 	{
-		#if flash
+		#if (flash || cpp)
 		var sprite = com.pblabs.util.SpriteUtil.create();
 		_bitmap = new flash.display.Bitmap(new flash.display.BitmapData(width, height, true, 0xff0000), flash.display.PixelSnapping.NEVER);
 		sprite.addChild(_bitmap);
@@ -198,7 +198,7 @@ class BitmapRenderer
 		#end
 	}
 	
-	#if flash override #end 
+	#if (flash || cpp) override #end 
 	function recomputeBounds () :Void
 	{
 		if (_bitmap != null) {
