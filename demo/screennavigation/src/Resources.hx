@@ -29,8 +29,7 @@ class Resources
 			#if flash
 			var type = Type.createEnum(ResourceType, rc.nodeName.toUpperCase());
 			var data = switch (type) {
-				case IMAGE, SVG, STRING: new ResourceToken(rc.get("id"), Source.swf("resources"), type);
-				case CLASS, IMAGE_DATA: new ResourceToken(rc.get("id"), Source.embedded(rc.get("id")), type);
+				case CLASS, IMAGE_DATA,IMAGE, SVG, STRING: new ResourceToken(rc.get("id"), Source.swf("resources"), type);
 				case SWF: new ResourceToken(rc.get("id"), Source.url(rc.get("url")), type);
 				default: null;
 			}
