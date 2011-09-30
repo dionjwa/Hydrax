@@ -10,6 +10,7 @@ class GraphicsComponent
 	#if flash
 	var _shape :flash.display.Shape;
 	#elseif js
+	var _graphics :flash.display.Graphics;
 	override function set_width (val :Float) :Float
 	{
 		super.set_width(val);
@@ -35,7 +36,7 @@ class GraphicsComponent
 		return _shape.graphics;
 		#elseif js
 		_isContentsDirty = true;
-		return new flash.display.Graphics(_backBuffer);
+		return _graphics;
 		#end
 	}
 	
@@ -44,31 +45,32 @@ class GraphicsComponent
 		#if flash
 		_shape = new flash.display.Shape();
 		_displayObject = _shape;
-		#elseif js
-		#end
 		super();
+		#elseif js
+		super();
+		_graphics = new flash.display.Graphics(_backBuffer);
+		#end
+		
 	}
 	
 	#if js
 	override private function redrawBackBuffer ()
 	{
-		if (_backBuffer == null) {
-			_backBuffer = cast js.Lib.document.createElement("canvas");
-			_backBuffer.width = 10;
-			_backBuffer.height = 10;
-			_backBuffer.style.position = "absolute";
-			_backBuffer.style.visibility = "hidden";
-			_backBuffer.style.display = "block";
-			//Add to the div display object, so it can be rendered to either CSS or Canvas layers.
-			com.pblabs.util.Assert.isNotNull(div);
-			div.appendChild(_backBuffer);
-		}
-		if (_backBuffer.width != Std.int(width)) {
-			_backBuffer.width = Std.int(width);
-		}
-		if (_backBuffer.height != Std.int(height)) {
-			_backBuffer.height = Std.int(height);
-		}
+		_bitmap = _graphics.jeashSurface;
+		super.redrawBackBuffer();
+	}
+	
+	override function set_bitmapData (val :ImageData) :ImageData
+	{
+		super.set_bitmapData(val);
+		_graphics = new flash.display.Graphics(_bitmap);
+		return val;
+	}
+	
+	override function onRemove () :Void
+	{
+		super.onRemove();
+		_graphics = null;
 	}
 	#end
 }
