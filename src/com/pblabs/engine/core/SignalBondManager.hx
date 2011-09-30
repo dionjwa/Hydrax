@@ -49,7 +49,9 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	public static function bindSignal <T>(component :EntityComponent, signaler :Signaler<T>, listener :T->Dynamic#if debug ,?infos :haxe.PosInfos #end ) :Bond
 	{
 		com.pblabs.util.Assert.isNotNull(component, "component is null");
+		com.pblabs.util.Assert.isNotNull(signaler, ' signaler is null');
 		com.pblabs.util.Assert.isNotNull(component.context, "component.context is null");
+		com.pblabs.util.Assert.isNotNull(listener, ' listener is null');
 		var bonds = component.context.getManager(SignalBondManager);
 		com.pblabs.util.Assert.isNotNull(bonds, "SignalBondManager is null");
 		
