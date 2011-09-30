@@ -26,6 +26,7 @@
 
 /*
 
+
    Lines, fill styles and closing polygons.
    Flash allows the line stype to be changed withing one filled polygon.
    A single NME "DrawObject" has a point list, an optional solid fill style
@@ -39,25 +40,29 @@
    is started, without affecting the solid fill bit.
  */
 
+
 package jeash.display;
 
-import com.pblabs.components.scene2D.ImageType;
-
-import flash.display.CapsStyle;
-import flash.display.GradientType;
-import flash.display.InterpolationMethod;
-import flash.display.JointStyle;
-import flash.display.LineScaleMode;
-import flash.display.SpreadMethod;
-
-import flash.geom.Decompose;
 import flash.geom.Matrix;
+import flash.geom.Decompose;
 import flash.geom.Point;
 import flash.geom.Rectangle;
-
-typedef HTMLCanvasElement = Canvas;
+import flash.geom.ColorTransform;
+import flash.display.LineScaleMode;
+import flash.display.CapsStyle;
+import flash.display.JointStyle;
+import flash.display.GradientType;
+import flash.display.SpreadMethod;
+import flash.display.InterpolationMethod;
+// import flash.display.BitmapData;
+import flash.display.IGraphicsData;
+import flash.display.IGraphicsFill;
 
 typedef DrawList = Array<Drawable>;
+typedef HTMLCanvasElement = Canvas;
+typedef BitmapData = Dynamic;
+typedef DisplayObject = Dynamic;
+typedef Vector<T> = Array<T>;
 
 class GfxPoint
 {
@@ -141,40 +146,6 @@ typedef Texture =
 
 typedef LineJobs = Array<LineJob>;
 
-// class GLTextureShader 
-// {
-
-// 	public static inline var mFragmentProgram = '
-// #ifdef GL_ES
-// 		precision highp float;
-// #endif
-
-// 		varying vec2 vTexCoord;
-
-// 		uniform sampler2D uSurface;
-
-// 		void main(void) {
-// 			gl_FragColor = texture2D(uSurface, vec2(vTexCoord.s, vTexCoord.t));
-// 		}
-// 	';
-
-// 	public static inline var mVertexProgram = '
-// 		attribute vec3 aVertPos;
-// 		attribute vec2 aTexCoord;
-
-// 		uniform mat4 uViewMatrix;
-// 		uniform mat4 uProjMatrix;
-
-// 		varying vec2 vTexCoord;
-
-// 		void main(void) {
-// 			gl_Position = uProjMatrix * uViewMatrix  * vec4(aVertPos, 1.0);
-// 			vTexCoord = aTexCoord;
-// 		}
-// 	';
-
-// }
-
 enum PointInPathMode
 {
 	USER_SPACE;
@@ -200,6 +171,7 @@ class Graphics
 	public static var REPEAT  = 0x0002;
 	public static var REFLECT = 0x0004;
 
+
 	private static var  EDGE_MASK        = 0x00f0;
 	private static var  EDGE_CLAMP       = 0x0000;
 	private static var  EDGE_REPEAT      = 0x0010;
@@ -222,6 +194,7 @@ class Graphics
 
 	public static var BMP_REPEAT  = 0x0010;
 	public static var BMP_SMOOTH  = 0x10000;
+
 
 	private static var  SCALE_NONE       = 0;
 	private static var  SCALE_VERTICAL   = 1;
@@ -248,8 +221,8 @@ class Graphics
 	public static var BLEND_SUBTRACT = 13;
 	public static var BLEND_SHADER = 14;
 
-	public var mSurface(default,null):HTMLCanvasElement;
-	public var mChanged:Bool;
+	public var jeashSurface(default,null):HTMLCanvasElement;
+	public var jeashChanged:Bool;
 
 	// Current set of points
 	private var mPoints:GfxPoints;
@@ -279,38 +252,33 @@ class Graphics
 	public var mMatrix(default,null):Matrix;
 	//public var mSurfaceAlpha(null,default):Float;
 
-	// GL shader
-	// public var mShaderGL:WebGLProgram;
-	// public var mTextureGL:WebGLTexture;
-	// public var mTextureUniformGL:WebGLUniformLocation;
-
-	// private static var gl:WebGLRenderingContext;
 	public var jeashShift(default,null):Bool;
-	// public var owner:DisplayObject;
+	public var owner:DisplayObject;
 	private var mBoundsDirty:Bool;
 	private var standardExtent:Rectangle;
 	private var originX:Float;
 	private var originY:Float;
 	private var nextDrawIndex:Int;
 	
+	// After this ("warm up") period, the canvas sheet will only expand,
+	// and will not contract if the drawing list changes. 
+	private var jeashRenderFrame:Int;
+	private static inline var JEASH_SIZING_WARM_UP = 10;
 
-	public function new(inSurface:HTMLCanvasElement)
+	public function new(?inSurface:HTMLCanvasElement)
 	{
-		// if ( inSurface == null ) {
-		// 	mSurface = cast js.Lib.document.createElement("canvas");
-		// 	var stage = flash.Lib.jeashGetStage();
-		// 	if (jeash.Lib.mOpenGL)
-		// 	{
-		// 		mSurface.width = GetSizePow2(stage.stageWidth);
-		// 		mSurface.height = GetSizePow2(stage.stageHeight);
-		// 	} else {
-		// 		mSurface.width = stage.stageWidth;
-		// 		mSurface.height = stage.stageHeight;
-		// 	}
+		if ( inSurface == null ) {
+			jeashSurface = cast js.Lib.document.createElement("canvas");
+			//var stage = flash.Lib.jeashGetStage();
+			//jeashSurface.width = stage.stageWidth;
+			//jeashSurface.height = stage.stageHeight;
+			jeashSurface.width = 0;
+			jeashSurface.height = 0;
 
-		// } else {
-			mSurface = inSurface;
-		// }
+		} else {
+			jeashSurface = inSurface;
+		}
+
 		mMatrix = new Matrix();
 
 		mLastMoveID = 0;
@@ -334,86 +302,15 @@ class Graphics
 
 		jeashClearLine();
 		mLineJobs = [];
-		mChanged = true;
+		jeashChanged = true;
 		jeashShift = false;
 		nextDrawIndex = 0;
 
-		// if (jeash.Lib.mOpenGL )
-		// {
-
-		// 	// initialise shaders
-
-		// 	gl = jeash.Lib.glContext;
-
-		// 	mShaderGL = CreateShaderGL( GLTextureShader.mFragmentProgram, GLTextureShader.mVertexProgram, ["aVertPos", "aTexCoord"] );
-
-		// 	// -- 
-
-		// } else {
-		// 	//Lib.jeashAppendSurface(mSurface, 0, 0);
-		// }
 	}
-
-	public static function GetSizePow2( size:Int )
-	{
-		var l_nCount:Int = 1;
-		var ts:Int = 1;
-		while(ts < size) 
-		{
-			ts <<= 1;
-			l_nCount++;
-			if( l_nCount >= 12 )
-			{
-				break;
-			}
-		}
-		return ts;
-	}
-
-	// public static function CreateShaderGL(fragmentProgram:String, vertexProgram:String, glAttributes:Array<String>)
-	// {
-	// 	var shaderProgram = gl.createProgram();
-
-	// 	// compile default fragment shader
-	// 	var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-	// 	gl.shaderSource(fragmentShader, fragmentProgram);
-	// 	gl.compileShader(fragmentShader);
-
-	// 	if(!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS))
-	// 		trace( "FRAGMENTSHADER " + gl.getShaderInfoLog(fragmentShader));
-
-	// 	// compile default vertex shader
-	// 	var vertexShader = gl.createShader(gl.VERTEX_SHADER);
-	// 	gl.shaderSource(vertexShader, vertexProgram);
-	// 	gl.compileShader(vertexShader);
-
-	// 	if(!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS))
-	// 		trace( "VERTEXSHADER " + gl.getShaderInfoLog(vertexShader));
-
-	// 	gl.attachShader( shaderProgram, fragmentShader );
-	// 	gl.attachShader( shaderProgram, vertexShader ); 
-
-	// 	gl.linkProgram(shaderProgram);
-
-	// 	// TODO: implement and call default shader ?
-	// 	if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS))
-	// 		trace("Could not compile shader.");
-	// 	else {
-	// 		for (name in glAttributes)
-	// 		{
-	// 			var index = gl.getAttribLocation(shaderProgram, name);
-	// 			if (index >= 0)
-	// 				gl.enableVertexAttribArray(index);
-					
-	// 		}
-	// 	}
-
-	// 	return shaderProgram;
-	// }
 
 	public function SetSurface(inSurface:Dynamic)
 	{
-		mSurface = inSurface;
+		jeashSurface = inSurface;
 	}
 
 	private function createCanvasColor(color : Int, alpha : Float) {
@@ -452,25 +349,32 @@ class Graphics
 
 	public function jeashRender(?maskHandle:HTMLCanvasElement, ?matrix:Matrix)
 	{
-		if (!mChanged) return false;
+		if (!jeashChanged) {
+			return false;
+		}
 
 		ClosePolygon(true);
 
 		// clear the canvas
 		/*if (mDrawList.length > 0)
-			ClearCanvas();*/
+			jeashClearCanvas();*/
+
+		var extent = getStandardExtent();
+		if (jeashRenderFrame++ < JEASH_SIZING_WARM_UP)
+			if (standardExtent.width - standardExtent.x != jeashSurface.width && standardExtent.height - standardExtent.y != jeashSurface.height) jeashAdjustSurface();
+		else
+			if (standardExtent.width - standardExtent.x < jeashSurface.width && standardExtent.height - standardExtent.y < jeashSurface.height) jeashAdjustSurface();
 
 		var ctx = getContext();
 		if (ctx==null) return false;
 
-		var extent = getStandardExtent();
-		//var extent = GetExtent(new Matrix());
 		var len : Int = mDrawList.length;
 		/*if (maskHandle != null)
 			ctx.setTransform(matrix.a, matrix.b, matrix.c, matrix.d, 0, 0);*/
 
-		jeashShift = false;//if (Math.abs(extent.x) < mSurface.width && Math.abs(extent.y) < mSurface.height)
-			//true; else false;
+		jeashShift = if (Math.abs(extent.x) < jeashSurface.width && Math.abs(extent.y) < jeashSurface.height)
+			true; else false;
+
 
 		ctx.save();
 		
@@ -556,11 +460,15 @@ class Graphics
 			}
 			ctx.fill();
 
+			ctx.save();
 			var bitmap = d.bitmap;
 			if ( bitmap != null) {
+					if (jeashShift) ctx.translate(-extent.x, -extent.y);
+
 					// Hack to workaround premature width calculations during async image load
 					if (!mNoClip)
 						ctx.clip();
+
 
 					var img = bitmap.texture_buffer;
 					var matrix = bitmap.matrix;
@@ -572,31 +480,23 @@ class Graphics
 					ctx.drawImage( img, 0, 0 );
 
 			}
+			ctx.restore();
 		}
 		
 		ctx.restore();
 		
 
-		// merge into parent canvas context - used only when caching.
-		// if ( maskHandle != null && len > 0) {
-		// 	// if (jeash.Lib.mOpenGL)
-		// 	// {
-		// 	// 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, mSurface);
-		// 	// }
-
-		// }
-
-		mChanged = false;
+		jeashChanged = false;
 		nextDrawIndex = len;
+
 
 		return true;
 
 	}
 
+
 	public function jeashHitTest(inX:Float, inY:Float) : Bool
 	{
-		// if (jeash.Lib.mOpenGL) return false;
-
 		var ctx : CanvasRenderingContext2D = getContext();
 		if (ctx==null) return false;
 
@@ -621,14 +521,17 @@ class Graphics
 		return false;
 	}
 
-	// public function blit(inTexture:ImageType)
-	// {
-	// 	ClosePolygon(true);
 
-	// 	var ctx = getContext();
-	// 	if (ctx != null) 
-	// 		ctx.drawImage(inTexture.handle(),mPenX,mPenY);
-	// }
+	public function blit(inTexture:BitmapData)
+	{
+		ClosePolygon(true);
+
+		var ctx = getContext();
+		if (ctx != null) 
+			ctx.drawImage(inTexture.handle(),mPenX,mPenY);
+	}
+
+
 
 	public function lineStyle(?thickness:Null<Float>,
 			?color:Null<Int>,
@@ -689,6 +592,7 @@ class Graphics
 			}
 		}
 
+
 		mCurrentLine.joints = CORNER_ROUND;
 		if (joints!=null)
 		{
@@ -719,6 +623,8 @@ class Graphics
 				focalPointRatio);
 	}
 
+
+
 	public function beginFill(color:Int, ?alpha:Null<Float>)
 	{
 		ClosePolygon(true);
@@ -733,7 +639,6 @@ class Graphics
 	public function endFill()
 	{
 		ClosePolygon(true);
-		jeashRender();
 	}
 
 	function DrawEllipse(x:Float,y:Float,rx:Float,ry:Float)
@@ -756,7 +661,6 @@ class Graphics
 		DrawEllipse(x+rx,y+ry,rx,ry);
 
 		ClosePolygon(false);
-		jeashRender();
 	}
 
 	public function drawCircle(x:Float,y:Float,rad:Float)
@@ -766,7 +670,6 @@ class Graphics
 		DrawEllipse(x,y,rad,rad);
 
 		ClosePolygon(false);
-		jeashRender();
 	}
 
 	public function drawRect(x:Float,y:Float,width:Float,height:Float)
@@ -786,8 +689,9 @@ class Graphics
 		lineTo(x,y);
 
 		ClosePolygon(false);
-		jeashRender();
 	}
+
+
 
 	public function drawRoundRect(x:Float,y:Float,width:Float,height:Float,
 			ellipseWidth:Float, ellipseHeight:Float = null)
@@ -823,7 +727,6 @@ class Graphics
 		lineTo(x,y+ellipseHeight);
 
 		ClosePolygon(false);
-		jeashRender();
 	}
 
 	function CreateGradient(type : GradientType,
@@ -840,6 +743,7 @@ class Graphics
 		for(i in 0...colors.length)
 			points.push({col:colors[i], alpha:alphas[i], ratio:ratios[i]});
 
+
 		var flags = 0;
 
 		if (type==GradientType.RADIAL)
@@ -849,6 +753,7 @@ class Graphics
 			flags |= REPEAT;
 		else if (spreadMethod==SpreadMethod.REFLECT)
 			flags |= REFLECT;
+
 
 		if (matrix==null)
 		{
@@ -861,6 +766,7 @@ class Graphics
 		var focal : Float = focalPointRatio ==null ? 0 : focalPointRatio;
 		return  { points : points, matrix : matrix, flags : flags, focal:focal };
 	}
+
 
 	public function beginGradientFill(type : GradientType,
 			colors : Array<Dynamic>,
@@ -881,7 +787,10 @@ class Graphics
 				focalPointRatio);
 	}
 
-	public function beginBitmapFill(bitmap:ImageData, ?matrix:Matrix,
+
+
+
+	public function beginBitmapFill(bitmap:BitmapData, ?matrix:Matrix,
 			?in_repeat:Bool, ?in_smooth:Bool)
 	{
 		ClosePolygon(true);
@@ -893,14 +802,13 @@ class Graphics
 
 		mSolidGradient = null;
 
-		// mBitmap  = { texture_buffer: bitmap.handle(),
-		mBitmap  = { texture_buffer: bitmap,
+		mBitmap  = { texture_buffer: bitmap.handle(),
 			matrix: matrix==null ? matrix : matrix.clone(),
 			flags : (repeat ? BMP_REPEAT : 0) |
 				(smooth ? BMP_SMOOTH : 0) };
 
-		// InitTextureGL(mBitmap.texture_buffer);
 	}
+
 
 	public function jeashClearLine()
 	{
@@ -909,9 +817,10 @@ class Graphics
 				SCALE_NORMAL, 3.0);
 	}
 
-	inline function ClearCanvas()
+	inline function jeashClearCanvas()
 	{
-		mSurface.width = mSurface.width;
+		if (jeashSurface != null)
+			jeashSurface.width = jeashSurface.width;
 	}
 
 	public function clear()
@@ -934,7 +843,8 @@ class Graphics
 		mLastMoveID = 0;
 
 		// clear the canvas
-		ClearCanvas();
+		jeashClearCanvas();
+
 
 		mLineJobs = [];
 		
@@ -950,8 +860,8 @@ class Graphics
 			return standardExtent = new Rectangle();
 
 		var maxX, minX, maxY, minY;
-		maxX = minX = mDrawList[0].points[0].x;
-		maxY = minY = mDrawList[0].points[0].y;
+		maxX = minX = 0.;//mDrawList[0].points[0].x;
+		maxY = minY = 0.;//mDrawList[0].points[0].y;
 		
 		for (dl in mDrawList) {
 			for (p in dl.points) {
@@ -973,64 +883,13 @@ class Graphics
 		
 		if((minX<0 && minX<originX) || (minY<0 && minY<originY)){
 			nextDrawIndex = 0;
-			ClearCanvas();		
+			jeashClearCanvas();		
 		}
 		originX=minX;
 		originY=minY;
 		
 		return standardExtent = new Rectangle(minX, minY, maxX-minX, maxY-minY);
 	}
-
-	/*
-	public function GetExtent(inMatrix:Matrix) : Rectangle
-	{
-		//flush();
-
-		if (mDrawList.length == 0)
-			return new Rectangle();
-
-		var maxX, minX, maxY, minY;
-		maxX = minX = mDrawList[0].points[0].x;
-		maxY = minY = mDrawList[0].points[0].y;
-		var findExtentByMatrixAndPoint = function (m:Matrix, p:Point)
-		{
-				var t = m.transformPoint(new Point(p.x, p.y));
-				if (t.x > maxX) {
-					maxX = t.x;
-				}
-				if (t.x < minX) {
-					minX = t.x;
-				}
-				if (t.y > maxY) {
-					maxY = t.y;
-				}
-				if (t.y < minY) {
-					minY = t.y;
-				}
-		}
-		for (dl in mDrawList) {
-			for (p in dl.points) {
-				findExtentByMatrixAndPoint(inMatrix, new Point(p.x, p.y));
-			}
-			if (dl.bitmap != null)
-			{
-				var matrix = if (dl.bitmap.matrix != null) 
-					dl.bitmap.matrix;
-				else
-					new Matrix();
-
-				var width = dl.bitmap.texture_buffer.width;
-				var height = dl.bitmap.texture_buffer.height;
-				findExtentByMatrixAndPoint(matrix, new Point(0,0));
-				findExtentByMatrixAndPoint(matrix, new Point(width,0));
-				findExtentByMatrixAndPoint(matrix, new Point(0,height));
-				findExtentByMatrixAndPoint(matrix, new Point(width,height));
-			} 
-		}
-		return new Rectangle(minX, minY, maxX-minX, maxY-minY);
-	}
-	 
-	 */
 
 	public function moveTo(inX:Float,inY:Float)
 	{
@@ -1070,7 +929,6 @@ class Graphics
 		}
 
 		if ( !mFilling ) ClosePolygon(false);
-		jeashRender();
 
 	}
 
@@ -1094,7 +952,9 @@ class Graphics
 			mCurrentLine.point_idx1 = pid;
 		}
 
+		if ( !mFilling ) ClosePolygon(false);
 	}
+
 
 	public function flush() { ClosePolygon(true); }
 
@@ -1105,27 +965,7 @@ class Graphics
 
 		mDrawList.unshift( inDrawable );
 
-		// InitTextureGL(mSurface);
-
 	}
-
-	// private function InitTextureGL(texture : HTMLCanvasElement)
-	// {
-	// 	// initialise Texture
-	// 	if ( jeash.Lib.mOpenGL && mTextureGL == null ) {
-	// 		mTextureGL = gl.createTexture();
-
-	// 		gl.bindTexture(gl.TEXTURE_2D, mTextureGL);
-
-	// 		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture);
-	// 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-	// 		gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-
-	// 		gl.bindTexture(gl.TEXTURE_2D, null);
-
-	// 		mTextureUniformGL = gl.getUniformLocation(mShaderGL, "uSurface");
-	// 	}
-	// }
 
 	private function AddLineSegment()
 	{
@@ -1193,9 +1033,61 @@ class Graphics
 			mFilling = false;
 		}
 
-		mChanged = true;
+		jeashChanged = true;
 		standardExtent=null;
 		markBoundsDirty();
+	}
+
+	public function drawGraphicsData(points:Vector<IGraphicsData>) 
+	{
+		for (data in points) {
+			if (data == null) {
+				mFilling=true;
+			} else {
+				switch (data.jeashGraphicsDataType) {
+					case STROKE:
+						var stroke : GraphicsStroke = cast data;
+						if (stroke.fill == null) {
+							lineStyle(stroke.thickness, 0x000000, 1., stroke.pixelHinting, stroke.scaleMode, stroke.caps, stroke.joints, stroke.miterLimit);
+						} else {
+							switch(stroke.fill.jeashGraphicsFillType) {
+								case SOLID_FILL:
+						
+									var fill : GraphicsSolidFill = cast stroke.fill;
+									lineStyle(stroke.thickness, fill.color, fill.alpha, stroke.pixelHinting, stroke.scaleMode, stroke.caps, stroke.joints, stroke.miterLimit);
+								case GRADIENT_FILL:
+
+									var fill : GraphicsGradientFill = cast stroke.fill;
+									lineGradientStyle(fill.type, fill.colors, fill.alphas, fill.ratios, fill.matrix, fill.spreadMethod, fill.interpolationMethod, fill.focalPointRatio);
+							}
+						}
+					case PATH:
+						var path : GraphicsPath = cast data;
+						var j = 0;
+						for (i in 0...path.commands.length) {
+							var command = path.commands[i];
+							switch (command) {
+								case GraphicsPathCommand.MOVE_TO: 
+									moveTo(path.data[j], path.data[j+1]);
+									j = j + 2;
+								case GraphicsPathCommand.LINE_TO:
+									lineTo(path.data[j], path.data[j+1]);
+									j = j + 2;
+								case GraphicsPathCommand.CURVE_TO:
+									curveTo(path.data[j], path.data[j+1], path.data[j+2], path.data[j+3]);
+									j = j + 4;
+
+							}
+						}
+					case SOLID:
+						var fill : GraphicsSolidFill = cast data;
+						beginFill(fill.color, fill.alpha);
+					case GRADIENT:
+						var fill : GraphicsGradientFill = cast data;
+						beginGradientFill(fill.type, fill.colors, fill.alphas, fill.ratios, fill.matrix, fill.spreadMethod, fill.interpolationMethod, fill.focalPointRatio);
+				}
+			}
+		}
 	}
 
 	public static function jeashDetectIsPointInPathMode()
@@ -1224,18 +1116,41 @@ class Graphics
 	inline function markBoundsDirty() {
 		if(!mBoundsDirty){
 			mBoundsDirty=true;
-			// if(owner!=null)
-			// 	owner.jeashInvalidateBounds();
+			if(owner!=null)
+				owner.jeashInvalidateBounds();
 		}
 	}
 
 	inline function getContext() : CanvasRenderingContext2D
 	{
 	       	try {
-			return mSurface.getContext("2d");
+			return jeashSurface.getContext("2d");
 		} catch (e:Dynamic) {
-			trace("2d canvas API not implemented for: " + mSurface);
+			// flash.Lib.trace("2d canvas API not implemented for: " + jeashSurface);
+			trace("2d canvas API not implemented for: " + jeashSurface);
 			return null;
 		}
 	}
+
+	function jeashAdjustSurface() 
+	{
+		trace("Not implemented");
+		// re-allocate canvas, copy into larger canvas.
+		// var dstCanvas : HTMLCanvasElement = cast js.Lib.document.createElement("canvas");
+		// var ctx = dstCanvas.getContext("2d");
+
+		// dstCanvas.width = Math.ceil(standardExtent.width - standardExtent.x);
+		// dstCanvas.height = Math.ceil(standardExtent.height - standardExtent.y);
+
+		// Lib.jeashDrawToSurface(jeashSurface, dstCanvas);
+		// if (Lib.jeashIsOnStage(jeashSurface)) {
+		// 	Lib.jeashAppendSurface(dstCanvas);
+		// 	Lib.jeashCopyStyle(jeashSurface, dstCanvas);
+		// 	Lib.jeashSwapSurface(jeashSurface,dstCanvas);
+		// 	Lib.jeashRemoveSurface(jeashSurface);
+		// }
+
+		// jeashSurface = dstCanvas;
+	}
 }
+

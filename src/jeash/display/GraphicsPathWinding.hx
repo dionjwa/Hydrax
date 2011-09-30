@@ -26,15 +26,8 @@
 
 package jeash.display;
 
-interface IGraphicsData 
+@:fakeEnum(String) enum GraphicsPathWinding 
 {
-	var jeashGraphicsDataType(default,null):GraphicsDataType;
-}
-
-@:fakeEnum(Int) enum GraphicsDataType 
-{
-	STROKE;
-	SOLID;
-	GRADIENT;
-	PATH;
+	EVEN_ODD;
+	NON_ZERO;
 }

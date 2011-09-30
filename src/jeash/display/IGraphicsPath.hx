@@ -26,15 +26,5 @@
 
 package jeash.display;
 
-interface IGraphicsData 
-{
-	var jeashGraphicsDataType(default,null):GraphicsDataType;
-}
+interface IGraphicsPath {}
 
-@:fakeEnum(Int) enum GraphicsDataType 
-{
-	STROKE;
-	SOLID;
-	GRADIENT;
-	PATH;
-}

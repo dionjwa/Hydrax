@@ -26,15 +26,48 @@
 
 package jeash.display;
 
-interface IGraphicsData 
-{
-	var jeashGraphicsDataType(default,null):GraphicsDataType;
-}
+import jeash.display.IGraphicsData;
 
-@:fakeEnum(Int) enum GraphicsDataType 
+class GraphicsPath implements IGraphicsData, implements IGraphicsPath
 {
-	STROKE;
-	SOLID;
-	GRADIENT;
-	PATH;
+	public var commands : Array<Int>;
+	public var data : Array<Float>;
+	public var winding : GraphicsPathWinding; /* note: currently ignored */
+	public var jeashGraphicsDataType(default,null):GraphicsDataType;
+
+	public function new(?commands : Array<Int>, ?data : Array<Float>, ?winding : GraphicsPathWinding) {
+		this.commands = commands;
+		this.data = data;
+		this.winding = winding;
+		this.jeashGraphicsDataType = PATH;
+	}
+
+	public function curveTo(controlX : Float, controlY : Float, anchorX : Float, anchorY : Float) {
+		if (this.commands != null && this.data != null) {
+			this.commands.push(GraphicsPathCommand.CURVE_TO);
+			this.data.push(anchorX);
+			this.data.push(anchorY);
+			this.data.push(controlX);
+			this.data.push(controlY);
+		}
+	}
+
+	public function lineTo(x : Float, y : Float) {
+		if (this.commands != null && this.data != null) {
+			this.commands.push(GraphicsPathCommand.LINE_TO);
+			this.data.push(x);
+			this.data.push(y);
+		}
+	}
+
+	public function moveTo(x : Float, y : Float) {
+		if (this.commands != null && this.data != null) {
+			this.commands.push(GraphicsPathCommand.MOVE_TO);
+			this.data.push(x);
+			this.data.push(y);
+		}
+	}
+
+	//function wideLineTo(x : Float, y : Float) : Void;
+	//function wideMoveTo(x : Float, y : Float) : Void;
 }
