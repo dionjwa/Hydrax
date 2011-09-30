@@ -9,7 +9,6 @@ import js.Dom;
   */
 class JsDebugUtil
 {
-
 	public static function insertIntoDebugDiv (element :HtmlDom) :Void
 	{
 		var debugElement = js.Lib.document.getElementById("debug");
