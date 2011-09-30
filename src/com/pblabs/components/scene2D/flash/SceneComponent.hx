@@ -72,9 +72,9 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		com.pblabs.engine.debug.Profiler.exit("sc.addedToParent");
 	}
 	
-	override function setDefaultVars () :Void
+	override function setDefaults () :Void
 	{
-		super.setDefaultVars();
+		super.setDefaults();
 		priority = 0;
 	}
 	

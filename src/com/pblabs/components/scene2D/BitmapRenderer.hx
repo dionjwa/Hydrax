@@ -251,9 +251,9 @@ class BitmapRenderer
 	}
 	
 	#if flash
-	override function setDefaultVars () :Void
+	override function setDefaults () :Void
 	{
-		super.setDefaultVars();
+		super.setDefaults();
 		if (_bitmap != null) {
 			smoothing = false;
 		}
