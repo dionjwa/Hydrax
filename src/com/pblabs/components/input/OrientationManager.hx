@@ -27,6 +27,7 @@ class OrientationManager extends BaseInputManager
 	public function new ()
 	{
 		super();
+		orientationChange = new DirectSignaler(this);
 	}
 	
 	override public function startup () :Void
@@ -54,9 +55,6 @@ class OrientationManager extends BaseInputManager
 		#if js
 		var listener = onOrientationChangeInternal;
 		untyped __js__("window.onorientationchange = listener");
-		orientationChange = new DirectSignaler(this);
-		#else
-		com.pblabs.util.Log.error("Orientation signals currently JS only.");
 		#end
 	}
 	
