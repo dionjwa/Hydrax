@@ -53,17 +53,18 @@ class PagedScreen extends PBContext
 		scene.autoSceneViewAttach = false;
 		scene.sceneAlignment = SceneAlignment.TOP_LEFT;
 		scene.visible = false;
+		#if js
 		scene.x = 1000;
+		#end
 		scene.update();
-		// scene.zoom = 2;
 		
+		#if js
 		_layerBackground = scene.addLayer("background", com.pblabs.components.scene2D.js.css.SceneLayer);
 		_layerForeground = scene.addLayer("foreground", com.pblabs.components.scene2D.js.css.SceneLayer);
-		// trace('scene.sceneView.width=' + scene.sceneView.width);
-		
-		// _layerBackground = scene.addLayer("background");
-		// _layerForeground = scene.addLayer("foreground");
-		
+		#elseif flash
+		_layerBackground = scene.addLayer("background");
+		_layerForeground = scene.addLayer("foreground");
+		#end
 	}
 	
 	override public function enter () :Void
