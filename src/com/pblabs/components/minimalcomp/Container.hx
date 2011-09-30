@@ -8,6 +8,7 @@ import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
 import de.polygonal.core.math.Limits;
+import de.polygonal.motor2.geom.primitive.AABB2;
 
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
@@ -17,6 +18,20 @@ class Container extends Component
 	public var sceneLayer :BaseSceneLayer<Dynamic, Dynamic>;
 	public var alignment :Alignment;
 	public var destroyChildrenIfDestroyed :Bool;
+	public var bounds (get_bounds, null) :AABB2;
+	function get_bounds () :AABB2
+	{
+		var b = new AABB2();
+		b.xmin = b.ymin = Math.POSITIVE_INFINITY;
+		b.xmax = b.ymax = Math.NEGATIVE_INFINITY;
+		for (c in children) {
+			b.xmin = Math.min(b.xmin, c.x - c.width / 2);
+			b.ymin = Math.min(b.ymin, c.y - c.height / 2);
+			b.xmax = Math.max(b.xmax, c.x + c.width / 2);
+			b.ymax = Math.max(b.ymax, c.y + c.height / 2);
+		}
+		return b;
+	}
 	
 	public function new ()
 	{
