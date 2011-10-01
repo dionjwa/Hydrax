@@ -139,6 +139,14 @@ class MCompTools
 		return child;
 	}
 	
+	public static function invalidate (e :IEntity) :IEntity
+	{
+		for (c in e.getComponents(Component)) {
+			c.invalidate();
+		}
+		return e;
+	}
+	
 	public static function setComponentId (e :IEntity, id :String) :IEntity
 	{
 		ensureComponent(e);
@@ -153,7 +161,6 @@ class MCompTools
 		var comp = e.getComponent(Component);
 		if (comp != null) {
 			e.setOnOrientationChange(function(_) :Void {
-				// trace("invalidating because of orientation change");
 				comp.invalidate();
 			});
 		}
