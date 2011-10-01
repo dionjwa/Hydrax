@@ -24,6 +24,8 @@ using com.pblabs.engine.util.PBUtil;
 
 using com.pblabs.components.scene2D.ImageTools;
 
+using com.pblabs.components.minimalcomp.MCompTools;
+
 /**
   * "using" functions for input, e.g. mouse, touch.
   */
@@ -45,6 +47,7 @@ class InputTools
 					var width = sc.layer.scene.sceneView.width;
 					sc.width = width * widthFraction;
 				}
+				e.invalidate();
 			}
 		}
 		e.context.getManager(IProcessManager).callLater(callback(stretch, 0));
@@ -60,6 +63,7 @@ class InputTools
 					var width = sc.layer.scene.sceneView.width;
 					sc.x = width * widthFraction;
 				}
+				e.invalidate();
 			}
 		}
 		e.context.getManager(IProcessManager).callLater(callback(cb, 0));
