@@ -54,6 +54,15 @@ class GraphicsComponent
 	}
 	
 	#if js
+	
+	override public function onFrame (dt :Float) :Void
+	{
+		if (_isContentsDirty) {
+			redrawBackBuffer();
+		}
+		super.onFrame(dt);
+	}
+	
 	override private function redrawBackBuffer ()
 	{
 		_bitmap = _graphics.jeashSurface;
