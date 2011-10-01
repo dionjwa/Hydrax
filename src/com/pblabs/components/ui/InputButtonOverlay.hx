@@ -3,7 +3,6 @@ package com.pblabs.components.ui;
 import com.pblabs.components.input.IInputData;
 import com.pblabs.components.input.InputManager;
 import com.pblabs.components.scene2D.BaseSceneComponent;
-import com.pblabs.components.scene2D.GraphicsComponent;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.geom.Vector2;
 using com.pblabs.components.util.DataComponent;
@@ -19,7 +18,12 @@ using com.pblabs.engine.util.PBUtil;
   * using com.pblabs.components.ui.InputButtonOverlay;
   *	 entity.showOverlay();  
   */
-class InputButtonOverlay extends GraphicsComponent
+class InputButtonOverlay
+	#if flash
+	extends com.pblabs.components.scene2D.GraphicsComponent
+	#elseif js
+	extends com.pblabs.components.scene2D.BitmapRenderer
+	#end
 {
 	static var OVERLAY_KEY :String = "InputButtonOverlayActive";
 	
@@ -60,7 +64,7 @@ class InputButtonOverlay extends GraphicsComponent
 	override function setDefaults () :Void
 	{
 		super.setDefaults();
-		// alpha = 0.33;
+		alpha = 0.33;
 	}
 	
 	function deviceDown (input :IInputData) :Void
@@ -76,9 +80,6 @@ class InputButtonOverlay extends GraphicsComponent
 
 	function deviceUp (input :IInputData) :Void
 	{
-		if (!context.isTopContext) {
-			return;
-		}
 		removeFromParent();
 	}
 	
@@ -89,20 +90,47 @@ class InputButtonOverlay extends GraphicsComponent
 		if (b == null || Math.isNaN(b.intervalX) || Math.isNaN(b.intervalY)) {
 			return;
 		}
-		var g = graphics;
-		g.clear();
-		g.beginFill(0x000000, 0.33);
-		g.drawRoundRect(0, 0, b.intervalX, b.intervalY, 10);
-		g.endFill();
-		#if js
-		g.jeashRender();
-		#end
+		
 		x = sc.x;
 		y = sc.y;
-		
 		registrationPoint = new Vector2((x - b.xmin), (y - b.ymin));
+		var round = 10;
+		
+		#if flash
+			var g = graphics;
+			g.clear();
+			g.beginFill(0x000000);
+			g.drawRoundRect(0, 0, b.intervalX, b.intervalY, round);
+			g.endFill();
+		#elseif js
+			var canvas :Canvas = cast js.Lib.document.createElement("canvas");
+			canvas.width = Std.int(b.intervalX);
+			canvas.height = Std.int(b.intervalY);
+			
+			var ctx = canvas.getContext('2d');
+			
+			var w = Std.int(b.intervalX);
+			var h = Std.int(b.intervalY);
+			
+			ctx.beginPath();
+			ctx.moveTo(round, 0);
+			ctx.lineTo(w-round, 0);
+			ctx.quadraticCurveTo(w, 0, w, round);
+			ctx.lineTo(w, h-round);
+			ctx.quadraticCurveTo(w, h, w-round, h);
+			ctx.lineTo(round, h);
+			ctx.quadraticCurveTo(0, h, 0, h-round);
+			ctx.lineTo(0, round);
+			ctx.quadraticCurveTo(0, 0, round, 0);
+			
+			ctx.fillStyle = "#000000";
+			ctx.fill();
+			
+			bitmapData = canvas;
+		#end
 		
 		addToParent(sc.parent);
+		
 		#if flash
 		onFrame(0);
 		#end
