@@ -35,6 +35,13 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		return div;
 	}
 	
+	static function createCanvas () :Canvas
+	{
+		var canvas :Canvas = cast js.Lib.document.createElement("canvas");
+		canvas.style.cssText = "position:relative;left:0px;top:0px;-webkit-transform:translateZ(0px)";
+		return canvas;
+	}
+	
 	public var priority :Int;
 	/** Set this when added to the parent */
 	public var isOnCanvas(default, null) :Bool;
@@ -115,13 +122,6 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 			cast(layer, JSLayer).isDirty = true;
 		}
 		return super.set_isTransformDirty(val);
-	}
-	
-	static function createCanvas () :Canvas
-	{
-		var canvas :Canvas = cast js.Lib.document.createElement("canvas");
-		canvas.style.cssText = "position:relative;left:0px;top:0px;-webkit-transform:translateZ(0px)";
-		return canvas;
 	}
 	
 	function set_cacheAsBitmap (val :Bool) :Bool
