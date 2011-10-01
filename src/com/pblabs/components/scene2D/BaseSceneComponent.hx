@@ -167,8 +167,10 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		com.pblabs.engine.debug.Profiler.enter("super");
 		super.onReset();
 		com.pblabs.engine.debug.Profiler.exit("super");
-		Preconditions.checkNotNull(parentProperty, "parentProperty is null in " + com.pblabs.util.ReflectUtil.getClassName(this));
-		com.pblabs.util.Assert.isNotNull(parent, com.pblabs.util.ReflectUtil.tinyClassName(this) + ".parent is null, prop=" + parentProperty);
+		if (autoAddToScene) {
+			Preconditions.checkNotNull(parentProperty, "parentProperty is null in " + com.pblabs.util.ReflectUtil.getClassName(this));
+			com.pblabs.util.Assert.isNotNull(parent, com.pblabs.util.ReflectUtil.tinyClassName(this) + ".parent is null, prop=" + parentProperty);
+		}
 		
 		var coords = spatialProperty != null ? owner.getProperty(spatialProperty) : null;
 		com.pblabs.engine.debug.Profiler.enter("bindsignals");
