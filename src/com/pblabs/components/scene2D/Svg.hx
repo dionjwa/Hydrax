@@ -27,15 +27,13 @@ using StringTools;
 
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.scene2D.SvgRenderTools;
+using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.resource.ResourceToken;
 using com.pblabs.util.StringUtil;
 using com.pblabs.util.XmlTools;
 #if flash
 using com.pblabs.util.DisplayUtils;
 import de.polygonal.core.math.Mathematics;
-#end
-
-#if flash
 #end
 
 /**
@@ -173,6 +171,22 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		#end
 		svgData = null;
 	}
+	
+	#if (flash || cpp)
+	override function onReset () :Void
+	{
+		super.onReset();
+		
+		//If there's a minimalcomp component, invalidate on render complete.
+		//Unfortunately we have to import the minimalcomp class here
+		bindSignal(renderCompleteSignal, function (?_) :Void {
+			//Notify the display hierarchy that our dimensions may have changed
+			if (owner.getComponent(com.pblabs.components.minimalcomp.Component) != null) {
+				owner.getComponent(com.pblabs.components.minimalcomp.Component).invalidate();
+			}
+		});
+	}
+	#end
 	
 	#if js
 	override function addedToParent () :Void
