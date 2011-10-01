@@ -141,9 +141,15 @@ class DemoPagedScreen extends com.pblabs.components.ui.PagedScreen
 				.addSceneComponent(CircleShape, _layerForeground)
 				.initializeEntity("icon")
 				.setEntityAsDisplayChildOf(button, Resources.list.BUTTON_ICON_LEFT, "anchor");
-			
+				
 			ii += 2;
 		}
+		
+		#if flash
+		//Prevent flicker
+		_layerForeground.scene.update();
+		#end
+		
 	}
 	
 	override function createBackButton () :Void
