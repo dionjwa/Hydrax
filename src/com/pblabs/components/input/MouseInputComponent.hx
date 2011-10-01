@@ -183,6 +183,10 @@ class MouseInputComponent extends EntityComponent
 	
 	function onMouseDownInternal (data :IInputData) :Void
 	{
+		if (!context.isTopContext) {
+			return;
+		}
+		
 		_mouseDownThis = false;
 		if (isTranslatable || (_deviceDownSignaler != null || _deviceClickSignaler != null || _deviceDownSignaler != null)) {
 			
@@ -207,6 +211,11 @@ class MouseInputComponent extends EntityComponent
 	function onMouseUpInternal (data :IInputData) :Void
 	{
 		destroyDeviceHeldBond();
+		
+		if (!context.isTopContext) {
+			return;
+		}
+		
 		if (bounds != null && data != null && data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
 			if (_deviceUpSignaler != null) {
 				_deviceUpSignaler.dispatch();
@@ -221,6 +230,11 @@ class MouseInputComponent extends EntityComponent
 	function onClickInternal (data :IInputData) :Void
 	{
 		destroyDeviceHeldBond();
+		
+		if (!context.isTopContext) {
+			return;
+		}
+		
 		if (_deviceClickSignaler != null && data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
 			_deviceClickSignaler.dispatch();
 		}
@@ -228,6 +242,10 @@ class MouseInputComponent extends EntityComponent
 	
 	function onDeviceHeldDownInternal (data :IInputData) :Void
 	{
+		if (!context.isTopContext) {
+			return;
+		}
+		
 		if (_deviceHeldDownSignaler != null && data.firstObjectUnderPoint(bounds.objectMask) == _bounds) {
 			_deviceHeldDownSignaler.dispatch();
 		}
