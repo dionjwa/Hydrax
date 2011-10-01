@@ -58,28 +58,11 @@ class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 	  */
 	override function checkZOrder () :Void
 	{
-		// trace("checkZOrder for " + name);
-		// trace("  before children=" + children.map(com.pblabs.engine.util.Mapping.componentToEntityName).array());
-		// com.pblabs.engine.debug.Profiler.enter("checkZorder");
-		// var sb = new StringBuf();
-		// sb.add("\n  before display ");
-		// for (ii in 0..._displayContainer.numChildren) {
-		// 	sb.add(_displayContainer.getChildAt(ii).name + ", ");
-		// }
 		for (i in 0...children.length) {
 			if (_displayContainer.getChildIndex(children[i].displayObject) != i) {
 				_displayContainer.setChildIndex(children[i].displayObject, i);
 			}
 		}
-		// sb.add("\n  after display ");
-		// for (ii in 0..._displayContainer.numChildren) {
-		// 	sb.add(_displayContainer.getChildAt(ii).name + ", ");
-		// }
-		// trace("  after children=" + children.map(com.pblabs.engine.util.Mapping.componentToEntityName).array());
-		// com.pblabs.engine.debug.Profiler.exit("checkZorder");
-		// trace(owner.name + "\n   " + children.map(com.pblabs.engine.util.Mapping.componentToEntity)
-		// 	.map(com.pblabs.engine.util.Mapping.entityToName) 
-		// 	.array().join("\n   "));
 	}
 	
 	override function childAdded (c :SceneComponent) :Void
@@ -116,7 +99,7 @@ class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 	{
 		super.addedToParent();
 		cast(_displayContainer, Sprite).graphics.clear();
-		// com.pblabs.util.GraphicsUtil.drawRect(cast(_displayContainer, Sprite).graphics, parent.sceneView.width - 1, parent.sceneView.height - 1, 0x000000, 1, 0);
+		com.pblabs.util.GraphicsUtil.drawRect(cast(_displayContainer, Sprite).graphics, parent.sceneView.width - 1, parent.sceneView.height - 1, 0xff0000, 1, 0);
 	}
 	#end
 }
