@@ -87,8 +87,13 @@ class ImageTools
 	}
 	
 	/** Converts Svg to Bitmap */
-	public static function addSvg (e :IEntity, layer :BaseSceneLayer<Dynamic, Dynamic>, token :ResourceToken, 
-		?replacements :Array<SvgReplace>, ?componentName :String, ?cache :Bool = true, ?isForDeviceDown :Bool = false) :IEntity 
+	public static function addSvg (e :IEntity, 
+		layer :BaseSceneLayer<Dynamic, Dynamic>, 
+		token :ResourceToken, 
+		?replacements :Array<SvgReplace>, 
+		?componentName :String, 
+		?cache :Bool = true, 
+		?isForDeviceDown :Bool = false) :IEntity 
 	{
 		if (cache) {
 			var svgComp = e.context.allocate(BitmapRenderer);
