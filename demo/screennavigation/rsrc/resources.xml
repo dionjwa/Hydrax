@@ -5,6 +5,8 @@
 	<svg id="BUTTON_01_DOWN" url="rsrc/button_01_down.svg"/>
 	<svg id="BUTTON_BACK" url="rsrc/button_back.svg"/>
 	<svg id="BUTTON_BACK_DOWN" url="rsrc/button_back_down.svg"/>
+	<svg id="BUTTON_ICON_LEFT" url="rsrc/button_icon_left.svg"/>
+	<svg id="BUTTON_TEXT" url="rsrc/button_text.svg"/>
 	<svg id="BUTTON_TEXT_IPHONE" url="rsrc/button_text_iphone.svg"/>
 	<svg id="BUTTON_TEXT_LINE" url="rsrc/button_text_line.svg"/>
 	<svg id="ICON_SQUARE_EMPTY" url="rsrc/icon_square_empty.svg"/>
