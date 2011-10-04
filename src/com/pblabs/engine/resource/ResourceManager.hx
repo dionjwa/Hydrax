@@ -148,6 +148,12 @@ class ResourceManager
 		}  
 	}
 	
+	public function getResourceByType <T> (type :ResourceType) :T
+	{
+		com.pblabs.util.Assert.isNotNull(type, ' type is null');
+		return cast getResource(Type.enumConstructor(type));
+	}
+	
 	public function addResource (rsrc :IResources<Dynamic>) :Void
 	{
 		com.pblabs.util.Log.info("addResource " + com.pblabs.util.ReflectUtil.getClassName(rsrc));
