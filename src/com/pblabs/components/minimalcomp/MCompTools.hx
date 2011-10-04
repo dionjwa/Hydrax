@@ -10,7 +10,9 @@ import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.NameManager;
+import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.util.Comparators;
+import com.pblabs.util.F;
 import com.pblabs.util.Predicates;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
@@ -21,6 +23,7 @@ using Lambda;
 using Type;
 
 using com.pblabs.components.input.InputTools;
+using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
 using com.pblabs.util.ArrayUtil;
 using com.pblabs.util.IterUtil;
@@ -147,6 +150,30 @@ class MCompTools
 		return e;
 	}
 	
+	/**
+	  * Updates positions of components taking into consideration platform quirks.
+	  */
+	public static function updatePosition (e :IEntity, positionFunc :IEntity->Void) :IEntity
+	{
+		var f = function () :Void {
+			positionFunc(e);
+			#if flash
+			com.pblabs.components.scene2D.SceneUtil.update(e);
+			#end
+		}
+		e.context.getManager(IProcessManager).callLater(function () :Void {
+			if (e.isLiveObject) {
+				ensureComponent(e).bindSignal(ensureComponent(e).redrawSignal, F.ignoreArg(f));
+			}
+		});
+		
+		e.context.getManager(IProcessManager).callLater(f);
+		positionFunc(e);
+		// f();
+		return e;
+	}
+	
+	
 	public static function setComponentId (e :IEntity, id :String) :IEntity
 	{
 		ensureComponent(e);
@@ -167,8 +194,7 @@ class MCompTools
 		return e;
 	}
 	
-	
-	static function ensureComponent (e :IEntity) :Component
+	public static function ensureComponent (e :IEntity) :Component
 	{
 		if (e.getComponent(Component) == null) {
 			e.addComponent(e.context.allocate(Component));
