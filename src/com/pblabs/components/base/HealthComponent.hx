@@ -71,6 +71,7 @@ class HealthComponent extends EntityComponent,
 	{
 		_health = xml.parseFloat("health");
 		healthMax = xml.parseFloat("healthMax");
+		return this;
 	}
 	
 	public function setDamageModifier (key :String, multiplier :Float) :Void
