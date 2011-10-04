@@ -321,6 +321,14 @@ class SceneUtil
 		}
 	}
 	
+	public static function update (e :IEntity) :IEntity
+	{
+		for (c in e.getComponents(IAnimatedObject)) {
+			cast(c, IAnimatedObject).onFrame(0);
+		}
+		return e;
+	}
+	
 	public static function setLayerColor (layer :BaseSceneLayer<Dynamic, Dynamic>, color :Int) :RectangleShape
 	{
 		var background = createBaseSceneEntity(layer.context, false);
