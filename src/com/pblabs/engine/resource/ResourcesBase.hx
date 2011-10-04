@@ -19,6 +19,11 @@ class ResourcesBase<T>
 	public var manager :IResourceManager;
 	public var name (get_name, never) :String;
 	
+	var _name :String;
+	var _onLoad :Void->Void;
+	var _onError :Dynamic->Void;
+	var _isLoaded :Bool;
+	
 	public function new (name :String)
 	{
 		_name = name;
@@ -72,11 +77,6 @@ class ResourcesBase<T>
 		_onError = null;
 	}
 
-	var _name :String;
-	var _onLoad :Void->Void;
-	var _onError :Dynamic->Void;
-	var _isLoaded :Bool;
-	
 	#if debug
 	public function toString () :String
 	{
