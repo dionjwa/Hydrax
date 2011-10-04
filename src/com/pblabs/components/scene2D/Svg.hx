@@ -123,6 +123,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			var sprite = cast(self._displayObject, flash.display.Sprite);
 			sprite.addChild(renderedSvg);
 			self.recomputeBounds();
+			registrationPoint = new com.pblabs.geom.Vector2(bounds.intervalX / 2, bounds.intervalY / 2);
 			self.renderCompleteSignal.dispatch();
 		});
 		#else
