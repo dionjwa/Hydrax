@@ -188,7 +188,7 @@ class ObjectType
 		// 	_bits |= manager.getType(childXML.toString());
 		// }
 		
-		// return this;
+		 return this;
 	}
 	
 	inline public function hashCode () :Int

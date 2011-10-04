@@ -82,6 +82,7 @@ class NodeChild<P :INodeParent<Dynamic>> extends EntityComponent,
 		if (parentProperty != null) {
 			addToParent();
 		}
+		return this;
 	}
 	
 	public function addedToParent () :Void

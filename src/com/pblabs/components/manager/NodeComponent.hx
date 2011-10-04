@@ -100,6 +100,7 @@ class NodeComponent<P :INodeParent<Dynamic>, C :INodeChild<Dynamic>> extends Ent
 		if (parentProperty != null) {
 			addToParent();
 		}
+		return this;
 	}
 	
 	public function addChild (c :C) :Void
