@@ -212,9 +212,14 @@ class PBContext
 		signalSetup.dispatch();
 	}
 	
-	public function enter () :Void
+	public function enterInternal () :Void
 	{
 		signalEnter.dispatch();
+		enter();
+	}
+	
+	public function enter () :Void
+	{
 	}
 	
 	public function exit () :Void
