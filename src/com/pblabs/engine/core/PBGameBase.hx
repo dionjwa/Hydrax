@@ -134,15 +134,6 @@ class PBGameBase
 		
 		if (Std.is(instance, IPBManager)) {
 			cast(instance, IPBManager).startup();
-			// try {
-			// 	cast(instance, IPBManager).startup();
-			// #if flash
-			// } catch (e :flash.errors.TypeError) {
-			// #else
-			// #end
-			// } catch (e :Dynamic) {
-			// 	trace("Fuck, error casting " + instance + "::" + com.pblabs.util.ReflectUtil.getClassName(instance) +" to a IPBManager, even though it says it's one: " + Std.is(instance, IPBManager) + "\n" + e);  
-			// }
 		}
 		return instance;
 	}
@@ -169,11 +160,9 @@ class PBGameBase
 			var bond :hsl.haxe.Bond = null;
 			bond = cast(ctx, PBContext).signalDestroyed.bind(
 				function (c :IPBContext) :Void {
-				// self.callLater(function () :Void {
 					self.signalContextShutdown.dispatch(ctx);
-				// });
 				}).destroyOnUse();
-			// //Fire setup
+			//Fire setup
 			signalContextSetup.dispatch(ctx);
 			ctx.setup();
 			
@@ -317,8 +306,6 @@ class PBGameBase
 			self._currentContext = null;
 		}
 		
-		
-		
 		//Do the transitions, then set the _currentContext at the end
 		while (_contextTransitions.length > 0) {
 			var nextTransition = _contextTransitions.shift();//Removes the first element and returns it.
@@ -327,9 +314,6 @@ class PBGameBase
 					transition = effect;
 					if (_currentContext != null) {
 						functionStack.push(exit(_currentContext));
-						// toExit.pushIfNotIn(_currentContext);
-						// _currentContext.exit();
-						// signalContextExit.dispatch(_currentContext);
 						_currentContext = null;
 					}
 					_contexts.push(c);
@@ -337,14 +321,7 @@ class PBGameBase
 					transition = effect;
 					if (_currentContext == c) {
 						functionStack.push(exit(_currentContext));
-						// functionStack.push(destroy(_currentContext));
-						// toDestroy.pushIfNotIn(_currentContext);
 						_currentContext = null;
-						// removeCurrentContext();
-					// } else {
-						
-					// 	signalContextShutdown.dispatch(c);
-					// 	c.shutdown();
 					}
 					functionStack.push(destroy(c));
 					_contexts.remove(c);
@@ -354,26 +331,18 @@ class PBGameBase
 					com.pblabs.util.Assert.isNotNull(oldContext);
 					if (_currentContext == oldContext) {
 						destroyCurrentContext();
-						// functionStack.push(exit(_currentContext));
-						// functionStack.push(destroy(_currentContext));
-						// _contexts.remove(_currentContext);
-						// _currentContext = null;
-						// removeCurrentContext();
 						_contexts.push(newContext);
 					} else {
 						var idx = _contexts.indexOf(oldContext);
 						com.pblabs.util.Assert.isWithinRange(idx, 0, _contexts.length);
 						_contexts[idx] = newContext;
 						functionStack.push(destroy(oldContext));
-						// signalContextShutdown.dispatch(oldContext);
-						// oldContext.shutdown();
 					}
 					
 				case REMOVE(c, effect):
 					transition = effect;
 					if (c == _currentContext) {
 						destroyCurrentContext();
-						// removeCurrentContext();
 					} else {
 						functionStack.push(destroy(c));
 						_contexts.remove(c);
@@ -382,8 +351,6 @@ class PBGameBase
 					transition = effect;
 					if (_currentContext != null && Std.is(_currentContext, cls)) {
 						functionStack.push(exit(_currentContext));
-						// removeCurrentContext();
-						// _contexts.push(allocate(c));
 					} else {
 						if (_currentContext != null) {
 							destroyCurrentContext();
@@ -391,8 +358,6 @@ class PBGameBase
 						while (_contexts.length > 0 && !Std.is(_contexts[_contexts.length - 1], cls)) {
 							var ctx = _contexts.pop();
 							functionStack.push(destroy(ctx));
-							// signalContextShutdown.dispatch(ctx);
-							// ctx.shutdown();
 						}
 						if (_contexts.length == 0) {
 							_contexts.push(allocate(cls));
@@ -400,37 +365,22 @@ class PBGameBase
 					}
 				case PLACE_ON_TOP(c, effect):
 					transition = effect;
-					
 					if (_currentContext != null) {
 						functionStack.push(exit(_currentContext));
 						_currentContext != null;
 					}
-					
 					_contexts.remove(c);
 					_contexts.push(c);
-					
-					// if (c != _currentContext) {
-					// 	removeCurrentContext();
-					// 	_contexts.remove(c);
-					// 	_contexts.push(c);
-					// } else {
-					// 	// c.exit();
-					// 	functionStack.push(exit(c));
-					// }
 			}
 		}
 		
 		//Define function for all the exiting/destroying
 		var doExitDestroyActions = function () :Void {
-			// trace("doExitDestroyActions");
 			while (functionStack.length > 0) {
 				functionStack.shift()();
 			}
 		}
 		
-		//Local function for new context
-		// var activateNewContext = function () :Void {
-			
 		_currentContext = _contexts[_contexts.length - 1];
 		_isUpdatingContextTransition = false;
 		_contextProcessManager = null;
@@ -440,21 +390,18 @@ class PBGameBase
 			//Dispatch the signaller first, so that managers are notified.
 			com.pblabs.util.Log.debug("New current context=" + _currentContext);
 			signalContextEnter.dispatch(_currentContext);
-			_currentContext.enter();
+			Reflect.callMethod(_currentContext, Reflect.field(_currentContext, "enterInternal"), null);
 			_contextProcessManager = cast _currentContext.getManager(IProcessManager);
 			_contextProcessManager.isRunning = true;
 		} else {
 			com.pblabs.util.Log.debug("No current context");
 		}
-		// }
 	
 		//Now that the local functions are defined, do the scene transition if there
 		if (transition != null) {
-			// trace("doing transition ");
 			transition(previousContext, _currentContext, doExitDestroyActions);
 		} else {
 			doExitDestroyActions();
-			// activateNewContext();
 		}
 		
 		com.pblabs.engine.debug.Profiler.exit("updateContextTransitions");
@@ -489,9 +436,6 @@ class PBGameBase
 
 		if (_contextTransitions != null && _contextTransitions.length > 0) {
 			updateContextTransitions();
-			// if (_contextProcessManager != null) {
-			// 	_contextProcessManager.onFrame(#if flash event #end);
-			// }
 		}
 
 		while (_callLater.length > 0) {
