@@ -42,7 +42,7 @@ class EntityComponent
    
    @editorData({ignore :"true"})
    public var name (get_name, set_name) :String;
-   
+
    public function new() 
    {
    	   key = com.pblabs.engine.util.PBUtil.KEY_COUNT++;

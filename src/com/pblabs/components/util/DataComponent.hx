@@ -69,6 +69,7 @@ class DataComponent<T> extends EntityComponent,
 		for (key in map.keys()) {
 			Reflect.setField(this, key, map.get(key));
 		}
+		return this;
 	}
 	
 	override public function unregister():Void
