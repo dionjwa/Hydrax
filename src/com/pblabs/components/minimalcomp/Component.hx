@@ -37,7 +37,7 @@ class Component extends NodeComponent<Container, Component>
 	public var spatialProperty :PropertyReference<SpatialComponent<Dynamic>>;
 	var _spatial :SpatialComponent<Dynamic>;
 	var _isHidden :Bool;
-		
+	
 	public function new ()
 	{
 		super();
