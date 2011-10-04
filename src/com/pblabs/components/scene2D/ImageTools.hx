@@ -9,15 +9,19 @@ import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.SvgResources;
+import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.util.Comparators;
+import com.pblabs.util.F;
 import com.pblabs.util.svg.SvgData;
 import com.pblabs.util.svg.SvgReplace;
 
-using com.pblabs.components.scene2D.SceneUtil;
-using com.pblabs.engine.util.PBUtil;
-using com.pblabs.components.util.DataComponent;
-
 using Lambda;
+
+using com.pblabs.components.input.InputTools;
+using com.pblabs.components.minimalcomp.MCompTools;
+using com.pblabs.components.scene2D.SceneUtil;
+using com.pblabs.components.util.DataComponent;
+using com.pblabs.engine.util.PBUtil;
 
 /**
   * "using" methods for adding and setting image data and/or components.
@@ -128,6 +132,56 @@ class ImageTools
 			}
 		}
 		
+		return e;
+	}
+	
+	public static function stretchToWidth (e :IEntity, ?widthFraction :Float = 1.0) :IEntity
+	{
+		var cb = function (orientation :Int = 0) :Void {
+			if (e.isLiveObject) {
+				for (sc in e.getComponents(BaseSceneComponent)) {
+					if (sc.layer == null || sc.layer.scene == null) {
+						continue;
+					}
+					var width = sc.layer.scene.sceneView.width;
+					// trace('sc.width=' + sc.width);
+					// trace('width=' + (width * widthFraction));
+					// trace('sc.x=' + sc.x);
+					// trace('sc.y=' + sc.y);
+					// trace('sc.bounds=' + sc.bounds);
+					sc.width = width * widthFraction;
+				}
+				e.invalidate();
+			}
+		}
+		// e.context.getManager(IProcessManager).callLater(callback(stretch, 0));
+		
+		e.updatePosition(F.ignoreArg(callback(cb,0)));
+		e.setOnOrientationChange(cb);
+		return e;
+	}
+	
+	public static function setXToScreenProportion (e :IEntity, ?widthFraction :Float = 0.5) :IEntity
+	{
+		var cb = function (orientation :Int) :Void {
+			if (e.isLiveObject) {
+				for (sc in e.getComponents(BaseSceneComponent)) {
+					if (sc.layer == null || sc.layer.scene == null) {
+						continue;
+					}
+					var width = sc.layer.scene.sceneView.width;
+					sc.x = width * widthFraction;
+				}
+				e.invalidate();
+			}
+		}
+		
+		e.updatePosition(F.ignoreArg(callback(cb,0)));
+		e.setOnOrientationChange(cb);
+		
+		// e.updatePosition(callback(cb, 0));
+		// e.context.getManager(IProcessManager).callLater(callback(cb, 0));
+		// e.setOnOrientationChange(cb);
 		return e;
 	}
 	

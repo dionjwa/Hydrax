@@ -8,23 +8,13 @@
  ******************************************************************************/
 package com.pblabs.components.input;
 
-import com.pblabs.components.input.MouseInputComponent;
-import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.engine.core.IEntity;
-import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.ObjectType;
-import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.engine.time.IProcessManager;
-import com.pblabs.util.Comparators;
-import com.pblabs.util.Preconditions;
 
 using Lambda;
 
-using com.pblabs.engine.util.PBUtil;
-
 using com.pblabs.components.scene2D.ImageTools;
-
-using com.pblabs.components.minimalcomp.MCompTools;
+using com.pblabs.engine.util.PBUtil;
 
 /**
   * "using" functions for input, e.g. mouse, touch.
@@ -36,38 +26,6 @@ class InputTools
 		e.context.ensureManager(OrientationManager);
 		var inputComponent = e.ensureComponent(InputListener);
 		inputComponent.bindOrientationChange(cb);
-		return e;
-	}
-	
-	public static function stretchToWidth (e :IEntity, ?widthFraction :Float = 1.0) :IEntity
-	{
-		var stretch = function (orientation :Int) :Void {
-			if (e.isLiveObject) {
-				for (sc in e.getComponents(BaseSceneComponent)) {
-					var width = sc.layer.scene.sceneView.width;
-					sc.width = width * widthFraction;
-				}
-				e.invalidate();
-			}
-		}
-		e.context.getManager(IProcessManager).callLater(callback(stretch, 0));
-		setOnOrientationChange(e, stretch);
-		return e;
-	}
-	
-	public static function setXToScreenProportion (e :IEntity, ?widthFraction :Float = 0.5) :IEntity
-	{
-		var cb = function (orientation :Int) :Void {
-			if (e.isLiveObject) {
-				for (sc in e.getComponents(BaseSceneComponent)) {
-					var width = sc.layer.scene.sceneView.width;
-					sc.x = width * widthFraction;
-				}
-				e.invalidate();
-			}
-		}
-		e.context.getManager(IProcessManager).callLater(callback(cb, 0));
-		setOnOrientationChange(e, cb);
 		return e;
 	}
 	
