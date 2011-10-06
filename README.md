@@ -5,6 +5,23 @@
 
 # PBE-Haxe (Hydrax): a [HaXe][haxe] port of the [PushButton Engine (PBE)][pushbutton]
 
+# What is it?
+
+Hydrax/PBE is a game engine.  It helps you write robust, maintainable, flexible games both big and small, having solved many problems that you will encounter if you don't use this or a similar library.
+
+It is not a direct competitor to NME.  NME is a platform independent Flash API, whereas Hydrax is a high level game engine. You can use NME with Hydrax, but you don't have to.  Hydrax does not attempt to replicate the Flash API.  In other words, you can mix and match Hydrax and NME as you see fit.  
+
+The focus of Hydrax is currently web platforms which means Flash and Canvas.  iPhone/C++ support is in progress.  Whatever Hydrax lacks, you can use NME. 
+
+Hydrax does this well:
+
+- Components: everything is based on components that you can easily replace with your own.
+- Asset handling
+- Platform independent 2D display.
+- Platform independent input (currently Flash + Canvas only).
+- Handling transitioning between game screens, or levels.
+- Managing complicated game objects.
+
 # Gettings started
 
 1. Install [HaXe][haxe].
@@ -38,6 +55,7 @@ Complete or functional:
 - Resources.  Rebuilt to handle multi-platform and haxe-only resources.
 - Tasks/tweens.
 - Profiling.
+- Box2D
 
 Extra features (not available in PBE):
 
@@ -51,7 +69,6 @@ Incomplete or not working:
 - Sound.  Cross platform sound is definitely needed.
 - PBE animations.
 - PBE sets.  Hydrax uses a context-specific SetManager (optional).
-- Box2D.  (Coming soon).
 - State machine (very low priority).
 - The PBE static class (not needed or useful with Haxe 'using' functionality).
 - Debugging.  
