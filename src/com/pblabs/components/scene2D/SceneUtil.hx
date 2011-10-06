@@ -138,6 +138,11 @@ class SceneUtil
 		return e.getComponent(SpatialComponent).position;
 	}
 	
+	public static function getAngle (e :IEntity) :Float
+	{
+		return e.getComponent(SpatialComponent).angle;
+	}
+	
 	public static function setAngle (e :IEntity, angle :Float) :IEntity
 	{
 		e.getComponent(SpatialComponent).angle = angle;

@@ -56,7 +56,6 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Man
 		return s;
 	}
 	
-	
 	public var position (get_point, set_point) :XY;
 	public var point (get_point, set_point) :XY;
 	// public var parent :ISpatialManager2D;

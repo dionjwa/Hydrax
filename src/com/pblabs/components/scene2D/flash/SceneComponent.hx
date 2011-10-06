@@ -14,7 +14,6 @@ import com.pblabs.util.Preconditions;
 import de.polygonal.core.math.Mathematics;
 
 import flash.display.DisplayObject;
-import flash.display.Sprite;
 
 import flash.geom.Matrix;
 
@@ -104,8 +103,8 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		#elseif cpp
 		var localDimensions = _displayObject.nmeGetPixelBounds();
 		#end
-		_unscaledBounds.x = localDimensions.width;
-		_unscaledBounds.y = localDimensions.height;
+		_unscaledBounds.x = localDimensions.width <= 0 ? 1 : localDimensions.width;
+		_unscaledBounds.y = localDimensions.height <= 0 ? 1 : localDimensions.height;
 		width = _unscaledBounds.x * scaleX;
 		height = _unscaledBounds.y * scaleY;
 		
