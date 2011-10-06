@@ -48,16 +48,18 @@ class GraphicsUtil
 	}
 	
 	public static function drawGrid (graphics :Graphics, gap :Float, ?color :Int = 0x000000, ?size :Int = 10) :Void
-    {
-        graphics.lineStyle(1, color, 0.3);
-        for( i in 0...size) {
-            graphics.moveTo( i * gap, 0);
-            graphics.lineTo( i * gap, gap * size);
+	{
+		graphics.lineStyle(1, color, 0.3);
+		for( i in -size...size) {
+			graphics.moveTo( i * gap, -size * gap);
+			graphics.lineTo( i * gap, size * gap);
 
-            graphics.moveTo(0, i * gap);
-            graphics.lineTo(gap * size, i * gap);
-        }
-    }
+			graphics.moveTo(-size * gap, i * gap);
+			graphics.lineTo(gap * size, i * gap);
+		}
+		graphics.lineStyle(1, color, 1);
+		graphics.drawCircle(0, 0, 10);
+	}
 
 	public static function drawLine (g :Graphics, x1 :Float, y1 :Float, x2 :Float, y2 :Float,
 		?color :Int = 0x000000, ?linethickness :Float = 1, ?alpha :Float = 1) :Void
