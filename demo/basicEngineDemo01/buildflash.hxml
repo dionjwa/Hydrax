@@ -1,13 +1,6 @@
 -D debug
 -D haxedev
 
--lib IterTools
--lib ArrayTools
--lib ListTools
--lib feffects
--lib hsl-1
--lib polygonal
--lib jeash
 -lib hydrax
 
 -cp src
