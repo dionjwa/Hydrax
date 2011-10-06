@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html 
+      PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html  xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:svg="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink">
+<head>
+        <title>Spritesheet Body</title>
+        <script type="text/javascript" src="src/jquery.js"></script>
+	<script type="text/javascript" src="src/jquery.query.js"></script>
+</head>
+
+<!--  overflow: hidden hides the horizontal scroll bars -->
+<body bgcolor="Silver" >
+
+<div>
+This is a demo of <a href="https://github.com/dionjwa/Hydrax">Hydrax</a>.  Each skeleton is a physics 'ball' randomly bouncing around.  When a skeleton hits another, and the other is in front, the 'attack' animation is played.
+
+The demo shows off:
+
+<ul>
+<li>Identical game output in Flash and Html5 canvas.</li>
+<li>Bitmap spritesheets</li>
+<li>Spritesheet bodies (with states and actions)</li>
+<li>Box2D physics</li>
+</ul>
+
+</div>
+Canvas:
+<div id="haxeSceneView" style="border: 1px coral solid; width:800px; height: 300px; background-color:#ffffff" />
+Flash:
+<div>
+	
+      <object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="800" height="300">
+        <param name="movie" value="demo.swf" />
+        <!--[if !IE]>-->
+        <object type="application/x-shockwave-flash" data="demo.swf" width="800" height="300">
+        <!--<![endif]-->
+          <p>Alternative content</p>
+        <!--[if !IE]>-->
+        </object>
+        <!--<![endif]-->
+      </object>
+
+    </div>
+    
+<div id="haxe:trace" />
+<div id="test" />
+<script type="text/javascript" src="demo.js" />
+
+</body>
+</html>
