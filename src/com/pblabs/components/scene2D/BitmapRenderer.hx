@@ -66,6 +66,9 @@ class BitmapRenderer
 			#if flash
 			com.pblabs.util.Assert.isNotNull(_bitmap);
 			_bitmap.bitmapData = val;
+			//This is set to false when a new bitmapData is assigned
+			//http://gskinner.com/blog/archives/2007/08/minor_bug_with_.html
+			_bitmap.smoothing = _smoothing;
 			#elseif js
 			_bitmap = val;
 			#end
@@ -215,9 +218,6 @@ class BitmapRenderer
 		var keepDisp = _displayObject;
 		super.onRemove();//Superclass nulls _displayObject
 		_displayObject = keepDisp;
-		#if flash
-		_smoothing = false;
-		#end
 	}
 	
 	#if (flash || cpp) override #end 
@@ -254,9 +254,7 @@ class BitmapRenderer
 	override function setDefaults () :Void
 	{
 		super.setDefaults();
-		if (_bitmap != null) {
-			smoothing = false;
-		}
+		_smoothing = true;
 	}
 	
 	static var zeroPoint = new Point();

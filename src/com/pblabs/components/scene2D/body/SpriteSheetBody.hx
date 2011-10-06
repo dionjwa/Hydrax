@@ -47,14 +47,6 @@ class SpriteSheetBody extends BitmapRenderer
 	public function new() 
 	{
 		super();
-		spriteSheets = [];
-		_queue = [];
-		_currentIndex = 0;
-		_localScaleFactor = 1;
-		
-		#if flash
-		// _bitmap.smoothing = true;
-		#end
 	}
 	
 	public function clearQueue () :Void
@@ -67,6 +59,15 @@ class SpriteSheetBody extends BitmapRenderer
 		spriteSheets = [];
 		_queue = [];
 		_currentSpriteList = null;
+	}
+	
+	override function setDefaults () :Void
+	{
+		super.setDefaults();
+		spriteSheets = [];
+		_queue = [];
+		_currentIndex = 0;
+		_localScaleFactor = 1;
 	}
 	
 	/**
@@ -82,6 +83,9 @@ class SpriteSheetBody extends BitmapRenderer
 			#if flash
 			com.pblabs.util.Assert.isNotNull(_bitmap);
 			_bitmap.bitmapData = val;
+			//This is set to false when a new bitmapData is assigned
+			//http://gskinner.com/blog/archives/2007/08/minor_bug_with_.html
+			_bitmap.smoothing = _smoothing;
 			#elseif js
 			_bitmap = val;
 			#end
