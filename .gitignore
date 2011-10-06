@@ -22,6 +22,7 @@ demo/screennavigation/flash
 demo/screennavigation/canvas
 demo/screennavigation/all
 demo/jquerymobile
+demo/animatedbody/demo*
 \#*#
 *AllClasses.hx
 src/AllClasses.hx
@@ -37,4 +38,6 @@ lib/as3svgrendererlib
 lib/hx.html5
 lib/jo
 lib/erazor
+lib/BitmapData.js
+lib/box2dhx/PhysTest.swf
 hydrax.zip
