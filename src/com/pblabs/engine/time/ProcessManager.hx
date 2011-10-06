@@ -241,7 +241,14 @@ class ProcessManager implements IProcessManager
 			_deferredObjects.push(object);
 			return;
 		}
-		addToPriorityArray(object, cast _animatedObjects);
+		
+		for (ii in 0..._animatedObjects.length) {
+			if (_animatedObjects[ii] != null && object.priority > _animatedObjects[ii].priority) {
+				_animatedObjects.insert(ii, object);
+				return;
+			}
+		}
+		_animatedObjects.push(object);
 	}
 	
 	/**
@@ -261,7 +268,14 @@ class ProcessManager implements IProcessManager
 			_deferredObjects.push(object);
 			return;
 		}
-		addToPriorityArray(object, cast _tickedObjects);
+		
+		for (ii in 0..._tickedObjects.length) {
+			if (_tickedObjects[ii] != null && object.priority > _tickedObjects[ii].priority) {
+				_tickedObjects.insert(ii, object);
+				return;
+			}
+		}
+		_tickedObjects.push(object);
 	}
 	
 	/**
@@ -512,7 +526,7 @@ class ProcessManager implements IProcessManager
 		var startTime = _virtualTime;
 		// Add time to the accumulator.
 		_elapsed += Std.int(deltaTime * 1000);
-		
+
 		// Perform ticks, respecting tick caps.
 		var tickCount:Int = 0;
 		com.pblabs.engine.debug.Profiler.enter("tick");
@@ -533,7 +547,6 @@ class ProcessManager implements IProcessManager
 				object = _tickedObjects[ii];
 				if(object == null)
 					continue;
-				
 				#if profiler com.pblabs.engine.debug.Profiler.enter(com.pblabs.util.ReflectUtil.getClassName(object));#end
 				object.onTick(SECONDS_PER_TICK);
 				#if profiler com.pblabs.engine.debug.Profiler.exit(com.pblabs.util.ReflectUtil.getClassName(object));#end
@@ -697,17 +710,6 @@ class ProcessManager implements IProcessManager
 			}
 		}
 		return val;
-	}
-	
-	static function addToPriorityArray (obj :Prioritizable, arr :Array<Prioritizable>) :Void
-	{
-		for (ii in 0...arr.length) {
-			if (arr[ii] != null && obj.priority > arr[ii].priority) {
-				arr.insert(ii, obj);
-				return;
-			}
-		}
-		arr.push(obj);
 	}
 	
 	#if !neko
