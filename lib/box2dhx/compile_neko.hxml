@@ -1,0 +1,6 @@
+
+-main Main
+-neko PhysTest.n
+--remap flash:nme
+-lib neash
+-lib nme

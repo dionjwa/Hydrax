@@ -1,0 +1,5 @@
+-main Main
+-swf9 PhysTest.swf
+-swf-header 640:360:1000:414647
+-debug
+--remap neash:flash
