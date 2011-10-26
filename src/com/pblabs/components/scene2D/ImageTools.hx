@@ -10,6 +10,7 @@ import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.SvgResources;
 import com.pblabs.engine.time.IProcessManager;
+import com.pblabs.util.BitmapUtil;
 import com.pblabs.util.Comparators;
 import com.pblabs.util.F;
 import com.pblabs.util.svg.SvgData;
@@ -99,8 +100,19 @@ class ImageTools
 		?cache :Bool = true, 
 		?isForDeviceDown :Bool = false) :IEntity 
 	{
+		com.pblabs.util.Assert.isNotNull(layer, ' layer is null');
+		com.pblabs.util.Assert.isNotNull(token, ' token is null');
+		com.pblabs.util.Assert.isNotNull(e, ' e is null');
+		
 		if (cache) {
 			var svgComp = e.context.allocate(BitmapRenderer);
+			
+			//Set the bitmap to the bounds of the svg so layout algorithms will work properly
+			var svgToken = SvgResources.getSvgResourceToken(e.context, token, replacements);
+			var svgData :SvgData = e.context.getManager(IResourceManager).get(svgToken);
+			var svgBounds = SvgRenderTools.getSvgBounds(svgData.xml);
+			svgComp.bitmapData = BitmapUtil.createImageData(Std.int(svgBounds.intervalX), Std.int(svgBounds.intervalY)); 
+			
 			componentName = componentName != null ? componentName : token.id + "_" + svgComp.key;
 			svgComp.parentProperty = layer.entityProp();
 			e.addComponent(svgComp, componentName);
@@ -115,6 +127,8 @@ class ImageTools
 					//Notify the display hierarchy that our dimensions may have changed
 					if (e.getComponent(com.pblabs.components.minimalcomp.Component) != null) {
 						e.getComponent(com.pblabs.components.minimalcomp.Component).invalidate();
+						e.context.getManager(IProcessManager).callLater(e.getComponent(com.pblabs.components.minimalcomp.Component).invalidate);
+						e.context.getManager(IProcessManager).callLater(e.getComponent(com.pblabs.components.minimalcomp.Component).invalidate, 2);
 					}
 				});
 		} else {
@@ -139,22 +153,32 @@ class ImageTools
 	{
 		var cb = function (orientation :Int = 0) :Void {
 			if (e.isLiveObject) {
+				// trace("stretchTo_transformMatrix.translate(_x * localZoom + _locationOffset.x * localZoom, _y * localZoom + _locationOffset.y * localZoom);Width " + e.name);
 				for (sc in e.getComponents(BaseSceneComponent)) {
-					if (sc.layer == null || sc.layer.scene == null) {
+					if (sc.layer == null || sc.layer.scene == null || sc.width <= 1) {
 						continue;
 					}
+					// trace("   before x=" + sc.x);
 					var width = sc.layer.scene.sceneView.width;
-					// trace('sc.width=' + sc.width);
-					// trace('width=' + (width * widthFraction));
-					// trace('sc.x=' + sc.x);
-					// trace('sc.y=' + sc.y);
-					// trace('sc.bounds=' + sc.bounds);
+					
 					sc.width = width * widthFraction;
+					
+					// var describe = function () :Void {
+					// 	trace('sc.scaleX=' + sc.scaleX);
+					// 	trace("   after x=" + sc.x);
+					// 	trace('sc.registrationPoint=' + sc.registrationPoint);
+					// 	trace('sc.width=' + sc.width);
+					// 	trace('sc.bounds=' + sc.bounds);
+					// }
+					// describe();
+					// haxe.Timer.delay(describe, 1000);
+					
+					
+					
 				}
 				e.invalidate();
 			}
 		}
-		// e.context.getManager(IProcessManager).callLater(callback(stretch, 0));
 		
 		e.updatePosition(F.ignoreArg(callback(cb,0)));
 		e.setOnOrientationChange(cb);
@@ -296,12 +320,21 @@ class ImageTools
 		return e;
 	}
 	
+	// public static function addText (e :IEntity, layer :BaseSceneLayer<Dynamic, Dynamic>, text :String, ?align :String) :IEntity
+	// {
+	// 	var svgComp = e.context.allocate(Svg);
+	// 	svgComp.svgData = new SvgData(null, SVG_TEXT, [new SvgReplace("$T", text)]);
+	// 	svgComp.parentProperty = layer.entityProp();
+	// 	e.addComponent(svgComp);
+	// 	return e;
+	// }
+	
 	public static function addText (e :IEntity, layer :BaseSceneLayer<Dynamic, Dynamic>, text :String, ?align :String) :IEntity
 	{
-		var svgComp = e.context.allocate(Svg);
-		svgComp.svgData = new SvgData(null, SVG_TEXT, [new SvgReplace("$T", text)]);
-		svgComp.parentProperty = layer.entityProp();
-		e.addComponent(svgComp);
+		var textComp = e.context.allocate(com.pblabs.components.scene2D.Text);
+		textComp.text = text;
+		textComp.parentProperty = layer.entityProp();
+		e.addComponent(textComp);
 		return e;
 	}
 }

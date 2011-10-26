@@ -21,15 +21,11 @@ class Html5StorageManager
 		//Attempt localStorage detection
 		_isAvailable = false;
 		
-		if (untyped __js__("typeof Modernizr == 'undefined'") ) {
-			try {
-				_isAvailable = untyped __js__("!!localStorage.getItem");
-			} catch(e :Dynamic) {}//Swallow
-		} else {
-			try {
-				_isAvailable = untyped __js__("Modernizr.localstorage");
-			} catch (e :Dynamic) {}
-		}
+		#if modernizr
+		_isAvailable = Modernizr.localstorage;
+		#else
+		com.pblabs.util.Log.warn("modernizr is missing, so we cannot safely check for localStorage");
+		#end
 	}
 	
 	public function isAvailable () :Bool

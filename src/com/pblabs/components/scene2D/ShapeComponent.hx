@@ -16,30 +16,30 @@ class ShapeComponent
 #end
 {
 	public var fillColor (get_fillColor, set_fillColor) :Int;
-	public var borderColor (get_borderColor, set_borderColor) :Int;
-	public var borderStroke (get_borderStroke, set_borderStroke) :Float;
-	public var borderAlpha (get_borderAlpha, set_borderAlpha) :Float;
+	public var lineColor (get_lineColor, set_lineColor) :Int;
+	public var lineStroke (get_lineStroke, set_lineStroke) :Float;
+	public var lineAlpha (get_lineAlpha, set_lineAlpha) :Float;
 	
 	var _fillColor :Int;
-	var _borderColor :Int;
-	var _borderStroke :Float;
-	var _borderAlpha :Float;
-	
-	#if js
-	var _svgContainer :js.Dom.HtmlDom;
-	var _svg :js.Dom.HtmlDom;
-	#end
+	var _lineColor :Int;
+	var _lineStroke :Float;
+	var _lineAlpha :Float;
 	
 	public function new ()
 	{
-		super();
-		_fillColor = 0xff0000;
-		_borderColor = 0x000000;
-		_borderStroke = 1;
-		_borderAlpha = 1;
 		#if (flash || cpp)
 		_displayObject = new flash.display.Shape();
 		#end
+		super();
+	}
+	
+	override function setDefaults () :Void
+	{
+		super.setDefaults();
+		_fillColor = 0xff0000;
+		_lineColor = 0x000000;
+		_lineStroke = 1;
+		_lineAlpha = 1;
 	}
 	
 	override function onReset () :Void
@@ -67,26 +67,26 @@ class ShapeComponent
 		return val;
 	}
 	
-	function get_borderColor () :Int
+	function get_lineColor () :Int
 	{
-		return _borderColor;
+		return _lineColor;
 	}
 	
-	function set_borderColor (val :Int) :Int
+	function set_lineColor (val :Int) :Int
 	{
-		_borderColor = val;
+		_lineColor = val;
 		redraw();
 		return val;
 	}
 	
-	function get_borderStroke () :Float
+	function get_lineStroke () :Float
 	{
-		return _borderStroke;
+		return _lineStroke;
 	}
 	
-	function set_borderStroke (val :Float) :Float
+	function set_lineStroke (val :Float) :Float
 	{
-		_borderStroke = val;
+		_lineStroke = val;
 		redraw();
 		return val;
 	}
@@ -98,14 +98,14 @@ class ShapeComponent
 		return val;
 	}
 	
-	function get_borderAlpha () :Float
+	function get_lineAlpha () :Float
 	{
-		return _borderAlpha;
+		return _lineAlpha;
 	}
 	
-	function set_borderAlpha (val :Float) :Float
+	function set_lineAlpha (val :Float) :Float
 	{
-		_borderAlpha = val;
+		_lineAlpha = val;
 		redraw();
 		return val;
 	}

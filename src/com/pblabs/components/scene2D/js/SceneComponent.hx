@@ -11,6 +11,7 @@ package com.pblabs.components.scene2D.js;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.scene2D.BaseSceneLayer;
 import com.pblabs.engine.time.IAnimatedObject;
+import com.pblabs.util.DomUtil;
 import com.pblabs.util.ReflectUtil;
 
 import js.Dom;
@@ -55,14 +56,16 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 	
 	public function new () :Void
 	{
-		super();
-		priority = 0;
-		isOnCanvas = false;
-		_isContentsDirty = true;
 		//Create the image and containing div element
 		//Why put it in a div?
 		//http ://dev.opera.com/articles/view/css3-transitions-and-2d-transforms/#transforms
 		div = createDiv();
+		
+		super();
+		priority = 0;
+		isOnCanvas = false;
+		_isContentsDirty = true;
+		
 	}
 	
 	public function onFrame (dt :Float) :Void
@@ -87,6 +90,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 	
 	override public function addedToParent () :Void
 	{
+		div.setAttribute("id", owner.name);
 		super.addedToParent();
 		
 		isOnCanvas = Std.is(parent, com.pblabs.components.scene2D.js.canvas.SceneLayer);
@@ -129,6 +133,9 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		if (val) {
 			redrawBackBuffer();
 		} else {
+			if (_backBuffer != null && _backBuffer.parentNode != null) {
+				_backBuffer.parentNode.removeChild(_backBuffer);
+			}
 			_backBuffer = null;
 		}
 		return val;
@@ -141,12 +148,16 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 	
 	private function redrawBackBuffer ()
 	{
+		//Remove previous children
+		while (div.hasChildNodes()) {
+			div.removeChild(div.lastChild);
+		}
 		if (_backBuffer == null) {
 			_backBuffer = cast js.Lib.document.createElement("canvas");
-			_backBuffer.width = 300;
-			_backBuffer.height = 300;
+			_backBuffer.width = 30;
+			_backBuffer.height = 30;
 			_backBuffer.style.position = "absolute";
-			_backBuffer.style.visibility = "hidden";
+			// _backBuffer.style.visibility = "hidden";
 			_backBuffer.style.display = "block";
 			//Add to the div display object, so it can be rendered to either CSS or Canvas layers.
 			com.pblabs.util.Assert.isNotNull(div);
@@ -196,11 +207,13 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 	
 	function renderCachedBuffer (ctx :CanvasRenderingContext2D) :Void
 	{
-		#if haxedev
-		ctx.drawImage(_backBuffer, 0, 0);
-		#else
-		ctx.drawImage(cast _backBuffer, 0, 0);
-		#end
+		if (_backBuffer != null && _backBuffer.width > 0 && _backBuffer.height > 0) {
+			#if haxedev
+			ctx.drawImage(_backBuffer, 0, 0);
+			#else
+			ctx.drawImage(cast _backBuffer, 0, 0);
+			#end
+		}
 	}
 	
 	public function drawPixels (ctx :CanvasRenderingContext2D)
@@ -228,9 +241,28 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		return super.set_scaleY(val);
 	}
 	
+	override function set_width (val :Float) :Float
+	{
+		_isContentsDirty = true;
+		return super.set_width(val);
+	}
+	
+	override function set_height (val :Float) :Float
+	{
+		_isContentsDirty = true;
+		return super.set_height(val);
+	}
+	
 	override function set_angle (val :Float) :Float
 	{
 		_isContentsDirty = true;
 		return super.set_angle(val);
+	}
+	
+	override function set_alpha (val :Float) :Float
+	{
+		super.set_alpha(val);
+		div.style.cssText = DomUtil.setStyle(div.style.cssText, "opacity", "" + alpha);
+		return val;
 	}
 }

@@ -27,16 +27,29 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 		_rootContainer = cast js.Lib.document.createElement("div");
 		_rootContainer.style.width = "100%";
 		_rootContainer.style.height = "100%";
+		
+		//Enable hardware acceleration
+		#if modernizr
+		if (Modernizr.csstransforms3d) {
+			untyped _rootContainer.style.webkitTransform = "translate3d(0, 0, 0)";
+			untyped _rootContainer.style.MozTransform = "translate3d(0, 0, 0)";
+		}
+		#else
+		com.pblabs.util.Log.warn("No Modernizr, so we cannot detect browser features.  Consider adding Modernizr. Not enabling hardware accelaration");
+		#end
 	}
 	
 	override public function addLayer (?layerName :String = null, ?cls :Class<Dynamic> = null, ?registerAsManager :Bool = false) :BaseSceneLayer<Dynamic, Dynamic>
 	{
 		if (cls == null || cls == JSLayer) {
-			#if use_html5_canvas_as_default_scene_layer
-			com.pblabs.util.Log.info("No JS class specified, defaulting to canvas rendering");
-			cls = com.pblabs.components.scene2D.js.canvas.SceneLayer;
+			//Figure out the most efficient kind of rendering layer
+			//Default to CSS transforms.  In general, this is the most efficient and has the most features.
+			#if modernizr
+			com.pblabs.util.Assert.isTrue(Modernizr.csstransforms || Modernizr.canvas, "No csstransforms or canvas.  Old browser?"); 
+			cls = untyped Modernizr.csstransforms ? com.pblabs.components.scene2D.js.css.SceneLayer :
+				com.pblabs.components.scene2D.js.canvas.SceneLayer;
 			#else
-			com.pblabs.util.Log.info("No JS class specified, defaulting to css rendering");
+			com.pblabs.util.Log.warn("No Modernizr, so we cannot detect browser features.  Consider adding Modernizr. Defaulting to Canvas");
 			cls = com.pblabs.components.scene2D.js.css.SceneLayer;
 			#end
 		}

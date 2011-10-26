@@ -5,6 +5,10 @@ import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.time.IAnimatedObject;
+import com.pblabs.geom.Vector2;
+
+import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor2.geom.primitive.AABB2;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
@@ -24,13 +28,14 @@ class Component extends NodeComponent<Container, Component>
 	public var id :String;
 	public var x (get_x, set_x) :Float;
 	public var y (get_y, set_y) :Float;
+	public var bounds (get_bounds, set_bounds) :AABB2;
+	public var registrationPoint (get_registrationPoint, null) :XY;
 	public var width (get_width, never) :Float;
 	public var height (get_height, never) :Float;
 	public var redrawSignal :Signaler<Component>;
 	public var root (get_root, never) :Component;
 	function get_root () :Component
 	{
-		// return parent == null || !Std.is(this, Container)? null : parent.root;
 		return parent == null ? this : parent.root;
 	}
 	
@@ -174,6 +179,25 @@ class Component extends NodeComponent<Container, Component>
 		com.pblabs.util.Assert.isNotNull(_spatial);
 		com.pblabs.util.Assert.isNotNull(_spatial.worldExtents);
 		return _spatial.worldExtents.intervalY;
+	}
+	
+	function get_bounds () :AABB2
+	{
+		return _spatial.worldExtents;
+	}
+	
+	function set_bounds (val :AABB2) :AABB2
+	{
+		_spatial.worldExtents = val;
+		return val;
+	}
+	
+	function get_registrationPoint () :XY
+	{
+		for (c in owner.getComponents(BaseSceneComponent)) {
+			return c.registrationPoint;
+		}
+		return new Vector2(x - _spatial.worldExtents.xmin, y - _spatial.worldExtents.ymin);
 	}
 	
 	#if debug

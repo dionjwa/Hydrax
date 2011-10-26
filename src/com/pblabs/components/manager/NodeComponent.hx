@@ -105,6 +105,7 @@ class NodeComponent<P :INodeParent<Dynamic>, C :INodeChild<Dynamic>> extends Ent
 	
 	public function addChild (c :C) :Void
 	{
+		com.pblabs.util.Assert.isTrue(untyped this != c);
 		Preconditions.checkArgument(isRegistered, "Component must first be registered");
 		Preconditions.checkArgument(Std.is(c, NodeComponent), "Children must be of type NodeComponent");
 		Preconditions.checkArgument(cast(c, IEntityComponent).isRegistered, "Child not registered: " + c);

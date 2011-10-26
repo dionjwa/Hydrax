@@ -33,6 +33,9 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 	public var parallaxFactor (get_parallaxFactor, set_parallaxFactor) :Float;
 	public var zOrderDirty :Bool;
 	
+	public var scale (get_scale, set_scale) :Float;
+	var _scale :Float;
+	
 	/** Optionally sort the display children when children are added */
 	public var sorter :Array<BaseSceneComponent<Dynamic>>->Void;
 	
@@ -86,6 +89,7 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 	function setDefaultVars () :Void
 	{
 		priority = 0;
+		_scale = 1;
 		//By default, searches all children
 		objectMask = ObjectType.ALL;
 		// ignoreInput = false;
@@ -123,6 +127,16 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 	    return val;
 	}
 	
+	function get_scale () :Float
+	{
+		return _scale;
+	}
+	
+	function set_scale (val :Float) :Float
+	{
+		_scale = val;
+		return val;
+	}
 	
 	// var _needsSort :Bool;
 	var _parallaxFactor :Float;

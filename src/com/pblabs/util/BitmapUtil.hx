@@ -1,6 +1,7 @@
 package com.pblabs.util;
 
 import com.pblabs.components.scene2D.ImageType;
+import com.pblabs.components.scene2D.ImageData;
 
 import de.polygonal.core.math.Mathematics;
 import de.polygonal.motor2.geom.primitive.AABB2;
@@ -11,6 +12,18 @@ typedef Canvas = Html5Dom.HTMLCanvasElement;
 
 class BitmapUtil
 {
+	public static function createImageData (width :Int, height :Int) :ImageData
+	{
+		#if (flash || cpp)
+		return new flash.display.BitmapData(width, height);
+		#elseif js
+		var canvas = createCanvas();
+		canvas.width = width;
+		canvas.height = height;
+		return canvas;
+		#end
+	}
+	
 	#if (flash || cpp)
 	public static function createBitmapData (d :flash.display.DisplayObject, ?scale :Float = 1.0, ?center :flash.geom.Point) :flash.display.BitmapData
 	{

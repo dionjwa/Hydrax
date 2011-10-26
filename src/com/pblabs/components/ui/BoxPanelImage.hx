@@ -1,4 +1,4 @@
-package ;
+package com.pblabs.components.ui;
 
 import com.pblabs.components.minimalcomp.Component;
 import com.pblabs.components.minimalcomp.Container;
@@ -10,6 +10,10 @@ import com.pblabs.geom.Vector2;
 import com.pblabs.util.F;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.util.StringUtil;
+using com.pblabs.components.scene2D.SceneUtil;
+#if js
+using com.pblabs.util.DomUtil;
+#end
 
 /**
   * An image that redraws itself if the container component is redrawn.
@@ -18,37 +22,9 @@ class BoxPanelImage
 	#if flash
 	extends GraphicsComponent
 	#elseif js
-	extends BitmapRenderer
+	extends com.pblabs.components.scene2D.RectangleShape
 	#end
 {
-	public var color (get_color, set_color) :Int;
-	var _color :Int;
-	function get_color () :Int
-	{
-		return _color;
-	}
-	
-	function set_color (val :Int) :Int
-	{
-		_color = val;
-		redraw();
-		return val;
-	}
-	
-	public var lineWidth (get_lineWidth, set_lineWidth) :Float;
-	var _lineWidth :Float;
-	function get_lineWidth () :Float
-	{
-		return _lineWidth;
-	}
-	
-	function set_lineWidth (val :Float) :Float
-	{
-		_lineWidth = val;
-		redraw();
-		return val;
-	}
-	
 	public var dividerColor (get_dividerColor, set_dividerColor) :Int;
 	var _dividerColor :Int;
 	function get_dividerColor () :Int
@@ -75,25 +51,11 @@ class BoxPanelImage
 		return val;
 	}
 	
-	public var roundCorner (get_roundCorner, set_roundCorner) :Int;
-	var _roundCorner :Int;
-	function get_roundCorner () :Int
-	{
-		return _roundCorner;
-	}
-	function set_roundCorner (val :Int) :Int
-	{
-		_roundCorner = val;
-		redraw();
-		return val;
-	}
-	
-	
+	var _needsRedraw :Bool;
 	
 	public function new ()
 	{
 		super();
-		setDefaults();
 	}
 	
 	override function onReset () :Void
@@ -113,19 +75,31 @@ class BoxPanelImage
 	
 	override function setDefaults () :Void
 	{
+		_needsRedraw = false;
 		super.setDefaults();
-		_color = _dividerColor = 0x000000;
-		_lineWidth = _dividerLineWidth = 1;
-		_roundCorner = 10;
+		_fillColor = 0xffffff;
+		_lineColor = 0x000000;
+		_lineStroke = 1;
+		_lineAlpha = 1;
+		_dividerColor = 0x000000;
+		_dividerLineWidth = 1;
+		borderRadius = 10;
 	}
 	
-	public function redraw () :Void
+	override public function redraw () :Void
 	{
-		context.getManager(IProcessManager).callLater(redrawInternal);
+		if (!_needsRedraw && context != null && isRegistered) {
+			_needsRedraw = true;
+			context.getManager(IProcessManager).callLater(redrawInternal);
+		}
 	}
 	
 	function redrawInternal () :Void
 	{
+		if (!_needsRedraw || ! isRegistered) {
+			return;
+		}
+		
 		var component = owner.getComponent(Container);
 		com.pblabs.util.Assert.isNotNull(component, ' component is null');
 		
@@ -135,23 +109,16 @@ class BoxPanelImage
 			return;
 		}
 		
+		width = bounds.intervalX;
+		height = bounds.intervalY;
+		super.redraw();
+		
+		_needsRedraw = false;
+		
 		var gap = 3;
-		var round = _roundCorner;
 		
 		#if flash
 			var g = graphics;
-			g.clear();
-			
-			//Draw the box
-			
-			g.lineStyle(_lineWidth, _color);
-			g.drawRoundRect(-_lineWidth - gap, -_lineWidth - gap, component.width + _lineWidth * 2 + gap * 2, component.height + _lineWidth * 2 + gap * 2, round);
-			registrationPoint = new Vector2(x - bounds.xmin, y - bounds.ymin);
-			
-			#if js
-			g.jeashRender();
-			#end
-			
 			//Draw the dividers
 			var curY = 0.0;
 			for (ii in 0...component.children.length) {
@@ -165,35 +132,47 @@ class BoxPanelImage
 				curY += c.height;
 			}
 			
-			#if js
-			g.jeashRender();
-			#end
 		#elseif js
-		var canvas :Canvas = cast js.Lib.document.createElement("canvas");
-		canvas.width = Std.int(bounds.intervalX + gap * 2 + _lineWidth * 2);
-		canvas.height = Std.int(bounds.intervalY + gap * 2 + _lineWidth * 2);
+		_displayObject.removeAllChildren();
 		
-		var ctx = canvas.getContext('2d');
+		_displayObject.style.width = bounds.intervalX + "px";
+		_displayObject.style.height = bounds.intervalY + "px";
 		
-		var w = Std.int(bounds.intervalX);
-		var h = Std.int(bounds.intervalY);
+		//Draw the dividers as divs
+		var curY = 0.0;
+		for (ii in 0...component.children.length) {
+			var c = component.children[ii];
+			if (ii == 0) {
+				curY += c.height;
+				continue;
+			}
+			var lineDiv = com.pblabs.components.scene2D.js.SceneComponent.createDiv();
+			_displayObject.appendChild(lineDiv);
+			var m = new flash.geom.Matrix();
+			m.translate(gap, curY);
+			lineDiv.applyTransform(m);
+			
+			lineDiv.style.cssText = com.pblabs.util.DomUtil.setStyle(lineDiv.style.cssText, "height", Std.int(Math.max(1, _dividerLineWidth)) + "px");
+			lineDiv.style.cssText = com.pblabs.util.DomUtil.setStyle(lineDiv.style.cssText, "position", "relative");
+			lineDiv.style.cssText = com.pblabs.util.DomUtil.setStyle(lineDiv.style.cssText, "width", (bounds.intervalX - gap * 2) + "px");
+			lineDiv.style.cssText = com.pblabs.util.DomUtil.setStyle(lineDiv.style.cssText, "background", _dividerColor.toColorString("#"));
+			
+			curY += c.height;
+		}
+		registrationPoint = new Vector2(x - bounds.xmin, y - bounds.ymin);
+		#end
+	}
+	
+	#if js
+	override public function drawPixels (ctx :CanvasRenderingContext2D)
+	{
+		super.drawPixels(ctx);
 		
-		ctx.beginPath();
-		ctx.moveTo(round, 0);
-		ctx.lineTo(w-round, 0);
-		ctx.quadraticCurveTo(w, 0, w, round);
-		ctx.lineTo(w, h-round);
-		ctx.quadraticCurveTo(w, h, w-round, h);
-		ctx.lineTo(round, h);
-		ctx.quadraticCurveTo(0, h, 0, h-round);
-		ctx.lineTo(0, round);
-		ctx.quadraticCurveTo(0, 0, round, 0);
+		var component = owner.getComponent(Container);
+		com.pblabs.util.Assert.isNotNull(component, ' component is null');
 		
-		ctx.lineWidth = _lineWidth;
-		ctx.strokeStyle = _color.toColorString("#");
-		ctx.stroke();
-		
-		ctx.beginPath();
+		var bounds = component.bounds;
+		var gap = 3;
 		//Draw the dividers
 		var curY = 0.0;
 		for (ii in 0...component.children.length) {
@@ -209,12 +188,7 @@ class BoxPanelImage
 		ctx.lineWidth = _dividerLineWidth;
 		ctx.strokeStyle = _dividerColor.toColorString("#");
 		ctx.stroke();
-		
-		bitmapData = canvas;
-		registrationPoint = new Vector2(x - bounds.xmin, y - bounds.ymin);
-		#end
-		
-		
 	}
+	#end
 
 }

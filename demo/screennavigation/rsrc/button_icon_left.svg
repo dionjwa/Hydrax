@@ -50,17 +50,20 @@
    inkscape:window-y="0"
    inkscape:window-maximized="0"
    inkscape:current-layer="Layer_1" />
-<text
-   style="font-size:32px;font-family:ArialMT"
-   id="text4"
-   font-size="32"
-   x="75.50663"
-   y="40.259003">$replace</text>
+
 <rect
    style="fill:#00ff0f;fill-opacity:0"
    height="17.143"
    width="16.43"
    y="23.658478"
    x="20"
-   id="anchor" />
-</svg>
+   id="anchor1"
+   inkscape:label="anchor1" />
+<rect
+   style="fill:#00ff0f;fill-opacity:0"
+   height="17.143"
+   width="16.43"
+   y="23.462399"
+   x="47.225677"
+   id="anchor2"
+   inkscape:label="anchor2" /></svg>

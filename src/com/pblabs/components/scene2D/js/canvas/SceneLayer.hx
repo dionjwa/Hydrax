@@ -27,6 +27,10 @@ class SceneLayer extends JSLayer
 	{
 		super();
 		_tempPoint = new Vector2();
+		
+		#if (debug && modernizr)
+		com.pblabs.util.Assert.isTrue(Modernizr.canvas, "Modernizr.canvas==false.  You will have to use a CSS layer in this browser");
+		#end
 	}
 	
 	override public function onFrame (dt :Float) :Void

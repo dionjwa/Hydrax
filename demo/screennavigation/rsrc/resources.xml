@@ -10,6 +10,7 @@
 	<svg id="BUTTON_TEXT_IPHONE" url="rsrc/button_text_iphone.svg"/>
 	<svg id="BUTTON_TEXT_LINE" url="rsrc/button_text_line.svg"/>
 	<svg id="ICON_SQUARE_EMPTY" url="rsrc/icon_square_empty.svg"/>
+	<svg id="TEXT_LEFT" url="rsrc/text_left.svg"/>
 	<svg id="TEXT_TEST" url="rsrc/text_test.svg"/>
 	<svg id="TEXT_TITLE" url="rsrc/text_title.svg"/>
 	<svg id="TITLEBAR" url="rsrc/titlebar.svg"/>

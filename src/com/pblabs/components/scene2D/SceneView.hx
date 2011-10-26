@@ -265,11 +265,13 @@ class SceneView
 	public function onOrientationChange (degreesRotation :Int) :Void
 	{
 		if (com.pblabs.util.Device.isMobileBrowser) {
-			var rawScreenDimensions = if (com.pblabs.util.Device.browser == com.pblabs.util.Device.Browser.SAFARI_IOS) {
-				com.pblabs.util.Device.ScreenDimensions.iOs3g;
-			} else {//TODO: others?  Compute from javascript?
-				com.pblabs.util.Device.ScreenDimensions.iOs3g;
-			}
+			var rawScreenDimensions = com.pblabs.util.Device.getScreenDimensions();//.scale(2); 
+			
+			// if (com.pblabs.util.Device.browser == com.pblabs.util.Device.Browser.SAFARI_IOS) {
+			// 	com.pblabs.util.Device.ScreenDimensions.iOs3g;
+			// } else {//TODO: others?  Compute from javascript?
+			// 	com.pblabs.util.Device.ScreenDimensions.iOs3g;
+			// }
 			
 			var topMenuHeight = 20;
 			

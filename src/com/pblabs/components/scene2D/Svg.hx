@@ -67,7 +67,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		var localRenderId =_renderId;
 		_displayObject.removeAllChildren();
 		#elseif js
-		if (!isOnCanvas) {
+		if (!isOnCanvas && SvgRenderTools.IS_INLINE_SVG) {
 			com.pblabs.util.Assert.isNotNull(div);
 			//Remove previous children
 			while (div.hasChildNodes()) {
@@ -108,7 +108,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		registrationPoint.x = _bounds.intervalX / 2;
 		registrationPoint.y = _bounds.intervalY / 2;
 		#if js
-		if (hasParent() && !isOnCanvas) {
+		if (hasParent() && !isOnCanvas && SvgRenderTools.IS_INLINE_SVG) {
 			insertSvgsIntoDiv();
 		}
 		#end
@@ -124,7 +124,9 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			sprite.addChild(renderedSvg);
 			self.recomputeBounds();
 			registrationPoint = new com.pblabs.geom.Vector2(bounds.intervalX / 2, bounds.intervalY / 2);
+			// trace("renderCompleteSignal.dispatch " + key + " " + owner.name + ", bounds=" + bounds);
 			self.renderCompleteSignal.dispatch();
+			
 		});
 		#else
 		//TODO: Is the js renderer asynchronous???
@@ -145,21 +147,33 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	}
 	
 	#if js
-	override public function updateTransform () :Void
+	
+	override function set_cacheAsBitmap (val :Bool) :Bool
 	{
-		if (!isTransformDirty) {
-			return;
+		//Only disallow caching if inline svgs are supported.
+		if (!val && !SvgRenderTools.IS_INLINE_SVG) {
+			val = true;
 		}
-		_transformMatrix.identity();
-		if (cacheAsBitmap) {
-		} else {
-			_transformMatrix.scale(_scaleX, _scaleY);
-		}
-		_transformMatrix.translate(-registrationPoint.x * _scaleX, - registrationPoint.y * _scaleY);
-		_transformMatrix.rotate(_angle + _angleOffset);
-		_transformMatrix.translate(_x + _locationOffset.x, _y + _locationOffset.y);
-		isTransformDirty = false;
+		return super.set_cacheAsBitmap(val);
 	}
+	
+	
+	// override public function updateTransform () :Void
+	// {
+	// 	if (!isTransformDirty) {
+	// 		return;
+	// 	}
+	// 	_transformMatrix.identity();
+	// 	// if (cacheAsBitmap) {
+	// 	// } else {
+	// 	// 	_transformMatrix.scale(_scaleX, _scaleY);
+	// 	// }
+	// 	_transformMatrix.scale(_scaleX, _scaleY);
+	// 	_transformMatrix.translate(-registrationPoint.x * _scaleX, - registrationPoint.y * _scaleY);
+	// 	_transformMatrix.rotate(_angle + _angleOffset);
+	// 	_transformMatrix.translate(_x + _locationOffset.x, _y + _locationOffset.y);
+	// 	isTransformDirty = false;
+	// }
 	#end
 	
 	override function onRemove () :Void
@@ -171,6 +185,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		}
 		#end
 		svgData = null;
+		// _hierarchyManager = null;
 	}
 	
 	#if (flash || cpp)
@@ -186,6 +201,9 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 				owner.getComponent(com.pblabs.components.minimalcomp.Component).invalidate();
 			}
 		});
+		// _hierarchyManager = context.getManager(com.pblabs.components.scene2D.HierarchyManager);
+		// com.pblabs.util.Assert.isNotNull(_hierarchyManager, ' _hierarchyManager is null');
+		
 	}
 	#end
 	
@@ -193,7 +211,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	override function addedToParent () :Void
 	{
 		super.addedToParent();
-		if (isOnCanvas) {
+		if (isOnCanvas || !SvgRenderTools.IS_INLINE_SVG) {
 			//Render the SVG to the backbuffer to then render to the canvas
 			cacheAsBitmap = true;
 		} else {
@@ -205,6 +223,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	
 	function insertSvgsIntoDiv () :Void
 	{
+		com.pblabs.util.Assert.isTrue(SvgRenderTools.IS_INLINE_SVG, "No inline SVG support");
 		//Insert the SVGdirectly into the DOM
 		com.pblabs.util.Assert.isNotNull(svgData);
 		com.pblabs.util.Assert.isNotNull(div);
@@ -229,14 +248,14 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		SvgRenderTools.renderSvg(svgData, ctx.canvas);
 	}
 	
-	override private function redrawBackBuffer ()
-	{
-		if (_backBuffer == null) {
-			_backBuffer = cast js.Lib.document.createElement("canvas");
-			com.pblabs.util.Assert.isNotNull(div);
-		}
-		super.redrawBackBuffer();
-	}
+	// override private function redrawBackBuffer ()
+	// {
+	// 	if (_backBuffer == null) {
+	// 		_backBuffer = cast js.Lib.document.createElement("canvas");
+	// 		com.pblabs.util.Assert.isNotNull(div);
+	// 	}
+	// 	super.redrawBackBuffer();
+	// }
 	#end
 	
 	#if flash

@@ -22,7 +22,7 @@ class InputButtonOverlay
 	#if flash
 	extends com.pblabs.components.scene2D.GraphicsComponent
 	#elseif js
-	extends com.pblabs.components.scene2D.BitmapRenderer
+	extends com.pblabs.components.scene2D.RectangleShape
 	#end
 {
 	static var OVERLAY_KEY :String = "InputButtonOverlayActive";
@@ -64,6 +64,9 @@ class InputButtonOverlay
 	override function setDefaults () :Void
 	{
 		super.setDefaults();
+		borderRadius = 10;
+		fillColor = 0x000000;
+		lineStroke = 0;
 		alpha = 0.33;
 	}
 	
@@ -93,46 +96,18 @@ class InputButtonOverlay
 		
 		x = sc.x;
 		y = sc.y;
+		width = b.intervalX;
+		height = b.intervalY;
 		registrationPoint = new Vector2((x - b.xmin), (y - b.ymin));
-		var round = 10;
-		
-		#if flash
-			var g = graphics;
-			g.clear();
-			g.beginFill(0x000000);
-			g.drawRoundRect(0, 0, b.intervalX, b.intervalY, round);
-			g.endFill();
-		#elseif js
-			var canvas :Canvas = cast js.Lib.document.createElement("canvas");
-			canvas.width = Std.int(b.intervalX);
-			canvas.height = Std.int(b.intervalY);
-			
-			var ctx = canvas.getContext('2d');
-			
-			var w = Std.int(b.intervalX);
-			var h = Std.int(b.intervalY);
-			
-			ctx.beginPath();
-			ctx.moveTo(round, 0);
-			ctx.lineTo(w-round, 0);
-			ctx.quadraticCurveTo(w, 0, w, round);
-			ctx.lineTo(w, h-round);
-			ctx.quadraticCurveTo(w, h, w-round, h);
-			ctx.lineTo(round, h);
-			ctx.quadraticCurveTo(0, h, 0, h-round);
-			ctx.lineTo(0, round);
-			ctx.quadraticCurveTo(0, 0, round, 0);
-			
-			ctx.fillStyle = "#000000";
-			ctx.fill();
-			
-			bitmapData = canvas;
-		#end
 		
 		addToParent(sc.parent);
 		
 		#if flash
 		onFrame(0);
+		#elseif js
+		if (!isOnCanvas) {
+			onFrame(0);
+		}
 		#end
 	}
 }

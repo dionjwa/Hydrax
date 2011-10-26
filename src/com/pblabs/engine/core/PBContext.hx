@@ -175,6 +175,10 @@ class PBContext
 	
 	public function setup () :Void
 	{
+	}
+	
+	public function setupInternal () :Void
+	{
 		com.pblabs.util.Assert.isFalse(isSetup, "Only call setup once");
 		isSetup = true;
 		Preconditions.checkNotNull(injector, "WTF is the injector null?");
@@ -208,6 +212,8 @@ class PBContext
 		
 		// Do manager startup.
 		initializeManagers();
+		
+		setup();
 		
 		signalSetup.dispatch();
 	}

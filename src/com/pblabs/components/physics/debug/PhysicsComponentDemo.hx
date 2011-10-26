@@ -5,7 +5,6 @@ import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
 import com.pblabs.geom.Vector2;
-import com.pblabs.util.DebugUtil;
 
 import flash.display.Sprite;
 

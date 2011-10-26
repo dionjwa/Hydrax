@@ -342,8 +342,8 @@ class SceneUtil
 		rect.width = layer.scene.sceneView.width;
 		rect.height = layer.scene.sceneView.height;
 		rect.fillColor = color;
-		rect.borderStroke = 0;
-		rect.borderColor = color;
+		rect.lineStroke = 0;
+		rect.lineColor = color;
 		background.addComponent(rect);
 		background.initialize(layer.context.getManager(NameManager).validateName("background"));
 		

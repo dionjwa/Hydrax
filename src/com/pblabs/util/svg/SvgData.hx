@@ -23,6 +23,7 @@ class SvgData
 			/** SVG documents added to the dom via innerHTML are *not* allowed to have any preamble. */
 			_data = cleanSvgForInnerHtml(_data);
 			#end
+			com.pblabs.util.Assert.isNotNull(_data, ' _data is null');
 		}
 		return _data;
 	}
@@ -83,7 +84,7 @@ class SvgData
 	public function destroy () :Void
 	{
 		_xml = null;
-		data = null;
+		_data = null;
 		_replacements = null;
 	}
 	

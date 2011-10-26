@@ -41,6 +41,10 @@ if props.has_key("create_swf") and props["create_swf"].strip().lower() == "false
 	create_swf = False
 keepGeneratedAS3File = True if props.has_key("keep_as3") and props["keep_as3"].strip().lower() == "true" else False
 
+svgDisplayObjects = False
+if props.has_key("svgDisplayObjects") and props["svgDisplayObjects"].strip().lower() == "true":
+	svgDisplayObjects = True
+	
 print "resourceFolders=", resourceFolders
 
 filetypes = props["filetypes"]
@@ -180,11 +184,13 @@ for rfile in fileList:
 		classTypes[suffix].append((className, rfile))
 		
 		if suffix == "svg":
-			#Embed both types of svgs, the text, and the image
-			# swffile.write('    [Embed(source="' + rfile + '", mimeType="image/svg")]\n')
-			# swffile.write('    public static const ' + className + '_IMG :Class;\n\n')
-			
-			swffile.write('    [Embed(source="' + rfile + '", mimeType="application/octet-stream")]\n')
+			#Embed svgs as text or DisplayObjects
+			if svgDisplayObjects:
+				swffile.write('    [Embed(source="' + rfile + '", mimeType="image/svg")]\n')
+				swffile.write('    public static const ' + className + '_IMG :Class;\n\n')
+				swffile.write('    [Embed(source="' + rfile + '", mimeType="image/svg")]\n')
+			else:
+				swffile.write('    [Embed(source="' + rfile + '", mimeType="application/octet-stream")]\n')
 		elif suffix == "ttf":
 			fontname = os.path.basename(rfile).split(".")[0]
 			fontname = fontname.replace("_", " ")

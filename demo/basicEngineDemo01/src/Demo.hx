@@ -35,13 +35,14 @@ class Demo
 		
 		//Create our blob that we will move around.
 		var so = context.createBaseSceneEntity();
-		var blob  = context.allocate(com.pblabs.components.scene2D.RectangleShape);
-		// var blob  = context.allocate(com.pblabs.components.scene2D.CircleShape);
+		// var blob  = context.allocate(com.pblabs.components.scene2D.RectangleShape);
+		// blob.borderRadius = 10;
+		var blob  = context.allocate(com.pblabs.components.scene2D.CircleShape);
 		// blob.radius = 30;
 		
 		blob.fillColor = 0x00ff00;
 		blob.width = 100;
-		blob.height = 300;
+		// blob.height = 300;
 		blob.parentProperty = layer.entityProp();
 		so.addComponent(blob);
 		so.initialize("SomeSceneObj");

@@ -37,7 +37,8 @@ class Resources
 			var type = Type.createEnum(ResourceType, rc.nodeName.toUpperCase());
 			var data = switch (type) {
 				case IMAGE: new ResourceToken(rc.get("id"), Source.url(rc.get("url")), type);
-				case SVG: new ResourceToken(rc.get("id"), Source.url("http://localhost:8000/" + rc.get("url")), type);
+				// case SVG: new ResourceToken(rc.get("id"), Source.url("http://localhost:8000/" + rc.get("url")), type);
+				case SVG: new ResourceToken(rc.get("id"), Source.url(rc.get("url")), type);
 				case STRING: new ResourceToken(rc.get("id"), Source.url(rc.get("url")), type);
 				case IMAGE_DATA: throw "Not defined in resources.xml";
 				default: null;

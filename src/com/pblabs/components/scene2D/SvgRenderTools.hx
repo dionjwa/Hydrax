@@ -1,6 +1,7 @@
 package com.pblabs.components.scene2D;
 
 import com.pblabs.engine.resource.ResourceToken;
+import com.pblabs.util.DomUtil;
 import com.pblabs.util.svg.SvgData;
 
 import de.polygonal.core.math.Mathematics;
@@ -18,6 +19,10 @@ using com.pblabs.util.svg.SvgTools;
 
 using de.polygonal.core.math.Mathematics;
 
+#if js
+import jQuery.JQuery;
+#end
+
 #if flash
 enum RenderLib {
 	SVGWEB;
@@ -30,6 +35,12 @@ enum RenderLib {
   */
 class SvgRenderTools
 {
+	#if js
+	public static var IS_INLINE_SVG = {
+		JQueryStatic.browser.webkit && !(js.Lib.window.navigator.userAgent.indexOf("Android") > -1);
+	};
+	#end
+	
 	static var mTranslateMatch = ~/translate\((.*),(.*)\)/;
 	static var mScaleMatch = ~/scale\((.*)\)/;
 	static var mMatrixMatch = ~/matrix\((.*),(.*),(.*),(.*),(.*),(.*)\)/;
@@ -77,6 +88,7 @@ class SvgRenderTools
 	#if enable_svgweb
 	public static function renderSvgWithSvgWeb (svgData :SvgData, cb :flash.display.DisplayObject->Void) :Void
 	{
+		// trace("rendering " + svgData);
 		/**
 		  * svgweb has 2 issues :
 		  *  1) It takes a number of frames to (asynchronously) render the svg
@@ -85,7 +97,7 @@ class SvgRenderTools
 		  * To deal with this, we create a hidden sprite attached to the stage, 
 		  * and use that as our sprite parent until the svg has finished rendering
 		  * and dispatched the render finish event.
-		  * http ://code.google.com/p/svgweb/issues/detail?id=265
+		  * http://code.google.com/p/svgweb/issues/detail?id=265
 		  */
 		if (INVISIBLE_STAGE == null) {
 			INVISIBLE_STAGE = new flash.display.Sprite();
@@ -99,7 +111,7 @@ class SvgRenderTools
 		INVISIBLE_STAGE.addChild(svg);
 		
 		svg.xml = new flash.xml.XML(svgData.data);
-		com.pblabs.util.EventDispatcherUtil.addOnceListener(svg.svgRoot, org.svgweb.events.SVGEvent.SVGLoad, 
+		com.pblabs.util.EventDispatcherUtil.addOnceListener(svg.svgRoot, org.svgweb.events.SVGEvent.SVGLoad,
 			function (ignored :Dynamic) :Void {
 				cb(svg);
 			});
@@ -134,13 +146,24 @@ class SvgRenderTools
 			}
 		}};
 		
+		com.pblabs.util.Assert.isTrue(canvas.width > 0);
+		com.pblabs.util.Assert.isTrue(canvas.height > 0);
+		
 		if (offset != null && offset.x != 0 && offset.y != 0) {
 			Reflect.setField(args, "offsetX", offset.x);
 			Reflect.setField(args, "offsetY", offset.y);
 		}
 		try {
+			//If you don't remove the canvas from the parent, there's a bug that results in an internal canvas.width==0 bug
+			//sometimes.  This needs to be reported to the canvg site.
+			var parent = canvas.parentNode;
+			if (parent != null) {
+				parent.removeChild(canvas);
+			}
 			untyped canvg(canvas, svgData.data, args);
-			
+			if (parent != null) {
+				parent.appendChild(canvas);
+			}
 			#if debug_graphics
 			var context = canvas.getContext("2d");
 			context.setTransform(1,0,0,1,0,0);
@@ -153,12 +176,12 @@ class SvgRenderTools
 			context.lineTo(0, canvas.height);
 			context.moveTo(0, canvas.height);
 			context.lineTo(0, 0);
-			context.strokeStyle = "#000";
+			context.strokeStyle = "#ff0000";
 			context.stroke();
 			#end
 			
 		} catch (e :Dynamic) {
-			com.pblabs.util.Log.error("Error rendering svg from canvg");
+			com.pblabs.util.Log.error("Error rendering svg from canvg " + e + "\n canvas=" + canvas + ", svg=" + svgData);
 			com.pblabs.util.Log.error(com.pblabs.util.Log.getStackTrace());
 		}
 	}
@@ -192,13 +215,6 @@ class SvgRenderTools
 		if (svgElement == null) {
 			return new AABB2();
 		}
-		
-		// svgElement = svgElement.ensureNotDocument();
-		// trace(svgElement.nodeType + "=" + Std.string(svgElement).substr(0, 50));
-		// if (svgElement.nodeType == Xml.Document) {
-		// 	trace(com.pblabs.util.Log.getStackTrace());
-		// }
-		// trace('svgElement.nodeName=' + svgElement.nodeName);
 		if (svgElement.nodeName == "svg".svgId()) {
 			return parseElementBounds(svgElement);
 		} else {
@@ -268,15 +284,7 @@ class SvgRenderTools
 			xml.set("style", name + ":" + value);
 		} else {
 			var style = xml.get("style");
-			var styleTokens = style.split(";");
-			for (ii in 0...styleTokens.length) {
-				if (styleTokens[ii].split(":")[0].trim() == name) {
-					styleTokens[ii] = name + ":" + value;
-					xml.set("style", styleTokens.join(";"));
-					return;
-				}
-			}
-			xml.set("style", style + ";" + name + ":" + value);
+			xml.set("style", DomUtil.setStyle(style, name, value));
 		}
 	}
 }

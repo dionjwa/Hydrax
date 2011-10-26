@@ -42,30 +42,70 @@ class PagedScreen extends PBContext
 	{
 		super();
 		titleLabel = "Default Title";
-		backLabel = titleLabel; 
+		backLabel = titleLabel;
 	}
 	
 	override public function setup () :Void
 	{
 		super.setup();
+		
 		scene = createBaseScene();
+		
+		#if js
+		//For performance, menu scenes should use css layers, since most of the images are not moving.
+		_layerBackground = scene.addLayer("background", com.pblabs.components.scene2D.js.css.SceneLayer);
+		_layerForeground = scene.addLayer("foreground", com.pblabs.components.scene2D.js.css.SceneLayer);
+		// _layerBackground = scene.addLayer("background");
+		// _layerForeground = scene.addLayer("foreground");
+		#elseif flash
+		_layerBackground = scene.addLayer("background");
+		_layerForeground = scene.addLayer("foreground");
+		#end
+		
+		com.pblabs.util.Assert.isNotNull(scene, ' scene is null');
 		scene.owner.getTaskComponent();
 		scene.autoSceneViewAttach = false;
 		scene.sceneAlignment = SceneAlignment.TOP_LEFT;
 		scene.visible = false;
 		#if js
-		scene.x = 1000;
+		if (getManager(PBGameBase).contexts.length > 0) {
+			scene.x = 1000;
+		}
 		#end
 		scene.update();
 		
-		#if js
-		_layerBackground = scene.addLayer("background", com.pblabs.components.scene2D.js.css.SceneLayer);
-		_layerForeground = scene.addLayer("foreground", com.pblabs.components.scene2D.js.css.SceneLayer);
-		#elseif flash
-		_layerBackground = scene.addLayer("background");
-		_layerForeground = scene.addLayer("foreground");
-		#end
+		
+		// setupUI();
 	}
+	
+	// function setupUI () :Void
+	// {
+	// 	createScene();
+	// 	com.pblabs.util.Assert.isNotNull(scene, ' scene is null');
+	// 	scene.owner.getTaskComponent();
+	// 	scene.autoSceneViewAttach = false;
+	// 	scene.sceneAlignment = SceneAlignment.TOP_LEFT;
+	// 	scene.visible = false;
+	// 	#if js
+	// 	scene.x = 1000;
+	// 	#end
+	// 	scene.update();
+	// }
+	
+	// function createScene () :Void
+	// {
+	// 	scene = createBaseScene();
+		
+	// 	#if js
+	// 	// _layerBackground = scene.addLayer("background", com.pblabs.components.scene2D.js.css.SceneLayer);
+	// 	// _layerForeground = scene.addLayer("foreground", com.pblabs.components.scene2D.js.css.SceneLayer);
+	// 	_layerBackground = scene.addLayer("background");
+	// 	_layerForeground = scene.addLayer("foreground");
+	// 	#elseif flash
+	// 	_layerBackground = scene.addLayer("background");
+	// 	_layerForeground = scene.addLayer("foreground");
+	// 	#end
+	// }
 	
 	override public function enter () :Void
 	{
@@ -92,7 +132,7 @@ class PagedScreen extends PBContext
 	{
 		var contextBelow = getPageBelow();
 		if (contextBelow != null ) {
-			return contextBelow.titleLabel;
+			return contextBelow.backLabel.isBlank() ? contextBelow.titleLabel : contextBelow.backLabel;
 		} else {
 			return "";
 		}

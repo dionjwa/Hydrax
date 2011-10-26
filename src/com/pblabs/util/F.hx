@@ -37,6 +37,11 @@ class F
 		return function (?_) :Void {f();}
 	}
 	
+	public static function ignoreArg2(f :Dynamic->Void) :Void->Void
+	{
+		return function () :Void {f(null);}
+	}
+	
 	public static function adapt (func :Dynamic, ?args :Array<Dynamic>, ?owner :Dynamic) :Dynamic->Void
 	{
 		return function (?ignored :Dynamic) :Void {

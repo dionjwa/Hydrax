@@ -14,12 +14,26 @@ using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
 
 class Container extends Component
+	,implements com.pblabs.engine.time.IAnimatedObject
 {
+	
+	var _needsRedraw :Bool;
+	public var priority :Int;
+	public function onFrame (dt :Float) :Void
+	{
+		if (!_needsRedraw) {
+			return;
+		}
+		_needsRedraw = false;
+		redraw();
+		// invalidate();
+	}
+	
 	public var sceneLayer :BaseSceneLayer<Dynamic, Dynamic>;
 	public var alignment :Alignment;
 	public var destroyChildrenIfDestroyed :Bool;
-	public var bounds (get_bounds, null) :AABB2;
-	function get_bounds () :AABB2
+	// public var bounds (get_bounds, null) :AABB2;
+	override function get_bounds () :AABB2
 	{
 		var b = new AABB2();
 		b.xmin = b.ymin = Math.POSITIVE_INFINITY;
@@ -38,6 +52,8 @@ class Container extends Component
 		super();
 		alignment = Alignment.NONE;
 		destroyChildrenIfDestroyed = true;
+		_needsRedraw = true;
+		priority = 0;
 	}
 	
 	override public function show () :Void
@@ -59,6 +75,7 @@ class Container extends Component
 	override function onReset () :Void
 	{
 		super.onReset();
+		_needsRedraw = true;
 		com.pblabs.util.Assert.isNotNull(_spatial);
 		//Listen for location changes so we can redraw
 		com.pblabs.util.Assert.isTrue(owner.getComponents(SpatialComponent).length == 1);
@@ -129,10 +146,12 @@ class Container extends Component
 	
 	override public function invalidate () :Void
 	{
+		// _needsRedraw = true;
 		if (parent != null) {
 			parent.invalidate();
 		} else {
-			redraw();
+			_needsRedraw = true;
+			// redraw();
 		}
 	}
 	
@@ -152,6 +171,7 @@ class Container extends Component
 	
 	override function get_height () :Float
 	{
+		// trace("get_height");
 		var top :Float = Limits.INT32_MAX;
 		var bottom :Float = Limits.INT32_MIN;
 		for (c in children) {
@@ -164,11 +184,16 @@ class Container extends Component
 		if (top == Limits.INT32_MAX) {
 			return 0;
 		}
+		// trace('bottom=' + bottom);
+		// trace('top=' + top);
+		// trace('(bottom - top)=' + (bottom - top));
 		return bottom - top;
 	}
 	
 	function onLocationChanged (ignored :Dynamic) :Void
 	{
-		redraw();
+		_needsRedraw = true;
+		// invalidate();
+		// redraw();
 	}
 }

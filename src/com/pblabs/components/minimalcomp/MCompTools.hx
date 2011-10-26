@@ -27,6 +27,7 @@ using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
 using com.pblabs.util.ArrayUtil;
 using com.pblabs.util.IterUtil;
+using com.pblabs.components.util.ResetCallbacks;
 
 /**
   * 'using' functions for Haxe minimal (like) components.
@@ -128,8 +129,7 @@ class MCompTools
 		
 		var containerComp = container.getComponent(Container);
 		com.pblabs.util.Assert.isNotNull(containerComp, container.name + ' has no Container');
-		ensureComponent(child);
-		var childComp = child.getComponent(Component);
+		var childComp = child.ensureComponent(Component);
 		
 		com.pblabs.util.Assert.isNotNull(childComp, child.name + " has no Component");
 		
@@ -161,23 +161,35 @@ class MCompTools
 			com.pblabs.components.scene2D.SceneUtil.update(e);
 			#end
 		}
-		e.context.getManager(IProcessManager).callLater(function () :Void {
-			if (e.isLiveObject) {
-				ensureComponent(e).bindSignal(ensureComponent(e).redrawSignal, F.ignoreArg(f));
-			}
-		});
+		onRedraw(e, positionFunc);
+		// e.context.getManager(IProcessManager).callLater(function () :Void {
+		// 	if (e.isLiveObject) {
+		// 		e.ensureComponent(Component).bindSignal(e.ensureComponent(Component).redrawSignal, F.ignoreArg(f));
+		// 	}
+		// });
 		
 		e.context.getManager(IProcessManager).callLater(f);
 		positionFunc(e);
-		// f();
 		return e;
 	}
 	
-	
+	public static function onRedraw (e :IEntity, cb :IEntity->Void) :IEntity
+	{
+		e.addResetCallback(function (e :IEntity) :Void {
+			var minimalComponent = e.getComponent(Component);
+			com.pblabs.util.Assert.isNotNull(minimalComponent, 'minimalComponent is null');
+			if (minimalComponent.isRegistered) {
+				e.ensureComponent(Component).bindSignal(minimalComponent.redrawSignal, function (c :Component) :Void {
+					cb(e);	
+				});
+			}
+		});
+		return e;
+	}
+			
 	public static function setComponentId (e :IEntity, id :String) :IEntity
 	{
-		ensureComponent(e);
-		var comp = e.getComponent(Component);
+		var comp = e.ensureComponent(Component);
 		com.pblabs.util.Assert.isNotNull(comp, ' comp is null');
 		comp.id = id;
 		return e;
@@ -192,13 +204,5 @@ class MCompTools
 			});
 		}
 		return e;
-	}
-	
-	public static function ensureComponent (e :IEntity) :Component
-	{
-		if (e.getComponent(Component) == null) {
-			e.addComponent(e.context.allocate(Component));
-		}
-		return e.getComponent(Component);
 	}
 }

@@ -22,26 +22,20 @@ class CircleShape extends ShapeComponent
 	public var radius (get_radius, set_radius) :Float;
 	public var showAngleLine :Bool;
 	var _radius :Float;
-	public function new (?rad :Float = 20)
+	
+	public function new ()
 	{
-		super();
-		
-		showAngleLine = true;
 		#if js
-		_svgContainer = untyped js.Lib.document.createElementNS(SceneUtil.SVG_NAMESPACE, "svg");
-		div.appendChild(_svgContainer);
-		_svgContainer.setAttribute("width", (rad * 2) + "px");
-		_svgContainer.setAttribute("height", (rad * 2) + "px");
-		_svgContainer.setAttribute("version", "1.1");
-
-		_svg = untyped js.Lib.document.createElementNS(SceneUtil.SVG_NAMESPACE, "circle");
-		_svgContainer.appendChild(_svg);
-		_svg.setAttribute("r", "10");
-		_svg.setAttribute("cx", "0");
-		_svg.setAttribute("cy", "0");
+		_displayObject = com.pblabs.components.scene2D.js.SceneComponent.createDiv();
+		_displayObject.style.cssText = com.pblabs.util.DomUtil.setStyle(_displayObject.style.cssText, "border-radius", "50%");
+		_displayObject.style.cssText = com.pblabs.util.DomUtil.setStyle(_displayObject.style.cssText, "-moz-border-radius", "50%");
 		#end
 		
-		radius = rad;
+		super();
+		
+		#if js
+		div.appendChild(_displayObject);
+		#end
 	}
 	
 	override public function containsWorldPoint (pos :XY, mask :ObjectType) :Bool
@@ -52,20 +46,12 @@ class CircleShape extends ShapeComponent
 		return CircleUtil.isWithinCircle(pos, x - _locationOffset.x, y - _locationOffset.y, radius);
 	}
 	
-	#if js
-	override function onAdd () :Void
+	override function setDefaults () :Void
 	{
-		super.onAdd();
-		com.pblabs.util.Log.debug("");
-		
-		//Put the element in the base div element
-		//Why put it in a div?
-		//http://dev.opera.com/articles/view/css3-transitions-and-2d-transforms/#transforms
-		redraw();
-		div.appendChild(_svgContainer);
-		com.pblabs.util.Log.debug("finished");
+		super.setDefaults();
+		radius = 20;
+		showAngleLine = true;
 	}
-	#end
 	
 	override public function redraw () :Void
 	{
@@ -79,23 +65,21 @@ class CircleShape extends ShapeComponent
 			g.drawCircle(r, r, r);
 			g.endFill();
 		}
-		g.lineStyle(borderStroke, borderColor);
+		g.lineStyle(lineStroke, lineColor);
 		g.drawCircle(r, r, r);
 		if (showAngleLine) {
-			g.lineStyle(borderStroke, borderColor);
+			g.lineStyle(lineStroke, lineColor);
 			g.moveTo(r, r);
 			g.lineTo(r * 2, r);
 		}
 		#elseif js
-		_svg.setAttribute("cx", r + "px");
-		_svg.setAttribute("cy", r + "px");
-		_svg.setAttribute( "r",  r + "px");
-		_svg.setAttribute("fill", StringUtil.toColorString(fillColor, "#"));
-		_svg.setAttribute("fill-opacity", "" + alpha);
-		_svg.setAttribute( "stroke",  StringUtil.toColorString(borderColor, "#"));
-		_svg.setAttribute( "stroke-width",  "" + borderStroke);
-		_svgContainer.setAttribute("width", (r * 2) + "px");
-		_svgContainer.setAttribute("height", (r * 2) + "px");
+		
+		_displayObject.style.cssText = com.pblabs.util.DomUtil.setStyle(_displayObject.style.cssText, "-webkit-border-radius", _radius + "px");
+		
+		_displayObject.style.cssText = com.pblabs.util.DomUtil.setStyle(_displayObject.style.cssText, "border", _lineStroke + "px solid " + StringUtil.toColorString(lineColor, "#"));
+		_displayObject.style.cssText = com.pblabs.util.DomUtil.setStyle(_displayObject.style.cssText, "background-color", StringUtil.toColorString(fillColor, "#"));
+		_displayObject.style.width = (_radius * 2) + "px";
+		_displayObject.style.height = (_radius * 2) + "px";
 		#end
 		com.pblabs.engine.debug.Profiler.exit("redraw");
 	}
@@ -108,9 +92,9 @@ class CircleShape extends ShapeComponent
 		ctx.fillStyle = StringUtil.toColorString(fillColor, "#");
 		ctx.fill();
 		ctx.closePath();
-		ctx.strokeStyle = StringUtil.toColorString(borderColor, "#");
-		if (borderStroke > 0) {
-			ctx.lineWidth = borderStroke;
+		ctx.strokeStyle = StringUtil.toColorString(lineColor, "#");
+		if (lineStroke > 0) {
+			ctx.lineWidth = lineStroke;
 			ctx.beginPath();
 			ctx.arc(radius, radius, radius, 0, Math.PI*2, true);
 			ctx.stroke();

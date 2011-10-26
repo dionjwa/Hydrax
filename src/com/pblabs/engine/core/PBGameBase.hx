@@ -39,12 +39,12 @@ using com.pblabs.util.ArrayUtil;
 typedef PBContextTransitionEffect = IPBContext->IPBContext->(Void->Void)->Void; 
 
 enum	ContextTransition {
-	PUSH(c :IPBContext, effect :PBContextTransitionEffect);
-	POP(c :IPBContext, effect :PBContextTransitionEffect);
-	PLACE_ON_TOP(c :IPBContext, effect :PBContextTransitionEffect);
-	CHANGE(oldContext :IPBContext, newContext :IPBContext, effect :PBContextTransitionEffect);
-	REMOVE(c :IPBContext, effect :PBContextTransitionEffect);
-	ROLL_BACK_UNTIL(cls :Class<Dynamic>, effect :PBContextTransitionEffect);//Must be an IPBContext
+	PUSH(c :IPBContext, ?effect :PBContextTransitionEffect);
+	POP(c :IPBContext, ?effect :PBContextTransitionEffect);
+	PLACE_ON_TOP(c :IPBContext, ?effect :PBContextTransitionEffect);
+	CHANGE(oldContext :IPBContext, newContext :IPBContext, ?effect :PBContextTransitionEffect);
+	REMOVE(c :IPBContext, ?effect :PBContextTransitionEffect);
+	ROLL_BACK_UNTIL(cls :Class<Dynamic>, ?effect :PBContextTransitionEffect);//Must be an IPBContext
 }
 
 /**
@@ -164,7 +164,7 @@ class PBGameBase
 				}).destroyOnUse();
 			//Fire setup
 			signalContextSetup.dispatch(ctx);
-			ctx.setup();
+			ctx.setupInternal();
 			
 			com.pblabs.util.Assert.isTrue(ctx.injector.getMapping(IPBContext) == ctx);
 			

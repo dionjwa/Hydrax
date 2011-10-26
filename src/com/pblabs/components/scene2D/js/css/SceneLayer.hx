@@ -25,6 +25,10 @@ class SceneLayer extends JSLayer
 	{
 		super();
 		_tempPoint = new Vector2();
+		
+		#if (debug && modernizr)
+		com.pblabs.util.Assert.isTrue(Modernizr.csstransforms, "Modernizr.csstransforms==false.  You will have to use a Canvas layer in this browser");
+		#end
 	}
 	
 	override public function onFrame (dt :Float) :Void
@@ -38,6 +42,9 @@ class SceneLayer extends JSLayer
 	
 	public function updateTransform () :Void
 	{
+		if (scene == null) {
+			return;
+		}
 		com.pblabs.util.Assert.isNotNull(scene);
 		com.pblabs.util.Assert.isNotNull(_tempPoint);
 		com.pblabs.util.Assert.isNotNull(scene.sceneAlignment);
@@ -47,9 +54,9 @@ class SceneLayer extends JSLayer
 		//Adjust for SceneView center			
 		SceneUtil.calculateOutPoint(_tempPoint, scene.sceneAlignment, scene.sceneView.width, scene.sceneView.height);
 		_transformMatrix.rotate(scene.rotation);
-		_transformMatrix.scale(scene.zoom, scene.zoom);
+		_transformMatrix.scale(scene.zoom * _scale, scene.zoom * _scale);
 		_transformMatrix.translate(_tempPoint.x, _tempPoint.y);
-		_transformMatrix.translate(scene.x *_parallaxFactor * scene.zoom, scene.y *_parallaxFactor * scene.zoom);
+		_transformMatrix.translate(scene.x *_parallaxFactor * scene.zoom * _scale, scene.y *_parallaxFactor * scene.zoom * _scale);
 		if (SceneView.isWebkitBrowser) {
 			untyped div.style.webkitTransform = _transformMatrix.toString();
 		} else {
@@ -63,5 +70,11 @@ class SceneLayer extends JSLayer
 		for (ii in 1...children.length) {
 			div.insertBefore(children[ii - 1].div, children[ii].div);
 		}
+	}
+	
+	override function set_scale (val :Float) :Float
+	{
+		isTransformDirty = true;
+		return super.set_scale(val);
 	}
 }

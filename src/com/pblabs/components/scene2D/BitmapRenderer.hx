@@ -77,7 +77,7 @@ class BitmapRenderer
 			recomputeBounds();
 		}
 
-		#if js	
+		#if js
 		if (!isOnCanvas) {
 			redrawBackBuffer();
 		}

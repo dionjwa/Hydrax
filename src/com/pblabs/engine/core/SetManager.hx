@@ -43,11 +43,6 @@ class SetManager extends PBManager
 	var _components :MultiMap<IEntityComponent, String>;
 	/** Maps objects to sets */
 	var _objects :MultiMap<IPBObject, String>;
-	// static var COMPONENTS_MARKED_SET :Map<Class<Dynamic>, Bool> = 
-	// 	new MapBuilder(ValueType.TClass(IEntityComponent)).makeComputing(isInSet).build();
-	
-	// static var COMPONENTS_SETS :Map<Class<Dynamic>, Array<String>> = 
-	// 	new MapBuilder(ValueType.TClass(IEntityComponent)).makeComputing(getClassSets).build();
 		
 	static var EMPTY_STRING_ARRAY :Array<String> = [];
 	static var EMPTY_OBJECT_ARRAY :Array<IPBObject> = [];
@@ -117,24 +112,8 @@ class SetManager extends PBManager
 			return;
 		}
 		_sets.set(set, obj);
-		
-		// var foundInSet = false;
-		// for (e in _sets.get(set)) {
-		// 	if (e == obj) {
-		// 		foundInSet = true;
-		// 	}
-		// }
 		_objects.set(obj, set);
 	}
-	
-	// public function addComponentToSet (obj :IEntityComponent, set :String) :Void
-	// {
-	// 	Preconditions.checkNotNull(obj);
-	// 	Preconditions.checkNotNull(set);
-		
-	// 	//Add object to set
-	// 	_componentSets.set(set, obj);
-	// }
 	
 	public function getObjectsInSet(set :String) :Iterable<IPBObject>
 	{
@@ -215,7 +194,6 @@ class SetManager extends PBManager
 			}
 		}
 		_objects.remove(obj);
-		// removeComponentSets(obj);
 	}
 	
 	public function addComponentToSet (component :IEntityComponent, set :String) :Void
@@ -224,11 +202,6 @@ class SetManager extends PBManager
 		_components.set(component, set);
 		
 		addObjectToSet(component.owner, set);
-		
-		// var cls = Type.getClass(component);
-	    // if (COMPONENTS_MARKED_SET.get(cls)) {
-		// 	_componentSets.set(cls, component);
-		// }
 	}
 	
 	public function removeComponentFromSets (component :IEntityComponent) :Void
@@ -238,38 +211,27 @@ class SetManager extends PBManager
 			removeObjectFromSet(component.owner, set);
 		}
 		_components.remove(component);
-		// var cls = Type.getClass(component);
-	    // if (COMPONENTS_MARKED_SET.get(cls)) {
-		// 	_componentSets.removeEntry(cls, component);
-		// }
 	}
-	
-	// public function removeComponentSets (obj :IPBObject) :Void
-	// {
-	//     if (Std.is(obj, IEntity) {
-	//     	var e :IEntity = cast obj;
-	//     	for (c in e) {
-	//     		var cls = Type.getClass(obj);
-	//     		if (COMPONENTS_MARKED_SET.get(cls)) {
-	//     			_componentSets.removeEntry(cls, obj);
-	// 			}
-	//     	}
-	//     }
-	// }
 	
 	public function destroySet (set :String) :Void
 	{
 		if (!_sets.exists(set) && !_componentSets.exists(set)) {
 			return;
 		}
-		for (obj in removeSet(set)) {
-			if (obj != null && obj.isLiveObject) {
-				obj.destroy();
+		
+		if (_sets.exists(set)) {
+			for (obj in removeSet(set)) {
+				if (obj != null && obj.isLiveObject) {
+					obj.destroy();
+				}
 			}
 		}
-		for (comp in removeComponentSet(set)) {
-			if (comp != null && comp.isRegistered) {
-				comp.owner.destroy();
+		
+		if (_componentSets.exists(set)) {
+			for (comp in removeComponentSet(set)) {
+				if (comp != null && comp.isRegistered) {
+					comp.owner.destroy();
+				}
 			}
 		}
 	}
@@ -297,41 +259,6 @@ class SetManager extends PBManager
 		_sets.clear();
 		_objects.clear();
 	}
-	
-	// public function injectSets (obj :IEntityComponent, ?cls :Class<Dynamic>) :Void
-	// {
-	// 	cls = cls == null ? obj.getClass() : cls;
-		
-	// 	for (set in COMPONENTS_SETS.get(cls)) {
-	// 		addObjectToSet(obj.owner, set);
-	// 	}
-		
-	// 	if (COMPONENTS_MARKED_SET.get(cls)) {
-	// 		_componentSets.set(cls, obj);
-	// 		// addObjectToSet(obj, Type.getClassName(cls));
-	// 	}
-		
-	// 	// var m = haxe.rtti.Meta.getType(cls);
-		
-	// 	// if (m != null) {
-	// 	// 	for (field in Reflect.fields(m)) {
-	// 	// 		if (field == "sets") {
-	// 	// 			for (s in cast(Reflect.field(m, field), Array<Dynamic>)) {
-	// 	// 				if (Std.is(s, Array)) {
-	// 	// 					for (ss in cast(s, Array<Dynamic>)) {
-	// 	// 						addObjectToSet(obj.owner, ss);
-	// 	// 					}
-	// 	// 				} else {
-	// 	// 					addObjectToSet(obj.owner, s);
-							
-	// 	// 				}
-	// 	// 			}
-	// 	// 		} else if (field == "set") {
-	// 	// 			addComponentToSet(obj, ss);
-	// 	// 		}
-	// 	// 	}
-	// 	// }
-	// }
 	
 	/**
 	  * Mark a component class with the @set class attribute, and it will be automatically added to component sets

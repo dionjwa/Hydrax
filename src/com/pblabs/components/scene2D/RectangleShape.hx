@@ -18,29 +18,36 @@ using com.pblabs.components.scene2D.SceneUtil;
 
 class RectangleShape extends ShapeComponent
 {
-	#if js
-	var _svgFill :js.Dom.HtmlDom;
-	#end
+	public var borderRadius (get_borderRadius, set_borderRadius) :Int;
+	var _borderRadius :Int;
+	function get_borderRadius () :Int
+	{
+		return _borderRadius;
+	}
+	function set_borderRadius (val :Int) :Int
+	{
+		_borderRadius = val;
+		#if js
+		for (cssName in ["-moz-border-radius", "-webkit-border-radius", "-khtml-border-radius", "border-radius"]) {
+			_displayObject.style.cssText = com.pblabs.util.DomUtil.setStyle(_displayObject.style.cssText, cssName, _borderRadius + "px");	
+		}
+		#end
+		redraw();
+		return val;
+	}
+	
 	public function new (?w :Float = 20.0, ?h :Float = 100.0)
 	{
+		
+		
+		#if js
+		_displayObject = com.pblabs.components.scene2D.js.SceneComponent.createDiv();
+		#end
+		
 		super();
 		
 		#if js
-		_svgContainer = untyped js.Lib.document.createElementNS(SceneUtil.SVG_NAMESPACE, "svg");
-		div.appendChild(_svgContainer);
-		div.style.width = "100%";
-		div.style.height = "100%";
-		_svgContainer.setAttribute("width", w + "px");
-		_svgContainer.setAttribute("height", h + "px");
-		_svgContainer.setAttribute("x", "0px");
-		_svgContainer.setAttribute("y", "0px");
-		_svgContainer.setAttribute("version", "1.1");
-		
-		_svgFill = untyped js.Lib.document.createElementNS(SceneUtil.SVG_NAMESPACE, "rect");
-		_svgContainer.appendChild(_svgFill);
-		
-		_svg = untyped js.Lib.document.createElementNS(SceneUtil.SVG_NAMESPACE, "rect");
-		_svgContainer.appendChild(_svg);
+		div.appendChild(_displayObject);
 		#end
 		
 		_unscaledBounds.x = w;
@@ -54,51 +61,68 @@ class RectangleShape extends ShapeComponent
 		height = h;
 	}
 	
+	override function setDefaults () :Void
+	{
+		super.setDefaults();
+		borderRadius = 0;
+	}
+	
 	override function redraw () :Void
 	{
 		#if (flash || cpp)
 		var zoom = parent != null && parent.parent != null ? parent.parent.zoom : 1.0;
 		var g = cast(_displayObject, flash.display.Shape).graphics;
 		g.clear();
-		g.beginFill(this.fillColor, 1);
-		g.drawRect(0, 0, width, height);
+		g.beginFill(fillColor, 1);
+		g.drawRoundRect(0, 0, width, height, _borderRadius);
 		g.endFill();
-		g.lineStyle(borderStroke, borderColor, 1.0);
-		g.drawRect(0, 0, width - borderStroke, height - borderStroke);
+		g.lineStyle(lineStroke, lineColor, 1.0);
+		g.drawRoundRect(0, 0, width - lineStroke, height - lineStroke, _borderRadius);
 		#elseif js
-		_svg.setAttribute("width", Std.string(width));
-		_svg.setAttribute("height", Std.string(height));
-		_svg.setAttribute("fill", "#000000");
-		_svg.setAttribute("fill-opacity", "0");
-		_svg.setAttribute("stroke-opacity", "" + alpha);
-		_svg.setAttribute( "stroke",  StringUtil.toColorString(borderColor, "#"));
-		_svg.setAttribute( "stroke-width",  "" + borderStroke);
-		
-		_svgFill.setAttribute("width", Std.string(width));
-		_svgFill.setAttribute("height", Std.string(height));
-		_svgFill.setAttribute("fill", StringUtil.toColorString(fillColor, "#"));
-		_svgFill.setAttribute("fill-opacity", "" + alpha);
-		_svgFill.setAttribute( "stroke",  "#000000");
-		_svgFill.setAttribute( "stroke-width",  "0");
-		_svgFill.setAttribute("stroke-opacity", "0");
-		
-		_svgContainer.setAttribute("width", width + "px");
-		_svgContainer.setAttribute("height", height + "px");
-		_svgContainer.setAttribute("viewBox", "0 0 " + width + " " + height);
+		_displayObject.style.cssText = com.pblabs.util.DomUtil.setStyle(_displayObject.style.cssText, "border", _lineStroke + "px solid " + StringUtil.toColorString(lineColor, "#"));
+		_displayObject.style.cssText = com.pblabs.util.DomUtil.setStyle(_displayObject.style.cssText, "background-color", StringUtil.toColorString(fillColor, "#"));
+		_displayObject.style.width = _bounds.intervalX + "px";
+		_displayObject.style.height = _bounds.intervalY + "px";
 		#end
 	}
 	
 	#if js
 	override public function drawPixels (ctx :CanvasRenderingContext2D)
 	{
-		ctx.fillStyle = StringUtil.toColorString(fillColor, "#");
-		ctx.fillRect(0, 0, Std.int(width), Std.int(height));
-		if (borderStroke > 0) {
-			ctx.strokeStyle = StringUtil.toColorString(borderColor, "#");
-			ctx.lineWidth = borderStroke;
+		if (_borderRadius == 0) {
+			ctx.fillStyle = StringUtil.toColorString(fillColor, "#");
+			ctx.fillRect(0, 0, Std.int(width), Std.int(height));
+			if (lineStroke > 0) {
+				ctx.strokeStyle = StringUtil.toColorString(lineColor, "#");
+				ctx.lineWidth = lineStroke;
+				ctx.beginPath();
+				ctx.rect(0, 0, width, height);
+				ctx.stroke();
+			}
+		} else {
+			
+			var w = Std.int(_bounds.intervalX);
+			var h = Std.int(_bounds.intervalY);
+			
 			ctx.beginPath();
-			ctx.rect(0, 0, width, height);
+			ctx.moveTo(_borderRadius, 0);
+			ctx.lineTo(w-_borderRadius, 0);
+			ctx.quadraticCurveTo(w, 0, w, _borderRadius);
+			ctx.lineTo(w, h-_borderRadius);
+			ctx.quadraticCurveTo(w, h, w-_borderRadius, h);
+			ctx.lineTo(_borderRadius, h);
+			ctx.quadraticCurveTo(0, h, 0, h-_borderRadius);
+			ctx.lineTo(0, _borderRadius);
+			ctx.quadraticCurveTo(0, 0, _borderRadius, 0);
+			
+			ctx.fillStyle = StringUtil.toColorString(fillColor, "#");
+			ctx.fill();
+			
+			ctx.lineWidth = lineStroke;
+			ctx.strokeStyle = StringUtil.toColorString(lineColor, "#");
 			ctx.stroke();
+			
+			
 		}
 	}
 	#end

@@ -3,8 +3,9 @@
 -D use_html5_canvas_as_default_scene_layer
 
 -lib hydrax
--cp ../../lib/hx.html5 
+-lib html5
 -lib jQueryExtern
+-lib modernizr
 
 -cp src
 --remap flash:jeash

@@ -23,9 +23,13 @@ import com.pblabs.util.Preconditions;
 
 import de.polygonal.core.math.Mathematics;
 import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor2.geom.primitive.AABB2;
 
 import hsl.haxe.Bond;
+import hsl.haxe.DirectSignaler;
+import hsl.haxe.Signaler;
 
+using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
 using com.pblabs.util.IterUtil;
@@ -43,7 +47,8 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	
 	@editor({ui :"UpdatingLabel"})
 	public var zoom(get_zoom, set_zoom) :Float;
-	public var sceneBounds(get_sceneBounds, set_sceneBounds) :Rectangle;
+	public var zoomSignaler (default, null):Signaler<Float>;
+	public var sceneBounds(get_sceneBounds, set_sceneBounds) :AABB2;
 	public var layerCount(get_layerCount, never) :Int;
 	@editor({ui :"UpdatingLabel"})
 	public var x (get_x, set_x) :Float;
@@ -51,6 +56,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	public var y (get_y, set_y) :Float;
 	@editor({ui :"UpdatingLabel"})
 	public var rotation (get_rotation, set_rotation) :Float;
+	public var visibleArea (get_visibleArea, null) :AABB2;
 	/** Default true.  Automatically  */
 	public var autoSceneViewAttach (default, set_autoSceneViewAttach) :Bool;
 	function set_autoSceneViewAttach (val :Bool) :Bool
@@ -124,7 +130,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	var _transformDirty :Bool;
 	
 	/** The view of the scene is always enclosed in the bounds */
-	var _sceneBounds :Rectangle;
+	var _sceneBounds :AABB2;
 	var _sceneAlignment :SceneAlignment;
 	var _sceneView :SceneView;
 	var _currentViewRect :Rectangle;
@@ -134,6 +140,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	public function new ()
 	{
 		super();
+		zoomSignaler = new DirectSignaler(this);
 		initVars();
 	}
 	
@@ -361,7 +368,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 			return newX;
 		}
 		_position.x = newX;
-		_transformDirty = true;
+		constrainViewToBounds();
 		return newX;
 	}
 	
@@ -376,17 +383,48 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 			return newY;
 		}
 		_position.y = newY;
-		_transformDirty = true;
+		constrainViewToBounds();
 		return newY;
 	}
+	
+	function constrainViewToBounds () :Void
+	{
+		if (_sceneBounds != null) {
+			var visible = visibleArea;
 
-	function get_sceneBounds () :Rectangle
+			if (visible.xmin < _sceneBounds.xmin) {
+				_position.x += visible.xmin - _sceneBounds.xmin;
+			} else if (visible.xmax > _sceneBounds.xmax) {
+				_position.x += visible.xmax - _sceneBounds.xmax;
+			}
+			
+			if (visible.ymin < _sceneBounds.ymin) {
+				_position.y += visible.ymin - _sceneBounds.ymin;
+			} else if (visible.ymax > _sceneBounds.ymax) {
+				_position.y += visible.ymax - _sceneBounds.ymax;
+			}
+		} 
+		_transformDirty = true;
+	}
+
+	function get_sceneBounds () :AABB2
 	{
 		return _sceneBounds;
 	}
-
-	function set_sceneBounds (value :Rectangle) :Rectangle
+	
+	function get_visibleArea () :AABB2
 	{
+		var area = new AABB2(0, 0, sceneView.width / _zoom, sceneView.height / _zoom);
+		area.centerX = -x;
+		area.centerY = -y;
+		return area;
+	}
+
+	function set_sceneBounds (value :AABB2) :AABB2
+	{
+		com.pblabs.util.Assert.isNotNull(sceneView, ' sceneView is null');
+		com.pblabs.util.Assert.isTrue(value.intervalX >= sceneView.width);
+		com.pblabs.util.Assert.isTrue(value.intervalY >= sceneView.height);
 		_sceneBounds = value;
 		return value;
 	}
@@ -416,7 +454,8 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 			return _zoom;
 		}
 		_zoom = value;
-		_transformDirty = true;
+		constrainViewToBounds();
+		zoomSignaler.dispatch(_zoom);
 		return value;
 	}
 	
