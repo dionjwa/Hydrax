@@ -95,10 +95,11 @@ class ImageTools
 	public static function addSvg (e :IEntity, 
 		layer :BaseSceneLayer<Dynamic, Dynamic>, 
 		token :ResourceToken, 
+		?cache :Bool = false, 
+		?isForDeviceDown :Bool = false,
 		?replacements :Array<SvgReplace>, 
-		?componentName :String, 
-		?cache :Bool = true, 
-		?isForDeviceDown :Bool = false) :IEntity 
+		?componentName :String
+		) :IEntity 
 	{
 		com.pblabs.util.Assert.isNotNull(layer, ' layer is null');
 		com.pblabs.util.Assert.isNotNull(token, ' token is null');
@@ -111,6 +112,7 @@ class ImageTools
 			var svgToken = SvgResources.getSvgResourceToken(e.context, token, replacements);
 			var svgData :SvgData = e.context.getManager(IResourceManager).get(svgToken);
 			var svgBounds = SvgRenderTools.getSvgBounds(svgData.xml);
+			// trace(e.getEntityData("order") + ', svgBounds=' + svgBounds);
 			svgComp.bitmapData = BitmapUtil.createImageData(Std.int(svgBounds.intervalX), Std.int(svgBounds.intervalY)); 
 			
 			componentName = componentName != null ? componentName : token.id + "_" + svgComp.key;
@@ -124,13 +126,12 @@ class ImageTools
 			com.pblabs.util.svg.SvgRenderQueueManager.getBitmapData(e.context, token, replacements, 
 				function (image :com.pblabs.components.scene2D.ImageData) :Void {
 					svgComp.bitmapData = image;
+					// trace("order rendered=" + e.getEntityData("order") + ", width=" + image.width);
 					//Notify the display hierarchy that our dimensions may have changed
 					if (e.getComponent(com.pblabs.components.minimalcomp.Component) != null) {
 						e.getComponent(com.pblabs.components.minimalcomp.Component).invalidate();
-						e.context.getManager(IProcessManager).callLater(e.getComponent(com.pblabs.components.minimalcomp.Component).invalidate);
-						e.context.getManager(IProcessManager).callLater(e.getComponent(com.pblabs.components.minimalcomp.Component).invalidate, 2);
 					}
-				});
+				}, true);
 		} else {
 			var svgToken = SvgResources.getSvgResourceToken(e.context, token, replacements);
 			var svgData = e.context.getManager(IResourceManager).get(svgToken);
