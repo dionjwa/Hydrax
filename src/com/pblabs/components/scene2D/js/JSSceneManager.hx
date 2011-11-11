@@ -39,21 +39,11 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 		#end
 	}
 	
-	override public function addLayer (?layerName :String = null, ?cls :Class<Dynamic> = null, ?registerAsManager :Bool = false) :BaseSceneLayer<Dynamic, Dynamic>
+	override public function addLayer (?layerName :String = null, ?cls :Class<Dynamic> = null, ?registerAsManager :Bool = false,
+		?startDetached :Bool = false) :BaseSceneLayer<Dynamic, Dynamic>
 	{
-		if (cls == null || cls == JSLayer) {
-			//Figure out the most efficient kind of rendering layer
-			//Default to CSS transforms.  In general, this is the most efficient and has the most features.
-			#if modernizr
-			com.pblabs.util.Assert.isTrue(Modernizr.csstransforms || Modernizr.canvas, "No csstransforms or canvas.  Old browser?"); 
-			cls = untyped Modernizr.csstransforms ? com.pblabs.components.scene2D.js.css.SceneLayer :
-				com.pblabs.components.scene2D.js.canvas.SceneLayer;
-			#else
-			com.pblabs.util.Log.warn("No Modernizr, so we cannot detect browser features.  Consider adding Modernizr. Defaulting to Canvas");
-			cls = com.pblabs.components.scene2D.js.css.SceneLayer;
-			#end
-		}
-		return super.addLayer(layerName, cls, registerAsManager);
+		cls = cls == null || cls == JSLayer ? defaultLayerClass : cls; 
+		return super.addLayer(layerName, cls, registerAsManager, startDetached);
 	}
 	
 	override public function setLayerIndex (layer :JSLayer, index :Int) :Void
@@ -116,6 +106,20 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 	{
 		super.onRemove();
 		_rootContainer = null;
+	}
+	
+	override function get_defaultLayerClass () :Class<JSLayer>
+	{
+		//Figure out the most efficient kind of rendering layer
+		//Default to CSS transforms.  In general, this is the most efficient and has the most features.
+		#if modernizr
+		com.pblabs.util.Assert.isTrue(Modernizr.csstransforms || Modernizr.canvas, "No csstransforms or canvas.  Old browser?"); 
+		return untyped Modernizr.csstransforms ? com.pblabs.components.scene2D.js.css.SceneLayer :
+			com.pblabs.components.scene2D.js.canvas.SceneLayer;
+		#else
+		com.pblabs.util.Log.warn("No Modernizr, so we cannot detect browser features.  Consider adding Modernizr. Defaulting to Canvas");
+		return com.pblabs.components.scene2D.js.css.SceneLayer;
+		#end
 	}
 	
 	override function set_visible (val :Bool) :Bool
