@@ -18,6 +18,7 @@ class DelayTicksTask
 	{
 		Preconditions.checkArgument(ticks >= 1 && ticks != Math.NaN, "Invalid number of ticks=" + ticks);
 		_ticks = ticks;
+		_elapsedTicks = 0;
 	}
 
 	public function update (dt :Float, obj :IEntity) :Bool
@@ -32,6 +33,6 @@ class DelayTicksTask
 		return new DelayTicksTask(_ticks);
 	}
 
-	var _ticks:Int ;
-	var _elapsedTicks:Int ;
+	var _ticks :Int;
+	var _elapsedTicks :Int;
 }
