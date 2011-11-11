@@ -135,9 +135,6 @@ class SvgRenderTools
 	#elseif js
 	public static function renderSvg (svgData :SvgData, canvas :Canvas, ?offset :XY, ?cb :Void->Void, ?ignoreDimensions :Bool = false) :Void
 	{
-		if (svgData.xml.nodeType == Xml.Document) {
-			trace("document at root, " + com.pblabs.util.Log.getStackTrace());
-		}
 		com.pblabs.util.Assert.isNotNull(svgData);
 		com.pblabs.util.Assert.isNotNull(canvas);
 		var args = { ignoreMouse :true, ignoreAnimation :true, ignoreDimensions :ignoreDimensions, ignoreClear :true, renderCallback :function (?_) :Void {
