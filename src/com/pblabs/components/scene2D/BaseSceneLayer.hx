@@ -33,8 +33,13 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 	public var parallaxFactor (get_parallaxFactor, set_parallaxFactor) :Float;
 	public var zOrderDirty :Bool;
 	
-	public var scale (get_scale, set_scale) :Float;
-	var _scale :Float;
+	public var scaleX (get_scaleX, set_scaleX) :Float;
+	var _scaleX :Float;
+	public var scaleY (get_scaleY, set_scaleY) :Float;
+	var _scaleY :Float;
+	
+	public var alpha (get_alpha, set_alpha) :Float;
+	var _alpha :Float;
 	
 	/** Optionally sort the display children when children are added */
 	public var sorter :Array<BaseSceneComponent<Dynamic>>->Void;
@@ -56,7 +61,7 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 	public function new ()
 	{
 		super();
-		setDefaultVars();
+		setDefaults();
 	}
 	
 	public function onFrame (dt :Float) :Void
@@ -83,13 +88,14 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 	/** Sets the sceneComponent zOrder with the actual z order.  Extended by platform specific subclasses */
 	function checkZOrder () :Void
 	{
-		throw "Subclasses override";
+		com.pblabs.util.Log.error("Subclasses override, class=" + com.pblabs.util.ReflectUtil.getClassName(this)); 
 	}
 	
-	function setDefaultVars () :Void
+	function setDefaults () :Void
 	{
 		priority = 0;
-		_scale = 1;
+		_scaleX = 1;
+		_scaleY = 1;
 		//By default, searches all children
 		objectMask = ObjectType.ALL;
 		// ignoreInput = false;
@@ -118,26 +124,47 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 	
 	function get_parallaxFactor () :Float
 	{
-	    return _parallaxFactor;
+		return _parallaxFactor;
 	}
 	
 	function set_parallaxFactor (val :Float) :Float
 	{
-	    _parallaxFactor = val;
-	    return val;
-	}
-	
-	function get_scale () :Float
-	{
-		return _scale;
-	}
-	
-	function set_scale (val :Float) :Float
-	{
-		_scale = val;
+		_parallaxFactor = val;
 		return val;
 	}
 	
-	// var _needsSort :Bool;
+	function get_scaleX () :Float
+	{
+		return _scaleX;
+	}
+	
+	function set_scaleX (val :Float) :Float
+	{
+		_scaleX = val;
+		return val;
+	}
+	
+	function get_scaleY () :Float
+	{
+		return _scaleY;
+	}
+	
+	function set_scaleY (val :Float) :Float
+	{
+		_scaleY = val;
+		return val;
+	}
+	
+	function get_alpha () :Float
+	{
+		return _alpha;
+	}
+	
+	function set_alpha (val :Float) :Float
+	{
+		_alpha = val;
+		return val;
+	}
+	
 	var _parallaxFactor :Float;
 }

@@ -91,6 +91,13 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		return val;
 	}
 	
+	public var defaultLayerClass (get_defaultLayerClass, null) :Class<Layer>;
+	function get_defaultLayerClass () :Class<Layer>
+	{
+		com.pblabs.util.Log.error("Subclasses override");
+		return null;
+	}
+	
 	public var index :Int;
 	
 	/**
@@ -169,50 +176,80 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		#end
 	}
 	
-	public function addLayer (?layerName :String = null, ?cls :Class<Dynamic> = null, ?registerAsManager :Bool = false) :BaseSceneLayer<Dynamic, Dynamic>
+	public function addLayer (?layerName :String = null, ?cls :Class<Dynamic> = null, ?registerAsManager :Bool = false, 
+		?startDetached :Bool = false) :BaseSceneLayer<Dynamic, Dynamic>
 	{
 		com.pblabs.util.Assert.isNotNull(context);
 		
 		//Get the order of the children first
 		var childrenCopy = children.copy();
 		
-		if (layerName.isBlank()) {
-			if (children.length == 0) {
-				layerName = SceneUtil.DEFAULT_LAYER_NAME;
-			} else {
-				layerName = SceneUtil.DEFAULT_LAYER_NAME + (children.length + 1);
-			}
-		}
 		
-		//Check for existing layers with the same name, maybe we could do something other than throw an error?
-		for (l in children	) {
-			if (l.name == layerName) {
-				throw "Existing layer with default name=" + layerName;
-			}
-		}
 		
 		//Use default class is none is given
-		if (cls == null) {
-			cls = SceneUtil.LAYER_CLASS;
-		}
+		// if (cls == null) {
+			// cls = SceneUtil.LAYER_CLASS;
+		// }
 		
-		com.pblabs.util.Assert.isNotNull(cls, "Null Layer Class");
+		// com.pblabs.util.Assert.isNotNull(cls, "Null Layer Class");
 		
-		var layer = context.allocate(cls);
+		var layer = createLayer(layerName, cls);//context.allocate(cls);
 		//Check compatability
 		// com.pblabs.util.Assert.isTrue(Std.is(layer, SceneUtil.LAYER_CLASS), "Layer class " + cls + " is not a " + SceneUtil.LAYER_CLASS);
 		var layerCast :com.pblabs.components.manager.NodeComponent<Dynamic, Dynamic> = cast layer;
-		layerCast.parentProperty = PBUtil.componentProp(this);
-		owner.addComponent(cast(layer, IEntityComponent), layerName);
+		
+		if (!startDetached) {
+			// owner.addComponent(cast(layer, IEntityComponent), layerName);
+			layerCast.parentProperty = PBUtil.componentProp(this);
+			layerCast.addToParent();
+		// } else {
+			// layerCast.parentProperty = PBUtil.componentProp(this);
+			// owner.addComponent(cast(layer, IEntityComponent), layerName);
+		}
+		
 		if (registerAsManager) {
 			context.registerManager(SceneUtil.LAYER_CLASS, layer, layerName, true);
 		}
 		
 		//Put the children in the previous order
-		childrenCopy.push(cast layer);
-		for (i in 0...childrenCopy.length) {
-			setLayerIndex(childrenCopy[i], i);
+		if (!startDetached) {
+			childrenCopy.push(cast layer);
+			for (i in 0...childrenCopy.length) {
+				setLayerIndex(childrenCopy[i], i);
+			}
 		}
+		return cast layer;
+	}
+	
+	/**
+	  * The layer starts detached.  Manual attachment necessary.
+	  */
+	public function createLayer (?layerName :String = null, ?cls :Class<Dynamic> = null) :BaseSceneLayer<Dynamic, Dynamic>
+	{
+		//Use default class is none is given
+		cls = cls == null ? defaultLayerClass : cls;
+		com.pblabs.util.Assert.isNotNull(cls, "Null Layer Class");
+		
+		var layer = context.allocate(cls);
+		
+		var layerCount = owner.getComponents(BaseSceneLayer).length;
+		
+		if (layerName.isBlank()) {
+			if (layerCount == 0) {
+				layerName = SceneUtil.DEFAULT_LAYER_NAME;
+			} else {
+				layerName = SceneUtil.DEFAULT_LAYER_NAME + (layerCount + 1);
+			}
+		}
+		
+		//Check for existing layers with the same name, maybe we could do something other than throw an error?
+		for (l in owner) {
+			if (l.name == layerName) {
+				throw "Existing layer with default name=" + layerName;
+			}
+		}
+		
+		owner.addComponent(layer, layerName);
 		return cast layer;
 	}
 	
@@ -403,7 +440,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 			} else if (visible.ymax > _sceneBounds.ymax) {
 				_position.y += visible.ymax - _sceneBounds.ymax;
 			}
-		} 
+		}
 		_transformDirty = true;
 	}
 
@@ -423,8 +460,8 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	function set_sceneBounds (value :AABB2) :AABB2
 	{
 		com.pblabs.util.Assert.isNotNull(sceneView, ' sceneView is null');
-		com.pblabs.util.Assert.isTrue(value.intervalX >= sceneView.width);
-		com.pblabs.util.Assert.isTrue(value.intervalY >= sceneView.height);
+		com.pblabs.util.Assert.isTrue(value.intervalX >= sceneView.width, "value.intervalX >= sceneView.width");
+		com.pblabs.util.Assert.isTrue(value.intervalY >= sceneView.height, "value.intervalY >= sceneView.height");
 		_sceneBounds = value;
 		return value;
 	}

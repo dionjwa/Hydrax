@@ -444,7 +444,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	function get_visible () :Bool
 	{
-		return _visible && alpha > 0;
+		return _visible;
 	}
 	
 	function set_visible (val :Bool) :Bool

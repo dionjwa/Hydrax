@@ -102,6 +102,9 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		
 		if (isOnCanvas) {
 		} else {
+			isTransformDirty = true;
+			updateTransform();
+			SceneUtil.applyTransform(div, _transformMatrix);
 			cast(layer, JSLayer).div.appendChild(div);
 			com.pblabs.util.Assert.isNotNull(div.parentNode);
 		}
@@ -262,7 +265,8 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 	override function set_alpha (val :Float) :Float
 	{
 		super.set_alpha(val);
-		div.style.cssText = DomUtil.setStyle(div.style.cssText, "opacity", "" + alpha);
+		_isContentsDirty = true;
+		div.style.cssText = DomUtil.setStyle(div.style.cssText, "opacity", "" + (Math.max(alpha, 0.00001)));
 		return val;
 	}
 }
