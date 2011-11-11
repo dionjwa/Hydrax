@@ -135,7 +135,7 @@ class RectangleShape extends ShapeComponent
 		_bounds.xmin = _x - val / 2;
 		_bounds.xmax = _x + val / 2;
 		_scaleX = val / unscaledWidth;
-		registrationPoint.x = _bounds.intervalX / 2;
+		registrationPoint.x = _bounds.intervalX / 2 + 1;
 		isTransformDirty = true;
 		redraw();
 		return val;
@@ -149,7 +149,7 @@ class RectangleShape extends ShapeComponent
 		_bounds.ymin = _y - val / 2;
 		_bounds.ymax = _y + val / 2;
 		_scaleY = val / unscaledHeight;
-		registrationPoint.y = _bounds.intervalY / 2;
+		registrationPoint.y = _bounds.intervalY / 2 + 1;
 		isTransformDirty = true;
 		redraw();
 		return val;
