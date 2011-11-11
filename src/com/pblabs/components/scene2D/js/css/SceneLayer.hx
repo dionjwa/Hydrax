@@ -12,6 +12,7 @@ import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.scene2D.js.JSLayer;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.geom.Vector2;
+import com.pblabs.util.DomUtil;
 
 import js.Dom;
 
@@ -19,12 +20,32 @@ import js.Lib;
 
 class SceneLayer extends JSLayer
 {
-	var _tempPoint :Vector2;
+	inline public static function updateTransformFromScene (scene :BaseSceneManager<Dynamic>, layer :SceneLayer) :Void
+	{
+		com.pblabs.util.Assert.isNotNull(scene);
+		com.pblabs.util.Assert.isNotNull(_tempPoint);
+		com.pblabs.util.Assert.isNotNull(scene.sceneAlignment);
+		com.pblabs.util.Assert.isNotNull(scene.sceneView);
+		
+		layer._transformMatrix.identity();
+		//Adjust for SceneView center			
+		SceneUtil.calculateOutPoint(_tempPoint, scene.sceneAlignment, scene.sceneView.width, scene.sceneView.height);
+		layer._transformMatrix.rotate(scene.rotation);
+		layer._transformMatrix.scale(scene.zoom * layer.scaleX, scene.zoom * layer.scaleY);
+		layer._transformMatrix.translate(_tempPoint.x, _tempPoint.y);
+		layer._transformMatrix.translate(scene.x * layer._parallaxFactor * scene.zoom * layer.scaleX, scene.y * layer._parallaxFactor * scene.zoom * layer.scaleY);
+		if (SceneView.isWebkitBrowser) {
+			untyped layer.div.style.webkitTransform = layer._transformMatrix.toString();
+		} else {
+			untyped layer.div.style.MozTransform = layer._transformMatrix.toMozString();
+		}
+	}
+	
+	static var _tempPoint = new Vector2();
 	
 	public function new ()
 	{
 		super();
-		_tempPoint = new Vector2();
 		
 		#if (debug && modernizr)
 		com.pblabs.util.Assert.isTrue(Modernizr.csstransforms, "Modernizr.csstransforms==false.  You will have to use a Canvas layer in this browser");
@@ -42,26 +63,16 @@ class SceneLayer extends JSLayer
 	
 	public function updateTransform () :Void
 	{
-		if (scene == null) {
-			return;
+		if (scene != null) {
+			updateTransformFromScene(scene, this);
 		}
-		com.pblabs.util.Assert.isNotNull(scene);
-		com.pblabs.util.Assert.isNotNull(_tempPoint);
-		com.pblabs.util.Assert.isNotNull(scene.sceneAlignment);
-		com.pblabs.util.Assert.isNotNull(scene.sceneView);
-		
-		_transformMatrix.identity();
-		//Adjust for SceneView center			
-		SceneUtil.calculateOutPoint(_tempPoint, scene.sceneAlignment, scene.sceneView.width, scene.sceneView.height);
-		_transformMatrix.rotate(scene.rotation);
-		_transformMatrix.scale(scene.zoom * _scale, scene.zoom * _scale);
-		_transformMatrix.translate(_tempPoint.x, _tempPoint.y);
-		_transformMatrix.translate(scene.x *_parallaxFactor * scene.zoom * _scale, scene.y *_parallaxFactor * scene.zoom * _scale);
-		if (SceneView.isWebkitBrowser) {
-			untyped div.style.webkitTransform = _transformMatrix.toString();
-		} else {
-			untyped div.style.MozTransform = _transformMatrix.toMozString();
-		}
+	}
+	
+	override function addedToParent () :Void
+	{
+		//Set the location before adding to the div to prevent a location flicker.
+		updateTransformFromScene(scene, this);
+		super.addedToParent();
 	}
 	
 	//Untested
@@ -72,9 +83,22 @@ class SceneLayer extends JSLayer
 		}
 	}
 	
-	override function set_scale (val :Float) :Float
+	override function set_scaleX (val :Float) :Float
 	{
 		isTransformDirty = true;
-		return super.set_scale(val);
+		return super.set_scaleX(val);
+	}
+	
+	override function set_scaleY (val :Float) :Float
+	{
+		isTransformDirty = true;
+		return super.set_scaleY(val);
+	}
+	
+	override function set_alpha (val :Float) :Float
+	{
+		super.set_alpha(val);
+		div.style.cssText = DomUtil.setStyle(div.style.cssText, "opacity", "" + (Math.max(alpha, 0.00001)));
+		return val;
 	}
 }
