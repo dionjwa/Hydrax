@@ -40,8 +40,7 @@ class TaskComponent extends EntityComponent
 	}
 	
 	/** Adds a named task to this IEntity. */
-	public function addNamedTask (name :String, task :IEntityTask, ?removeExistingTasks :Bool =
-		false) :Void
+	public function addNamedTask (name :String, task :IEntityTask, ?removeExistingTasks :Bool = true) :Void
 	{
 		_tasks.addNamedTask(name, task, removeExistingTasks);
 	}

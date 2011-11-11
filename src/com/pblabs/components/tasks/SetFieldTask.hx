@@ -14,7 +14,7 @@ import com.pblabs.util.Preconditions;
 import com.pblabs.util.ReflectUtil;
 
 class SetFieldTask
-	implements IEntityTask 
+	implements IEntityTask
 {
 	
 	public function new (obj :Dynamic, fieldName :String, val :Dynamic)

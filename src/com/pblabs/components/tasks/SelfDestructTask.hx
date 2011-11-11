@@ -35,7 +35,10 @@ class SelfDestructTask
 	
 	public function update (dt :Float, obj :IEntity) :Bool
 	{
-		obj.destroy();
+		//It is possible that the object has already been destroyed.
+		if (obj.isLiveObject) {
+			obj.destroy();
+		}
 		return true;
 	}
 

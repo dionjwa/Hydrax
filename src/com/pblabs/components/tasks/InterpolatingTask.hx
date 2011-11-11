@@ -16,10 +16,12 @@ import de.polygonal.core.math.Mathematics;
 
 import feffects.easing.Linear;
 
+import com.pblabs.components.tasks.TaskUtil;
+
 class InterpolatingTask implements IEntityTask 
 {
 	
-	public function new (?time :Float = 0, ?easingFn :Float->Float->Float->Float->Float = null)
+	public function new (?time :Float = 0, ?easingFn :EasingFunc = null)
 	{
 		_totalTime = Math.max(time, 0);
 		// default to linear interpolation
@@ -44,7 +46,7 @@ class InterpolatingTask implements IEntityTask
 	}
 
 	public static function interp (a :Float, b :Float, t :Float, duration :Float,
-		easingFn :Float->Float->Float->Float->Float) :Float
+		easingFn :EasingFunc) :Float
 	{
 		if (duration <= 0) {
 			return b;
@@ -55,5 +57,5 @@ class InterpolatingTask implements IEntityTask
 
 	var _totalTime :Float;
 	var _elapsedTime :Float;
-	var _easingFn :Float->Float->Float->Float->Float;
+	var _easingFn :EasingFunc;
 }

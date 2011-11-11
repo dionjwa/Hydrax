@@ -32,7 +32,7 @@ class TaskComponentTicked extends TaskComponent,
 	}
 	
 	/** Adds a named task to this IEntity. */
-	override public function addNamedTask (name :String, task :IEntityTask, ?removeExistingTasks :Bool = false) :Void
+	override public function addNamedTask (name :String, task :IEntityTask, ?removeExistingTasks :Bool = true) :Void
 	{
 		super.addNamedTask(name, task, removeExistingTasks);
 		_tasksFinished = false;

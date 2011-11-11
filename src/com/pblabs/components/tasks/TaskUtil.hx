@@ -15,6 +15,8 @@ import com.pblabs.components.tasks.TaskComponent;
 import com.pblabs.components.tasks.TimedTask;
 import com.pblabs.engine.core.IEntity;
 
+typedef EasingFunc = Float->Float->Float->Float->Float;
+
 /**
   * By "using" this class, entity objects get TaskComponent methods
   * directly.
@@ -32,8 +34,7 @@ class TaskUtil
 	}
 	
 	 /** Adds a named task to this IEntity. */
-	public static function addNamedTask (e :IEntity, name :String, task :IEntityTask, ?removeExistingTasks :Bool =
-		false) :IEntity
+	public static function addNamedTask (e :IEntity, name :String, task :IEntityTask, ?removeExistingTasks :Bool = true) :IEntity
 	{
 		getTaskComponent(e).addNamedTask(name, task, removeExistingTasks);
 		return e;

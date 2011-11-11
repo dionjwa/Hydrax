@@ -29,9 +29,9 @@ package com.pblabs.components.tasks;
 
 class SerialTask extends TaskContainer 
 {
-
-	//Just three optional tasks for now.  No varargs.	
-	public function new (?subtask1:IEntityTask, ?subtask2:IEntityTask, ?subtask3:IEntityTask, ?subtask4:IEntityTask)
+	//Just 5 optional tasks for now.  No varargs.	
+	public function new (?subtask1:IEntityTask, ?subtask2:IEntityTask, ?subtask3:IEntityTask, ?subtask4:IEntityTask, 
+		?subtask5:IEntityTask, ?subtask6:IEntityTask, ?subtask7:IEntityTask)
 	{
 		var subtasks = new Array<IEntityTask>();
 		if (subtask1 != null) {
@@ -45,6 +45,15 @@ class SerialTask extends TaskContainer
 		}
 		if (subtask4 != null) {
 			subtasks.push(subtask4);
+		}
+		if (subtask5 != null) {
+			subtasks.push(subtask5);
+		}
+		if (subtask6 != null) {
+			subtasks.push(subtask6);
+		}
+		if (subtask7 != null) {
+			subtasks.push(subtask7);
 		}
 		super(TaskContainer.TYPE_SERIAL, subtasks);
 	}
