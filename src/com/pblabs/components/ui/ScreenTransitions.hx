@@ -130,7 +130,9 @@ class ScreenTransitions
 				new FunctionTask(cb)));
 		}
 		
-		activeEntity.addNamedTask("updater", new RepeatingTask(
+		var updateTaskName = "updater " + (scenes.length > 0 ? scenes[0].context.key : 0);
+		
+		activeEntity.addNamedTask(updateTaskName, new RepeatingTask(
 			new FunctionTask(function () :Void {
 				for (sm in scenes) {
 					sm.update();	
@@ -140,7 +142,7 @@ class ScreenTransitions
 		activeEntity.addTask(new SerialTask(
 				new TimedTask(duration),
 				new FunctionTask(function () :Void {
-					activeEntity.removeNamedTasks("updater");
+					activeEntity.removeNamedTasks(updateTaskName);
 				})));
 			
 		for (scene in scenes) {
@@ -151,7 +153,6 @@ class ScreenTransitions
 				case UP: new Vector2(0, -scene.sceneView.height);
 				case DOWN: new Vector2(0, scene.sceneView.height);
 			}
-			
 			if (delta.x != 0) {
 				activeEntity.addTask(new AnimateValueTask(scene, "x", scene.x + delta.x, duration, easing));
 			}
