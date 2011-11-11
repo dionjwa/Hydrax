@@ -3,6 +3,9 @@ package com.pblabs.components.minimalcomp;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.scene2D.Direction;
 import com.pblabs.engine.time.IAnimatedObject;
+import com.pblabs.geom.Vector2;
+
+import de.polygonal.motor2.geom.math.XY;
 
 class HBox extends Container
 {
@@ -30,18 +33,22 @@ class HBox extends Container
 				case RIGHT: curX += c.width / 2;
 				default: throw "Should never be here";
 			}
-			c.x = curX;
-			c.y = curY;
 			
-			var sc = c.owner.getComponent(BaseSceneComponent);
-			if (Std.is(sc, IAnimatedObject)) {
-				cast(sc, IAnimatedObject).onFrame(0);
-			}
+			if (!c.ignoreParentLocation) {
+				c.x = curX;
+				c.y = curY;
 			
-			switch (alignment) {
-				case TOP: c.y = curY + c.height / 2;
-				case BOTTOM: c.y = curY - c.height / 2;
-				default:
+			
+				var sc = c.owner.getComponent(BaseSceneComponent);
+				if (Std.is(sc, IAnimatedObject)) {
+					cast(sc, IAnimatedObject).onFrame(0);
+				}
+			
+				switch (alignment) {
+					case TOP: c.y = curY + c.height / 2;
+					case BOTTOM: c.y = curY - c.height / 2;
+					default:
+				}
 			}
 			
 			switch (flowDirection) {
@@ -53,6 +60,25 @@ class HBox extends Container
 		redrawSignal.dispatch(this);
 	}
 	
+	override public function getChildLocation (index :Int = -1) :XY
+	{
+		if (index == -1) {
+			var b = get_bounds();
+			if (flowDirection == Direction.RIGHT) {
+				return new Vector2(x + b.intervalX + gap, y);
+			} else {
+				return new Vector2(x - b.intervalX - gap, y);
+			}
+		} else {
+			var xpos = x;
+			index = Std.int(Math.min(index, children.length));
+			for (ii in 0...index) {
+				xpos += children[ii].width + gap;
+			}
+			return new Vector2(xpos, y);
+		}
+	}
+	
 	override function onRemove () :Void
 	{
 		super.onRemove();
@@ -60,8 +86,9 @@ class HBox extends Container
 	}
 	
 	
-	function setDefaults () :Void
+	override function setDefaults () :Void
 	{
+		super.setDefaults();
 		gap = 2;
 		flowDirection = Direction.RIGHT;
 	}

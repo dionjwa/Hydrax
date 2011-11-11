@@ -47,20 +47,25 @@ class VBox extends Container
 			// 		default: throw "Should never be here";
 			// 	}
 			// }
-			c.x = curX;
-			c.y = curY;
 			
-			for (sc in c.owner.getComponents(com.pblabs.components.scene2D.BaseSceneComponent)) {
-				if (Std.is(sc, IAnimatedObject)) {
-					cast(sc, IAnimatedObject).onFrame(0);
+			
+			if (!c.ignoreParentLocation) {
+					
+				c.x = curX;
+				c.y = curY;
+				
+				for (sc in c.owner.getComponents(com.pblabs.components.scene2D.BaseSceneComponent)) {
+					if (Std.is(sc, IAnimatedObject)) {
+						cast(sc, IAnimatedObject).onFrame(0);
+					}
 				}
-			}
-			
-			switch (alignment) {
-				case LEFT: c.x = curX + c.width / 2;
-				case RIGHT: c.x = curX - c.width / 2;
-				case MIDDLE: c.x = curX;
-				default:
+				
+				switch (alignment) {
+					case LEFT: c.x = curX + c.width / 2;
+					case RIGHT: c.x = curX - c.width / 2;
+					case MIDDLE: c.x = curX;
+					default:
+				}
 			}
 			
 			// if (false && Std.is(c, Container)) {
@@ -82,6 +87,20 @@ class VBox extends Container
 		redrawSignal.dispatch(this);
 	}
 	
+	override public function getChildLocation (index :Int = -1) :XY
+	{
+		if (index == -1) {
+			var b = get_bounds();
+			if (flowDirection == Direction.DOWN) {
+				return new Vector2(x, y + b.intervalY);
+			} else {
+				return new Vector2(x, y - b.intervalY);
+			}
+		} else {
+			throw "Implement me";
+		}
+	}
+	
 	override function get_registrationPoint () :XY
 	{
 		var v = new Vector2();
@@ -90,16 +109,17 @@ class VBox extends Container
 		 	default: 0;
 		}
 		v.x = switch (alignment) {
-		  	case LEFT: 0;
-		  	case RIGHT: width;
-		  	case MIDDLE: width / 2; 
-		  	default: 0;
+			case LEFT: 0;
+			case RIGHT: width;
+			case MIDDLE: width / 2; 
+			default: 0;
 		}
 		return v;
 	}
 	
-	function setDefaults () :Void
+	override function setDefaults () :Void
 	{
+		super.setDefaults();
 		gap = 2;
 		flowDirection = Direction.DOWN;
 	}

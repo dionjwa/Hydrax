@@ -26,6 +26,8 @@ class Component extends NodeComponent<Container, Component>
 {
 	/** Used by containers that map locations to component ids */
 	public var id :String;
+	/** Switch to ignore hierarchical positioning.  Useful for animating into place to avoid location conflicts. */
+	public var ignoreParentLocation :Bool;
 	public var x (get_x, set_x) :Float;
 	public var y (get_y, set_y) :Float;
 	public var bounds (get_bounds, set_bounds) :AABB2;
@@ -47,7 +49,7 @@ class Component extends NodeComponent<Container, Component>
 	{
 		super();
 		redrawSignal = new DirectSignaler(this);
-		setDefaultVars();
+		setDefaults();
 	}
 	
 	public function show () :Void
@@ -56,14 +58,17 @@ class Component extends NodeComponent<Container, Component>
 			return;
 		}
 		_isHidden = false;
-		for (disp in owner.getComponents(com.pblabs.components.scene2D.BaseSceneComponent)) {
-			if (!disp.hasParent()) {
-				disp.addToParent();
-				if (Std.is(disp, IAnimatedObject)) {
-					cast(disp, IAnimatedObject).onFrame(0);
+		context.getManager(com.pblabs.engine.time.IProcessManager).callLater( function () :Void {
+			for (disp in owner.getComponents(com.pblabs.components.scene2D.BaseSceneComponent)) {
+				if (!disp.hasParent()) {
+					disp.addToParent();
+					// disp.isTransformDirty = true;
+					if (Std.is(disp, IAnimatedObject)) {
+						cast(disp, IAnimatedObject).onFrame(0);
+					}
 				}
 			}
-		}
+		});
 		
 		redraw();
 	}
@@ -96,10 +101,10 @@ class Component extends NodeComponent<Container, Component>
 	public function redraw () :Void
 	{
 		redrawSignal.dispatch(this);
-		for (disp in owner.getComponents(com.pblabs.components.scene2D.BaseSceneComponent)) {
-			disp.isTransformDirty = true;
-			disp.updateIfUpdatable();
-		}
+		// for (disp in owner.getComponents(com.pblabs.components.scene2D.BaseSceneComponent)) {
+		// 	disp.isTransformDirty = true;
+		// 	// disp.updateIfUpdatable();
+		// }
 	}
 	
 	override function addedToParent () :Void
@@ -125,12 +130,13 @@ class Component extends NodeComponent<Container, Component>
 	override function onRemove () :Void
 	{
 		super.onRemove();
-		setDefaultVars();
+		setDefaults();
 	}
 	
-	inline function setDefaultVars () :Void
+	function setDefaults () :Void
 	{
 		id = null;
+		ignoreParentLocation = false;
 		_spatial = null;
 		_isHidden = false;
 	}

@@ -8,6 +8,7 @@ import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
 import de.polygonal.core.math.Limits;
+import de.polygonal.motor2.geom.math.XY;
 import de.polygonal.motor2.geom.primitive.AABB2;
 
 using com.pblabs.engine.core.SignalBondManager;
@@ -70,6 +71,12 @@ class Container extends Component
 		for (c in children) {
 			c.hide();
 		}
+	}
+	
+	public function getChildLocation (index :Int = -1) :XY
+	{
+		throw "Subclasses override";
+		return null;
 	}
 	
 	override function onReset () :Void
@@ -196,4 +203,16 @@ class Container extends Component
 		// invalidate();
 		// redraw();
 	}
+	
+	#if debug
+	override public function toString () :String
+	{
+		var sb = new StringBuf();
+		sb.add(com.pblabs.util.ReflectUtil.getClassName(this) + "[x=" + x + ", y=" + y);
+		for (c in children) {
+			sb.add(", child(x=" + c.x + ", y=" + c.y + ", width=" + c.width + ", height=" + c.height);
+		}
+		return sb.toString();
+	}
+	#end
 }
