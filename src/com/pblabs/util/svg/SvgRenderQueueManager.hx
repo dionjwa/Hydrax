@@ -24,11 +24,12 @@ using com.pblabs.engine.util.PBUtil;
   */
 class SvgRenderQueueManager
 {
-	public static function getBitmapData (context :IPBContext, token :ResourceToken, replacements :Array<SvgReplace>, cb :ImageData->Void) :Void
+	public static function getBitmapData (context :IPBContext, token :ResourceToken, replacements :Array<SvgReplace>, 
+		cb :ImageData->Void, ?cache :Bool = false) :Void
 	{
 		com.pblabs.util.Assert.isNotNull(context, ' context is null');
 		var queue = context.ensureGameManager(SvgRenderQueueManager);
-		queue.getBitmapDataInternal(context, token, replacements, cb);
+		queue.getBitmapDataInternal(context, token, replacements, cb, cache);
 	}
 	
 	var _callbacks :MultiMap<ResourceToken, ImageData->Void>;
@@ -42,7 +43,8 @@ class SvgRenderQueueManager
 	  * Given an Svg ResourceToken, retrieves the cached image, if present, otherwise queues
 	  * the rendering (asynchronously) and calls the callback when ready.
 	  */
-	public function getBitmapDataInternal (context :IPBContext, token :ResourceToken, replacements :Array<SvgReplace>, cb :ImageData->Void) :Void
+	public function getBitmapDataInternal (context :IPBContext, token :ResourceToken, replacements :Array<SvgReplace>, 
+		cb :ImageData->Void, ?cache :Bool = false) :Void
 	{
 		com.pblabs.util.Assert.isNotNull(token, ' token is null');
 		com.pblabs.util.Assert.isNotNull(cb, ' cb is null');
@@ -60,7 +62,12 @@ class SvgRenderQueueManager
 		
 		var svgToken = SvgResources.getSvgResourceToken(context, token, replacements);
 		var bitmapToken = new ResourceToken(svgToken.id, Source.none, ResourceType.IMAGE_DATA);
-		var imageData = rsrc.get(bitmapToken);
+		
+		var getImageFromCache = function () :ImageData {
+			return rsrc.get(bitmapToken);
+		}
+		
+		var imageData = getImageFromCache();
 		
 		if (imageData != null) {
 			cb(imageData);
@@ -76,10 +83,12 @@ class SvgRenderQueueManager
 				var svgData = rsrc.get(svgToken);
 				com.pblabs.util.Assert.isNotNull(svgData, ' svgData is null for ' + svgToken);
 				var self = this;
-				intensiveTasks.queueIntensiveTask(createRenderCall(svgData, function (imageData :ImageData) :Void {
-					var bitmapCache :BitmapCacheResource = cast context.getManager(IResourceManager).getResource(Type.enumConstructor(ResourceType.IMAGE_DATA));
-					bitmapToken = new ResourceToken(svgToken.id, Source.linked(imageData), ResourceType.IMAGE_DATA);
-					bitmapCache.add(bitmapToken);
+				intensiveTasks.queueIntensiveTask(createRenderCall(svgData, getImageFromCache, function (imageData :ImageData) :Void {
+					if (cache && getImageFromCache() == null) {
+						var bitmapCache :BitmapCacheResource = cast context.getManager(IResourceManager).getResource(Type.enumConstructor(ResourceType.IMAGE_DATA));
+						bitmapToken = new ResourceToken(svgToken.id, Source.linked(imageData), ResourceType.IMAGE_DATA);
+						bitmapCache.add(bitmapToken);
+					}
 					for (cachedCallback in self._callbacks.get(svgToken)) {
 						com.pblabs.util.Assert.isNotNull(cachedCallback, ' cachedCallback is null');
 						cachedCallback(imageData);
@@ -94,7 +103,7 @@ class SvgRenderQueueManager
 		}
 	}
 	
-	public function createRenderCall (svg :SvgData, onFinish :ImageData->Void) :Float->Bool
+	public function createRenderCall (svg :SvgData, getImageFromCache :Void->ImageData, onFinish :ImageData->Void) :Float->Bool
 	{
 		var finished = false;
 		var started = false;
@@ -103,19 +112,32 @@ class SvgRenderQueueManager
 			if (finished) return true;
 			if (started) return false;
 			started = true;
-			com.pblabs.util.Log.info("Rendering " + svg);
-			SvgRenderTools.renderSvg(svg, function (renderedSvg :flash.display.DisplayObject) :Void {
-				var bm = com.pblabs.util.DisplayUtils.convertToBitmap(renderedSvg); 
-				var bd = bm.bitmapData;
-				onFinish(bm.bitmapData);
+			
+			var image = getImageFromCache();
+			if (image != null) {
 				finished = true;
-				bm.bitmapData = null;
-			});
+				onFinish(image);
+				return true;
+			} else {
+				com.pblabs.util.Log.info("Rendering " + svg);
+				SvgRenderTools.renderSvg(svg, function (renderedSvg :flash.display.DisplayObject) :Void {
+					var bm = com.pblabs.util.DisplayUtils.convertToBitmap(renderedSvg); 
+					var bd = bm.bitmapData;
+					onFinish(bm.bitmapData);
+					finished = true;
+					bm.bitmapData = null;
+				});
+			}
 			return false;
 			#elseif js
-			var canvas :Canvas = cast js.Lib.document.createElement("canvas");
-			SvgRenderTools.renderSvg(svg, canvas);
-			onFinish(canvas);
+			var image :Canvas = getImageFromCache();
+			if (image != null) {
+				onFinish(image);
+			} else {
+				image = cast js.Lib.document.createElement("canvas");
+				SvgRenderTools.renderSvg(svg, image);
+				onFinish(image);
+			}
 			return true;
 			#end
 		}
