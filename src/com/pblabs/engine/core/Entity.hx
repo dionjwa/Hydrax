@@ -169,7 +169,7 @@ class Entity extends PBObject,
 		// Get out of the NameManager and other general cleanup stuff.
 		super.destroy();
 		#if debug
-		com.pblabs.util.Assert.isFalse(destroyedSignal.isListenedTo);
+		com.pblabs.util.Assert.isFalse(destroyedSignal.isListenedTo, "destroyedSignal.isListenedTo");
 		#end
 		_deferring = false;
 		_components.clear();
