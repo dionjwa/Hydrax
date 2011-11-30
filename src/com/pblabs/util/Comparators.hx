@@ -28,7 +28,7 @@
 
 package com.pblabs.util; 
 
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 
 import Type;
 

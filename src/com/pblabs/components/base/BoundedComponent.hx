@@ -9,7 +9,7 @@
 package com.pblabs.components.base;
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.geom.bounds.IBounds;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 import com.pblabs.engine.core.EntityComponent;
 
 class BoundedComponent extends EntityComponent 

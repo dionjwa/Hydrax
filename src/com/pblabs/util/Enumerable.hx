@@ -204,7 +204,7 @@ class Enumerable<T>
 	public function serialize (xml :Xml) :Void
 	{
 		//Get the serializable fields by parsing the original xml
-		var root = Xml.parse(haxe.Resource.getString(ReflectUtil.getClassName(this)).trim()).firstChild();
+		var root = Xml.parse(haxe.Resource.getString(haxe.rtti.ReflectUtil.getClassName(this)).trim()).firstChild();
 		var serializableFields = [];
 		
 		var breakout = false;

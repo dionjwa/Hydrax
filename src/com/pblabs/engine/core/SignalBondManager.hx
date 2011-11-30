@@ -9,7 +9,7 @@
 package com.pblabs.engine.core;
 
 import com.pblabs.engine.core.IPBManager;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 import com.pblabs.util.ds.multimaps.ArrayMultiMap;
 
 import de.polygonal.ds.Hashable;
@@ -92,7 +92,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 			var component = cast(owner, IEntityComponent);
 			com.pblabs.util.Assert.isTrue(component.isRegistered, "component is unregistered");
 			com.pblabs.util.Assert.isTrue(component.owner.isLiveObject, "component entity is not initialized.  Entities much be initialized first");
-			com.pblabs.util.Assert.isFalse(component.owner.name.isBlank(), "owner has no name for " + component.owner + "::" + com.pblabs.util.ReflectUtil.getClassName(component));
+			com.pblabs.util.Assert.isFalse(component.owner.name.isBlank(), "owner has no name for " + component.owner + "::" + haxe.rtti.ReflectUtil.getClassName(component));
 		}
 		#end
 		var bond = signaler.bind(listener);
@@ -121,7 +121,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 			var component = cast(owner, IEntityComponent);
 			com.pblabs.util.Assert.isTrue(component.isRegistered, "component is unregistered");
 			com.pblabs.util.Assert.isTrue(component.owner.isLiveObject, "component entity is not initialized.  Entities much be initialized first");
-			com.pblabs.util.Assert.isFalse(component.owner.name.isBlank(), "owner has no name for " + component.owner + "::" + com.pblabs.util.ReflectUtil.getClassName(component));
+			com.pblabs.util.Assert.isFalse(component.owner.name.isBlank(), "owner has no name for " + component.owner + "::" + haxe.rtti.ReflectUtil.getClassName(component));
 		}
 		#end
 		

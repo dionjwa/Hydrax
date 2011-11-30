@@ -7,31 +7,33 @@ class Html5StorageDebugManager
 	{
 	}
 	
-	public function isAvailable () :Bool
+	public function isAvailable (cb :Bool->Void) :Void
 	{
-		return false;
+		cb(false);
 	}
 	
-	public function getItem (key :String) :Dynamic
+	public function getItem (key :String, cb :Dynamic->Void) :Void
 	{
-		return null;
+		cb(null);
 	}
 	
-	public function setItem (key :String, val :Dynamic) :Void
+	public function setItem (key :String, val :Dynamic, cb :Bool->Void) :Void
 	{
+		cb(false);
 	}
 	
-	public function removeItem (key :String) :Void
+	public function removeItem (key :String, cb :Bool->Void) :Void
 	{
+		cb(false);
 	}
 	
-	public function getLength() :Int
+	public function getLength(cb :Int->Void) :Void
 	{
-		return 0; 
+		cb(0); 
 	}
 	
-	public function key(index :Int) :String
+	public function key(index :Int, cb :String->Void) :Void
 	{
-		return null;
+		cb(null);
 	}
 }

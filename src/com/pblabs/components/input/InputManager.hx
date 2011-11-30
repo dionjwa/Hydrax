@@ -21,7 +21,7 @@ import com.pblabs.engine.core.SetManager;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Preconditions;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 import com.pblabs.util.ds.MultiMap;

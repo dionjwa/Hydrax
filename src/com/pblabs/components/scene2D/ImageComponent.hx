@@ -86,7 +86,7 @@ class ImageComponent extends BitmapRenderer
 		} else if (Std.is(image, flash.display.DisplayObject)) {
 			displayObject = cast image;
 		} else {
-			com.pblabs.util.Log.error("Unrecognized image type=" + com.pblabs.util.ReflectUtil.getClassName(image)); 
+			com.pblabs.util.Log.error("Unrecognized image type=" + haxe.rtti.ReflectUtil.getClassName(image)); 
 		}
 		recomputeBounds();
 		// trace("after loading flash image, _unscaledBounds=" + _unscaledBounds + ", _bounds=" + _bounds);

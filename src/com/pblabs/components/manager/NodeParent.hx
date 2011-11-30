@@ -16,7 +16,7 @@ import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.serialization.Serializer;
 import com.pblabs.engine.util.PBUtil;
 import com.pblabs.util.Preconditions;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 
 using Lambda;
 

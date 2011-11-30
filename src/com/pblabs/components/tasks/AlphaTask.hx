@@ -12,7 +12,7 @@ package com.pblabs.components.tasks;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.util.Preconditions;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 
 class AlphaTask extends InterpolatingTask
 {

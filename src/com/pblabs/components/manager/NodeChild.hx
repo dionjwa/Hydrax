@@ -16,7 +16,7 @@ import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.serialization.Serializer;
 import com.pblabs.engine.util.PBUtil;
 import com.pblabs.util.Preconditions;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 
 using Lambda;
 
@@ -105,14 +105,14 @@ class NodeChild<P :INodeParent<Dynamic>> extends EntityComponent,
 		}
 		
 		if (!hasParent() && (newParent != null || parentProperty != null)) {
-			Preconditions.checkArgument(isRegistered, "Component must first be registered ::" + com.pblabs.util.ReflectUtil.getClassName(this));
-			Preconditions.checkArgument(newParent != null || parentProperty != null, "No parent or parent property provided ::" + com.pblabs.util.ReflectUtil.getClassName(this));
+			Preconditions.checkArgument(isRegistered, "Component must first be registered ::" + haxe.rtti.ReflectUtil.getClassName(this));
+			Preconditions.checkArgument(newParent != null || parentProperty != null, "No parent or parent property provided ::" + haxe.rtti.ReflectUtil.getClassName(this));
 			com.pblabs.engine.debug.Profiler.enter("getParentFromProp");
 			newParent = newParent == null ? owner.getProperty(parentProperty) : newParent;
 			com.pblabs.engine.debug.Profiler.exit("getParentFromProp");
 			Preconditions.checkNotNull(newParent, "Parent cannot be null, parentProperty=" + parentProperty);
 			// Preconditions.checkArgument(Std.is(newParent, NodeComponent), "Parent must be of type NodeComponent, parent is type=" + ReflectUtil.getClassName(newParent));
-			// Preconditions.checkArgument(newParent.isRegistered, "Parent not registered: " + com.pblabs.util.ReflectUtil.getClassName(newParent));
+			// Preconditions.checkArgument(newParent.isRegistered, "Parent not registered: " + haxe.rtti.ReflectUtil.getClassName(newParent));
 			// if (hasParent()) {
 			// 	// com.pblabs.util.Log.warn(" but " + name + ".hasParent " + ReflectUtil.getClassName(parent));
 			// 	return;

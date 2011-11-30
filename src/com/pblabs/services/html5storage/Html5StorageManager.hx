@@ -5,13 +5,8 @@ package com.pblabs.services.html5storage;
   * If Modernizr is available, it's used to detect localStorage
   * http://www.modernizr.com/
   */
-class Html5StorageManager
-	#if js
-	implements Html5StorageService
-	#end
+class Html5StorageManager implements Html5StorageService
 {
-	public static var REMOTING_ID = "html5storage";
-	
 	#if js
 	var _isAvailable :Bool;
 	static var ERR_MSG = "No localStorage.  Did you check first?";
@@ -28,50 +23,53 @@ class Html5StorageManager
 		#end
 	}
 	
-	public function isAvailable () :Bool
+	public function isAvailable (cb :Bool->Void) :Void
 	{
-		return _isAvailable;
+		return cb(_isAvailable);
 	}
 	
-	public function getItem (key :String) :Dynamic
+	public function getItem (key :String, cb :Dynamic->Void) :Void
 	{
 		check();
 		var item = LocalStorage.getItem(key);
 		if (item == null) {
-			return null;
+			cb(null);
 		}
 		try {
-			return haxe.Unserializer.run(item);
+			cb(haxe.Unserializer.run(item));
 		} catch (e :Dynamic) {
 			com.pblabs.util.Log.error("Error unserializing " + key + ", so removing the item. e=" + e);
-			removeItem(key);
-			return null;
+			removeItem(key, function (_) :Void {
+				cb(null);
+			});
 		}
 	}
 	
-	public function setItem (key :String, val :Dynamic) :Void
+	public function setItem (key :String, val :Dynamic, cb :Bool->Void) :Void
 	{
 		check();
 		var itemString = haxe.Serializer.run(val);
 		LocalStorage.setItem(key, itemString);
+		cb(true);
 	}
 	
-	public function removeItem (key :String) :Void
+	public function removeItem (key :String, cb :Bool->Void) :Void
 	{
 		check();
 		LocalStorage.removeItem(key);
+		cb(true);
 	}
 	
-	public function getLength() :Int
+	public function getLength(cb :Int->Void) :Void
 	{
 		check();
-		return LocalStorage.length; 
+		cb(LocalStorage.length); 
 	}
 	
-	public function key(index :Int) :String
+	public function key(index :Int, cb :String->Void) :Void
 	{
 		check();
-		return LocalStorage.key(index);
+		cb(LocalStorage.key(index));
 	}
 	
 	inline function check () :Void

@@ -16,7 +16,7 @@ import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.util.Preconditions;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 import com.pblabs.util.StringUtil;
 using com.pblabs.util.StringUtil;
 using Lambda;

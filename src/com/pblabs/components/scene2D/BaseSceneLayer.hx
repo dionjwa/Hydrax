@@ -88,7 +88,7 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 	/** Sets the sceneComponent zOrder with the actual z order.  Extended by platform specific subclasses */
 	function checkZOrder () :Void
 	{
-		com.pblabs.util.Log.error("Subclasses override, class=" + com.pblabs.util.ReflectUtil.getClassName(this)); 
+		com.pblabs.util.Log.error("Subclasses override, class=" + haxe.rtti.ReflectUtil.getClassName(this)); 
 	}
 	
 	function setDefaults () :Void

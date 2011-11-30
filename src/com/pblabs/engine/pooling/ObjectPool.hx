@@ -9,7 +9,7 @@
 package com.pblabs.engine.pooling;
 
 import com.pblabs.util.Preconditions;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 
 using Lambda;
 

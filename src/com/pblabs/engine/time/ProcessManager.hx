@@ -16,7 +16,7 @@ import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ITickedObject;
 import com.pblabs.util.MathUtil;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 
 using com.pblabs.util.NumberUtil;
 
@@ -547,9 +547,9 @@ class ProcessManager implements IProcessManager
 				object = _tickedObjects[ii];
 				if(object == null)
 					continue;
-				#if profiler com.pblabs.engine.debug.Profiler.enter(com.pblabs.util.ReflectUtil.getClassName(object));#end
+				#if profiler com.pblabs.engine.debug.Profiler.enter(haxe.rtti.ReflectUtil.getClassName(object));#end
 				object.onTick(SECONDS_PER_TICK);
-				#if profiler com.pblabs.engine.debug.Profiler.exit(com.pblabs.util.ReflectUtil.getClassName(object));#end
+				#if profiler com.pblabs.engine.debug.Profiler.exit(haxe.rtti.ReflectUtil.getClassName(object));#end
 			}
 			_duringAdvance = false;
 			
@@ -590,9 +590,9 @@ class ProcessManager implements IProcessManager
 			if(animatedObject == null)
 				continue;
 			
-			#if profiler com.pblabs.engine.debug.Profiler.enter(com.pblabs.util.ReflectUtil.getClassName(animatedObject)); #end
+			#if profiler com.pblabs.engine.debug.Profiler.enter(haxe.rtti.ReflectUtil.getClassName(animatedObject)); #end
 			animatedObject.onFrame(deltaTime);
-			#if profiler com.pblabs.engine.debug.Profiler.exit(com.pblabs.util.ReflectUtil.getClassName(animatedObject));#end
+			#if profiler com.pblabs.engine.debug.Profiler.exit(haxe.rtti.ReflectUtil.getClassName(animatedObject));#end
 		}
 		_duringAdvance = false;
 		com.pblabs.engine.debug.Profiler.exit("frame");

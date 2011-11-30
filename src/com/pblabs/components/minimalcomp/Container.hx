@@ -208,7 +208,7 @@ class Container extends Component
 	override public function toString () :String
 	{
 		var sb = new StringBuf();
-		sb.add(com.pblabs.util.ReflectUtil.getClassName(this) + "[x=" + x + ", y=" + y);
+		sb.add(haxe.rtti.ReflectUtil.getClassName(this) + "[x=" + x + ", y=" + y);
 		for (c in children) {
 			sb.add(", child(x=" + c.x + ", y=" + c.y + ", width=" + c.width + ", height=" + c.height);
 		}

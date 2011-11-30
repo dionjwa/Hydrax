@@ -230,14 +230,14 @@ class PBGameBase
 		com.pblabs.util.Log.debug("Sutting down contexts");
 		for (context in _contexts) {
 			if (context != null) {
-				com.pblabs.util.Log.debug("Shutting down " + com.pblabs.util.ReflectUtil.getClassName(context));
+				com.pblabs.util.Log.debug("Shutting down " + haxe.rtti.ReflectUtil.getClassName(context));
 				context.shutdown();
 			}
 		}
 		com.pblabs.util.Log.debug("Shutting down managers");
 		for (m in _managers) {
 			if (Std.is(m, IPBManager)) {
-				com.pblabs.util.Log.debug("Shutting down " + com.pblabs.util.ReflectUtil.getClassName(m));
+				com.pblabs.util.Log.debug("Shutting down " + haxe.rtti.ReflectUtil.getClassName(m));
 				cast(m, IPBManager).shutdown();
 			}
 		}

@@ -25,7 +25,7 @@ import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.geom.Vector2;
 import com.pblabs.util.Preconditions;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 import com.pblabs.util.ds.Tuple;
 
 import de.polygonal.core.math.Mathematics;

@@ -2,7 +2,7 @@ package com.pblabs.components.iui;
 
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGameBase;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 
 import js.Dom;
 

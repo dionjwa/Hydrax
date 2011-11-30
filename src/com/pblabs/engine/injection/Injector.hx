@@ -17,14 +17,14 @@ import com.pblabs.util.ds.Maps;
 import com.pblabs.util.ds.MultiMap;
 import com.pblabs.util.ds.Tuple;
 import com.pblabs.util.ds.multimaps.SetMultiMap;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 
 using Lambda;
 
 using Reflect;
 
 using com.pblabs.util.IterUtil;
-using com.pblabs.util.ReflectUtil;
+using haxe.rtti.ReflectUtil;
 
 /**
   * Injects component PropertyReference variable fields.
@@ -95,7 +95,7 @@ class Injector
 	public function injectInto (obj :Dynamic) :Void
 	{
 		Preconditions.checkNotNull(obj, "obj argument is null");
-		var cls = com.pblabs.util.ReflectUtil.getClass(obj);
+		var cls = haxe.rtti.ReflectUtil.getClass(obj);
 		Preconditions.checkNotNull(cls, "obj class is null");
 		injectFields(obj, cls);
 	}

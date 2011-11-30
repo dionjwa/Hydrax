@@ -2,7 +2,7 @@ package com.pblabs.components.scene2D.body;
 
 import Type;
 
-import com.pblabs.util.Serialization;
+import haxe.serialization.Serialization;
 
 import haxe.io.Bytes;
 

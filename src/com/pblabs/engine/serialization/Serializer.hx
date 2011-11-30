@@ -21,7 +21,7 @@ import com.pblabs.geom.Vector2;
 import com.pblabs.geom.VectorTools;
 import com.pblabs.util.Enumerable;
 import com.pblabs.util.Preconditions;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 import com.pblabs.util.StringUtil;
 import com.pblabs.util.XmlTools;
 import com.pblabs.util.ds.Map;

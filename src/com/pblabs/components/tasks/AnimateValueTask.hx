@@ -11,7 +11,7 @@ package com.pblabs.components.tasks;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.util.Preconditions;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 
 class AnimateValueTask extends InterpolatingTask {
 	
@@ -65,9 +65,15 @@ class AnimateValueTask extends InterpolatingTask {
 		_obj = obj;
 		_fieldName = fieldName;
 		
+		if (ReflectUtil.field(obj, fieldName) == null) {
+			trace('obj=' + Type.getClassName(Type.getClass(obj)));
+			trace('fieldName=' + fieldName);
+		}
+		
 		Preconditions.checkNotNull(fieldName,  "fieldName null");
-		Preconditions.checkArgument(obj != null && ReflectUtil.fieldGS(obj, fieldName) != null,  "obj must be non null, and must contain a 'value' property");
-		Preconditions.checkArgument(!Math.isNaN(ReflectUtil.fieldGS(obj, fieldName)),  "targetValue is NaN");
+		Preconditions.checkArgument(obj != null,  "obj must be non null");
+		Preconditions.checkArgument(ReflectUtil.field(obj, fieldName) != null,  "obj must contain a '" + fieldName + "' property");
+		Preconditions.checkArgument(!Math.isNaN(ReflectUtil.field(obj, fieldName)),  "targetValue is NaN");
 
 		_to = targetValue;
 	}
@@ -76,7 +82,7 @@ class AnimateValueTask extends InterpolatingTask {
 	{
 		if (0 == _elapsedTime) {
 			// _from = ReflectUtil.field(_obj, _fieldName);
-			_from = ReflectUtil.fieldGS(_obj, _fieldName);
+			_from = ReflectUtil.field(_obj, _fieldName);
 			if (Math.isNaN(_from)) {
 				throw _obj + "." + _fieldName + " must be non null, and must be a numerical property.";
 			}
@@ -88,7 +94,7 @@ class AnimateValueTask extends InterpolatingTask {
 
 		super.update(dt, obj);
 		// ReflectUtil.setField(_obj, _fieldName, interpolate(_from, _to));
-		ReflectUtil.setFieldGS(_obj, _fieldName, interpolate(_from, _to));
+		ReflectUtil.setField(_obj, _fieldName, interpolate(_from, _to));
 
 		return _elapsedTime >= _totalTime;
 	}

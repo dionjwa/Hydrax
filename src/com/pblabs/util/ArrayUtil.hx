@@ -114,7 +114,7 @@ class ArrayUtil
 		var sb = new StringBuf();
 		sb.add("[");
 		for (obj in arr) {
-			sb.add(obj + "::" + com.pblabs.util.ReflectUtil.getClassName(obj) + ", ");
+			sb.add(obj + "::" + haxe.rtti.ReflectUtil.getClassName(obj) + ", ");
 		}
 		sb.add("]");
 		return sb.toString();

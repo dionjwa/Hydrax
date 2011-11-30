@@ -16,7 +16,7 @@ import com.pblabs.geom.bounds.AbstractBounds;
 import com.pblabs.geom.bounds.BoundsPoint;
 import com.pblabs.geom.bounds.BoundsPolygon;
 import com.pblabs.geom.bounds.IBounds;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 
 import de.polygonal.motor2.geom.math.XY;
 

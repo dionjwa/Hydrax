@@ -16,7 +16,7 @@ import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.IPBObject;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.util.Preconditions;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 

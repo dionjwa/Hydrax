@@ -8,11 +8,13 @@
  ******************************************************************************/
 package com.pblabs.util.ds;
 
+import Type;
+
 import com.pblabs.util.Constants;
 import com.pblabs.util.StringUtil;
 import com.pblabs.util.ds.Map;
 
-import Type;
+import haxe.rtti.ReflectUtil;
 
 typedef MapType = {
 	function keys () :Iterator<Dynamic>;

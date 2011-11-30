@@ -13,7 +13,7 @@ import com.pblabs.geom.bounds.BoundsPoint;
 import com.pblabs.geom.bounds.BoundsPolygon;
 import com.pblabs.geom.bounds.BoundsRectangle;
 import com.pblabs.geom.bounds.IBounds;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 using com.pblabs.geom.CircleUtil;
 using com.pblabs.geom.PolygonTools;
 using com.pblabs.geom.VectorTools;

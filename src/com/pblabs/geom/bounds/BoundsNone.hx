@@ -10,7 +10,7 @@ package com.pblabs.geom.bounds;
 
 import com.pblabs.geom.Rectangle;
 import com.pblabs.geom.Vector2;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 
 import de.polygonal.motor2.geom.math.XY;
 

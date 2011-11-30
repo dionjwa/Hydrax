@@ -146,7 +146,7 @@ class Maps
 		// 	var k = keyClazz != null ? Type.createEmptyInstance(keyClazz) : null;
 			
 		// 	// #if cpp
-		// 	// if (com.pblabs.util.ReflectUtil.is(k, "com.pblabs.util.Enumerable")) {
+		// 	// if (haxe.rtti.ReflectUtil.is(k, "com.pblabs.util.Enumerable")) {
 		// 	// #else
 		// 	if (Std.is(k, com.pblabs.util.Enumerable)) {
 		// 	// #end

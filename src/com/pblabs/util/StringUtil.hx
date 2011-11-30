@@ -30,7 +30,7 @@ package com.pblabs.util;
 import Type;
 
 import com.pblabs.util.Preconditions;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 
 import haxe.Int32;
 #if nodejs
@@ -105,7 +105,7 @@ class StringUtil
 		
 		fields = fields == null ? [] : fields;
 		for (f in fields) {
-			s.add(", " + f + "=" + (isDynamic ? ReflectUtil.fieldGS(obj, f) : ReflectUtil.fieldGS(obj, f)));
+			s.add(", " + f + "=" + (isDynamic ? ReflectUtil.field(obj, f) : ReflectUtil.field(obj, f)));
 		}
 		s.add("]");
 		return s.toString();

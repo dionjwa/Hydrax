@@ -11,7 +11,7 @@ package com.pblabs.components.tasks;
 
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.util.Preconditions;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 
 class SetFieldTask
 	implements IEntityTask

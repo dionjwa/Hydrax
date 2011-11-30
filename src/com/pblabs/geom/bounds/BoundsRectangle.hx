@@ -93,7 +93,7 @@ class BoundsRectangle extends BoundsForwarding<BoundsRectangle>
 	#if debug
 	public function toString () :String
 	{
-		return com.pblabs.util.ReflectUtil.getClassName(this) + "[" + _boundsRect + "]";
+		return haxe.rtti.ReflectUtil.getClassName(this) + "[" + _boundsRect + "]";
 	}
 	#end
 }

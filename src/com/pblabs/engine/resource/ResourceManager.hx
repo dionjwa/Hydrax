@@ -156,7 +156,7 @@ class ResourceManager
 	
 	public function addResource (rsrc :IResources<Dynamic>) :Void
 	{
-		com.pblabs.util.Log.info("addResource " + com.pblabs.util.ReflectUtil.getClassName(rsrc));
+		com.pblabs.util.Log.info("addResource " + haxe.rtti.ReflectUtil.getClassName(rsrc));
 		Preconditions.checkNotNull(rsrc, "Resource is null");
 		Preconditions.checkNotNull(rsrc.name, "Resource must have a name");
 		Preconditions.checkArgument(!isResource(rsrc.name), "Resource with name=" + rsrc.name  + " alrady exists");

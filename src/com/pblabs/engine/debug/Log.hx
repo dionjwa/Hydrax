@@ -14,7 +14,7 @@ import haxe.PosInfos;
 
 import haxe.Stack;
 
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 
 
 /**

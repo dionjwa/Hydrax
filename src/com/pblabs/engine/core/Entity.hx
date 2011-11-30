@@ -17,7 +17,7 @@ import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.time.ITickedObject;
 import com.pblabs.engine.util.PBUtil;
 import com.pblabs.util.Preconditions;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
@@ -486,9 +486,9 @@ class Entity extends PBObject,
 			}
 			
 			//Reset it!
-			#if profiler com.pblabs.engine.debug.Profiler.enter("reseting " + com.pblabs.util.ReflectUtil.getClassName(component)); #end
+			#if profiler com.pblabs.engine.debug.Profiler.enter("reseting " + haxe.rtti.ReflectUtil.getClassName(component)); #end
 			component.reset();
-			#if profiler com.pblabs.engine.debug.Profiler.exit("reseting " + com.pblabs.util.ReflectUtil.getClassName(component)); #end
+			#if profiler com.pblabs.engine.debug.Profiler.exit("reseting " + haxe.rtti.ReflectUtil.getClassName(component)); #end
 		}
 		com.pblabs.util.Log.debug("  finished reseting");
 		com.pblabs.engine.debug.Profiler.exit("doResetComponents");

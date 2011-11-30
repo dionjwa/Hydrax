@@ -12,7 +12,7 @@ import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.scene2D.BaseSceneLayer;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.util.DomUtil;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 
 import js.Dom;
 

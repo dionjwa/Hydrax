@@ -40,7 +40,7 @@ class VBox extends Container
 			// 		default: throw "Should never be here";
 			// 	}
 			// } else {
-			// // trace(com.pblabs.util.ReflectUtil.getClassName(c) + " height=" + c.height);
+			// // trace(haxe.rtti.ReflectUtil.getClassName(c) + " height=" + c.height);
 			// 	switch (flowDirection) {
 			// 		case UP: curY -= c.height / 2;
 			// 		case DOWN: curY += c.height / 2;

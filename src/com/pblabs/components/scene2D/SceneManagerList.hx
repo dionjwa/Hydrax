@@ -9,7 +9,7 @@
 package com.pblabs.components.scene2D;
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 
 class SceneManagerList extends NodeComponent<Dynamic, BaseSceneManager<Dynamic>>
 {

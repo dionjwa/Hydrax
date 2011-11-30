@@ -16,7 +16,7 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.util.PBUtil;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 
 /**
 * An implementation of the IEntityComponent interface, providing all the basic
@@ -104,7 +104,7 @@ class EntityComponent
 	 _sanityCheck = false;
 	 _isRegistered = true;
 	 onAdd();
-	 com.pblabs.util.Assert.isTrue(_sanityCheck, "Forgot to call super.onAdd(); in " + com.pblabs.util.ReflectUtil.getClassName(this) + "!");
+	 com.pblabs.util.Assert.isTrue(_sanityCheck, "Forgot to call super.onAdd(); in " + haxe.rtti.ReflectUtil.getClassName(this) + "!");
   }
   
   public function unregister():Void
@@ -113,7 +113,7 @@ class EntityComponent
 	 _isRegistered = false;
 	 _sanityCheck = false;
 	 onRemove();
-	 com.pblabs.util.Assert.isTrue(_sanityCheck, "Forgot to call super.onRemove(); in " + com.pblabs.util.ReflectUtil.getClassName(this) + "!");
+	 com.pblabs.util.Assert.isTrue(_sanityCheck, "Forgot to call super.onRemove(); in " + haxe.rtti.ReflectUtil.getClassName(this) + "!");
 	 _owner = null;
 	 _name = null;
 	 _context = null;
@@ -123,7 +123,7 @@ class EntityComponent
   {
   	  _sanityCheck = false;
   	  onReset();
-  	  com.pblabs.util.Assert.isTrue(_sanityCheck, "Forgot to call super.onReset(); in " + com.pblabs.util.ReflectUtil.getClassName(this) + "!");
+  	  com.pblabs.util.Assert.isTrue(_sanityCheck, "Forgot to call super.onReset(); in " + haxe.rtti.ReflectUtil.getClassName(this) + "!");
   }
   
   /**

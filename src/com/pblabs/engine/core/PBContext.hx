@@ -18,7 +18,7 @@ import com.pblabs.engine.time.ProcessManager;
 import com.pblabs.engine.util.PBUtil;
 import com.pblabs.util.Assert;
 import com.pblabs.util.Preconditions;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 
@@ -363,7 +363,7 @@ class PBContext
 		
 		var managerName = PBUtil.getManagerName(clazz, optionalName);
 		
-		com.pblabs.util.Assert.isFalse(_managers.exists(managerName), "A manager already exists " + managerName + " in " + com.pblabs.util.ReflectUtil.getClassName(this));
+		com.pblabs.util.Assert.isFalse(_managers.exists(managerName), "A manager already exists " + managerName + " in " + haxe.rtti.ReflectUtil.getClassName(this));
 		_managers.set(managerName, instance);
 		
 		if(!suppressInject) {

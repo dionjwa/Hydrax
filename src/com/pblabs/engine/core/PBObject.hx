@@ -91,7 +91,7 @@ class PBObject
 	
 	function set_name(name :String) :String
 	{
-		com.pblabs.util.Assert.isTrue(_name == null, com.pblabs.util.ReflectUtil.getClassName(this) + " already has a name");
+		com.pblabs.util.Assert.isTrue(_name == null, haxe.rtti.ReflectUtil.getClassName(this) + " already has a name");
 		_name = name;
 		return name;
 	}
@@ -101,7 +101,7 @@ class PBObject
 		// Note the names.
 		com.pblabs.util.Assert.isNull(_name, "_name is not null=" + _name);
 		_name = name;
-		com.pblabs.util.Assert.isNotNull(_context, "Context null on init :" + com.pblabs.util.ReflectUtil.getClassName(this));
+		com.pblabs.util.Assert.isNotNull(_context, "Context null on init :" + haxe.rtti.ReflectUtil.getClassName(this));
 		_context.register(this);
 	}
 	

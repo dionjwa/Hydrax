@@ -28,7 +28,7 @@
 package com.pblabs.util;
 
 import com.pblabs.util.EqualableUtil;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 
 /**
  * Predicates suitable for lambda filter and map functions.

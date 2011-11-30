@@ -22,7 +22,7 @@ import hsl.haxe.Bond;
 using Lambda;
 
 using com.pblabs.util.IterUtil;
-using com.pblabs.util.ReflectUtil;
+using haxe.rtti.ReflectUtil;
 using com.pblabs.util.StringUtil;
 
 /**

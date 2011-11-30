@@ -3,7 +3,7 @@ package com.pblabs.components.scene2D.spritesheet;
 import com.pblabs.components.scene2D.ImageData;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceToken;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 import com.pblabs.util.ds.Map;
 import com.pblabs.util.ds.Maps;
 

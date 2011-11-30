@@ -13,7 +13,7 @@ import com.pblabs.components.scene2D.js.JSLayer;
 import com.pblabs.components.scene2D.js.SceneComponent;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.geom.Vector2;
-import com.pblabs.util.ReflectUtil;
+import haxe.rtti.ReflectUtil;
 
 import js.Dom;
 

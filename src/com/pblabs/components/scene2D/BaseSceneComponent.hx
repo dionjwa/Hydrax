@@ -168,8 +168,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		super.onReset();
 		com.pblabs.engine.debug.Profiler.exit("super");
 		if (autoAddToScene) {
-			Preconditions.checkNotNull(parentProperty, "parentProperty is null in " + com.pblabs.util.ReflectUtil.getClassName(this));
-			com.pblabs.util.Assert.isNotNull(parent, com.pblabs.util.ReflectUtil.tinyClassName(this) + ".parent is null, prop=" + parentProperty);
+			Preconditions.checkNotNull(parentProperty, "parentProperty is null in " + haxe.rtti.ReflectUtil.getClassName(this));
+			com.pblabs.util.Assert.isNotNull(parent, haxe.rtti.ReflectUtil.tinyClassName(this) + ".parent is null, prop=" + parentProperty);
 		}
 		
 		var coords = spatialProperty != null ? owner.getProperty(spatialProperty) : null;
@@ -177,7 +177,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		if (coords != null) {
 			#if debug
 			var bond = bindSignal(coords.signalerLocation, setLocation);
-			bond.debugInfo = com.pblabs.util.ReflectUtil.tinyClassName(this);
+			bond.debugInfo = haxe.rtti.ReflectUtil.tinyClassName(this);
 			#else
 			bindSignal(coords.signalerLocation, setLocation);
 			#end
