@@ -10,11 +10,11 @@ import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.SvgResources;
 import com.pblabs.engine.time.IProcessManager;
-import com.pblabs.util.BitmapUtil;
-import com.pblabs.util.Comparators;
-import com.pblabs.util.F;
-import com.pblabs.util.svg.SvgData;
-import com.pblabs.util.svg.SvgReplace;
+import org.transition9.util.BitmapUtil;
+import org.transition9.util.Comparators;
+import org.transition9.util.F;
+import org.transition9.util.svg.SvgData;
+import org.transition9.util.svg.SvgReplace;
 
 using Lambda;
 
@@ -75,7 +75,7 @@ class ImageTools
 		token :ResourceToken, ?entityName :String) :IEntity
 	{
 		var svgData = layer.context.getManager(IResourceManager).get(token);
-		com.pblabs.util.Assert.isNotNull(svgData, ' svgData is null from token ' + token);
+		org.transition9.util.Assert.isNotNull(svgData, ' svgData is null from token ' + token);
 		return createSvg(layer, svgData, entityName);
 	}
 	
@@ -95,15 +95,15 @@ class ImageTools
 	public static function addSvg (e :IEntity, 
 		layer :BaseSceneLayer<Dynamic, Dynamic>, 
 		token :ResourceToken, 
-		?cache :Bool = false, 
-		?isForDeviceDown :Bool = false,
+		?cache :Null<Bool> = false, 
+		?isForDeviceDown :Null<Bool> = false,
 		?replacements :Array<SvgReplace>, 
 		?componentName :String
 		) :IEntity 
 	{
-		com.pblabs.util.Assert.isNotNull(layer, ' layer is null');
-		com.pblabs.util.Assert.isNotNull(token, ' token is null');
-		com.pblabs.util.Assert.isNotNull(e, ' e is null');
+		org.transition9.util.Assert.isNotNull(layer, ' layer is null');
+		org.transition9.util.Assert.isNotNull(token, ' token is null');
+		org.transition9.util.Assert.isNotNull(e, ' e is null');
 		
 		if (cache) {
 			var svgComp = e.context.allocate(BitmapRenderer);
@@ -123,7 +123,7 @@ class ImageTools
 				setAsDeviceDownLayer(e, svgComp); 
 			}
 			
-			com.pblabs.util.svg.SvgRenderQueueManager.getBitmapData(e.context, token, replacements, 
+			org.transition9.util.svg.SvgRenderQueueManager.getBitmapData(e.context, token, replacements, 
 				function (image :com.pblabs.components.scene2D.ImageData) :Void {
 					svgComp.bitmapData = image;
 					// trace("order rendered=" + e.getEntityData("order") + ", width=" + image.width);
@@ -135,7 +135,7 @@ class ImageTools
 		} else {
 			var svgToken = SvgResources.getSvgResourceToken(e.context, token, replacements);
 			var svgData = e.context.getManager(IResourceManager).get(svgToken);
-			com.pblabs.util.Assert.isNotNull(svgData, ' svgData is null for ' + svgToken);
+			org.transition9.util.Assert.isNotNull(svgData, ' svgData is null for ' + svgToken);
 			var svgComp = e.context.allocate(Svg);
 			svgComp.svgData = svgData;
 			svgComp.parentProperty = layer.entityProp();
@@ -262,7 +262,7 @@ class ImageTools
 			switch (token.type) {
 				case IMAGE: 
 					var image = e.context.getManager(IResourceManager).get(token);
-					com.pblabs.util.Assert.isNotNull(image, ' image is null for token=' + token);
+					org.transition9.util.Assert.isNotNull(image, ' image is null for token=' + token);
 					#if flash
 					imageComp.bitmapData = image.bitmapData; 
 					#elseif js
@@ -271,7 +271,7 @@ class ImageTools
 					
 				case IMAGE_DATA:
 					var bd = e.context.getManager(IResourceManager).get(token);
-					com.pblabs.util.Assert.isNotNull(bd, ' bd is null');
+					org.transition9.util.Assert.isNotNull(bd, ' bd is null');
 					imageComp.bitmapData = bd;
 				default:
 			}
@@ -292,7 +292,7 @@ class ImageTools
 				switch (token.type) {
 					case IMAGE: 
 						var image = e.context.getManager(IResourceManager).get(token);
-						com.pblabs.util.Assert.isNotNull(image, ' image is null');
+						org.transition9.util.Assert.isNotNull(image, ' image is null');
 						#if flash
 						imageComp.bitmapData = image.bitmapData; 
 						#elseif js
@@ -300,7 +300,7 @@ class ImageTools
 						#end
 					case IMAGE_DATA:
 						var bd = e.context.getManager(IResourceManager).get(token);
-						com.pblabs.util.Assert.isNotNull(bd, ' bd is null');
+						org.transition9.util.Assert.isNotNull(bd, ' bd is null');
 						imageComp.bitmapData = bd;
 					default:
 				}
@@ -308,7 +308,7 @@ class ImageTools
 				imageComp.bitmapData = null;
 			}
 		} else {
-			com.pblabs.util.Log.warn("setImageData but no BitmapRenderer, token=" + token);
+			org.transition9.util.Log.warn("setImageData but no BitmapRenderer, token=" + token);
 		}
 		return e;
 	}
@@ -316,7 +316,7 @@ class ImageTools
 	public static function setSvg (e :IEntity, svgData :SvgData) :IEntity
 	{
 		var svgComp = e.getComponent(Svg);
-		com.pblabs.util.Assert.isNotNull(svgComp, ' svgComp is null');
+		org.transition9.util.Assert.isNotNull(svgComp, ' svgComp is null');
 		svgComp.svgData = svgData;
 		return e;
 	}

@@ -13,7 +13,7 @@ class CustomHtml extends SceneComponent
 	
 	function set_html (val :HtmlDom) :HtmlDom
 	{
-		com.pblabs.util.Assert.isNotNull(val, ' val is null');
+		org.transition9.util.Assert.isNotNull(val, ' val is null');
 		if (hasParent()) {
 			parent.div.replaceChild(_html, val);
 		}
@@ -41,14 +41,14 @@ class CustomHtml extends SceneComponent
 	
 	override function set_cacheAsBitmap (val :Bool) :Bool
 	{
-		com.pblabs.util.Assert.isFalse(val, "You cannot use cacheAsBitmap, this is a Dom only component");
+		org.transition9.util.Assert.isFalse(val, "You cannot use cacheAsBitmap, this is a Dom only component");
 		return super.set_cacheAsBitmap(val);
 	}
 	
 	override public function addedToParent () :Void
 	{
 		super.addedToParent();
-		com.pblabs.util.Assert.isFalse(isOnCanvas);
+		org.transition9.util.Assert.isFalse(isOnCanvas);
 		cast(layer, JSLayer).div.appendChild(_html);
 	}
 	

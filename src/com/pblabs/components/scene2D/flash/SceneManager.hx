@@ -13,8 +13,8 @@ import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.scene2D.SceneView;
 import com.pblabs.components.scene2D.flash.SceneLayer;
 import com.pblabs.engine.time.IAnimatedObject;
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.Preconditions;
+import org.transition9.geom.Vector2;
+import org.transition9.util.Preconditions;
 
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
@@ -25,10 +25,8 @@ import flash.geom.Point;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
-using com.pblabs.util.ArrayUtil;
-using com.pblabs.util.DisplayUtils;
-
-using de.polygonal.gl.DisplayListIterator;
+using org.transition9.util.ArrayUtil;
+using org.transition9.util.DisplayUtils;
 
 /**
  * Basic Rendering 2D scene. It is given a SceneView and some
@@ -92,8 +90,8 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 	{
 		super.onRemove();
 		_rootSprite.detach();
-		com.pblabs.util.Assert.isTrue(_rootSprite.numChildren == 0);
-		com.pblabs.util.Assert.isTrue(_rootSprite.parent == null);
+		org.transition9.util.Assert.isTrue(_rootSprite.numChildren == 0);
+		org.transition9.util.Assert.isTrue(_rootSprite.parent == null);
 	}
 	
 	override function set_zoom (value :Float) :Float
@@ -107,7 +105,7 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 	public function onFrame (dt :Float) :Void
 	{
 		if (sceneView == null) {
-			com.pblabs.util.Log.warn(this + "sceneView is null, so we aren't rendering.");
+			org.transition9.util.Log.warn(this + "sceneView is null, so we aren't rendering.");
 			return;
 		}
 		updateTransform();
@@ -157,11 +155,11 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 	
 	override public function attach () :Void
 	{
-		com.pblabs.util.Assert.isNotNull(_rootSprite);
-		com.pblabs.util.Assert.isNotNull(displayContainer);
-		com.pblabs.util.Assert.isNotNull(context, "How can the context be null??, name=" + name + ", isRegistered=" +isRegistered);
+		org.transition9.util.Assert.isNotNull(_rootSprite);
+		org.transition9.util.Assert.isNotNull(displayContainer);
+		org.transition9.util.Assert.isNotNull(context, "How can the context be null??, name=" + name + ", isRegistered=" +isRegistered);
 		if (_rootSprite.parent == null) {
-			com.pblabs.util.Assert.isNotNull(context.getManager(SceneView), "No SceneView??");
+			org.transition9.util.Assert.isNotNull(context.getManager(SceneView), "No SceneView??");
 			context.getManager(SceneView).addDisplayObject(displayContainer);
 		}
 	}
@@ -171,6 +169,11 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 		if (_rootSprite.parent != null) {
 			_rootSprite.detach();
 		}
+	}
+	
+	override function get_defaultLayerClass () :Class<SceneLayer>
+	{
+		return com.pblabs.components.scene2D.flash.SceneLayer;
 	}
 	
 	function get_displayContainer () :DisplayObjectContainer
@@ -203,7 +206,7 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 					trace("Stuck bond on " + debugOwnerName + "=" + b);
 				}
 			}
-			com.pblabs.util.Assert.isFalse(sig.isListenedTo, debugOwnerName);
+			org.transition9.util.Assert.isFalse(sig.isListenedTo, debugOwnerName);
 		}
 	}
 	#end

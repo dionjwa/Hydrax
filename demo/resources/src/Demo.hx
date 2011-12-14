@@ -27,9 +27,9 @@ import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ProcessManager;
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.Rand;
-import com.pblabs.util.ds.Tuple;
+import org.transition9.geom.Vector2;
+import org.transition9.util.Rand;
+import org.transition9.ds.Tuple;
 
 using com.pblabs.components.input.InputTools;
 using com.pblabs.components.scene2D.ImageTools;
@@ -91,7 +91,7 @@ class Demo #if flash extends flash.display.Sprite #end
 		var time = Math.random() * 5;
 		time = Math.max(time, 2);
 		var sceneComp = e.getComponent(BaseSceneComponent);
-		com.pblabs.util.Assert.isNotNull(sceneComp);
+		org.transition9.util.Assert.isNotNull(sceneComp);
 		
 		var minX = sceneComp.layer.scene.getAlignedPoint(SceneAlignment.TOP_LEFT).x;
 		var maxX = sceneComp.layer.scene.getAlignedPoint(SceneAlignment.TOP_RIGHT).x;

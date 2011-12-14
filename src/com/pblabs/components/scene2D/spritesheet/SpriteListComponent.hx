@@ -3,9 +3,9 @@ package com.pblabs.components.scene2D.spritesheet;
 import com.pblabs.components.scene2D.ImageData;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceToken;
-import haxe.rtti.ReflectUtil;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
+import org.transition9.rtti.ReflectUtil;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
 
 import de.polygonal.motor2.geom.math.XY;
 
@@ -88,14 +88,14 @@ class SpriteListComponent extends SpriteContainerComponent
 		if (_resources == null || _resources.length == 0) {
 			return null;
 		}
-		com.pblabs.util.Assert.isTrue(_resources.length > 0);
+		org.transition9.util.Assert.isTrue(_resources.length > 0);
 		
 		var frames = [];
 		var rm = context.getManager(IResourceManager);
-		com.pblabs.util.Assert.isNotNull(rm);
+		org.transition9.util.Assert.isNotNull(rm);
 		for (rt in _resources) {
 			var bd = rm.get(rt);
-			com.pblabs.util.Assert.isNotNull(bd);
+			org.transition9.util.Assert.isNotNull(bd);
 			frames.push(bd);
 		}
 		
@@ -117,7 +117,7 @@ class SpriteListComponent extends SpriteContainerComponent
 	#if debug
 	override public function toString () :String
 	{
-	    return com.pblabs.util.StringUtil.objectToString(this, ["name"]);
+	    return org.transition9.util.StringUtil.objectToString(this, ["name"]);
 	}
 	#end
 }

@@ -2,13 +2,13 @@ package com.pblabs.components.scene2D.body;
 
 import Type;
 
-import haxe.serialization.Serialization;
+import org.transition9.serialization.Serialization;
 
 import haxe.io.Bytes;
 
 using Lambda;
 
-using com.pblabs.util.IterUtil;
+using org.transition9.util.IterUtil;
 
 /**
   * Minimum data needed to store a sprite list.
@@ -47,7 +47,7 @@ class SpriteSheetData
 	// {
 	// 	s.serialize(scale);
 	// 	s.serialize(id);
-	// 	// s.serialize(com.pblabs.util.ds.MapUtil.toArray(frameLabels));
+	// 	// s.serialize(org.transition9.ds.MapUtil.toArray(frameLabels));
 	// 	s.serialize(frameLabels);
 	// 	s.serialize(centers == null ? null :centers.map(vector2Array).array());
 	// 	s.serialize(bounds == null ? null :bounds.map(vector2Array).array());
@@ -58,7 +58,7 @@ class SpriteSheetData
 	// {
 	// 	scale = s.unserialize();
 	// 	id = s.unserialize();
-	// 	// frameLabels = cast com.pblabs.util.ds.MapUtil.fromArray(s.unserialize(), ValueType.TClass(String));
+	// 	// frameLabels = cast org.transition9.ds.MapUtil.fromArray(s.unserialize(), ValueType.TClass(String));
 	// 	frameLabels = s.unserialize();
 	// 	centers = flatArrayToXYArray(s.unserialize());
 	// 	bounds = flatArrayToXYArray(s.unserialize());
@@ -72,7 +72,7 @@ class SpriteSheetData
 		obj.scale = scale;
 		obj.id = id;
 		// var self = this;
-		obj.frameLabels = frameLabels;// == null ? null :com.pblabs.util.ds.MapUtil.toArray(frameLabels);
+		obj.frameLabels = frameLabels;// == null ? null :org.transition9.ds.MapUtil.toArray(frameLabels);
 		obj.centers = centers.array();// == null ? null :centers.map(vector2Array).array();
 		obj.bounds = bounds;// == null ? null :bounds.map(vector2Array).array();
 		// obj.imageData = imageData;
@@ -88,7 +88,7 @@ class SpriteSheetData
 		id = from.id;
 		scale = from.scale;
 		var self = this;
-		frameLabels = from.frameLabels;// == null ? null :cast com.pblabs.util.ds.MapUtil.fromArray(from.frameLabels, ValueType.TClass(String));
+		frameLabels = from.frameLabels;// == null ? null :cast org.transition9.ds.MapUtil.fromArray(from.frameLabels, ValueType.TClass(String));
 		// centers = flatArrayToXYArray(from.centers);
 		// centers = null;
 		// if (from.centers != null) {
@@ -96,7 +96,7 @@ class SpriteSheetData
 		// 	var c :Array<Float> = from.centers;
 		// 	// centers = c.map(array2XY).array();
 		// 	for (v in c) {
-		// 		centers.push(new com.pblabs.geom.Vector2(v[0], v[1]));
+		// 		centers.push(new org.transition9.geom.Vector2(v[0], v[1]));
 		// 	}
 		// }
 		
@@ -108,7 +108,7 @@ class SpriteSheetData
 		// 	bounds = [];
 		// 	var c :Array<Float> = from.bounds;
 		// 	for (v in c) {
-		// 		bounds.push(new com.pblabs.geom.Vector2(v[0], v[1]));
+		// 		bounds.push(new org.transition9.geom.Vector2(v[0], v[1]));
 		// 	}
 		// }
 		

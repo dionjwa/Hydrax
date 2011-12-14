@@ -14,17 +14,17 @@ import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.resource.IResources;
 import com.pblabs.engine.resource.IResourceManager;
-import com.pblabs.util.Assert;
-import com.pblabs.util.Preconditions;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
+import org.transition9.util.Assert;
+import org.transition9.util.Preconditions;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
 using Lambda;
 
-using com.pblabs.util.IterUtil;
+using org.transition9.util.IterUtil;
 
 /**
   * Basic resource manager.  This class should suffice for most
@@ -67,7 +67,7 @@ class ResourceManager
 	
 	public function add (token :ResourceToken) :Void
 	{
-		com.pblabs.util.Assert.isNotNull(getResourceForToken(token), ' resource is null from ' + token + ', resource ids=' + this.map(
+		org.transition9.util.Assert.isNotNull(getResourceForToken(token), ' resource is null from ' + token + ', resource ids=' + this.map(
 		function (r :IResources<Dynamic>) :String {
 			return r.name;
 		}).array());
@@ -81,19 +81,19 @@ class ResourceManager
 	
 	public function get <T>(token :ResourceToken) :T
 	{
-		com.pblabs.util.Assert.isNotNull(token, ' token is null');
-		com.pblabs.util.Assert.isNotNull(getResourceForToken(token), ' getResource(' + token + ') is null');
+		org.transition9.util.Assert.isNotNull(token, ' token is null');
+		org.transition9.util.Assert.isNotNull(getResourceForToken(token), ' getResource(' + token + ') is null');
 		return getResourceForToken(token).get(token);
 	}
 
 	public function load (onLoad :Void->Void, ?onError :Dynamic->Void) :Void
 	{
-		com.pblabs.util.Log.info("");
+		org.transition9.util.Log.info("");
 		Preconditions.checkNotNull(onLoad);
 		
 		if (_pendingResources.size() == 0 && _loadingResources.size() == 0) {
-			com.pblabs.util.Log.info("No resources to load, calling onLoad");
-			com.pblabs.util.Assert.isTrue(_onLoadCallbacks.length == 0);
+			org.transition9.util.Log.info("No resources to load, calling onLoad");
+			org.transition9.util.Assert.isTrue(_onLoadCallbacks.length == 0);
 			_numResources = 0;
 			onLoad();
 			return;
@@ -110,10 +110,10 @@ class ResourceManager
 			_pendingResources.remove(key);
 			_loadingResources.set(key, rsrc);
 			var loaded = function () :Void {
-				com.pblabs.util.Log.debug("Loaded callback for resource=" + key);
+				org.transition9.util.Log.debug("Loaded callback for resource=" + key);
 				self.resourceLoaded(rsrc);
 			}
-			com.pblabs.util.Log.debug("Loading resource=" + rsrc);
+			org.transition9.util.Log.debug("Loading resource=" + rsrc);
 			rsrc.load(loaded, handleLoadingError);
 		}
 		_numResources = _pendingResources.size() + _loadingResources.size();
@@ -127,7 +127,7 @@ class ResourceManager
 			_loadedResources.remove(resourceName);
 			rsrc.unload();
 		} else {
-			com.pblabs.util.Log.warn("unload('" +resourceName + "') but does not exist.");
+			org.transition9.util.Log.warn("unload('" +resourceName + "') but does not exist.");
 		}
 	}
 	
@@ -138,7 +138,7 @@ class ResourceManager
 	
 	public function getResource (resourceName :String) :IResources<Dynamic>
 	{
-		com.pblabs.util.Assert.isNotNull(resourceName, ' resourceName is null');
+		org.transition9.util.Assert.isNotNull(resourceName, ' resourceName is null');
 		if (_loadedResources.exists(resourceName)) {
 			return cast _loadedResources.get(resourceName);
 		} else if (_pendingResources.exists(resourceName)) {
@@ -150,13 +150,13 @@ class ResourceManager
 	
 	public function getResourceByType <T> (type :ResourceType) :T
 	{
-		com.pblabs.util.Assert.isNotNull(type, ' type is null');
+		org.transition9.util.Assert.isNotNull(type, ' type is null');
 		return cast getResource(Type.enumConstructor(type));
 	}
 	
 	public function addResource (rsrc :IResources<Dynamic>) :Void
 	{
-		com.pblabs.util.Log.info("addResource " + haxe.rtti.ReflectUtil.getClassName(rsrc));
+		org.transition9.util.Log.info("addResource " + org.transition9.rtti.ReflectUtil.getClassName(rsrc));
 		Preconditions.checkNotNull(rsrc, "Resource is null");
 		Preconditions.checkNotNull(rsrc.name, "Resource must have a name");
 		Preconditions.checkArgument(!isResource(rsrc.name), "Resource with name=" + rsrc.name  + " alrady exists");
@@ -164,10 +164,10 @@ class ResourceManager
 		rsrc.manager = this;
 		
 		if (rsrc.isLoaded()) {
-			com.pblabs.util.Log.info("adding to loadedResources: " + rsrc);
+			org.transition9.util.Log.info("adding to loadedResources: " + rsrc);
 			_loadedResources.set(rsrc.name, rsrc);
 		} else {
-			com.pblabs.util.Log.info("adding to _pendingResources: " + rsrc);
+			org.transition9.util.Log.info("adding to _pendingResources: " + rsrc);
 			_pendingResources.set(rsrc.name, rsrc);
 		}
 	}
@@ -216,7 +216,7 @@ class ResourceManager
 	
 	function resourceLoaded (rsrc :IResources<Dynamic>) :Void
 	{
-		com.pblabs.util.Log.info(rsrc);
+		org.transition9.util.Log.info(rsrc);
 		_loadingResources.remove(rsrc.name);
 		_loadedResources.set(rsrc.name, rsrc);
 		if (_loadingResources.size() == 0 && _pendingResources.size() == 0) {
@@ -234,7 +234,7 @@ class ResourceManager
 	
 	function allResourcesLoaded () :Void
 	{
-		com.pblabs.util.Log.info("");
+		org.transition9.util.Log.info("");
 		
 		//Copy and clear the current arrays to avoid change conflicts during callbacks
 		var onloadcallbacks = _onLoadCallbacks.copy();

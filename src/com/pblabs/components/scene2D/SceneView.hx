@@ -10,8 +10,8 @@ package com.pblabs.components.scene2D;
 
 import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.PBObject;
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.Preconditions;
+import org.transition9.geom.Vector2;
+import org.transition9.util.Preconditions;
 
 import de.polygonal.core.math.Mathematics;
 import de.polygonal.motor2.geom.math.XY;
@@ -21,7 +21,7 @@ import hsl.haxe.Signaler;
 
 using StringTools;
 
-using com.pblabs.geom.VectorTools;
+using org.transition9.geom.VectorTools;
 #if js
 import js.Dom;
 #end
@@ -128,7 +128,7 @@ class SceneView
 		
 		#if debug
 		haxe.Timer.delay(function () :Void {
-			com.pblabs.util.Assert.isFalse(sizeChangeSignaler.isListenedTo, "sizeChangeSignaler.isListenedTo == true");
+			org.transition9.util.Assert.isFalse(sizeChangeSignaler.isListenedTo, "sizeChangeSignaler.isListenedTo == true");
 		}, 100);
 		#end
 	}
@@ -147,7 +147,7 @@ class SceneView
 		#else
 		_height = value;
 		#end
-		sizeChangeSignaler.dispatch(new com.pblabs.geom.Vector2(width, height));
+		sizeChangeSignaler.dispatch(new org.transition9.geom.Vector2(width, height));
 		return value;
 	}
 
@@ -166,7 +166,7 @@ class SceneView
 		#else
 		_width = value;
 		#end
-		sizeChangeSignaler.dispatch(new com.pblabs.geom.Vector2(width, height));
+		sizeChangeSignaler.dispatch(new org.transition9.geom.Vector2(width, height));
 		return value;
 	}
 	
@@ -233,7 +233,7 @@ class SceneView
 		_width = Std.int(flash.Lib.current.stage.stageWidth);
 		_height = Std.int(flash.Lib.current.stage.stageHeight);
 		
-		com.pblabs.util.Log.debug("added to stage " + _layer.width + " " + _layer.height);
+		org.transition9.util.Log.debug("added to stage " + _layer.width + " " + _layer.height);
 	}
 	#end
 	
@@ -244,14 +244,14 @@ class SceneView
 		if (_layer == null) {
 			Preconditions.checkNotNull(_layerId, "no layer, and layerId is null");
 			_layer = cast js.Lib.document.getElementById(_layerId);
-			com.pblabs.util.Assert.isNotNull(_layer, "No element with id=" + _layerId);
+			org.transition9.util.Assert.isNotNull(_layer, "No element with id=" + _layerId);
 			onOrientationChange(0);
 			
 			//Prevent text selection.  This may not be desired, but I'm not sure where to put this otherwise.
 			untyped _layer.onselectstart = function () { return false; };//ie
 			untyped _layer.onmousedown = function () { return false; };//mozilla
 		}
-		com.pblabs.util.Assert.isNotNull(_layer, "Could not find HTML element with id=" + _layerId);
+		org.transition9.util.Assert.isNotNull(_layer, "Could not find HTML element with id=" + _layerId);
 		
 		return _layer;
 	}
@@ -264,26 +264,26 @@ class SceneView
 	  */
 	public function onOrientationChange (degreesRotation :Int) :Void
 	{
-		if (com.pblabs.util.Device.isMobileBrowser) {
-			var rawScreenDimensions = com.pblabs.util.Device.getScreenDimensions();//.scale(2); 
+		if (org.transition9.util.Device.isMobileBrowser) {
+			var rawScreenDimensions = org.transition9.util.Device.getScreenDimensions();//.scale(2); 
 			
-			// if (com.pblabs.util.Device.browser == com.pblabs.util.Device.Browser.SAFARI_IOS) {
-			// 	com.pblabs.util.Device.ScreenDimensions.iOs3g;
+			// if (org.transition9.util.Device.browser == org.transition9.util.Device.Browser.SAFARI_IOS) {
+			// 	org.transition9.util.Device.ScreenDimensions.iOs3g;
 			// } else {//TODO: others?  Compute from javascript?
-			// 	com.pblabs.util.Device.ScreenDimensions.iOs3g;
+			// 	org.transition9.util.Device.ScreenDimensions.iOs3g;
 			// }
 			
 			var topMenuHeight = 20;
 			
 			var dimensions = switch (degreesRotation) {
 				case 0, 180:
-					if (com.pblabs.util.Device.browser == com.pblabs.util.Device.Browser.SAFARI_IOS) {
+					if (org.transition9.util.Device.browser == org.transition9.util.Device.Browser.SAFARI_IOS) {
 						new Vector2(rawScreenDimensions.x, rawScreenDimensions.y - topMenuHeight);
 					} else {
 						new Vector2(rawScreenDimensions.x, rawScreenDimensions.y - topMenuHeight);
 					}
 				case 90, -90:
-					if (com.pblabs.util.Device.browser == com.pblabs.util.Device.Browser.SAFARI_IOS) {
+					if (org.transition9.util.Device.browser == org.transition9.util.Device.Browser.SAFARI_IOS) {
 						new Vector2(rawScreenDimensions.y, rawScreenDimensions.x - topMenuHeight);
 					} else {
 						new Vector2(rawScreenDimensions.y, rawScreenDimensions.x - topMenuHeight);
@@ -326,10 +326,10 @@ class SceneView
 	
 	function get_mouseOffset () :XY
 	{
-		// com.pblabs.util.Log.warn("Currently disabled");
+		// org.transition9.util.Log.warn("Currently disabled");
 		// return new Vector2();
 		#if debug
-			if (!com.pblabs.util.JsLibs.isJQuery) {
+			if (!org.transition9.util.JsLibs.isJQuery) {
 				throw "JQuery missing, please add to html";
 			}
 		#end

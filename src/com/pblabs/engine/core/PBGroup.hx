@@ -12,8 +12,8 @@
  ******************************************************************************/
 package com.pblabs.engine.core;
 
-import com.pblabs.util.Preconditions;
-using com.pblabs.util.IterUtil;
+import org.transition9.util.Preconditions;
+using org.transition9.util.IterUtil;
 
 /**
  * A group which owns the objects contained it. When the PBGroup is
@@ -106,7 +106,7 @@ class PBGroup extends PBObject,
 	#if debug
 	override public function toString () :String
 	{
-		return com.pblabs.util.StringUtil.objectToString(this, ["name", "length", "owningGroup"]);
+		return org.transition9.util.StringUtil.objectToString(this, ["name", "length", "owningGroup"]);
 	}
 	#end
 }

@@ -61,10 +61,10 @@ class IntensiveTaskQueue extends PBManager,
 		var ticks :Int = 0;
 		while (_queue.size() > 0 && ticks < maxUpdatesPerTick && haxe.Timer.stamp() - begin < timeAllowedPerTick) {
 			_tempTask = _queue.peek();
-			com.pblabs.util.Log.debug("doing task: " + _tempTask); 
+			org.transition9.util.Log.debug("doing task: " + _tempTask); 
 			if (_tempTask.onFrame(dt)) {
 				_queue.remove(_tempTask);
-				com.pblabs.util.Log.info("Finished " + _tempTask + "\nremaining " + _queue.size());
+				org.transition9.util.Log.info("Finished " + _tempTask + "\nremaining " + _queue.size());
 				_tempTask.finish();
 			}
 			_tempTask = null;
@@ -86,7 +86,7 @@ class IntensiveTaskQueue extends PBManager,
 	
 	public function removeTask (task :IntensiveTask) :Bool
 	{
-		com.pblabs.util.Assert.isNotNull(task, " task is null");
+		org.transition9.util.Assert.isNotNull(task, " task is null");
 		task.shutdown();
 	    return _queue.remove(task);
 	}

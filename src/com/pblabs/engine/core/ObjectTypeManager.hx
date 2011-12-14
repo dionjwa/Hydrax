@@ -12,8 +12,8 @@
  ******************************************************************************/
 package com.pblabs.engine.core;
 
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
 
 import Type;
 
@@ -65,7 +65,7 @@ class ObjectTypeManager
 	{
 		if (!_typeList.exists(typeName)) {
 			if (_typeCount == 32) {
-				com.pblabs.util.Log.warn("Only 32 unique object types can be created.");
+				org.transition9.util.Log.warn("Only 32 unique object types can be created.");
 				return 0;
 			}
 			

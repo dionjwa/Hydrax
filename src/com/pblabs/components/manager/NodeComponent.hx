@@ -15,13 +15,13 @@ import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.serialization.Serializer;
 import com.pblabs.engine.util.PBUtil;
-import com.pblabs.util.Preconditions;
-import haxe.rtti.ReflectUtil;
+import org.transition9.util.Preconditions;
+import org.transition9.rtti.ReflectUtil;
 
 using Lambda;
 
-using com.pblabs.util.ArrayUtil;
-using com.pblabs.util.XmlTools;
+using org.transition9.util.ArrayUtil;
+using org.transition9.util.XmlTools;
 
 /**
 	Useful for managing components and setting up tree structures.
@@ -105,7 +105,7 @@ class NodeComponent<P :INodeParent<Dynamic>, C :INodeChild<Dynamic>> extends Ent
 	
 	public function addChild (c :C) :Void
 	{
-		com.pblabs.util.Assert.isTrue(untyped this != c);
+		org.transition9.util.Assert.isTrue(untyped this != c);
 		Preconditions.checkArgument(isRegistered, "Component must first be registered");
 		Preconditions.checkArgument(Std.is(c, NodeComponent), "Children must be of type NodeComponent");
 		Preconditions.checkArgument(cast(c, IEntityComponent).isRegistered, "Child not registered: " + c);
@@ -139,14 +139,14 @@ class NodeComponent<P :INodeParent<Dynamic>, C :INodeChild<Dynamic>> extends Ent
 		if (!children.remove(c)) {
 			throw "Removing child with a different manager";
 		}
-		com.pblabs.util.Assert.isFalse(children.length == before, "children.length the same after removal");
+		org.transition9.util.Assert.isFalse(children.length == before, "children.length the same after removal");
 		
 		if (children.has(null)) {
 			throw "After child removal, we have null in children=" + children;
 		}
 		cNode.removingFromParent();
 		cNode.parent = null;
-		com.pblabs.util.Assert.isNull(cNode.parent);
+		org.transition9.util.Assert.isNull(cNode.parent);
 		childRemoved(c);
 	}
 	
@@ -180,16 +180,16 @@ class NodeComponent<P :INodeParent<Dynamic>, C :INodeChild<Dynamic>> extends Ent
 		}
 		
 		if (!hasParent() && (newParent != null || parentProperty != null)) {
-			Preconditions.checkArgument(isRegistered, "Component must first be registered ::" + haxe.rtti.ReflectUtil.getClassName(this));
-			Preconditions.checkArgument(newParent != null || parentProperty != null, "No parent or parent property provided ::" + haxe.rtti.ReflectUtil.getClassName(this));
+			Preconditions.checkArgument(isRegistered, "Component must first be registered ::" + org.transition9.rtti.ReflectUtil.getClassName(this));
+			Preconditions.checkArgument(newParent != null || parentProperty != null, "No parent or parent property provided ::" + org.transition9.rtti.ReflectUtil.getClassName(this));
 			com.pblabs.engine.debug.Profiler.enter("getParentFromProp");
 			newParent = newParent == null ? owner.getProperty(parentProperty) : newParent;
 			com.pblabs.engine.debug.Profiler.exit("getParentFromProp");
 			Preconditions.checkNotNull(newParent, "Parent cannot be null, parentProperty=" + parentProperty);
 			Preconditions.checkArgument(Std.is(newParent, NodeComponent), "Parent must be of type NodeComponent, parent is type=" + ReflectUtil.getClassName(newParent));
-			Preconditions.checkArgument(newParent.isRegistered, "Parent not registered: " + haxe.rtti.ReflectUtil.getClassName(newParent));
+			Preconditions.checkArgument(newParent.isRegistered, "Parent not registered: " + org.transition9.rtti.ReflectUtil.getClassName(newParent));
 			// if (hasParent()) {
-			// 	// com.pblabs.util.Log.warn(" but " + name + ".hasParent " + ReflectUtil.getClassName(parent));
+			// 	// org.transition9.util.Log.warn(" but " + name + ".hasParent " + ReflectUtil.getClassName(parent));
 			// 	return;
 			// }
 			com.pblabs.engine.debug.Profiler.enter("addChild");

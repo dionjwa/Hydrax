@@ -3,7 +3,7 @@ package com.pblabs.components.physics.motor2.test;
 import com.pblabs.components.scene2D.flash.SceneComponentSprite;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.time.IAnimatedObject;
-import com.pblabs.geom.Vector2;
+import org.transition9.geom.Vector2;
 
 import de.polygonal.motor2.World;
 import de.polygonal.motor2.geom.math.XY;
@@ -11,7 +11,7 @@ import de.polygonal.motor2.geom.primitive.OBB2;
 
 import com.pblabs.components.physics.motor2.PhysicsManager;
 
-using com.pblabs.geom.VectorTools;
+using org.transition9.geom.VectorTools;
 
 class MotorRenderer extends SceneComponentSprite,
 	implements IAnimatedObject
@@ -37,7 +37,7 @@ class MotorRenderer extends SceneComponentSprite,
 		if (physics == null) {
 			physics = owner.getProperty(physicsManagerProperty);
 		}
-		com.pblabs.util.Assert.isNotNull(physics);
+		org.transition9.util.Assert.isNotNull(physics);
 	}
 	
 	override public function onFrame (dt :Float) :Void
@@ -218,7 +218,7 @@ class MotorRenderer extends SceneComponentSprite,
 		
 		
 	// 	_world = owner.getProperty(worldProperty);
-	// 	com.pblabs.util.Assert.isNotNull(_world);
+	// 	org.transition9.util.Assert.isNotNull(_world);
 		
 	// 	_displayList = new ShapeRendererList();
 		

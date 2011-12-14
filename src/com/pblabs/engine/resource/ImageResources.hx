@@ -13,11 +13,11 @@ import Type;
 import com.pblabs.components.scene2D.ImageType;
 import com.pblabs.engine.resource.ResourcesBase;
 import com.pblabs.engine.resource.ResourceToken;
-import com.pblabs.util.Preconditions;
-import haxe.rtti.ReflectUtil;
-import com.pblabs.util.StringUtil;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
+import org.transition9.util.Preconditions;
+import org.transition9.rtti.ReflectUtil;
+import org.transition9.util.StringUtil;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
 
 /**
   * Loads and stores images from URLs, embedded data, swfs etc.
@@ -39,7 +39,7 @@ class ImageResources extends LoadingResources<ImageType>
 		image.onload = function () {
 			self._loading.remove(token);
 			self._data.set(token, image);
-			com.pblabs.util.Assert.isNotNull(self._data.get(token), ' _data.get(token) is null');
+			org.transition9.util.Assert.isNotNull(self._data.get(token), ' _data.get(token) is null');
 			self.maybeFinish();
 		}
 		image.onerror = function (e :Dynamic) {

@@ -15,7 +15,7 @@ import hsl.haxe.Signaler;
 
 import com.pblabs.components.physics.CollisionPair;
 
-using com.pblabs.util.MathUtil;
+using org.transition9.util.MathUtil;
 
 /**
   * This is not designed to be pooled.
@@ -41,7 +41,7 @@ class PhysicsManager extends NodeComponent<Dynamic, com.pblabs.components.physic
 	
 	override public function addChild (c :PhysicsComponent) :Void
 	{
-		com.pblabs.util.Assert.isTrue(children.length - 1 <= settings.maxProxies, "Max children exceeded, assuming  max 1 shape/child");
+		org.transition9.util.Assert.isTrue(children.length - 1 <= settings.maxProxies, "Max children exceeded, assuming  max 1 shape/child");
 		super.addChild(c);
 	}
 	
@@ -107,7 +107,7 @@ class PhysicsManager extends NodeComponent<Dynamic, com.pblabs.components.physic
 		updateCollisionData = null;
 		_collision.c1 = null;
 		_collision.c2 = null;
-		com.pblabs.util.Assert.isFalse(collisionSignaler.isListenedTo);
+		org.transition9.util.Assert.isFalse(collisionSignaler.isListenedTo);
 		collisionSignaler = null;
 	}
 	

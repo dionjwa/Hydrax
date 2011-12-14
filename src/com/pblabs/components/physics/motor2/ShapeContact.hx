@@ -2,8 +2,8 @@ package com.pblabs.components.physics.motor2;
 
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.geom.Vector2;
-import com.pblabs.geom.VectorTools;
+import org.transition9.geom.Vector2;
+import org.transition9.geom.VectorTools;
 
 import de.polygonal.motor2.World;
 import de.polygonal.motor2.data.BoxData;
@@ -22,7 +22,7 @@ using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
 
 class ShapeContact extends NodeComponent<ShapeContactManager, Dynamic>,
-	implements com.pblabs.util.ds.Hashable
+	implements org.transition9.ds.Hashable
 {
 	public var shapeType (get_shapeType, set_shapeType) :ShapeType;
 	var _shapeType :ShapeType;
@@ -87,7 +87,7 @@ class ShapeContact extends NodeComponent<ShapeContactManager, Dynamic>,
 	function get_world () :World
 	{
 		if (parent == null) {
-			com.pblabs.util.Log.error("Asking for World, but no parent");
+			org.transition9.util.Log.error("Asking for World, but no parent");
 			return null;
 		}
 		return parent.world;
@@ -112,17 +112,17 @@ class ShapeContact extends NodeComponent<ShapeContactManager, Dynamic>,
 		}
 		
 		if (_shapeType == null) {
-			com.pblabs.util.Log.warn("No shape");
+			org.transition9.util.Log.warn("No shape");
 			return null;
 		}
 		
 		if (parent == null || parent.world == null) {
-			com.pblabs.util.Log.info("No parent when setting shapeType");
+			org.transition9.util.Log.info("No parent when setting shapeType");
 			return _shapeType;
 		}
 		
-		com.pblabs.util.Assert.isNotNull(parent, "No parent");
-		com.pblabs.util.Assert.isNotNull(parent.world, "No world on parent");
+		org.transition9.util.Assert.isNotNull(parent, "No parent");
+		org.transition9.util.Assert.isNotNull(parent.world, "No world on parent");
 		
 		var shapeData :ShapeData;
 		switch (_shapeType) {
@@ -143,11 +143,11 @@ class ShapeContact extends NodeComponent<ShapeContactManager, Dynamic>,
 		}
 		
 		var coords = owner.getComponent(SpatialComponent);
-		com.pblabs.util.Assert.isNotNull(coords);
+		org.transition9.util.Assert.isNotNull(coords);
 		var bd = new RigidBodyData(coords.x, coords.y, coords.angle);
 		
-		com.pblabs.util.Assert.isNotNull(bd, "No rigid body data");
-		com.pblabs.util.Assert.isNotNull(shapeData, "No shapeData");
+		org.transition9.util.Assert.isNotNull(bd, "No rigid body data");
+		org.transition9.util.Assert.isNotNull(shapeData, "No shapeData");
 		
 		bd.addShapeData(shapeData);
 		

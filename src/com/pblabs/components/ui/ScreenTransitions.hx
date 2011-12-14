@@ -11,7 +11,7 @@ import com.pblabs.components.tasks.TimedTask;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.PBGameBase;
-import com.pblabs.geom.Vector2;
+import org.transition9.geom.Vector2;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
 using Lambda;
@@ -24,7 +24,7 @@ class ScreenTransitions
 {
 	public static function scrollBack (inactive :IPBContext, active :IPBContext, cb :Void->Void) :Void
 	{
-		com.pblabs.util.Assert.isNotNull(inactive, ' inactive is null');
+		org.transition9.util.Assert.isNotNull(inactive, ' inactive is null');
 		
 		if (active == null) {
 			cb();
@@ -46,9 +46,9 @@ class ScreenTransitions
 		//Set the current screen and the previous (if present) scrolling right
 		
 		var scenes = getAllSceneManagers(active);
-		com.pblabs.util.Assert.isNotNull(scenes, ' scenes is null');
+		org.transition9.util.Assert.isNotNull(scenes, ' scenes is null');
 		var activeScene = scenes[0];
-		com.pblabs.util.Assert.isNotNull(activeScene, ' activeScene is null');
+		org.transition9.util.Assert.isNotNull(activeScene, ' activeScene is null');
 		
 		scroll(activeScene.owner, getAllSceneManagers(inactive), Direction.RIGHT, duration, null, function () :Void {
 			cb();
@@ -58,7 +58,7 @@ class ScreenTransitions
 	
 	public static function scrollForward (inactive :IPBContext, active :IPBContext, cb :Void->Void) :Void
 	{
-		com.pblabs.util.Assert.isNotNull(active, ' active is null');
+		org.transition9.util.Assert.isNotNull(active, ' active is null');
 		if (inactive == null) {
 			cb();
 			return;
@@ -80,9 +80,9 @@ class ScreenTransitions
 		//Set the current screen and the previous (if present) scrolling right
 		
 		var scenes = getAllSceneManagers(active);
-		com.pblabs.util.Assert.isNotNull(scenes, ' scenes is null');
+		org.transition9.util.Assert.isNotNull(scenes, ' scenes is null');
 		var activeScene = scenes[0];
-		com.pblabs.util.Assert.isNotNull(activeScene, ' activeScene is null');
+		org.transition9.util.Assert.isNotNull(activeScene, ' activeScene is null');
 		
 		scroll(activeScene.owner, getAllSceneManagers(active), Direction.LEFT, duration, null, function () :Void {
 			cb();
@@ -101,7 +101,7 @@ class ScreenTransitions
 	
 	public static function getAllSceneManagers (context :IPBContext) :Array<BaseSceneManager<Dynamic>>
 	{
-		com.pblabs.util.Assert.isNotNull(context.getManager(SceneManagerList), ' context.getManager(SceneManagerList) is null');
+		org.transition9.util.Assert.isNotNull(context.getManager(SceneManagerList), ' context.getManager(SceneManagerList) is null');
 		return context.getManager(SceneManagerList).children;
 	}
 	
@@ -146,7 +146,7 @@ class ScreenTransitions
 				})));
 			
 		for (scene in scenes) {
-			com.pblabs.util.Assert.isNotNull(scene, ' scene is null');
+			org.transition9.util.Assert.isNotNull(scene, ' scene is null');
 			var delta = switch (direction) {
 				case LEFT: new Vector2(-scene.sceneView.width, 0);
 				case RIGHT: new Vector2(scene.sceneView.width, 0);

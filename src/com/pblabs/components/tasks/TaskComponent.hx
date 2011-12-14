@@ -10,14 +10,14 @@ package com.pblabs.components.tasks;
 
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntity;
-import com.pblabs.util.Preconditions;
+import org.transition9.util.Preconditions;
 
 import haxe.FastList;
 
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
-import haxe.rtti.ReflectUtil;
-import haxe.rtti.ReflectUtil;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
+import org.transition9.rtti.ReflectUtil;
+import org.transition9.rtti.ReflectUtil;
 
 import com.pblabs.components.tasks.IEntityTask;
 import com.pblabs.components.tasks.ParallelTask;

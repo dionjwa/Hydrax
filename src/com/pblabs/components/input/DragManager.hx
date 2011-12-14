@@ -23,10 +23,10 @@ import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.time.IProcessManager;
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.Preconditions;
-import haxe.rtti.ReflectUtil;
-import com.pblabs.util.ds.Tuple;
+import org.transition9.geom.Vector2;
+import org.transition9.util.Preconditions;
+import org.transition9.rtti.ReflectUtil;
+import org.transition9.ds.Tuple;
 
 import de.polygonal.core.math.Mathematics;
 import de.polygonal.motor2.geom.math.XY;
@@ -41,10 +41,10 @@ using Type;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
-using com.pblabs.geom.VectorTools;
-using com.pblabs.util.IterUtil;
-using com.pblabs.util.MathUtil;
-using com.pblabs.util.NumberUtil;
+using org.transition9.geom.VectorTools;
+using org.transition9.util.IterUtil;
+using org.transition9.util.MathUtil;
+using org.transition9.util.NumberUtil;
 
 typedef Translatable = {
 	public var x (get_x, set_x) :Float;
@@ -128,7 +128,7 @@ class DragManager extends EntityComponent,
 		e.deferring = false;
 		
 		_inputManager = context.getManager(InputManager);
-		com.pblabs.util.Assert.isNotNull(_inputManager);
+		org.transition9.util.Assert.isNotNull(_inputManager);
 	}
 	
 	public function shutdown():Void
@@ -170,7 +170,7 @@ class DragManager extends EntityComponent,
 		_isEasing = easing;
 		_constraint = constraint;
 		if (_constraint != null && _isEasing) {
-			com.pblabs.util.Log.warn("easing doesn't work with constraints yet");
+			org.transition9.util.Log.warn("easing doesn't work with constraints yet");
 			_isEasing = false;
 		}
 		
@@ -199,8 +199,8 @@ class DragManager extends EntityComponent,
 			_yProp = _sceneComponent.componentProp("y");
 		}
 		
-		com.pblabs.util.Assert.isNotNull(_xProp);
-		com.pblabs.util.Assert.isNotNull(_yProp);
+		org.transition9.util.Assert.isNotNull(_xProp);
+		org.transition9.util.Assert.isNotNull(_yProp);
 		
 		_startObj.x = _sceneComponent.owner.getProperty(_xProp);
 		_startObj.y = _sceneComponent.owner.getProperty(_yProp);
@@ -322,7 +322,7 @@ class DragManager extends EntityComponent,
 				var oldest = lastVectors[0];
 				//For computing the mean angle, use the mean unit vector
 				var meanVector = new Vector2();
-				com.pblabs.util.Assert.isNotNull(_scene);
+				org.transition9.util.Assert.isNotNull(_scene);
 				if (diff > minimumDistanceToEase) {
 					var angles = [];
 					for (i in 1...lastVectors.length) {
@@ -396,8 +396,8 @@ class DragManager extends EntityComponent,
 	override public function postDestructionCheck () :Void
 	{
 		super.postDestructionCheck();
-		com.pblabs.util.Assert.isFalse(dragSignaler.isListenedTo);
-		com.pblabs.util.Assert.isFalse(dragEndedSignaler.isListenedTo);
+		org.transition9.util.Assert.isFalse(dragSignaler.isListenedTo);
+		org.transition9.util.Assert.isFalse(dragEndedSignaler.isListenedTo);
 	}
 	#end
 }

@@ -17,9 +17,9 @@ import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.util.PBUtil;
-import com.pblabs.geom.Rectangle;
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.Preconditions;
+import org.transition9.geom.Rectangle;
+import org.transition9.geom.Vector2;
+import org.transition9.util.Preconditions;
 
 import de.polygonal.core.math.Mathematics;
 import de.polygonal.motor2.geom.math.XY;
@@ -32,8 +32,8 @@ import hsl.haxe.Signaler;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
-using com.pblabs.util.IterUtil;
-using com.pblabs.util.StringUtil;
+using org.transition9.util.IterUtil;
+using org.transition9.util.StringUtil;
 
 /**
   * Layers are arranged :smaller index is behind.
@@ -94,7 +94,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	public var defaultLayerClass (get_defaultLayerClass, null) :Class<Layer>;
 	function get_defaultLayerClass () :Class<Layer>
 	{
-		com.pblabs.util.Log.error("Subclasses override");
+		org.transition9.util.Log.error("Subclasses override");
 		return null;
 	}
 	
@@ -170,7 +170,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		
 		//Device specific
 		#if js
-		if (com.pblabs.util.Device.isRetinaDisplay) {
+		if (org.transition9.util.Device.isRetinaDisplay) {
 			// _zoom = 2.0;
 		}
 		#end
@@ -179,7 +179,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	public function addLayer (?layerName :String = null, ?cls :Class<Dynamic> = null, ?registerAsManager :Bool = false, 
 		?startDetached :Bool = false) :BaseSceneLayer<Dynamic, Dynamic>
 	{
-		com.pblabs.util.Assert.isNotNull(context);
+		org.transition9.util.Assert.isNotNull(context);
 		
 		//Get the order of the children first
 		var childrenCopy = children.copy();
@@ -191,11 +191,11 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 			// cls = SceneUtil.LAYER_CLASS;
 		// }
 		
-		// com.pblabs.util.Assert.isNotNull(cls, "Null Layer Class");
+		// org.transition9.util.Assert.isNotNull(cls, "Null Layer Class");
 		
 		var layer = createLayer(layerName, cls);//context.allocate(cls);
 		//Check compatability
-		// com.pblabs.util.Assert.isTrue(Std.is(layer, SceneUtil.LAYER_CLASS), "Layer class " + cls + " is not a " + SceneUtil.LAYER_CLASS);
+		// org.transition9.util.Assert.isTrue(Std.is(layer, SceneUtil.LAYER_CLASS), "Layer class " + cls + " is not a " + SceneUtil.LAYER_CLASS);
 		var layerCast :com.pblabs.components.manager.NodeComponent<Dynamic, Dynamic> = cast layer;
 		
 		if (!startDetached) {
@@ -228,7 +228,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	{
 		//Use default class is none is given
 		cls = cls == null ? defaultLayerClass : cls;
-		com.pblabs.util.Assert.isNotNull(cls, "Null Layer Class");
+		org.transition9.util.Assert.isNotNull(cls, "Null Layer Class");
 		
 		var layer = context.allocate(cls);
 		
@@ -291,7 +291,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	
 	public function getLayerIndex (layer :Layer) :Int
 	{
-		com.pblabs.util.Assert.isTrue(children.indexOf(layer) >= 0 && children.indexOf(layer) < children.length);
+		org.transition9.util.Assert.isTrue(children.indexOf(layer) >= 0 && children.indexOf(layer) < children.length);
 		return children.indexOf(layer);
 	}
 	
@@ -311,7 +311,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 
 	override function childAdded (c :Layer) :Void
 	{
-		com.pblabs.util.Log.debug("adding scene layer " + c);
+		org.transition9.util.Log.debug("adding scene layer " + c);
 		super.childAdded(c);
 		_transformDirty = true;
 	}
@@ -319,7 +319,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	override function childRemoved (c :Layer) :Void
 	{
 		super.childRemoved(c);
-		com.pblabs.util.Log.debug("removing scene layer " + c);
+		org.transition9.util.Log.debug("removing scene layer " + c);
 		_transformDirty = true;
 	}
 
@@ -348,13 +348,13 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 			var sceneList = com.pblabs.engine.util.PBUtil.addSingletonComponent(context, SceneManagerList, 
 				SceneManagerList.NAME + ":" + context.name);
 			context.registerManager(SceneManagerList, sceneList, null, true);
-			com.pblabs.util.Assert.isNotNull(context.getManager(SceneManagerList), "No SceneManagerList after adding one???");
+			org.transition9.util.Assert.isNotNull(context.getManager(SceneManagerList), "No SceneManagerList after adding one???");
 		}
 		
 		parentProperty = context.getManager(com.pblabs.components.scene2D.SceneManagerList).entityProp(); 
 		super.onAdd();	  
 		sceneView = context.getManager(SceneView);
-		com.pblabs.util.Assert.isNotNull(sceneView, "No SceneView");
+		org.transition9.util.Assert.isNotNull(sceneView, "No SceneView");
 		//Custom attachment
 		attach();
 	}
@@ -459,9 +459,9 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 
 	function set_sceneBounds (value :AABB2) :AABB2
 	{
-		com.pblabs.util.Assert.isNotNull(sceneView, ' sceneView is null');
-		com.pblabs.util.Assert.isTrue(value.intervalX >= sceneView.width, "value.intervalX >= sceneView.width");
-		com.pblabs.util.Assert.isTrue(value.intervalY >= sceneView.height, "value.intervalY >= sceneView.height");
+		org.transition9.util.Assert.isNotNull(sceneView, ' sceneView is null');
+		org.transition9.util.Assert.isTrue(value.intervalX >= sceneView.width, "value.intervalX >= sceneView.width");
+		org.transition9.util.Assert.isTrue(value.intervalY >= sceneView.height, "value.intervalY >= sceneView.height");
 		_sceneBounds = value;
 		return value;
 	}

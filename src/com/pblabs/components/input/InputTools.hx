@@ -77,12 +77,12 @@ class InputTools
 	/** Grabs two BaseSceneComponent components and makes them into the two button states */
 	public static function makeTwoStateButton (e :IEntity, ?isToggle = false) :IEntity
 	{
-		com.pblabs.util.Assert.isNotNull(e, ' e is null');
+		org.transition9.util.Assert.isNotNull(e, ' e is null');
 		InputTools.ensureMouseInputComponent(e);
 		var mouse = e.getComponent(MouseInputComponent);
 		
 		var defaultComponents = e.getDeviceUpLayers();
-		com.pblabs.util.Assert.isTrue(defaultComponents.length > 0);
+		org.transition9.util.Assert.isTrue(defaultComponents.length > 0);
 		var deviceDownComponents = e.getDeviceDownLayers();
 		
 		for (bottom in deviceDownComponents) {
@@ -104,7 +104,7 @@ class InputTools
 		var toggleState = false;
 		
 		var sm = e.context.getManager(com.pblabs.engine.core.SignalBondManager);
-		com.pblabs.util.Assert.isNotNull(sm);
+		org.transition9.util.Assert.isNotNull(sm);
 		if (isToggle) {
 			mouse.bindDeviceDown(function () :Void {
 				toggleState = !toggleState;
@@ -145,14 +145,14 @@ class InputTools
 	{
 		var spatial = mouse.owner.getComponent(com.pblabs.components.spatial.SpatialComponent);
 		var input = mouse.context.getManager(com.pblabs.components.input.InputManager);
-		com.pblabs.util.Assert.isNotNull(spatial);
-		com.pblabs.util.Assert.isNotNull(input);
+		org.transition9.util.Assert.isNotNull(spatial);
+		org.transition9.util.Assert.isNotNull(input);
 		var downOnThisButton = false;
 		var move :com.pblabs.components.input.IInputData->Void = null;
 		var bond :hsl.haxe.Bond = null;
 		var down = function () :Void {
 			if (!mouse.isRegistered) {
-				com.pblabs.util.Log.warn("Mouse not registered");
+				org.transition9.util.Log.warn("Mouse not registered");
 				return;
 			}
 			spatial.y += 5;

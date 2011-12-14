@@ -26,7 +26,7 @@ class JSLayer extends BaseSceneLayer<JSSceneManager, SceneComponent>
 	
 	public function fixPosition () :Void
 	{
-		com.pblabs.util.Assert.isNotNull(div, "div is null");
+		org.transition9.util.Assert.isNotNull(div, "div is null");
 		
 		//Make sure the layers have an adjusted offset
 		var offsetHeight = 0;

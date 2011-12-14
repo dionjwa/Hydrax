@@ -24,8 +24,8 @@ import com.pblabs.engine.resource.ImageResources;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
-import com.pblabs.util.Rand;
-import com.pblabs.util.ReflectUtil;
+import org.transition9.util.Rand;
+import org.transition9.util.ReflectUtil;
 using com.pblabs.components.input.InputTools;
 using com.pblabs.components.scene2D.ImageTools;
 using com.pblabs.components.scene2D.SceneUtil;
@@ -104,7 +104,7 @@ class Demo
 		var time = Math.random() * 5;
 		time = Math.max(time, 2);
 		var sceneComp = e.getComponent(BaseSceneComponent);
-		com.pblabs.util.Assert.isNotNull(sceneComp);
+		org.transition9.util.Assert.isNotNull(sceneComp);
 		
 		var minX = sceneComp.layer.scene.getAlignedPoint(SceneAlignment.TOP_LEFT).x;
 		var maxX = sceneComp.layer.scene.getAlignedPoint(SceneAlignment.TOP_RIGHT).x;

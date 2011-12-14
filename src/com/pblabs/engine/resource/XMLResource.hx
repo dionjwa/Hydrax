@@ -10,13 +10,13 @@ package com.pblabs.engine.resource;
 
 import com.pblabs.engine.resource.ResourcesBase;
 import com.pblabs.engine.serialization.ISerializable;
-import com.pblabs.util.Preconditions;
-import com.pblabs.util.StringUtil;
+import org.transition9.util.Preconditions;
+import org.transition9.util.StringUtil;
 
 import haxe.io.BytesData;
 
 #if flash
-using com.pblabs.util.EventDispatcherUtil;
+using org.transition9.util.EventDispatcherUtil;
 #end
 
 /**
@@ -41,7 +41,7 @@ class XMLResource extends ResourcesBase<Xml>
 				case text (t): loadFromText(t);
 				case embedded (n): loadFromEmbedded(n);
 				default:
-					com.pblabs.util.Log.error("Resouce source type not handled: " + _source);
+					org.transition9.util.Log.error("Resouce source type not handled: " + _source);
 			}
 		} catch (e :Dynamic) {
 			onError(e);
@@ -55,7 +55,7 @@ class XMLResource extends ResourcesBase<Xml>
 	// override public function get (?name :String) :Xml
 	{
 		if (name != null) {
-			com.pblabs.util.Log.error("get(name): name argument is ignored");
+			org.transition9.util.Log.error("get(name): name argument is ignored");
 		}
 		return _xml.firstElement();
 	}
@@ -81,12 +81,12 @@ class XMLResource extends ResourcesBase<Xml>
 	{
 		Preconditions.checkNotNull(url, "url is null");
 		#if flash
-		com.pblabs.util.Log.debug("url=" + url);
+		org.transition9.util.Log.debug("url=" + url);
 		var self = this;
 		var urlLoader = new flash.net.URLLoader();
 		urlLoader.dataFormat = flash.net.URLLoaderDataFormat.TEXT;
 		var onComplete = function (e :flash.events.Event) :Void {
-			com.pblabs.util.Log.debug("xml downloaded");
+			org.transition9.util.Log.debug("xml downloaded");
 			urlLoader.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
 			urlLoader.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
 			self.createXMLFromData(urlLoader.data);
@@ -120,7 +120,7 @@ class XMLResource extends ResourcesBase<Xml>
 	
 	function loadFromEmbedded (embeddedName :String) :Void
 	{
-		com.pblabs.util.Log.debug("loadFromEmbedded");
+		org.transition9.util.Log.debug("loadFromEmbedded");
 		#if flash
 		var cls :Class<Dynamic> = Type.resolveClass("SWFResources_" + embeddedName);
 		Preconditions.checkNotNull(cls, "No embedded resource class SWFResources_" + embeddedName);

@@ -2,10 +2,10 @@ package com.pblabs.components.minimalcomp;
 
 import Type;
 
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
-import com.pblabs.util.ds.maps.MapBuilder;
+import org.transition9.geom.Vector2;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
+import org.transition9.ds.maps.MapBuilder;
 
 import de.polygonal.motor2.geom.math.XY;
 
@@ -22,7 +22,7 @@ class ContainerMappedChildren extends Container
 		anchors = new MapBuilder(ValueType.TClass(String))
 			.setDefaultValue(cast new Vector2())
 			.set("center", cast new Vector2()).build();
-		com.pblabs.util.Assert.isNotNull(anchors, ' anchors is null');
+		org.transition9.util.Assert.isNotNull(anchors, ' anchors is null');
 	}
 	
 	override public function redraw () :Void
@@ -33,7 +33,7 @@ class ContainerMappedChildren extends Container
 		}
 		
 		if (anchors == null) {
-			com.pblabs.util.Log.warn("No anchors");
+			org.transition9.util.Log.warn("No anchors");
 			return;
 		}
 		
@@ -42,15 +42,15 @@ class ContainerMappedChildren extends Container
 				continue;
 			}
 			if (c.id == null) {
-				com.pblabs.util.Log.warn(c.owner.name + " has a null component.id, so it cannot be assigned a location. Defaulting to (0,0)");
+				org.transition9.util.Log.warn(c.owner.name + " has a null component.id, so it cannot be assigned a location. Defaulting to (0,0)");
 			}
 			#if debug
 			if (!anchors.exists(c.id)) {
-				com.pblabs.util.Log.error("Missing anchor=" + c.id);
+				org.transition9.util.Log.error("Missing anchor=" + c.id);
 			}
 			#end
 			var loc = anchors.get(c.id);
-			com.pblabs.util.Assert.isNotNull(loc, ' loc is null for id=' + c.id);
+			org.transition9.util.Assert.isNotNull(loc, ' loc is null for id=' + c.id);
 			
 			var absX = x + loc.x;
 			var absY = y + loc.y;

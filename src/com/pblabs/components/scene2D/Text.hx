@@ -50,13 +50,14 @@ class Text extends
 		#end
 	}
 	
-	
+	#if js
 	override public function drawPixels (ctx :CanvasRenderingContext2D)
 	{
 		#if (debug && modernizr)
-		com.pblabs.util.Assert.isTrue(Modernizr.canvastext, "Modernizr.canvastext==false");
+		org.transition9.util.Assert.isTrue(Modernizr.canvastext, "Modernizr.canvastext==false");
 		#end
 	}
+	#end
 	
 	override function onReset () :Void
 	{

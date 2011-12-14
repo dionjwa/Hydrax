@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.components.tasks;
 import com.pblabs.engine.core.IEntity;
-import com.pblabs.util.Preconditions;
+import org.transition9.util.Preconditions;
 
 import haxe.FastList;
 

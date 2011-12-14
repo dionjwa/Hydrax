@@ -9,10 +9,10 @@
 package com.pblabs.engine.resource;
 
 import com.pblabs.engine.core.IPBContext;
-import com.pblabs.util.Equalable;
+import org.transition9.util.Equalable;
 
 class ResourceToken
-	implements Equalable<ResourceToken>, implements com.pblabs.util.ds.Hashable, implements de.polygonal.ds.Hashable
+	implements Equalable<ResourceToken>, implements org.transition9.ds.Hashable, implements de.polygonal.ds.Hashable
 {
 	public var key :Int;
 	public var source :Source;
@@ -28,7 +28,7 @@ class ResourceToken
 		this.id = id;
 		this.type = type;
 		//Only hash the id and the type.  The source should not matter for hashing.
-		_hashCode = com.pblabs.util.StringUtil.hashCode(id + ":" + Type.enumConstructor(type));
+		_hashCode = org.transition9.util.StringUtil.hashCode(id + ":" + Type.enumConstructor(type));
 	}
 	
 	public function equals (other :ResourceToken) :Bool
@@ -66,7 +66,7 @@ class ResourceToken
 	{
 		switch (source) {
 			case Source.url (u): return u; 
-			default: com.pblabs.util.Log.error("ResourceType does not have an URL: " + this);
+			default: org.transition9.util.Log.error("ResourceType does not have an URL: " + this);
 		}
 		return null;
 	}

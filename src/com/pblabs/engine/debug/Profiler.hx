@@ -12,8 +12,8 @@
  ******************************************************************************/
 package com.pblabs.engine.debug;
 
-import com.pblabs.util.ds.Maps;
-import com.pblabs.util.ds.Map;
+import org.transition9.ds.Maps;
+import org.transition9.ds.Map;
 
 import de.polygonal.core.math.Limits;
 
@@ -207,8 +207,8 @@ import Type;
 		static function doReport () :Void
 		{
 			_wantReport = false;
-			com.pblabs.util.Assert.isNotNull(_rootNode);
-			var header = "\n" + com.pblabs.util.Sprintf.format("%-" + nameFieldWidth + "s%-8s%-8s%-8s%-8s%-8s%-8s", ["name",
+			org.transition9.util.Assert.isNotNull(_rootNode);
+			var header = "\n" + org.transition9.util.Sprintf.format("%-" + nameFieldWidth + "s%-8s%-8s%-8s%-8s%-8s%-8s", ["name",
 			"Calls", "Total%", "NonSub%", "AvgMs", "MinMs", "MaxMs"]);
 			
 			var report = header + report_R(_rootNode, 0);
@@ -232,7 +232,7 @@ import Type;
 	
 		static function report_R (pi :ProfileInfo, indent :Int) :String
 		{
-			com.pblabs.util.Assert.isNotNull(pi);
+			org.transition9.util.Assert.isNotNull(pi);
 			var s = "";
 			// Figure our display values.
 			var selfTime :Float = pi.totalTime;
@@ -262,7 +262,7 @@ import Type;
 			if (indent == 0) {
 				"\n+Root";
 			} else {
-				"\n" + com.pblabs.util.Sprintf.format("%-" + (indent * indentAmount) + "s%-" + (nameFieldWidth - indent *
+				"\n" + org.transition9.util.Sprintf.format("%-" + (indent * indentAmount) + "s%-" + (nameFieldWidth - indent *
 					indentAmount) + "s%-8i%-8.2f%-8.2f%-8.2f%-8.2f%-8.2f", ["", (hasKids ? "+" : "-") + pi.name,
 					pi.activations, displayTime, displayNonSubTime,
 					pi.totalTime / pi.activations, pi.minTime, pi.maxTime]);

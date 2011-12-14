@@ -9,9 +9,9 @@
 package com.pblabs.components.scene2D;
 
 import com.pblabs.engine.resource.ResourceToken;
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.ds.Tuple;
-import com.pblabs.util.svg.SvgData;
+import org.transition9.geom.Vector2;
+import org.transition9.ds.Tuple;
+import org.transition9.util.svg.SvgData;
 
 import de.polygonal.motor2.geom.math.XY;
 import de.polygonal.motor2.geom.primitive.AABB2;
@@ -29,10 +29,10 @@ using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.scene2D.SvgRenderTools;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.resource.ResourceToken;
-using com.pblabs.util.StringUtil;
-using com.pblabs.util.XmlTools;
+using org.transition9.util.StringUtil;
+using org.transition9.util.XmlTools;
 #if flash
-using com.pblabs.util.DisplayUtils;
+using org.transition9.util.DisplayUtils;
 import de.polygonal.core.math.Mathematics;
 #end
 
@@ -68,14 +68,14 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		_displayObject.removeAllChildren();
 		#elseif js
 		if (!isOnCanvas && SvgRenderTools.IS_INLINE_SVG) {
-			com.pblabs.util.Assert.isNotNull(div);
+			org.transition9.util.Assert.isNotNull(div);
 			//Remove previous children
 			while (div.hasChildNodes()) {
 				div.removeChild(div.lastChild);
 			}
 		} else {
 			// canvas.getContext("2d").clearRect(0, 0, width, height);
-			// com.pblabs.util.Log.error("Setting svg null should clear the display component, but this is not yet implemented in canvas js");
+			// org.transition9.util.Log.error("Setting svg null should clear the display component, but this is not yet implemented in canvas js");
 		}
 		#end
 		
@@ -116,14 +116,14 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		#if (flash || cpp)
 		_displayObject.removeAllChildren();
 		var self = this;
-		com.pblabs.util.Log.info("SvgRenderTools.renderSvg");
+		org.transition9.util.Log.info("SvgRenderTools.renderSvg");
 		SvgRenderTools.renderSvg(_svgData, function (renderedSvg :flash.display.DisplayObject) :Void {
 			if (!self.isRegistered) return;
 			if (localRenderId != self._renderId) return;//Another render call supercedes this render
 			var sprite = cast(self._displayObject, flash.display.Sprite);
 			sprite.addChild(renderedSvg);
 			self.recomputeBounds();
-			registrationPoint = new com.pblabs.geom.Vector2(bounds.intervalX / 2, bounds.intervalY / 2);
+			registrationPoint = new org.transition9.geom.Vector2(bounds.intervalX / 2, bounds.intervalY / 2);
 			// trace("renderCompleteSignal.dispatch " + key + " " + owner.name + ", bounds=" + bounds);
 			self.renderCompleteSignal.dispatch();
 			
@@ -202,7 +202,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			}
 		});
 		// _hierarchyManager = context.getManager(com.pblabs.components.scene2D.HierarchyManager);
-		// com.pblabs.util.Assert.isNotNull(_hierarchyManager, ' _hierarchyManager is null');
+		// org.transition9.util.Assert.isNotNull(_hierarchyManager, ' _hierarchyManager is null');
 		
 	}
 	#end
@@ -223,23 +223,23 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	
 	function insertSvgsIntoDiv () :Void
 	{
-		com.pblabs.util.Assert.isTrue(SvgRenderTools.IS_INLINE_SVG, "No inline SVG support");
+		org.transition9.util.Assert.isTrue(SvgRenderTools.IS_INLINE_SVG, "No inline SVG support");
 		//Insert the SVGdirectly into the DOM
-		com.pblabs.util.Assert.isNotNull(svgData);
-		com.pblabs.util.Assert.isNotNull(div);
+		org.transition9.util.Assert.isNotNull(svgData);
+		org.transition9.util.Assert.isNotNull(div);
 		//Remove previous children
 		while (div.hasChildNodes()) {
 			div.removeChild(div.lastChild);
 		}
 		
-		var uniquedIds = Std.string(com.pblabs.util.svg.SvgTools.makeIdsGloballyUnique(_svgData.xml.clone()));
+		var uniquedIds = Std.string(org.transition9.util.svg.SvgTools.makeIdsGloballyUnique(_svgData.xml.clone()));
 		
 		div.innerHTML = uniquedIds;//_svgData.data;
 	}
 	
 	override public function drawPixels (ctx :CanvasRenderingContext2D)
 	{
-		com.pblabs.util.Assert.isNotNull(ctx);
+		org.transition9.util.Assert.isNotNull(ctx);
 		if (svgData == null) {
 			_isContentsDirty = true;
 			ctx.fillRect(0, 0, 30, 30);
@@ -252,7 +252,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	// {
 	// 	if (_backBuffer == null) {
 	// 		_backBuffer = cast js.Lib.document.createElement("canvas");
-	// 		com.pblabs.util.Assert.isNotNull(div);
+	// 		org.transition9.util.Assert.isNotNull(div);
 	// 	}
 	// 	super.redrawBackBuffer();
 	// }
@@ -261,7 +261,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	#if flash
 	override function set_displayObject (d :flash.display.DisplayObject) :flash.display.DisplayObject
 	{
-		com.pblabs.util.Preconditions.checkArgument(_displayObject == null && !isRegistered);
+		org.transition9.util.Preconditions.checkArgument(_displayObject == null && !isRegistered);
 		_displayObject = d;
 		return d;
 	}
@@ -270,7 +270,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 	#if debug
 	override public function toString () :String
 	{
-		return "Svg " + key + " " + name + " Entity(" + (owner != null ? owner.name : "null") + ") " + com.pblabs.util.StringUtil.objectToString(this, ["x", "y", "width", "height"]);
+		return "Svg " + key + " " + name + " Entity(" + (owner != null ? owner.name : "null") + ") " + org.transition9.util.StringUtil.objectToString(this, ["x", "y", "width", "height"]);
 	}
 	#end
 	
@@ -284,7 +284,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 				for (b in sig.getBonds()) {
 					trace("Stuck bond on " + debugOwnerName + "=" + b);
 				}
-				com.pblabs.util.Assert.isFalse(sig.isListenedTo, debugOwnerName);
+				org.transition9.util.Assert.isFalse(sig.isListenedTo, debugOwnerName);
 			}
 		}
 	}

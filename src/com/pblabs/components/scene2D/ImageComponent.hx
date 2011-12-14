@@ -13,8 +13,8 @@ import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.resource.IResources;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceToken;
-import com.pblabs.geom.RectangleTools;
-import com.pblabs.util.Preconditions;
+import org.transition9.geom.RectangleTools;
+import org.transition9.util.Preconditions;
 
 import de.polygonal.motor2.geom.math.XY;
 
@@ -36,7 +36,7 @@ class ImageComponent extends BitmapRenderer
 	
 	override function onAdd () :Void
 	{
-		com.pblabs.util.Assert.isNotNull(resource, "resource is null for #" + owner.name + "." + name);
+		org.transition9.util.Assert.isNotNull(resource, "resource is null for #" + owner.name + "." + name);
 		#if js
 		super.onAdd();
 		loadJSImage();
@@ -49,9 +49,9 @@ class ImageComponent extends BitmapRenderer
 	#if js
 	function loadJSImage () :Void
 	{
-		com.pblabs.util.Assert.isNotNull(resource, ' resource is null');
+		org.transition9.util.Assert.isNotNull(resource, ' resource is null');
 		var image :Image = context.getTokenResource(resource);
-		com.pblabs.util.Assert.isNotNull(image, ' image is null');
+		org.transition9.util.Assert.isNotNull(image, ' image is null');
 		setImage(image);
 		// width = image.width;
 		// height = image.height;
@@ -68,7 +68,7 @@ class ImageComponent extends BitmapRenderer
 		// ctx.drawImage(image, 0, 0);
 		// bitmapData = canvas;
 		//Assume you want the image centered.
-		// registrationPoint = new com.pblabs.geom.Vector2(image.width / 2, image.height / 2);
+		// registrationPoint = new org.transition9.geom.Vector2(image.width / 2, image.height / 2);
 	}
 	#end
 	
@@ -77,8 +77,8 @@ class ImageComponent extends BitmapRenderer
 	{
 		var image :Dynamic = context.getTokenResource(resource);
 		// trace(resource + "=" + image); 
-		com.pblabs.util.Assert.isNotNull(image, "Image loaded from " + resource + " is null");
-		com.pblabs.util.Assert.isNotNull(image, "null image for " + resource);
+		org.transition9.util.Assert.isNotNull(image, "Image loaded from " + resource + " is null");
+		org.transition9.util.Assert.isNotNull(image, "null image for " + resource);
 		if (Std.is(image, flash.display.BitmapData)) {
 			this.bitmapData = cast image;
 		} else if (Std.is(image, flash.display.Bitmap)) {
@@ -86,19 +86,19 @@ class ImageComponent extends BitmapRenderer
 		} else if (Std.is(image, flash.display.DisplayObject)) {
 			displayObject = cast image;
 		} else {
-			com.pblabs.util.Log.error("Unrecognized image type=" + haxe.rtti.ReflectUtil.getClassName(image)); 
+			org.transition9.util.Log.error("Unrecognized image type=" + org.transition9.rtti.ReflectUtil.getClassName(image)); 
 		}
 		recomputeBounds();
 		// trace("after loading flash image, _unscaledBounds=" + _unscaledBounds + ", _bounds=" + _bounds);
 		//Assume you want the image centered.
-		// registrationPoint = new com.pblabs.geom.Vector2(image.width / 2, image.height / 2);
+		// registrationPoint = new org.transition9.geom.Vector2(image.width / 2, image.height / 2);
 	}
 	#end
 	
 	#if debug
 	override public function toString () :String
 	{
-		return com.pblabs.util.StringUtil.objectToString(this, ["x", "y", "width", "height"]);
+		return org.transition9.util.StringUtil.objectToString(this, ["x", "y", "width", "height"]);
 	}
 	#end
 }

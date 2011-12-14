@@ -19,15 +19,15 @@ import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.core.SetManager;
 import com.pblabs.engine.time.IProcessManager;
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.Preconditions;
-import haxe.rtti.ReflectUtil;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
-import com.pblabs.util.ds.MultiMap;
-import com.pblabs.util.ds.Set;
-import com.pblabs.util.ds.Sets;
-import com.pblabs.util.ds.multimaps.ArrayMultiMap;
+import org.transition9.geom.Vector2;
+import org.transition9.util.Preconditions;
+import org.transition9.rtti.ReflectUtil;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
+import org.transition9.ds.MultiMap;
+import org.transition9.ds.Set;
+import org.transition9.ds.Sets;
+import org.transition9.ds.multimaps.ArrayMultiMap;
 
 import de.polygonal.motor2.geom.math.XY;
 
@@ -40,7 +40,7 @@ import Type;
 using Lambda;
 
 using com.pblabs.components.scene2D.SceneUtil;
-using com.pblabs.util.MathUtil;
+using org.transition9.util.MathUtil;
 
 /**
  * Integrates different lower level input listeners into higher level signals such as drag,
@@ -168,7 +168,7 @@ class InputManager extends BaseInputManager,
 			return null;
 		}
 		if (_sceneManagers == null) {
-			com.pblabs.util.Assert.isNotNull(context);
+			org.transition9.util.Assert.isNotNull(context);
 			
 			var sceneList = context.getManager(SceneManagerList);
 			if (sceneList == null) {
@@ -185,7 +185,7 @@ class InputManager extends BaseInputManager,
 	
 	function bindSignals () :Void
 	{
-		com.pblabs.util.Assert.isNotNull(_mouse, "MouseInputManager is null, did you register one?");
+		org.transition9.util.Assert.isNotNull(_mouse, "MouseInputManager is null, did you register one?");
 
 		_mouse.mouseDown.bind(onMouseDown);
 		_mouse.mouseMove.bind(onMouseMove);
@@ -289,7 +289,7 @@ class InputManager extends BaseInputManager,
 	
 	function onMouseDown (m :MouseLocation) :Void
 	{
-		com.pblabs.util.Log.info(m);
+		org.transition9.util.Log.info(m);
 		//Reset markers
 		_isGesturing =  _isZooming = false;
 		_isDeviceDown = true;
@@ -307,7 +307,7 @@ class InputManager extends BaseInputManager,
 	
 	function onMouseUp (m :MouseLocation) :Void
 	{
-		com.pblabs.util.Log.info(m);
+		org.transition9.util.Log.info(m);
 		_isDeviceDown = false;
 		
 		if (!deviceUp.isListenedTo) {
@@ -378,7 +378,7 @@ class InputManager extends BaseInputManager,
 		#elseif js
 		//TODO: find this
 		#else
-		com.pblabs.util.Log.warn("No mouse detection on this platform");
+		org.transition9.util.Log.warn("No mouse detection on this platform");
 		#end
 		
 		return _deviceLoc;
@@ -433,16 +433,16 @@ class InputManager extends BaseInputManager,
 	{
 		mask = mask == null ? ObjectType.ALL : mask;
 		
-		com.pblabs.util.Assert.isNotNull(_displayObjectFirstUnderPoint);
+		org.transition9.util.Assert.isNotNull(_displayObjectFirstUnderPoint);
 		if (_displayObjectFirstUnderPoint.exists(mask.bits)) {
 			return _displayObjectFirstUnderPoint.get(mask.bits);
 		}
 		
 		if (getSceneManagers() == null) {
-			com.pblabs.util.Log.info("No object under point because getSceneManagers() == null"); 
+			org.transition9.util.Log.info("No object under point because getSceneManagers() == null"); 
 			return null;
 		}
-		com.pblabs.util.Assert.isNotNull(getSceneManagers());
+		org.transition9.util.Assert.isNotNull(getSceneManagers());
 		for (sceneManager in getSceneManagers()) {
 			var worldLoc = sceneManager.translateScreenToWorld(inputLocation);
 			var layerIndex = sceneManager.children.length - 1;

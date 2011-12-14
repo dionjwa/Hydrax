@@ -14,9 +14,9 @@ import com.pblabs.components.spatial.IBounded;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.geom.RectangleTools;
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.Preconditions;
+import org.transition9.geom.RectangleTools;
+import org.transition9.geom.Vector2;
+import org.transition9.util.Preconditions;
 
 import de.polygonal.core.math.Mathematics;
 import de.polygonal.motor2.geom.math.XY;
@@ -27,9 +27,9 @@ import flash.geom.Matrix;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
-using com.pblabs.geom.VectorTools;
-using com.pblabs.util.ArrayUtil;
-using com.pblabs.util.StringUtil;
+using org.transition9.geom.VectorTools;
+using org.transition9.util.ArrayUtil;
+using org.transition9.util.StringUtil;
 
 class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComponent<Layer, Dynamic>,
 		implements IInteractiveComponent, implements haxe.rtti.Infos, implements IBounded
@@ -137,13 +137,13 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	public function containsScreenPoint (pos :XY, mask :ObjectType) :Bool
 	{
-		com.pblabs.util.Assert.isNotNull(mask);
-		com.pblabs.util.Assert.isNotNull(objectMask);
+		org.transition9.util.Assert.isNotNull(mask);
+		org.transition9.util.Assert.isNotNull(objectMask);
 		if (!objectMask.and(mask)) {
 			return false;
 		}
 		var scene :BaseSceneManager<Dynamic> = cast parent.scene;
-		com.pblabs.util.Assert.isNotNull(scene);
+		org.transition9.util.Assert.isNotNull(scene);
 		return containsWorldPoint(scene.translateScreenToWorld(pos), mask);
 	}
 	
@@ -168,8 +168,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		super.onReset();
 		com.pblabs.engine.debug.Profiler.exit("super");
 		if (autoAddToScene) {
-			Preconditions.checkNotNull(parentProperty, "parentProperty is null in " + haxe.rtti.ReflectUtil.getClassName(this));
-			com.pblabs.util.Assert.isNotNull(parent, haxe.rtti.ReflectUtil.tinyClassName(this) + ".parent is null, prop=" + parentProperty);
+			Preconditions.checkNotNull(parentProperty, "parentProperty is null in " + org.transition9.rtti.ReflectUtil.getClassName(this));
+			org.transition9.util.Assert.isNotNull(parent, org.transition9.rtti.ReflectUtil.tinyClassName(this) + ".parent is null, prop=" + parentProperty);
 		}
 		
 		var coords = spatialProperty != null ? owner.getProperty(spatialProperty) : null;
@@ -177,7 +177,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		if (coords != null) {
 			#if debug
 			var bond = bindSignal(coords.signalerLocation, setLocation);
-			bond.debugInfo = haxe.rtti.ReflectUtil.tinyClassName(this);
+			bond.debugInfo = org.transition9.rtti.ReflectUtil.tinyClassName(this);
 			#else
 			bindSignal(coords.signalerLocation, setLocation);
 			#end
@@ -187,7 +187,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 			setLocation(coords.position);
 			angle = coords.angle;
 		} else {
-			com.pblabs.util.Log.info("No coords component found, you are on your own regarding updating Scene components " + com.pblabs.util.Log.getStackTrace());
+			org.transition9.util.Log.info("No coords component found, you are on your own regarding updating Scene components " + org.transition9.util.Log.getStackTrace());
 		}
 		com.pblabs.engine.debug.Profiler.exit("bindsignals");
 		
@@ -313,11 +313,11 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	function set_width (val :Float) :Float
 	{
-		com.pblabs.util.Assert.isTrue(val >= 0, "val=" + val + " " + com.pblabs.util.Log.getStackTrace());
+		org.transition9.util.Assert.isTrue(val >= 0, "val=" + val + " " + org.transition9.util.Log.getStackTrace());
 		isTransformDirty = true;
 		_bounds.xmin = _x - val / 2;
 		_bounds.xmax = _x + val / 2;
-		com.pblabs.util.Assert.isTrue(_unscaledBounds.x > 0, com.pblabs.util.Log.getStackTrace());
+		org.transition9.util.Assert.isTrue(_unscaledBounds.x > 0, org.transition9.util.Log.getStackTrace());
 		_scaleX =_bounds.intervalX / _unscaledBounds.x;
 		return val;
 	}
@@ -329,11 +329,11 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	function set_height (val :Float) :Float
 	{
-		com.pblabs.util.Assert.isTrue(val >= 0, "val=" + val);
+		org.transition9.util.Assert.isTrue(val >= 0, "val=" + val);
 		isTransformDirty = true;
 		_bounds.ymin = _y - val / 2;
 		_bounds.ymax = _y + val / 2;
-		com.pblabs.util.Assert.isTrue(_unscaledBounds.y > 0);
+		org.transition9.util.Assert.isTrue(_unscaledBounds.y > 0);
 		_scaleY =_bounds.intervalY / _unscaledBounds.y;
 		return val;
 	}
@@ -362,7 +362,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		} else {
 			_zIndex = Mathematics.clamp(val, 0, layer.children.length - 1);
 			var curIndex = layer.children.indexOf(this);
-			com.pblabs.util.Assert.isTrue(curIndex > -1);
+			org.transition9.util.Assert.isTrue(curIndex > -1);
 			if (curIndex != _zIndex) {
 				layer.children.splice(curIndex, 1);
 				layer.children.insert(_zIndex, this);

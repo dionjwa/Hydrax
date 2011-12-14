@@ -13,13 +13,13 @@ import com.pblabs.components.tasks.TaskComponent;
 import com.pblabs.components.tasks.TaskComponentTicked;
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.util.BitmapUtil;
-import com.pblabs.util.ds.multimaps.SetMultiMap;
+import org.transition9.util.BitmapUtil;
+import org.transition9.ds.multimaps.SetMultiMap;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
-using com.pblabs.util.IterUtil;
-using com.pblabs.util.StringUtil;
+using org.transition9.util.IterUtil;
+using org.transition9.util.StringUtil;
 
 /**
   * Listends for progress events on the Dispatcher,
@@ -48,7 +48,7 @@ class ProgressBar extends EntityComponent
 	{
 		super.onAdd();
 		
-		com.pblabs.util.Assert.isNotNull(layerProperty, "No layer property");
+		org.transition9.util.Assert.isNotNull(layerProperty, "No layer property");
 		owner.deferring = true;
 		SpatialComponent.addToEntity(owner);
 		owner.addComponent(context.allocate(TaskComponentTicked), TaskComponent.NAME);
@@ -66,7 +66,7 @@ class ProgressBar extends EntityComponent
 	{
 		super.onReset();
 		var disp :BaseSceneComponent<Dynamic> = owner.getComponentByName(DISPLAY_NAME);
-		com.pblabs.util.Assert.isNotNull(disp);
+		org.transition9.util.Assert.isNotNull(disp);
 		//Start NOT on the layer.
 		disp.removeFromParent();
 		
@@ -74,9 +74,9 @@ class ProgressBar extends EntityComponent
 		bindSignal(dis.dispatcher, onDispatcherSignal);
 		
 		//Center
-		com.pblabs.util.Assert.isNotNull(layerProperty);
+		org.transition9.util.Assert.isNotNull(layerProperty);
 		var layer = owner.getProperty(layerProperty);
-		com.pblabs.util.Assert.isNotNull(layer, "No layer, prop=" + layerProperty);
+		org.transition9.util.Assert.isNotNull(layer, "No layer, prop=" + layerProperty);
 		var p = SceneUtil.getAlignedPoint(layer.scene, SceneAlignment.CENTER);
 		SceneUtil.setLocation(owner, p.x, p.y - layer.scene.sceneView.height / 4);
 	}
@@ -113,7 +113,7 @@ class ProgressBar extends EntityComponent
 	function redraw () :Void
 	{
 		var disp :BaseSceneComponent<Dynamic> = owner.getComponentByName(DISPLAY_NAME);
-		com.pblabs.util.Assert.isNotNull(disp, " disp is null");
+		org.transition9.util.Assert.isNotNull(disp, " disp is null");
 		if (_inProgress.length == 0) {
 			if (disp.layer != null) {
 				disp.removeFromParent();
@@ -126,7 +126,7 @@ class ProgressBar extends EntityComponent
 		
 		#if (flash || cpp)
 		var shape :com.pblabs.components.scene2D.flash.SceneComponentShape = owner.getComponentByName(DISPLAY_NAME);
-		com.pblabs.util.Assert.isNotNull(shape, " shape is null");
+		org.transition9.util.Assert.isNotNull(shape, " shape is null");
 		var g = shape.shape.graphics;
 		
 		var width = 200;

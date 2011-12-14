@@ -57,7 +57,7 @@ class PBObject
 	
 	function set_context (c :IPBContext) :IPBContext
 	{
-		com.pblabs.util.Assert.isTrue(_context == null, "Trying to set context on a PBObject that already has one!");
+		org.transition9.util.Assert.isTrue(_context == null, "Trying to set context on a PBObject that already has one!");
 		_context = cast(c);
 		return c;
 	}
@@ -69,8 +69,8 @@ class PBObject
 	
 	function set_owningGroup (value :IPBGroup) :IPBGroup
 	{
-		com.pblabs.util.Assert.isNotNull(value, "Must always be in a group - cannot set owningGroup to null!");
-		com.pblabs.util.Assert.isTrue(_owningGroup == null || value.rootGroup == _owningGroup, "Attempting to set an illegal group");
+		org.transition9.util.Assert.isNotNull(value, "Must always be in a group - cannot set owningGroup to null!");
+		org.transition9.util.Assert.isTrue(_owningGroup == null || value.rootGroup == _owningGroup, "Attempting to set an illegal group");
 		if(value == _owningGroup) {
 			return value;
 		}
@@ -91,7 +91,7 @@ class PBObject
 	
 	function set_name(name :String) :String
 	{
-		com.pblabs.util.Assert.isTrue(_name == null, haxe.rtti.ReflectUtil.getClassName(this) + " already has a name");
+		org.transition9.util.Assert.isTrue(_name == null, org.transition9.rtti.ReflectUtil.getClassName(this) + " already has a name");
 		_name = name;
 		return name;
 	}
@@ -99,9 +99,9 @@ class PBObject
 	public function initialize(name :String = null) :Void
 	{		   
 		// Note the names.
-		com.pblabs.util.Assert.isNull(_name, "_name is not null=" + _name);
+		org.transition9.util.Assert.isNull(_name, "_name is not null=" + _name);
 		_name = name;
-		com.pblabs.util.Assert.isNotNull(_context, "Context null on init :" + haxe.rtti.ReflectUtil.getClassName(this));
+		org.transition9.util.Assert.isNotNull(_context, "Context null on init :" + org.transition9.rtti.ReflectUtil.getClassName(this));
 		_context.register(this);
 	}
 	

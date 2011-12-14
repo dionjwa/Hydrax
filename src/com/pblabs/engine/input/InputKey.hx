@@ -12,7 +12,7 @@
  ******************************************************************************/
 package com.pblabs.engine.input;
 
-import com.pblabs.util.Enumerable;
+import org.transition9.util.Enumerable;
 
 /**
  * Enumeration class that maps friendly key names to their key code equivalent. This class

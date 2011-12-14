@@ -29,7 +29,7 @@
 package com.pblabs.components.tasks;
 
 import com.pblabs.engine.core.IEntity;
-import com.pblabs.util.Assert;
+import org.transition9.util.Assert;
 
 class TaskContainer
 	implements IEntityTask 

@@ -14,7 +14,7 @@ import flash.display.Sprite;
 
 import flash.geom.Matrix;
 
-using com.pblabs.util.DisplayUtils;
+using org.transition9.util.DisplayUtils;
 
 /**
  * A scene which draws to a BitmapData. Useful when you want to do
@@ -77,12 +77,12 @@ class BitmapDataScene extends com.pblabs.components.scene2D.flash.SceneManager
 			// Firefox 3 bug - we can get stageHeight/stageWidth of 0 which
 			// trickles down and causes this problem. So if they are zero, 
 			// just reassign to stageHeight/stageWidth.
-			// com.pblabs.util.Log.warn(this, "onFrame", "Zero size sceneView! Resetting to stage size (" + PBE.mainStage.stageWidth + "x" + PBE.mainStage.stageHeight + ")");
+			// org.transition9.util.Log.warn(this, "onFrame", "Zero size sceneView! Resetting to stage size (" + PBE.mainStage.stageWidth + "x" + PBE.mainStage.stageHeight + ")");
 			
 			// if(PBE.mainStage.stageWidth == 0 || PBE.mainStage.stageHeight == 0)
 			// {
-			// 	com.pblabs.util.Log.warn(this, "onFrame", "Stage is also zero size! This might be a Firefox bug (see http ://bugs.adobe.com/jira/browse/FP-434).");
-			// 	com.pblabs.util.Log.warn(this, "onFrame", "If it doesn't go away after a few frames, it is probably another issue.");
+			// 	org.transition9.util.Log.warn(this, "onFrame", "Stage is also zero size! This might be a Firefox bug (see http ://bugs.adobe.com/jira/browse/FP-434).");
+			// 	org.transition9.util.Log.warn(this, "onFrame", "If it doesn't go away after a few frames, it is probably another issue.");
 			// }
 			
 			// sceneView.width = PBE.mainStage.stageWidth;
@@ -156,10 +156,10 @@ class BitmapDataScene extends com.pblabs.components.scene2D.flash.SceneManager
 	
 	override function attach () :Void
 	{
-		com.pblabs.util.Assert.isNotNull(bitmap);
-		com.pblabs.util.Assert.isNotNull(context, "How can the context be null??, name=" + name + ", isRegistered=" +isRegistered);
+		org.transition9.util.Assert.isNotNull(bitmap);
+		org.transition9.util.Assert.isNotNull(context, "How can the context be null??, name=" + name + ", isRegistered=" +isRegistered);
 		if (bitmap.parent == null) {
-			com.pblabs.util.Assert.isNotNull(context.getManager(SceneView), "No SceneView??");
+			org.transition9.util.Assert.isNotNull(context.getManager(SceneView), "No SceneView??");
 			context.getManager(SceneView).addDisplayObject(bitmap);
 		}
 	}

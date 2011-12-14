@@ -16,7 +16,7 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.util.PBUtil;
-import haxe.rtti.ReflectUtil;
+import org.transition9.rtti.ReflectUtil;
 
 /**
 * An implementation of the IEntityComponent interface, providing all the basic
@@ -60,7 +60,7 @@ class EntityComponent
    
    function set_context(value:IPBContext):IPBContext
    {
-   	   com.pblabs.util.Assert.isTrue(_context == null || _context == value, ReflectUtil.getClassName(this) + " already registered in another context.");
+   	   org.transition9.util.Assert.isTrue(_context == null || _context == value, ReflectUtil.getClassName(this) + " already registered in another context.");
 	   _context = value;
 	   return value;
    }
@@ -72,8 +72,8 @@ class EntityComponent
   
    function set_owner(value:IEntity):IEntity
    {
-	  com.pblabs.util.Assert.isNotNull(value, "Cannot set an Entity owner to null.  This can only happen on unRegister");
-	  com.pblabs.util.Assert.isTrue(_owner == null, "Cannot change the owner");
+	  org.transition9.util.Assert.isNotNull(value, "Cannot set an Entity owner to null.  This can only happen on unRegister");
+	  org.transition9.util.Assert.isTrue(_owner == null, "Cannot change the owner");
 	  _owner = value;
 	  return value;
    }
@@ -85,7 +85,7 @@ class EntityComponent
   
   function set_name (name :String) :String
   {
-	  com.pblabs.util.Assert.isTrue(_name == null, ReflectUtil.getClassName(this) + " already has a name");
+	  org.transition9.util.Assert.isTrue(_name == null, ReflectUtil.getClassName(this) + " already has a name");
 	  _name = name;
 	  return name;
   }
@@ -97,23 +97,23 @@ class EntityComponent
   
   public function register(owner :IEntity, ?name:String):Void
   {
-	  com.pblabs.util.Assert.isTrue(!isRegistered, "Trying to register an already-registered component!");
+	  org.transition9.util.Assert.isTrue(!isRegistered, "Trying to register an already-registered component!");
 	 _context = owner.context;
 	 _name = name;
 	 _owner = owner;
 	 _sanityCheck = false;
 	 _isRegistered = true;
 	 onAdd();
-	 com.pblabs.util.Assert.isTrue(_sanityCheck, "Forgot to call super.onAdd(); in " + haxe.rtti.ReflectUtil.getClassName(this) + "!");
+	 org.transition9.util.Assert.isTrue(_sanityCheck, "Forgot to call super.onAdd(); in " + org.transition9.rtti.ReflectUtil.getClassName(this) + "!");
   }
   
   public function unregister():Void
   {
-	  com.pblabs.util.Assert.isTrue(isRegistered, "Trying to unregister an unregistered component!");
+	  org.transition9.util.Assert.isTrue(isRegistered, "Trying to unregister an unregistered component!");
 	 _isRegistered = false;
 	 _sanityCheck = false;
 	 onRemove();
-	 com.pblabs.util.Assert.isTrue(_sanityCheck, "Forgot to call super.onRemove(); in " + haxe.rtti.ReflectUtil.getClassName(this) + "!");
+	 org.transition9.util.Assert.isTrue(_sanityCheck, "Forgot to call super.onRemove(); in " + org.transition9.rtti.ReflectUtil.getClassName(this) + "!");
 	 _owner = null;
 	 _name = null;
 	 _context = null;
@@ -123,7 +123,7 @@ class EntityComponent
   {
   	  _sanityCheck = false;
   	  onReset();
-  	  com.pblabs.util.Assert.isTrue(_sanityCheck, "Forgot to call super.onReset(); in " + haxe.rtti.ReflectUtil.getClassName(this) + "!");
+  	  org.transition9.util.Assert.isTrue(_sanityCheck, "Forgot to call super.onReset(); in " + org.transition9.rtti.ReflectUtil.getClassName(this) + "!");
   }
   
   /**

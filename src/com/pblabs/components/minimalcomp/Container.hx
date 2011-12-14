@@ -4,8 +4,8 @@ import Type;
 
 import com.pblabs.components.scene2D.BaseSceneLayer;
 import com.pblabs.components.spatial.SpatialComponent;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
 
 import de.polygonal.core.math.Limits;
 import de.polygonal.motor2.geom.math.XY;
@@ -83,9 +83,9 @@ class Container extends Component
 	{
 		super.onReset();
 		_needsRedraw = true;
-		com.pblabs.util.Assert.isNotNull(_spatial);
+		org.transition9.util.Assert.isNotNull(_spatial);
 		//Listen for location changes so we can redraw
-		com.pblabs.util.Assert.isTrue(owner.getComponents(SpatialComponent).length == 1);
+		org.transition9.util.Assert.isTrue(owner.getComponents(SpatialComponent).length == 1);
 		bindSignal(_spatial.signalerLocation, onLocationChanged);
 		invalidate();
 	}
@@ -128,7 +128,7 @@ class Container extends Component
 		}
 		for (c in children) {
 			if (c.owner == owner) {
-				com.pblabs.util.Log.warn("Child and parent owned by the same entity, could get strange with updates");
+				org.transition9.util.Log.warn("Child and parent owned by the same entity, could get strange with updates");
 				continue;
 			}
 			
@@ -144,7 +144,7 @@ class Container extends Component
 		
 		redrawSignal.dispatch(this);
 		
-		// com.pblabs.util.Assert.isNotNull(sceneLayer, ' sceneLayer is null');
+		// org.transition9.util.Assert.isNotNull(sceneLayer, ' sceneLayer is null');
 		//Trigger the sceneLayer to resort the display children on it's next update
 		//This assumes we've set sceneLayer.sorter to MCompTools.compareComponentRenderOrder
 		// sceneLayer.zOrderDirty = true;
@@ -208,7 +208,7 @@ class Container extends Component
 	override public function toString () :String
 	{
 		var sb = new StringBuf();
-		sb.add(haxe.rtti.ReflectUtil.getClassName(this) + "[x=" + x + ", y=" + y);
+		sb.add(org.transition9.rtti.ReflectUtil.getClassName(this) + "[x=" + x + ", y=" + y);
 		for (c in children) {
 			sb.add(", child(x=" + c.x + ", y=" + c.y + ", width=" + c.width + ", height=" + c.height);
 		}

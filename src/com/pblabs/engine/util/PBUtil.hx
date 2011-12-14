@@ -15,10 +15,10 @@ import com.pblabs.engine.core.IPBObject;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.util.Preconditions;
-import haxe.rtti.ReflectUtil;
-import com.pblabs.util.StringUtil;
-using com.pblabs.util.StringUtil;
+import org.transition9.util.Preconditions;
+import org.transition9.rtti.ReflectUtil;
+import org.transition9.util.StringUtil;
+using org.transition9.util.StringUtil;
 using Lambda;
 /**
  * Useful functions relating to Entity and EntityComponent objects.
@@ -62,7 +62,7 @@ class PBUtil
 		var inst = context.getManager(mng);
 		if (inst == null) {
 			var game = context.getManager(PBGameBase);
-			com.pblabs.util.Assert.isNotNull(game, ' game is null');
+			org.transition9.util.Assert.isNotNull(game, ' game is null');
 			inst = game.registerManager(mng, game.allocate(mng));
 		} 
 		return inst;
@@ -99,22 +99,22 @@ class PBUtil
 	public static function addSingletonComponent <T> (context :IPBContext, compClass :Class<T>, ?compName :String = null, 
 		?deferring :Bool = false) :T
 	{
-		com.pblabs.util.Assert.isNotNull(context, ' context is null');
-		com.pblabs.util.Assert.isNotNull(compClass, "Null compClass");
+		org.transition9.util.Assert.isNotNull(context, ' context is null');
+		org.transition9.util.Assert.isNotNull(compClass, "Null compClass");
 		if (compName == null) {
 			compName = ReflectUtil.tinyName(compClass);
 		}
 		
 		var component = context.allocate(compClass);
-		com.pblabs.util.Assert.isNotNull(component, "allocate returned null for compClass=" + compClass);
+		org.transition9.util.Assert.isNotNull(component, "allocate returned null for compClass=" + compClass);
 		
 		// Preconditions.checkArgument(Std.is(component, IEntityComponent), "Singleton " + compClass + " is not an IEntityComponent");
 		var e = context.allocate(IEntity);
-		com.pblabs.util.Assert.isNotNull(e.context, "How can the entity context be null? e.name=" +e.name + ", compClass=" + Type.getClassName(compClass));
+		org.transition9.util.Assert.isNotNull(e.context, "How can the entity context be null? e.name=" +e.name + ", compClass=" + Type.getClassName(compClass));
 		e.initialize(compName);
 		e.deferring = deferring;
 		e.addComponent(cast(component, IEntityComponent), compName);
-		com.pblabs.util.Assert.isTrue(deferring || cast(component, IEntityComponent).isRegistered, "addsingle, not registered");
+		org.transition9.util.Assert.isTrue(deferring || cast(component, IEntityComponent).isRegistered, "addsingle, not registered");
 		return component;
 	}
 	
@@ -128,11 +128,11 @@ class PBUtil
 		compName = context.getManager(NameManager).validateName(compName);
 		
 		var e = context.allocate(IEntity);
-		com.pblabs.util.Assert.isNotNull(e.context, "How can the entity context be null? e.name=" +e.name + ", compClass=" + ReflectUtil.getClassName(component));
+		org.transition9.util.Assert.isNotNull(e.context, "How can the entity context be null? e.name=" +e.name + ", compClass=" + ReflectUtil.getClassName(component));
 		e.initialize(compName);
 		e.addComponent(component, compName);
 		e.deferring = false;
-		com.pblabs.util.Assert.isTrue(cast(component, IEntityComponent).isRegistered, "addsingle, not registered");
+		org.transition9.util.Assert.isTrue(cast(component, IEntityComponent).isRegistered, "addsingle, not registered");
 		return component;
 	}
 	
@@ -143,7 +143,7 @@ class PBUtil
 		entityName = entityName == null ? getDefaultComponentName(compClass) : entityName;
 		entityName = context.getManager(NameManager).validateName(entityName);
 		var component = context.allocate(compClass);
-		com.pblabs.util.Assert.isNotNull(component, "allocate returned null for compClass=" + compClass);
+		org.transition9.util.Assert.isNotNull(component, "allocate returned null for compClass=" + compClass);
 		
 		var e = context.allocate(IEntity);
 		e.initialize(entityName);
@@ -155,8 +155,8 @@ class PBUtil
 	
 	public static function addComponentToEntity (e :IEntity, compClass :Class<Dynamic>, ?entityName :String) :IEntity
 	{
-		com.pblabs.util.Assert.isNotNull(e, ' e is null');
-		com.pblabs.util.Assert.isNotNull(compClass, ' compClass is null');
+		org.transition9.util.Assert.isNotNull(e, ' e is null');
+		org.transition9.util.Assert.isNotNull(compClass, ' compClass is null');
 		e.addComponent(cast(e.context.allocate(compClass), IEntityComponent), entityName);
 		return e;
 	}
@@ -190,11 +190,11 @@ class PBUtil
 		}
 		
 		var component = context.allocate(compClass);
-		com.pblabs.util.Assert.isNotNull(component, "allocate returned null for compClass=" + compClass);
+		org.transition9.util.Assert.isNotNull(component, "allocate returned null for compClass=" + compClass);
 		
 		// Preconditions.checkArgument(Std.is(component, IEntityComponent), "Singleton " + compClass + " is not an IEntityComponent");
 		var e = context.allocate(IEntity);
-		com.pblabs.util.Assert.isNotNull(e.context, "How can the entity context be null? e.name=" +e.name + ", compClass=" + Type.getClassName(compClass));
+		org.transition9.util.Assert.isNotNull(e.context, "How can the entity context be null? e.name=" +e.name + ", compClass=" + Type.getClassName(compClass));
 		e.initialize(entityName);
 		e.deferring = true;
 		e.addComponent(cast(component, IEntityComponent), compName);
@@ -215,7 +215,7 @@ class PBUtil
 	
 	inline public static function componentPropString (c :IEntityComponent, ?fieldName :String) :String
 	{
-		com.pblabs.util.Assert.isTrue(c.isRegistered, Type.getClass(c) + " is not yet registered");
+		org.transition9.util.Assert.isTrue(c.isRegistered, Type.getClass(c) + " is not yet registered");
 		return "@" + c.name + fieldToken(fieldName);
 	}
 	
@@ -247,8 +247,8 @@ class PBUtil
 	
 	public static function entityPropString (c :IEntityComponent, ?fieldName :String) :String
 	{
-		com.pblabs.util.Assert.isNotNull(c, "IEntityComponent is null");
-		com.pblabs.util.Assert.isTrue(c.isRegistered, "Cannot get the PropertyReference of an unregistered IEntityComponent (type=" + ReflectUtil.getClassName(c) + ") " + com.pblabs.util.Log.getStackTrace());
+		org.transition9.util.Assert.isNotNull(c, "IEntityComponent is null");
+		org.transition9.util.Assert.isTrue(c.isRegistered, "Cannot get the PropertyReference of an unregistered IEntityComponent (type=" + ReflectUtil.getClassName(c) + ") " + org.transition9.util.Log.getStackTrace());
 		return "#" + c.owner.name + "." + componentName(c) + fieldToken(fieldName);
 	}
 

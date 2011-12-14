@@ -11,7 +11,7 @@ package com.pblabs.engine.resource.flash;
 import com.pblabs.components.Constants;
 import com.pblabs.engine.resource.ResourcesBase;
 import com.pblabs.engine.resource.Source;
-import com.pblabs.util.Preconditions;
+import org.transition9.util.Preconditions;
 
 import flash.display.DisplayObject;
 import flash.display.Loader;
@@ -21,7 +21,7 @@ import flash.errors.Error;
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
 
-using com.pblabs.util.EventDispatcherUtil;
+using org.transition9.util.EventDispatcherUtil;
 using Lambda;
 
 class SwfResource extends ResourcesBase<Dynamic> 
@@ -54,7 +54,7 @@ class SwfResource extends ResourcesBase<Dynamic>
 		var loader = _loader;
 		var self = this;
 		var onComplete = function (e :flash.events.Event) :Void {
-			com.pblabs.util.Log.debug("onComplete");
+			org.transition9.util.Log.debug("onComplete");
 			loader.contentLoaderInfo.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
 			loader.contentLoaderInfo.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
 			self.loaded();
@@ -75,7 +75,7 @@ class SwfResource extends ResourcesBase<Dynamic>
 	// override public function get (?name :String) :Dynamic
 	override public function get (token :ResourceToken) :Dynamic
 	{
-		com.pblabs.util.Assert.isNotNull(token, "Must supply a token for SwfResources.get");
+		org.transition9.util.Assert.isNotNull(token, "Must supply a token for SwfResources.get");
 		switch (token.type) {
 			// case IMAGE_DATA:
 			default: return createInstance(token.id);
@@ -84,8 +84,8 @@ class SwfResource extends ResourcesBase<Dynamic>
 	
 	override public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
 	{
-		com.pblabs.util.Assert.isNotNull(_source, "Null sourc. Reloading Source.bytes fails.");
-		com.pblabs.util.Log.debug("load " + _source);
+		org.transition9.util.Assert.isNotNull(_source, "Null sourc. Reloading Source.bytes fails.");
+		org.transition9.util.Log.debug("load " + _source);
 		super.load(onLoad, onError);
 		var self = this;
 		createLoader();
@@ -94,7 +94,7 @@ class SwfResource extends ResourcesBase<Dynamic>
 			case bytes (b) :loadFromBytes(b);
 			case embedded (name) :loadFromEmbedded(name);
 			default :
-				com.pblabs.util.Log.error("Resource source type not handled :" + _source);
+				org.transition9.util.Log.error("Resource source type not handled :" + _source);
 		}
 	}
 	
@@ -120,7 +120,7 @@ class SwfResource extends ResourcesBase<Dynamic>
 		Preconditions.checkNotNull(bytes, "bytes is null");
 		
 		if (_xorKey > 0) {
-			bytes = com.pblabs.util.BytesUtil.xorBytes(bytes, _xorKey);
+			bytes = org.transition9.util.BytesUtil.xorBytes(bytes, _xorKey);
 		}
 		
 		var context = new LoaderContext();
@@ -156,7 +156,7 @@ class SwfResource extends ResourcesBase<Dynamic>
 			return;
 		}
 		//It's a ByteArray/Asset
-		loadFromBytes(haxe.io.Bytes.ofData(Type.createInstance(cls, com.pblabs.util.Constants.EMPTY_ARRAY)));
+		loadFromBytes(haxe.io.Bytes.ofData(Type.createInstance(cls, org.transition9.util.Constants.EMPTY_ARRAY)));
 	}
 	
 	override public function unload () :Void
@@ -209,7 +209,7 @@ class SwfResource extends ResourcesBase<Dynamic>
 	public function createInstance (name :String) :Dynamic
 	{
 		var cls = getClass(name);
-		com.pblabs.util.Assert.isNotNull(cls, name + " is not defined in " + this);
+		org.transition9.util.Assert.isNotNull(cls, name + " is not defined in " + this);
 		return Type.createInstance(cls, Constants.EMPTY_ARRAY);
 	}
 }

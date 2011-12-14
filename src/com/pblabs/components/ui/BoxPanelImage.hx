@@ -6,13 +6,13 @@ import com.pblabs.components.scene2D.BitmapRenderer;
 import com.pblabs.components.scene2D.GraphicsComponent;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.time.IProcessManager;
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.F;
+import org.transition9.geom.Vector2;
+import org.transition9.util.F;
 using com.pblabs.engine.core.SignalBondManager;
-using com.pblabs.util.StringUtil;
+using org.transition9.util.StringUtil;
 using com.pblabs.components.scene2D.SceneUtil;
 #if js
-using com.pblabs.util.DomUtil;
+using org.transition9.util.DomUtil;
 #end
 
 /**
@@ -101,7 +101,7 @@ class BoxPanelImage
 		}
 		
 		var component = owner.getComponent(Container);
-		com.pblabs.util.Assert.isNotNull(component, ' component is null');
+		org.transition9.util.Assert.isNotNull(component, ' component is null');
 		
 		var bounds = component.bounds;
 		
@@ -152,10 +152,10 @@ class BoxPanelImage
 			m.translate(gap, curY);
 			lineDiv.applyTransform(m);
 			
-			lineDiv.style.cssText = com.pblabs.util.DomUtil.setStyle(lineDiv.style.cssText, "height", Std.int(Math.max(1, _dividerLineWidth)) + "px");
-			lineDiv.style.cssText = com.pblabs.util.DomUtil.setStyle(lineDiv.style.cssText, "position", "relative");
-			lineDiv.style.cssText = com.pblabs.util.DomUtil.setStyle(lineDiv.style.cssText, "width", (bounds.intervalX - gap * 2) + "px");
-			lineDiv.style.cssText = com.pblabs.util.DomUtil.setStyle(lineDiv.style.cssText, "background", _dividerColor.toColorString("#"));
+			lineDiv.style.cssText = org.transition9.util.DomUtil.setStyle(lineDiv.style.cssText, "height", Std.int(Math.max(1, _dividerLineWidth)) + "px");
+			lineDiv.style.cssText = org.transition9.util.DomUtil.setStyle(lineDiv.style.cssText, "position", "relative");
+			lineDiv.style.cssText = org.transition9.util.DomUtil.setStyle(lineDiv.style.cssText, "width", (bounds.intervalX - gap * 2) + "px");
+			lineDiv.style.cssText = org.transition9.util.DomUtil.setStyle(lineDiv.style.cssText, "background", _dividerColor.toColorString("#"));
 			
 			curY += c.height;
 		}
@@ -169,7 +169,7 @@ class BoxPanelImage
 		super.drawPixels(ctx);
 		
 		var component = owner.getComponent(Container);
-		com.pblabs.util.Assert.isNotNull(component, ' component is null');
+		org.transition9.util.Assert.isNotNull(component, ' component is null');
 		
 		var bounds = component.bounds;
 		var gap = 3;

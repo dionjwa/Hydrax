@@ -15,10 +15,10 @@ import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.IPBObject;
 import com.pblabs.engine.core.PBContext;
-import com.pblabs.util.Preconditions;
-import haxe.rtti.ReflectUtil;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
+import org.transition9.util.Preconditions;
+import org.transition9.rtti.ReflectUtil;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
 
 import hsl.haxe.Bond;
 
@@ -33,7 +33,7 @@ import hsl.haxe.Bond;
   *		
   *   //Make sure you have created one in initializeManagers().
   *		var pool = getManager(com.pblabs.engine.pooling.ObjectPoolMgr);
-  *		com.pblabs.util.Assert.isNotNull(pool);
+  *		org.transition9.util.Assert.isNotNull(pool);
   *		//Register pooled classes
   *		pool.register(com.pblabs.components.spatial.SpatialComponent);
   *		pool.register(com.pblabs.components.base.AlphaComponent);
@@ -68,7 +68,7 @@ class ObjectPoolMgr //extends PBManagerBase
 	public function add<T> (o :T) :Void
 	{
 		if (o == null) {
-			com.pblabs.util.Log.warn("ObjectPoolMgr.add(null)");
+			org.transition9.util.Log.warn("ObjectPoolMgr.add(null)");
 			return;
 		}
 		_tempPool.push(o);

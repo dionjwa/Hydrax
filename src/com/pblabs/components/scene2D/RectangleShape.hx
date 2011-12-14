@@ -8,9 +8,9 @@
  ******************************************************************************/
 package com.pblabs.components.scene2D;
 
-import com.pblabs.geom.RectangleTools;
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.StringUtil;
+import org.transition9.geom.RectangleTools;
+import org.transition9.geom.Vector2;
+import org.transition9.util.StringUtil;
 
 import de.polygonal.motor2.geom.primitive.AABB2;
 
@@ -29,7 +29,7 @@ class RectangleShape extends ShapeComponent
 		_borderRadius = val;
 		#if js
 		for (cssName in ["-moz-border-radius", "-webkit-border-radius", "-khtml-border-radius", "border-radius"]) {
-			_displayObject.style.cssText = com.pblabs.util.DomUtil.setStyle(_displayObject.style.cssText, cssName, _borderRadius + "px");	
+			_displayObject.style.cssText = org.transition9.util.DomUtil.setStyle(_displayObject.style.cssText, cssName, _borderRadius + "px");	
 		}
 		#end
 		redraw();
@@ -79,8 +79,8 @@ class RectangleShape extends ShapeComponent
 		g.lineStyle(lineStroke, lineColor, 1.0);
 		g.drawRoundRect(0, 0, width - lineStroke, height - lineStroke, _borderRadius);
 		#elseif js
-		_displayObject.style.cssText = com.pblabs.util.DomUtil.setStyle(_displayObject.style.cssText, "border", _lineStroke + "px solid " + StringUtil.toColorString(lineColor, "#"));
-		_displayObject.style.cssText = com.pblabs.util.DomUtil.setStyle(_displayObject.style.cssText, "background-color", StringUtil.toColorString(fillColor, "#"));
+		_displayObject.style.cssText = org.transition9.util.DomUtil.setStyle(_displayObject.style.cssText, "border", _lineStroke + "px solid " + StringUtil.toColorString(lineColor, "#"));
+		_displayObject.style.cssText = org.transition9.util.DomUtil.setStyle(_displayObject.style.cssText, "background-color", StringUtil.toColorString(fillColor, "#"));
 		_displayObject.style.width = _bounds.intervalX + "px";
 		_displayObject.style.height = _bounds.intervalY + "px";
 		#end
@@ -129,7 +129,7 @@ class RectangleShape extends ShapeComponent
 	
 	override function set_width (val :Float) :Float
 	{
-		com.pblabs.util.Assert.isTrue(val >= 0, "val=" + val + " " + com.pblabs.util.Log.getStackTrace());
+		org.transition9.util.Assert.isTrue(val >= 0, "val=" + val + " " + org.transition9.util.Log.getStackTrace());
 		var unscaledWidth = val / _scaleX;
 		_unscaledBounds.x = unscaledWidth;
 		_bounds.xmin = _x - val / 2;
@@ -143,7 +143,7 @@ class RectangleShape extends ShapeComponent
 	
 	override function set_height (val :Float) :Float
 	{
-		com.pblabs.util.Assert.isTrue(val >= 0, "val=" + val + " " + com.pblabs.util.Log.getStackTrace());
+		org.transition9.util.Assert.isTrue(val >= 0, "val=" + val + " " + org.transition9.util.Log.getStackTrace());
 		var unscaledHeight = val / _scaleY;
 		_unscaledBounds.y = unscaledHeight;
 		_bounds.ymin = _y - val / 2;

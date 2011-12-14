@@ -15,13 +15,13 @@ import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.serialization.Serializer;
 import com.pblabs.engine.util.PBUtil;
-import com.pblabs.util.Preconditions;
-import haxe.rtti.ReflectUtil;
+import org.transition9.util.Preconditions;
+import org.transition9.rtti.ReflectUtil;
 
 using Lambda;
 
-using com.pblabs.util.ArrayUtil;
-using com.pblabs.util.XmlTools;
+using org.transition9.util.ArrayUtil;
+using org.transition9.util.XmlTools;
 
 /**
 	Useful for managing components and setting up tree structures.
@@ -102,14 +102,14 @@ class NodeParent<C :INodeChild<Dynamic>> extends EntityComponent
 		if (!children.remove(c)) {
 			throw "Removing child with a different manager";
 		}
-		com.pblabs.util.Assert.isFalse(children.length == before, "children.length the same after removal");
+		org.transition9.util.Assert.isFalse(children.length == before, "children.length the same after removal");
 		
 		if (children.has(null)) {
 			throw "After child removal, we have null in children=" + children;
 		}
 		c.removingFromParent();
 		c.parent = null;
-		com.pblabs.util.Assert.isNull(c.parent);
+		org.transition9.util.Assert.isNull(c.parent);
 		childRemoved(c);
 	}
 	

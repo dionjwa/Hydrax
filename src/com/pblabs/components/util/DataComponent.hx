@@ -11,8 +11,8 @@ package com.pblabs.components.util;
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.serialization.ISerializable;
-import com.pblabs.util.ds.Set;
-import com.pblabs.util.ds.Sets;
+import org.transition9.ds.Set;
+import org.transition9.ds.Sets;
 
 import haxe.Serializer;
 

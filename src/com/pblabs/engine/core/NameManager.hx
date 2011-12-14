@@ -12,13 +12,13 @@
  ******************************************************************************/
 package com.pblabs.engine.core;
 
-import com.pblabs.util.Preconditions;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
+import org.transition9.util.Preconditions;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
 
 import Type;
 
-using com.pblabs.util.StringUtil;
+using org.transition9.util.StringUtil;
 
 /**
  * The name manager stores references to IPBObject that have been given
@@ -47,9 +47,9 @@ class NameManager
 		Preconditions.checkNotNull(object);
 		
 		if (!object.name.isBlank()) {
-			com.pblabs.util.Log.debug("Adding named object: " + object.name);
+			org.transition9.util.Log.debug("Adding named object: " + object.name);
 			if (_objects.get(object.name) != null) {
-				com.pblabs.util.Log.warn("An object with the name already exists: " + object.name);
+				org.transition9.util.Log.warn("An object with the name already exists: " + object.name);
 			}
 			_objects.set(object.name, object);
 		}
@@ -163,7 +163,7 @@ class NameManager
 	#if debug
 	public function toString () :String
 	{
-	    return "NameManager=" + com.pblabs.util.ds.MapUtil.toString(_objects);
+	    return "NameManager=" + org.transition9.ds.MapUtil.toString(_objects);
 	}
 	#end
 }

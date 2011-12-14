@@ -11,8 +11,8 @@ package com.pblabs.components.scene2D.js;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.scene2D.BaseSceneLayer;
 import com.pblabs.engine.time.IAnimatedObject;
-import com.pblabs.util.DomUtil;
-import haxe.rtti.ReflectUtil;
+import org.transition9.util.DomUtil;
+import org.transition9.rtti.ReflectUtil;
 
 import js.Dom;
 
@@ -97,7 +97,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		
 		#if debug
 		if (isOnCanvas)
-			com.pblabs.util.Assert.isNotNull(div);
+			org.transition9.util.Assert.isNotNull(div);
 		#end
 		
 		if (isOnCanvas) {
@@ -106,7 +106,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 			updateTransform();
 			SceneUtil.applyTransform(div, _transformMatrix);
 			cast(layer, JSLayer).div.appendChild(div);
-			com.pblabs.util.Assert.isNotNull(div.parentNode);
+			org.transition9.util.Assert.isNotNull(div.parentNode);
 		}
 	}
 	
@@ -114,7 +114,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 	{
 		super.removingFromParent();
 		#if debug
-		com.pblabs.util.Assert.isNotNull(div);
+		org.transition9.util.Assert.isNotNull(div);
 		#end
 		
 		if (isOnCanvas) {
@@ -163,7 +163,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 			// _backBuffer.style.visibility = "hidden";
 			_backBuffer.style.display = "block";
 			//Add to the div display object, so it can be rendered to either CSS or Canvas layers.
-			com.pblabs.util.Assert.isNotNull(div);
+			org.transition9.util.Assert.isNotNull(div);
 			div.appendChild(_backBuffer);
 		}
 		_backBuffer.width = Std.int(width);
@@ -178,7 +178,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 	
 	public function render (ctx :CanvasRenderingContext2D) :Void
 	{
-		com.pblabs.util.Assert.isNotNull(ctx, "Null Context2d?");
+		org.transition9.util.Assert.isNotNull(ctx, "Null Context2d?");
 		if (visible && alpha > 0) {
 			ctx.save();
 			if (isTransformDirty) {
@@ -187,7 +187,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 			if (_isContentsDirty && cacheAsBitmap) {
 				redrawBackBuffer();
 			}
-			com.pblabs.util.Assert.isNotNull(_transformMatrix, "Null _transformMatrix?");
+			org.transition9.util.Assert.isNotNull(_transformMatrix, "Null _transformMatrix?");
 			untyped ctx.transform(
 				_transformMatrix.a.toFixed(4), 
 				_transformMatrix.b.toFixed(4), 

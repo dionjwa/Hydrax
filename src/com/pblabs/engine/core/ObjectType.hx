@@ -21,7 +21,7 @@ import com.pblabs.engine.serialization.ISerializable;
  * @see ObjectTypeManager
  */
 class ObjectType 
-	implements ISerializable, implements com.pblabs.util.ds.Hashable
+	implements ISerializable, implements org.transition9.ds.Hashable
 {
 	public static var ALL :ObjectType = {
 		var wildcard = new ObjectType([]);

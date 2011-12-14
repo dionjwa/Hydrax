@@ -11,8 +11,8 @@ package com.pblabs.components.scene2D.js.css;
 import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.scene2D.js.JSLayer;
 import com.pblabs.engine.time.IAnimatedObject;
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.DomUtil;
+import org.transition9.geom.Vector2;
+import org.transition9.util.DomUtil;
 
 import js.Dom;
 
@@ -22,10 +22,10 @@ class SceneLayer extends JSLayer
 {
 	inline public static function updateTransformFromScene (scene :BaseSceneManager<Dynamic>, layer :SceneLayer) :Void
 	{
-		com.pblabs.util.Assert.isNotNull(scene);
-		com.pblabs.util.Assert.isNotNull(_tempPoint);
-		com.pblabs.util.Assert.isNotNull(scene.sceneAlignment);
-		com.pblabs.util.Assert.isNotNull(scene.sceneView);
+		org.transition9.util.Assert.isNotNull(scene);
+		org.transition9.util.Assert.isNotNull(_tempPoint);
+		org.transition9.util.Assert.isNotNull(scene.sceneAlignment);
+		org.transition9.util.Assert.isNotNull(scene.sceneView);
 		
 		layer._transformMatrix.identity();
 		//Adjust for SceneView center			
@@ -48,7 +48,7 @@ class SceneLayer extends JSLayer
 		super();
 		
 		#if (debug && modernizr)
-		com.pblabs.util.Assert.isTrue(Modernizr.csstransforms, "Modernizr.csstransforms==false.  You will have to use a Canvas layer in this browser");
+		org.transition9.util.Assert.isTrue(Modernizr.csstransforms, "Modernizr.csstransforms==false.  You will have to use a Canvas layer in this browser");
 		#end
 	}
 	

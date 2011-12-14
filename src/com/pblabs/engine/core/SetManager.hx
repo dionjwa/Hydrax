@@ -10,20 +10,20 @@ package com.pblabs.engine.core;
 
 import Type;
 
-import com.pblabs.util.Preconditions;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.MultiMap;
-import com.pblabs.util.ds.maps.MapBuilder;
-import com.pblabs.util.ds.multimaps.ArrayMultiMap;
-import com.pblabs.util.ds.multimaps.SetMultiMap;
+import org.transition9.util.Preconditions;
+import org.transition9.ds.Map;
+import org.transition9.ds.MultiMap;
+import org.transition9.ds.maps.MapBuilder;
+import org.transition9.ds.multimaps.ArrayMultiMap;
+import org.transition9.ds.multimaps.SetMultiMap;
 
 import hsl.haxe.Bond;
 
 using Lambda;
 
-using com.pblabs.util.IterUtil;
-using haxe.rtti.ReflectUtil;
-using com.pblabs.util.StringUtil;
+using org.transition9.util.IterUtil;
+using org.transition9.rtti.ReflectUtil;
+using org.transition9.util.StringUtil;
 
 /**
   * Manages IPBObject set membership.  It's recommended to 
@@ -52,27 +52,27 @@ class SetManager extends PBManager
 	//The static functions are for "using" 
 	public static function getAllInSet(context :IPBContext, set :String) :Iterable<IPBObject>
 	{
-		com.pblabs.util.Assert.isNotNull(context);
-		com.pblabs.util.Assert.isNotNull(getSetManager(context));
-		com.pblabs.util.Assert.isNotNull(getSetManager(context).getObjectsInSet(set));
-		com.pblabs.util.Assert.isFalse(set.isBlank());
-		return getSetManager(context).getObjectsInSet(set).filter(com.pblabs.util.Predicates.notNull);
+		org.transition9.util.Assert.isNotNull(context);
+		org.transition9.util.Assert.isNotNull(getSetManager(context));
+		org.transition9.util.Assert.isNotNull(getSetManager(context).getObjectsInSet(set));
+		org.transition9.util.Assert.isFalse(set.isBlank());
+		return getSetManager(context).getObjectsInSet(set).filter(org.transition9.util.Predicates.notNull);
 	}
 	
 	public static function destroyAllInSet(context :IPBContext, set :String) :Void
 	{
-		com.pblabs.util.Assert.isNotNull(context);
-		com.pblabs.util.Assert.isNotNull(getSetManager(context));
+		org.transition9.util.Assert.isNotNull(context);
+		org.transition9.util.Assert.isNotNull(getSetManager(context));
 		return getSetManager(context).destroySet(set);
 	}
 	
 	public static function getAllEntitiesInSet(context :IPBContext, set :String) :Iterable<IEntity>
 	{
-		com.pblabs.util.Assert.isNotNull(context);
-		com.pblabs.util.Assert.isNotNull(getSetManager(context));
-		com.pblabs.util.Assert.isNotNull(getSetManager(context).getObjectsInSet(set));
-		com.pblabs.util.Assert.isFalse(set.isBlank());
-		return getSetManager(context).getEntitiesInSet(set).filter(com.pblabs.util.Predicates.notNull);
+		org.transition9.util.Assert.isNotNull(context);
+		org.transition9.util.Assert.isNotNull(getSetManager(context));
+		org.transition9.util.Assert.isNotNull(getSetManager(context).getObjectsInSet(set));
+		org.transition9.util.Assert.isFalse(set.isBlank());
+		return getSetManager(context).getEntitiesInSet(set).filter(org.transition9.util.Predicates.notNull);
 	}
 	
 	public static function addToSet (obj :IEntity, set :String) :IEntity
@@ -249,7 +249,7 @@ class SetManager extends PBManager
 	override public function startup () :Void
 	{
 		super.startup();
-		com.pblabs.util.Assert.isNotNull(context.getManager(SignalBondManager), "SignalBondManager required");
+		org.transition9.util.Assert.isNotNull(context.getManager(SignalBondManager), "SignalBondManager required");
 		context.getManager(SignalBondManager).bind(this, cast(context, PBContext).signalObjectRemoved, onObjectDestroyed);
 	}	
 	

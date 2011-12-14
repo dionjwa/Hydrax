@@ -16,7 +16,7 @@ import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
 import com.pblabs.engine.resource.SvgResources;
-import com.pblabs.util.svg.SvgReplace;
+import org.transition9.util.svg.SvgReplace;
 
 using StringTools;
 
@@ -26,7 +26,7 @@ using com.pblabs.components.scene2D.ImageTools;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
-using com.pblabs.util.StringUtil;
+using org.transition9.util.StringUtil;
 
 class Demo  
 {
@@ -49,26 +49,26 @@ class Demo
 		game.getManager(IResourceManager).addResource(game.allocate(BitmapCacheResource));
 		
 		//Add the embedded resources
-		// com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/anchors.svg", "anchors");
-		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/anchors.svg", "anchors");
+		// org.transition9.util.Macros.embedBinaryDataResource("rsrc/anchors.svg", "anchors");
+		org.transition9.util.Macros.embedBinaryDataResource("rsrc/anchors.svg", "anchors");
 		svgs.add(new ResourceToken("anchors", Source.embedded("anchors"), ResourceType.SVG));
 		
-		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/button_01.svg", "button");
+		org.transition9.util.Macros.embedBinaryDataResource("rsrc/button_01.svg", "button");
 		svgs.add(new ResourceToken("button", Source.embedded("button"), ResourceType.SVG));
 
-		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/button_01_down.svg", "button_down");
+		org.transition9.util.Macros.embedBinaryDataResource("rsrc/button_01_down.svg", "button_down");
 		svgs.add(new ResourceToken("button_down", Source.embedded("button_down"), ResourceType.SVG));
 
-		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/icon.svg", "button_icon");
+		org.transition9.util.Macros.embedBinaryDataResource("rsrc/icon.svg", "button_icon");
 		svgs.add(new ResourceToken("button_icon", Source.embedded("button_icon"), ResourceType.SVG));
 
-		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/text_center.svg", "text");
+		org.transition9.util.Macros.embedBinaryDataResource("rsrc/text_center.svg", "text");
 		svgs.add(new ResourceToken("text", Source.embedded("text"), ResourceType.SVG));
 
-		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/tiger.svg", "tiger");
+		org.transition9.util.Macros.embedBinaryDataResource("rsrc/tiger.svg", "tiger");
 		svgs.add(new ResourceToken("tiger", Source.embedded("tiger"), ResourceType.SVG));
 
-		com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/ui_complete.svg", "ui_complete");
+		org.transition9.util.Macros.embedBinaryDataResource("rsrc/ui_complete.svg", "ui_complete");
 		svgs.add(new ResourceToken("ui_complete", Source.embedded("ui_complete"), ResourceType.SVG));
 		
 		game.getManager(IResourceManager).load(startGame, function (e :Dynamic) {trace(e);});

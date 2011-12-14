@@ -9,7 +9,7 @@
 package com.pblabs.components.input;
 
 import com.pblabs.components.scene2D.SceneView;
-import com.pblabs.util.Device;
+import org.transition9.util.Device;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
@@ -34,7 +34,7 @@ class OrientationManager extends BaseInputManager
 	{
 		super.startup();
 		bindSignals();
-		com.pblabs.util.Assert.isNotNull(scene, ' scene is null');
+		org.transition9.util.Assert.isNotNull(scene, ' scene is null');
 	}
 	
 	override public function shutdown () :Void
@@ -44,7 +44,7 @@ class OrientationManager extends BaseInputManager
 		#if js
 		untyped __js__("window.onorientationchange = null");
 		#if debug
-		com.pblabs.util.Assert.isFalse(orientationChange.isListenedTo);
+		org.transition9.util.Assert.isFalse(orientationChange.isListenedTo);
 		#end
 		orientationChange = null;
 		#end

@@ -2,12 +2,12 @@ package com.pblabs.components.scene2D;
 
 import Type;
 
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.Comparators;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
-import com.pblabs.util.ds.maps.SortedMap;
-import com.pblabs.util.svg.SvgData;
+import org.transition9.geom.Vector2;
+import org.transition9.util.Comparators;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
+import org.transition9.ds.maps.SortedMap;
+import org.transition9.util.svg.SvgData;
 
 import de.polygonal.motor2.geom.math.XY;
 
@@ -18,11 +18,11 @@ using Lambda;
 using StringTools;
 
 using com.pblabs.components.scene2D.SvgRenderTools;
-using com.pblabs.geom.VectorTools;
-using com.pblabs.util.IterUtil;
-using com.pblabs.util.StringUtil;
-using com.pblabs.util.XmlTools;
-using com.pblabs.util.svg.SvgTools;
+using org.transition9.geom.VectorTools;
+using org.transition9.util.IterUtil;
+using org.transition9.util.StringUtil;
+using org.transition9.util.XmlTools;
+using org.transition9.util.svg.SvgTools;
 
 /**
   * Parses svg Strings for anchor elements, and caches them.
@@ -41,8 +41,8 @@ class SvgAnchors
 	
 	public static function getAnchors (svgData :SvgData) :Map<String, XY>
 	{
-		// com.pblabs.util.Assert.isNotNull(id, ' id is null');
-		// com.pblabs.util.Assert.isNotNull(svg, ' svg is null');
+		// org.transition9.util.Assert.isNotNull(id, ' id is null');
+		// org.transition9.util.Assert.isNotNull(svg, ' svg is null');
 		// var md5 = haxe.Md5.encode(svg);
 	    if (_anchors.exists(svgData)) {
 	    	return _anchors.get(svgData);

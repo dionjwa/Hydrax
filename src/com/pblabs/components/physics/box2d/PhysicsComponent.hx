@@ -14,10 +14,10 @@ import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.time.ITickedObject;
-import com.pblabs.geom.Circle;
-import com.pblabs.geom.VectorTools;
-import com.pblabs.util.Preconditions;
-import com.pblabs.util.SignalVarAdvanced;
+import org.transition9.geom.Circle;
+import org.transition9.geom.VectorTools;
+import org.transition9.util.Preconditions;
+import org.transition9.util.SignalVarAdvanced;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
@@ -82,19 +82,19 @@ class PhysicsComponent extends SpatialComponent<PhysicsManager>,
 	// 			parent.updateCollisionData(this);
 	// 			body.wakeUp();
 	// 	} else {
-	// 		com.pblabs.util.Log.error("No parent.updateCollisionData");
+	// 		org.transition9.util.Log.error("No parent.updateCollisionData");
 	// 	}
 	// }
 	
 	inline function createBody () :Void
 	{
-		com.pblabs.util.Assert.isNotNull(world, ' world is null');
-		com.pblabs.util.Assert.isNull(body);
+		org.transition9.util.Assert.isNotNull(world, ' world is null');
+		org.transition9.util.Assert.isNull(body);
 		
 		var bd = new B2BodyDef();
 		bd.userData = this;
 		body = world.CreateBody(bd);
-		com.pblabs.util.Assert.isNotNull(body, ' body is null');
+		org.transition9.util.Assert.isNotNull(body, ' body is null');
 	}
 	
 	override function onRemove () :Void
@@ -110,7 +110,7 @@ class PhysicsComponent extends SpatialComponent<PhysicsManager>,
 		if (body == null) {
 			createBody();
 		}
-		com.pblabs.util.Assert.isNotNull(_shapeType, ' _shapeType is null');
+		org.transition9.util.Assert.isNotNull(_shapeType, ' _shapeType is null');
 		set_shapeType(_shapeType);
 	}
 	
@@ -140,7 +140,7 @@ class PhysicsComponent extends SpatialComponent<PhysicsManager>,
 	
 	public function applyForce (forceX :Float, forceY :Float) :Void
 	{
-		com.pblabs.util.Assert.isNotNull(body, ' body is null');
+		org.transition9.util.Assert.isNotNull(body, ' body is null');
 		body.ApplyForce(new B2Vec2(forceX, forceY), body.GetXForm().position);
 	}
 	
@@ -167,7 +167,7 @@ class PhysicsComponent extends SpatialComponent<PhysicsManager>,
 	
 	inline function updatePos () :Void
 	{
-		com.pblabs.util.Assert.isNotNull(body, ' body is null');
+		org.transition9.util.Assert.isNotNull(body, ' body is null');
 		_temp.x = x / parent.m_physScale;
 		_temp.y = y / parent.m_physScale;
 		body.SetXForm(_temp, _angle);
@@ -175,7 +175,7 @@ class PhysicsComponent extends SpatialComponent<PhysicsManager>,
 	
 	function get_xVelocity () :Float
 	{
-		com.pblabs.util.Assert.isNotNull(body, ' body is null');
+		org.transition9.util.Assert.isNotNull(body, ' body is null');
 		return body.GetLinearVelocity().x * parent.m_physScale;
 	}
 	
@@ -193,7 +193,7 @@ class PhysicsComponent extends SpatialComponent<PhysicsManager>,
 	
 	function get_yVelocity () :Float
 	{
-		com.pblabs.util.Assert.isNotNull(body, ' body is null');
+		org.transition9.util.Assert.isNotNull(body, ' body is null');
 		return body.GetLinearVelocity().y;
 	}
 	
@@ -211,25 +211,25 @@ class PhysicsComponent extends SpatialComponent<PhysicsManager>,
 	
 	function get_linearFriction () :Float
 	{
-		com.pblabs.util.Log.error("Not implemented");
+		org.transition9.util.Log.error("Not implemented");
 		return 0;
 	}
 	
 	function set_linearFriction (val :Float) :Float
 	{
-		com.pblabs.util.Log.error("Not implemented");
+		org.transition9.util.Log.error("Not implemented");
 		return val;
 	}
 	
 	function get_restitution () :Float
 	{
-		com.pblabs.util.Log.error("Not implemented");
+		org.transition9.util.Log.error("Not implemented");
 		return 0;
 	}
 	
 	function set_restitution (val :Float) :Float
 	{
-		com.pblabs.util.Log.error("Not implemented");
+		org.transition9.util.Log.error("Not implemented");
 		return val;
 	}
 	
@@ -257,13 +257,13 @@ class PhysicsComponent extends SpatialComponent<PhysicsManager>,
 	
 	function get_mass () :Float
 	{
-		com.pblabs.util.Assert.isNotNull(body, ' body is null');
+		org.transition9.util.Assert.isNotNull(body, ' body is null');
 		return body.GetMass();
 	}
 	
 	function set_mass (val :Float) :Float
 	{
-		com.pblabs.util.Assert.isNotNull(body, ' body is null');
+		org.transition9.util.Assert.isNotNull(body, ' body is null');
 		
 		var md = new B2MassData();
 		//Copied from Circle/BoxShape
@@ -283,13 +283,13 @@ class PhysicsComponent extends SpatialComponent<PhysicsManager>,
 	
 	function get_xForce () :Float
 	{
-		com.pblabs.util.Assert.isNotNull(body, ' body is null');
+		org.transition9.util.Assert.isNotNull(body, ' body is null');
 		return body.m_force.x * parent.m_physScale;
 	}
 	
 	function set_xForce (val :Float) :Float
 	{
-		com.pblabs.util.Assert.isNotNull(body, ' body is null');
+		org.transition9.util.Assert.isNotNull(body, ' body is null');
 		body.m_force.x = val / parent.m_physScale;
 		if (body.IsSleeping())
 		{
@@ -300,13 +300,13 @@ class PhysicsComponent extends SpatialComponent<PhysicsManager>,
 	
 	function get_yForce () :Float
 	{
-		com.pblabs.util.Assert.isNotNull(body, ' body is null');
+		org.transition9.util.Assert.isNotNull(body, ' body is null');
 		return body.m_force.y * parent.m_physScale;
 	}
 	
 	function set_yForce (val :Float) :Float
 	{
-		com.pblabs.util.Assert.isNotNull(body, ' body is null');
+		org.transition9.util.Assert.isNotNull(body, ' body is null');
 		body.m_force.y = val / parent.m_physScale;
 		if (body.IsSleeping())
 		{
@@ -318,7 +318,7 @@ class PhysicsComponent extends SpatialComponent<PhysicsManager>,
 	function get_world () :B2World
 	{
 		if (parent == null) {
-			com.pblabs.util.Log.error("Asking for World, but no parent");
+			org.transition9.util.Log.error("Asking for World, but no parent");
 			return null;
 		}
 		return parent.world;
@@ -345,9 +345,9 @@ class PhysicsComponent extends SpatialComponent<PhysicsManager>,
 		if (_shapeType == null) {
 			return null;
 		}
-		com.pblabs.util.Assert.isNotNull(parent, "No parent");
-		com.pblabs.util.Assert.isNotNull(parent.world, "No world on parent");
-		com.pblabs.util.Assert.isNotNull(body, ' body is null');
+		org.transition9.util.Assert.isNotNull(parent, "No parent");
+		org.transition9.util.Assert.isNotNull(parent.world, "No world on parent");
+		org.transition9.util.Assert.isNotNull(body, ' body is null');
 		
 		switch (_shapeType) {
 			case CIRCLE(radius, def):
@@ -401,7 +401,7 @@ class PhysicsComponent extends SpatialComponent<PhysicsManager>,
 	
 	function destroyBody () :Void
 	{
-		com.pblabs.util.Log.debug("");
+		org.transition9.util.Log.debug("");
 		if (body != null) {
 			for (shape in body.getShapes()) {
 				shape.SetUserData(null);
@@ -413,7 +413,7 @@ class PhysicsComponent extends SpatialComponent<PhysicsManager>,
 			body = null;
 		}
 		_vec.x = _vec.y = _angle = 0;
-		com.pblabs.util.Log.debug("end");
+		org.transition9.util.Log.debug("end");
 	}
 	
 	#if debug

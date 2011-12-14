@@ -4,7 +4,7 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
-import com.pblabs.geom.Vector2;
+import org.transition9.geom.Vector2;
 
 import flash.display.Sprite;
 

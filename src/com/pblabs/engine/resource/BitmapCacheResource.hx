@@ -11,15 +11,15 @@ package com.pblabs.engine.resource;
 import Type;
 
 import com.pblabs.components.scene2D.SvgRenderTools;
-import com.pblabs.util.F;
-import com.pblabs.util.Preconditions;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
+import org.transition9.util.F;
+import org.transition9.util.Preconditions;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
 
 import haxe.io.Bytes;
 
 using Lambda;
-using com.pblabs.util.IterUtil;
+using org.transition9.util.IterUtil;
 
 /**
   * Caches bitmap representations of other display types, e.g. Bitmaps of 
@@ -47,8 +47,8 @@ class BitmapCacheResource extends ImageDataResources,
 	
 	override public function load (onLoad :Void->Void, onError :Dynamic->Void) :Void
 	{
-		com.pblabs.util.Assert.isNotNull(onLoad, ' onLoad is null');
-		com.pblabs.util.Assert.isNotNull(game, ' game is null');
+		org.transition9.util.Assert.isNotNull(onLoad, ' onLoad is null');
+		org.transition9.util.Assert.isNotNull(game, ' game is null');
 		super.load(onLoad, onError);
 		
 		//If the current context is destroyed, cancel all pending and current render calls
@@ -71,7 +71,7 @@ class BitmapCacheResource extends ImageDataResources,
 		for (token in tokens) {
 			add(createCachedToken(token));
 		}
-		load(onFinish, function (e :Dynamic) :Void { com.pblabs.util.Log.error(Std.string(e));});
+		load(onFinish, function (e :Dynamic) :Void { org.transition9.util.Log.error(Std.string(e));});
 	}
 	
 	override function processDerivedToken (token :ResourceToken, derivedFrom :ResourceToken) :Void
@@ -82,7 +82,7 @@ class BitmapCacheResource extends ImageDataResources,
 	function loadTokenData (token :ResourceToken) :Void
 	{
 		//Is there an intensive task manager?
-		com.pblabs.util.Assert.isNotNull(game, ' game is null');
+		org.transition9.util.Assert.isNotNull(game, ' game is null');
 		var taskQueue = game.currentContext != null ? game.currentContext.getManager(com.pblabs.components.system.IntensiveTaskQueue) : null;
 		if (taskQueue != null) {
 			var added = false;
@@ -112,15 +112,15 @@ class BitmapCacheResource extends ImageDataResources,
 			default: token; 
 		}
 		
-		com.pblabs.util.Log.debug("Rendering cached image for key=" + name + "...");
+		org.transition9.util.Log.debug("Rendering cached image for key=" + name + "...");
 		switch (sourceToken.type) {
 			case SVG:
 				var svgData = manager.get(sourceToken);
-				com.pblabs.util.Assert.isNotNull(svgData, ' svgData is null sourceToken=' + sourceToken);
+				org.transition9.util.Assert.isNotNull(svgData, ' svgData is null sourceToken=' + sourceToken);
 				#if flash
 				var self = this;
 				SvgRenderTools.renderSvg(svgData, function (renderedSvg :flash.display.DisplayObject) :Void {
-					var bm = com.pblabs.util.DisplayUtils.convertToBitmap(renderedSvg); 
+					var bm = org.transition9.util.DisplayUtils.convertToBitmap(renderedSvg); 
 					var bd = bm.bitmapData;
 					bm.bitmapData = null;
 					self._data.set(token, bd);
@@ -137,7 +137,7 @@ class BitmapCacheResource extends ImageDataResources,
 			#if flash
 			case CLASS: 
 				var someDisplayObject = manager.get(token);
-				var bm = com.pblabs.util.DisplayUtils.convertToBitmap(someDisplayObject); 
+				var bm = org.transition9.util.DisplayUtils.convertToBitmap(someDisplayObject); 
 				var bd = bm.bitmapData;
 				bm.bitmapData = null;
 				_data.set(token, bd);

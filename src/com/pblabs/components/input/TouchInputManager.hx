@@ -10,7 +10,7 @@ package com.pblabs.components.input;
 
 #if js
 
-import com.pblabs.geom.Vector2;
+import org.transition9.geom.Vector2;
 
 import hsl.haxe.Signaler;
 
@@ -141,7 +141,7 @@ class TouchInputManager extends BaseInputManager
 		}
 		
 		if (convertTouchEventsToMouse && mouse == null) {
-			com.pblabs.util.Log.error("Convert touch events to mouse, but no MouseInputManager");
+			org.transition9.util.Log.error("Convert touch events to mouse, but no MouseInputManager");
 		}
 		
 	}
@@ -152,10 +152,10 @@ class TouchInputManager extends BaseInputManager
 		
 		#if js
 		#if debug
-		com.pblabs.util.Assert.isFalse(touchStart.isListenedTo);
-		com.pblabs.util.Assert.isFalse(touchMove.isListenedTo);
-		com.pblabs.util.Assert.isFalse(touchEnd.isListenedTo);
-		com.pblabs.util.Assert.isFalse(swipe.isListenedTo);
+		org.transition9.util.Assert.isFalse(touchStart.isListenedTo);
+		org.transition9.util.Assert.isFalse(touchMove.isListenedTo);
+		org.transition9.util.Assert.isFalse(touchEnd.isListenedTo);
+		org.transition9.util.Assert.isFalse(swipe.isListenedTo);
 		#end
 		touchStart = null;
 		touchMove = null;
@@ -171,7 +171,7 @@ class TouchInputManager extends BaseInputManager
 		touchMove = new hsl.js.translating.JSSignaler(this, js.Lib.document, JSEventType.TOUCHMOVE, new hsl.js.translation.touch.TouchTranslator(false));
 		touchEnd = new hsl.js.translating.JSSignaler(this, js.Lib.document, JSEventType.TOUCHEND, new hsl.js.translation.touch.TouchTranslator(false));
 		#else
-		com.pblabs.util.Log.error("Platform gestures are not yet implemented.  Currently JS only.");
+		org.transition9.util.Log.error("Platform gestures are not yet implemented.  Currently JS only.");
 		#end
 	}
 	

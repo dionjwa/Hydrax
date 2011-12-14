@@ -22,7 +22,7 @@ class ContainerFixedChildren extends Container
 		}
 		
 		if (fixedPositions == null) {
-			com.pblabs.util.Log.warn("No fixedPositions");
+			org.transition9.util.Log.warn("No fixedPositions");
 			return;
 		}
 		
@@ -30,7 +30,7 @@ class ContainerFixedChildren extends Container
 			var c = children[ii];
 			var loc = fixedPositions[ii];
 			if (c == null || loc == null) {
-				com.pblabs.util.Log.warn("children.length > fixedPositions.length");
+				org.transition9.util.Log.warn("children.length > fixedPositions.length");
 				return;
 			}
 			

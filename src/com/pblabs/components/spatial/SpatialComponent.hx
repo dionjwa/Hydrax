@@ -17,7 +17,7 @@ import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.serialization.Serializer;
-import com.pblabs.geom.Vector2;
+import org.transition9.geom.Vector2;
 
 import de.polygonal.motor2.geom.inside.PointInsideAABB;
 import de.polygonal.motor2.geom.math.XY;
@@ -26,8 +26,8 @@ import de.polygonal.motor2.geom.primitive.AABB2;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
-using com.pblabs.geom.VectorTools;
-using com.pblabs.util.XmlTools;
+using org.transition9.geom.VectorTools;
+using org.transition9.util.XmlTools;
 
 /**
  * Very basic spatial component that exists at a position. 
@@ -49,8 +49,8 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Man
 	
 	public static function addToEntity (e :IEntity) :SpatialComponent<Dynamic>
 	{
-		com.pblabs.util.Assert.isNotNull(e);
-		com.pblabs.util.Assert.isNotNull(e.context);
+		org.transition9.util.Assert.isNotNull(e);
+		org.transition9.util.Assert.isNotNull(e.context);
 		var s = e.context.allocate(SpatialComponent);
 		e.addComponent(s, NAME);
 		return s;
@@ -162,8 +162,8 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Man
 	{
 		x = xLoc;
 		y = yLoc;
-		// com.pblabs.util.Assert.isFalse(Math.isNaN(xLoc), com.pblabs.util.Log.getStackTrace());
-		// com.pblabs.util.Assert.isFalse(Math.isNaN(yLoc), com.pblabs.util.Log.getStackTrace());
+		// org.transition9.util.Assert.isFalse(Math.isNaN(xLoc), org.transition9.util.Log.getStackTrace());
+		// org.transition9.util.Assert.isFalse(Math.isNaN(yLoc), org.transition9.util.Log.getStackTrace());
 		// if (_vec.x != xLoc || _vec.y != yLoc) {
 		// 	_vec.x = xLoc;
 		// 	_vec.y = yLoc;
@@ -244,7 +244,7 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Man
 				for (b in sig.getBonds()) {
 					trace("Stuck bond on " + debugOwnerName + "=" + b);
 				}
-				com.pblabs.util.Assert.isFalse(sig.isListenedTo, debugOwnerName);
+				org.transition9.util.Assert.isFalse(sig.isListenedTo, debugOwnerName);
 			}
 		}
 	}
@@ -312,7 +312,7 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Man
 		
 		throw "No AABB2";
 		
-		// com.pblabs.util.Assert.isNotNull(worldExtents, "No worldExtends for point checking");
+		// org.transition9.util.Assert.isNotNull(worldExtents, "No worldExtends for point checking");
 		// // If no sprite then we just test our bounds.
 		// var b = worldExtents;
 		// return pos.x <= b.xmax && pos.x >= b.xmin && pos.y <= b.ymax && pos.y >= b.ymin;

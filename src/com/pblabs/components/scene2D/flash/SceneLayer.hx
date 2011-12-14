@@ -12,8 +12,8 @@ import com.pblabs.components.scene2D.BaseSceneLayer;
 import com.pblabs.components.scene2D.SceneAlignment;
 import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.scene2D.SceneView;
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.Preconditions;
+import org.transition9.geom.Vector2;
+import org.transition9.util.Preconditions;
 
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
@@ -99,7 +99,7 @@ class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 	{
 		super.addedToParent();
 		cast(_displayContainer, Sprite).graphics.clear();
-		com.pblabs.util.GraphicsUtil.drawRect(cast(_displayContainer, Sprite).graphics, parent.sceneView.width - 1, parent.sceneView.height - 1, 0xff0000, 1, 0);
+		org.transition9.util.GraphicsUtil.drawRect(cast(_displayContainer, Sprite).graphics, parent.sceneView.width - 1, parent.sceneView.height - 1, 0xff0000, 1, 0);
 	}
 	#end
 }

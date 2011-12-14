@@ -9,9 +9,9 @@
 package com.pblabs.components.scene2D;
 
 import com.pblabs.engine.core.ObjectType;
-import com.pblabs.geom.CircleUtil;
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.StringUtil;
+import org.transition9.geom.CircleUtil;
+import org.transition9.geom.Vector2;
+import org.transition9.util.StringUtil;
 
 import de.polygonal.motor2.geom.math.XY;
 
@@ -27,8 +27,8 @@ class CircleShape extends ShapeComponent
 	{
 		#if js
 		_displayObject = com.pblabs.components.scene2D.js.SceneComponent.createDiv();
-		_displayObject.style.cssText = com.pblabs.util.DomUtil.setStyle(_displayObject.style.cssText, "border-radius", "50%");
-		_displayObject.style.cssText = com.pblabs.util.DomUtil.setStyle(_displayObject.style.cssText, "-moz-border-radius", "50%");
+		_displayObject.style.cssText = org.transition9.util.DomUtil.setStyle(_displayObject.style.cssText, "border-radius", "50%");
+		_displayObject.style.cssText = org.transition9.util.DomUtil.setStyle(_displayObject.style.cssText, "-moz-border-radius", "50%");
 		#end
 		
 		super();
@@ -74,10 +74,10 @@ class CircleShape extends ShapeComponent
 		}
 		#elseif js
 		
-		_displayObject.style.cssText = com.pblabs.util.DomUtil.setStyle(_displayObject.style.cssText, "-webkit-border-radius", _radius + "px");
+		_displayObject.style.cssText = org.transition9.util.DomUtil.setStyle(_displayObject.style.cssText, "-webkit-border-radius", _radius + "px");
 		
-		_displayObject.style.cssText = com.pblabs.util.DomUtil.setStyle(_displayObject.style.cssText, "border", _lineStroke + "px solid " + StringUtil.toColorString(lineColor, "#"));
-		_displayObject.style.cssText = com.pblabs.util.DomUtil.setStyle(_displayObject.style.cssText, "background-color", StringUtil.toColorString(fillColor, "#"));
+		_displayObject.style.cssText = org.transition9.util.DomUtil.setStyle(_displayObject.style.cssText, "border", _lineStroke + "px solid " + StringUtil.toColorString(lineColor, "#"));
+		_displayObject.style.cssText = org.transition9.util.DomUtil.setStyle(_displayObject.style.cssText, "background-color", StringUtil.toColorString(fillColor, "#"));
 		_displayObject.style.width = (_radius * 2) + "px";
 		_displayObject.style.height = (_radius * 2) + "px";
 		#end

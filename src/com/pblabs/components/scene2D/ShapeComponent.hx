@@ -44,10 +44,10 @@ class ShapeComponent
 	
 	override function onReset () :Void
 	{
-		com.pblabs.util.Log.debug("");
+		org.transition9.util.Log.debug("");
 		super.onReset();
 		redraw();
-		com.pblabs.util.Log.debug("finished");
+		org.transition9.util.Log.debug("finished");
 	}
 	
 	public function redraw () :Void

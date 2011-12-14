@@ -10,21 +10,21 @@ package com.pblabs.engine.injection;
 
 import Type.ValueType;
 
-import com.pblabs.util.Preconditions;
+import org.transition9.util.Preconditions;
 
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
-import com.pblabs.util.ds.MultiMap;
-import com.pblabs.util.ds.Tuple;
-import com.pblabs.util.ds.multimaps.SetMultiMap;
-import haxe.rtti.ReflectUtil;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
+import org.transition9.ds.MultiMap;
+import org.transition9.ds.Tuple;
+import org.transition9.ds.multimaps.SetMultiMap;
+import org.transition9.rtti.ReflectUtil;
 
 using Lambda;
 
 using Reflect;
 
-using com.pblabs.util.IterUtil;
-using haxe.rtti.ReflectUtil;
+using org.transition9.util.IterUtil;
+using org.transition9.rtti.ReflectUtil;
 
 /**
   * Injects component PropertyReference variable fields.
@@ -50,7 +50,7 @@ class Injector
 	
 	public function new () 
 	{
-		_injectionValues = new com.pblabs.util.ds.maps.HashMap();
+		_injectionValues = new org.transition9.ds.maps.HashMap();
 	}
 	
 	public function mapValue (type :Class<Dynamic>, value :Dynamic, ?optionalName :String) :Void
@@ -95,7 +95,7 @@ class Injector
 	public function injectInto (obj :Dynamic) :Void
 	{
 		Preconditions.checkNotNull(obj, "obj argument is null");
-		var cls = haxe.rtti.ReflectUtil.getClass(obj);
+		var cls = org.transition9.rtti.ReflectUtil.getClass(obj);
 		Preconditions.checkNotNull(cls, "obj class is null");
 		injectFields(obj, cls);
 	}
@@ -190,7 +190,7 @@ class Injector
 							}
 						}
 					} else {
-						com.pblabs.util.Log.error("@inject on " + cls.getClassName() + "." + field + ", but there is no inject annotation, and the class does not implement haxe.rtti.Infos, so we cannot get the class field types at runtime.");
+						org.transition9.util.Log.error("@inject on " + cls.getClassName() + "." + field + ", but there is no inject annotation, and the class does not implement haxe.rtti.Infos, so we cannot get the class field types at runtime.");
 					}
 				} else {
 					var injectArr :Array<String> = cast(injectMeta);

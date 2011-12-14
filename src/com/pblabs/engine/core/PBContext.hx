@@ -16,11 +16,11 @@ import com.pblabs.engine.injection.Injector;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ProcessManager;
 import com.pblabs.engine.util.PBUtil;
-import com.pblabs.util.Assert;
-import com.pblabs.util.Preconditions;
-import haxe.rtti.ReflectUtil;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
+import org.transition9.util.Assert;
+import org.transition9.util.Preconditions;
+import org.transition9.rtti.ReflectUtil;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
@@ -142,7 +142,7 @@ class PBContext
 		Assert.isNotNull(i, "allocated'd instance is null, type=" + type);
 		
 		#if debug
-		com.pblabs.util.Assert.isFalse(Std.is(i, IPBContext), "You are forbidden to allocate IPBContexts from IPBContexts, use the PBGame");
+		org.transition9.util.Assert.isFalse(Std.is(i, IPBContext), "You are forbidden to allocate IPBContexts from IPBContexts, use the PBGame");
 		#end
 		//Components get injected by the entity.  The reason is that a component may get
 		//added, but removed before properly initializing. This means that the component
@@ -179,7 +179,7 @@ class PBContext
 	
 	public function setupInternal () :Void
 	{
-		com.pblabs.util.Assert.isFalse(isSetup, "Only call setup once");
+		org.transition9.util.Assert.isFalse(isSetup, "Only call setup once");
 		isSetup = true;
 		Preconditions.checkNotNull(injector, "WTF is the injector null?");
 		
@@ -200,14 +200,14 @@ class PBContext
 		rg.name = _nameManager.validateName(name + " RootGroup");
 		_nameManager.add(rg);
 		rootGroup = rg;
-		com.pblabs.util.Log.debug("about to set current group, currentGroup=" + currentGroup);
+		org.transition9.util.Log.debug("about to set current group, currentGroup=" + currentGroup);
 		currentGroup = rg;
-		com.pblabs.util.Log.debug("done set current group");
+		org.transition9.util.Log.debug("done set current group");
 		injector.mapValue(IPBGroup, rootGroup);
 		
 		#if enable_object_pooling
 		_objectPool = injector.getMapping(com.pblabs.engine.pooling.ObjectPoolMgr);
-		if (_objectPool == null) com.pblabs.util.Log.error("No _objectPool in setup");
+		if (_objectPool == null) org.transition9.util.Log.error("No _objectPool in setup");
 		#end
 		
 		// Do manager startup.
@@ -242,7 +242,7 @@ class PBContext
 	public function getManager <T>(cls :Class<T>, ?name :String = null, ?createIfMissing :Bool = false):T
 	{
 		if (createIfMissing) {
-			com.pblabs.util.Assert.isNotNull(injector, " injector is null" + com.pblabs.util.Log.getStackTrace());
+			org.transition9.util.Assert.isNotNull(injector, " injector is null" + org.transition9.util.Log.getStackTrace());
 			var mng = injector.getMapping(cls, name);
 			if (mng == null) {
 				mng = registerManager(cls, null, name);
@@ -308,11 +308,11 @@ class PBContext
 				var sig = sigs.get(sigkey);
 				if (sig.isListenedTo) {
 					for (b in sig.getBonds()) {
-						//com.pblabs.util.ArrayUtil.indexOf(sigs, sig)
+						//org.transition9.util.ArrayUtil.indexOf(sigs, sig)
 						trace("Stuck bond on " + sigkey + " " + self.name + "=" + b);
 					}
 				}
-				com.pblabs.util.Assert.isFalse(sig.isListenedTo, self.name);
+				org.transition9.util.Assert.isFalse(sig.isListenedTo, self.name);
 			}
 		}, 60);
 		#end
@@ -363,7 +363,7 @@ class PBContext
 		
 		var managerName = PBUtil.getManagerName(clazz, optionalName);
 		
-		com.pblabs.util.Assert.isFalse(_managers.exists(managerName), "A manager already exists " + managerName + " in " + haxe.rtti.ReflectUtil.getClassName(this));
+		org.transition9.util.Assert.isFalse(_managers.exists(managerName), "A manager already exists " + managerName + " in " + org.transition9.rtti.ReflectUtil.getClassName(this));
 		_managers.set(managerName, instance);
 		
 		if(!suppressInject) {
@@ -396,7 +396,7 @@ class PBContext
 	{
 		// Early out if we got a null property reference.
 		if (reference == null || reference.property == null || reference.property == "") {
-			com.pblabs.util.Log.debug("  null bail out early");
+			org.transition9.util.Log.debug("  null bail out early");
 			return null;
 		}
 
@@ -408,7 +408,7 @@ class PBContext
 		// Cached lookups apply only to components.
 		if (reference.cachedLookup != null && reference.cachedLookup.length > 0) {
 			if (entity == null) {
-				com.pblabs.util.Log.error("Cached prop lookup, but entity is null");
+				org.transition9.util.Log.error("Cached prop lookup, but entity is null");
 				return null;
 			}
 			
@@ -447,7 +447,7 @@ class PBContext
 		var parentElem :Dynamic = null;
 		if (startChar == "@") {
 			if (entity == null) {
-				com.pblabs.util.Log.error("component ref but no entity given for " + reference + " " + com.pblabs.util.Log.getStackTrace());
+				org.transition9.util.Log.error("component ref but no entity given for " + reference + " " + org.transition9.util.Log.getStackTrace());
 				return null;
 			}
 			
@@ -541,7 +541,7 @@ class PBContext
 		Preconditions.checkNotNull(info, "Null PropertyInfo");
 		
 		if (info.propertyParent == null) {
-			com.pblabs.util.Log.error(["info.propertyParent", info.propertyParent]);
+			org.transition9.util.Log.error(["info.propertyParent", info.propertyParent]);
 			return;
 		}
 		
@@ -563,7 +563,7 @@ class PBContext
 		if (msg == null) {
 			msg = "findProperty couldn't resolve";
 		}
-		com.pblabs.util.Log.warn([msg, "context", context, "ref", reference.property, com.pblabs.util.Log.getStackTrace()]);
+		org.transition9.util.Log.warn([msg, "context", context, "ref", reference.property, org.transition9.util.Log.getStackTrace()]);
 	}
 	
 	public function getProperty<T> (property :PropertyReference<T>, ?defaultVal :T = null, ?entity :IEntity = null, ?suppressErrors :Bool = false) :T
@@ -595,7 +595,7 @@ class PBContext
 	
 	public function setProperty (property :PropertyReference<Dynamic>, value :Dynamic, ?entity :IEntity = null) :Void
 	{
-		com.pblabs.util.Assert.isNotNull(property);
+		org.transition9.util.Assert.isNotNull(property);
 		// Look up and set.
 		var info:PropertyInfo = findProperty(this, entity, property, true, _tempPropertyInfo);
 		
@@ -607,7 +607,7 @@ class PBContext
 		if (info != null) {
 			info.setValue(value, property);
 		} else {
-			com.pblabs.util.Log.warn(["property", property, "info", info]);
+			org.transition9.util.Log.warn(["property", property, "info", info]);
 		}
 
 		// Clean up to avoid dangling references.

@@ -11,8 +11,8 @@ package com.pblabs.components.tasks;
 
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.engine.core.IEntity;
-import com.pblabs.util.Preconditions;
-import haxe.rtti.ReflectUtil;
+import org.transition9.util.Preconditions;
+import org.transition9.rtti.ReflectUtil;
 
 class AlphaTask extends InterpolatingTask
 {
@@ -46,7 +46,7 @@ class AlphaTask extends InterpolatingTask
 	public override function update (dt :Float, obj :IEntity) :Bool
 	{
 		if (0 == _elapsedTime) {
-			com.pblabs.util.Assert.isNotNull(obj.getComponent(BaseSceneComponent), ' obj.getComponent(BaseSceneComponent) is null');
+			org.transition9.util.Assert.isNotNull(obj.getComponent(BaseSceneComponent), ' obj.getComponent(BaseSceneComponent) is null');
 			_from = obj.getComponent(BaseSceneComponent).alpha;
 			if (Math.isNaN(_from)) {
 				throw "_from must be non null, and must be a numerical property.";

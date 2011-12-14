@@ -1,6 +1,6 @@
 package com.pblabs.engine.resource;
 
-import com.pblabs.util.Constants;
+import org.transition9.util.Constants;
 
 class ResourceTools
 {
@@ -21,7 +21,7 @@ class ResourceTools
 			
 		cls = Type.resolveClass("SWFResources_" + id.toUpperCase());
 		if (cls == null) {
-			com.pblabs.util.Log.error("Failed to resolve embedded class: " + id);
+			org.transition9.util.Log.error("Failed to resolve embedded class: " + id);
 		}
 		return cls;
 	}

@@ -9,8 +9,8 @@
 package com.pblabs.engine.core;
 
 import com.pblabs.engine.core.IPBManager;
-import haxe.rtti.ReflectUtil;
-import com.pblabs.util.ds.multimaps.ArrayMultiMap;
+import org.transition9.rtti.ReflectUtil;
+import org.transition9.ds.multimaps.ArrayMultiMap;
 
 import de.polygonal.ds.Hashable;
 
@@ -20,7 +20,7 @@ import hsl.haxe.Signaler;
 import Type;
 
 using com.pblabs.engine.util.PBUtil;
-using com.pblabs.util.StringUtil;
+using org.transition9.util.StringUtil;
 
 /**
   * Holds signal bindings for Hashable objects.  When the Entity is 
@@ -48,12 +48,12 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	
 	public static function bindSignal <T>(component :EntityComponent, signaler :Signaler<T>, listener :T->Dynamic#if debug ,?infos :haxe.PosInfos #end ) :Bond
 	{
-		com.pblabs.util.Assert.isNotNull(component, "component is null");
-		com.pblabs.util.Assert.isNotNull(signaler, ' signaler is null');
-		com.pblabs.util.Assert.isNotNull(component.context, "component.context is null");
-		com.pblabs.util.Assert.isNotNull(listener, ' listener is null');
+		org.transition9.util.Assert.isNotNull(component, "component is null");
+		org.transition9.util.Assert.isNotNull(signaler, ' signaler is null');
+		org.transition9.util.Assert.isNotNull(component.context, "component.context is null");
+		org.transition9.util.Assert.isNotNull(listener, ' listener is null');
 		var bonds = component.context.getManager(SignalBondManager);
-		com.pblabs.util.Assert.isNotNull(bonds, "SignalBondManager is null");
+		org.transition9.util.Assert.isNotNull(bonds, "SignalBondManager is null");
 		
 		#if debug
 		return bonds.bind(component, signaler, listener, infos);
@@ -64,10 +64,10 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	
 	public static function bindVoidSignal (component :EntityComponent, signaler :Signaler<Void>, listener :Void->Dynamic#if debug ,?infos :haxe.PosInfos #end ) :Bond
 	{
-		com.pblabs.util.Assert.isNotNull(component, "component is null");
-		com.pblabs.util.Assert.isNotNull(component.context, "component.context is null");
+		org.transition9.util.Assert.isNotNull(component, "component is null");
+		org.transition9.util.Assert.isNotNull(component.context, "component.context is null");
 		var bonds = component.context.getManager(SignalBondManager);
-		com.pblabs.util.Assert.isNotNull(bonds, "SignalBondManager is null");
+		org.transition9.util.Assert.isNotNull(bonds, "SignalBondManager is null");
 		
 		#if debug
 		return bonds.bindVoid(component, signaler, listener, infos);
@@ -84,15 +84,15 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 
 	public function bind <T>(owner :Hashable, signaler :Signaler<T>, listener :T->Dynamic, ?onlyOnce :Null<Bool> = false #if debug ,?infos :haxe.PosInfos #end ) :Bond
 	{
-		com.pblabs.util.Assert.isNotNull(owner, "owner is null");
-		com.pblabs.util.Assert.isNotNull(signaler, "signaler is null");
-		com.pblabs.util.Assert.isNotNull(listener, "listener is null");
+		org.transition9.util.Assert.isNotNull(owner, "owner is null");
+		org.transition9.util.Assert.isNotNull(signaler, "signaler is null");
+		org.transition9.util.Assert.isNotNull(listener, "listener is null");
 		#if debug
 		if (Std.is(owner, IEntityComponent)) {
 			var component = cast(owner, IEntityComponent);
-			com.pblabs.util.Assert.isTrue(component.isRegistered, "component is unregistered");
-			com.pblabs.util.Assert.isTrue(component.owner.isLiveObject, "component entity is not initialized.  Entities much be initialized first");
-			com.pblabs.util.Assert.isFalse(component.owner.name.isBlank(), "owner has no name for " + component.owner + "::" + haxe.rtti.ReflectUtil.getClassName(component));
+			org.transition9.util.Assert.isTrue(component.isRegistered, "component is unregistered");
+			org.transition9.util.Assert.isTrue(component.owner.isLiveObject, "component entity is not initialized.  Entities much be initialized first");
+			org.transition9.util.Assert.isFalse(component.owner.name.isBlank(), "owner has no name for " + component.owner + "::" + org.transition9.rtti.ReflectUtil.getClassName(component));
 		}
 		#end
 		var bond = signaler.bind(listener);
@@ -102,10 +102,10 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		set(owner.key, bond);
 		
 		#if debug
-		com.pblabs.util.Assert.isNotNull(infos, " infos is null");
+		org.transition9.util.Assert.isNotNull(infos, " infos is null");
 		bond.infos = infos;
 		bond.debugInfo = infos == null ? "no infos @SignalBondManager.bind" : ""; 
-		com.pblabs.util.Log.debug("New " + bond);
+		org.transition9.util.Log.debug("New " + bond);
 		#end
 		
 		return bond;
@@ -113,15 +113,15 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	
 	public function bindVoid (owner :Hashable, signaler :Signaler<Void>, listener :Void->Dynamic, ?onlyOnce :Null<Bool> = false#if debug ,?infos :haxe.PosInfos #end ) :Bond
 	{
-		com.pblabs.util.Assert.isNotNull(owner, "owner is null");
-		com.pblabs.util.Assert.isNotNull(signaler, "signaler is null");
-		com.pblabs.util.Assert.isNotNull(listener, "listener is null");
+		org.transition9.util.Assert.isNotNull(owner, "owner is null");
+		org.transition9.util.Assert.isNotNull(signaler, "signaler is null");
+		org.transition9.util.Assert.isNotNull(listener, "listener is null");
 		#if debug
 		if (Std.is(owner, IEntityComponent)) {
 			var component = cast(owner, IEntityComponent);
-			com.pblabs.util.Assert.isTrue(component.isRegistered, "component is unregistered");
-			com.pblabs.util.Assert.isTrue(component.owner.isLiveObject, "component entity is not initialized.  Entities much be initialized first");
-			com.pblabs.util.Assert.isFalse(component.owner.name.isBlank(), "owner has no name for " + component.owner + "::" + haxe.rtti.ReflectUtil.getClassName(component));
+			org.transition9.util.Assert.isTrue(component.isRegistered, "component is unregistered");
+			org.transition9.util.Assert.isTrue(component.owner.isLiveObject, "component entity is not initialized.  Entities much be initialized first");
+			org.transition9.util.Assert.isFalse(component.owner.name.isBlank(), "owner has no name for " + component.owner + "::" + org.transition9.rtti.ReflectUtil.getClassName(component));
 		}
 		#end
 		
@@ -129,12 +129,12 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		if (onlyOnce) {
 			bond.destroyOnUse();
 		}
-		com.pblabs.util.Assert.isNotNull(bond, "bond is null");
+		org.transition9.util.Assert.isNotNull(bond, "bond is null");
 		set(owner.key, bond);
 		
 		#if debug
 		bond.infos = infos;
-		com.pblabs.util.Log.debug("New " + bond);
+		org.transition9.util.Log.debug("New " + bond);
 		#end
 		
 		return bond;
@@ -163,7 +163,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	
 	public function startup():Void
 	{
-		com.pblabs.util.Assert.isNotNull(game);
+		org.transition9.util.Assert.isNotNull(game);
 		//Listen to new contexts so we can listen to object removal
 		bind(this, game.signalContextSetup, onNewContext);
 		if (game.currentContext != null) {
@@ -184,13 +184,13 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	
 	public function destroyBondOnEntity (obj :IPBObject) :Void
 	{
-		com.pblabs.util.Log.debug("Destroying on " + obj.name);
+		org.transition9.util.Log.debug("Destroying on " + obj.name);
 		destroyBonds(obj);
 		
 		if (Std.is(obj, IEntity)) {
 			//Signals bound to component signalers
 			for (c in cast(obj, IEntity)) {
-				com.pblabs.util.Assert.isNotNull(c, "??EntityComponent is null??");
+				org.transition9.util.Assert.isNotNull(c, "??EntityComponent is null??");
 				destroyBonds(c);
 			}
 		}
@@ -198,10 +198,10 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	
 	public function destroyBonds (c :Hashable) :Void
 	{
-		com.pblabs.util.Assert.isNotNull(c, "??owner is null??");
+		org.transition9.util.Assert.isNotNull(c, "??owner is null??");
 		#if debug
 		var count = destroyBondsOnKey(c.key);
-		com.pblabs.util.Log.debug(count + " bonds broken on " + ReflectUtil.getClassName(c));
+		org.transition9.util.Log.debug(count + " bonds broken on " + ReflectUtil.getClassName(c));
 		#else
 		destroyBondsOnKey(c.key);
 		#end
@@ -209,7 +209,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	
 	public function onNewContext (c :IPBContext) :Void
 	{
-		com.pblabs.util.Log.debug("onNewContext " + c.name);
+		org.transition9.util.Log.debug("onNewContext " + c.name);
 		var ctx = cast(c, PBContext);
 		var self = this;
 		//Listen to destroyed entities

@@ -1,6 +1,6 @@
 package com.pblabs.components.scene2D.body;
 
-import com.pblabs.util.ds.Map;
+import org.transition9.ds.Map;
 
 import de.polygonal.motor2.geom.math.XY;
 
@@ -60,7 +60,7 @@ class BodySpriteList
 	
 	// public function toString () :String
 	// {
-	// 	return com.pblabs.util.StringUtil.stringify(this, ["id", "scale", "imageData"]);
+	// 	return org.transition9.util.StringUtil.stringify(this, ["id", "scale", "imageData"]);
 	// }
 	
 	// public function from (sd :SpriteSheetData) :Void

@@ -17,17 +17,17 @@ import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.PBManagerBase;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.geom.Vector2;
-import com.pblabs.geom.VectorTools;
-import com.pblabs.util.Enumerable;
-import com.pblabs.util.Preconditions;
-import haxe.rtti.ReflectUtil;
-import com.pblabs.util.StringUtil;
-import com.pblabs.util.XmlTools;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
-import com.pblabs.util.ds.Set;
-import com.pblabs.util.ds.Sets;
+import org.transition9.geom.Vector2;
+import org.transition9.geom.VectorTools;
+import org.transition9.util.Enumerable;
+import org.transition9.util.Preconditions;
+import org.transition9.rtti.ReflectUtil;
+import org.transition9.util.StringUtil;
+import org.transition9.util.XmlTools;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
+import org.transition9.ds.Set;
+import org.transition9.ds.Sets;
 
 import Type;
 
@@ -35,9 +35,9 @@ using Lambda;
 
 using StringTools;
 
-using com.pblabs.util.IterUtil;
-using com.pblabs.util.StringUtil;
-using com.pblabs.util.XmlTools;
+using org.transition9.util.IterUtil;
+using org.transition9.util.StringUtil;
+using org.transition9.util.XmlTools;
 
 /**
  * Singleton class for serializing and deserializing objects into Xml. This class 
@@ -75,11 +75,11 @@ class Serializer extends PBManagerBase
 		_deserializers.set("Enum", deserializeEnumLocal);
 		_deserializers.set("Array", deserializeIterable);
 		_deserializers.set("List", deserializeIterable);
-		_deserializers.set("com.pblabs.util.ds.Map", deserializeIterable);
+		_deserializers.set("org.transition9.ds.Map", deserializeIterable);
 		_deserializers.set("Class", deserializeClass);
-		_deserializers.set("com.pblabs.util.Enumerable", deserializeEnumerable);
-		_deserializers.set("com.pblabs.util.EnumWrappedEnumerable", deserializeEnumerable);
-		_deserializers.set("com.pblabs.geom.Vector2", deserializeVector2);
+		_deserializers.set("org.transition9.util.Enumerable", deserializeEnumerable);
+		_deserializers.set("org.transition9.util.EnumWrappedEnumerable", deserializeEnumerable);
+		_deserializers.set("org.transition9.geom.Vector2", deserializeVector2);
 		
 		_serializers.set("::DefaultSimple", serializeSimple);
 		_serializers.set("::DefaultComplex", serializeComplex);
@@ -90,11 +90,11 @@ class Serializer extends PBManagerBase
 		_serializers.set("Array", serializeIterable);
 		_serializers.set("List", serializeIterable);
 		_serializers.set("Iterable", serializeIterable);
-		_serializers.set("com.pblabs.util.ds.Map", serializeIterable);
-		_serializers.set("com.pblabs.util.Enumerable", serializeEnumerable);
-		_serializers.set("com.pblabs.util.EnumWrappedEnumerable", serializeEnumerable);
+		_serializers.set("org.transition9.ds.Map", serializeIterable);
+		_serializers.set("org.transition9.util.Enumerable", serializeEnumerable);
+		_serializers.set("org.transition9.util.EnumWrappedEnumerable", serializeEnumerable);
 		_serializers.set("ISerializable", serializeSerializable);
-		_serializers.set("com.pblabs.geom.Vector2", serializeVector2);
+		_serializers.set("org.transition9.geom.Vector2", serializeVector2);
 		
 		
 		ignoredTypes = Sets.newSetOf(ValueType.TObject);
@@ -111,7 +111,7 @@ class Serializer extends PBManagerBase
 		// if(TypeUtility.getTypeHint(tmd, "someArray") != "Number")
 		// {
 		//	 // Don't error, as it makes it very hard for CS4 people to develop.
-		//	 com.pblabs.util.Log.print(this, "Metadata is not included in this build of the engine, so serialization will not work!\n" + 
+		//	 org.transition9.util.Log.print(this, "Metadata is not included in this build of the engine, so serialization will not work!\n" + 
 		//		 "Add --keep-as3-metadata+=TypeHint,EditorData,Embed,Inject to your compiler arguments to get around this.");
 		// }
 	}
@@ -166,7 +166,7 @@ class Serializer extends PBManagerBase
 			} else if (_serializers.exists(valueKey)) {
 				_serializers.get(valueKey)(object, xml);
 			} else {
-				com.pblabs.util.Log.error("No serializer for " + typeName);
+				org.transition9.util.Log.error("No serializer for " + typeName);
 			}
 				
 			if (typeHint != null) {
@@ -174,7 +174,7 @@ class Serializer extends PBManagerBase
 			}
 			
 			// throw "Currently all serializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object);
-			// com.pblabs.util.Log.warn("Currently all serializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object));
+			// org.transition9.util.Log.warn("Currently all serializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object));
 			// // Normal case - determine type and call the right Serializer.
 			// var typeName = ReflectUtil.getClassName(object);
 			// trace("serializer for " +typeName + ": " +_serializers.exists(typeName));
@@ -183,7 +183,7 @@ class Serializer extends PBManagerBase
 			// 	trace("typeName=" + typeName);
 			// 	_serializers.get(typeName)(object, xml);
 			// } else {
-			// 	com.pblabs.util.Log.error("No serializer for " + typeName);
+			// 	org.transition9.util.Log.error("No serializer for " + typeName);
 			// }
 			// serializeComplex(name :String, object :Dynamic, xml :XML) :Void
 			
@@ -205,7 +205,7 @@ class Serializer extends PBManagerBase
 	 */
 	public function deserialize(object :Dynamic, xml :Xml, ?typeHint :String=null) :Dynamic
 	{
-		com.pblabs.util.Log.debug("object=" + object + ", typeHint=" + typeHint);
+		org.transition9.util.Log.debug("object=" + object + ", typeHint=" + typeHint);
 		// Preconditions.checkNotNull(context, "context is null");
 		// Preconditions.checkNotNull(object, "object is null");
 		Preconditions.checkNotNull(xml, "xml is null");
@@ -218,7 +218,7 @@ class Serializer extends PBManagerBase
 			}
 			else if (Std.is(object, IEntity)) {
 				_currentEntity = cast(object, IEntity);
-				com.pblabs.util.Log.debug("deserializing entity");
+				org.transition9.util.Log.debug("deserializing entity");
 				_currentEntity.deserialize(xml, true);
 				resolveReferences();
 				return cast(object, IEntity);
@@ -241,7 +241,7 @@ class Serializer extends PBManagerBase
 				} else {
 					//If the static class has a deserialize method, we will store it here
 					if (Type.getInstanceFields(cls).has("deserialize")) {
-						com.pblabs.util.Log.info("Adding " + Type.getClassName(cls) + " to mapped (de)serializers");
+						org.transition9.util.Log.info("Adding " + Type.getClassName(cls) + " to mapped (de)serializers");
 						var des = function (obj :Dynamic, xml :Xml, typeHint :String) :Dynamic {
 							var inst = Type.createInstance(cls, EMPTY_ARRAY);
 							Reflect.callMethod(inst, Reflect.field(inst, "deserialize"), [xml]);
@@ -254,13 +254,13 @@ class Serializer extends PBManagerBase
 			}
 		}
 		
-		com.pblabs.util.Log.error("No deserializer found for " + xml + ", typeHint=" + typeHint);
+		org.transition9.util.Log.error("No deserializer found for " + xml + ", typeHint=" + typeHint);
 		//Fall back to deserializing complex
 		// deserializeComplex(context, object, xml, typeHint);
 		return XmlTools.parseString(xml);
 		
 		
-		// com.pblabs.util.Log.warn("Currently all deserializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object));
+		// org.transition9.util.Log.warn("Currently all deserializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object));
 		// return object;
 		// throw "Currently all deserializable objects must implement ISerializable:   " + ReflectUtil.getClassName(object);
 		// // Normal case - determine type and call the right Serializer.
@@ -270,7 +270,7 @@ class Serializer extends PBManagerBase
 		// }
 		// trace("typeName=" + typeName);
 		// #if debug
-		// com.pblabs.util.Assert.isNotNull(_deserializers.get(typeName), "No deserializer for " + typeName);
+		// org.transition9.util.Assert.isNotNull(_deserializers.get(typeName), "No deserializer for " + typeName);
 		// #end
 		
 		// return _deserializers.get(typeName)(context, object, xml, typeHint);
@@ -406,7 +406,7 @@ class Serializer extends PBManagerBase
 					// Deal with typehints.
 					// var childTypeHint :String = null;//TypeUtility.getTypeHint(object, fieldName);
 					// child = deserialize(child, fieldXML, childTypeHint);
-					com.pblabs.util.Log.error("The field " + fieldName + " of type " + typeName + " could not be instantiated");
+					org.transition9.util.Log.error("The field " + fieldName + " of type " + typeName + " could not be instantiated");
 					continue;
 				}
 				
@@ -416,7 +416,7 @@ class Serializer extends PBManagerBase
 					// object[fieldName] = child;
 				} catch(e :Dynamic) {
 					xmlPath = reportXMLPath(fieldXML);
-					com.pblabs.util.Log.error("The field " + fieldName + " could not be set to '" + child + "' due to :" + e.toString() + " " + xmlPath);
+					org.transition9.util.Log.error("The field " + fieldName + " could not be set to '" + child + "' due to :" + e.toString() + " " + xmlPath);
 				}
 			}
 		}
@@ -427,7 +427,7 @@ class Serializer extends PBManagerBase
 	//TODO:broken
 	public static function deserializeEnumerable (object :Dynamic, xml :Xml, typeHint :String) :Dynamic
 	{
-		com.pblabs.util.Assert.isNotNull(xml);
+		org.transition9.util.Assert.isNotNull(xml);
 		typeHint = typeHint == null ? xml.get("type") : typeHint;
 		xml = switch (xml.nodeType) {
 			case Xml.Document: xml.firstChild();
@@ -437,7 +437,7 @@ class Serializer extends PBManagerBase
 		try {
 			return Enumerable.serializedValueOf(typeHint, xml.nodeValue);
 		} catch (e :Dynamic){
-			com.pblabs.util.Log.error("Problem getting Enumerable, type=" + xml.get("type") + ", value=" + xml.nodeValue + ", " + e); 
+			org.transition9.util.Log.error("Problem getting Enumerable, type=" + xml.get("type") + ", value=" + xml.nodeValue + ", " + e); 
 			return null;
 		}
 	}
@@ -513,7 +513,7 @@ class Serializer extends PBManagerBase
 			var valueInfo = getTypeInfo(ReflectUtil.field(object, f));
 			
 			if (valueInfo != null) {
-				com.pblabs.util.Assert.isNotNull(_serializers.get(valueInfo.typeKey), "No serializer for the key " + valueInfo.typeKey + " for field=" +f);
+				org.transition9.util.Assert.isNotNull(_serializers.get(valueInfo.typeKey), "No serializer for the key " + valueInfo.typeKey + " for field=" +f);
 				var childXml = Xml.createElement(f);
 				//If we can't work out the type, we default to a String
 				if (valueInfo.typeHint != null && valueInfo.typeHint != "String") {
@@ -581,11 +581,11 @@ class Serializer extends PBManagerBase
 		} else if (Std.is(val, Map) || Std.is(val, Array) || Std.is(val, List)) {
 			_typeInfo.typeKey = "Iterable";
 		} else if (Std.is(val, Enumerable)) {
-			_typeInfo.typeKey = "com.pblabs.util.Enumerable";
-		} else if (clsName == "com.pblabs.util.SignalVar") {
+			_typeInfo.typeKey = "org.transition9.util.Enumerable";
+		} else if (clsName == "org.transition9.util.SignalVar") {
 			//Don't serialize the SignalVar, rather the value
 			_typeInfo.typeHint = _typeInfo.typeKey = _typeInfo.val = null;
-			return getTypeInfo(cast(val, com.pblabs.util.SignalVar<Dynamic>).value);
+			return getTypeInfo(cast(val, org.transition9.util.SignalVar<Dynamic>).value);
 		} else if (_serializers.exists(clsName)) {
 			_typeInfo.typeKey = clsName;
 		} else {
@@ -628,7 +628,7 @@ class Serializer extends PBManagerBase
 	
 	public static function deserializeBool(xml :Xml, object :Dynamic, typeHint :String) :Dynamic
 	{
-		com.pblabs.util.Assert.isNotNull(xml);
+		org.transition9.util.Assert.isNotNull(xml);
 		return (xml.firstChild().toString() == "true");
 	}
 	
@@ -644,13 +644,13 @@ class Serializer extends PBManagerBase
 	
 	public static function deserializeInt (xml :Xml) :Int
 	{
-		com.pblabs.util.Assert.isNotNull(xml);
+		org.transition9.util.Assert.isNotNull(xml);
 		return Std.parseInt(xml.firstChild().nodeValue.trim());
 	}
 	
 	public static function deserializeString (xml :Xml) :String
 	{
-		com.pblabs.util.Assert.isNotNull(xml);
+		org.transition9.util.Assert.isNotNull(xml);
 		return xml.firstChild().nodeValue.trim();
 	}
 	
@@ -661,7 +661,7 @@ class Serializer extends PBManagerBase
 	
 	public static function deserializeFloat(xml :Xml) :Float
 	{
-		com.pblabs.util.Assert.isNotNull(xml);
+		org.transition9.util.Assert.isNotNull(xml);
 		return Std.parseFloat(xml.firstChild().nodeValue);
 	}
 	
@@ -677,9 +677,9 @@ class Serializer extends PBManagerBase
 	
 	public static function deserializeEnum(xml :Xml, ?typeHint :String) :Dynamic
 	{
-		com.pblabs.util.Assert.isNotNull(xml);
+		org.transition9.util.Assert.isNotNull(xml);
 		typeHint = typeHint.isBlank() ? xml.get("type") :typeHint;
-		com.pblabs.util.Assert.isNotNull(typeHint);
+		org.transition9.util.Assert.isNotNull(typeHint);
 		return Type.createEnum(Type.resolveEnum(typeHint), xml.firstChild().nodeValue, []);
 	}
 	
@@ -720,10 +720,10 @@ class Serializer extends PBManagerBase
 			if (XmlTools.child(xml, childName) != null) {
 				return new PropertyReference(XmlTools.parseString(XmlTools.child(xml, childName)));
 			} else {
-				com.pblabs.util.Log.info("No child property to parse=" + childName);
+				org.transition9.util.Log.info("No child property to parse=" + childName);
 			}
 		} catch (e :Dynamic) {
-			com.pblabs.util.Log.error("Cannot parse PropertyReference from " + XmlTools.child(xml, childName).toString()); 
+			org.transition9.util.Log.error("Cannot parse PropertyReference from " + XmlTools.child(xml, childName).toString()); 
 		}
 		return null;
 	}
@@ -742,7 +742,7 @@ class Serializer extends PBManagerBase
 			// Might be invalid...
 			if (key.isBlank() && Std.is(object, Map)) {
 				var xmlPath = reportXMLPath(childXML);
-				com.pblabs.util.Log.error([object, "deserialize", "Cannot add a value to a Map without a key. " + xmlPath]);
+				org.transition9.util.Log.error([object, "deserialize", "Cannot add a value to a Map without a key. " + xmlPath]);
 				continue;
 			}
 				
@@ -766,7 +766,7 @@ class Serializer extends PBManagerBase
 					
 				// Assign, either to key or to end of array.
 				if (!key.isBlank()) {
-					com.pblabs.util.Assert.isTrue(Std.is(object, Map), "key length >1 but object is not a map");
+					org.transition9.util.Assert.isTrue(Std.is(object, Map), "key length >1 but object is not a map");
 					cast(object, Map<Dynamic, Dynamic>).set(key, value);
 					// ReflectUtil.setField(object, key, value);
 				}
@@ -838,7 +838,7 @@ class Serializer extends PBManagerBase
 	
 	public function deserializeClass(object :Dynamic, xml :Xml, typeHint :String) :Dynamic
 	{
-		com.pblabs.util.Assert.isNotNull(xml);
+		org.transition9.util.Assert.isNotNull(xml);
 		return Type.resolveClass(xml.firstChild().nodeValue);
 	}
 	
@@ -934,7 +934,7 @@ class Serializer extends PBManagerBase
 		// Note we want to check for null here; null is distinct from coerce-to-false.
 		if (childObject == null) {
 			var xmlPath :String = reportXMLPath(fieldXml);
-			com.pblabs.util.Log.error("Unable to create type " + typeName + " for the field " + fieldName + ". " + xmlPath);
+			org.transition9.util.Log.error("Unable to create type " + typeName + " for the field " + fieldName + ". " + xmlPath);
 			return null;
 		}
 		
@@ -980,7 +980,7 @@ class Serializer extends PBManagerBase
 	
 	public function resolveReferences() :Void
 	{
-		com.pblabs.util.Log.debug("");
+		org.transition9.util.Log.debug("");
 		var i = 0;
 		while (i < _deferredReferences.length) {
 			var reference = _deferredReferences[i];
@@ -1029,7 +1029,7 @@ private class ResourceNote
 	
 	// public function onFailed(resource :Resource) :Void
 	// {
-	//	 com.pblabs.util.Log.error(owner, "set " + fieldName, "No resource was found with filename " + resource.filename + ".");
+	//	 org.transition9.util.Log.error(owner, "set " + fieldName, "No resource was found with filename " + resource.filename + ".");
 	//	 context.getManager(Serializer).removeResource(resource.filename);
 	// }
 	
@@ -1129,19 +1129,19 @@ private class ReferenceNote
 		
 		// Name reference.
 		if(nameReference != null) {
-			com.pblabs.util.Log.warn(firstPart + "Couldn't resolve reference to named entity '" + nameReference + "'");
+			org.transition9.util.Log.warn(firstPart + "Couldn't resolve reference to named entity '" + nameReference + "'");
 			return; 
 		}
 		
 		// Look up a component on a named object by name (first) or type (second).
 		if (componentReference != "") {
-			com.pblabs.util.Log.warn(firstPart + " Couldn't find named entity '" + componentReference + "'");
+			org.transition9.util.Log.warn(firstPart + " Couldn't find named entity '" + componentReference + "'");
 			return;
 		}
 		
 		// Component reference on the entity being deserialized when the reference was created.
 		if (componentName != "") {
-			com.pblabs.util.Log.warn(firstPart + " Couldn't find component on same entity named '" + componentName + "'");
+			org.transition9.util.Log.warn(firstPart + " Couldn't find component on same entity named '" + componentName + "'");
 			return;
 		}
 	}
@@ -1156,19 +1156,19 @@ private class ReferenceNote
 		
 		// Name reference.
 		if(nameReference != null) {
-			com.pblabs.util.Log.warn(firstPart + " After failure, was able to resolve reference to named entity '" + nameReference + "'");
+			org.transition9.util.Log.warn(firstPart + " After failure, was able to resolve reference to named entity '" + nameReference + "'");
 			return; 
 		}
 		
 		// Look up a component on a named object by name (first) or type (second).
 		if (!StringUtil.isBlank(componentReference)) {
-			com.pblabs.util.Log.warn(firstPart + " After failure, was able to find named entity '" + componentReference + "'");
+			org.transition9.util.Log.warn(firstPart + " After failure, was able to find named entity '" + componentReference + "'");
 			return;
 		}
 		
 		// Component reference on the entity being deserialized when the reference was created.
 		if (!StringUtil.isBlank(componentName)) {
-			com.pblabs.util.Log.warn(firstPart + " After failure, was able to find component on same entity named '" + componentName + "'");
+			org.transition9.util.Log.warn(firstPart + " After failure, was able to find component on same entity named '" + componentName + "'");
 			return;
 		}
 	}

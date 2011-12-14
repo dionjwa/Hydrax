@@ -1,8 +1,7 @@
 package com.pblabs.components.scene2D;
 
 import com.pblabs.engine.resource.ResourceToken;
-import com.pblabs.util.DomUtil;
-import com.pblabs.util.svg.SvgData;
+import org.transition9.util.svg.SvgData;
 
 import de.polygonal.core.math.Mathematics;
 import de.polygonal.motor2.geom.math.XY;
@@ -12,14 +11,15 @@ import flash.geom.Matrix;
 
 using StringTools;
 
-using com.pblabs.util.NumberUtil;
-using com.pblabs.util.StringUtil;
-using com.pblabs.util.XmlTools;
-using com.pblabs.util.svg.SvgTools;
+using org.transition9.util.NumberUtil;
+using org.transition9.util.StringUtil;
+using org.transition9.util.XmlTools;
+using org.transition9.util.svg.SvgTools;
 
 using de.polygonal.core.math.Mathematics;
 
 #if js
+import org.transition9.util.DomUtil;
 import jQuery.JQuery;
 #end
 
@@ -62,19 +62,19 @@ class SvgRenderTools
 	#if flash
 	public static function renderSvg (svgData :SvgData, cb :flash.display.DisplayObject->Void, ?renderLib :RenderLib = null) :Void
 	{
-		com.pblabs.util.Assert.isNotNull(svgData, ' svgData is null');
+		org.transition9.util.Assert.isNotNull(svgData, ' svgData is null');
 		// #if debug
 		// trace("Rendering " + Xml.parse(svgData).ensureNotDocument().get("id"));
 		// #end
-		// trace("!!!!!!!!!!!!!!!!!!!flash rendering svg=" + svgData + "\n" + com.pblabs.util.Log.getStackTrace());
-		com.pblabs.util.Assert.isNotNull(svgData);
-		com.pblabs.util.Assert.isNotNull(cb);
+		// trace("!!!!!!!!!!!!!!!!!!!flash rendering svg=" + svgData + "\n" + org.transition9.util.Log.getStackTrace());
+		org.transition9.util.Assert.isNotNull(svgData);
+		org.transition9.util.Assert.isNotNull(cb);
 		renderLib = renderLib == null ? RenderLib.SVGWEB :renderLib;
 		if (renderLib == SVGWEB) {
 			#if enable_svgweb
 			renderSvgWithSvgWeb(svgData, cb);
 			#else
-			com.pblabs.util.Log.warn("You must add the compiler switch -D enable_svgweb and add the swf lib 'hydrax/lib/svgweb/svgweb.swf.\n Falling back to gm2d'");
+			org.transition9.util.Log.warn("You must add the compiler switch -D enable_svgweb and add the swf lib 'hydrax/lib/svgweb/svgweb.swf.\n Falling back to gm2d'");
 			cb(renderSvgWithGM2D(svgData));
 			// trace("throwing missing svgweb stuff");
 			// throw "You must add the compiler switch -D enable_svgweb and add the swf lib 'hydrax/lib/svgweb/svgweb.swf'";
@@ -111,7 +111,7 @@ class SvgRenderTools
 		INVISIBLE_STAGE.addChild(svg);
 		
 		svg.xml = new flash.xml.XML(svgData.data);
-		com.pblabs.util.EventDispatcherUtil.addOnceListener(svg.svgRoot, org.svgweb.events.SVGEvent.SVGLoad,
+		org.transition9.util.EventDispatcherUtil.addOnceListener(svg.svgRoot, org.svgweb.events.SVGEvent.SVGLoad,
 			function (ignored :Dynamic) :Void {
 				cb(svg);
 			});
@@ -135,16 +135,16 @@ class SvgRenderTools
 	#elseif js
 	public static function renderSvg (svgData :SvgData, canvas :Canvas, ?offset :XY, ?cb :Void->Void, ?ignoreDimensions :Bool = false) :Void
 	{
-		com.pblabs.util.Assert.isNotNull(svgData);
-		com.pblabs.util.Assert.isNotNull(canvas);
+		org.transition9.util.Assert.isNotNull(svgData);
+		org.transition9.util.Assert.isNotNull(canvas);
 		var args = { ignoreMouse :true, ignoreAnimation :true, ignoreDimensions :ignoreDimensions, ignoreClear :true, renderCallback :function (?_) :Void {
 			if (cb != null) {
 				cb();
 			}
 		}};
 		
-		com.pblabs.util.Assert.isTrue(canvas.width > 0);
-		com.pblabs.util.Assert.isTrue(canvas.height > 0);
+		org.transition9.util.Assert.isTrue(canvas.width > 0);
+		org.transition9.util.Assert.isTrue(canvas.height > 0);
 		
 		if (offset != null && offset.x != 0 && offset.y != 0) {
 			Reflect.setField(args, "offsetX", offset.x);
@@ -178,8 +178,8 @@ class SvgRenderTools
 			#end
 			
 		} catch (e :Dynamic) {
-			com.pblabs.util.Log.error("Error rendering svg from canvg " + e + "\n canvas=" + canvas + ", svg=" + svgData);
-			com.pblabs.util.Log.error(com.pblabs.util.Log.getStackTrace());
+			org.transition9.util.Log.error("Error rendering svg from canvg " + e + "\n canvas=" + canvas + ", svg=" + svgData);
+			org.transition9.util.Log.error(org.transition9.util.Log.getStackTrace());
 		}
 	}
 	#end
@@ -270,7 +270,7 @@ class SvgRenderTools
 		  scale = Math.sqrt(ioMatrix.a*ioMatrix.a + ioMatrix.c*ioMatrix.c );
 	   }
 	   else {
-	   	   com.pblabs.util.Log.warn("unknown transform :" + inTrans);
+	   	   org.transition9.util.Log.warn("unknown transform :" + inTrans);
 	   }
 	   return ioMatrix;
 	}
@@ -281,7 +281,7 @@ class SvgRenderTools
 			xml.set("style", name + ":" + value);
 		} else {
 			var style = xml.get("style");
-			xml.set("style", DomUtil.setStyle(style, name, value));
+			xml.set("style", org.transition9.util.DomUtil.setStyle(style, name, value));
 		}
 	}
 }

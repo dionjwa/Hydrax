@@ -28,18 +28,18 @@ import com.pblabs.engine.resource.Source;
 import com.pblabs.engine.resource.XMLResource;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.serialization.Serializer;
-import com.pblabs.util.Preconditions;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
-import com.pblabs.util.ds.maps.DynamicMap;
+import org.transition9.util.Preconditions;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
+import org.transition9.ds.maps.DynamicMap;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
 import Type;
 
-using com.pblabs.util.IterUtil;
-using com.pblabs.util.StringUtil;
+using org.transition9.util.IterUtil;
+using org.transition9.util.StringUtil;
 
 /**
  * @eventType com.pblabs.engine.core.TemplateEvent.GROUP_LOADED
@@ -124,14 +124,14 @@ class TemplateManager
 		_inGroup = false;
 		_entityType = null;
 		if (_things.size() > 0) {
-			com.pblabs.util.Log.warn("_things still had elements");
+			org.transition9.util.Log.warn("_things still had elements");
 		}
 		_things.clear();
 		
 		#if debug
-		com.pblabs.util.Assert.isFalse(signalLoaded.isListenedTo);
-		com.pblabs.util.Assert.isFalse(signalFailed.isListenedTo);
-		com.pblabs.util.Assert.isFalse(signalGroupLoaded.isListenedTo);
+		org.transition9.util.Assert.isFalse(signalLoaded.isListenedTo);
+		org.transition9.util.Assert.isFalse(signalFailed.isListenedTo);
+		org.transition9.util.Assert.isFalse(signalGroupLoaded.isListenedTo);
 		#end
 	}
 	
@@ -172,7 +172,7 @@ class TemplateManager
 	// 	}
 		
 	// 	var onError = function (e :Dynamic) :Void {
-	// 		com.pblabs.util.Log.error("Failed to load " + filename + ", error=" + e);
+	// 		org.transition9.util.Log.error("Failed to load " + filename + ", error=" + e);
 	// 		self.signalFailed.dispatch(rsrc);
 	// 	}
 		
@@ -207,7 +207,7 @@ class TemplateManager
 	 */
 	public function instantiateEntity(name :String, context :IPBContext) :IEntity
 	{
-		com.pblabs.util.Log.debug("name=" + name);
+		org.transition9.util.Log.debug("name=" + name);
 		Preconditions.checkNotNull(name, "name is null");
 		Preconditions.checkNotNull(context, "context is null");
 		Profiler.enter("instantiateEntity");
@@ -215,21 +215,21 @@ class TemplateManager
 		// try {
 			// Check for a callback.
 			if (_things.exists(name)) {
-				// com.pblabs.util.Log.debug("thing exists=" + _things.get(name));
+				// org.transition9.util.Log.debug("thing exists=" + _things.get(name));
 				if (_things.get(name).type == RefType.group) {
 					throw "Thing '" + name + "' is a group callback!";
 				}
 				
 				if (_things.get(name).type == RefType.entity) {
-					com.pblabs.util.Log.debug("creating entity from a callback");
+					org.transition9.util.Log.debug("creating entity from a callback");
 					var thing :ThingReference = _things.get(name);
 					var instantiated = null;
 					// try {
 						instantiated = thing.createEntity();
-						com.pblabs.util.Log.debug("entity created from callback");
+						org.transition9.util.Log.debug("entity created from callback");
 					// }
 					// catch (e :Dynamic) {
-					// 	com.pblabs.util.Log.error("createEntity callback failed,  name=" + name + ", error :" + e);
+					// 	org.transition9.util.Log.error("createEntity callback failed,  name=" + name + ", error :" + e);
 					// 	throw e;
 					// }
 					
@@ -241,10 +241,10 @@ class TemplateManager
 					return instantiated;
 				}
 			}
-			// com.pblabs.util.Log.debug("entity instantiated via XML");			
+			// org.transition9.util.Log.debug("entity instantiated via XML");			
 			var xml = getXML(name, "template", "entity");
 			if (xml == null) {
-				com.pblabs.util.Log.error("Unable to find a template or entity with the name " + name + ".");
+				org.transition9.util.Log.error("Unable to find a template or entity with the name " + name + ".");
 				Profiler.exit("instantiateEntity");
 				return null;
 			}
@@ -254,7 +254,7 @@ class TemplateManager
 			Profiler.exit("instantiateEntity");
 		// }
 		// catch (e :Dynamic) {
-		// 	com.pblabs.util.Log.error("Failed instantiating '" + name + "' due to :" + e.toString() + "\n" + e.getStackTrace());
+		// 	org.transition9.util.Log.error("Failed instantiating '" + name + "' due to :" + e.toString() + "\n" + e.getStackTrace());
 		// 	entity = null;
 		// 	Profiler.exit("instantiateEntity");
 		// }
@@ -312,7 +312,7 @@ class TemplateManager
 	 */
 	public function instantiateEntityFromXML (xml :Xml, context :IPBContext) :IEntity
 	{
-		com.pblabs.util.Log.debug("");
+		org.transition9.util.Log.debug("");
 		Preconditions.checkNotNull(xml);
 		Preconditions.checkNotNull(context);
 		Profiler.enter("instantiateEntityFromXML");
@@ -327,22 +327,22 @@ class TemplateManager
 			}
 
 			if (!xml.get("template").isBlank() && hasEntityCallback(xml.get("template"))) {
-				com.pblabs.util.Log.debug("instantiating entity '" + name + "' from a callback");
+				org.transition9.util.Log.debug("instantiating entity '" + name + "' from a callback");
 				// try {
 					entity = instantiateEntity(xml.get("template"), context);
 					entity.deferring = true;
 				// } catch (e :Dynamic) {
 				// 	#if (flash || cpp)
-				// 	com.pblabs.util.Log.error("Failed instantiating '" + name + "' from an entity callback due to :" + e + "\n" + cast(e, flash.errors.Error).getStackTrace());
+				// 	org.transition9.util.Log.error("Failed instantiating '" + name + "' from an entity callback due to :" + e + "\n" + cast(e, flash.errors.Error).getStackTrace());
 				// 	#else
-				// 	com.pblabs.util.Log.error("Failed instantiating '" + name + "' from an entity callback due to :" + e + "\n" + com.pblabs.util.Log.getStackTrace());
+				// 	org.transition9.util.Log.error("Failed instantiating '" + name + "' from an entity callback due to :" + e + "\n" + org.transition9.util.Log.getStackTrace());
 				// 	#end
 				// 	Profiler.exit("instantiateEntityFromXML");
 				// 	return null;
 				// }
-				com.pblabs.util.Log.debug("instantiated entity '" + name + "' from a callback");
+				org.transition9.util.Log.debug("instantiated entity '" + name + "' from a callback");
 			} else {
-				com.pblabs.util.Log.debug("instantiating entity '" + name + "' from xml");
+				org.transition9.util.Log.debug("instantiating entity '" + name + "' from xml");
 				// Make the IEntity instance.
 				entity = context.allocate(IEntity);
 				// To aid with reference handling, initialize FIRST but defer the
@@ -353,7 +353,7 @@ class TemplateManager
 				
 				
 				
-				com.pblabs.util.Log.debug("doInstantiateTemplate");
+				org.transition9.util.Log.debug("doInstantiateTemplate");
 				if (!doInstantiateTemplate(entity, xml.get("template"), new DynamicMap<Bool>())) {
 					trace("destroying created entity " + name);
 					entity.destroy();
@@ -366,7 +366,7 @@ class TemplateManager
 			entity.deferring = true;
 			
 			var serializer = context.getManager(Serializer);
-			com.pblabs.util.Assert.isNotNull(serializer);
+			org.transition9.util.Assert.isNotNull(serializer);
 			
 			serializer.deserialize(entity, xml);
 			serializer.clearCurrentEntity();
@@ -381,7 +381,7 @@ class TemplateManager
 			Profiler.exit("instantiateEntityFromXML");
 	// 	}
 	// 	catch (e :Dynamic) {
-	// 		com.pblabs.util.Log.error("Failed instantiating xml due to "  + e + " xml=" + xml.toString());//'" + name + "' from XML due to :" + e + "\n" + com.pblabs.util.Log.getStackTrace());
+	// 		org.transition9.util.Log.error("Failed instantiating xml due to "  + e + " xml=" + xml.toString());//'" + name + "' from XML due to :" + e + "\n" + org.transition9.util.Log.getStackTrace());
 	// 		entity = null;
 	// 		Profiler.exit("instantiateEntityFromXML");
 	// 		throw e;
@@ -401,10 +401,10 @@ class TemplateManager
 	 */
 	public function instantiateGroup(context :IPBContext, name :String) :IPBGroup
 	{
-		com.pblabs.util.Log.debug("name=" + name);
+		org.transition9.util.Log.debug("name=" + name);
 		// Check for a callback.
 		if (_things.exists(name) && _things.get(name).type == RefType.group) {
-			com.pblabs.util.Log.debug("name exists, type=" + _things.get(name).type);
+			org.transition9.util.Log.debug("name exists, type=" + _things.get(name).type);
 			Preconditions.checkArgument(_things.get(name).type != RefType.entity, "Thing '" + name + "' is an entity callback!"); 
 			// We won't dispatch the GROUP_LOADED event here as it's the callback
 			// author's responsibility.
@@ -426,7 +426,7 @@ class TemplateManager
 			return group;
 		// }
 		// catch (e :Dynamic) {
-		// 	com.pblabs.util.Log.error("Failed to instantiate group '" + name + "' due to :" + e.toString());
+		// 	org.transition9.util.Log.error("Failed to instantiate group '" + name + "' due to :" + e.toString());
 		// 	return null;
 		// }
 		
@@ -449,12 +449,12 @@ class TemplateManager
 		var name = xml.get("name");
 		
 		if (name.length == 0) {
-			com.pblabs.util.Log.warn("XML object description added without a 'name' attribute.");
+			org.transition9.util.Log.warn("XML object description added without a 'name' attribute.");
 			return;
 		}
 		
 		if (_things.exists(name)) {
-			com.pblabs.util.Log.warn("An XML object description with name " + name + " has already been added.");
+			org.transition9.util.Log.warn("An XML object description with name " + name + " has already been added.");
 			return;
 		}
 		
@@ -463,8 +463,8 @@ class TemplateManager
 		thing.identifier = identifier;
 		thing.version = version;
 		
-		com.pblabs.util.Log.debug("new thing, name=" +name + ", thing=" + thing);
-		com.pblabs.util.Log.debug("previous thing=" + _things.get(name));
+		org.transition9.util.Log.debug("new thing, name=" +name + ", thing=" + thing);
+		org.transition9.util.Log.debug("previous thing=" + _things.get(name));
 		_things.set(name, thing);
 		#if flash
 		untyped xml._map = null;
@@ -544,14 +544,14 @@ class TemplateManager
 	 */
 	public function registerEntityCallback(name :String, callBack :Void->IEntity) :Void
 	{
-		com.pblabs.util.Log.debug("name=" + name);
+		org.transition9.util.Log.debug("name=" + name);
 		Preconditions.checkNotNull(callBack, "Must pass a callback function!");
 		Preconditions.checkArgument(!_things.exists(name), "Already have a thing registered under '" + name + "'!");
 		
 		var newThing = new ThingReference(RefType.entity);
 		newThing.createEntity = callBack;
 		// newThing.entityCallback = callBack;
-		com.pblabs.util.Log.debug("newThing=" + newThing);
+		org.transition9.util.Log.debug("newThing=" + newThing);
 		_things.set(name, newThing);
 	}
 	
@@ -562,7 +562,7 @@ class TemplateManager
 	public function unregisterEntityCallback(name :String) :Void
 	{
 		if (!_things.exists(name)) {
-			com.pblabs.util.Log.warn("No such template '" + name + "'!");
+			org.transition9.util.Log.warn("No such template '" + name + "'!");
 			return;
 		}
 		Preconditions.checkNotNull(_things.get(name).type != RefType.entity, "Thing '" + name + "' is not an entity callback!"); 
@@ -624,19 +624,19 @@ class TemplateManager
 	
 	function doInstantiateTemplate (object :IEntity, templateName :String, tree :Map<String, Bool>) :Bool
 	{
-		com.pblabs.util.Log.debug("templateName=" + templateName);
+		org.transition9.util.Log.debug("templateName=" + templateName);
 		if (templateName == null || templateName.length == 0) {
 			return true;
 		}
 		
 		if (tree.exists(templateName)) {
-			com.pblabs.util.Log.warn("Cyclical template detected. " + templateName + " has already been instantiated.");
+			org.transition9.util.Log.warn("Cyclical template detected. " + templateName + " has already been instantiated.");
 			return false;
 		}
 		
 		var templateXML = getXML(templateName, "template");
 		if (null == templateXML) {
-			com.pblabs.util.Log.error("Unable to find the template " + templateName + ".");
+			org.transition9.util.Log.error("Unable to find the template " + templateName + ".");
 			return false;
 		}
 		
@@ -652,7 +652,7 @@ class TemplateManager
 	
 	function doInstantiateGroup(name :String, tree :Map<String, Bool>, context :IPBContext) :IPBGroup
 	{
-		com.pblabs.util.Log.debug("name=" + name);
+		org.transition9.util.Log.debug("name=" + name);
 		var xml = getXML(name, "group");
 		Preconditions.checkNotNull(xml, "Could not find group '" + name + "'"); 
 		
@@ -682,7 +682,7 @@ class TemplateManager
 						return null;
 					}
 				// } catch (err :Dynamic) {
-				// 	com.pblabs.util.Log.warn("Failed to instantiate group '" + childName + "' from groupReference in '" + name + "' due to :" + err);
+				// 	org.transition9.util.Log.warn("Failed to instantiate group '" + childName + "' from groupReference in '" + name + "' due to :" + err);
 				// 	return null;
 				// }
 			} else if (objectXML.nodeName == "objectReference") {
@@ -690,7 +690,7 @@ class TemplateManager
 				instantiateEntity(childName, context);
 				_inGroup=false;
 			} else {
-				com.pblabs.util.Log.warn("Encountered unknown tag " + objectXML.nodeName + " in group.");
+				org.transition9.util.Log.warn("Encountered unknown tag " + objectXML.nodeName + " in group.");
 			}
 		}
 		
@@ -703,8 +703,8 @@ class TemplateManager
 	
 	public function loadInMemoryFile(data :Xml, sourceName :String) :Void
 	{
-		com.pblabs.util.Assert.isNotNull(data);
-		com.pblabs.util.Assert.isTrue(data.nodeType == Xml.Element || data.nodeType == Xml.Document, "Incorrect node type=" + data.nodeType);
+		org.transition9.util.Assert.isNotNull(data);
+		org.transition9.util.Assert.isTrue(data.nodeType == Xml.Element || data.nodeType == Xml.Document, "Incorrect node type=" + data.nodeType);
 		
 		//Issues with XML.  If we're handed a Document, set the data to the first child element
 		if (data.nodeType == Xml.Document) {
@@ -712,22 +712,22 @@ class TemplateManager
 		}
 		
 		var version = Std.parseInt(data.get("version"));
-		com.pblabs.util.Log.debug("version=" + version);
+		org.transition9.util.Log.debug("version=" + version);
 		var thingCount :Int = 0;
 		
 		
 		for (xml in data.elements()) {
 			if (xml.nodeType == Xml.Element) {
-				com.pblabs.util.Log.info("adding child " + xml.nodeType + " " + xml.nodeName);
+				org.transition9.util.Log.info("adding child " + xml.nodeType + " " + xml.nodeName);
 				thingCount++;
 				addXML(xml, sourceName, version);
 			} 
 			else {
-				com.pblabs.util.Log.info(" not child adding " + xml.nodeType + " " + xml);
+				org.transition9.util.Log.info(" not child adding " + xml.nodeType + " " + xml);
 			}
 		}
 		
-		com.pblabs.util.Log.info("Loaded " + thingCount + " from " + sourceName);			
+		org.transition9.util.Log.info("Loaded " + thingCount + " from " + sourceName);			
 	}
 	
 	// function onLoaded(resource :XMLResource) :Void
@@ -740,7 +740,7 @@ class TemplateManager
 	// 		addXML(childxml, resource.name, version);
 	// 	}
 		
-	// 	com.pblabs.util.Log.info("Loaded " + thingCount + " from " + resource.name);
+	// 	org.transition9.util.Log.info("Loaded " + thingCount + " from " + resource.name);
 		
 	// 	// signalLoaded.dispatch(resource);
 	// }
@@ -794,7 +794,7 @@ class ThingReference
 	#if debug
 	public function toString () :String
 	{
-		return com.pblabs.util.StringUtil.objectToString(this, ["type", "version", "identifier"]);
+		return org.transition9.util.StringUtil.objectToString(this, ["type", "version", "identifier"]);
 	}
 	#end
 }

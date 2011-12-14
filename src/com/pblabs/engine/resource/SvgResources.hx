@@ -1,8 +1,8 @@
 package com.pblabs.engine.resource;
 
 import com.pblabs.engine.core.IPBContext;
-import com.pblabs.util.svg.SvgData;
-import com.pblabs.util.svg.SvgReplace;
+import org.transition9.util.svg.SvgData;
+import org.transition9.util.svg.SvgReplace;
 
 /**
   * Loads and stores SvgData resources.
@@ -19,8 +19,8 @@ class SvgResources extends LoadingResources<SvgData>
 	{
 		var rsrc = context.getManager(IResourceManager);
 		if (replacements == null || replacements.length == 0) {
-			com.pblabs.util.Assert.isNotNull(rsrc.get(base), ' null rsrc.get(' + base + ')');
-			com.pblabs.util.Assert.isNotNull(cast(rsrc.get(base), SvgData).data, ' rsrc.get(base).data is null');
+			org.transition9.util.Assert.isNotNull(rsrc.get(base), ' null rsrc.get(' + base + ')');
+			org.transition9.util.Assert.isNotNull(cast(rsrc.get(base), SvgData).data, ' rsrc.get(base).data is null');
 			return base;
 		}
 		
@@ -28,8 +28,8 @@ class SvgResources extends LoadingResources<SvgData>
 		var derivedToken = createDerivedResourceToken(base, replacements);
 		if (rsrc.get(derivedToken) == null) {
 			//We need the base svg for modifiying, so check if it exists
-			com.pblabs.util.Assert.isNotNull(rsrc.get(base), ' rsrc.get(base) is null, base=' + base);
-			com.pblabs.util.Assert.isNotNull(cast(rsrc.get(base), SvgData).data, ' rsrc.get(base).data is null, base=' + rsrc.get(base));
+			org.transition9.util.Assert.isNotNull(rsrc.get(base), ' rsrc.get(base) is null, base=' + base);
+			org.transition9.util.Assert.isNotNull(cast(rsrc.get(base), SvgData).data, ' rsrc.get(base).data is null, base=' + rsrc.get(base));
 			//Create the SvgData object with the replacements.
 			var newSvg = new SvgData(derivedToken.id, cast(rsrc.get(base), SvgData).data, replacements);
 			//The derived token contains the SvgData.  The SvgResources will add it to the map when retrieved
@@ -88,7 +88,7 @@ class SvgResources extends LoadingResources<SvgData>
 	
 	override function loadFromEmbedded (token :ResourceToken) :Void
 	{
-		com.pblabs.util.Assert.isNotNull(haxe.Resource.getString(token.id), ' haxe.Resource.getString(' + token.id + ') is null');
+		org.transition9.util.Assert.isNotNull(haxe.Resource.getString(token.id), ' haxe.Resource.getString(' + token.id + ') is null');
 		_data.set(token, new SvgData(token.id, haxe.Resource.getString(token.id)));
 		_loading.remove(token);
 		maybeFinish();
@@ -116,9 +116,9 @@ class SvgResources extends LoadingResources<SvgData>
 	override function loadFromSwf (token :ResourceToken, swfId :String) :Void
 	{
 			var data :flash.utils.ByteArray = ResourceTools.instantiateEmbeddedClass(token.id);
-			com.pblabs.util.Assert.isNotNull(data, ' data is null');
+			org.transition9.util.Assert.isNotNull(data, ' data is null');
 			_data.set(token, new SvgData(token.id, data.toString()));
-			com.pblabs.util.Assert.isNotNull(_data.get(token).data, ' _data.get(token).data is null');
+			org.transition9.util.Assert.isNotNull(_data.get(token).data, ' _data.get(token).data is null');
 			_loading.remove(token);
 			maybeFinish();
 	}

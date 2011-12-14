@@ -10,8 +10,8 @@ package com.pblabs.components.tasks;
 
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.util.Preconditions;
-import haxe.rtti.ReflectUtil;
+import org.transition9.util.Preconditions;
+import org.transition9.rtti.ReflectUtil;
 
 class AnimateValueTask extends InterpolatingTask {
 	

@@ -30,7 +30,7 @@ class PBManagerBase
 	
 	public function startup () :Void
 	{
-		com.pblabs.util.Assert.isNotNull(game, "No PBGameBase?");
+		org.transition9.util.Assert.isNotNull(game, "No PBGameBase?");
 		game.signalContextEnter.bind(onNewContextInternal);
 		game.signalContextExit.bind(onContextRemovedInternal);
 		
@@ -41,9 +41,9 @@ class PBManagerBase
 	
 	public function shutdown () :Void
 	{
-		com.pblabs.util.Assert.isNotNull(game);
-		com.pblabs.util.Assert.isNotNull(game.signalContextEnter);
-		com.pblabs.util.Assert.isNotNull(game.signalContextExit);
+		org.transition9.util.Assert.isNotNull(game);
+		org.transition9.util.Assert.isNotNull(game.signalContextEnter);
+		org.transition9.util.Assert.isNotNull(game.signalContextExit);
 		game.signalContextEnter.unbind(onNewContextInternal);
 		game.signalContextExit.unbind(onContextRemovedInternal);
 		//Destroy signal bonds

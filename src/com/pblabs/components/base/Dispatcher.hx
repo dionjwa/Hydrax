@@ -23,7 +23,7 @@ class Dispatcher
 	public function dispatch (message :Dynamic) :Void
 	{
 		if (dispatcher.isListenedTo) {
-			// com.pblabs.util.Log.debug("dispatching=" + Std.string(message));
+			// org.transition9.util.Log.debug("dispatching=" + Std.string(message));
 			dispatcher.dispatch(message);
 		} 
 	}
@@ -42,7 +42,7 @@ class Dispatcher
 				for (b in sig.getBonds()) {
 					trace("Stuck bond=" + b);
 				}
-				com.pblabs.util.Assert.isFalse(sig.isListenedTo);
+				org.transition9.util.Assert.isFalse(sig.isListenedTo);
 			}
 		}, 40);
 		#end

@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.components.scene2D;
 
-import com.pblabs.geom.RectangleTools;
+import org.transition9.geom.RectangleTools;
 
 import de.polygonal.motor2.geom.math.XY;
 
@@ -36,7 +36,7 @@ class BitmapRenderer
 	public var bitmapData (get_bitmapData, set_bitmapData) :ImageData;
 	inline function get_bitmapData () :ImageData
 	{
-		com.pblabs.util.Assert.isNotNull(_bitmap);
+		org.transition9.util.Assert.isNotNull(_bitmap);
 		#if (flash || cpp)
 		return _bitmap.bitmapData;
 		#elseif js
@@ -64,7 +64,7 @@ class BitmapRenderer
 			#end
 		} else {
 			#if flash
-			com.pblabs.util.Assert.isNotNull(_bitmap);
+			org.transition9.util.Assert.isNotNull(_bitmap);
 			_bitmap.bitmapData = val;
 			//This is set to false when a new bitmapData is assigned
 			//http://gskinner.com/blog/archives/2007/08/minor_bug_with_.html
@@ -99,10 +99,10 @@ class BitmapRenderer
 	
 	override private function redrawBackBuffer ()
 	{
-		com.pblabs.util.Assert.isNotNull(_backBuffer, ' _backBuffer is null');
+		org.transition9.util.Assert.isNotNull(_backBuffer, ' _backBuffer is null');
 		
 		if (_bitmap != null) {
-			com.pblabs.util.Assert.isNotNull(_bitmap, ' _bitmap is null');
+			org.transition9.util.Assert.isNotNull(_bitmap, ' _bitmap is null');
 			if (_backBuffer.width != _bitmap.width || _backBuffer.height != _bitmap.height) {
 				_backBuffer.width = _bitmap.width;
 				_backBuffer.height = _bitmap.height;
@@ -151,7 +151,7 @@ class BitmapRenderer
 	public function new (?width :Int = 1, ?height :Int = 1) :Void
 	{
 		#if (flash || cpp)
-		var sprite = com.pblabs.util.SpriteUtil.create();
+		var sprite = org.transition9.util.SpriteUtil.create();
 		_bitmap = new flash.display.Bitmap(new flash.display.BitmapData(width, height, true, 0xff0000), flash.display.PixelSnapping.NEVER);
 		sprite.addChild(_bitmap);
 		_displayObject = sprite;
@@ -165,7 +165,7 @@ class BitmapRenderer
 		_backBuffer.style.display = "block";
 		//Add to the div display object, so it can be rendered to either CSS or Canvas layers.
 		super();
-		com.pblabs.util.Assert.isNotNull(div);
+		org.transition9.util.Assert.isNotNull(div);
 		div.appendChild(_backBuffer);
 		isTransformDirty = true;
 		// cacheAsBitmap = false;
@@ -177,7 +177,7 @@ class BitmapRenderer
 		#if flash
 		bitmapData = image.bitmapData;
 		#elseif js
-		bitmapData = com.pblabs.util.BitmapUtil.toCanvas(image);
+		bitmapData = org.transition9.util.BitmapUtil.toCanvas(image);
 		#end
 	}
 	
@@ -197,7 +197,7 @@ class BitmapRenderer
 	
 	public function drawImage (image :Image) :Void
 	{
-		set_bitmapData(com.pblabs.util.BitmapUtil.toCanvas(image));
+		set_bitmapData(org.transition9.util.BitmapUtil.toCanvas(image));
 	}
 	#end
 	
@@ -263,7 +263,7 @@ class BitmapRenderer
 	#if debug
 	override public function toString () :String
 	{
-		return com.pblabs.util.StringUtil.objectToString(this, ["x", "y", "width", "height"]);
+		return org.transition9.util.StringUtil.objectToString(this, ["x", "y", "width", "height"]);
 	}
 	#end
 }

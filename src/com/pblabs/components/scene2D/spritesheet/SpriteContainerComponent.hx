@@ -10,7 +10,7 @@ package com.pblabs.components.scene2D.spritesheet;
 
 import com.pblabs.components.scene2D.ImageData;
 import com.pblabs.engine.core.EntityComponent;
-import com.pblabs.geom.Vector2;
+import org.transition9.geom.Vector2;
 
 import de.polygonal.core.math.Limits;
 import de.polygonal.motor2.geom.math.XY;

@@ -18,13 +18,13 @@ import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.time.IAnimatedObject;
-import com.pblabs.geom.Vector2;
+import org.transition9.geom.Vector2;
 
 import de.polygonal.core.math.Mathematics;
 import de.polygonal.motor2.geom.math.XY;
 
 using com.pblabs.engine.util.PBUtil;
-using com.pblabs.geom.VectorTools;
+using org.transition9.geom.VectorTools;
 
 class SceneUtil
 {
@@ -70,7 +70,7 @@ class SceneUtil
 	public static function createBaseScene (context :IPBContext, ?name :String = null, ?addDefaultLayer :Bool = false, 
 		?registerAsManager :Bool = true, ?cls :Class<Dynamic>) :BaseSceneManager<Dynamic>
 	{
-		com.pblabs.util.Assert.isNotNull(context);
+		org.transition9.util.Assert.isNotNull(context);
 		var cls = cls == null ? MANAGER_CLASS : cls;
 		var scene = cast(context.addSingletonComponent(cls, name, true), BaseSceneManager<Dynamic>);
 		//The spatial component is for panning control
@@ -80,7 +80,7 @@ class SceneUtil
 			context.registerManager(IScene2D, scene, scene.name, true);
 			context.registerManager(MANAGER_CLASS, scene, scene.name, true);
 		}
-		com.pblabs.util.Assert.isNotNull(scene);
+		org.transition9.util.Assert.isNotNull(scene);
 		if (addDefaultLayer) {
 			scene.addLayer(SceneUtil.DEFAULT_LAYER_NAME);
 		}
@@ -103,9 +103,9 @@ class SceneUtil
 	public static function addSceneComponent (e :IEntity, compClass :Class<Dynamic>, 
 		layer :BaseSceneLayer<Dynamic, Dynamic>, ?entityName :String) :IEntity
 	{
-		com.pblabs.util.Assert.isNotNull(e, ' e is null');
-		com.pblabs.util.Assert.isNotNull(compClass, ' compClass is null');
-		com.pblabs.util.Assert.isNotNull(layer, ' layer is null');
+		org.transition9.util.Assert.isNotNull(e, ' e is null');
+		org.transition9.util.Assert.isNotNull(compClass, ' compClass is null');
+		org.transition9.util.Assert.isNotNull(layer, ' layer is null');
 		var sc :BaseSceneComponent<Dynamic> = e.context.allocate(compClass);
 		sc.parentProperty = layer.entityProp();
 		e.addComponent(sc, entityName);
@@ -114,7 +114,7 @@ class SceneUtil
 	
 	public static function setLocation (e :IEntity, x :Float, y :Float) :IEntity
 	{
-		com.pblabs.util.Assert.isNotNull(e);
+		org.transition9.util.Assert.isNotNull(e);
 		e.getComponent(SpatialComponent).setLocation(x, y);
 		return e;
 	}
@@ -123,10 +123,10 @@ class SceneUtil
 	{
 		if (layer == null) {
 			var sc = e.getComponent(BaseSceneComponent);
-			com.pblabs.util.Assert.isNotNull(sc, ' sc is null');
+			org.transition9.util.Assert.isNotNull(sc, ' sc is null');
 			layer = sc.layer;
 		}
-		com.pblabs.util.Assert.isNotNull(e.getComponent(SpatialComponent), ' e.getComponent(SpatialComponent) is null');
+		org.transition9.util.Assert.isNotNull(e.getComponent(SpatialComponent), ' e.getComponent(SpatialComponent) is null');
 		var p = getAlignedPoint(layer.scene, a);
 		e.getComponent(SpatialComponent).setLocation(p.x, p.y);
 		return e;
@@ -134,7 +134,7 @@ class SceneUtil
 	
 	public static function getLocation (e :IEntity) :XY
 	{
-		com.pblabs.util.Assert.isNotNull(e);
+		org.transition9.util.Assert.isNotNull(e);
 		return e.getComponent(SpatialComponent).position;
 	}
 	
@@ -203,8 +203,8 @@ class SceneUtil
 	 */
 	public static function calculateOutPoint (outPoint :XY, alignment :SceneAlignment, sceneWidth :Float, sceneHeight :Float) :XY
 	{
-		com.pblabs.util.Assert.isNotNull(outPoint);
-		com.pblabs.util.Assert.isNotNull(alignment);
+		org.transition9.util.Assert.isNotNull(outPoint);
+		org.transition9.util.Assert.isNotNull(alignment);
 		switch (alignment) {
 			case CENTER :
 				outPoint.x = sceneWidth * 0.5;

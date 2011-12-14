@@ -8,8 +8,8 @@
  ******************************************************************************/
 package com.pblabs.engine.pooling;
 
-import com.pblabs.util.Preconditions;
-import haxe.rtti.ReflectUtil;
+import org.transition9.util.Preconditions;
+import org.transition9.rtti.ReflectUtil;
 
 using Lambda;
 
@@ -58,14 +58,14 @@ class ObjectPool<T>
 	 */
 	public function getObject () :T
 	{
-		// com.pblabs.util.Log.debug("Get/create " +  _clazz);
+		// org.transition9.util.Log.debug("Get/create " +  _clazz);
 		var obj = _objects.pop();
 		if (obj == null) {
 			obj = Type.createInstance(_clazz, ObjectPoolMgr.EMPTY_ARRAY);
-			// com.pblabs.util.Log.debug("no objects in pool, creating " +  _clazz);
+			// org.transition9.util.Log.debug("no objects in pool, creating " +  _clazz);
 			return obj;
 		} else {
-			// com.pblabs.util.Log.debug("from pool " +  _clazz);
+			// org.transition9.util.Log.debug("from pool " +  _clazz);
 			return obj;
 		}
 	}

@@ -16,10 +16,10 @@ import com.pblabs.engine.serialization.Serializer;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.time.ITickedObject;
 import com.pblabs.engine.util.PBUtil;
-import com.pblabs.util.Preconditions;
-import haxe.rtti.ReflectUtil;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
+import org.transition9.util.Preconditions;
+import org.transition9.rtti.ReflectUtil;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
@@ -29,7 +29,7 @@ import Type;
 using Lambda;
 
 // using com.pblabs.engine.core.SetManager;
-using com.pblabs.util.StringUtil;
+using org.transition9.util.StringUtil;
 
 /**
  * Default implementation of IEntity.
@@ -124,7 +124,7 @@ class Entity extends PBObject,
 	public override function destroy():Void
 	{
 		if (!isLiveObject) {
-			com.pblabs.util.Log.error("Calling destroy on a dead Entity");
+			org.transition9.util.Log.error("Calling destroy on a dead Entity");
 		}
 		// Give listeners a chance to act before we start destroying stuff.
 		destroyedSignal.dispatch(this);
@@ -132,10 +132,10 @@ class Entity extends PBObject,
 		cast(context, PBContext).dispatchObjectDestroyed(this);
 		
 		// Unregister our components.
-		com.pblabs.util.Assert.isNotNull(_components, " _components is null");
+		org.transition9.util.Assert.isNotNull(_components, " _components is null");
 		for (c in _components)
 		{
-			com.pblabs.util.Assert.isNotNull(c, " c is null");
+			org.transition9.util.Assert.isNotNull(c, " c is null");
 			if(c.isRegistered) {
 				c.unregister();
 			}
@@ -156,7 +156,7 @@ class Entity extends PBObject,
 		
 		// And remove their references from the dictionary.
 		for (c in _components.array()) {
-			com.pblabs.util.Assert.isNotNull(c, "How can the component be null?");
+			org.transition9.util.Assert.isNotNull(c, "How can the component be null?");
 			_components.remove(c.name);
 		}
 		
@@ -169,7 +169,7 @@ class Entity extends PBObject,
 		// Get out of the NameManager and other general cleanup stuff.
 		super.destroy();
 		#if debug
-		com.pblabs.util.Assert.isFalse(destroyedSignal.isListenedTo, "destroyedSignal.isListenedTo");
+		org.transition9.util.Assert.isFalse(destroyedSignal.isListenedTo, "destroyedSignal.isListenedTo");
 		#end
 		_deferring = false;
 		_components.clear();
@@ -208,14 +208,14 @@ class Entity extends PBObject,
 		deferring = true;
 		
 		var serializer = context.getManager(Serializer);
-		com.pblabs.util.Assert.isNotNull(serializer);
+		org.transition9.util.Assert.isNotNull(serializer);
 		
 		// Process each component tag in the xml.
 		for (componentXML in xml.elements())
 		{
 			// Error if it's an unexpected tag.
 			if(componentXML.nodeName.toLowerCase() != "component") {
-				com.pblabs.util.Log.error("Found unexpected tag '" + componentXML.nodeName + "', only <component/> is valid, ignoring tag, error in entity '" + name + "'.");
+				org.transition9.util.Log.error("Found unexpected tag '" + componentXML.nodeName + "', only <component/> is valid, ignoring tag, error in entity '" + name + "'.");
 				continue;
 			}
 			
@@ -227,13 +227,13 @@ class Entity extends PBObject,
 				// If it specifies a type, instantiate a component and add it.
 				var type :Class<Dynamic> = Type.resolveClass(componentClassName);
 				if (null == type) {
-					com.pblabs.util.Log.error("Unable to find type '" + componentClassName + "' for component '" + componentName +"' on entity '" + name + "'.");
+					org.transition9.util.Log.error("Unable to find type '" + componentClassName + "' for component '" + componentName +"' on entity '" + name + "'.");
 					continue;
 				}
 				
 				component = cast(context.allocate(type), IEntityComponent);
 				if (null == component) {
-					com.pblabs.util.Log.error("Unable to instantiate component " + componentName + " of type " + componentClassName + " on entity '" + name + "'.");
+					org.transition9.util.Log.error("Unable to instantiate component " + componentName + " of type " + componentClassName + " on entity '" + name + "'.");
 					continue;
 				}
 				
@@ -244,15 +244,15 @@ class Entity extends PBObject,
 				// Otherwise just get the existing one of that name.
 				component = getComponentByName(componentName);
 				if (null == component) {
-					com.pblabs.util.Log.error("No type specified for the component " + componentName + " and the component doesn't exist on a parent template for entity '" + name + "'.");
+					org.transition9.util.Log.error("No type specified for the component " + componentName + " and the component doesn't exist on a parent template for entity '" + name + "'.");
 					continue;
 				}
 			}
 			
-			com.pblabs.util.Log.debug("deserializing component " + componentName);
+			org.transition9.util.Log.debug("deserializing component " + componentName);
 			// Deserialize the XML into the component.
 			serializer.deserialize(component, componentXML);
-			com.pblabs.util.Log.debug("deserialized component " + componentName);
+			org.transition9.util.Log.debug("deserialized component " + componentName);
 		}
 		
 		// Deal with set membership.
@@ -281,9 +281,9 @@ class Entity extends PBObject,
 		
 		componentName = componentName == null ? PBUtil.getDefaultComponentName(Type.getClass(c)) : componentName; 
 		// Check the context.
-		com.pblabs.util.Assert.isTrue(c.context != null, "Component has a null context!");
-		com.pblabs.util.Assert.isTrue(context != null, "Entity has a null context!");
-		com.pblabs.util.Assert.isTrue(c.context == context, "Component and entity are not from same context!");
+		org.transition9.util.Assert.isTrue(c.context != null, "Component has a null context!");
+		org.transition9.util.Assert.isTrue(context != null, "Entity has a null context!");
+		org.transition9.util.Assert.isTrue(c.context == context, "Component and entity are not from same context!");
 		
 		// Add it to the dictionary.
 		if (!doAddComponent(c, componentName)) {
@@ -321,7 +321,7 @@ class Entity extends PBObject,
 	
 	public function removeComponent(component:IEntityComponent):Void
 	{
-		com.pblabs.util.Assert.isNotNull(component, "Why is the component null? " + com.pblabs.util.Log.getStackTrace());
+		org.transition9.util.Assert.isNotNull(component, "Why is the component null? " + org.transition9.util.Log.getStackTrace());
 		
 		#if debug
 		_context.getManager(com.pblabs.engine.core.PBGameBase).callLater(component.postDestructionCheck);
@@ -367,7 +367,7 @@ class Entity extends PBObject,
 		for (c in _components)
 		{
 			#if (cpp && debug)
-			com.pblabs.util.Assert.isTrue(Type.getClassName(componentType) != "Dynamic");
+			org.transition9.util.Assert.isTrue(Type.getClassName(componentType) != "Dynamic");
 			#end
 			if (Std.is(c, componentType))
 				return cast(c);
@@ -381,7 +381,7 @@ class Entity extends PBObject,
 		var list = new Array();
 		
 		#if (cpp && debug)
-		com.pblabs.util.Assert.isTrue(Type.getClassName(componentType) != "Dynamic");
+		org.transition9.util.Assert.isTrue(Type.getClassName(componentType) != "Dynamic");
 		#end
 			
 		for (component in _components)
@@ -416,16 +416,16 @@ class Entity extends PBObject,
 	function doAddComponent(c:IEntityComponent, componentName:String):Bool
 	{
 		if (componentName == "") {
-			com.pblabs.util.Log.warn(["AddComponent", "A component name was not specified. This might cause problems later."]);
+			org.transition9.util.Log.warn(["AddComponent", "A component name was not specified. This might cause problems later."]);
 		}
 		
 		if (c.owner != null) {
-			com.pblabs.util.Log.error(["AddComponent", "The component " + componentName + " already has an owner. (" + name + ")"]);
+			org.transition9.util.Log.error(["AddComponent", "The component " + componentName + " already has an owner. (" + name + ")"]);
 			return false;
 		}
 		
 		if (_components.exists(componentName)) {
-			com.pblabs.util.Log.error(["AddComponent", "A component with name " + componentName + " already exists on this entity (" + name + ")."]);
+			org.transition9.util.Log.error(["AddComponent", "A component with name " + componentName + " already exists on this entity (" + name + ")."]);
 			return false;
 		}
 		
@@ -438,12 +438,12 @@ class Entity extends PBObject,
 	function doRemoveComponent(c:IEntityComponent):Bool
 	{
 		if (c.owner != this) {
-			com.pblabs.util.Log.error(["doRemoveComponent", "The component " + c.name + " is not owned by this entity. (" + name + ")"]);
+			org.transition9.util.Log.error(["doRemoveComponent", "The component " + c.name + " is not owned by this entity. (" + name + ")"]);
 			return false;
 		}
 		
 		if (_components.get(c.name) == null) {
-			com.pblabs.util.Log.error(["doRemoveComponent", "The component " + c.name + " was not found on this entity. (" + name + ")"]);
+			org.transition9.util.Log.error(["doRemoveComponent", "The component " + c.name + " was not found on this entity. (" + name + ")"]);
 			return false;
 		}
 		
@@ -477,7 +477,7 @@ class Entity extends PBObject,
 		
 		var sets = context.getManager(SetManager);
 		
-		com.pblabs.util.Log.debug(name + " started reseting");
+		org.transition9.util.Log.debug(name + " started reseting");
 		for (component in _components)
 		{
 			// Skip unregistered entities. 
@@ -486,11 +486,11 @@ class Entity extends PBObject,
 			}
 			
 			//Reset it!
-			#if profiler com.pblabs.engine.debug.Profiler.enter("reseting " + haxe.rtti.ReflectUtil.getClassName(component)); #end
+			#if profiler com.pblabs.engine.debug.Profiler.enter("reseting " + org.transition9.rtti.ReflectUtil.getClassName(component)); #end
 			component.reset();
-			#if profiler com.pblabs.engine.debug.Profiler.exit("reseting " + haxe.rtti.ReflectUtil.getClassName(component)); #end
+			#if profiler com.pblabs.engine.debug.Profiler.exit("reseting " + org.transition9.rtti.ReflectUtil.getClassName(component)); #end
 		}
-		com.pblabs.util.Log.debug("  finished reseting");
+		org.transition9.util.Log.debug("  finished reseting");
 		com.pblabs.engine.debug.Profiler.exit("doResetComponents");
 		deferring = false;
 	}
@@ -504,7 +504,7 @@ class Entity extends PBObject,
 		 // if (sets != null) {
 		 // 	 sets.injectSets(c);
 		 // } else {
-		 // 	 com.pblabs.util.Log.warn("No SetManager, cannot inject IEntityComponents into sets");
+		 // 	 org.transition9.util.Log.warn("No SetManager, cannot inject IEntityComponents into sets");
 		 // }
 	}
 	

@@ -11,7 +11,7 @@ package com.pblabs.components.scene2D;
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.time.IAnimatedObject;
-import com.pblabs.util.Preconditions;
+import org.transition9.util.Preconditions;
 
 import flash.geom.Matrix;
 
@@ -88,7 +88,7 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 	/** Sets the sceneComponent zOrder with the actual z order.  Extended by platform specific subclasses */
 	function checkZOrder () :Void
 	{
-		com.pblabs.util.Log.error("Subclasses override, class=" + haxe.rtti.ReflectUtil.getClassName(this)); 
+		org.transition9.util.Log.error("Subclasses override, class=" + org.transition9.rtti.ReflectUtil.getClassName(this)); 
 	}
 	
 	function setDefaults () :Void

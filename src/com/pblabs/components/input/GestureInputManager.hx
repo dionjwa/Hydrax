@@ -91,7 +91,7 @@ class GestureInputManager extends BaseInputManager
     function bindSignals () :Void
     {
         #if js
-        // com.pblabs.util.Assert.isNotNull(_layer, "Layer is null");
+        // org.transition9.util.Assert.isNotNull(_layer, "Layer is null");
         
         gestureStart = new hsl.js.translating.JSSignaler(this, Lib.document, JSEventType.GESTURESTART, new hsl.js.translation.touch.GestureTranslator());
         gestureChange = new hsl.js.translating.JSSignaler(this, Lib.document, JSEventType.GESTURECHANGE, new hsl.js.translation.touch.GestureTranslator());
@@ -105,9 +105,9 @@ class GestureInputManager extends BaseInputManager
     {
         #if js
         #if debug
-        com.pblabs.util.Assert.isFalse(gestureStart.isListenedTo);
-        com.pblabs.util.Assert.isFalse(gestureChange.isListenedTo);
-        com.pblabs.util.Assert.isFalse(gestureEnd.isListenedTo);
+        org.transition9.util.Assert.isFalse(gestureStart.isListenedTo);
+        org.transition9.util.Assert.isFalse(gestureChange.isListenedTo);
+        org.transition9.util.Assert.isFalse(gestureEnd.isListenedTo);
         #end
         // gestureStart.unbindAll();
         // gestureChange.unbindAll();

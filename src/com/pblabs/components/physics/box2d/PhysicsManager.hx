@@ -57,8 +57,8 @@ class PhysicsManager extends NodeParent<PhysicsComponent>,
 	{
 		
 		if (debugLayer != null) {
-			var drawLayer = com.pblabs.util.SpriteUtil.create();
-			var gridLayer = com.pblabs.util.SpriteUtil.create();
+			var drawLayer = org.transition9.util.SpriteUtil.create();
+			var gridLayer = org.transition9.util.SpriteUtil.create();
 			debugLayer.addChild(gridLayer);
 			debugLayer.addChild(drawLayer);
 			var dbgDraw = new box2D.dynamics.B2DebugDraw();
@@ -70,10 +70,10 @@ class PhysicsManager extends NodeParent<PhysicsComponent>,
 			world.SetDebugDraw(dbgDraw);
 			
 			//Draw grid 10 wide
-			com.pblabs.util.GraphicsUtil.drawGrid(gridLayer.graphics, m_physScale * 10, 0x000000, 10);
-			// com.pblabs.util.GraphicsUtil.drawGrid(gridLayer.graphics, 10, 0x000000, 10);
+			org.transition9.util.GraphicsUtil.drawGrid(gridLayer.graphics, m_physScale * 10, 0x000000, 10);
+			// org.transition9.util.GraphicsUtil.drawGrid(gridLayer.graphics, 10, 0x000000, 10);
 		} else {
-			com.pblabs.util.Log.warn("No PhysicsManager debug layer");
+			org.transition9.util.Log.warn("No PhysicsManager debug layer");
 		}
 	}
 	#end

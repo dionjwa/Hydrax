@@ -2,9 +2,9 @@ package com.pblabs.engine.resource;
 
 import Type;
 
-import com.pblabs.util.Preconditions;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
+import org.transition9.util.Preconditions;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
 
 import haxe.io.Bytes;
 
@@ -134,12 +134,12 @@ class LoadingResources<T> extends ResourcesBase<T>
 		#if flash
 		throw Type.getClassName(Type.getClass(this)) + ":Subclasses override";
 		#else
-		com.pblabs.util.Log.debug("loading url:" + token.url);
+		org.transition9.util.Log.debug("loading url:" + token.url);
 		var conn = new haxe.Http(token.url);
 		var self = this;
 		conn.onData = function (data :String) :Void {
 			self._loading.remove(token);
-			com.pblabs.util.Assert.isFalse(self._data.exists(token), "WTF? token already exists=" + token);
+			org.transition9.util.Assert.isFalse(self._data.exists(token), "WTF? token already exists=" + token);
 			self._data.set(token, self.createResourceFromJsUrlData(token, data));
 			self.maybeFinish();
 			conn.onData = null;
@@ -149,7 +149,7 @@ class LoadingResources<T> extends ResourcesBase<T>
 			if (self._onError != null) {
 				self._onError(e);
 			} else {
-				com.pblabs.util.Log.error("Resource " + token + " failed to load " + e);
+				org.transition9.util.Log.error("Resource " + token + " failed to load " + e);
 			}
 		}
 		conn.request(false);
@@ -216,13 +216,13 @@ class LoadingResources<T> extends ResourcesBase<T>
 	
 	function loadDisplayObjectFromUrl (token :ResourceToken, url :String) :Void
 	{
-		com.pblabs.util.Log.debug("loadDisplayObjectFromUrl " + token);
+		org.transition9.util.Log.debug("loadDisplayObjectFromUrl " + token);
 		try {
 			var loader = new flash.display.Loader();
 			_loaders.set(token, loader);
 			var self = this;
 			var onComplete = function (e :flash.events.Event) :Void {
-				com.pblabs.util.Log.debug("onComplete " + token);
+				org.transition9.util.Log.debug("onComplete " + token);
 				loader.contentLoaderInfo.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
 				loader.contentLoaderInfo.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
 				self._loading.remove(token);
@@ -231,7 +231,7 @@ class LoadingResources<T> extends ResourcesBase<T>
 				self.maybeFinish();
 			}
 			
-			com.pblabs.util.EventDispatcherUtil.addOnceListener(loader.contentLoaderInfo, flash.events.Event.COMPLETE, onComplete);
+			org.transition9.util.EventDispatcherUtil.addOnceListener(loader.contentLoaderInfo, flash.events.Event.COMPLETE, onComplete);
 			loader.contentLoaderInfo.addEventListener(flash.events.IOErrorEvent.IO_ERROR, onLoadError);
 			loader.contentLoaderInfo.addEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, onLoadError);
 			
@@ -249,7 +249,7 @@ class LoadingResources<T> extends ResourcesBase<T>
 			_urlloaders.set(token, loader);
 			var self = this;
 			var onComplete = function (e :flash.events.Event) :Void {
-				com.pblabs.util.Log.debug("onComplete");
+				org.transition9.util.Log.debug("onComplete");
 				self._loading.remove(token);
 				loader.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
 				loader.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
@@ -258,7 +258,7 @@ class LoadingResources<T> extends ResourcesBase<T>
 				self.maybeFinish();
 			}
 			
-			com.pblabs.util.EventDispatcherUtil.addOnceListener(loader, flash.events.Event.COMPLETE, onComplete);
+			org.transition9.util.EventDispatcherUtil.addOnceListener(loader, flash.events.Event.COMPLETE, onComplete);
 			loader.addEventListener(flash.events.IOErrorEvent.IO_ERROR, onLoadError);
 			loader.addEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, onLoadError);
 		} catch (e :flash.errors.SecurityError) {

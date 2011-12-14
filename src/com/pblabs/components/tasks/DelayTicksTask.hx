@@ -9,7 +9,7 @@
 package com.pblabs.components.tasks;
 
 import com.pblabs.engine.core.IEntity;
-import com.pblabs.util.Preconditions;
+import org.transition9.util.Preconditions;
 
 class DelayTicksTask
 	implements IEntityTask {

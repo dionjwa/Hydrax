@@ -18,7 +18,7 @@ import com.pblabs.engine.resource.BitmapCacheResource;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.Source;
 import com.pblabs.engine.resource.SvgResources;
-import com.pblabs.util.svg.SvgReplace;
+import org.transition9.util.svg.SvgReplace;
 
 using Lambda;
 
@@ -34,7 +34,7 @@ using com.pblabs.components.ui.InputButtonOverlay;
 using com.pblabs.components.util.ResetCallbacks;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
-using com.pblabs.util.StringUtil;
+using org.transition9.util.StringUtil;
 
 class Demo  
 {
@@ -42,7 +42,7 @@ class Demo
 	{
 		#if js
 		haxe.Firebug.redirectTraces();
-		// com.pblabs.util.JsDebugUtil.traceToConsole(false);
+		// org.transition9.util.JsDebugUtil.traceToConsole(false);
 		// trace("");
 		// trace("");
 		// trace("");
@@ -51,7 +51,7 @@ class Demo
 		#end
 		
 		com.pblabs.engine.debug.Log.setup();
-		// com.pblabs.util.Log.setLevel(com.pblabs.engine.time.ProcessManager, com.pblabs.util.Log.DEBUG); 
+		// org.transition9.util.Log.setLevel(com.pblabs.engine.time.ProcessManager, org.transition9.util.Log.DEBUG); 
 		game = new PBGame();
 		game.registerManager(MouseInputManager, new MouseInputManager());
 		
@@ -73,7 +73,7 @@ class Demo
 		game.getManager(IResourceManager).load(startGame, function (e :Dynamic) {trace(e);});
 		
 		#if flash
-		// haxe.Timer.delay(callback(com.pblabs.util.DebugUtil.traceDisplayChildren, flash.Lib.current, " "), 2000);
+		// haxe.Timer.delay(callback(org.transition9.util.DebugUtil.traceDisplayChildren, flash.Lib.current, " "), 2000);
 		#end
 	}
 	
@@ -82,7 +82,7 @@ class Demo
 		var context :DemoPagedScreen = game.pushContext(DemoPagedScreen);
 		
 		#if flash
-		com.pblabs.util.GraphicsUtil.drawGrid(flash.Lib.current.graphics, 0x0000, 100);
+		org.transition9.util.GraphicsUtil.drawGrid(flash.Lib.current.graphics, 0x0000, 100);
 		#end
 	}
 	

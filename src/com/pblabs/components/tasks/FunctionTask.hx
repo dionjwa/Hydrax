@@ -29,7 +29,7 @@
 package com.pblabs.components.tasks;
 
 import com.pblabs.engine.core.IEntity;
-import com.pblabs.util.Preconditions;
+import org.transition9.util.Preconditions;
 
 class FunctionTask
 	implements IEntityTask {
@@ -37,7 +37,7 @@ class FunctionTask
 	public function new (fn :Dynamic, ?args:Array<Dynamic> = null)
 	{
 		_fn = Preconditions.checkNotNull(fn, "fn must be non-null");
-		_args = if (args != null) args else com.pblabs.util.Constants.EMPTY_ARRAY;
+		_args = if (args != null) args else org.transition9.util.Constants.EMPTY_ARRAY;
 	}
 	
 	public function update (dt :Float, obj :IEntity) :Bool

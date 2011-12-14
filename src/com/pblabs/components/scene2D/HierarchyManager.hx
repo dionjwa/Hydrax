@@ -8,10 +8,10 @@ import com.pblabs.engine.core.PBManager;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.time.IProcessManager;
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.Comparators;
-import com.pblabs.util.F;
-import com.pblabs.util.ds.Map;
+import org.transition9.geom.Vector2;
+import org.transition9.util.Comparators;
+import org.transition9.util.F;
+import org.transition9.ds.Map;
 
 import de.polygonal.motor2.geom.math.XY;
 
@@ -20,9 +20,9 @@ using StringTools;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
-using com.pblabs.geom.VectorTools;
-using com.pblabs.util.StringUtil;
-using com.pblabs.util.XmlTools;
+using org.transition9.geom.VectorTools;
+using org.transition9.util.StringUtil;
+using org.transition9.util.XmlTools;
 
 /**
   * Manages the display anchors (MovieClips in Flash, SVGs in JS).
@@ -74,13 +74,13 @@ class HierarchyManager extends PBManager
 	
 	public function getAnchors (token :ResourceToken) :Map<String, XY>
 	{
-		com.pblabs.util.Assert.isNotNull(token, ' token is null');
+		org.transition9.util.Assert.isNotNull(token, ' token is null');
 		com.pblabs.engine.debug.Profiler.enter("getSvgResource");
 		com.pblabs.engine.debug.Profiler.exit("getSvgResource");
 		com.pblabs.engine.debug.Profiler.enter("_rsrc.get(");
 		var svg = _rsrc.get(token);
 		com.pblabs.engine.debug.Profiler.exit("_rsrc.get(");
-		com.pblabs.util.Assert.isNotNull(svg, ' svg is null');
+		org.transition9.util.Assert.isNotNull(svg, ' svg is null');
 		com.pblabs.engine.debug.Profiler.enter("SvgAnchors.getAnchors");
 		var val = SvgAnchors.getAnchors(svg);
 		com.pblabs.engine.debug.Profiler.exit("SvgAnchors.getAnchors");
@@ -90,17 +90,17 @@ class HierarchyManager extends PBManager
 	function updateLink (link :Link) :Void
 	{
 		com.pblabs.engine.debug.Profiler.enter("updateLink");
-		com.pblabs.util.Assert.isNotNull(link);
+		org.transition9.util.Assert.isNotNull(link);
 		com.pblabs.engine.debug.Profiler.enter("getOffset");
 		var offset = getOffset(link.parentDisplayType, link.childKey);
 		com.pblabs.engine.debug.Profiler.exit("getOffset");
 		if (offset == null) {
-			com.pblabs.util.Log.warn("Not a valid match " + link.parentDisplayType + "." + link.childKey);
+			org.transition9.util.Log.warn("Not a valid match " + link.parentDisplayType + "." + link.childKey);
 			com.pblabs.engine.debug.Profiler.exit("updateLink");
 			return;
 		}
 		com.pblabs.engine.debug.Profiler.enter("rest");
-		com.pblabs.util.Assert.isNotNull(link.parent);
+		org.transition9.util.Assert.isNotNull(link.parent);
 		// var disp = link.parent.owner.getComponent(com.pblabs.components.scene2D.BaseSceneComponent);
 		// trace('disp=' + disp);
 		// if (disp != null) {trace(disp.scaleX);}
@@ -116,10 +116,10 @@ class HierarchyManager extends PBManager
 	public function setAsChild (parent :IEntity, parentResource :ResourceToken, 
 		childKey :String, child :BaseSceneComponent<Dynamic>) :Void
 	{
-		com.pblabs.util.Assert.isNotNull(parent);
-		com.pblabs.util.Assert.isNotNull(childKey);
-		com.pblabs.util.Assert.isNotNull(child);
-		com.pblabs.util.Assert.isNotNull(parentResource);
+		org.transition9.util.Assert.isNotNull(parent);
+		org.transition9.util.Assert.isNotNull(childKey);
+		org.transition9.util.Assert.isNotNull(child);
+		org.transition9.util.Assert.isNotNull(parentResource);
 		
 		removeChild(child);
 		
@@ -147,7 +147,7 @@ class HierarchyManager extends PBManager
 		// 	var self = this;
 		// 	child.bindSignal(link.parent.signalerLocation, F.ignoreArg(callback(updateLink, link)));
 		// } else {
-		// 	com.pblabs.util.Log.warn("Missing SpatialComponent on the parent");
+		// 	org.transition9.util.Log.warn("Missing SpatialComponent on the parent");
 		// }
 	}
 	

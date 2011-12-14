@@ -3,7 +3,7 @@ package com.pblabs.components.minimalcomp;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.scene2D.Direction;
 import com.pblabs.engine.time.IAnimatedObject;
-import com.pblabs.geom.Vector2;
+import org.transition9.geom.Vector2;
 
 import de.polygonal.motor2.geom.math.XY;
 

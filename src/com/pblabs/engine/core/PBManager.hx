@@ -19,7 +19,7 @@ class PBManager
 	
 	public function startup () :Void
 	{
-		com.pblabs.util.Assert.isNotNull(context, "context is null, failed injection?");
+		org.transition9.util.Assert.isNotNull(context, "context is null, failed injection?");
 	}
 	
 	public function shutdown () :Void

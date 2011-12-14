@@ -6,7 +6,7 @@ import com.pblabs.engine.resource.Source;
 
 using StringTools;
 
-using com.pblabs.util.XmlTools;
+using org.transition9.util.XmlTools;
 
 class Resources 
 {
@@ -21,7 +21,7 @@ class Resources
 			all.remove(key);
 		}
 		
-		var resourceXml = Xml.parse(haxe.Resource.getString(com.pblabs.util.PBMacros.embedBinaryDataResource("rsrc/resources.xml")));
+		var resourceXml = Xml.parse(haxe.Resource.getString(org.transition9.util.Macros.embedBinaryDataResource("rsrc/resources.xml")));
 		for (rc in resourceXml.child("resources")) {
 			if (rc.nodeType != Xml.Element) {
 				continue;

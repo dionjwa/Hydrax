@@ -33,7 +33,7 @@ class TextComponent extends SceneComponent
 	public function new ()
 	{
 		super();
-		_sprite = com.pblabs.util.SpriteUtil.create();
+		_sprite = org.transition9.util.SpriteUtil.create();
 		_text = new TextField();
 		_text.width = 200;
 		_text.height = 30;

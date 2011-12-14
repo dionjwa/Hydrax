@@ -18,7 +18,7 @@ import com.pblabs.engine.resource.BitmapCacheResource;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.Source;
 import com.pblabs.engine.resource.SvgResources;
-import com.pblabs.util.svg.SvgReplace;
+import org.transition9.util.svg.SvgReplace;
 
 using Lambda;
 
@@ -34,7 +34,7 @@ using com.pblabs.components.ui.InputButtonOverlay;
 using com.pblabs.components.util.ResetCallbacks;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
-using com.pblabs.util.StringUtil;
+using org.transition9.util.StringUtil;
 
 class DemoPagedScreen extends com.pblabs.components.ui.PagedScreen
 {
@@ -115,7 +115,7 @@ class DemoPagedScreen extends com.pblabs.components.ui.PagedScreen
 			text.getComponent(BaseSceneComponent).objectMask = ObjectType.NONE;
 			var regPoint = text.getComponent(BaseSceneComponent).registrationPoint;
 			
-			text.getComponent(BaseSceneComponent).registrationPoint = new com.pblabs.geom.Vector2(0, regPoint.y);
+			text.getComponent(BaseSceneComponent).registrationPoint = new org.transition9.geom.Vector2(0, regPoint.y);
 				
 			ii += 2;
 		}

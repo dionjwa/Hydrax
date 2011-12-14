@@ -1,9 +1,9 @@
 package com.pblabs.components.physics.motor2;
 
 import com.pblabs.components.manager.NodeComponent;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
-import com.pblabs.util.ds.Tuple;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
+import org.transition9.ds.Tuple;
 
 import de.polygonal.motor2.Settings;
 import de.polygonal.motor2.World;
@@ -16,8 +16,8 @@ import de.polygonal.motor2.geom.primitive.AABB2;
 
 import Type;
 
-using com.pblabs.util.IterUtil;
-using com.pblabs.util.MathUtil;
+using org.transition9.util.IterUtil;
+using org.transition9.util.MathUtil;
 
 /**
   * This is not designed to be pooled.
@@ -44,7 +44,7 @@ class ShapeContactManager extends NodeComponent<Dynamic, ShapeContact>,
 	{
 	    _cachedTuple.set(s1, s2);
 	    var contact = _map.get(_cachedTuple);
-	    com.pblabs.util.Assert.isNotNull(contact);
+	    org.transition9.util.Assert.isNotNull(contact);
 	    contact.evaluate();
 	    var manifold = contact.manifold;
 	    trace("contact.manifoldCount=" + contact.manifoldCount);
@@ -70,13 +70,13 @@ class ShapeContactManager extends NodeComponent<Dynamic, ShapeContact>,
 	
 	public function addContacts (c :ShapeContact) :Void
 	{
-		com.pblabs.util.Assert.isTrue(c.hashCode() != 0);
+		org.transition9.util.Assert.isTrue(c.hashCode() != 0);
 	    for (child in children) {
 			if (child != c) {
 				var t = new Tuple(c, child);
-				com.pblabs.util.Assert.isFalse(_map.exists(t));
-				com.pblabs.util.Assert.isNotNull(c.body.shape);
-				com.pblabs.util.Assert.isNotNull(child.body.shape);
+				org.transition9.util.Assert.isFalse(_map.exists(t));
+				org.transition9.util.Assert.isNotNull(c.body.shape);
+				org.transition9.util.Assert.isNotNull(child.body.shape);
 				var contact = new BoxContact(settings);
 				contact.init(c.body.shape, child.body.shape);
 				_map.set(t, contact);

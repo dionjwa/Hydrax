@@ -11,7 +11,7 @@ package com.pblabs.components.input;
 import com.pblabs.components.scene2D.SceneView;
 import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.PBManagerBase;
-import com.pblabs.util.Preconditions;
+import org.transition9.util.Preconditions;
 #if js
 import js.Dom;
 #end
@@ -45,9 +45,9 @@ class BaseInputManager extends PBManagerBase
 		#if (flash || cpp)
 		
 		if (_layer == null) {
-			com.pblabs.util.Assert.isNotNull(sceneView, "Could not find SceneView");
+			org.transition9.util.Assert.isNotNull(sceneView, "Could not find SceneView");
 			_layer = sceneView.layer;
-			com.pblabs.util.Assert.isNotNull(_layer, "Could not find root container");
+			org.transition9.util.Assert.isNotNull(_layer, "Could not find root container");
 		}
 		#end
 	}

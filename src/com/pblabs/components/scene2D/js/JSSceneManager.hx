@@ -10,7 +10,7 @@ package com.pblabs.components.scene2D.js;
 import com.pblabs.components.scene2D.BaseSceneManager;
 import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.engine.time.IAnimatedObject;
-import com.pblabs.util.Preconditions;
+import org.transition9.util.Preconditions;
 
 using Lambda;
 
@@ -35,7 +35,7 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 			untyped _rootContainer.style.MozTransform = "translate3d(0, 0, 0)";
 		}
 		#else
-		com.pblabs.util.Log.warn("No Modernizr, so we cannot detect browser features.  Consider adding Modernizr. Not enabling hardware accelaration");
+		org.transition9.util.Log.warn("No Modernizr, so we cannot detect browser features.  Consider adding Modernizr. Not enabling hardware accelaration");
 		#end
 	}
 	
@@ -59,8 +59,8 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 	
 	override public function attach () :Void
 	{
-		com.pblabs.util.Assert.isNotNull(sceneView);
-		com.pblabs.util.Assert.isNotNull(sceneView.layer);
+		org.transition9.util.Assert.isNotNull(sceneView);
+		org.transition9.util.Assert.isNotNull(sceneView.layer);
 		if (_rootContainer.parentNode != sceneView.layer) { 
 			sceneView.layer.appendChild(_rootContainer);
 		}
@@ -91,13 +91,13 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 	override function onAdd () :Void
 	{
 		#if debug
-		com.pblabs.util.Assert.isNotNull(sceneView);
-		com.pblabs.util.Assert.isNotNull(sceneView.layer);
+		org.transition9.util.Assert.isNotNull(sceneView);
+		org.transition9.util.Assert.isNotNull(sceneView.layer);
 		#end
 		_rootContainer.id = owner.name + "_" + name;
 		_rootContainer.style.cssText = "position:absolute";
 		#if debug
-		com.pblabs.util.Assert.isNotNull(_rootContainer);
+		org.transition9.util.Assert.isNotNull(_rootContainer);
 		#end
 		super.onAdd();
 	}
@@ -113,11 +113,11 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 		//Figure out the most efficient kind of rendering layer
 		//Default to CSS transforms.  In general, this is the most efficient and has the most features.
 		#if modernizr
-		com.pblabs.util.Assert.isTrue(Modernizr.csstransforms || Modernizr.canvas, "No csstransforms or canvas.  Old browser?"); 
+		org.transition9.util.Assert.isTrue(Modernizr.csstransforms || Modernizr.canvas, "No csstransforms or canvas.  Old browser?"); 
 		return untyped Modernizr.csstransforms ? com.pblabs.components.scene2D.js.css.SceneLayer :
 			com.pblabs.components.scene2D.js.canvas.SceneLayer;
 		#else
-		com.pblabs.util.Log.warn("No Modernizr, so we cannot detect browser features.  Consider adding Modernizr. Defaulting to Canvas");
+		org.transition9.util.Log.warn("No Modernizr, so we cannot detect browser features.  Consider adding Modernizr. Defaulting to Canvas");
 		return com.pblabs.components.scene2D.js.css.SceneLayer;
 		#end
 	}

@@ -15,10 +15,10 @@ package com.pblabs.engine.time;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ITickedObject;
-import com.pblabs.util.MathUtil;
-import haxe.rtti.ReflectUtil;
+import org.transition9.util.MathUtil;
+import org.transition9.rtti.ReflectUtil;
 
-using com.pblabs.util.NumberUtil;
+using org.transition9.util.NumberUtil;
 
 using Lambda;
 
@@ -164,10 +164,10 @@ class ProcessManager implements IProcessManager
 	 */
 	function start ():Void
 	{
-		com.pblabs.util.Log.info("Starting ProcessManager");
+		org.transition9.util.Log.info("Starting ProcessManager");
 		
 		if (_isRunning) {
-			com.pblabs.util.Log.warn("The ProcessManager is already started.");
+			org.transition9.util.Log.warn("The ProcessManager is already started.");
 			return;
 		}
 		
@@ -183,8 +183,8 @@ class ProcessManager implements IProcessManager
 			_timer.start();
 			#elseif !neko
 			if (_timer == null) {
-				com.pblabs.util.Log.debug("Creating haxe.Timer");
-				com.pblabs.util.Log.info("Assuming a frame rate of 30fps");
+				org.transition9.util.Log.debug("Creating haxe.Timer");
+				org.transition9.util.Log.info("Assuming a frame rate of 30fps");
 				_timer = new haxe.Timer(Std.int(1000/30));
 				_timer.run = onFrame;
 			}
@@ -193,7 +193,7 @@ class ProcessManager implements IProcessManager
 		
 		_isRunning = true;
 		#if flash
-		com.pblabs.util.Log.info("Started at " + (untyped flash.Lib.current.stage["frameRate"]) + "Hz");
+		org.transition9.util.Log.info("Started at " + (untyped flash.Lib.current.stage["frameRate"]) + "Hz");
 		#end
 	}
 	
@@ -205,12 +205,12 @@ class ProcessManager implements IProcessManager
 	function stop():Void
 	{
 		if (!_isRunning) {
-			com.pblabs.util.Log.info("The ProcessManager isn't started.");
+			org.transition9.util.Log.info("The ProcessManager isn't started.");
 			return;
 		}
 		_isRunning = false;
 		
-		com.pblabs.util.Log.info("Stopping ProcessManager");
+		org.transition9.util.Log.info("Stopping ProcessManager");
 		
 		if (_isUsingInternalTimer) {
 			#if flash
@@ -235,9 +235,9 @@ class ProcessManager implements IProcessManager
 	 */
 	public function addAnimatedObject(object:IAnimatedObject):Void
 	{
-		com.pblabs.util.Log.debug("Adding animated object=" + object);
+		org.transition9.util.Log.debug("Adding animated object=" + object);
 		if(_duringAdvance) {
-			com.pblabs.util.Log.debug("adding to deferred");
+			org.transition9.util.Log.debug("adding to deferred");
 			_deferredObjects.push(object);
 			return;
 		}
@@ -262,9 +262,9 @@ class ProcessManager implements IProcessManager
 	 */
 	public function addTickedObject(object :ITickedObject):Void
 	{
-		com.pblabs.util.Log.debug("Adding ticked object=" + object);
+		org.transition9.util.Log.debug("Adding ticked object=" + object);
 		if(_duringAdvance) {
-			com.pblabs.util.Log.debug("adding to deferred");
+			org.transition9.util.Log.debug("adding to deferred");
 			_deferredObjects.push(object);
 			return;
 		}
@@ -350,16 +350,16 @@ class ProcessManager implements IProcessManager
 	// function addObject(object:Dynamic, priority:Int, objectList:Array<Dynamic>, isTickedObject :Bool):Void
 	// {
 	// 	// If we are in a tick, defer the add.
-	// 	com.pblabs.util.Log.debug("addObject " + object + ", _duringAdvance=" + _duringAdvance + ", isTickedObject=" + isTickedObject);
-	// 	com.pblabs.util.Log.debug('objectList=' + objectList);
-	// 	com.pblabs.util.Log.debug('(objectList == _tickedObjects)=' + (objectList == _tickedObjects));
+	// 	org.transition9.util.Log.debug("addObject " + object + ", _duringAdvance=" + _duringAdvance + ", isTickedObject=" + isTickedObject);
+	// 	org.transition9.util.Log.debug('objectList=' + objectList);
+	// 	org.transition9.util.Log.debug('(objectList == _tickedObjects)=' + (objectList == _tickedObjects));
 		
 	// 	objectList = isTickedObject ? cast _tickedObjects : cast _animatedObjects;
-	// 	com.pblabs.util.Log.debug('(objectList == _tickedObjects)=' + (objectList == _tickedObjects));
+	// 	org.transition9.util.Log.debug('(objectList == _tickedObjects)=' + (objectList == _tickedObjects));
 		
 	// 	if(_duringAdvance)
 	// 	{
-	// 		com.pblabs.util.Log.debug("adding to deferred");
+	// 		org.transition9.util.Log.debug("adding to deferred");
 	// 		_deferredObjects.push(new Tuple(object, priority));
 	// 		return;
 	// 	}
@@ -372,7 +372,7 @@ class ProcessManager implements IProcessManager
 			
 	// 		if (objectList[i].listener == object)
 	// 		{
-	// 			com.pblabs.util.Log.warn("This object has already been added to the process manager.");
+	// 			org.transition9.util.Log.warn("This object has already been added to the process manager.");
 	// 			return;
 	// 		}
 			
@@ -397,7 +397,7 @@ class ProcessManager implements IProcessManager
 	// 		} else {
 	// 			objectList.insert(position, processObject);
 	// 		}
-	// 		com.pblabs.util.Log.debug("Adding to objectList=" + objectList);
+	// 		org.transition9.util.Log.debug("Adding to objectList=" + objectList);
 	// 	} else {
 	// 		var processObject = new ProcessObjectAnimated();
 	// 		processObject.listener = object;
@@ -411,10 +411,10 @@ class ProcessManager implements IProcessManager
 	// 		} else {
 	// 			objectList.insert(position, processObject);
 	// 		}
-	// 		com.pblabs.util.Log.debug("Adding to objectList=" + objectList);
+	// 		org.transition9.util.Log.debug("Adding to objectList=" + objectList);
 	// 	}
 		
-	// 	com.pblabs.util.Log.debug(" objectList=" + objectList);
+	// 	org.transition9.util.Log.debug(" objectList=" + objectList);
 		
 	// }
 	
@@ -425,10 +425,10 @@ class ProcessManager implements IProcessManager
 	 */
 	// function removeObject(object:Dynamic, objectList:Array<Dynamic>):Void
 	// {
-	// 	com.pblabs.util.Assert.isNotNull(object, com.pblabs.util.Log.getStackTrace());
+	// 	org.transition9.util.Assert.isNotNull(object, org.transition9.util.Log.getStackTrace());
 		
 	// 	if (listenerCount == 1 && _deferredCallbacks[0] == null) {//|| .length == 0
-	// 		com.pblabs.util.Log.debug("Stopping because listener count == 1 and no _deferredCallbacks");	
+	// 		org.transition9.util.Log.debug("Stopping because listener count == 1 and no _deferredCallbacks");	
 	// 		stop();
 	// 	}
 		
@@ -448,7 +448,7 @@ class ProcessManager implements IProcessManager
 	// 		}
 	// 	}
 		
-	// 	com.pblabs.util.Log.info(ReflectUtil.getClassName(object) + " " + object + ": object has not been added to the process manager.\n" + com.pblabs.util.Log.getStackTrace());
+	// 	org.transition9.util.Log.info(ReflectUtil.getClassName(object) + " " + object + ": object has not been added to the process manager.\n" + org.transition9.util.Log.getStackTrace());
 	// }
 	
 	/**
@@ -471,7 +471,7 @@ class ProcessManager implements IProcessManager
 		if (_lastTime < 0)
 		{
 			_lastTime = currentTime;
-			com.pblabs.util.Log.debug("_lastTime < 0");
+			org.transition9.util.Log.debug("_lastTime < 0");
 			return;
 		}
 		
@@ -518,7 +518,7 @@ class ProcessManager implements IProcessManager
 	  */
 	function advanceInternal (deltaTime :Float, ?suppressSafety:Bool = false):Void
 	{
-		com.pblabs.util.Log.debug("advanceInternal, dt=" + deltaTime);
+		org.transition9.util.Log.debug("advanceInternal, dt=" + deltaTime);
 		// Update platform time, to avoid lots of costly calls to getTimer.
 		_platformTime = Std.int(haxe.Timer.stamp() * 1000);
 		
@@ -547,9 +547,9 @@ class ProcessManager implements IProcessManager
 				object = _tickedObjects[ii];
 				if(object == null)
 					continue;
-				#if profiler com.pblabs.engine.debug.Profiler.enter(haxe.rtti.ReflectUtil.getClassName(object));#end
+				#if profiler com.pblabs.engine.debug.Profiler.enter(org.transition9.rtti.ReflectUtil.getClassName(object));#end
 				object.onTick(SECONDS_PER_TICK);
-				#if profiler com.pblabs.engine.debug.Profiler.exit(haxe.rtti.ReflectUtil.getClassName(object));#end
+				#if profiler com.pblabs.engine.debug.Profiler.exit(org.transition9.rtti.ReflectUtil.getClassName(object));#end
 			}
 			_duringAdvance = false;
 			
@@ -564,7 +564,7 @@ class ProcessManager implements IProcessManager
 		// Safety net - don't do more than a few ticks per frame to avoid death spirals.
 		if (tickCount >= MAX_TICKS_PER_FRAME && !suppressSafety && !disableSlowWarning) {
 			// By default, only show when profiling.
-			com.pblabs.util.Log.warn(["advance", "Exceeded maximum number of ticks for frame (" + _elapsed.toFixed(1) + "ms dropped) ."]);
+			org.transition9.util.Log.warn(["advance", "Exceeded maximum number of ticks for frame (" + _elapsed.toFixed(1) + "ms dropped) ."]);
 		}
 		
 		// Make sure that we don't fall behind too far. This helps correct
@@ -590,9 +590,9 @@ class ProcessManager implements IProcessManager
 			if(animatedObject == null)
 				continue;
 			
-			#if profiler com.pblabs.engine.debug.Profiler.enter(haxe.rtti.ReflectUtil.getClassName(animatedObject)); #end
+			#if profiler com.pblabs.engine.debug.Profiler.enter(org.transition9.rtti.ReflectUtil.getClassName(animatedObject)); #end
 			animatedObject.onFrame(deltaTime);
-			#if profiler com.pblabs.engine.debug.Profiler.exit(haxe.rtti.ReflectUtil.getClassName(animatedObject));#end
+			#if profiler com.pblabs.engine.debug.Profiler.exit(org.transition9.rtti.ReflectUtil.getClassName(animatedObject));#end
 		}
 		_duringAdvance = false;
 		com.pblabs.engine.debug.Profiler.exit("frame");
@@ -607,7 +607,7 @@ class ProcessManager implements IProcessManager
 			}
 		}
 		
-		com.pblabs.util.Assert.isTrue(_deferredObjects.length == 0);
+		org.transition9.util.Assert.isTrue(_deferredObjects.length == 0);
 			
 		// Pump the call later queue.
 		com.pblabs.engine.debug.Profiler.enter("callLater_postFrame");
@@ -687,9 +687,9 @@ class ProcessManager implements IProcessManager
 	
 	function removeFromDeferredObjects (object :Dynamic) :Bool
 	{
-		com.pblabs.util.Log.debug(object);
+		org.transition9.util.Log.debug(object);
 		if (_deferredObjects.length == 0) {
-			com.pblabs.util.Log.debug("No deferredObjects to remove " + object);
+			org.transition9.util.Log.debug("No deferredObjects to remove " + object);
 			return false;
 		}
 		return _deferredObjects.remove(object);

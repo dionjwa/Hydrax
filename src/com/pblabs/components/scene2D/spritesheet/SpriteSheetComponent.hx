@@ -189,7 +189,7 @@ class SpriteSheetComponent extends SpriteContainerComponent
 	
 	// function onImageFailed(resource :ImageResource) :Void
 	// {
-	// 	// com.pblabs.util.Log.error([this, "onImageFailed", "Failed to load '" + (resource != null ? resource.filename :"(unknown)") + "'"]);
+	// 	// org.transition9.util.Log.error([this, "onImageFailed", "Failed to load '" + (resource != null ? resource.filename :"(unknown)") + "'"]);
 	// }
 	
 	var _image :BitmapData;

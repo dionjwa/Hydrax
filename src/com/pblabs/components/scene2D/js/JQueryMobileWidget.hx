@@ -14,7 +14,7 @@ class HtmlWidget extends BaseSceneComponent<JSLayer>
 	override public function addedToParent () :Void
 	{
 		super.addedToParent();
-		com.pblabs.util.Assert.isNotNull(html, ' html is null');
+		org.transition9.util.Assert.isNotNull(html, ' html is null');
 		cast(layer, JSLayer).div.appendChild(html);
 	}
 	
@@ -22,7 +22,7 @@ class HtmlWidget extends BaseSceneComponent<JSLayer>
 	{
 		super.removingFromParent();
 		#if debug
-		com.pblabs.util.Assert.isNotNull(html);
+		org.transition9.util.Assert.isNotNull(html);
 		#end
 		parent.div.removeChild(html);
 	}

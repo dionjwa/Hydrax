@@ -5,9 +5,9 @@ import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.time.ITickedObject;
 import com.pblabs.engine.util.PBUtil;
-import com.pblabs.geom.VectorTools;
-import com.pblabs.util.Log;
-import com.pblabs.util.Preconditions;
+import org.transition9.geom.VectorTools;
+import org.transition9.util.Log;
+import org.transition9.util.Preconditions;
 
 import hsl.haxe.Signaler;
 
@@ -119,17 +119,17 @@ class PhysicsComponentPhysaxe extends NodeComponent<PhysicsManagerPhysaxe, Dynam
 	
 	override function addedToParent () :Void
 	{
-		com.pblabs.util.Assert.isNotNull(parent);
-		com.pblabs.util.Assert.isNotNull(parent.world);
-		com.pblabs.util.Assert.isNotNull(body);
+		org.transition9.util.Assert.isNotNull(parent);
+		org.transition9.util.Assert.isNotNull(parent.world);
+		org.transition9.util.Assert.isNotNull(body);
 		_scale = parent.internalScale;
 	}
 	
 	override function removingFromParent () :Void
 	{
-		com.pblabs.util.Assert.isNotNull(parent);
-		com.pblabs.util.Assert.isNotNull(parent.world);
-		com.pblabs.util.Assert.isNotNull(body);
+		org.transition9.util.Assert.isNotNull(parent);
+		org.transition9.util.Assert.isNotNull(parent.world);
+		org.transition9.util.Assert.isNotNull(body);
 		parent.world.removeBody(body);
 	}
 	
@@ -140,7 +140,7 @@ class PhysicsComponentPhysaxe extends NodeComponent<PhysicsManagerPhysaxe, Dynam
 	
 	function set_shapeType (val :ShapeType) :ShapeType
 	{
-		com.pblabs.util.Assert.isNotNull(body);
+		org.transition9.util.Assert.isNotNull(body);
 		_shape = val;
 		if (_physaxeShape != null) {
 			body.removeShape(_physaxeShape);
@@ -171,8 +171,8 @@ class PhysicsComponentPhysaxe extends NodeComponent<PhysicsManagerPhysaxe, Dynam
 	override function onReset () :Void
 	{
 		super.onReset();
-		// com.pblabs.util.Assert.isNotNull(parent);
-		// com.pblabs.util.Assert.isNotNull(parent.world);
+		// org.transition9.util.Assert.isNotNull(parent);
+		// org.transition9.util.Assert.isNotNull(parent.world);
 		// initBody();
 	}
 	
@@ -284,7 +284,7 @@ class PhysicsComponentPhysaxe extends NodeComponent<PhysicsManagerPhysaxe, Dynam
 		// 	val = 2 * Math.PI  - val; 
 		// }
 		// trace("final=" + val);
-		// body.setAngle(com.pblabs.util.MathUtil.toDeg(VectorTools.simplifyRadian(val)));
+		// body.setAngle(org.transition9.util.MathUtil.toDeg(VectorTools.simplifyRadian(val)));
 		body.setAngle(val);
 		sync();
 		return val;
@@ -323,7 +323,7 @@ class PhysicsComponentPhysaxe extends NodeComponent<PhysicsManagerPhysaxe, Dynam
 	
 	function set_linearFriction (val :Float) :Float
 	{
-		com.pblabs.util.Assert.isWithinRange(val, 0, 1);
+		org.transition9.util.Assert.isWithinRange(val, 0, 1);
 		//http://code.google.com/p/physaxe/issues/detail?id=9
 		body.properties.linearFriction = 1 - val;
 		// body.properties.linearFriction = val;
@@ -336,7 +336,7 @@ class PhysicsComponentPhysaxe extends NodeComponent<PhysicsManagerPhysaxe, Dynam
 		for (shape in body.shapes) {
 			return shape.material.restitution;
 		}
-		com.pblabs.util.Log.warn("no shape");
+		org.transition9.util.Log.warn("no shape");
 		return 0;
 	}
 	

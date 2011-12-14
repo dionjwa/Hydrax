@@ -9,7 +9,7 @@
 package com.pblabs.components.scene2D.flash;
 
 import com.pblabs.components.scene2D.BaseSceneComponent;
-import com.pblabs.util.Preconditions;
+import org.transition9.util.Preconditions;
 
 import de.polygonal.core.math.Mathematics;
 
@@ -18,9 +18,9 @@ import flash.display.DisplayObject;
 import flash.geom.Matrix;
 
 using com.pblabs.engine.util.PBUtil;
-using com.pblabs.util.ArrayUtil;
-using com.pblabs.util.DisplayUtils;
-using com.pblabs.util.MathUtil;
+using org.transition9.util.ArrayUtil;
+using org.transition9.util.DisplayUtils;
+using org.transition9.util.MathUtil;
 
 class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	implements com.pblabs.engine.time.IAnimatedObject
@@ -40,7 +40,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 			return;
 		}
 		if (_layerIndexDirty) {
-			com.pblabs.util.Assert.isNotNull(parent, "Cannot change layer index if not attached to a scene since which layer?");
+			org.transition9.util.Assert.isNotNull(parent, "Cannot change layer index if not attached to a scene since which layer?");
 			var scene = parent.parent;
 			var newlayer = scene.getLayerAt(layerIndex);
 			if (newlayer != null) {
@@ -63,10 +63,10 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		com.pblabs.engine.debug.Profiler.enter("sc.addedToParent");
 		super.addedToParent();
 		if (parent.parent != null) {
-			com.pblabs.util.Assert.isNotNull(parent.parent);
+			org.transition9.util.Assert.isNotNull(parent.parent);
 			_layerIndex = parent.parent.getLayerIndex(parent);
 		} else {
-			com.pblabs.util.Log.warn("Layer " + parent.name + " has no scene parent");
+			org.transition9.util.Log.warn("Layer " + parent.name + " has no scene parent");
 		}
 		com.pblabs.engine.debug.Profiler.exit("sc.addedToParent");
 	}
@@ -80,7 +80,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	override function onAdd () :Void
 	{
 		super.onAdd();
-		com.pblabs.util.Assert.isNotNull(_displayObject);
+		org.transition9.util.Assert.isNotNull(_displayObject);
 		_displayObject.name = name;
 		_transformMatrix.identity();
 		_displayObject.transform.matrix = _transformMatrix;
@@ -91,7 +91,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		super.onRemove();
 		if (_displayObject != null) {
 			_displayObject.detach();
-			com.pblabs.util.Assert.isNull(_displayObject.parent);
+			org.transition9.util.Assert.isNull(_displayObject.parent);
 			_displayObject = null;
 		}
 	}
@@ -133,7 +133,7 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 	override public function updateTransform () :Void
 	{
 		if (_displayObject == null) {
-			com.pblabs.util.Log.error("No _displayObject");
+			org.transition9.util.Log.error("No _displayObject");
 			return;
 		}
 		

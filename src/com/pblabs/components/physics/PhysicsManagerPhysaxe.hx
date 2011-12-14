@@ -2,9 +2,9 @@ package com.pblabs.components.physics;
 
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.engine.time.ITickedObject;
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.Preconditions;
-import com.pblabs.util.SignalVar;
+import org.transition9.geom.Vector2;
+import org.transition9.util.Preconditions;
+import org.transition9.util.SignalVar;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;

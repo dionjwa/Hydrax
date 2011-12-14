@@ -1,8 +1,8 @@
 package com.pblabs.components.physics; 
 
-import com.pblabs.geom.Vector2;
+import org.transition9.geom.Vector2;
 
-import com.pblabs.util.Preconditions;
+import org.transition9.util.Preconditions;
 
 import net.hydrax.ITickedObject;
 import com.pblabs.components.manager.NodeComponent;

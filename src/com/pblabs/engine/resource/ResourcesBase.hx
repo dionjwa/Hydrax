@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.engine.resource;
 
-import com.pblabs.util.StringUtil;
+import org.transition9.util.StringUtil;
 
 /**
   * Base class for extending to more specific Resource types.

@@ -11,7 +11,7 @@ package com.pblabs.components.scene2D.body;
 import com.pblabs.components.scene2D.BitmapRenderer;
 import com.pblabs.components.scene2D.ImageData;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.geom.Vector2;
+import org.transition9.geom.Vector2;
 
 import flash.geom.Point;
 
@@ -19,8 +19,8 @@ using Lambda;
 
 using Std;
 
-using com.pblabs.geom.VectorTools;
-using com.pblabs.util.StringUtil;
+using org.transition9.geom.VectorTools;
+using org.transition9.util.StringUtil;
 
 /**
   * A sprite sheet renderer that has multiple states and actions.
@@ -81,7 +81,7 @@ class SpriteSheetBody extends BitmapRenderer
 			super.set_bitmapData(val);
 		} else {
 			#if flash
-			com.pblabs.util.Assert.isNotNull(_bitmap);
+			org.transition9.util.Assert.isNotNull(_bitmap);
 			_bitmap.bitmapData = val;
 			//This is set to false when a new bitmapData is assigned
 			//http://gskinner.com/blog/archives/2007/08/minor_bug_with_.html
@@ -232,7 +232,7 @@ class SpriteSheetBody extends BitmapRenderer
 		
 		#if flash
 		if (_displayObject == null) {
-			com.pblabs.util.Log.error("No _displayObject");
+			org.transition9.util.Log.error("No _displayObject");
 			return;
 		}
 		_displayObject.transform.matrix = _transformMatrix;

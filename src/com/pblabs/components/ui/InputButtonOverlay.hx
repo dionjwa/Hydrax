@@ -4,7 +4,7 @@ import com.pblabs.components.input.IInputData;
 import com.pblabs.components.input.InputManager;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.engine.core.IEntity;
-import com.pblabs.geom.Vector2;
+import org.transition9.geom.Vector2;
 using com.pblabs.components.util.DataComponent;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
@@ -55,7 +55,7 @@ class InputButtonOverlay
 		parentProperty = null;
 		autoAddToScene = false;
 		super.onReset();
-		com.pblabs.util.Assert.isNotNull(context.getManager(InputManager), ' context.getManager(InputManager) is null');
+		org.transition9.util.Assert.isNotNull(context.getManager(InputManager), ' context.getManager(InputManager) is null');
 		var input = context.getManager(InputManager);
 		bindSignal(input.deviceDown, deviceDown);
 		bindSignal(input.deviceUp, deviceUp);
@@ -88,7 +88,7 @@ class InputButtonOverlay
 	
 	function drawOverlay (sc :BaseSceneComponent<Dynamic>) :Void
 	{
-		com.pblabs.util.Assert.isNotNull(sc, ' sc is null');
+		org.transition9.util.Assert.isNotNull(sc, ' sc is null');
 		var b = sc.bounds;
 		if (b == null || Math.isNaN(b.intervalX) || Math.isNaN(b.intervalY)) {
 			return;

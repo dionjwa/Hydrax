@@ -15,7 +15,7 @@ import com.pblabs.engine.serialization.Serializer;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
-using com.pblabs.util.XmlTools;
+using org.transition9.util.XmlTools;
 
 class NotifyingValueComponent extends EntityComponent,
 	implements ISerializable
@@ -79,7 +79,7 @@ class NotifyingValueComponent extends EntityComponent,
 	override public function postDestructionCheck () :Void
 	{
 		super.postDestructionCheck();
-		com.pblabs.util.Assert.isFalse(signaler.isListenedTo);
+		org.transition9.util.Assert.isFalse(signaler.isListenedTo);
 	}
 	#end
 }

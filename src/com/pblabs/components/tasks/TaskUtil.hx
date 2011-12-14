@@ -43,7 +43,7 @@ class TaskUtil
 	/** Adds an unnamed task to this IEntity. */
 	public static function addTask (e :IEntity, task :IEntityTask) :IEntity
 	{
-		com.pblabs.util.Assert.isNotNull(e, "null entity");
+		org.transition9.util.Assert.isNotNull(e, "null entity");
 		getTaskComponent(e).addTask(task);
 		return e;
 	}
@@ -79,7 +79,7 @@ class TaskUtil
 	  */
 	public static function getTaskComponent (e :IEntity) :TaskComponent
 	{
-		com.pblabs.util.Assert.isNotNull(e, "null entity");
+		org.transition9.util.Assert.isNotNull(e, "null entity");
 		var tasks = e.getComponentByName(TaskComponent.NAME) != null ? e.getComponentByName(TaskComponent.NAME) : 
 			e.getComponent(TaskComponent);
 			

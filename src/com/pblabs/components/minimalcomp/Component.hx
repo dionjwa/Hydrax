@@ -5,7 +5,7 @@ import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.time.IAnimatedObject;
-import com.pblabs.geom.Vector2;
+import org.transition9.geom.Vector2;
 
 import de.polygonal.motor2.geom.math.XY;
 import de.polygonal.motor2.geom.primitive.AABB2;
@@ -122,7 +122,7 @@ class Component extends NodeComponent<Container, Component>
 	override function onReset () :Void
 	{
 		_spatial = owner.getComponent(SpatialComponent);
-		com.pblabs.util.Assert.isNotNull(_spatial);
+		org.transition9.util.Assert.isNotNull(_spatial);
 		super.onReset();
 		invalidate();
 	}
@@ -182,8 +182,8 @@ class Component extends NodeComponent<Container, Component>
 		if (_spatial == null) {
 			return 0;
 		}
-		com.pblabs.util.Assert.isNotNull(_spatial);
-		com.pblabs.util.Assert.isNotNull(_spatial.worldExtents);
+		org.transition9.util.Assert.isNotNull(_spatial);
+		org.transition9.util.Assert.isNotNull(_spatial.worldExtents);
 		return _spatial.worldExtents.intervalY;
 	}
 	

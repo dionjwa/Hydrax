@@ -3,10 +3,10 @@ package com.pblabs.components.physics.motor2;
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.util.PBUtil;
-import com.pblabs.geom.Circle;
-import com.pblabs.geom.VectorTools;
-import com.pblabs.util.Preconditions;
-import com.pblabs.util.SignalVarAdvanced;
+import org.transition9.geom.Circle;
+import org.transition9.geom.VectorTools;
+import org.transition9.util.Preconditions;
+import org.transition9.util.SignalVarAdvanced;
 
 import de.polygonal.core.math.Mathematics;
 import de.polygonal.motor2.World;
@@ -114,7 +114,7 @@ class PhysicsComponent extends NodeComponent<PhysicsManager, Dynamic>,
 				parent.updateCollisionData(this);
 				body.wakeUp();
 		} else {
-			com.pblabs.util.Log.error("No parent.updateCollisionData");
+			org.transition9.util.Log.error("No parent.updateCollisionData");
 		}
 	}
 	
@@ -122,7 +122,7 @@ class PhysicsComponent extends NodeComponent<PhysicsManager, Dynamic>,
 	override function onReset () :Void
 	{
 		super.onReset();
-		com.pblabs.util.Log.debug("_shapeType=" + _shapeType);
+		org.transition9.util.Log.debug("_shapeType=" + _shapeType);
 	}
 	#end
 	
@@ -161,9 +161,9 @@ class PhysicsComponent extends NodeComponent<PhysicsManager, Dynamic>,
 			return;
 		}
 		
-		com.pblabs.util.Assert.isFalse(Math.isNaN(body.x));
-		com.pblabs.util.Assert.isFalse(Math.isNaN(body.y));
-		com.pblabs.util.Assert.isFalse(Math.isNaN(body.angle));
+		org.transition9.util.Assert.isFalse(Math.isNaN(body.x));
+		org.transition9.util.Assert.isFalse(Math.isNaN(body.y));
+		org.transition9.util.Assert.isFalse(Math.isNaN(body.angle));
 		
 		_x = body.x;
 		_y = body.y;
@@ -184,7 +184,7 @@ class PhysicsComponent extends NodeComponent<PhysicsManager, Dynamic>,
 	public function applyForce (forceX :Float, forceY :Float) :Void
 	{
 		if (body == null) {
-			com.pblabs.util.Log.debug("No body defined");
+			org.transition9.util.Log.debug("No body defined");
 			return;
 		}
 		body.applyForce(Mathematics.maxPrecision(forceX, precision), Mathematics.maxPrecision(forceY, precision));
@@ -225,8 +225,8 @@ class PhysicsComponent extends NodeComponent<PhysicsManager, Dynamic>,
 		}
 		_y = val;
 		if (body != null) {
-			com.pblabs.util.Assert.isNotNull(body);
-			com.pblabs.util.Assert.isNotNull(_y);
+			org.transition9.util.Assert.isNotNull(body);
+			org.transition9.util.Assert.isNotNull(_y);
 			body.y = _y;
 			body.wakeUp();
 		}
@@ -259,7 +259,7 @@ class PhysicsComponent extends NodeComponent<PhysicsManager, Dynamic>,
 	function get_xVelocity () :Float
 	{
 		if (body == null) {
-			com.pblabs.util.Log.debug("No body defined");
+			org.transition9.util.Log.debug("No body defined");
 			return 0;
 		}
 		return body.vx;
@@ -396,7 +396,7 @@ class PhysicsComponent extends NodeComponent<PhysicsManager, Dynamic>,
 		// trace("\nsetting mass=" + val);
 		_mass = val;
 		if (body == null) {
-			com.pblabs.util.Log.debug("No body defined");
+			org.transition9.util.Log.debug("No body defined");
 			return 0;
 		}
 		
@@ -464,7 +464,7 @@ class PhysicsComponent extends NodeComponent<PhysicsManager, Dynamic>,
 	function get_world () :World
 	{
 		if (parent == null) {
-			com.pblabs.util.Log.error("Asking for World, but no parent");
+			org.transition9.util.Log.error("Asking for World, but no parent");
 			return null;
 		}
 		return parent.world;
@@ -519,12 +519,12 @@ class PhysicsComponent extends NodeComponent<PhysicsManager, Dynamic>,
 			return null;
 		}
 		if (parent == null || parent.world == null) {
-			com.pblabs.util.Log.info("No parent when setting shapeType");
+			org.transition9.util.Log.info("No parent when setting shapeType");
 			com.pblabs.engine.debug.Profiler.exit("set_shapeType");
 			return _shapeType;
 		}
-		com.pblabs.util.Assert.isNotNull(parent, "No parent");
-		com.pblabs.util.Assert.isNotNull(parent.world, "No world on parent");
+		org.transition9.util.Assert.isNotNull(parent, "No parent");
+		org.transition9.util.Assert.isNotNull(parent.world, "No world on parent");
 		
 		var initialX = 0.0;//owner.getProperty(xProperty, 0);// / parent.scale;
 		var initialY = 0.0;//owner.getProperty(yProperty, 0);// / parent.scale;
@@ -553,13 +553,13 @@ class PhysicsComponent extends NodeComponent<PhysicsManager, Dynamic>,
 		
 		var initialAngle = owner.getProperty(angleProperty, 0);
 		var bd = new RigidBodyData(initialX, initialY, initialAngle);
-		com.pblabs.util.Assert.isNotNull(bd, "No rigid body data");
-		com.pblabs.util.Assert.isNotNull(shapeData, "No shapeData");
+		org.transition9.util.Assert.isNotNull(bd, "No rigid body data");
+		org.transition9.util.Assert.isNotNull(shapeData, "No shapeData");
 		
 		body = parent.world.createBody(bd);
 		body.userData = this;
 		body.createShape(shapeData);
-		com.pblabs.util.Assert.isNotNull(body);
+		org.transition9.util.Assert.isNotNull(body);
 		set_mass(_mass);
 		updateCollisionData();
 		com.pblabs.engine.debug.Profiler.exit("set_shapeType");
@@ -568,14 +568,14 @@ class PhysicsComponent extends NodeComponent<PhysicsManager, Dynamic>,
 	
 	function destroyBody () :Void
 	{
-		com.pblabs.util.Log.debug("");
+		org.transition9.util.Log.debug("");
 		if (body != null) {
 			body.free();
 			body.userData = null;
 			body = null;
 		}
 		_x = _y = _angle = 0;
-		com.pblabs.util.Log.debug("end");
+		org.transition9.util.Log.debug("end");
 	}
 	
 	#if debug

@@ -26,9 +26,9 @@ import com.pblabs.engine.resource.ImageResources;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
-import com.pblabs.geom.Vector2;
-import com.pblabs.util.Comparators;
-import com.pblabs.util.Rand;
+import org.transition9.geom.Vector2;
+import org.transition9.util.Comparators;
+import org.transition9.util.Rand;
 
 import haxe.Resource;
 
@@ -41,8 +41,8 @@ using Lambda;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
-using com.pblabs.geom.VectorTools;
-using com.pblabs.util.BitmapUtil;
+using org.transition9.geom.VectorTools;
+using org.transition9.util.BitmapUtil;
 
 class Demo 
 {
@@ -107,13 +107,13 @@ class Demo
 			var tokens = getTokensStartingWith(prefix);
 			for (token in tokens) {
 				var image = rsrc.get(token);
-				com.pblabs.util.Assert.isNotNull(image, ' image is null');
+				org.transition9.util.Assert.isNotNull(image, ' image is null');
 				#if flash
 				var imageData = image.bitmapData;
 				spritelist.imageData.push(imageData);
 				spritelist.centers.push(new Vector2(imageData.width / 2, imageData.height / 2));
 				#elseif js
-				var imageData = com.pblabs.util.BitmapUtil.toCanvas(image);
+				var imageData = org.transition9.util.BitmapUtil.toCanvas(image);
 				spritelist.imageData.push(imageData);
 				spritelist.centers.push(new Vector2(imageData.width / 2, imageData.height / 2));
 				#end
@@ -193,7 +193,7 @@ class Demo
 		physicsManager.m_physScale = 30;
 		#if (debug && flash)
 		var spriteComponent = context.allocate(com.pblabs.components.scene2D.flash.SceneComponent);
-		var sprite = com.pblabs.util.SpriteUtil.create();
+		var sprite = org.transition9.util.SpriteUtil.create();
 		spriteComponent.parentProperty = layer.entityProp();
 		spriteComponent.displayObject = sprite;
 		spriteComponent.spatialProperty = null;

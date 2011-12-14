@@ -14,11 +14,11 @@ import com.pblabs.components.scene2D.ImageType;
 import com.pblabs.components.scene2D.ImageData;
 import com.pblabs.engine.resource.ResourcesBase;
 import com.pblabs.engine.resource.ResourceToken;
-import com.pblabs.util.Preconditions;
-import haxe.rtti.ReflectUtil;
-import com.pblabs.util.StringUtil;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
+import org.transition9.util.Preconditions;
+import org.transition9.rtti.ReflectUtil;
+import org.transition9.util.StringUtil;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
 
 /**
   * Image resources.

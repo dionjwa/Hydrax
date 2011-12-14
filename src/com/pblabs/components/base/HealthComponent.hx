@@ -18,7 +18,7 @@ import de.polygonal.core.math.Mathematics;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
-using com.pblabs.util.XmlTools;
+using org.transition9.util.XmlTools;
 
 class HealthComponent extends EntityComponent,
 	implements ISerializable
@@ -212,7 +212,7 @@ class HealthComponent extends EntityComponent,
 					trace("Stuck bond on " + debugOwnerName + "=" + b);
 				}
 			}
-			com.pblabs.util.Assert.isFalse(sig.isListenedTo, debugOwnerName);
+			org.transition9.util.Assert.isFalse(sig.isListenedTo, debugOwnerName);
 		}
 	}
 	#end

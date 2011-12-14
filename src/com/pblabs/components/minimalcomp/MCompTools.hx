@@ -11,12 +11,12 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.time.IProcessManager;
-import com.pblabs.util.Comparators;
-import com.pblabs.util.F;
-import com.pblabs.util.Predicates;
-import com.pblabs.util.ds.Map;
-import com.pblabs.util.ds.Maps;
-import com.pblabs.util.ds.maps.MapBuilder;
+import org.transition9.util.Comparators;
+import org.transition9.util.F;
+import org.transition9.util.Predicates;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
+import org.transition9.ds.maps.MapBuilder;
 
 using Lambda;
 
@@ -25,8 +25,8 @@ using Type;
 using com.pblabs.components.input.InputTools;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
-using com.pblabs.util.ArrayUtil;
-using com.pblabs.util.IterUtil;
+using org.transition9.util.ArrayUtil;
+using org.transition9.util.IterUtil;
 using com.pblabs.components.util.ResetCallbacks;
 
 /**
@@ -85,7 +85,7 @@ class MCompTools
 			componentsToSort.sort(sorter2);
 			var sortedSceneObjects = componentsToSort.map(component2SceneComp.get).filter(Predicates.notNull).array();
 			var rootIndex = children.indexOf(sortedSceneObjects[0]);
-			com.pblabs.util.Assert.isTrue(rootIndex > -1);
+			org.transition9.util.Assert.isTrue(rootIndex > -1);
 			for (c in sortedSceneObjects) {
 				children.remove(c);
 			}
@@ -124,14 +124,14 @@ class MCompTools
 	
 	public static function addToComponentParent (child :IEntity, container :IEntity) :IEntity
 	{
-		com.pblabs.util.Assert.isNotNull(container);
-		com.pblabs.util.Assert.isNotNull(child);
+		org.transition9.util.Assert.isNotNull(container);
+		org.transition9.util.Assert.isNotNull(child);
 		
 		var containerComp = container.getComponent(Container);
-		com.pblabs.util.Assert.isNotNull(containerComp, container.name + ' has no Container');
+		org.transition9.util.Assert.isNotNull(containerComp, container.name + ' has no Container');
 		var childComp = child.ensureComponent(Component);
 		
-		com.pblabs.util.Assert.isNotNull(childComp, child.name + " has no Component");
+		org.transition9.util.Assert.isNotNull(childComp, child.name + " has no Component");
 		
 		//Assign the parent property as well as actually adding the parent
 		//This way, we can detach and attach without having to explicity get the parent again
@@ -177,7 +177,7 @@ class MCompTools
 	{
 		e.addResetCallback(function (e :IEntity) :Void {
 			var minimalComponent = e.getComponent(Component);
-			com.pblabs.util.Assert.isNotNull(minimalComponent, 'minimalComponent is null');
+			org.transition9.util.Assert.isNotNull(minimalComponent, 'minimalComponent is null');
 			if (minimalComponent.isRegistered) {
 				e.ensureComponent(Component).bindSignal(minimalComponent.redrawSignal, function (c :Component) :Void {
 					cb(e);	
@@ -190,7 +190,7 @@ class MCompTools
 	public static function setComponentId (e :IEntity, id :String) :IEntity
 	{
 		var comp = e.ensureComponent(Component);
-		com.pblabs.util.Assert.isNotNull(comp, ' comp is null');
+		org.transition9.util.Assert.isNotNull(comp, ' comp is null');
 		comp.id = id;
 		return e;
 	}

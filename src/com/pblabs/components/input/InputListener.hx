@@ -32,8 +32,8 @@ class InputListener extends EntityComponent
 	
 	public function bindOrientationChange (callBack :Int->Void) :InputListener
 	{
-		com.pblabs.util.Assert.isNotNull(callBack);
-		com.pblabs.util.Assert.isNotNull(orientationSignaler);
+		org.transition9.util.Assert.isNotNull(callBack);
+		org.transition9.util.Assert.isNotNull(orientationSignaler);
 		_bonds.push(orientationSignaler.bind(callBack));
 		return this;
 	}
@@ -50,7 +50,7 @@ class InputListener extends EntityComponent
 	{
 		super.onReset();
 		var input = context.ensureManager(OrientationManager);
-		com.pblabs.util.Assert.isNotNull(input, "No OrientationManager?");
+		org.transition9.util.Assert.isNotNull(input, "No OrientationManager?");
 		SignalBondManager.bindSignal(this, input.orientationChange, onOrientationChangeInternal);
 	}
 	
@@ -77,7 +77,7 @@ class InputListener extends EntityComponent
 	{
 		super.postDestructionCheck();
 		if (_orientationSignaler != null) {
-			com.pblabs.util.Assert.isFalse(_orientationSignaler.isListenedTo);
+			org.transition9.util.Assert.isFalse(_orientationSignaler.isListenedTo);
 		}
 	}
 	#end

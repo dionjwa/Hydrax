@@ -14,7 +14,7 @@ import haxe.PosInfos;
 
 import haxe.Stack;
 
-import haxe.rtti.ReflectUtil;
+import org.transition9.rtti.ReflectUtil;
 
 
 /**
@@ -155,7 +155,7 @@ class Log
 		_levels = new Hash<Int>(); // reset cached levels
 	}
 	
-	static function setLevelStatic (module :Dynamic, level :com.pblabs.util.Log.LogLevel) :Void
+	static function setLevelStatic (module :Dynamic, level :org.transition9.util.Log.LogLevel) :Void
 	{
 		setLevel (module, Type.enumIndex(level));
 	}
@@ -468,6 +468,10 @@ class Log
 		#else
 			_setLevels.set("", 4);//4==OFF, but the static OFF value not known here
 		#end
+		
+		#if (js && !nodejs)
+		haxe.Firebug.redirectTraces();
+		#end
 	}
 	
 	static function debugStatic (msg :Dynamic, ?infos :PosInfos) :Void
@@ -508,11 +512,11 @@ class Log
 		
 		#if !no_logging
 		Log.showDateTime = false;
-		com.pblabs.util.Log.debug = debugStatic;
-		com.pblabs.util.Log.info = infoStatic;
-		com.pblabs.util.Log.warn = warnStatic;
-		com.pblabs.util.Log.error = errorStatic;
-		com.pblabs.util.Log.setLevel = setLevelStatic;
+		org.transition9.util.Log.debug = debugStatic;
+		org.transition9.util.Log.info = infoStatic;
+		org.transition9.util.Log.warn = warnStatic;
+		org.transition9.util.Log.error = errorStatic;
+		org.transition9.util.Log.setLevel = setLevelStatic;
 		//Basic default, in case the user doesn't set anything
 		setLevel("", WARN);
 		#end

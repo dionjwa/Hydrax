@@ -3,7 +3,7 @@ package com.pblabs.components.minimalcomp;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.scene2D.Direction;
 import com.pblabs.engine.time.IAnimatedObject;
-import com.pblabs.geom.Vector2;
+import org.transition9.geom.Vector2;
 
 import de.polygonal.motor2.geom.math.XY;
 
@@ -40,7 +40,7 @@ class VBox extends Container
 			// 		default: throw "Should never be here";
 			// 	}
 			// } else {
-			// // trace(haxe.rtti.ReflectUtil.getClassName(c) + " height=" + c.height);
+			// // trace(org.transition9.rtti.ReflectUtil.getClassName(c) + " height=" + c.height);
 			// 	switch (flowDirection) {
 			// 		case UP: curY -= c.height / 2;
 			// 		case DOWN: curY += c.height / 2;
