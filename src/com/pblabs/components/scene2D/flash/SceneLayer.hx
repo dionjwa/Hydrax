@@ -12,13 +12,15 @@ import com.pblabs.components.scene2D.BaseSceneLayer;
 import com.pblabs.components.scene2D.SceneAlignment;
 import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.scene2D.SceneView;
-import org.transition9.geom.Vector2;
-import org.transition9.util.Preconditions;
+
+import de.polygonal.motor.geom.math.Vec2;
 
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
 
 import flash.geom.Matrix;
+
+import org.transition9.util.Preconditions;
 
 using Lambda;
 
@@ -34,7 +36,7 @@ class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 		_displayContainer.mouseEnabled = false;
 		_displayContainer.mouseChildren = false;
 		_rootTransform = new Matrix();
-		_tempPoint = new Vector2();
+		_tempPoint = new Vec2();
 	}
 	
 	public function getChildIndex (c :SceneComponent) :Int
@@ -92,7 +94,7 @@ class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 
 	var _displayContainer :DisplayObjectContainer;	
 	var _rootTransform :Matrix;
-	var _tempPoint :Vector2;
+	var _tempPoint :Vec2;
 	
 	#if (debug && sceneDebug) 
 	override function addedToParent () :Void

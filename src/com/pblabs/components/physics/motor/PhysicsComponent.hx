@@ -1,32 +1,33 @@
-package com.pblabs.components.physics.motor2;
+package com.pblabs.components.physics.motor;
 
 import com.pblabs.components.manager.NodeComponent;
+import com.pblabs.components.physics.CollisionData;
+import com.pblabs.components.physics.ShapeType;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.util.PBUtil;
-import org.transition9.geom.Circle;
-import org.transition9.geom.VectorTools;
-import org.transition9.util.Preconditions;
-import org.transition9.util.SignalVarAdvanced;
 
 import de.polygonal.core.math.Mathematics;
-import de.polygonal.motor2.World;
-import de.polygonal.motor2.collision.shape.AbstractShape;
-import de.polygonal.motor2.data.BoxData;
-import de.polygonal.motor2.data.CircleData;
-import de.polygonal.motor2.data.MassData;
-import de.polygonal.motor2.data.RigidBodyData;
-import de.polygonal.motor2.data.ShapeData;
-import de.polygonal.motor2.dynamics.RigidBody;
+import de.polygonal.motor.World;
+import de.polygonal.motor.collision.shape.AbstractShape;
+import de.polygonal.motor.data.BoxData;
+import de.polygonal.motor.data.CircleData;
+import de.polygonal.motor.data.MassData;
+import de.polygonal.motor.data.RigidBodyData;
+import de.polygonal.motor.data.ShapeData;
+import de.polygonal.motor.dynamics.RigidBody;
+import de.polygonal.motor.geom.math.Vec2;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
-import com.pblabs.components.physics.CollisionData;
-import com.pblabs.components.physics.ShapeType;
+import org.transition9.geom.Circle;
+import org.transition9.geom.Vec2Tools;
+import org.transition9.util.Preconditions;
+import org.transition9.util.SignalVarAdvanced;
 
 using de.polygonal.ds.BitFlags;
 
-@sets("motor2PhysicsComponent")
+@sets("motorPhysicsComponent")
 class PhysicsComponent extends NodeComponent<PhysicsManager, Dynamic>,
 	implements com.pblabs.components.physics.IPhysicalObject
 {
@@ -243,7 +244,7 @@ class PhysicsComponent extends NodeComponent<PhysicsManager, Dynamic>,
 	
 	function set_angle (val :Float) :Float
 	{
-		_angle = Mathematics.maxPrecision(VectorTools.simplifyRadian(val), precision);
+		_angle = Mathematics.maxPrecision(Vec2Tools.simplifyRadian(val), precision);
 		if (body != null) {
 			body.angle = _angle;
 			//If we're setting the angle directly, remove angular momentum
@@ -411,7 +412,7 @@ class PhysicsComponent extends NodeComponent<PhysicsManager, Dynamic>,
 			var rSq = radius * radius;
 			md.I = Mathematics.maxPrecision(md.mass * .5 * rSq, precision);
 			case BOX(w, h, def) :
-			md.I = Mathematics.maxPrecision(md.mass / 12 * de.polygonal.motor2.geom.math.Vec2.dot4(w, h, w, h), precision);
+			md.I = Mathematics.maxPrecision(md.mass / 12 * Vec2.dot4(w, h, w, h), precision);
 			case FIXED_BOX(x, y, w, h, def) :
 				//Nothing, it's fixed
 				return val;
@@ -584,7 +585,7 @@ class PhysicsComponent extends NodeComponent<PhysicsManager, Dynamic>,
 		if (body == null) {
 			return "null body";
 		} else {
-			return "[x=" + _x + ", y=" + _y + ", angle=" + _angle + ", isSleeping=" + de.polygonal.ds.BitFlags.hasf(body, de.polygonal.motor2.dynamics.RigidBody.SLEEPING) + ", speed=" + speed + "]";// "\n			body=" + body + "]";
+			return "[x=" + _x + ", y=" + _y + ", angle=" + _angle + ", isSleeping=" + de.polygonal.ds.BitFlags.hasf(body, de.polygonal.motor.dynamics.RigidBody.SLEEPING) + ", speed=" + speed + "]";// "\n			body=" + body + "]";
 		}
 	}
 	#end

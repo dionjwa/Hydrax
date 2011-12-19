@@ -6,7 +6,7 @@ import com.pblabs.components.scene2D.BitmapRenderer;
 import com.pblabs.components.scene2D.GraphicsComponent;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.time.IProcessManager;
-import org.transition9.geom.Vector2;
+
 import org.transition9.util.F;
 using com.pblabs.engine.core.SignalBondManager;
 using org.transition9.util.StringUtil;
@@ -19,11 +19,11 @@ using org.transition9.util.DomUtil;
   * An image that redraws itself if the container component is redrawn.
   */
 class BoxPanelImage
-	#if flash
-	extends GraphicsComponent
-	#elseif js
+	// #if flash
+	// extends GraphicsComponent
+	// #elseif js
 	extends com.pblabs.components.scene2D.RectangleShape
-	#end
+	// #end
 {
 	public var dividerColor (get_dividerColor, set_dividerColor) :Int;
 	var _dividerColor :Int;
@@ -118,7 +118,8 @@ class BoxPanelImage
 		var gap = 3;
 		
 		#if flash
-			var g = graphics;
+			// var g = graphics;
+			var g = cast(_displayObject, flash.display.Shape).graphics;
 			//Draw the dividers
 			var curY = 0.0;
 			for (ii in 0...component.children.length) {
@@ -159,7 +160,7 @@ class BoxPanelImage
 			
 			curY += c.height;
 		}
-		registrationPoint = new Vector2(x - bounds.xmin, y - bounds.ymin);
+		registrationPoint = new Vec2(x - bounds.xmin, y - bounds.ymin);
 		#end
 	}
 	

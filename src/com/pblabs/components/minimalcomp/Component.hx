@@ -5,10 +5,9 @@ import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.time.IAnimatedObject;
-import org.transition9.geom.Vector2;
 
-import de.polygonal.motor2.geom.math.XY;
-import de.polygonal.motor2.geom.primitive.AABB2;
+import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.motor.geom.primitive.AABB2;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
@@ -31,7 +30,7 @@ class Component extends NodeComponent<Container, Component>
 	public var x (get_x, set_x) :Float;
 	public var y (get_y, set_y) :Float;
 	public var bounds (get_bounds, set_bounds) :AABB2;
-	public var registrationPoint (get_registrationPoint, null) :XY;
+	public var registrationPoint (get_registrationPoint, null) :Vec2;
 	public var width (get_width, never) :Float;
 	public var height (get_height, never) :Float;
 	public var redrawSignal :Signaler<Component>;
@@ -198,12 +197,12 @@ class Component extends NodeComponent<Container, Component>
 		return val;
 	}
 	
-	function get_registrationPoint () :XY
+	function get_registrationPoint () :Vec2
 	{
 		for (c in owner.getComponents(BaseSceneComponent)) {
 			return c.registrationPoint;
 		}
-		return new Vector2(x - _spatial.worldExtents.xmin, y - _spatial.worldExtents.ymin);
+		return new Vec2(x - _spatial.worldExtents.xmin, y - _spatial.worldExtents.ymin);
 	}
 	
 	#if debug

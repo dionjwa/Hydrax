@@ -16,8 +16,8 @@ import com.pblabs.components.manager.INodeChild;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.ObjectType;
 
-import de.polygonal.motor2.geom.math.XY;
-import de.polygonal.motor2.geom.primitive.AABB2;
+import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.motor.geom.primitive.AABB2;
 
 /**
  * Object with extents and ability to be ray-casted.
@@ -46,7 +46,7 @@ interface ISpatialObject2D<Manager:ISpatialManager2D<Dynamic>>
 	/**
 	 * Perform a ray cast against this object.
 	 */ 
-	// function castRay (start :XY, end :XY, result :RayHitInfo, ?flags :ObjectType = null):Bool;
+	// function castRay (start :Vec2, end :Vec2, result :RayHitInfo, ?flags :ObjectType = null):Bool;
 	
 	/**
 	 * Return true if the specified point is occupied by this object, used for
@@ -54,5 +54,5 @@ interface ISpatialObject2D<Manager:ISpatialManager2D<Dynamic>>
 	 *
 	 * @param pos Location in worldspace to check.
 	 */
-	function containsWorldPoint (pos :XY, mask :ObjectType):Bool;
+	function containsWorldPoint (pos :Vec2, mask :ObjectType):Bool;
 }

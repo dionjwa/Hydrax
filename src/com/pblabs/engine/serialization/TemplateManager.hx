@@ -761,6 +761,7 @@ enum RefType {
  * Helper class to store information about each thing.
  */
 class ThingReference
+	implements haxe.rtti.Infos
 {
 	public var type (default, null) :RefType;
 	public var version :Int;

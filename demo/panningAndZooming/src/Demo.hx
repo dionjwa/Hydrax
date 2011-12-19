@@ -34,7 +34,7 @@ import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
 import org.transition9.geom.Rectangle;
-import org.transition9.geom.Vector2;
+import Vec2;
 import org.transition9.util.Rand;
 import org.transition9.util.ReflectUtil;
 import org.transition9.ds.MultiMap;
@@ -114,7 +114,7 @@ class Demo
 		man.initialize("man");
 		var serial = new SerialTask();
 		
-		var outpoint = new Vector2();
+		var outpoint = new Vec2();
 		var sceneView = gamescene.sceneView;
 		#if debug
 		org.transition9.util.Assert.isNotNull(sceneView, "??");
@@ -170,7 +170,7 @@ class Demo
 		var time = Math.random() * 5;
 		time = Math.max(time, 2);
 		
-		var outpoint = new Vector2();
+		var outpoint = new Vec2();
 		SceneUtil.calculateOutPoint(outpoint, scene.sceneAlignment, sceneView.width, sceneView.height);
 		var randX = Rand.nextFloatInRange(-outpoint.x, -outpoint.x + sceneView.width);
 		var randY = Rand.nextFloatInRange(-outpoint.y, -outpoint.y + sceneView.height);

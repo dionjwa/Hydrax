@@ -11,7 +11,7 @@ package com.pblabs.components.scene2D.body;
 import com.pblabs.components.scene2D.BitmapRenderer;
 import com.pblabs.components.scene2D.ImageData;
 import com.pblabs.engine.core.PropertyReference;
-import org.transition9.geom.Vector2;
+
 
 import flash.geom.Point;
 
@@ -19,7 +19,7 @@ using Lambda;
 
 using Std;
 
-using org.transition9.geom.VectorTools;
+using org.transition9.geom.Vec2Tools;
 using org.transition9.util.StringUtil;
 
 /**

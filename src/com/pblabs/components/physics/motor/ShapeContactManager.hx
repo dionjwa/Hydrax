@@ -1,18 +1,18 @@
-package com.pblabs.components.physics.motor2;
+package com.pblabs.components.physics.motor;
 
 import com.pblabs.components.manager.NodeComponent;
 import org.transition9.ds.Map;
 import org.transition9.ds.Maps;
 import org.transition9.ds.Tuple;
 
-import de.polygonal.motor2.Settings;
-import de.polygonal.motor2.World;
-import de.polygonal.motor2.collision.nbody.SAP;
-import de.polygonal.motor2.data.RigidBodyData;
-import de.polygonal.motor2.dynamics.contact.Contact;
-import de.polygonal.motor2.dynamics.contact.generator.BoxContact;
-import de.polygonal.motor2.geom.math.Vec2;
-import de.polygonal.motor2.geom.primitive.AABB2;
+import de.polygonal.motor.Settings;
+import de.polygonal.motor.World;
+import de.polygonal.motor.collision.nbody.SAP;
+import de.polygonal.motor.data.RigidBodyData;
+import de.polygonal.motor.dynamics.contact.Contact;
+import de.polygonal.motor.dynamics.contact.generator.BoxContact;
+import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.motor.geom.primitive.AABB2;
 
 import Type;
 

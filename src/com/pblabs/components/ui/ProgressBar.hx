@@ -13,11 +13,17 @@ import com.pblabs.components.tasks.TaskComponent;
 import com.pblabs.components.tasks.TaskComponentTicked;
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.PropertyReference;
-import org.transition9.util.BitmapUtil;
+
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
+import org.transition9.ds.Tuple;
 import org.transition9.ds.multimaps.SetMultiMap;
+import org.transition9.util.BitmapUtil;
+
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
+
 using org.transition9.util.IterUtil;
 using org.transition9.util.StringUtil;
 
@@ -34,14 +40,19 @@ class ProgressBar extends EntityComponent
 	public var persistTimeAfterComplete :Float;
 	public var layerProperty :PropertyReference<BaseSceneLayer<BaseSceneManager<Dynamic>, BaseSceneComponent<Dynamic>>>;
 	
-	var _inProgress :SetMultiMap<String, String>;
-	var _complete :SetMultiMap<String, String>;
+	/** Tasks in a task set that are still in progress  */
+	var _taskSetProgress :SetMultiMap<String, String>;
+	/** Tasks in a task set that are complete */
+	var _taskSetComplete :SetMultiMap<String, String>;
+	/** Tasks in a task set that are complete */
+	var _manualProgress :Map<String, Tuple<String, Float>>;
 	
 	public function new ()
 	{
 		super();
-		_inProgress = SetMultiMap.create(ValueType.TClass(String), ValueType.TClass(String));
-		_complete = SetMultiMap.create(ValueType.TClass(String), ValueType.TClass(String));
+		_taskSetProgress = SetMultiMap.create(ValueType.TClass(String), ValueType.TClass(String));
+		_taskSetComplete = SetMultiMap.create(ValueType.TClass(String), ValueType.TClass(String));
+		_manualProgress = Maps.newHashMap(ValueType.TClass(String));
 	}
 	
 	override function onAdd () :Void
@@ -88,21 +99,25 @@ class ProgressBar extends EntityComponent
 			if (e == ProgressEvent) {
 				switch (cast(msg, ProgressEvent)) {
 					case CLEAR_ALL_EVENTS:
-						_inProgress.clear();
-						_complete.clear();
+						_taskSetProgress.clear();
+						_taskSetComplete.clear();
+						_manualProgress.clear();
 					case CLEAR_GROUP(taskGroup):
-						_inProgress.remove(taskGroup);
-						_complete.remove(taskGroup);
+						_taskSetProgress.remove(taskGroup);
+						_taskSetComplete.remove(taskGroup);
+						_manualProgress.remove(taskGroup);
 					case TASK_STARTED(taskGroup, taskName):
-						_inProgress.set(taskGroup, taskName);
+						_taskSetProgress.set(taskGroup, taskName);
 					case TASK_COMPLETE(taskGroup, taskName):
-						_inProgress.removeEntry(taskGroup, taskName);
-						if (_inProgress.sizeOf(taskGroup) == 0) {
-							_complete.remove(taskGroup);
-							_inProgress.remove(taskGroup);
+						_taskSetProgress.removeEntry(taskGroup, taskName);
+						if (_taskSetProgress.sizeOf(taskGroup) == 0) {
+							_taskSetComplete.remove(taskGroup);
+							_taskSetProgress.remove(taskGroup);
 						} else {
-							_complete.set(taskGroup, taskName);
+							_taskSetComplete.set(taskGroup, taskName);
 						}
+					case PROGRESS(taskId, text, fractionComplete):
+						_manualProgress.set(taskId, new Tuple(text, fractionComplete));
 				}
 				redraw();
 			}
@@ -114,7 +129,7 @@ class ProgressBar extends EntityComponent
 	{
 		var disp :BaseSceneComponent<Dynamic> = owner.getComponentByName(DISPLAY_NAME);
 		org.transition9.util.Assert.isNotNull(disp, " disp is null");
-		if (_inProgress.length == 0) {
+		if (_taskSetProgress.length == 0) {
 			if (disp.layer != null) {
 				disp.removeFromParent();
 			}
@@ -134,12 +149,8 @@ class ProgressBar extends EntityComponent
 		g.clear();
 		var currentY = 0;
 		
-		for (id in _inProgress.keys()) {
-			var inProgress :Float = _inProgress.sizeOf(id);
-			var complete :Float = _complete.sizeOf(id);
-			var frac = complete / (inProgress + complete) ;
-			
-			
+		
+		var drawBar = function (frac :Float, text :String) {
 			g.beginFill(0xff0000, 0.5);
 			g.drawRect(-width / 2, currentY + -height / 2, width * frac, height);
 			g.endFill();
@@ -147,9 +158,9 @@ class ProgressBar extends EntityComponent
 			g.drawRect(-width / 2, currentY + -height / 2, width, height);
 			
 			//Text
-			if (!id.isBlank()) {
+			if (!text.isBlank()) {
 				var tf = new flash.text.TextField();
-				tf.text = id;
+				tf.text = text;
 				tf.border = false;
 				tf.background = false;
 				tf.width = 200;
@@ -170,6 +181,18 @@ class ProgressBar extends EntityComponent
 			}
 			
 			currentY += height + 10;
+		}
+		
+		
+		for (id in _taskSetProgress.keys()) {
+			var inProgress :Float = _taskSetProgress.sizeOf(id);
+			var complete :Float = _taskSetComplete.sizeOf(id);
+			var frac = complete / (inProgress + complete) ;
+			drawBar(frac, id);
+		}
+		
+		for (tuple in _manualProgress) {
+			drawBar(tuple.v2, tuple.v1);
 		}
 		#end
 	}

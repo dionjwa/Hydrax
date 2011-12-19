@@ -13,7 +13,7 @@ import com.pblabs.engine.resource.ImageResources;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
-import org.transition9.geom.Vector2;
+import Vec2;
 import org.transition9.util.Assert;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;

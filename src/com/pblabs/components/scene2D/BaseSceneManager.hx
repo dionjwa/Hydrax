@@ -18,12 +18,11 @@ import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.util.PBUtil;
 import org.transition9.geom.Rectangle;
-import org.transition9.geom.Vector2;
 import org.transition9.util.Preconditions;
 
 import de.polygonal.core.math.Mathematics;
-import de.polygonal.motor2.geom.math.XY;
-import de.polygonal.motor2.geom.primitive.AABB2;
+import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.motor.geom.primitive.AABB2;
 
 import hsl.haxe.Bond;
 import hsl.haxe.DirectSignaler;
@@ -131,7 +130,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		return val;
 	}
 	
-	var _position :XY;
+	var _position :Vec2;
 	var _zoom :Float;
 	var _rotation :Float;
 	var _transformDirty :Bool;
@@ -159,7 +158,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		_currentViewRect = new Rectangle();
 		_zoom = 1.0;
 		_rotation = 0;
-		_position = new Vector2();
+		_position = new Vec2();
 		// _transformDirty = false;
 		parentProperty = SceneManagerList.PROP;
 		_sceneView = null;
@@ -303,7 +302,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		children.insert(index, layer);
 	}
 	
-	public function setLocation (loc :XY) :Void
+	public function setLocation (loc :Vec2) :Void
 	{
 		set_x(loc.x);
 		set_y(loc.y);

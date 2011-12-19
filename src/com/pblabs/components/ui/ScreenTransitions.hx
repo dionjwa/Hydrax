@@ -11,7 +11,9 @@ import com.pblabs.components.tasks.TimedTask;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.PBGameBase;
-import org.transition9.geom.Vector2;
+
+import de.polygonal.motor.geom.math.Vec2;
+
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
 using Lambda;
@@ -108,10 +110,10 @@ class ScreenTransitions
 	public static function setScreenOffSceneView (scene :BaseSceneManager<Dynamic>, direction :Direction) :Void
 	{
 		var delta = switch (direction) {
-			case LEFT: new Vector2(-scene.sceneView.width, 0);
-			case RIGHT: new Vector2(scene.sceneView.width, 0);
-			case UP: new Vector2(0, -scene.sceneView.height);
-			case DOWN: new Vector2(0, scene.sceneView.height);
+			case LEFT: new Vec2(-scene.sceneView.width, 0);
+			case RIGHT: new Vec2(scene.sceneView.width, 0);
+			case UP: new Vec2(0, -scene.sceneView.height);
+			case DOWN: new Vec2(0, scene.sceneView.height);
 		}
 		scene.x = delta.x;
 		scene.y = delta.y;
@@ -148,10 +150,10 @@ class ScreenTransitions
 		for (scene in scenes) {
 			org.transition9.util.Assert.isNotNull(scene, ' scene is null');
 			var delta = switch (direction) {
-				case LEFT: new Vector2(-scene.sceneView.width, 0);
-				case RIGHT: new Vector2(scene.sceneView.width, 0);
-				case UP: new Vector2(0, -scene.sceneView.height);
-				case DOWN: new Vector2(0, scene.sceneView.height);
+				case LEFT: new Vec2(-scene.sceneView.width, 0);
+				case RIGHT: new Vec2(scene.sceneView.width, 0);
+				case UP: new Vec2(0, -scene.sceneView.height);
+				case DOWN: new Vec2(0, scene.sceneView.height);
 			}
 			if (delta.x != 0) {
 				activeEntity.addTask(new AnimateValueTask(scene, "x", scene.x + delta.x, duration, easing));

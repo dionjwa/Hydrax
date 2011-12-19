@@ -15,7 +15,7 @@ import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.time.ITickedObject;
 import org.transition9.geom.Circle;
-import org.transition9.geom.VectorTools;
+import org.transition9.geom.Vec2Tools;
 import org.transition9.util.Preconditions;
 import org.transition9.util.SignalVarAdvanced;
 
@@ -160,7 +160,7 @@ class PhysicsComponent extends SpatialComponent<PhysicsManager>,
 	
 	override function set_angle (val :Float) :Float
 	{
-		super.set_angle(VectorTools.simplifyRadian(val));
+		super.set_angle(Vec2Tools.simplifyRadian(val));
 		updatePos();
 		return _angle;
 	}
@@ -273,7 +273,7 @@ class PhysicsComponent extends SpatialComponent<PhysicsManager>,
 				var rSq = (radius / parent.m_physScale) * (radius / parent.m_physScale);
 				md.I = md.mass * .5 * rSq;
 			case BOX(w, h, def):
-				md.I = (md.mass / 12 * de.polygonal.motor2.geom.math.Vec2.dot4(w / parent.m_physScale, h / parent.m_physScale, w / parent.m_physScale, h / parent.m_physScale));
+				md.I = (md.mass / 12 * de.polygonal.motor.geom.math.Vec2.dot4(w / parent.m_physScale, h / parent.m_physScale, w / parent.m_physScale, h / parent.m_physScale));
 			case FIXED_BOX(x, y, w, h, def):
 				md.mass = 0;		
 		}
@@ -390,9 +390,9 @@ class PhysicsComponent extends SpatialComponent<PhysicsManager>,
 	// 	this.isCollidable = val;
 	// 	if (body != null) {
 	// 		if (val) {
-	// 			body.clrf(de.polygonal.motor2.collision.shape.AbstractShape.GHOST);
+	// 			body.clrf(de.polygonal.motor.collision.shape.AbstractShape.GHOST);
 	// 		} else {
-	// 			body.setf(de.polygonal.motor2.collision.shape.AbstractShape.GHOST);
+	// 			body.setf(de.polygonal.motor.collision.shape.AbstractShape.GHOST);
 	// 		}
 	// 		body.wakeUp();
 	// 	}

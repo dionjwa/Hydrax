@@ -1,17 +1,17 @@
-package com.pblabs.components.physics.motor2.test;
+package com.pblabs.components.physics.motor.test;
 
 import com.pblabs.components.scene2D.flash.SceneComponentSprite;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.time.IAnimatedObject;
-import org.transition9.geom.Vector2;
 
-import de.polygonal.motor2.World;
-import de.polygonal.motor2.geom.math.XY;
-import de.polygonal.motor2.geom.primitive.OBB2;
 
-import com.pblabs.components.physics.motor2.PhysicsManager;
+import de.polygonal.motor.World;
+import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.motor.geom.primitive.OBB2;
 
-using org.transition9.geom.VectorTools;
+import com.pblabs.components.physics.motor.PhysicsManager;
+
+using org.transition9.geom.Vec2Tools;
 
 class MotorRenderer extends SceneComponentSprite,
 	implements IAnimatedObject
@@ -19,7 +19,7 @@ class MotorRenderer extends SceneComponentSprite,
 	public var physicsManagerProperty :PropertyReference<PhysicsManager>;
 	public var physics :PhysicsManager;
 	var _OBB2 :OBB2;
-	var _vertices :Array<XY>;
+	var _vertices :Array<Vec2>;
 	
 	public function new ()
 	{
@@ -27,7 +27,7 @@ class MotorRenderer extends SceneComponentSprite,
 	    _OBB2 = new OBB2();
 	    _vertices = [];
 	    for (i in 0...4) {
-	    	_vertices.push(new Vector2());
+	    	_vertices.push(new Vec2());
 	    }
 	}
 	
@@ -51,7 +51,7 @@ class MotorRenderer extends SceneComponentSprite,
 	    		case CIRCLE(radius):
 	    			g.drawCircle(c.x, c.y, radius);
 	    			g.moveTo(c.x, c.y);
-	    			var v = new Vector2(c.x, c.y).addLocal(c.angle.angleToVector2(radius));
+	    			var v = new Vec2(c.x, c.y).addLocal(c.angle.angleToVec2(radius));
 	    			g.lineTo(v.x, v.y);	
 	    		case BOX(w, h):
 	    			_OBB2.c.x = c.x;
@@ -107,10 +107,10 @@ class MotorRenderer extends SceneComponentSprite,
 	// var _canvas:Shape;
 	// var _worldMouse:Vec2;
 	// var _snap:Float;
-	// var _t0:XY;
-	// var _t1:XY;
+	// var _t0:Vec2;
+	// var _t1:Vec2;
 	// var _tmpAABB:AABB2;
-	// var _tmpVec:XY;
+	// var _tmpVec:Vec2;
 	
 	// public var key(default, null):Int;
 	

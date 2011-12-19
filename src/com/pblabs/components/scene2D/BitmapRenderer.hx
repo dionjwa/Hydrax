@@ -10,7 +10,7 @@ package com.pblabs.components.scene2D;
 
 import org.transition9.geom.RectangleTools;
 
-import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor.geom.math.Vec2;
 
 import flash.geom.Matrix;
 import flash.geom.Point;

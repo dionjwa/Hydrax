@@ -23,13 +23,13 @@ import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.time.IAnimatedObject;
 import com.pblabs.engine.time.IProcessManager;
-import org.transition9.geom.Vector2;
+
 import org.transition9.util.Preconditions;
 import org.transition9.rtti.ReflectUtil;
 import org.transition9.ds.Tuple;
 
 import de.polygonal.core.math.Mathematics;
-import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor.geom.math.Vec2;
 
 import haxe.Timer;
 
@@ -41,7 +41,7 @@ using Type;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
-using org.transition9.geom.VectorTools;
+using org.transition9.geom.Vec2Tools;
 using org.transition9.util.IterUtil;
 using org.transition9.util.MathUtil;
 using org.transition9.util.NumberUtil;
@@ -79,8 +79,8 @@ class DragManager extends EntityComponent,
 	var isPanning (get_isPanning, set_isPanning) :Bool;
 	var _scene :BaseSceneManager<Dynamic>;
 	var _sceneComponent :BaseSceneComponent<Dynamic>;
-	var _panVectors :Array<XY>;
-	var _lastMouseMove :XY;
+	var _panVectors :Array<Vec2>;
+	var _lastMouseMove :Vec2;
 	var _isPanning :Bool;
 	var _isGesturing :Bool;
 	var _timer :Timer;
@@ -90,8 +90,8 @@ class DragManager extends EntityComponent,
 	/** If panning slows rendering too much, you can pause the game while panning. */
 	var _pauseProcessManagerOnPan :Bool;
 	var _inputManager :InputManager;
-	var _startMouse :XY;
-	var _startObj :XY;
+	var _startMouse :Vec2;
+	var _startObj :Vec2;
 	/** The SceneComponent might internally scale coordinates.  Correct with this factor. */
 	var _zoomFactor :Float;
 	var _xProp :PropertyReference<Float>;
@@ -103,8 +103,8 @@ class DragManager extends EntityComponent,
 		super();
 		dragSignaler = new DirectSignaler(this);
 		dragEndedSignaler = new DirectSignaler(this);
-		_startMouse = new Vector2();
-		_startObj = new Vector2();
+		_startMouse = new Vec2();
+		_startObj = new Vec2();
 		_zoomFactor = 1;
 		
 		_isEasing = true;
@@ -321,22 +321,22 @@ class DragManager extends EntityComponent,
 				//Most recent at the end of the array
 				var oldest = lastVectors[0];
 				//For computing the mean angle, use the mean unit vector
-				var meanVector = new Vector2();
+				var meanVector = new Vec2();
 				org.transition9.util.Assert.isNotNull(_scene);
 				if (diff > minimumDistanceToEase) {
 					var angles = [];
 					for (i in 1...lastVectors.length) {
-						var unit = lastVectors[i - 1].angleTo(lastVectors[i]).angleToVector2();
-						angles.push(unit.angle.toFixed(3));
+						var unit = lastVectors[i - 1].angleTo(lastVectors[i]).angleToVec2();
+						angles.push(unit.angle().toFixed(3));
 						meanVector.x += unit.x;
 						meanVector.y += unit.y;
 					}
 					meanVector.x /= _panVectors.length;
 					meanVector.y /= _panVectors.length;
-					var toAdd = meanVector.angle.angleToVector2(diff / 3);
+					var toAdd = meanVector.angle().angleToVec2(diff / 3);
 					toAdd.scaleLocal(1 / _scene.zoom);
 					toAdd.rotateLocal(-_scene.rotation);
-					var currentScene = new Vector2(_scene.x,_scene.y); 
+					var currentScene = new Vec2(_scene.x,_scene.y); 
 					var finalStop = currentScene.add(toAdd);
 	
 					//The bigger the distance to move, the longer it takes

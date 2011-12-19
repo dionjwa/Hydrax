@@ -3,9 +3,9 @@ package com.pblabs.components.minimalcomp;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.scene2D.Direction;
 import com.pblabs.engine.time.IAnimatedObject;
-import org.transition9.geom.Vector2;
 
-import de.polygonal.motor2.geom.math.XY;
+
+import de.polygonal.motor.geom.math.Vec2;
 
 class HBox extends Container
 {
@@ -60,14 +60,14 @@ class HBox extends Container
 		redrawSignal.dispatch(this);
 	}
 	
-	override public function getChildLocation (index :Int = -1) :XY
+	override public function getChildLocation (index :Int = -1) :Vec2
 	{
 		if (index == -1) {
 			var b = get_bounds();
 			if (flowDirection == Direction.RIGHT) {
-				return new Vector2(x + b.intervalX + gap, y);
+				return new Vec2(x + b.intervalX + gap, y);
 			} else {
-				return new Vector2(x - b.intervalX - gap, y);
+				return new Vec2(x - b.intervalX - gap, y);
 			}
 		} else {
 			var xpos = x;
@@ -75,7 +75,7 @@ class HBox extends Container
 			for (ii in 0...index) {
 				xpos += children[ii].width + gap;
 			}
-			return new Vector2(xpos, y);
+			return new Vec2(xpos, y);
 		}
 	}
 	

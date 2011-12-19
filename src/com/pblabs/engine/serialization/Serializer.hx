@@ -17,8 +17,10 @@ import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.PBManagerBase;
 import com.pblabs.engine.core.PropertyReference;
-import org.transition9.geom.Vector2;
-import org.transition9.geom.VectorTools;
+
+import de.polygonal.motor.geom.math.Vec2;
+
+import org.transition9.geom.Vec2Tools;
 import org.transition9.util.Enumerable;
 import org.transition9.util.Preconditions;
 import org.transition9.rtti.ReflectUtil;
@@ -79,7 +81,7 @@ class Serializer extends PBManagerBase
 		_deserializers.set("Class", deserializeClass);
 		_deserializers.set("org.transition9.util.Enumerable", deserializeEnumerable);
 		_deserializers.set("org.transition9.util.EnumWrappedEnumerable", deserializeEnumerable);
-		_deserializers.set("org.transition9.geom.Vector2", deserializeVector2);
+		_deserializers.set("Vec2", deserializeVec2);
 		
 		_serializers.set("::DefaultSimple", serializeSimple);
 		_serializers.set("::DefaultComplex", serializeComplex);
@@ -94,7 +96,7 @@ class Serializer extends PBManagerBase
 		_serializers.set("org.transition9.util.Enumerable", serializeEnumerable);
 		_serializers.set("org.transition9.util.EnumWrappedEnumerable", serializeEnumerable);
 		_serializers.set("ISerializable", serializeSerializable);
-		_serializers.set("org.transition9.geom.Vector2", serializeVector2);
+		_serializers.set("Vec2", serializeVec2);
 		
 		
 		ignoredTypes = Sets.newSetOf(ValueType.TObject);
@@ -693,14 +695,14 @@ class Serializer extends PBManagerBase
 		xml.nodeValue = Type.enumConstructor(val);
 	}
 	
-	public static function serializeVector2 (val :Dynamic, xml :Xml) :Void
+	public static function serializeVec2 (val :Dynamic, xml :Xml) :Void
 	{
-		VectorTools.serializeXY(cast val, xml);
+		Vec2Tools.serializeVec2(cast val, xml);
 	}
 	
-	public static function deserializeVector2 (object :Dynamic, xml :Xml, typeHint :String) :Dynamic
+	public static function deserializeVec2 (object :Dynamic, xml :Xml, typeHint :String) :Dynamic
 	{
-		return VectorTools.deserializeXY(xml);
+		return Vec2Tools.deserializeVec2(xml);
 	}
 	
 	public static function serializeSerializable(val :Dynamic, xml :Xml) :Void

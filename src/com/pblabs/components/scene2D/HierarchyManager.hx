@@ -8,19 +8,19 @@ import com.pblabs.engine.core.PBManager;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.time.IProcessManager;
-import org.transition9.geom.Vector2;
+
 import org.transition9.util.Comparators;
 import org.transition9.util.F;
 import org.transition9.ds.Map;
 
-import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor.geom.math.Vec2;
 
 using StringTools;
 
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
-using org.transition9.geom.VectorTools;
+using org.transition9.geom.Vec2Tools;
 using org.transition9.util.StringUtil;
 using org.transition9.util.XmlTools;
 
@@ -54,7 +54,7 @@ class HierarchyManager extends PBManager
 	  * Maps <svg id or DisplayObject.name, map of <anchor name, relative location>>  
 	  */
 	var _links :Array<Link>;
-	var _temp :XY;
+	var _temp :Vec2;
 	public var priority :Int;
 	
 	public function new ()
@@ -62,7 +62,7 @@ class HierarchyManager extends PBManager
 		super();
 		priority = 0;
 		_links = [];
-		_temp = new Vector2();
+		_temp = new Vec2();
 	}
 	
 	public function onTick (dt :Float) :Void
@@ -72,7 +72,7 @@ class HierarchyManager extends PBManager
 		}
 	}
 	
-	public function getAnchors (token :ResourceToken) :Map<String, XY>
+	public function getAnchors (token :ResourceToken) :Map<String, Vec2>
 	{
 		org.transition9.util.Assert.isNotNull(token, ' token is null');
 		com.pblabs.engine.debug.Profiler.enter("getSvgResource");
@@ -183,7 +183,7 @@ class HierarchyManager extends PBManager
 		}
 	}
 	
-	function getOffset (parent :ResourceToken, child :String) :XY
+	function getOffset (parent :ResourceToken, child :String) :Vec2
 	{
 		_temp.x = _temp.y = 0;
 		

@@ -17,16 +17,15 @@ import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.serialization.Serializer;
-import org.transition9.geom.Vector2;
 
-import de.polygonal.motor2.geom.inside.PointInsideAABB;
-import de.polygonal.motor2.geom.math.XY;
-import de.polygonal.motor2.geom.primitive.AABB2;
+import de.polygonal.motor.geom.inside.PointInsideAABB;
+import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.motor.geom.primitive.AABB2;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
-using org.transition9.geom.VectorTools;
+using org.transition9.geom.Vec2Tools;
 using org.transition9.util.XmlTools;
 
 /**
@@ -38,11 +37,11 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Man
 	inline public static var NAME :String = "ISpatialObject2D";
 	public static var P_X :PropertyReference<Float> = new PropertyReference("@" + NAME + ".x");
 	public static var P_Y :PropertyReference<Float> = new PropertyReference("@" + NAME + ".y");
-	public static var P_POINT :PropertyReference<XY> = new PropertyReference("@" + NAME + ".position");
+	public static var P_POINT :PropertyReference<Vec2> = new PropertyReference("@" + NAME + ".position");
 	public static var P_ANGLE :PropertyReference<Float> = new PropertyReference("@" + NAME + ".angle");
 	public static var P_SPATIAL :PropertyReference<SpatialComponent<Dynamic>> = new PropertyReference("@" + NAME);
 	
-	public static function getLocation (c :IEntity) :XY
+	public static function getLocation (c :IEntity) :Vec2
 	{
 	    return c.getComponent(SpatialComponent).position;
 	}
@@ -56,8 +55,8 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Man
 		return s;
 	}
 	
-	public var position (get_point, set_point) :XY;
-	public var point (get_point, set_point) :XY;
+	public var position (get_point, set_point) :Vec2;
+	public var point (get_point, set_point) :Vec2;
 	// public var parent :ISpatialManager2D;
 	public var x (get_x, set_x) : Float;
 	public var y (get_y, set_y) : Float;
@@ -65,7 +64,7 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Man
 	public var objectMask(get_objectMask, set_objectMask) :ObjectType;
 	public var worldExtents(get_worldExtents, set_worldExtents) :AABB2;
 	
-	public var signalerLocation (default, null) :Signaler<XY>;
+	public var signalerLocation (default, null) :Signaler<Vec2>;
 	public var signalerAngle (default, null) :Signaler<Float>;
 	
 	/**
@@ -76,8 +75,8 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Man
 	public var spriteForPointChecks :IBounded;
 	#end
 	var _objectMask :ObjectType;
-	var _vec :XY;
-	var _vecForSignalling :XY;
+	var _vec :Vec2;
+	var _vecForSignalling :Vec2;
 	var _angle :Float;
 	var _worldAABB :AABB2;
 	
@@ -91,8 +90,8 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Man
 	
 	function setDefaults() :Void
 	{
-		_vec = new Vector2();
-		_vecForSignalling = new Vector2();
+		_vec = new Vec2();
+		_vecForSignalling = new Vec2();
 		_angle = 0;
 		_worldAABB = null;
 		_objectMask = ObjectType.ALL;
@@ -101,14 +100,14 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Man
 		#end
 	}
 
-	function get_point ():XY
+	function get_point ():Vec2
 	{
 		_vecForSignalling.x = _vec.x;
 		_vecForSignalling.y = _vec.y;
 		return _vecForSignalling;
 	}
 
-	function set_point (p :XY):XY
+	function set_point (p :Vec2):Vec2
 	{
 		setLocation(p.x, p.y);
 		return p;
@@ -285,7 +284,7 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Man
 	/**
 	 * Not currently implemented.
 	 */
-	// public function castRay (start :XY, end :XY, result :RayHitInfo, ?flags :ObjectType = null):Bool
+	// public function castRay (start :Vec2, end :Vec2, result :RayHitInfo, ?flags :ObjectType = null):Bool
 	// {
 	// 	return false;
 	// }
@@ -293,7 +292,7 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Man
 	/**
 	 * All points in our bounding box are occupied.
 	 */
-	public function containsWorldPoint (pos :XY, mask :ObjectType):Bool
+	public function containsWorldPoint (pos :Vec2, mask :ObjectType):Bool
 	{
 		//False if masks say so
 		if (_objectMask != null && mask != null && !_objectMask.and(mask)) {

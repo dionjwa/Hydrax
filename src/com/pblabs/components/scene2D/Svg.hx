@@ -9,12 +9,11 @@
 package com.pblabs.components.scene2D;
 
 import com.pblabs.engine.resource.ResourceToken;
-import org.transition9.geom.Vector2;
 import org.transition9.ds.Tuple;
 import org.transition9.util.svg.SvgData;
 
-import de.polygonal.motor2.geom.math.XY;
-import de.polygonal.motor2.geom.primitive.AABB2;
+import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.motor.geom.primitive.AABB2;
 
 import flash.geom.Matrix;
 
@@ -123,7 +122,7 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 			var sprite = cast(self._displayObject, flash.display.Sprite);
 			sprite.addChild(renderedSvg);
 			self.recomputeBounds();
-			registrationPoint = new org.transition9.geom.Vector2(bounds.intervalX / 2, bounds.intervalY / 2);
+			registrationPoint = new Vec2(bounds.intervalX / 2, bounds.intervalY / 2);
 			// trace("renderCompleteSignal.dispatch " + key + " " + owner.name + ", bounds=" + bounds);
 			self.renderCompleteSignal.dispatch();
 			

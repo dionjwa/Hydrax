@@ -8,8 +8,8 @@ import org.transition9.ds.Map;
 import org.transition9.ds.Maps;
 
 import de.polygonal.core.math.Limits;
-import de.polygonal.motor2.geom.math.XY;
-import de.polygonal.motor2.geom.primitive.AABB2;
+import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.motor.geom.primitive.AABB2;
 
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
@@ -73,7 +73,7 @@ class Container extends Component
 		}
 	}
 	
-	public function getChildLocation (index :Int = -1) :XY
+	public function getChildLocation (index :Int = -1) :Vec2
 	{
 		throw "Subclasses override";
 		return null;

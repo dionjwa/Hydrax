@@ -27,7 +27,7 @@ import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ProcessManager;
-import org.transition9.geom.Vector2;
+import Vec2;
 import org.transition9.util.Rand;
 import org.transition9.ds.Tuple;
 

@@ -10,18 +10,17 @@ package com.pblabs.components.scene2D;
 
 import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.PBObject;
-import org.transition9.geom.Vector2;
 import org.transition9.util.Preconditions;
 
 import de.polygonal.core.math.Mathematics;
-import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor.geom.math.Vec2;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
 using StringTools;
 
-using org.transition9.geom.VectorTools;
+using org.transition9.geom.Vec2Tools;
 #if js
 import js.Dom;
 #end
@@ -55,7 +54,7 @@ class SceneView
 	public var width(get_width, set_width) : Int;
 	public var fullScreen :Bool;
 	
-	public var sizeChangeSignaler (default, null) :Signaler<XY>;
+	public var sizeChangeSignaler (default, null) :Signaler<Vec2>;
 
 	#if (flash || cpp)	
 	public var layer (get_layer, null) :flash.display.Sprite;
@@ -65,7 +64,7 @@ class SceneView
 	var _layer :HtmlDom;
 	public var layerId (get_layerId, set_layerId) :String;
 	var _layerId :String;
-	public var mouseOffset (get_mouseOffset, never) :XY;
+	public var mouseOffset (get_mouseOffset, never) :Vec2;
 	// public var mouseOffsetY (get_mouseOffsetY, never) :Float;
 	#end
 	
@@ -147,7 +146,7 @@ class SceneView
 		#else
 		_height = value;
 		#end
-		sizeChangeSignaler.dispatch(new org.transition9.geom.Vector2(width, height));
+		sizeChangeSignaler.dispatch(new Vec2(width, height));
 		return value;
 	}
 
@@ -166,7 +165,7 @@ class SceneView
 		#else
 		_width = value;
 		#end
-		sizeChangeSignaler.dispatch(new org.transition9.geom.Vector2(width, height));
+		sizeChangeSignaler.dispatch(new Vec2(width, height));
 		return value;
 	}
 	
@@ -278,15 +277,15 @@ class SceneView
 			var dimensions = switch (degreesRotation) {
 				case 0, 180:
 					if (org.transition9.util.Device.browser == org.transition9.util.Device.Browser.SAFARI_IOS) {
-						new Vector2(rawScreenDimensions.x, rawScreenDimensions.y - topMenuHeight);
+						new Vec2(rawScreenDimensions.x, rawScreenDimensions.y - topMenuHeight);
 					} else {
-						new Vector2(rawScreenDimensions.x, rawScreenDimensions.y - topMenuHeight);
+						new Vec2(rawScreenDimensions.x, rawScreenDimensions.y - topMenuHeight);
 					}
 				case 90, -90:
 					if (org.transition9.util.Device.browser == org.transition9.util.Device.Browser.SAFARI_IOS) {
-						new Vector2(rawScreenDimensions.y, rawScreenDimensions.x - topMenuHeight);
+						new Vec2(rawScreenDimensions.y, rawScreenDimensions.x - topMenuHeight);
 					} else {
-						new Vector2(rawScreenDimensions.y, rawScreenDimensions.x - topMenuHeight);
+						new Vec2(rawScreenDimensions.y, rawScreenDimensions.x - topMenuHeight);
 					}
 			}
 			width = Std.int(dimensions.x);
@@ -324,17 +323,17 @@ class SceneView
 		return val;
 	}
 	
-	function get_mouseOffset () :XY
+	function get_mouseOffset () :Vec2
 	{
 		// org.transition9.util.Log.warn("Currently disabled");
-		// return new Vector2();
+		// return new Vec2();
 		#if debug
 			if (!org.transition9.util.JsLibs.isJQuery) {
 				throw "JQuery missing, please add to html";
 			}
 		#end
 		var os :{top:Float, left:Float} = new JQuery("#" + layerId).offset();
-		var v = new Vector2(os.left, os.top);
+		var v = new Vec2(os.left, os.top);
 		v.x += Std.parseFloat(_layer.style.borderWidth);
 		v.y += Std.parseFloat(_layer.style.borderWidth);
 		return v;

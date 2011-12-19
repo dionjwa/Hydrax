@@ -4,7 +4,9 @@ import com.pblabs.components.input.IInputData;
 import com.pblabs.components.input.InputManager;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.engine.core.IEntity;
-import org.transition9.geom.Vector2;
+
+import de.polygonal.motor.geom.math.Vec2;
+
 using com.pblabs.components.util.DataComponent;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
@@ -19,11 +21,11 @@ using com.pblabs.engine.util.PBUtil;
   *	 entity.showOverlay();  
   */
 class InputButtonOverlay
-	#if flash
-	extends com.pblabs.components.scene2D.GraphicsComponent
-	#elseif js
+	// #if flash
+	// extends com.pblabs.components.scene2D.GraphicsComponent
+	// #elseif js
 	extends com.pblabs.components.scene2D.RectangleShape
-	#end
+	// #end
 {
 	static var OVERLAY_KEY :String = "InputButtonOverlayActive";
 	
@@ -98,7 +100,7 @@ class InputButtonOverlay
 		y = sc.y;
 		width = b.intervalX;
 		height = b.intervalY;
-		registrationPoint = new Vector2((x - b.xmin), (y - b.ymin));
+		registrationPoint = new Vec2((x - b.xmin), (y - b.ymin));
 		
 		addToParent(sc.parent);
 		

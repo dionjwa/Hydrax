@@ -19,7 +19,6 @@ import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGameBase;
 import com.pblabs.engine.core.SetManager;
 import com.pblabs.engine.time.IProcessManager;
-import org.transition9.geom.Vector2;
 import org.transition9.util.Preconditions;
 import org.transition9.rtti.ReflectUtil;
 import org.transition9.ds.Map;
@@ -29,7 +28,7 @@ import org.transition9.ds.Set;
 import org.transition9.ds.Sets;
 import org.transition9.ds.multimaps.ArrayMultiMap;
 
-import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor.geom.math.Vec2;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
@@ -81,13 +80,13 @@ class InputManager extends BaseInputManager,
 	var _displayObjectsUnderPoint :Map<Int, Array<BaseSceneComponent<Dynamic>>>;
 	var _displayObjectFirstUnderPoint :Map<Int, BaseSceneComponent<Dynamic>>;
 	var _deviceDownComponent :MouseInputComponent;
-	var _deviceDownComponentLoc :Vector2;
-	var _deviceDownLoc :Vector2;
+	var _deviceDownComponentLoc :Vec2;
+	var _deviceDownLoc :Vec2;
 	var _checked :Set<String>;
 	var _fingersTouching :Int;
-	var _deviceLoc :Vector2;
+	var _deviceLoc :Vec2;
 	var _isGesturing :Bool;
-	var _tempVec :Vector2;
+	var _tempVec :Vec2;
 	static var INPUT_SET :String = ReflectUtil.tinyName(IInteractiveComponent);
 	
 	public function new ()
@@ -103,10 +102,10 @@ class InputManager extends BaseInputManager,
 		deviceZoomDelta = new DirectSignaler(this);
 		
 		_checked = Sets.newSetOf(ValueType.TClass(String));
-		_deviceLoc = new Vector2();
+		_deviceLoc = new Vec2();
 		_isDeviceDown = false;
 		_isGesturing = false;
-		_tempVec = new Vector2();
+		_tempVec = new Vec2();
 		_fingersTouching = 0;
 		
 		_sceneManagers = null;
@@ -274,16 +273,16 @@ class InputManager extends BaseInputManager,
 		}
 	}
 
-	inline function adjustDeviceLocation (m :MouseLocation) :Vector2
+	inline function adjustDeviceLocation (m :MouseLocation) :Vec2
 	{
 		// trace('sceneView.mouseOffsetX=' + sceneView.mouseOffsetX);
 		#if (flash || cpp)
-		return new Vector2(m.globalLocation.x, m.globalLocation.y);
+		return new Vec2(m.globalLocation.x, m.globalLocation.y);
 		#elseif js
 		var offset = sceneView.mouseOffset;
-		return new Vector2(m.globalLocation.x - offset.x, m.globalLocation.y - offset.y);
+		return new Vec2(m.globalLocation.x - offset.x, m.globalLocation.y - offset.y);
 		#else
-		return new Vector2(m.x, m.y);
+		return new Vec2(m.x, m.y);
 		#end
 	}
 	
@@ -351,7 +350,7 @@ class InputManager extends BaseInputManager,
 		deviceZoomDelta.dispatch(this);
 	}
 	
-	function isWithinSceneView (mouse :Vector2) :Bool
+	function isWithinSceneView (mouse :Vec2) :Bool
 	{
 	    return !(mouse.x < 0 || mouse.x > sceneView.width || mouse.y < 0 || mouse.y > sceneView.height);
 	}
@@ -370,7 +369,7 @@ class InputManager extends BaseInputManager,
 		deviceClick.dispatch(this);
 	}
 	
-	function getMouseLoc () :Vector2
+	function getMouseLoc () :Vec2
 	{
 		#if (flash || cpp)
 		_deviceLoc.x = flash.Lib.current.stage.mouseX;
@@ -473,8 +472,8 @@ class InputManager extends BaseInputManager,
 		return null;
 	}
 	
-	public var inputLocation (get_inputLocation, null) :XY;
-	function get_inputLocation () :XY
+	public var inputLocation (get_inputLocation, null) :Vec2;
+	function get_inputLocation () :Vec2
 	{
 		return _deviceLoc;
 	}

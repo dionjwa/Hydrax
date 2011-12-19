@@ -2,7 +2,7 @@ package com.pblabs.components.scene2D.body;
 
 import org.transition9.ds.Map;
 
-import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor.geom.math.Vec2;
 
 class BodySpriteList
 	implements IBodySpriteList
@@ -18,7 +18,7 @@ class BodySpriteList
 	/** Maps a frame label to the frame number */
 	public var frameLabels :Map<String, Int>;
 	public var imageData :Array<ImageData>;
-	public var centers :Array<XY>;
+	public var centers :Array<Vec2>;
 	
 	public var isLoaded (get_isLoaded, never) :Bool;
 	function get_isLoaded () :Bool
@@ -45,7 +45,7 @@ class BodySpriteList
 		return imageData != null ? imageData[index] :null; 
 	}
 	
-	public function getCenter(index :Int, ?direction :Float = 0.0) :XY
+	public function getCenter(index :Int, ?direction :Float = 0.0) :Vec2
 	{
 		return centers != null ? centers[index] :null;
 	}

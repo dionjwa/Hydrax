@@ -10,10 +10,10 @@ package com.pblabs.components.scene2D.spritesheet;
 
 import com.pblabs.components.scene2D.ImageData;
 import com.pblabs.engine.core.EntityComponent;
-import org.transition9.geom.Vector2;
+
 
 import de.polygonal.core.math.Limits;
-import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor.geom.math.Vec2;
 
 /**
  * An abstract class to allow access to a set of sprites.
@@ -32,12 +32,12 @@ class SpriteContainerComponent extends EntityComponent
 		directionsPerFrame = 1;
 		_frames = null;
 		// _modifiers = new Array();
-		// _center = new Vector2(0, 0);
+		// _center = new Vec2(0, 0);
 		_defaultCenter = true;
 		frameCountCap = 0;
 	}
 	
-	// public var center(getCenter, setCenter) :XY;
+	// public var center(getCenter, setCenter) :Vec2;
 	public var centered(getCentered, null) :Bool;
 	public var frameCount (get_frameCount, set_frameCount) :Int;
 	public var degreesPerDirection(getDegreesPerDirection, null) :Float;
@@ -101,7 +101,7 @@ class SpriteContainerComponent extends EntityComponent
 	 * Specifies an offset so the sprite is centered correctly. If it is not
 	 * set, the sprite is centered.
 	 */
-	public function getCenter(index :Int, ?direction :Float=0.0) :XY
+	public function getCenter(index :Int, ?direction :Float=0.0) :Vec2
 	{
 		// if (_center != null)
 		// 	return _center;
@@ -109,7 +109,7 @@ class SpriteContainerComponent extends EntityComponent
 		return _center;
 	}
 	
-	public function setCenter(v :XY) :XY{
+	public function setCenter(v :Vec2) :Vec2{
 		_center = v;
 		_defaultCenter = false;
 		return v;
@@ -267,7 +267,7 @@ class SpriteContainerComponent extends EntityComponent
 		}
 		
 		if (_defaultCenter)
-			_center = new Vector2(_frames[0].width * 0.5, _frames[0].height * 0.5);
+			_center = new Vec2(_frames[0].width * 0.5, _frames[0].height * 0.5);
 	}
 	
 	/**
@@ -311,7 +311,7 @@ class SpriteContainerComponent extends EntityComponent
 	var _frameNotes :Array<FrameNote>;
 	var _frames :Array<ImageData>;
 	var _modifiers :Array<Dynamic>;
-	var _center :XY;
+	var _center :Vec2;
 	var _defaultCenter :Bool;
 	var frameCountCap :Int;
 }

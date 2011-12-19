@@ -5,7 +5,7 @@ import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.time.ITickedObject;
 import com.pblabs.engine.util.PBUtil;
-import org.transition9.geom.VectorTools;
+import org.transition9.geom.Vec2Tools;
 import org.transition9.util.Log;
 import org.transition9.util.Preconditions;
 
@@ -271,20 +271,20 @@ class PhysicsComponentPhysaxe extends NodeComponent<PhysicsManagerPhysaxe, Dynam
 	
 	function get_angle () :Float
 	{
-		// trace("body.a=" + body.a + ", ->" + VectorTools.simplifyRadian(body.a));
-		return VectorTools.simplifyRadian(body.a);//VectorTools.simplifyRadian(body.a);
+		// trace("body.a=" + body.a + ", ->" + Vec2Tools.simplifyRadian(body.a));
+		return Vec2Tools.simplifyRadian(body.a);//Vec2Tools.simplifyRadian(body.a);
 	}
 	
 	function set_angle (val :Float) :Float
 	{
 		//[-pi, pi]
 		// trace("val=" + val);
-		// val = VectorTools.simplifyRadian(val);
+		// val = Vec2Tools.simplifyRadian(val);
 		// if (val < 0) {
 		// 	val = 2 * Math.PI  - val; 
 		// }
 		// trace("final=" + val);
-		// body.setAngle(org.transition9.util.MathUtil.toDeg(VectorTools.simplifyRadian(val)));
+		// body.setAngle(org.transition9.util.MathUtil.toDeg(Vec2Tools.simplifyRadian(val)));
 		body.setAngle(val);
 		sync();
 		return val;

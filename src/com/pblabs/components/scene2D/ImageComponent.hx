@@ -16,7 +16,7 @@ import com.pblabs.engine.resource.ResourceToken;
 import org.transition9.geom.RectangleTools;
 import org.transition9.util.Preconditions;
 
-import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor.geom.math.Vec2;
 
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.resource.ResourceManager;
@@ -68,7 +68,7 @@ class ImageComponent extends BitmapRenderer
 		// ctx.drawImage(image, 0, 0);
 		// bitmapData = canvas;
 		//Assume you want the image centered.
-		// registrationPoint = new org.transition9.geom.Vector2(image.width / 2, image.height / 2);
+		// registrationPoint = new Vec2(image.width / 2, image.height / 2);
 	}
 	#end
 	
@@ -91,7 +91,7 @@ class ImageComponent extends BitmapRenderer
 		recomputeBounds();
 		// trace("after loading flash image, _unscaledBounds=" + _unscaledBounds + ", _bounds=" + _bounds);
 		//Assume you want the image centered.
-		// registrationPoint = new org.transition9.geom.Vector2(image.width / 2, image.height / 2);
+		// registrationPoint = new Vec2(image.width / 2, image.height / 2);
 	}
 	#end
 	

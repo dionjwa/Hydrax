@@ -18,13 +18,12 @@ import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.time.IAnimatedObject;
-import org.transition9.geom.Vector2;
 
 import de.polygonal.core.math.Mathematics;
-import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor.geom.math.Vec2;
 
 using com.pblabs.engine.util.PBUtil;
-using org.transition9.geom.VectorTools;
+using org.transition9.geom.Vec2Tools;
 
 class SceneUtil
 {
@@ -132,7 +131,7 @@ class SceneUtil
 		return e;
 	}
 	
-	public static function getLocation (e :IEntity) :XY
+	public static function getLocation (e :IEntity) :Vec2
 	{
 		org.transition9.util.Assert.isNotNull(e);
 		return e.getComponent(SpatialComponent).position;
@@ -201,7 +200,7 @@ class SceneUtil
 	 * @paramsceneHeight
 	 *
 	 */
-	public static function calculateOutPoint (outPoint :XY, alignment :SceneAlignment, sceneWidth :Float, sceneHeight :Float) :XY
+	public static function calculateOutPoint (outPoint :Vec2, alignment :SceneAlignment, sceneWidth :Float, sceneHeight :Float) :Vec2
 	{
 		org.transition9.util.Assert.isNotNull(outPoint);
 		org.transition9.util.Assert.isNotNull(alignment);
@@ -226,12 +225,12 @@ class SceneUtil
 		return outPoint;
 	}
 	
-	public static function getAlignedPoint (scene :BaseSceneManager<Dynamic>, borderAlignment :SceneAlignment) :XY
+	public static function getAlignedPoint (scene :BaseSceneManager<Dynamic>, borderAlignment :SceneAlignment) :Vec2
 	{
 		var alignment = scene.sceneAlignment;
 		var sceneWidth = scene.sceneView.width;
 		var sceneHeight = scene.sceneView.height;
-		var borderPoint = new Vector2();
+		var borderPoint = new Vec2();
 		switch (alignment) {
 			case CENTER :
 				switch (borderAlignment) {
@@ -285,21 +284,21 @@ class SceneUtil
 		return borderPoint;
 	}
 	
-	public static function translateScreenToWorld (sceneManager :BaseSceneManager<Dynamic>, screen :XY) :XY
+	public static function translateScreenToWorld (sceneManager :BaseSceneManager<Dynamic>, screen :Vec2) :Vec2
 	{
-		var viewOffset = new Vector2();
+		var viewOffset = new Vec2();
 		calculateOutPoint(viewOffset, sceneManager.sceneAlignment, sceneManager.sceneView.width, sceneManager.sceneView.height);
-		return screen.subtract(viewOffset).scale(1.0 / sceneManager.zoom).rotate(sceneManager.rotation).subtract(new Vector2(sceneManager.x, sceneManager.y));
+		return screen.subtract(viewOffset).scale(1.0 / sceneManager.zoom).rotate(sceneManager.rotation).subtract(new Vec2(sceneManager.x, sceneManager.y));
 	}
 	
-	public static function translateWorldToScreen (sceneManager :BaseSceneManager<Dynamic>, world :XY) :XY
+	public static function translateWorldToScreen (sceneManager :BaseSceneManager<Dynamic>, world :Vec2) :Vec2
 	{
-		var viewOffset = new Vector2();
+		var viewOffset = new Vec2();
 		calculateOutPoint(viewOffset, sceneManager.sceneAlignment, sceneManager.sceneView.width, sceneManager.sceneView.height);
-		return world.add(new Vector2(sceneManager.x, sceneManager.y)).rotate(sceneManager.rotation).scale(sceneManager.zoom).add(viewOffset);
+		return world.add(new Vec2(sceneManager.x, sceneManager.y)).rotate(sceneManager.rotation).scale(sceneManager.zoom).add(viewOffset);
 	}
 	
-	public static function getDisplayComponentUnderPoint (scene :BaseSceneManager<Dynamic>, screenPoint :XY, mask :ObjectType) :BaseSceneComponent<Dynamic>
+	public static function getDisplayComponentUnderPoint (scene :BaseSceneManager<Dynamic>, screenPoint :Vec2, mask :ObjectType) :BaseSceneComponent<Dynamic>
 	{
 		var layerIndex :Int = scene.layerCount - 1;
 		while (layerIndex >= 0) {
@@ -375,7 +374,7 @@ class SceneUtil
 	/**
 	  * Hacks to get the proper dimensions
 	  */
-	public static function getFullScreenDimensions (?landscape :Bool = false) :XY
+	public static function getFullScreenDimensions (?landscape :Bool = false) :Vec2
 	{
 		// trace('js.Lib.window.navigator.userAgent=' + js.Lib.window.navigator.userAgent);
 		var screen = js.Lib.window.screen;
@@ -400,7 +399,7 @@ class SceneUtil
 				height -= 20;
 			}
 		}
-		return new Vector2(width, height);
+		return new Vec2(width, height);
 	}
 	#end
 	

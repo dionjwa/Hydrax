@@ -1,13 +1,13 @@
 package com.pblabs.components.minimalcomp;
 
-import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor.geom.math.Vec2;
 
 using com.pblabs.components.scene2D.SceneUtil;
 
 /** Assigns children to relative fixed positions */
 class ContainerFixedChildren extends Container
 {
-	public var fixedPositions :Array<XY>;
+	public var fixedPositions :Array<Vec2>;
 	
 	public function new ()
 	{

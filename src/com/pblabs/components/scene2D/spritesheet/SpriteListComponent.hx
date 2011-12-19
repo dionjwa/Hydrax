@@ -7,7 +7,7 @@ import org.transition9.rtti.ReflectUtil;
 import org.transition9.ds.Map;
 import org.transition9.ds.Maps;
 
-import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor.geom.math.Vec2;
 
 
 /**
@@ -18,7 +18,7 @@ class SpriteListComponent extends SpriteContainerComponent
 	public var resources (get_resources, set_resources) :Array<ResourceToken>;
 	var _resources :Array<ResourceToken>;
 	var _sourceFrames :Array<ImageData>;
-	public var centers :Array<XY>;
+	public var centers :Array<Vec2>;
 	override function set_sourceFrames (val :Array<ImageData>) :Array<ImageData>
 	{
 		deleteFrames();
@@ -50,7 +50,7 @@ class SpriteListComponent extends SpriteContainerComponent
 		_defaultCenter = false;
 	}
 	
-	override public function getCenter(index :Int, ?direction :Float=0.0) :XY
+	override public function getCenter(index :Int, ?direction :Float=0.0) :Vec2
 	{
 		if (centers != null) {
 			return centers[index];

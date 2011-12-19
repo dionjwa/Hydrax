@@ -15,19 +15,18 @@ import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PropertyReference;
 import org.transition9.geom.RectangleTools;
-import org.transition9.geom.Vector2;
 import org.transition9.util.Preconditions;
 
 import de.polygonal.core.math.Mathematics;
-import de.polygonal.motor2.geom.math.XY;
-import de.polygonal.motor2.geom.primitive.AABB2;
+import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.motor.geom.primitive.AABB2;
 
 import flash.geom.Matrix;
 
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
-using org.transition9.geom.VectorTools;
+using org.transition9.geom.Vec2Tools;
 using org.transition9.util.ArrayUtil;
 using org.transition9.util.StringUtil;
 
@@ -51,9 +50,9 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	public var zIndex (get_zIndex, set_zIndex) :Int;
 	public var layerIndex (get_layerIndex, set_layerIndex) :Int;
-	public var locationOffset (get_locationOffset, set_locationOffset) :XY;
+	public var locationOffset (get_locationOffset, set_locationOffset) :Vec2;
 	public var angleOffset (get_angleOffset, set_angleOffset) :Float;
-	public var registrationPoint (get_registrationPoint, set_registrationPoint) :XY;
+	public var registrationPoint (get_registrationPoint, set_registrationPoint) :Vec2;
 	public var bounds (get_bounds, set_bounds) :AABB2;
 	public var visible (get_visible, set_visible) :Bool;
 	
@@ -73,13 +72,13 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	var _layerIndex :Int;
 	var _zIndex :Int;
 	var _angleOffset :Float;
-	var _locationOffset :XY;
+	var _locationOffset :Vec2;
 	var _layerIndexDirty :Bool;
 	// var _zIndexDirty :Bool;
-	var _registrationPoint :XY;
+	var _registrationPoint :Vec2;
 	var _objectMask :ObjectType;
 	var _bounds :AABB2;
-	var _unscaledBounds :XY;
+	var _unscaledBounds :Vec2;
 	var _visible :Bool;
 	/** For physics engines and the like, where the x and y need to be translated  */
 	public var localZoom :Float;
@@ -102,13 +101,13 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		isTransformDirty = true;
 		_layerIndex = 0;
 		_layerIndexDirty = false;
-		_locationOffset = new Vector2();
+		_locationOffset = new Vec2();
 		objectMask = ObjectType.ALL;
-		_registrationPoint = new Vector2(0, 0);
+		_registrationPoint = new Vec2(0, 0);
 		_scaleX = 1;
 		_scaleY = 1;
 		_transformMatrix = new Matrix();
-		_unscaledBounds = new Vector2(1, 1);
+		_unscaledBounds = new Vec2(1, 1);
 		_visible = true;
 		_x = 0;
 		_y = 0;
@@ -135,7 +134,7 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		isTransformDirty = false;
 	}
 	
-	public function containsScreenPoint (pos :XY, mask :ObjectType) :Bool
+	public function containsScreenPoint (pos :Vec2, mask :ObjectType) :Bool
 	{
 		org.transition9.util.Assert.isNotNull(mask);
 		org.transition9.util.Assert.isNotNull(objectMask);
@@ -147,15 +146,15 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		return containsWorldPoint(scene.translateScreenToWorld(pos), mask);
 	}
 	
-	public function containsWorldPoint (pos :XY, mask :ObjectType) :Bool
+	public function containsWorldPoint (pos :Vec2, mask :ObjectType) :Bool
 	{
 		if (!mask.and(objectMask)) {
 			return false;
 		}
-		return de.polygonal.motor2.geom.inside.PointInsideAABB.test2(pos, bounds);
+		return de.polygonal.motor.geom.inside.PointInsideAABB.test2(pos, bounds);
 	}
 	
-	public function setLocation (loc :XY) :Void
+	public function setLocation (loc :Vec2) :Void
 	{
 		set_x(loc.x);
 		set_y(loc.y);
@@ -384,24 +383,24 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		return val;
 	}
 	
-	function get_registrationPoint () :XY
+	function get_registrationPoint () :Vec2
 	{
 		return _registrationPoint;
 	}
 	
-	function set_registrationPoint (val :XY) :XY
+	function set_registrationPoint (val :Vec2) :Vec2
 	{
 		_registrationPoint = val;
 		isTransformDirty = true;
 		return val;
 	}
 	
-	function get_locationOffset () :XY
+	function get_locationOffset () :Vec2
 	{
 		return _locationOffset;
 	}
 	
-	function set_locationOffset (val :XY) :XY
+	function set_locationOffset (val :Vec2) :Vec2
 	{
 		_locationOffset = val;
 		isTransformDirty = true;

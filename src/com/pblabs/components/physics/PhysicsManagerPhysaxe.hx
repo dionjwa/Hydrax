@@ -2,7 +2,7 @@ package com.pblabs.components.physics;
 
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.engine.time.ITickedObject;
-import org.transition9.geom.Vector2;
+
 import org.transition9.util.Preconditions;
 import org.transition9.util.SignalVar;
 
@@ -39,7 +39,7 @@ class PhysicsManagerPhysaxe extends NodeComponent<Dynamic, PhysicsComponentPhysa
 	public var world (default, null) :World;
 	public var collisionSignaler (default, null) :Signaler<CollisionData>;
 	
-	public function new (?gravity :Vector2)
+	public function new (?gravity :Vec2)
 	{
 		super();
 		internalScale = 1.0;//new SignalVar(1.0);
@@ -157,7 +157,7 @@ class PhysicsManagerPhysaxe extends NodeComponent<Dynamic, PhysicsComponentPhysa
 	}
 	
 	var _enabled :Bool;
-	var _gravity :Vector2;
+	var _gravity :Vec2;
 	var _bodies :IntHash<PhysicsComponentPhysaxe>;
 	var _collisionData :CollisionData;
 }

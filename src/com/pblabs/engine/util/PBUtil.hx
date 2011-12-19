@@ -115,6 +115,7 @@ class PBUtil
 		e.deferring = deferring;
 		e.addComponent(cast(component, IEntityComponent), compName);
 		org.transition9.util.Assert.isTrue(deferring || cast(component, IEntityComponent).isRegistered, "addsingle, not registered");
+		// context.registerManager(compClass, component, null, true);
 		return component;
 	}
 	

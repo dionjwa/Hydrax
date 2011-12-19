@@ -4,8 +4,8 @@ import com.pblabs.engine.resource.ResourceToken;
 import org.transition9.util.svg.SvgData;
 
 import de.polygonal.core.math.Mathematics;
-import de.polygonal.motor2.geom.math.XY;
-import de.polygonal.motor2.geom.primitive.AABB2;
+import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.motor.geom.primitive.AABB2;
 
 import flash.geom.Matrix;
 
@@ -133,7 +133,7 @@ class SvgRenderTools
 		}
 	}
 	#elseif js
-	public static function renderSvg (svgData :SvgData, canvas :Canvas, ?offset :XY, ?cb :Void->Void, ?ignoreDimensions :Bool = false) :Void
+	public static function renderSvg (svgData :SvgData, canvas :Canvas, ?offset :Vec2, ?cb :Void->Void, ?ignoreDimensions :Bool = false) :Void
 	{
 		org.transition9.util.Assert.isNotNull(svgData);
 		org.transition9.util.Assert.isNotNull(canvas);

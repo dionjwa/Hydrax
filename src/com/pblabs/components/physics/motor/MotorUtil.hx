@@ -1,8 +1,8 @@
-package com.pblabs.components.physics.motor2;
+package com.pblabs.components.physics.motor;
 
-import de.polygonal.motor2.data.BoxData;
-import de.polygonal.motor2.data.CircleData;
-import de.polygonal.motor2.data.ShapeData;
+import de.polygonal.motor.data.BoxData;
+import de.polygonal.motor.data.CircleData;
+import de.polygonal.motor.data.ShapeData;
 
 import com.pblabs.components.physics.ShapeType;
 

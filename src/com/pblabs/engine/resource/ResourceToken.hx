@@ -12,7 +12,7 @@ import com.pblabs.engine.core.IPBContext;
 import org.transition9.util.Equalable;
 
 class ResourceToken
-	implements Equalable<ResourceToken>, implements org.transition9.ds.Hashable, implements de.polygonal.ds.Hashable
+	implements Equalable<ResourceToken>, implements org.transition9.ds.Hashable, implements de.polygonal.ds.Hashable, implements haxe.rtti.Infos
 {
 	public var key :Int;
 	public var source :Source;

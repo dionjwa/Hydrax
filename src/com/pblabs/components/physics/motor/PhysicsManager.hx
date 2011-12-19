@@ -1,14 +1,14 @@
-package com.pblabs.components.physics.motor2;
+package com.pblabs.components.physics.motor;
 
 import com.pblabs.components.manager.NodeComponent;
 
 import de.polygonal.core.math.Mathematics;
-import de.polygonal.motor2.Settings;
-import de.polygonal.motor2.World;
-import de.polygonal.motor2.collision.nbody.SAP;
-import de.polygonal.motor2.data.RigidBodyData;
-import de.polygonal.motor2.geom.math.Vec2;
-import de.polygonal.motor2.geom.primitive.AABB2;
+import de.polygonal.motor.Settings;
+import de.polygonal.motor.World;
+import de.polygonal.motor.collision.nbody.SAP;
+import de.polygonal.motor.data.RigidBodyData;
+import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.motor.geom.primitive.AABB2;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
@@ -20,7 +20,7 @@ using org.transition9.util.MathUtil;
 /**
   * This is not designed to be pooled.
   */
-class PhysicsManager extends NodeComponent<Dynamic, com.pblabs.components.physics.motor2.PhysicsComponent>
+class PhysicsManager extends NodeComponent<Dynamic, com.pblabs.components.physics.motor.PhysicsComponent>
 {
 	public var precision :Int;
 	public var world (default, null) :World;
@@ -84,9 +84,10 @@ class PhysicsManager extends NodeComponent<Dynamic, com.pblabs.components.physic
 		var _tmpAABB :AABB2 = new AABB2();
 		_tmpAABB.set4(-1500, -1500, 1500, 1500);
 		settings.worldBounds = _tmpAABB;
-		settings.contactPoolSize = 4;
-		settings.maxProxies = 1 << 3;
-		settings.maxPairs = settings.maxProxies << 4;
+		// settings.contactPoolSize = 4;
+		// settings.maxProxies = 1 << 3;
+		// settings.maxPairs = settings.maxProxies << 4;
+		
 		// settings.maxProxies = 100.upperPowerOf2();
 		// settings.maxPairs = (settings.maxProxies * (settings.maxProxies - 1)).upperPowerOf2();
 		// settings.setStepSize(1 / 60);

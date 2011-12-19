@@ -26,7 +26,7 @@ import com.pblabs.engine.resource.ImageResources;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
-import org.transition9.geom.Vector2;
+import Vec2;
 import org.transition9.util.Comparators;
 import org.transition9.util.Rand;
 
@@ -41,7 +41,7 @@ using Lambda;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
-using org.transition9.geom.VectorTools;
+using org.transition9.geom.Vec2Tools;
 using org.transition9.util.BitmapUtil;
 
 class Demo 
@@ -111,11 +111,11 @@ class Demo
 				#if flash
 				var imageData = image.bitmapData;
 				spritelist.imageData.push(imageData);
-				spritelist.centers.push(new Vector2(imageData.width / 2, imageData.height / 2));
+				spritelist.centers.push(new Vec2(imageData.width / 2, imageData.height / 2));
 				#elseif js
 				var imageData = org.transition9.util.BitmapUtil.toCanvas(image);
 				spritelist.imageData.push(imageData);
-				spritelist.centers.push(new Vector2(imageData.width / 2, imageData.height / 2));
+				spritelist.centers.push(new Vec2(imageData.width / 2, imageData.height / 2));
 				#end
 			}
 			return spritelist;

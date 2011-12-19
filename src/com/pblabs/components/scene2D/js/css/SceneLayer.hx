@@ -11,7 +11,7 @@ package com.pblabs.components.scene2D.js.css;
 import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.scene2D.js.JSLayer;
 import com.pblabs.engine.time.IAnimatedObject;
-import org.transition9.geom.Vector2;
+
 import org.transition9.util.DomUtil;
 
 import js.Dom;
@@ -41,7 +41,7 @@ class SceneLayer extends JSLayer
 		}
 	}
 	
-	static var _tempPoint = new Vector2();
+	static var _tempPoint = new Vec2();
 	
 	public function new ()
 	{

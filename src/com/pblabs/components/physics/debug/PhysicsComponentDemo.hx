@@ -4,7 +4,7 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
-import org.transition9.geom.Vector2;
+
 
 import flash.display.Sprite;
 
@@ -67,17 +67,17 @@ class PhysicsDemoGameMode extends PBContext
 		
 		var radius = 30.0;
 		for (i in 0...10) {
-			var ball = createPhysicsEntity(ShapeType.CIRCLE(radius), new Vector2(Math.random() * 100, Math.random() * 100));
+			var ball = createPhysicsEntity(ShapeType.CIRCLE(radius), new Vec2(Math.random() * 100, Math.random() * 100));
 		}
 		
 		createPhysicsEntity(ShapeType.FIXED_BOX(0,280, 270,50));
 	}
 	
-	function createPhysicsEntity (shape :ShapeType, ?loc :Vector2 = null) :IEntity
+	function createPhysicsEntity (shape :ShapeType, ?loc :Vec2 = null) :IEntity
 	{
 		var ball = createBaseSceneEntity();
 		
-		var physics = allocate(com.pblabs.components.physics.motor2.PhysicsComponent);
+		var physics = allocate(com.pblabs.components.physics.motor.PhysicsComponent);
 		physics.shapeType = shape;
 		// physics.xProperty = LocationComponent.P_X;
 		// physics.yProperty = LocationComponent.P_Y;

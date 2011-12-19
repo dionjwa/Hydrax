@@ -11,7 +11,7 @@ package com.pblabs.components.input;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.ObjectType;
 
-import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor.geom.math.Vec2;
 
 /**
   * Minimal functionality needed to begin mouse/input device interactions.
@@ -19,5 +19,5 @@ import de.polygonal.motor2.geom.math.XY;
 interface IInteractiveComponent implements IEntityComponent
 {
 	var objectMask (get_objectMask, set_objectMask) :ObjectType;
-	function containsScreenPoint (pos :XY, mask :ObjectType) :Bool;
+	function containsScreenPoint (pos :Vec2, mask :ObjectType) :Bool;
 }

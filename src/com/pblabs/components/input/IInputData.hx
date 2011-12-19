@@ -10,7 +10,7 @@ package com.pblabs.components.input;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.engine.core.ObjectType;
 
-import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor.geom.math.Vec2;
 
 /**
   * Necessary data for input listeners
@@ -21,7 +21,7 @@ interface IInputData
 	
 	function firstObjectUnderPoint (?mask :ObjectType) :BaseSceneComponent<Dynamic>;
 	
-	var inputLocation (get_inputLocation, null) :XY;
+	var inputLocation (get_inputLocation, null) :Vec2;
 	
 	#if js
 	var inputAngle (get_inputAngle, null) :Float;

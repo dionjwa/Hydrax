@@ -12,7 +12,7 @@ import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.scene2D.js.JSLayer;
 import com.pblabs.components.scene2D.js.SceneComponent;
 import com.pblabs.engine.time.IAnimatedObject;
-import org.transition9.geom.Vector2;
+
 import org.transition9.rtti.ReflectUtil;
 
 import js.Dom;
@@ -26,7 +26,7 @@ class SceneLayer extends JSLayer
 	public function new ()
 	{
 		super();
-		_tempPoint = new Vector2();
+		_tempPoint = new Vec2();
 		
 		#if (debug && modernizr)
 		org.transition9.util.Assert.isTrue(Modernizr.canvas, "Modernizr.canvas==false.  You will have to use a CSS layer in this browser");
@@ -123,5 +123,5 @@ class SceneLayer extends JSLayer
 		return cast canvas;
 	}
 	
-	var _tempPoint :Vector2;
+	var _tempPoint :Vec2;
 }

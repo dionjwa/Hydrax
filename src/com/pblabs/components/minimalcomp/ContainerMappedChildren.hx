@@ -2,26 +2,26 @@ package com.pblabs.components.minimalcomp;
 
 import Type;
 
-import org.transition9.geom.Vector2;
+
 import org.transition9.ds.Map;
 import org.transition9.ds.Maps;
 import org.transition9.ds.maps.MapBuilder;
 
-import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor.geom.math.Vec2;
 
 using com.pblabs.components.scene2D.SceneUtil;
 
 /** Assigns children to a map of fixed positions.  Children must be added manually */
 class ContainerMappedChildren extends Container
 {
-	public var anchors :Map<String, XY>;
+	public var anchors :Map<String, Vec2>;
 	
 	public function new ()
 	{
 		super();
 		anchors = new MapBuilder(ValueType.TClass(String))
-			.setDefaultValue(cast new Vector2())
-			.set("center", cast new Vector2()).build();
+			.setDefaultValue(cast new Vec2())
+			.set("center", cast new Vec2()).build();
 		org.transition9.util.Assert.isNotNull(anchors, ' anchors is null');
 	}
 	

@@ -5,7 +5,6 @@
         <depends name="transition9"/>
         <depends name="feffects"/>
         <depends name="robothaxe"/>
-        <depends name="polygonal"/>
         <depends name="hsl-1"/>
         <depends name="gm2d"/>
         <depends name="remoting"/>

@@ -195,19 +195,19 @@ class PhysicsManager extends NodeParent<PhysicsComponent>,
 	}
 	#end
 	
-	public function queryAABB2 (box:de.polygonal.motor2.geom.primitive.AABB2, mask :ObjectType, results :Array<PhysicsComponent>) :Bool
+	public function queryAABB2 (box:de.polygonal.motor.geom.primitive.AABB2, mask :ObjectType, results :Array<PhysicsComponent>) :Bool
 	{
 		throw "Not implemented";
 		return false;
 	}
 	
-	public function queryCircle(center :de.polygonal.motor2.geom.math.XY, radius :Float, mask :ObjectType, results :Array<PhysicsComponent>) :Bool
+	public function queryCircle(center :de.polygonal.motor.geom.math.Vec2, radius :Float, mask :ObjectType, results :Array<PhysicsComponent>) :Bool
 	{
 		throw "Not implemented";
 		return false;
 	}
 	
-	public function getObjectsUndergetObjectsUnderPoint(worldPosition :de.polygonal.motor2.geom.math.XY, mask :ObjectType, results :Array<PhysicsComponent>) :Bool
+	public function getObjectsUndergetObjectsUnderPoint(worldPosition :de.polygonal.motor.geom.math.Vec2, mask :ObjectType, results :Array<PhysicsComponent>) :Bool
 	{
 		throw "Not implemented";
 		return false;

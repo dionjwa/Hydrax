@@ -9,10 +9,9 @@
 package com.pblabs.components.scene2D;
 
 import org.transition9.geom.RectangleTools;
-import org.transition9.geom.Vector2;
 import org.transition9.util.StringUtil;
 
-import de.polygonal.motor2.geom.primitive.AABB2;
+import de.polygonal.motor.geom.primitive.AABB2;
 
 using com.pblabs.components.scene2D.SceneUtil;
 

@@ -3,9 +3,8 @@ package com.pblabs.components.minimalcomp;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.scene2D.Direction;
 import com.pblabs.engine.time.IAnimatedObject;
-import org.transition9.geom.Vector2;
 
-import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor.geom.math.Vec2;
 
 class VBox extends Container
 {
@@ -87,23 +86,23 @@ class VBox extends Container
 		redrawSignal.dispatch(this);
 	}
 	
-	override public function getChildLocation (index :Int = -1) :XY
+	override public function getChildLocation (index :Int = -1) :Vec2
 	{
 		if (index == -1) {
 			var b = get_bounds();
 			if (flowDirection == Direction.DOWN) {
-				return new Vector2(x, y + b.intervalY);
+				return new Vec2(x, y + b.intervalY);
 			} else {
-				return new Vector2(x, y - b.intervalY);
+				return new Vec2(x, y - b.intervalY);
 			}
 		} else {
 			throw "Implement me";
 		}
 	}
 	
-	override function get_registrationPoint () :XY
+	override function get_registrationPoint () :Vec2
 	{
-		var v = new Vector2();
+		var v = new Vec2();
 		v.y = switch (flowDirection) {
 		 	case UP: height;
 		 	default: 0;

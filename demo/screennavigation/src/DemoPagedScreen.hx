@@ -115,7 +115,7 @@ class DemoPagedScreen extends com.pblabs.components.ui.PagedScreen
 			text.getComponent(BaseSceneComponent).objectMask = ObjectType.NONE;
 			var regPoint = text.getComponent(BaseSceneComponent).registrationPoint;
 			
-			text.getComponent(BaseSceneComponent).registrationPoint = new org.transition9.geom.Vector2(0, regPoint.y);
+			text.getComponent(BaseSceneComponent).registrationPoint = new Vec2(0, regPoint.y);
 				
 			ii += 2;
 		}

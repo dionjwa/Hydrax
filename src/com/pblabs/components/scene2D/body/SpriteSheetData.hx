@@ -21,7 +21,7 @@ class SpriteSheetData
 	/** Generated bitmaps maybe scaled to improve local resolution */
 	public var scale :Float;
 	/** Don't change once set */
-	public var id :String;
+	public var _id :String;
 	/** [frameLabel1, frame1, framelabel2, frame2, ...] */
 	public var frameLabels :Array<Dynamic>;
 	/** Base64 encoded */
@@ -60,8 +60,8 @@ class SpriteSheetData
 	// 	id = s.unserialize();
 	// 	// frameLabels = cast org.transition9.ds.MapUtil.fromArray(s.unserialize(), ValueType.TClass(String));
 	// 	frameLabels = s.unserialize();
-	// 	centers = flatArrayToXYArray(s.unserialize());
-	// 	bounds = flatArrayToXYArray(s.unserialize());
+	// 	centers = flatArrayToVec2Array(s.unserialize());
+	// 	bounds = flatArrayToVec2Array(s.unserialize());
 	// 	imageData = s.unserialize();
 	// }
 	
@@ -85,30 +85,30 @@ class SpriteSheetData
 
 	public function deserializeDynamic (from :Dynamic) :Void
 	{
-		id = from.id;
+		_id = from._id;
 		scale = from.scale;
 		var self = this;
 		frameLabels = from.frameLabels;// == null ? null :cast org.transition9.ds.MapUtil.fromArray(from.frameLabels, ValueType.TClass(String));
-		// centers = flatArrayToXYArray(from.centers);
+		// centers = flatArrayToVec2Array(from.centers);
 		// centers = null;
 		// if (from.centers != null) {
 		// 	centers = [];
 		// 	var c :Array<Float> = from.centers;
-		// 	// centers = c.map(array2XY).array();
+		// 	// centers = c.map(array2Vec2).array();
 		// 	for (v in c) {
-		// 		centers.push(new org.transition9.geom.Vector2(v[0], v[1]));
+		// 		centers.push(new Vec2(v[0], v[1]));
 		// 	}
 		// }
 		
-		// bounds = flatArrayToXYArray(from.bounds);
+		// bounds = flatArrayToVec2Array(from.bounds);
 		// if (from.bounds != null) {
 		// 	var c :Array<Float> = from.bounds;
-		// 	// bounds = c.map(array2XY).array();
+		// 	// bounds = c.map(array2Vec2).array();
 			
 		// 	bounds = [];
 		// 	var c :Array<Float> = from.bounds;
 		// 	for (v in c) {
-		// 		bounds.push(new org.transition9.geom.Vector2(v[0], v[1]));
+		// 		bounds.push(new Vec2(v[0], v[1]));
 		// 	}
 		// }
 		

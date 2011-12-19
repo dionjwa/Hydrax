@@ -2,14 +2,14 @@ package com.pblabs.components.scene2D;
 
 import Type;
 
-import org.transition9.geom.Vector2;
+
 import org.transition9.util.Comparators;
 import org.transition9.ds.Map;
 import org.transition9.ds.Maps;
 import org.transition9.ds.maps.SortedMap;
 import org.transition9.util.svg.SvgData;
 
-import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor.geom.math.Vec2;
 
 import flash.geom.Matrix;
 
@@ -18,7 +18,7 @@ using Lambda;
 using StringTools;
 
 using com.pblabs.components.scene2D.SvgRenderTools;
-using org.transition9.geom.VectorTools;
+using org.transition9.geom.Vec2Tools;
 using org.transition9.util.IterUtil;
 using org.transition9.util.StringUtil;
 using org.transition9.util.XmlTools;
@@ -37,9 +37,9 @@ class SvgAnchors
 	public static var ANCHOR_PREFIX = "anchor";
 	public static var INKSCAPE_LABEL = "inkscape:label";
 	
-	static var _anchors :Map<SvgData, Map<String, XY>> = Maps.newHashMap(ValueType.TClass(SvgData)); 
+	static var _anchors :Map<SvgData, Map<String, Vec2>> = Maps.newHashMap(ValueType.TClass(SvgData)); 
 	
-	public static function getAnchors (svgData :SvgData) :Map<String, XY>
+	public static function getAnchors (svgData :SvgData) :Map<String, Vec2>
 	{
 		// org.transition9.util.Assert.isNotNull(id, ' id is null');
 		// org.transition9.util.Assert.isNotNull(svg, ' svg is null');
@@ -64,14 +64,14 @@ class SvgAnchors
 	    }
 	}
 	
-	public static function parseAnchors(svg :Xml) :Map<String, XY>
+	public static function parseAnchors(svg :Xml) :Map<String, Vec2>
 	{
-		var anchors :Map<String, XY> = new SortedMap(Maps.newHashMap(ValueType.TClass(String)), Comparators.compareStrings);
+		var anchors :Map<String, Vec2> = new SortedMap(Maps.newHashMap(ValueType.TClass(String)), Comparators.compareStrings);
 		parseSvgAnchorsRecursive(svg, anchors);
 		return anchors;
 	}
 	
-	static function parseSvgAnchorsRecursive (element :Xml, anchors :Map<String, XY>) :Void
+	static function parseSvgAnchorsRecursive (element :Xml, anchors :Map<String, Vec2>) :Void
 	{
 		if (element.nodeName == "rect".svgId()) {
 			var isFromInkscapeLabel =  element.get(INKSCAPE_LABEL) != null && element.get(INKSCAPE_LABEL).toLowerCase().startsWith(ANCHOR_PREFIX);
@@ -90,9 +90,9 @@ class SvgAnchors
 				//We do this somewhere else?
 				//Reverse the y axis, the origin of svg documents is the bottom left.
 				var label = isFromInkscapeLabel ? element.get(INKSCAPE_LABEL) : element.get("id").split("_")[0];
-				// trace(label + "=>" + anchor.toVector2());
-				// anchors.set(label, anchor.toVector2().subtractLocal(new Vector2(svgBounds.intervalX / 2, svgBounds.intervalY / 2)));
-				anchors.set(label, anchor.toVector2());
+				// trace(label + "=>" + anchor.toVec2());
+				// anchors.set(label, anchor.toVec2().subtractLocal(new Vec2(svgBounds.intervalX / 2, svgBounds.intervalY / 2)));
+				anchors.set(label, anchor.toVec2());
 			}
 		} else {
 			if (element.nodeType == Xml.Element) {

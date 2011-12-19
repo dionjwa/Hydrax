@@ -1,6 +1,6 @@
 package com.pblabs.components.physics; 
 
-import org.transition9.geom.Vector2;
+
 
 import org.transition9.util.Preconditions;
 
@@ -13,7 +13,7 @@ class PhysicsManagerBox2D extends NodeComponent,
 {
     public var world (default, null) :World;
     
-    public function new (?gravity :Vector2)
+    public function new (?gravity :Vec2)
     {
         super();
         _enabled = true;
@@ -110,6 +110,6 @@ class PhysicsManagerBox2D extends NodeComponent,
     }
     
     var _enabled :Bool;
-    var _gravity :Vector2;
+    var _gravity :Vec2;
     
 }

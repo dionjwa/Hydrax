@@ -13,8 +13,8 @@ import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.scene2D.SceneView;
 import com.pblabs.components.scene2D.flash.SceneLayer;
 import com.pblabs.engine.time.IAnimatedObject;
-import org.transition9.geom.Vector2;
-import org.transition9.util.Preconditions;
+
+import de.polygonal.motor.geom.math.Vec2;
 
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
@@ -25,6 +25,7 @@ import flash.geom.Point;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
+import org.transition9.util.Preconditions;
 using org.transition9.util.ArrayUtil;
 using org.transition9.util.DisplayUtils;
 
@@ -43,7 +44,7 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 	
 	var _rootSprite :Sprite;
 	var _rootTransform :Matrix;
-	var _tempPoint :Vector2;
+	var _tempPoint :Vec2;
 
 	public function new ()
 	{
@@ -53,7 +54,7 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 		_rootSprite.mouseEnabled = false;
 		_rootSprite.mouseChildren = false;
 		_rootTransform = new Matrix();
-		_tempPoint = new Vector2();
+		_tempPoint = new Vec2();
 	}
 	
 	override public function setLayerIndex (layer :SceneLayer, index :Int) :Void

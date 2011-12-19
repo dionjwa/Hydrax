@@ -1,17 +1,17 @@
-package com.pblabs.components.physics.motor2;
+package com.pblabs.components.physics.motor;
 
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.engine.core.PropertyReference;
-import org.transition9.geom.Vector2;
-import org.transition9.geom.VectorTools;
 
-import de.polygonal.motor2.World;
-import de.polygonal.motor2.data.BoxData;
-import de.polygonal.motor2.data.CircleData;
-import de.polygonal.motor2.data.MassData;
-import de.polygonal.motor2.data.RigidBodyData;
-import de.polygonal.motor2.data.ShapeData;
-import de.polygonal.motor2.dynamics.RigidBody;
+import org.transition9.geom.Vec2Tools;
+
+import de.polygonal.motor.World;
+import de.polygonal.motor.data.BoxData;
+import de.polygonal.motor.data.CircleData;
+import de.polygonal.motor.data.MassData;
+import de.polygonal.motor.data.RigidBodyData;
+import de.polygonal.motor.data.ShapeData;
+import de.polygonal.motor.dynamics.RigidBody;
 
 import hsl.haxe.Signaler;
 
@@ -69,7 +69,7 @@ class ShapeContact extends NodeComponent<ShapeContactManager, Dynamic>,
 		}
 	}
 	
-	function onLocationChange (loc :Vector2) :Void
+	function onLocationChange (loc :Vec2) :Void
 	{
 		if (body != null) {
 			body.x = loc.x;

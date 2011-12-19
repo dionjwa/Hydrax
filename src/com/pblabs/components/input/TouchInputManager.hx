@@ -10,7 +10,7 @@ package com.pblabs.components.input;
 
 #if js
 
-import org.transition9.geom.Vector2;
+
 
 import hsl.haxe.Signaler;
 
@@ -72,7 +72,7 @@ class TouchInputManager extends BaseInputManager
 				#end
 				
 				//Compute the average touch if the user puts down more than one finger at the same time
-				var meanTouch = new Vector2();
+				var meanTouch = new Vec2();
 				for (touch in e.changedTouches) {
 					meanTouch.x += touch.clientX;
 					meanTouch.y += touch.clientY;

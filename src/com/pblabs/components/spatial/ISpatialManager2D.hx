@@ -15,8 +15,8 @@ package com.pblabs.components.spatial;
 import com.pblabs.components.manager.INodeParent;
 import com.pblabs.engine.core.ObjectType;
 
-import de.polygonal.motor2.geom.math.XY;
-import de.polygonal.motor2.geom.primitive.AABB2;
+import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.motor.geom.primitive.AABB2;
 
 /**
 * Basic interface for 2D spatial database.
@@ -48,21 +48,21 @@ interface ISpatialManager2D<T:ISpatialObject2D<Dynamic>>
 	* 
 	* @see QueryAABB2
 	*/ 
-	function queryCircle(center :XY, radius :Float, mask :ObjectType, results :Array<T>) :Bool;
+	function queryCircle(center :Vec2, radius :Float, mask :ObjectType, results :Array<T>) :Bool;
 	
 	/**
 	* Cast a ray and (optionally) return information about what it hits in result.
 	*/
-	// function castRay(start :XY, end :XY, result :RayHitInfo, ?flags :ObjectType = null) :Bool;
+	// function castRay(start :Vec2, end :Vec2, result :RayHitInfo, ?flags :ObjectType = null) :Bool;
 	
 	/**
 	* Return all the spatial objects under a given point. Objects can optionally implement
 	* pixel-level collision checking.
 	*
-	* @param worldPosition XY in worldspace to check.
+	* @param worldPosition Vec2 in worldspace to check.
 	* @param results An array into which ISpatialObject2Ds are added based on what is under point.
 	* @param mask Only consider objects that match this ObjectType. Null uses all types.
 	* @return Found something under point or not.
 	*/
-	function getObjectsUndergetObjectsUnderPoint(worldPosition :XY, mask :ObjectType, results :Array<T>) :Bool;
+	function getObjectsUndergetObjectsUnderPoint(worldPosition :Vec2, mask :ObjectType, results :Array<T>) :Bool;
 }

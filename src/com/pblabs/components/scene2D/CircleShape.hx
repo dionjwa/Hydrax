@@ -10,10 +10,10 @@ package com.pblabs.components.scene2D;
 
 import com.pblabs.engine.core.ObjectType;
 import org.transition9.geom.CircleUtil;
-import org.transition9.geom.Vector2;
+
 import org.transition9.util.StringUtil;
 
-import de.polygonal.motor2.geom.math.XY;
+import de.polygonal.motor.geom.math.Vec2;
 
 using com.pblabs.components.scene2D.SceneUtil;
 
@@ -38,7 +38,7 @@ class CircleShape extends ShapeComponent
 		#end
 	}
 	
-	override public function containsWorldPoint (pos :XY, mask :ObjectType) :Bool
+	override public function containsWorldPoint (pos :Vec2, mask :ObjectType) :Bool
 	{
 		if (!objectMask.and(mask)) {
 			return false;
