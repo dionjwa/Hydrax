@@ -7,15 +7,18 @@
  * in the License.html file at the root directory of this SDK.
  ******************************************************************************/
 package com.pblabs.components.scene2D.js.canvas;
+
 import com.pblabs.components.scene2D.BaseSceneLayer;
 import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.scene2D.js.JSLayer;
 import com.pblabs.components.scene2D.js.SceneComponent;
 import com.pblabs.engine.time.IAnimatedObject;
 
-import org.transition9.rtti.ReflectUtil;
+import de.polygonal.motor.geom.math.Vec2;
 
 import js.Dom;
+
+import org.transition9.rtti.ReflectUtil;
 
 class SceneLayer extends JSLayer
 {

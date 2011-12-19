@@ -12,11 +12,13 @@ import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.scene2D.js.JSLayer;
 import com.pblabs.engine.time.IAnimatedObject;
 
-import org.transition9.util.DomUtil;
+import de.polygonal.motor.geom.math.Vec2;
 
 import js.Dom;
 
 import js.Lib;
+
+import org.transition9.util.DomUtil;
 
 class SceneLayer extends JSLayer
 {
