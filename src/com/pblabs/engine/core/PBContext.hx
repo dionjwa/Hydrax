@@ -12,20 +12,22 @@
  ******************************************************************************/
 package com.pblabs.engine.core;
 
-import com.pblabs.engine.injection.Injector;
+import Type;
+
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ProcessManager;
 import com.pblabs.engine.util.PBUtil;
-import org.transition9.util.Assert;
-import org.transition9.util.Preconditions;
-import org.transition9.rtti.ReflectUtil;
-import org.transition9.ds.Map;
-import org.transition9.ds.Maps;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
-import Type;
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
+import org.transition9.rtti.ReflectUtil;
+import org.transition9.util.Assert;
+import org.transition9.util.Preconditions;
+
+import robothaxe.injector.Injector;
 
 class PBContext
 	implements IPBContext
@@ -50,7 +52,7 @@ class PBContext
 	public var isTopContext (get_isTopContext, never) :Bool;
 	public var isLive (get_isLive, never) :Bool;
 	
-	public var injector :Injector;
+	public var injector (default, null) :Injector;
 	var _managers :Map<String, Dynamic>;
 	
 	var _processManager :IProcessManager;
@@ -73,7 +75,7 @@ class PBContext
 			this.name = name;
 		}
 		
-		injector = createInjector();
+		injector = new Injector();
 		_managers = Maps.newHashMap(ValueType.TClass(String));
 		_processManager = registerManager(IProcessManager, createProcessManager(), true);
 		#if debug
@@ -291,7 +293,7 @@ class PBContext
 		_currentGroup = null;
 		_processManager = null;
 		_managers = null;
-		injector.shutdown();
+		injector.parentInjector = null;
 		injector = null;
 		_tempPropertyInfo = null;
 		
@@ -384,7 +386,7 @@ class PBContext
 	public function setInjectorParent (i :Injector) :Void
 	{
 		Preconditions.checkNotNull(i);
-		injector.parent = i;
+		injector.parentInjector = i;
 	}
 
 	public function injectInto(instance:Dynamic):Void
@@ -617,11 +619,6 @@ class PBContext
 	function get_processManager () :IProcessManager
 	{
 		return _processManager;
-	}
-	
-	function createInjector () :Injector
-	{
-		return new Injector();
 	}
 	
 	function createProcessManager () :IProcessManager

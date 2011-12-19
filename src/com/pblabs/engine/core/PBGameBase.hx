@@ -14,17 +14,19 @@ package com.pblabs.engine.core;
 
 import Type;
 
-import com.pblabs.engine.injection.Injector;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ProcessManager;
 import com.pblabs.engine.util.PBUtil;
-import org.transition9.util.F;
-import org.transition9.util.Preconditions;
-import org.transition9.ds.Map;
-import org.transition9.ds.Maps;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
+
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
+import org.transition9.util.F;
+import org.transition9.util.Preconditions;
+
+import robothaxe.injector.Injector;
 
 using Lambda;
 
@@ -416,7 +418,7 @@ class PBGameBase
 		signalContextShutdown = new DirectSignaler(this);
 		_managers = Maps.newHashMap(ValueType.TClass(String));
 
-		injector = createInjector();
+		injector = new Injector();
 		_contexts = new Array();
 		
 		registerManager(PBGameBase, this, null, true);
@@ -487,10 +489,5 @@ class PBGameBase
 		#end
 	}
 
-	function createInjector () :Injector
-	{
-		return new Injector();
-	}
-	
 	static var EMPTY_ARRAY :Array<Dynamic> = [];
 }
