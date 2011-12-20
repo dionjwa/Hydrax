@@ -33,7 +33,7 @@ class PBGame extends PBGameBase
 		super.initializeManagers();
 
 		// Register ourselves.
-		registerManager(PBGameBase, this);
+		registerManager(PBGameBase, this, null, true);
 		
 		// Bring in the global managers.
 		registerManager(SignalBondManager, new SignalBondManager());

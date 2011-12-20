@@ -111,14 +111,15 @@ class PBGameBase
 	
 	public function getManager <T>(cls :Class<T>, ?name :String = null):T
 	{
-		return injector.getMapping(cls, name);
+		return injector.getMapping(cls, name).getResponse(injector);
 	}
 	
 	//Returns manager for convenience
-	public function registerManager <T>(clazz:Class<Dynamic>, ?instance:T = null, ?optionalName:String="", ?suppressInject:Bool = false):T
+	public function registerManager <T>(clazz:Class<Dynamic>, ?instance:T = null, ?optionalName:String = null, ?suppressInject:Bool = false):T
 	{
 		if (instance == null) {
 			instance = allocate(clazz);
+			suppressInject = true;
 		}
 		
 		org.transition9.util.Assert.isNotNull(instance);
@@ -419,9 +420,8 @@ class PBGameBase
 		_managers = Maps.newHashMap(ValueType.TClass(String));
 
 		injector = new Injector();
+		injector.mapValue(PBGameBase, this);
 		_contexts = new Array();
-		
-		registerManager(PBGameBase, this, null, true);
 		
 		initializeManagers();
 		
@@ -488,6 +488,13 @@ class PBGameBase
 		_timer = null;
 		#end
 	}
+	
+	#if debug
+	public function toString () :String
+	{
+		return "PBGameBase ";
+	}
+	#end
 
 	static var EMPTY_ARRAY :Array<Dynamic> = [];
 }

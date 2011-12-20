@@ -30,13 +30,13 @@ using org.transition9.util.StringUtil;
   *   -use SignalBondManager.bindSignal to bind the signals.
   */
 class SignalBondManager extends ArrayMultiMap<Int, Bond>,
-	implements IPBManager, implements Hashable
+	implements IPBManager, implements Hashable, implements haxe.rtti.Infos
 {
 	/** Key for our own signal listening to changin contexts. */
 	public var key :Int;
 	
-	@inject("com.pblabs.engine.core.PBGameBase")
-	var game :PBGameBase;
+	@inject
+	public var game :PBGameBase;
 	
 	public static function destroyBond (bond :Bond) :Bond
 	{
@@ -220,4 +220,11 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 			self.destroyBonds(c);
 		}, true);
 	}
+	
+	#if debug
+	override public function toString () :String
+	{
+		return org.transition9.util.StringUtil.stringify(this);
+	}
+	#end
 }

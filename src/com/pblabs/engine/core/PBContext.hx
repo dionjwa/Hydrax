@@ -245,13 +245,13 @@ class PBContext
 	{
 		if (createIfMissing) {
 			org.transition9.util.Assert.isNotNull(injector, " injector is null" + org.transition9.util.Log.getStackTrace());
-			var mng = injector.getMapping(cls, name);
+			var mng = injector.getMapping(cls, name) != null ? injector.getMapping(cls, name).getResponse(injector) : null;
 			if (mng == null) {
 				mng = registerManager(cls, null, name);
 			}
 			return mng;
 		} else {
-			return injector.getMapping(cls, name);
+			return injector.getMapping(cls, name) != null ? injector.getMapping(cls, name).getResponse(injector) : null;
 		}
 	}
 	

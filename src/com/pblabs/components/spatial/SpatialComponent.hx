@@ -204,14 +204,14 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Man
 		super.onRemove();
 	}
 	
-	inline public function dispatchAngle () :Void
+	public function dispatchAngle () :Void
 	{
 		if (signalerAngle.isListenedTo) {
 			signalerAngle.dispatch(_angle);
 		}
 	}
 	
-	inline public function dispatchLocation () :Void
+	public function dispatchLocation () :Void
 	{
 		if ( signalerLocation.isListenedTo) {
 			_vecForSignalling.x = _vec.x;
