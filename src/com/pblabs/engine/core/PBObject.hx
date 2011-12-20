@@ -29,7 +29,7 @@ class PBObject
 	}
 	
 	@editorData({ignore :"true"})
-	@inject("com.pblabs.engine.core.IPBContext")
+	@inject
 	public var context(get_context, set_context) :IPBContext;
 	
 	public var name(get_name, set_name) :String;

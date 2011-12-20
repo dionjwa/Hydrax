@@ -19,7 +19,7 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
-import com.pblabs.engine.core.PBGameBase;
+import com.pblabs.engine.core.PBGame;
 import com.pblabs.engine.resource.BitmapCacheResource;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ImageResources;
@@ -213,5 +213,5 @@ class Demo
 		new Demo();
 	}
 	
-	var game :PBGameBase;
+	var game :PBGame;
 }

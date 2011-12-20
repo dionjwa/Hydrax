@@ -1,7 +1,7 @@
 package com.pblabs.components.jquerymobile;
 
 import com.pblabs.engine.core.PBContext;
-import com.pblabs.engine.core.PBGameBase;
+import com.pblabs.engine.core.PBGame;
 import org.transition9.rtti.ReflectUtil;
 
 import js.Dom;

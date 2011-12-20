@@ -13,7 +13,7 @@ import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBObject;
 import com.pblabs.engine.core.NameManager;
-import com.pblabs.engine.core.PBGameBase;
+import com.pblabs.engine.core.PBGame;
 import com.pblabs.engine.core.PropertyReference;
 import org.transition9.util.Preconditions;
 import org.transition9.rtti.ReflectUtil;
@@ -61,7 +61,7 @@ class PBUtil
 	{
 		var inst = context.getManager(mng);
 		if (inst == null) {
-			var game = context.getManager(PBGameBase);
+			var game = context.getManager(PBGame);
 			org.transition9.util.Assert.isNotNull(game, ' game is null');
 			inst = game.registerManager(mng, game.allocate(mng));
 		} 

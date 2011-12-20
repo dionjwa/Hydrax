@@ -1,7 +1,7 @@
 package com.pblabs.components.iui;
 
 import com.pblabs.engine.core.PBContext;
-import com.pblabs.engine.core.PBGameBase;
+import com.pblabs.engine.core.PBGame;
 import org.transition9.rtti.ReflectUtil;
 
 import js.Dom;
@@ -82,7 +82,7 @@ class IUIScreen extends PBContext
 		}, 40);
 		// var backButton :HtmlDom = js.Lib.document.getElementById("backButton");
 		// org.transition9.util.Assert.isNotNull(backButton, ' backButton is null');
-		// var contexts = getManager(PBGameBase).contexts;
+		// var contexts = getManager(PBGame).contexts;
 		// var index = contexts.indexOf(this);
 		// if (index > 0) {
 		// 	backButton.nodeValue = ReflectUtil.tinyClassName(contexts[index - 1]); 

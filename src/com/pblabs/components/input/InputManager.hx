@@ -16,7 +16,7 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PBContext;
-import com.pblabs.engine.core.PBGameBase;
+import com.pblabs.engine.core.PBGame;
 import com.pblabs.engine.core.SetManager;
 import com.pblabs.engine.time.IProcessManager;
 import org.transition9.util.Preconditions;
@@ -68,11 +68,11 @@ class InputManager extends BaseInputManager,
 	var _startingScale :Float;
 	var _isZooming :Bool;
 	@inject
-	var _mouse :MouseInputManager;
+	public var _mouse :MouseInputManager;
 	
 	#if js
 	@inject
-	var gestures :com.pblabs.components.input.GestureInputManager;
+	public var gestures :com.pblabs.components.input.GestureInputManager;
 	#end
 
 	//Variables to make queries more efficient

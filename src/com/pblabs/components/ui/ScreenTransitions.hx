@@ -10,7 +10,7 @@ import com.pblabs.components.tasks.SerialTask;
 import com.pblabs.components.tasks.TimedTask;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
-import com.pblabs.engine.core.PBGameBase;
+import com.pblabs.engine.core.PBGame;
 
 import de.polygonal.motor.geom.math.Vec2;
 
@@ -96,7 +96,7 @@ class ScreenTransitions
 	
 	public function getScreenBelow (screen :IPBContext) :IPBContext
 	{
-		var game = screen.getManager(PBGameBase);
+		var game = screen.getManager(PBGame);
 		var contexts = game.contexts;
 		return contexts[contexts.length - 2];
 	}

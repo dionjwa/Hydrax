@@ -17,8 +17,8 @@ class PBManagerBase
 {
 	var context :IPBContext;
 	
-	@inject("com.pblabs.engine.core.PBGameBase")
-	var game :PBGameBase;
+	@inject
+	public var game :PBGame;
 	
 	/** Key for hashing. Don't modify. */
 	public var key :Int;
@@ -30,7 +30,7 @@ class PBManagerBase
 	
 	public function startup () :Void
 	{
-		org.transition9.util.Assert.isNotNull(game, "No PBGameBase?");
+		org.transition9.util.Assert.isNotNull(game, "No PBGame? for " + org.transition9.rtti.ReflectUtil.getClassName(this));
 		game.signalContextEnter.bind(onNewContextInternal);
 		game.signalContextExit.bind(onContextRemovedInternal);
 		

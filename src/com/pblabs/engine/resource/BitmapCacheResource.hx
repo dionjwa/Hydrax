@@ -38,7 +38,7 @@ class BitmapCacheResource extends ImageDataResources,
 	}
 
 	@inject
-	public var game :com.pblabs.engine.core.PBGameBase;
+	public var game :com.pblabs.engine.core.PBGame;
 	
 	public function new ()
 	{

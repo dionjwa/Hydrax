@@ -59,6 +59,10 @@ class Serializer extends PBManagerBase
 	var _typeInfo :TypeInfo;
 	
 	public var ignoredTypes (default, null) :Set<Class<Dynamic>>;
+	
+	@inject
+	var test :com.pblabs.engine.core.PBGame;
+	
 	public function new()
 	{
 		super();

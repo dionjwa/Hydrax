@@ -9,7 +9,7 @@ import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
-import com.pblabs.engine.core.PBGameBase;
+import com.pblabs.engine.core.PBGame;
 import com.pblabs.engine.resource.BitmapCacheResource;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceToken;
@@ -130,5 +130,5 @@ class Demo
     }
     #end
 	
-	var game :PBGameBase;
+	var game :PBGame;
 }

@@ -16,7 +16,7 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
-import com.pblabs.engine.core.PBGameBase;
+import com.pblabs.engine.core.PBGame;
 import com.pblabs.engine.core.SetManager;
 import com.pblabs.engine.core.SignalBondManager;
 import com.pblabs.engine.resource.IResourceManager;
@@ -116,5 +116,5 @@ class Demo #if flash extends flash.display.Sprite #end
 		new Demo();
 	}
 	
-	var game :PBGameBase;
+	var game :PBGame;
 }

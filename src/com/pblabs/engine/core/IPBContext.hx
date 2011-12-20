@@ -58,13 +58,13 @@ interface IPBContext
 	var signalEnter (default, null) :Signaler<Void>;
 	/** Dispatched when this becomes stops being the active IPBContext */
 	var signalExit (default, null) :Signaler<Void>;
-	/** Dispatched by the PBGameBase once when initialized  */
+	/** Dispatched by the PBGame once when initialized  */
 	var signalSetup (default, null) :Signaler<IPBContext>;
-	/** Dispatched by the PBGameBase once just before destruction */
+	/** Dispatched by the PBGame once just before destruction */
 	var signalDestroyed (default, null) :Signaler<IPBContext>;
 	
 	
-	/** Called by the PBGameBase once to initialize  */
+	/** Called by the PBGame once to initialize  */
 	function setup () :Void;
 	// /** Called when destroyed */
 	function shutdown():Void;

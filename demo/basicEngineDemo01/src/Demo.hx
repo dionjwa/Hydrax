@@ -15,6 +15,7 @@ using Lambda;
 
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
+using com.pblabs.engine.core.PBGameUtil;
 using com.pblabs.engine.util.PBUtil;
 
 class Demo 
@@ -25,6 +26,8 @@ class Demo
 		com.pblabs.engine.debug.Log.setup();
 		
 		var game = new PBGame();
+		game.addBaseManagers();
+		
 		//The main "context".  This is equivalent to a level, or a menu screen.
 		var context :PBContext = game.pushContext(PBContext);
 		//This method is via 'using' SceneUtil

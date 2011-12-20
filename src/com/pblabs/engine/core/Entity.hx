@@ -141,7 +141,7 @@ class Entity extends PBObject,
 			}
 			
 			#if debug
-			_context.getManager(com.pblabs.engine.core.PBGameBase).callLater(c.postDestructionCheck);
+			_context.getManager(com.pblabs.engine.core.PBGame).callLater(c.postDestructionCheck);
 			#end
 			
 			if (Std.is(c, ITickedObject)) {
@@ -324,7 +324,7 @@ class Entity extends PBObject,
 		org.transition9.util.Assert.isNotNull(component, "Why is the component null? " + org.transition9.util.Log.getStackTrace());
 		
 		#if debug
-		_context.getManager(com.pblabs.engine.core.PBGameBase).callLater(component.postDestructionCheck);
+		_context.getManager(com.pblabs.engine.core.PBGame).callLater(component.postDestructionCheck);
 		#end
 		
 		// Update the dictionary.

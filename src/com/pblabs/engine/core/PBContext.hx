@@ -77,11 +77,11 @@ class PBContext
 		
 		injector = new Injector();
 		_managers = Maps.newHashMap(ValueType.TClass(String));
-		_processManager = registerManager(IProcessManager, createProcessManager(), true);
+		// registerManager(IPBContext, this, null, true);
+		_processManager = registerManager(IProcessManager, createProcessManager(), null, true);
 		#if debug
 		cast(_processManager, ProcessManager).name = this.name;
 		#end
-		registerManager(IPBContext, this, true);
 		_tempPropertyInfo = new PropertyInfo();
 		signalObjectAdded = new DirectSignaler(this);
 		signalObjectRemoved = new DirectSignaler(this);
@@ -191,7 +191,7 @@ class PBContext
 		Preconditions.checkNotNull(_nameManager, "WTF is the nameManager null?");
 		
 		injector.mapValue(IPBContext, this);
-		Preconditions.checkArgument(injector.getMapping(IPBContext) == this, "Injector borked");
+		Preconditions.checkArgument(injector.getMapping(IPBContext).getResponse(injector) == this, "Injector borked");
 
 		// Set up root and current group.
 		//The root group cannot easily be injected due to 
@@ -628,7 +628,7 @@ class PBContext
 
 	function get_isTopContext () :Bool
 	{
-		return getManager(PBGameBase).currentContext == this;
+		return getManager(PBGame).currentContext == this;
 	}
 	
 	function get_isLive () :Bool

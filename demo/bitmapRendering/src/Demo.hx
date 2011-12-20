@@ -18,18 +18,21 @@ import com.pblabs.components.tasks.SerialTask;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
-import com.pblabs.engine.core.PBGameBase;
+import com.pblabs.engine.core.PBGame;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ImageResources;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
+
 import org.transition9.util.Rand;
-import org.transition9.util.ReflectUtil;
+import org.transition9.rtti.ReflectUtil;
+
 using com.pblabs.components.input.InputTools;
 using com.pblabs.components.scene2D.ImageTools;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
+using com.pblabs.engine.core.PBGameUtil;
 using com.pblabs.engine.util.PBUtil;
 
 class Demo 
@@ -38,7 +41,8 @@ class Demo
 	{
 		com.pblabs.engine.debug.Log.setup();
 		game = new PBGame();
-		
+		game.addBaseManagers();
+
 		game.registerManager(MouseInputManager, new MouseInputManager());
 		#if js
 		game.registerManager(com.pblabs.components.input.TouchInputManager, new com.pblabs.components.input.TouchInputManager());
@@ -130,5 +134,5 @@ class Demo
 		new Demo();
 	}
 	
-	var game :PBGameBase;
+	var game :PBGame;
 }

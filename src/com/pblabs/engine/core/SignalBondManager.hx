@@ -36,7 +36,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	public var key :Int;
 	
 	@inject
-	public var game :PBGameBase;
+	public var game :PBGame;
 	
 	public static function destroyBond (bond :Bond) :Bond
 	{
@@ -163,7 +163,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	
 	public function startup():Void
 	{
-		org.transition9.util.Assert.isNotNull(game);
+		org.transition9.util.Assert.isNotNull(game, "Is --macro RTTI.generate() called?");
 		//Listen to new contexts so we can listen to object removal
 		bind(this, game.signalContextSetup, onNewContext);
 		if (game.currentContext != null) {

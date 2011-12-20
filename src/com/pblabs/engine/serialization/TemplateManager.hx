@@ -75,10 +75,10 @@ class TemplateManager
 	public var signalGroupLoaded :Signaler<String>;
 	
 	// public var entityType(null, setEntityType) :Class<Dynamic>;
-	@inject("com.pblabs.engine.serialization.Serializer")
+	@inject
 	public var serializer :Serializer;
 	
-	@inject("com.pblabs.engine.resource.IResourceManager")
+	@inject
 	public var resourceManager :IResourceManager;
 	
 	/**

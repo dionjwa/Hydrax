@@ -13,7 +13,7 @@ import com.pblabs.components.ui.ScreenTransitions;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PBGame;
-import com.pblabs.engine.core.PBGameBase;
+import com.pblabs.engine.core.PBGame;
 import com.pblabs.engine.resource.BitmapCacheResource;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.Source;
@@ -67,7 +67,7 @@ class DemoPagedScreen extends com.pblabs.components.ui.PagedScreen
 		_contextVbox.getComponent(BoxPanelImage).lineColor = 0x000000;
 		_contextVbox.getComponent(BoxPanelImage).dividerLineWidth = 0.5;
 			
-		var game = getManager(PBGameBase);
+		var game = getManager(PBGame);
 		var jobs :Array<Dynamic> = [
 			"Push context", callback(game.pushContext, DemoPagedScreen, ScreenTransitions.scrollForward),
 			"Pop context", function () :Void {
@@ -148,7 +148,7 @@ class DemoPagedScreen extends com.pblabs.components.ui.PagedScreen
 			.addSvg(_layerForeground, Resources.list.BUTTON_BACK, [new SvgReplace("$T", text)], "c1", false)
 			.addSvg(_layerForeground, Resources.list.BUTTON_BACK_DOWN, [new SvgReplace("$T", text)], "c2", false, true)
 			.makeTwoStateButton()
-			.setOnClick(callback(getManager(PBGameBase).popContext, ScreenTransitions.scrollBack))
+			.setOnClick(callback(getManager(PBGame).popContext, ScreenTransitions.scrollBack))
 			//You have to async set the location, because we may not know the width and height immediately.
 			.addResetCallback(function (e :IEntity) :Void {
 				if (e.ensureComponent(Component).isRegistered) {

@@ -9,8 +9,8 @@ class PBManager
 	/** Key for hashing. Don't modify. */
 	public var key :Int;
 	
-	@inject("com.pblabs.engine.core.IPBContext")
-	var context :IPBContext;
+	@inject
+	public var context :IPBContext;
 	
 	public function new () 
 	{

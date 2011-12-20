@@ -28,7 +28,7 @@ typedef LayerClass = flash.display.DisplayObjectContainer;
 class BaseInputManager extends PBManagerBase
 {
 	@inject
-	var sceneView :SceneView;
+	public var sceneView :SceneView;
 	
 	#if (flash || cpp)
 	public var layer (get_layer, set_layer) :LayerClass;

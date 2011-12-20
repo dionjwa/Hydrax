@@ -8,15 +8,18 @@
  ******************************************************************************/
 package com.pblabs.components.input;
 
-#if js
-
-
+import de.polygonal.motor.geom.math.Vec2;
 
 import hsl.haxe.Signaler;
-
-import hsl.js.translating.JSSignaler;
 import hsl.js.data.Touch;
-using hsl.js.data.Touch.TouchListIterator;
+import hsl.js.translating.JSSignaler;
+
+using hsl.js.data.Touch;
+
+#if !js
+//Only on js platform for now
+#error
+#end
 
 /**
  * Javascript only ATM.  What other platforms support gestures?
@@ -25,7 +28,6 @@ using hsl.js.data.Touch.TouchListIterator;
  * Can funnel into MouseInputManager if no specific gesture Logic.
  * 
  */
-@:require(js)
 class TouchInputManager extends BaseInputManager
 {
 	@inject
@@ -177,5 +179,3 @@ class TouchInputManager extends BaseInputManager
 	
 	var _firstTouchId :Int;
 }
-
-#end

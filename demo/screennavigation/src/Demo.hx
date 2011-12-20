@@ -13,7 +13,7 @@ import com.pblabs.components.ui.ScreenTransitions;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PBGame;
-import com.pblabs.engine.core.PBGameBase;
+import com.pblabs.engine.core.PBGame;
 import com.pblabs.engine.resource.BitmapCacheResource;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.Source;
@@ -91,7 +91,7 @@ class Demo
 		new Demo();
 	}
 
-	var game :PBGameBase;
+	var game :PBGame;
 }
 
 

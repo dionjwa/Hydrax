@@ -11,7 +11,7 @@ import com.pblabs.components.tasks.TaskComponent;
 import com.pblabs.components.tasks.TaskComponentTicked;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.PBContext;
-import com.pblabs.engine.core.PBGameBase;
+import com.pblabs.engine.core.PBGame;
 
 using Lambda;
 
@@ -68,7 +68,7 @@ class PagedScreen extends PBContext
 		scene.sceneAlignment = SceneAlignment.TOP_LEFT;
 		scene.visible = false;
 		#if js
-		if (getManager(PBGameBase).contexts.length > 0) {
+		if (getManager(PBGame).contexts.length > 0) {
 			scene.x = 1000;
 		}
 		#end
@@ -140,7 +140,7 @@ class PagedScreen extends PBContext
 	
 	public function getPageBelow () :PagedScreen
 	{
-		var game = getManager(PBGameBase);
+		var game = getManager(PBGame);
 		var contexts = game.contexts;
 		
 		var contextBelow = contexts[contexts.length - 2];

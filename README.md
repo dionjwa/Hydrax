@@ -17,6 +17,7 @@ Hydrax does this well:
 
 - Components: everything is based on components that you can easily replace with your own.
 - Asset handling
+- Injection via robotlegs (robothaxe).
 - Platform independent 2D display.
 - Platform independent input (currently Flash + Canvas only).
 - Handling transitioning between game screens, or levels.
@@ -50,6 +51,7 @@ Currently, Hydrax will (mostly) keep the PBE package structure of the core class
 Complete or functional:
 
 - Core engine.
+- Injection.
 - Rendering (Flash and HTML5).  Modified the original as3 pbe code to handle different platforms.
 - Xml Template system and PBE serialization.
 - Resources.  Rebuilt to handle multi-platform and haxe-only resources.
@@ -93,7 +95,6 @@ Standardized some method names:
 - IEntity.lookupComponentByType -> IEntity.getComponent
 - IEntity.lookupComponentByName -> IEntity.getComponentByName
 - Hydrax IPBObjects don't have internal lists of game object sets.  That functionality is managed entirely by the SetManager.
-- A lightweight custom injection system is used instead of robolegs.  I'll endevour to incorporate a more robust injection system in the near future.
 - Signals are used instead of flash specific event dispatchers.  
 - Haxe cannot property deserialize dynamic objects.  Currently, Haxe cannot check if an object implements Dynamic (where you can add arbitrary fields) so cannot decide if assigning such a field is a valid operation.
 - Property getters and setters must be in the form 'get_fieldName', 'set_fieldName' to work with PropertyReferences and ReflectUtil.  ReflectUtil adds duplicate methods from Reflect, checking getters/setters

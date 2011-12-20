@@ -42,8 +42,8 @@ import hsl.haxe.Bond;
 class ObjectPoolMgr //extends PBManagerBase
 	implements IPBManager
 {
-	@inject("com.pblabs.engine.core.PBGameBase")
-	var game :com.pblabs.engine.core.PBGameBase;
+	@inject("com.pblabs.engine.core.PBGame")
+	var game :com.pblabs.engine.core.PBGame;
 	
  	var _classes:Array<Class<Dynamic>> ;
 	var _pools:Map<String, ObjectPool<Dynamic>>;
