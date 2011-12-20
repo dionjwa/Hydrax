@@ -20,7 +20,7 @@ import hsl.haxe.Signaler;
 class OrientationManager extends BaseInputManager
 {
 	@inject
-	var scene :SceneView;
+	public var scene :SceneView;
 	
 	public var orientationChange (default, null) :Signaler<Int>;
 	
