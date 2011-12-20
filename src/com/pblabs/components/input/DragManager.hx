@@ -89,7 +89,8 @@ class DragManager extends EntityComponent,
 	var _framesWithoutMovement :Int;
 	/** If panning slows rendering too much, you can pause the game while panning. */
 	var _pauseProcessManagerOnPan :Bool;
-	var _inputManager :InputManager;
+	@inject
+	public var _inputManager :InputManager;
 	var _startMouse :Vec2;
 	var _startObj :Vec2;
 	/** The SceneComponent might internally scale coordinates.  Correct with this factor. */
@@ -126,8 +127,6 @@ class DragManager extends EntityComponent,
 		e.addComponent(this);
 		e.addComponent(context.allocate(TaskComponentTicked), TaskComponent.NAME);
 		e.deferring = false;
-		
-		_inputManager = context.getManager(InputManager);
 		org.transition9.util.Assert.isNotNull(_inputManager);
 	}
 	
