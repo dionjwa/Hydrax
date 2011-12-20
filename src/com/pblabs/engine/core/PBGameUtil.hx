@@ -32,6 +32,14 @@ class PBGameUtil
 		//Sensible default
 		game.getManager(com.pblabs.components.scene2D.SceneView).layerId = "haxeSceneView";
 		#end
+		
+		//Input
+		game.registerManager(com.pblabs.components.input.MouseInputManager);
+		#if js
+		game.registerManager(com.pblabs.components.input.TouchInputManager);
+		game.registerManager(com.pblabs.components.input.GestureInputManager);
+		#end
+		game.registerManager(com.pblabs.components.input.InputManager);
 	}
 	
 }
