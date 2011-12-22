@@ -1,0 +1,4 @@
+--macro RTTI.generate()
+-lib hydrax
+-cp src
+-cp rsrc

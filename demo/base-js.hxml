@@ -1,0 +1,7 @@
+../base.hxml
+
+-lib jQueryExtern
+-lib html5
+-lib modernizr
+
+--remap flash:jeash

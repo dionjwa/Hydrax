@@ -124,6 +124,9 @@ class SvgRenderTools
 			var svg = new gm2d.svg.SVG2Gfx(svgData.xml);
 			var shape = svg.CreateShape();
 			shape.cacheAsBitmap = true;
+			#if debug_graphics
+			org.transition9.util.DebugUtil.drawBoundingRectShape(shape, shape);
+			#end
 			return shape;
 		} catch (e :Dynamic) {
 			trace("Problem rendering svg " + e);

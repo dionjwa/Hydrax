@@ -43,12 +43,6 @@ class Demo
 		game = new PBGame();
 		game.addBaseManagers();
 
-		game.registerManager(MouseInputManager, new MouseInputManager());
-		#if js
-		game.registerManager(com.pblabs.components.input.TouchInputManager, new com.pblabs.components.input.TouchInputManager());
-		game.registerManager(com.pblabs.components.input.GestureInputManager, new com.pblabs.components.input.GestureInputManager());
-		#end
-		
 		var images = new ImageResources();
 		game.getManager(IResourceManager).addResource(images);
 		
@@ -57,8 +51,6 @@ class Demo
 		#elseif js
 		images.add(new ResourceToken("avatar", Source.url("rsrc/avatar.png"), ResourceType.IMAGE));
 		#end
-		
-		game.registerManager(InputManager, new InputManager());
 		
 		game.getManager(IResourceManager).load(startGame, function (e :Dynamic) {trace("Error loading: " + e);});
 	}

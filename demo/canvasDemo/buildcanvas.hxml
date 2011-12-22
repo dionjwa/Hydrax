@@ -1,11 +1,6 @@
+../base-js.hxml
+
 -D debug
 -D use_html5_canvas_as_default_scene_layer
 
--lib hydrax
--lib jQueryExtern
-
--cp src
-
---remap flash:jeash
--js build/demo.js
 -main CanvasDemo

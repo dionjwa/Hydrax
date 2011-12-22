@@ -1,13 +1,8 @@
+../base-js.hxml
+
 -D debug
 -D haxedev
--D use_html5_canvas_as_default_scene_layer
 
--lib hydrax
--lib html5
--lib jQueryExtern
--lib modernizr
-
--cp src
---remap flash:jeash
 -js build/demo.js
+
 -main Demo

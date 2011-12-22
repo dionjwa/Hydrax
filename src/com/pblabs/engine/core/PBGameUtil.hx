@@ -36,8 +36,8 @@ class PBGameUtil
 		//Input
 		game.registerManager(com.pblabs.components.input.MouseInputManager);
 		#if js
-		game.registerManager(com.pblabs.components.input.TouchInputManager);
 		game.registerManager(com.pblabs.components.input.GestureInputManager);
+		game.registerManager(com.pblabs.components.input.TouchInputManager);
 		#end
 		game.registerManager(com.pblabs.components.input.InputManager);
 	}

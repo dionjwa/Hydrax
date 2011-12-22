@@ -1,0 +1,11 @@
+../base.hxml
+
+-lib gm2d
+
+-cp src
+-cp rsrc
+
+-swf-version 10
+-swf-header 800:300:30:FFFFFF
+
+-main Demo

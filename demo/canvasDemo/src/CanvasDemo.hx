@@ -13,10 +13,14 @@ import com.pblabs.engine.resource.ImageResources;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
-import Vec2;
+
+import de.polygonal.motor.geom.math.Vec2;
+
 import org.transition9.util.Assert;
+
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
+using com.pblabs.engine.core.PBGameUtil;
 using com.pblabs.engine.util.PBUtil;
 
 class CanvasDemo
@@ -25,6 +29,7 @@ class CanvasDemo
 	{
 		com.pblabs.engine.debug.Log.setup();
 		app = new PBGame();
+		app.addBaseManagers();
 		Assert.isNotNull(app.getManager(SceneView));
 		app.getManager(SceneView).layerId = "haxeSceneView";
 		var images = new ImageResources();
@@ -40,7 +45,7 @@ class CanvasDemo
 	{
 		var ctx : PBContext = app.pushContext(PBContext);
 		Assert.isNotNull(ctx, "WTF, ctx is null");
-		Assert.isNotNull(ctx.injector.parent, "Parent injector null");
+		Assert.isNotNull(ctx.injector.parentInjector, "Parent injector null");
 		var canvas = ctx.createBaseScene();
 		
 		var backLayer = canvas.addLayer("backlayer");

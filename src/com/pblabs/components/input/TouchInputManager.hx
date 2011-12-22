@@ -31,7 +31,7 @@ using hsl.js.data.Touch;
 class TouchInputManager extends BaseInputManager
 {
 	@inject
-	var mouse :MouseInputManager;
+	public var mouse :MouseInputManager;
 	
 	public var touchStart (default, null) :Signaler<TouchEvent>;
 	public var touchMove (default, null) :Signaler<TouchEvent>;

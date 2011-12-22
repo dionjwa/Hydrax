@@ -1,16 +1,9 @@
+../base-flash.hxml
+
 -D debug
 -D haxedev
 
--lib hydrax
-
 -cp src
+-cp rsrc
 
--swf9 build/demo.swf
--swf-header 1000:600:30:FFFFFF
-
--main Demo
-
-
-
-
-
+-swf build/demo.swf

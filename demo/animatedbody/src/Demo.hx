@@ -26,7 +26,9 @@ import com.pblabs.engine.resource.ImageResources;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
-import Vec2;
+
+import de.polygonal.motor.geom.math.Vec2;
+
 import org.transition9.util.Comparators;
 import org.transition9.util.Rand;
 
@@ -41,6 +43,7 @@ using Lambda;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
+using com.pblabs.engine.core.PBGameUtil;
 using org.transition9.geom.Vec2Tools;
 using org.transition9.util.BitmapUtil;
 
@@ -51,15 +54,7 @@ class Demo
 		//General setup
 		com.pblabs.engine.debug.Log.setup();
 		game = new PBGame();
-		
-		//Input, although this demo isn't using any input yet.
-		game.registerManager(MouseInputManager, new MouseInputManager());
-		#if js
-		game.registerManager(com.pblabs.components.input.TouchInputManager, new com.pblabs.components.input.TouchInputManager());
-		game.registerManager(com.pblabs.components.input.GestureInputManager, new com.pblabs.components.input.GestureInputManager());
-		#end
-		
-		game.registerManager(InputManager, new InputManager());
+		game.addBaseManagers();
 		
 		Resources.init();
 		var rsrc = game.getManager(IResourceManager);
