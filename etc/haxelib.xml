@@ -1,7 +1,7 @@
 <project name="hydrax" url="https://github.com/dionjwa/Hydrax" license="BSD">
         <user name="dionjwa"/>
         <description>A port of the Pushbutton Game Engine, with multi-platform features not found in the original PBE</description>
-        <version name="1.2.7">Added transition9 dependency.</version>
+        <version name="1.2.8">Demo fixes.</version>
         <depends name="transition9"/>
         <depends name="feffects"/>
         <depends name="robothaxe"/>
