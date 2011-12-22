@@ -1,13 +1,5 @@
--D use_rtti_doc
--D debug
--D use_html5_canvas_as_default_scene_layer
+../base-js.hxml
 
--lib hydrax
--lib jQueryExtern
-
--cp src
-
---remap flash:jeash
 -js canvas/haxe.js
 
 -main Demo

@@ -26,21 +26,24 @@ import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
 import com.pblabs.engine.core.PBGame;
 import com.pblabs.engine.core.SetManager;
-import com.pblabs.engine.injection.Injector;
 import com.pblabs.engine.resource.BitmapCacheResource;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ImageResources;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
-import org.transition9.geom.Rectangle;
-import Vec2;
-import org.transition9.util.Rand;
-import org.transition9.util.ReflectUtil;
+
+import de.polygonal.motor.geom.math.Vec2;
+
 import org.transition9.ds.MultiMap;
 import org.transition9.ds.Tuple;
 import org.transition9.ds.multimaps.ArrayMultiMap;
+import org.transition9.geom.Rectangle;
+import org.transition9.util.Rand;
+import org.transition9.rtti.ReflectUtil;
+
 using com.pblabs.components.tasks.TaskUtil;
+using com.pblabs.engine.core.PBGameUtil;
 using com.pblabs.engine.util.PBUtil;
 
 class Demo  
@@ -49,6 +52,7 @@ class Demo
 	{
 		com.pblabs.engine.debug.Log.setup();
 		game = new PBGame();
+		// game.
 		
 		#if js
 		game.getManager(SceneView).layerId = "haxeSceneView";
@@ -57,21 +61,23 @@ class Demo
 		
 		game.registerManager(MouseInputManager, new MouseInputManager());
 		
-		var rsrc = game.getManager(IResourceManager);
-		rsrc.addResource(game.allocate(ImageResources));
-		rsrc.addResource(game.allocate(BitmapCacheResource));
+		var images = new ImageResources();
+		game.getManager(IResourceManager).addResource(images);
+		
+		
+		// rsrc.addResource(game.allocate(ImageResources));
+		// rsrc.addResource(game.allocate(BitmapCacheResource));
 		#if js
-		game.registerManager(com.pblabs.components.input.TouchInputManager, new com.pblabs.components.input.TouchInputManager());
-		game.registerManager(com.pblabs.components.input.GestureInputManager, new com.pblabs.components.input.GestureInputManager());
-		rsrc.add(new Resource("face", Source.url("../rsrc/face.png"), ResourceType.IMAGE));
+		// rsrc.add(new ResourceToken("face", Source.url("../rsrc/face.png"), ResourceType.IMAGE));
+		images.add(new ResourceToken("face", Source.url("rsrc/face.png"), ResourceType.IMAGE));
 		// rsrc.addResource(new ImageResource("face", Source.url("../rsrc/face.png")));
 		#elseif flash
-		rsrc.add(new Resource("face", Source.url("../rsrc/face.png"), ResourceType.IMAGE));
-		rsrc.addResource(new ImageResource("face", Source.embedded("FACE")));
+		images.add(new ResourceToken("face", Source.url("../rsrc/face.png"), ResourceType.IMAGE));
+		// rsrc.add(new Resource("face", Source.url("../rsrc/face.png"), ResourceType.IMAGE));
+		// rsrc.addResource(new ImageResource("face", Source.embedded("FACE")));
 		#end
-		game.registerManager(InputManager, new InputManager());
 		
-		rsrc.load(startGame, function (e :Dynamic) {trace("Error loading: " + e);});
+		game.getManager(IResourceManager).load(startGame, function (e :Dynamic) {trace("Error loading: " + e);});
 	}
 	
 	function startGame () :Void
@@ -103,7 +109,7 @@ class Demo
 		
 		var man  = SceneUtil.createBaseSceneEntity(context);
 		var c = context.allocate(ImageComponent);
-		c.resource = cast new ResourceToken("face");
+		c.resource = cast new ResourceToken("face", Source.none, ResourceType.IMAGE);
 		c.parentProperty = layer.entityProp();
 		man.addComponent(c);
 		var manmouse = context.allocate(MouseInputComponent);
@@ -192,7 +198,7 @@ class Demo
 		var man  = SceneUtil.createBaseSceneEntity(context);
 		
 		var c = context.allocate(ImageComponent);
-		c.resource = cast new ResourceToken("face");
+		c.resource = cast new ResourceToken("face", Source.none, ResourceType.IMAGE);
 		
 		c.parentProperty = layer.entityProp();
 		man.addComponent(c);

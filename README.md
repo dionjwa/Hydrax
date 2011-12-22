@@ -34,6 +34,12 @@ Hydrax does this well:
 5. Open the swf in *demo/basicEngineDemo01/build/demo.swf*
 6. You should see a circle or rectangle moving around the screen border.
 
+Hydrax is under constant development, this sometimes breaks the demos.  Demos current working: 
+ 
+- basicEngineDemo01
+- bitmapRendering
+- animatedbody
+
 # Why
 
 HaXe and the PBE are a natural fit.  
