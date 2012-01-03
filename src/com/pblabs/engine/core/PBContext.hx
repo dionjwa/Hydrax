@@ -262,7 +262,9 @@ class PBContext
 		if (Std.is(mng, IPBManager)) {
 			cast(mng, IPBManager).shutdown();
 		}
-		injector.unmap(clazz, name);
+		if (injector.hasMapping(clazz, name)) {
+			injector.unmap(clazz, name);
+		}
 	}
 	
 	public function inject (object :Dynamic) :Void
