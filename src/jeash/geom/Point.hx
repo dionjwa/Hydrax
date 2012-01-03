@@ -96,4 +96,11 @@ class Point
    {
       return new Point( len*Math.cos(angle), len*Math.sin(angle) );
    }
+   
+   #if debug
+   public function toString () :String
+   {
+   	return "[" + x + ", " + y + "]";
+   }
+   #end
 }
