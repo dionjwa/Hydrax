@@ -84,7 +84,8 @@ class SvgAnchors
 				var h = Std.parseFloat(element.get("height"));
 				//Don't offset by the width and height, that is taken care of by 
 				//the hierarchy manager. You cannot assume offsets here.
-				var anchor = new flash.geom.Point((x + w / 2), (y + h / 2));
+				// var anchor = new flash.geom.Point((x + w / 2), (y + h / 2));
+				var anchor = new Vec2((x + w / 2), (y + h / 2));
 				var transformMatrix = element.getAbsoluteTransform();
 				var svgBounds = element.getSvgBounds();
 				//We do this somewhere else?
@@ -92,7 +93,7 @@ class SvgAnchors
 				var label = isFromInkscapeLabel ? element.get(INKSCAPE_LABEL) : element.get("id").split("_")[0];
 				// trace(label + "=>" + anchor.toVec2());
 				// anchors.set(label, anchor.toVec2().subtractLocal(new Vec2(svgBounds.intervalX / 2, svgBounds.intervalY / 2)));
-				anchors.set(label, anchor.toVec2());
+				anchors.set(label, anchor);
 			}
 		} else {
 			if (element.nodeType == Xml.Element) {

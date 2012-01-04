@@ -6,28 +6,35 @@ import com.pblabs.components.minimalcomp.VBox;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.scene2D.BaseSceneLayer;
 import com.pblabs.components.scene2D.Direction;
+import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.time.IProcessManager;
+
+import de.polygonal.motor.geom.math.Vec2;
+
+import org.transition9.ds.Map;
+import org.transition9.ds.Maps;
+import org.transition9.ds.Set;
+import org.transition9.ds.Sets;
+import org.transition9.ds.maps.MapBuilder;
 import org.transition9.util.Comparators;
 import org.transition9.util.F;
 import org.transition9.util.Predicates;
-import org.transition9.ds.Map;
-import org.transition9.ds.Maps;
-import org.transition9.ds.maps.MapBuilder;
 
 using Lambda;
 
 using Type;
 
 using com.pblabs.components.input.InputTools;
+using com.pblabs.components.util.ResetCallbacks;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
+
 using org.transition9.util.ArrayUtil;
 using org.transition9.util.IterUtil;
-using com.pblabs.components.util.ResetCallbacks;
 
 /**
   * 'using' functions for Haxe minimal (like) components.
@@ -142,6 +149,28 @@ class MCompTools
 		return child;
 	}
 	
+	/**
+	  * Sets the child with relative coords to the parent.
+	  */
+	public static function setRelative (child :IEntity, container :IEntity, x :Float, y :Float) :IEntity
+	{
+		org.transition9.util.Assert.isNotNull(container);
+		org.transition9.util.Assert.isNotNull(child);
+		
+		var containerComp = container.ensureComponent(ContainerRelativeChildren);
+		var childComp = child.ensureComponent(Component);
+		
+		//Assign the parent property as well as actually adding the parent
+		//This way, we can detach and attach without having to explicity get the parent again
+		childComp.parentProperty = containerComp.entityProp();
+		if (childComp.isRegistered) {
+			containerComp.addChild(childComp);
+		}
+		containerComp.setRelative(childComp, x, y);
+		return child;
+	}
+	
+	
 	public static function invalidate (e :IEntity) :IEntity
 	{
 		for (c in e.getComponents(Component)) {
@@ -204,5 +233,78 @@ class MCompTools
 			});
 		}
 		return e;
+	}
+	
+	/**
+	  * Overrides the SceneUtil version to handle Containers and Components
+	  */
+	public static function setScale (e :IEntity, scaleX :Float, scaleY :Float) :IEntity
+	{
+		setScaleInternal(e, scaleX, scaleY);
+		return e;
+	}
+	
+	public static function getAbsoluteScale (e :IEntity) :Vec2
+	{
+		var scale = new Vec2(1, 1);
+		
+		while (e != null) {
+			var sceneComp = e.getComponent(BaseSceneComponent);
+			if (sceneComp != null) {
+				scale.x *= sceneComp.scaleX;
+				scale.y *= sceneComp.scaleY;
+			}
+			
+			var comp :Component = e.getComponent(Component);
+			if (comp != null) {
+				e = comp.parent != null ? comp.parent.owner : null;
+			} else {
+				e = null;
+			}
+		}
+		
+		return scale;
+	}
+	
+	
+	/**
+	  * Overrides the SceneUtil version to handle Containers and Components
+	  */
+	public static function fitDimensions (e :IEntity, width :Float, height :Float) :IEntity
+	{
+		var maxWidth = 0.0;
+		var maxHeight = 0.0;
+		for (c in e.getComponents(BaseSceneComponent)) {
+			maxWidth = Math.max(c.width / c.scaleX, maxWidth);
+			maxHeight = Math.max(c.height / c.scaleY, maxHeight);
+		}
+		
+		var minScale = Math.min(width / maxWidth, height / maxHeight);
+		
+		setScaleInternal(e, minScale, minScale);
+		
+		return e;
+	}
+	
+	static function setScaleInternal (e :IEntity, scaleX :Float, scaleY :Float, ?done :Set<IEntity>) :Void
+	{
+		if (done == null) {
+			done = Sets.newSetOf(ValueType.TClass(IEntity));
+		}
+		
+		if (done.exists(e)) {
+			return;
+		}
+		
+		done.add(e);
+		
+		var localScale = SceneUtil.getScale(e); 
+		SceneUtil.setScale(e, scaleX * localScale.x, scaleY * localScale.y);
+		
+		for (c in e.getComponents(Container)) {
+			for (child in c.children) {
+				setScaleInternal(child.owner, scaleX, scaleY, done);
+			}
+		}
 	}
 }

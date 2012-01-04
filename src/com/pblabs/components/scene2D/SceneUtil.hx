@@ -165,6 +165,17 @@ class SceneUtil
 		return e;
 	}
 	
+	public static function getScale (e :IEntity) :Vec2
+	{
+		var comp = e.getComponent(BaseSceneComponent);
+		var scale = new Vec2(1, 1);
+		if (comp != null) {
+			scale.x = comp.scaleX;
+			scale.y = comp.scaleY;
+		}
+		return scale;
+	}
+	
 	public static function getWidth (e :IEntity) :Float
 	{
 		return e.getComponent(SpatialComponent).worldExtents.intervalX;
@@ -187,6 +198,24 @@ class SceneUtil
 	{
 		for (c in e.getComponents(BaseSceneComponent)) {
 			c.width = val; 
+		}
+		return e;
+	}
+	
+	public static function fitDimensions (e :IEntity, width :Float, height :Float) :IEntity
+	{
+		var maxWidth = 0.0;
+		var maxHeight = 0.0;
+		for (c in e.getComponents(BaseSceneComponent)) {
+			maxWidth = Math.max(c.width / c.scaleX, maxWidth);
+			maxHeight = Math.max(c.height / c.scaleY, maxHeight);
+		}
+		
+		var minScale = Math.min(width / maxWidth, height / maxHeight);
+		
+		for (c in e.getComponents(BaseSceneComponent)) {
+			c.scaleX = minScale;
+			c.scaleY = minScale;
 		}
 		return e;
 	}

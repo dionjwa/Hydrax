@@ -26,6 +26,8 @@ class ContainerFixedChildren extends Container
 			return;
 		}
 		
+		var absScale = MCompTools.getAbsoluteScale(owner);
+		
 		for (ii in 0...children.length) {
 			var c = children[ii];
 			var loc = fixedPositions[ii];
@@ -33,9 +35,10 @@ class ContainerFixedChildren extends Container
 				org.transition9.util.Log.warn("children.length > fixedPositions.length");
 				return;
 			}
+		
+			var absX = x + loc.x * absScale.x;
+			var absY = y + loc.y * absScale.y;
 			
-			var absX = x + loc.x;
-			var absY = y + loc.y;
 			switch(alignment) {
 				case LEFT: c.x = absX + c.width / 2;  c.y = absY; 
 				case RIGHT: c.x = absX - c.width / 2; c.y = absY;

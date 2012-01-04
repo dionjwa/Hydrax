@@ -11,7 +11,7 @@
    height="498.65625"
    id="svg3910"
    version="1.1"
-   inkscape:version="0.48.1 r9760"
+   inkscape:version="0.48.2 r9819"
    sodipodi:docname="anchors.svg">
   <defs
      id="defs3912" />
@@ -23,7 +23,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
-     inkscape:cx="-114.63839"
+     inkscape:cx="-367.49553"
      inkscape:cy="152.95625"
      inkscape:document-units="px"
      inkscape:current-layer="svg3910"
@@ -57,7 +57,7 @@
      x="1.282824"
      y="1.262327" />
   <rect
-     style="fill:#ff0004;fill-opacity:0;stroke:none"
+     style="fill:#ff0004;fill-opacity:1;stroke:none"
      id="rect4582"
      width="112.5"
      height="89.550003"
@@ -65,7 +65,7 @@
      y="92.400002"
      inkscape:label="anchor1" />
   <rect
-     style="fill:#ff0004;fill-opacity:0;stroke:none"
+     style="fill:#ff0004;fill-opacity:1;stroke:none"
      id="rect4584"
      width="89.610001"
      height="81.050003"
@@ -73,7 +73,7 @@
      y="177.79999"
      inkscape:label="anchor2" />
   <rect
-     style="fill:#ff0004;fill-opacity:0;stroke:none"
+     style="fill:#ff0004;fill-opacity:1;stroke:none"
      id="rect4586"
      width="86.449997"
      height="75.050003"

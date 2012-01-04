@@ -82,8 +82,10 @@ class SceneView
 		_width = width;
 		_height = height;
 		fullScreen = true;
-		_maxWidth =  960;
-		_maxHeight = 640;
+		// _maxWidth =  960;
+		// _maxHeight = 640;
+		_maxWidth =  1600;
+		_maxHeight = 1200;
 		//Default div id
 		layerId = "haxeSceneView";
 		//This is used by the transform operations.

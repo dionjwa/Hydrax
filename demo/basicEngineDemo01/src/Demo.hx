@@ -34,7 +34,6 @@ class Demo
 		var scene2D = context.createBaseScene();
 		scene2D.sceneAlignment = SceneAlignment.TOP_LEFT;
 		var layer = scene2D.addLayer("defaultLayer");
-		var layer_ = scene2D.addLayer("prev");
 		
 		//Create our blob that we will move around.
 		var so = context.createBaseSceneEntity();

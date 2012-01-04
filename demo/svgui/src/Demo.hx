@@ -23,10 +23,14 @@ using StringTools;
 using com.pblabs.components.input.InputTools;
 using com.pblabs.components.scene2D.HierarchyManager;
 using com.pblabs.components.scene2D.ImageTools;
+//This must go before SceneUtil to override setScale
+using com.pblabs.components.minimalcomp.MCompTools;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
+using com.pblabs.engine.core.PBGameUtil;
 using org.transition9.util.StringUtil;
+
 
 class Demo  
 {
@@ -34,15 +38,7 @@ class Demo
 	{
 		com.pblabs.engine.debug.Log.setup();
 		game = new PBGame();
-		
-		
-		game.registerManager(MouseInputManager, new MouseInputManager());
-		#if js
-		game.registerManager(com.pblabs.components.input.TouchInputManager, new com.pblabs.components.input.TouchInputManager());
-		game.registerManager(com.pblabs.components.input.GestureInputManager, new com.pblabs.components.input.GestureInputManager());
-		#end
-		game.registerManager(InputManager, new InputManager());
-		var input = game.getManager(InputManager);
+		game.addBaseManagers();
 		
 		var svgs = game.allocate(SvgResources);
 		game.getManager(IResourceManager).addResource(svgs);
@@ -82,11 +78,14 @@ class Demo
 		#if flash
 		var layer :BaseSceneLayer<Dynamic, Dynamic> = scene.addLayer();
 		#elseif js
-		//Comment one of these to switch between css and canvas SVG rendering
-		// var layer :BaseSceneLayer<Dynamic, Dynamic> = scene.addLayer(null, com.pblabs.components.scene2D.js.css.SceneLayer);
-		var layer :BaseSceneLayer<Dynamic, Dynamic> = scene.addLayer();
-		// var layer :BaseSceneLayer<Dynamic, Dynamic> = scene.addLayer(null, com.pblabs.components.scene2D.js.canvas.SceneLayer);
+			#if canvas
+			var layer :BaseSceneLayer<Dynamic, Dynamic> = scene.addLayer(null, com.pblabs.components.scene2D.js.canvas.SceneLayer);
+			#else
+			var layer :BaseSceneLayer<Dynamic, Dynamic> = scene.addLayer(null, com.pblabs.components.scene2D.js.css.SceneLayer);
+			#end
 		#end
+		
+		trace('scene.sceneView.width=' + scene.sceneView.width);
 		
 		var rootSvgToken = new ResourceToken("anchors", Source.embedded("anchors"), ResourceType.SVG);
 		var uiblob = context.createBaseSceneEntity()
@@ -104,6 +103,7 @@ class Demo
 				.setEntityAsDisplayChildOf(uiblob, rootSvgToken, "anchor" + ii);
 		}
 			
+		uiblob.fitDimensions(scene.sceneView.width, scene.sceneView.height);
 		
 		#if flash
 		drawGrid(flash.Lib.current.graphics, 100);

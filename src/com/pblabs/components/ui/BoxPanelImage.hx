@@ -7,7 +7,10 @@ import com.pblabs.components.scene2D.GraphicsComponent;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.time.IProcessManager;
 
+import de.polygonal.motor.geom.math.Vec2;
+
 import org.transition9.util.F;
+
 using com.pblabs.engine.core.SignalBondManager;
 using org.transition9.util.StringUtil;
 using com.pblabs.components.scene2D.SceneUtil;

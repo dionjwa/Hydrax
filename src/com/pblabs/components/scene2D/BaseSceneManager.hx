@@ -141,8 +141,6 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	var _sceneView :SceneView;
 	var _currentViewRect :Rectangle;
 
-	
-
 	public function new ()
 	{
 		super();
@@ -159,13 +157,11 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		_zoom = 1.0;
 		_rotation = 0;
 		_position = new Vec2();
-		// _transformDirty = false;
 		parentProperty = SceneManagerList.PROP;
 		_sceneView = null;
 		_sceneBounds = null;
 		this.autoSceneViewAttach = true;
 		_autoSceneViewAttachBonds = [];
-		
 		
 		//Device specific
 		#if js
@@ -183,27 +179,12 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		//Get the order of the children first
 		var childrenCopy = children.copy();
 		
-		
-		
-		//Use default class is none is given
-		// if (cls == null) {
-			// cls = SceneUtil.LAYER_CLASS;
-		// }
-		
-		// org.transition9.util.Assert.isNotNull(cls, "Null Layer Class");
-		
 		var layer = createLayer(layerName, cls);//context.allocate(cls);
-		//Check compatability
-		// org.transition9.util.Assert.isTrue(Std.is(layer, SceneUtil.LAYER_CLASS), "Layer class " + cls + " is not a " + SceneUtil.LAYER_CLASS);
 		var layerCast :com.pblabs.components.manager.NodeComponent<Dynamic, Dynamic> = cast layer;
 		
 		if (!startDetached) {
-			// owner.addComponent(cast(layer, IEntityComponent), layerName);
 			layerCast.parentProperty = PBUtil.componentProp(this);
 			layerCast.addToParent();
-		// } else {
-			// layerCast.parentProperty = PBUtil.componentProp(this);
-			// owner.addComponent(cast(layer, IEntityComponent), layerName);
 		}
 		
 		if (registerAsManager) {
@@ -371,11 +352,6 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		_debugcontext = pb;
 		#end
 		set_autoSceneViewAttach(autoSceneViewAttach);
-		
-		// if (autoSceneViewAttach) {
-		// 	bindVoidSignal(pb.signalEnter, attach);
-		// 	bindVoidSignal(pb.signalExit, detach);
-		// }
 	}
 
 	override function onRemove () :Void

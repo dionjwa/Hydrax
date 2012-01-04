@@ -1,27 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html 
-      PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html  xmlns="http://www.w3.org/1999/xhtml" 
       xmlns:svg="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink">
 <head>
-<title>Title</title>
-<h2>Css</h2>
-<!-- http://matt.might.net/articles/how-to-native-iphone-ipad-apps-in-javascript/ -->
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black" /> <!--white, black or translucent-->
-<script type="text/javascript" src="jquery-1.6.1.min.js" />
+	<title>SVG UI demo using CSS layers</title>
+	<script type="text/javascript" src="jquery.js"></script>
+        <script type="text/javascript" src="jquery.query.js"></script>
+        <script type="text/javascript" src="modernizr.js"></script>
 </head>
-
-<!--  overflow: hidden hides the horizontal scroll bars -->
-<!--<body bgcolor="Silver" scroll="no" style=" overflow: hidden">-->
 <body bgcolor="Silver" >
-<div><h3>Native SVGs</h3></div>
-<div id="haxeSceneView" style="border: 1px coral solid; width:650px; height:900px; overflow: hidden; position: relative;" />
-<div id="haxe:trace" />
-<script type="text/javascript" src="./haxe.js" />
-
-
+	<div><h3>SVGs embedded inline in Divs</h3></div>
+	<div id="haxeSceneView" style="border: 1px coral solid; width:1250px; height:300px; overflow: hidden; position: relative;" />
+	<script type="text/javascript" src="./demo.js" />
 </body>
 </html>

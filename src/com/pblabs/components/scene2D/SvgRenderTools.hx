@@ -244,8 +244,8 @@ class SvgRenderTools
 	   {
 		  // TODO :Pre-translate
 		  ioMatrix.translate(
-				  Std.parseFloat(mTranslateMatch.matched(1) ),
-				  Std.parseFloat(mTranslateMatch.matched(2) ));
+			  Std.parseFloat(mTranslateMatch.matched(1) ),
+			  Std.parseFloat(mTranslateMatch.matched(2) ));
 	   }
 	   else if (mScaleMatch.match(inTrans))
 	   {
@@ -257,12 +257,12 @@ class SvgRenderTools
 	   else if (mMatrixMatch.match(inTrans))
 	   {
 		  var m = new Matrix(
-				  Std.parseFloat(mMatrixMatch.matched(1) ),
-				  Std.parseFloat(mMatrixMatch.matched(2) ),
-				  Std.parseFloat(mMatrixMatch.matched(3) ),
-				  Std.parseFloat(mMatrixMatch.matched(4) ),
-				  Std.parseFloat(mMatrixMatch.matched(5) ),
-				  Std.parseFloat(mMatrixMatch.matched(6) ) );
+			  Std.parseFloat(mMatrixMatch.matched(1) ),
+			  Std.parseFloat(mMatrixMatch.matched(2) ),
+			  Std.parseFloat(mMatrixMatch.matched(3) ),
+			  Std.parseFloat(mMatrixMatch.matched(4) ),
+			  Std.parseFloat(mMatrixMatch.matched(5) ),
+			  Std.parseFloat(mMatrixMatch.matched(6) ) );
 		  m.concat(ioMatrix);
 		  ioMatrix.a = m.a;
 		  ioMatrix.b = m.b;
