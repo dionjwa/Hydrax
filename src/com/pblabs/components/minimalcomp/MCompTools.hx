@@ -266,7 +266,6 @@ class MCompTools
 		return scale;
 	}
 	
-	
 	/**
 	  * Overrides the SceneUtil version to handle Containers and Components
 	  */
