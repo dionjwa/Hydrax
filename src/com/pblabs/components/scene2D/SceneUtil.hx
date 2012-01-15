@@ -221,6 +221,25 @@ class SceneUtil
 	}
 	
 	
+	public static function stretchToFit (e :IEntity, width :Float, height :Float) :IEntity
+	{
+		var maxWidth = 0.0;
+		var maxHeight = 0.0;
+		for (c in e.getComponents(BaseSceneComponent)) {
+			maxWidth = Math.max(c.width / c.scaleX, maxWidth);
+			maxHeight = Math.max(c.height / c.scaleY, maxHeight);
+		}
+		
+		var scaleX = width / maxWidth;
+		var scaleY = height / maxHeight;
+		
+		for (c in e.getComponents(BaseSceneComponent)) {
+			c.scaleX = scaleX;
+			c.scaleY = scaleY;
+		}
+		return e;
+	}
+	
 	/**
 	 * Given an alignment constant from this class, calculate
 	 * @param outPoint
