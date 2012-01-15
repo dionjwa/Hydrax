@@ -200,6 +200,7 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 	override public function postDestructionCheck () :Void
 	{
 		super.postDestructionCheck();
+		#if debug_hxhsl
 		var sigs :Array<Signaler<Dynamic>> = cast [zoomSignal]; 
 		for (sig in sigs) {
 			if (sig.isListenedTo) {
@@ -209,6 +210,7 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 			}
 			org.transition9.util.Assert.isFalse(sig.isListenedTo, debugOwnerName);
 		}
+		#end
 	}
 	#end
 }

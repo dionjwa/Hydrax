@@ -46,7 +46,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		return null;
 	}
 	
-	public static function bindSignal <T>(component :EntityComponent, signaler :Signaler<T>, listener :T->Dynamic#if debug ,?infos :haxe.PosInfos #end ) :Bond
+	public static function bindSignal <T>(component :EntityComponent, signaler :Signaler<T>, listener :T->Dynamic#if debug_hxhsl ,?infos :haxe.PosInfos #end ) :Bond
 	{
 		org.transition9.util.Assert.isNotNull(component, "component is null");
 		org.transition9.util.Assert.isNotNull(signaler, ' signaler is null');
@@ -55,21 +55,21 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		var bonds = component.context.getManager(SignalBondManager);
 		org.transition9.util.Assert.isNotNull(bonds, "SignalBondManager is null");
 		
-		#if debug
+		#if debug_hxhsl
 		return bonds.bind(component, signaler, listener, infos);
 		#else
 		return bonds.bind(component, signaler, listener);
 		#end
 	}
 	
-	public static function bindVoidSignal (component :EntityComponent, signaler :Signaler<Void>, listener :Void->Dynamic#if debug ,?infos :haxe.PosInfos #end ) :Bond
+	public static function bindVoidSignal (component :EntityComponent, signaler :Signaler<Void>, listener :Void->Dynamic#if debug_hxhsl ,?infos :haxe.PosInfos #end ) :Bond
 	{
 		org.transition9.util.Assert.isNotNull(component, "component is null");
 		org.transition9.util.Assert.isNotNull(component.context, "component.context is null");
 		var bonds = component.context.getManager(SignalBondManager);
 		org.transition9.util.Assert.isNotNull(bonds, "SignalBondManager is null");
 		
-		#if debug
+		#if debug_hxhsl
 		return bonds.bindVoid(component, signaler, listener, infos);
 		#else
 		return bonds.bindVoid(component, signaler, listener);
@@ -82,12 +82,12 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		key = com.pblabs.engine.util.PBUtil.KEY_COUNT++;
 	}
 
-	public function bind <T>(owner :Hashable, signaler :Signaler<T>, listener :T->Dynamic, ?onlyOnce :Null<Bool> = false #if debug ,?infos :haxe.PosInfos #end ) :Bond
+	public function bind <T>(owner :Hashable, signaler :Signaler<T>, listener :T->Dynamic, ?onlyOnce :Null<Bool> = false #if debug_hxhsl ,?infos :haxe.PosInfos #end ) :Bond
 	{
 		org.transition9.util.Assert.isNotNull(owner, "owner is null");
 		org.transition9.util.Assert.isNotNull(signaler, "signaler is null");
 		org.transition9.util.Assert.isNotNull(listener, "listener is null");
-		#if debug
+		#if debug_hxhsl
 		if (Std.is(owner, IEntityComponent)) {
 			var component = cast(owner, IEntityComponent);
 			org.transition9.util.Assert.isTrue(component.isRegistered, "component is unregistered");
@@ -101,7 +101,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		}
 		set(owner.key, bond);
 		
-		#if debug
+		#if debug_hxhsl
 		org.transition9.util.Assert.isNotNull(infos, " infos is null");
 		bond.infos = infos;
 		bond.debugInfo = infos == null ? "no infos @SignalBondManager.bind" : ""; 
@@ -111,12 +111,12 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		return bond;
 	}
 	
-	public function bindVoid (owner :Hashable, signaler :Signaler<Void>, listener :Void->Dynamic, ?onlyOnce :Null<Bool> = false#if debug ,?infos :haxe.PosInfos #end ) :Bond
+	public function bindVoid (owner :Hashable, signaler :Signaler<Void>, listener :Void->Dynamic, ?onlyOnce :Null<Bool> = false#if debug_hxhsl ,?infos :haxe.PosInfos #end ) :Bond
 	{
 		org.transition9.util.Assert.isNotNull(owner, "owner is null");
 		org.transition9.util.Assert.isNotNull(signaler, "signaler is null");
 		org.transition9.util.Assert.isNotNull(listener, "listener is null");
-		#if debug
+		#if debug_hxhsl
 		if (Std.is(owner, IEntityComponent)) {
 			var component = cast(owner, IEntityComponent);
 			org.transition9.util.Assert.isTrue(component.isRegistered, "component is unregistered");
@@ -132,7 +132,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		org.transition9.util.Assert.isNotNull(bond, "bond is null");
 		set(owner.key, bond);
 		
-		#if debug
+		#if debug_hxhsl
 		bond.infos = infos;
 		org.transition9.util.Log.debug("New " + bond);
 		#end
@@ -140,15 +140,15 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		return bond;
 	}
 	
-	#if debug public function destroyBondsOnKey (key :Int) :Int #else
+	#if debug_hxhsl public function destroyBondsOnKey (key :Int) :Int #else
 	public function destroyBondsOnKey (key :Int) :Void #end
 	{
-		#if debug
+		#if debug_hxhsl
 		var count :Int = 0;
 		#end
 		if (exists(key)) {
 			for (bond in get(key)) {
-				#if debug
+				#if debug_hxhsl
 				count++;
 				#end
 				bond.destroy();
@@ -156,7 +156,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 			remove(key);
 		}
 		
-		#if debug
+		#if debug_hxhsl
 		return count;
 		#end
 	}
@@ -199,7 +199,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	public function destroyBonds (c :Hashable) :Void
 	{
 		org.transition9.util.Assert.isNotNull(c, "??owner is null??");
-		#if debug
+		#if debug_hxhsl
 		var count = destroyBondsOnKey(c.key);
 		org.transition9.util.Log.debug(count + " bonds broken on " + ReflectUtil.getClassName(c));
 		#else
@@ -221,7 +221,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 		}, true);
 	}
 	
-	#if debug
+	#if debug_hxhsl
 	override public function toString () :String
 	{
 		return org.transition9.util.StringUtil.stringify(this);

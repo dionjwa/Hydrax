@@ -168,7 +168,7 @@ class Entity extends PBObject,
 		
 		// Get out of the NameManager and other general cleanup stuff.
 		super.destroy();
-		#if debug
+		#if debug_hxhsl
 		org.transition9.util.Assert.isFalse(destroyedSignal.isListenedTo, "destroyedSignal.isListenedTo");
 		#end
 		_deferring = false;

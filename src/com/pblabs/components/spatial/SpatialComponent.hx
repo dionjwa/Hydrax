@@ -237,15 +237,17 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Man
 	override public function postDestructionCheck () :Void
 	{
 		super.postDestructionCheck();
-		var sigs :Array<Signaler<Dynamic>> = cast [signalerLocation, signalerAngle]; 
-		for (sig in sigs) {
-			if (sig.isListenedTo) {
-				for (b in sig.getBonds()) {
-					trace("Stuck bond on " + debugOwnerName + "=" + b);
+		#if debug_hxhsl
+			var sigs :Array<Signaler<Dynamic>> = cast [signalerLocation, signalerAngle]; 
+			for (sig in sigs) {
+				if (sig.isListenedTo) {
+					for (b in sig.getBonds()) {
+						trace("Stuck bond on " + debugOwnerName + "=" + b);
+					}
+					org.transition9.util.Assert.isFalse(sig.isListenedTo, debugOwnerName);
 				}
-				org.transition9.util.Assert.isFalse(sig.isListenedTo, debugOwnerName);
 			}
-		}
+		#end
 	}
 	#end
 	

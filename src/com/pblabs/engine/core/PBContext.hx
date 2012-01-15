@@ -301,24 +301,27 @@ class PBContext
 		
 		com.pblabs.engine.debug.Profiler.exit("PBContext.shutdown");
 		#if (debug && !neko)
-		var sigs :Hash<Signaler<Dynamic>> = new Hash();
-		sigs.set("signalEnter", signalEnter);
-		sigs.set("signalExit", signalExit);
-		sigs.set("signalDestroyed", signalDestroyed);
-		//Delay check.
-		var self = this;
-		haxe.Timer.delay(function () :Void {
-			for (sigkey in sigs.keys()) {
-				var sig = sigs.get(sigkey);
-				if (sig.isListenedTo) {
-					for (b in sig.getBonds()) {
-						//org.transition9.util.ArrayUtil.indexOf(sigs, sig)
-						trace("Stuck bond on " + sigkey + " " + self.name + "=" + b);
+			var sigs :Hash<Signaler<Dynamic>> = new Hash();
+			sigs.set("signalEnter", signalEnter);
+			sigs.set("signalExit", signalExit);
+			sigs.set("signalDestroyed", signalDestroyed);
+			
+			#if debug_hxhsl
+				//Delay check.
+				var self = this;
+				haxe.Timer.delay(function () :Void {
+					for (sigkey in sigs.keys()) {
+						var sig = sigs.get(sigkey);
+						if (sig.isListenedTo) {
+							for (b in sig.getBonds()) {
+								//org.transition9.util.ArrayUtil.indexOf(sigs, sig)
+								trace("Stuck bond on " + sigkey + " " + self.name + "=" + b);
+							}
+						}
+						org.transition9.util.Assert.isFalse(sig.isListenedTo, self.name);
 					}
-				}
-				org.transition9.util.Assert.isFalse(sig.isListenedTo, self.name);
-			}
-		}, 60);
+				}, 60);
+			#end
 		#end
 	}
 	
