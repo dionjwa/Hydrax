@@ -1,6 +1,6 @@
 ../base-flash.hxml
 
--D debug
+-debug
 -D haxedev
 
 -cp src

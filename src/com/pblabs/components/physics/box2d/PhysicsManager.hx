@@ -2,7 +2,6 @@ package com.pblabs.components.physics.box2d;
 
 import box2D.collision.B2AABB;
 import box2D.collision.B2ContactPoint;
-import box2D.collision.shapes.B2PolygonDef;
 
 import box2D.common.math.B2Vec2;
 
@@ -63,7 +62,8 @@ class PhysicsManager extends NodeParent<PhysicsComponent>,
 			debugLayer.addChild(drawLayer);
 			var dbgDraw = new box2D.dynamics.B2DebugDraw();
 			dbgDraw.m_sprite = drawLayer;
-			dbgDraw.m_drawScale = m_physScale;
+			dbgDraw.setDrawScale(m_physScale);
+			dbgDraw.
 			dbgDraw.m_fillAlpha = 0.8;
 			dbgDraw.m_lineThickness = 1.0;
 			dbgDraw.m_drawFlags = box2D.dynamics.B2DebugDraw.e_shapeBit | box2D.dynamics.B2DebugDraw.e_jointBit | box2D.dynamics.B2DebugDraw.e_coreShapeBit;

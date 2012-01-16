@@ -1,20 +1,23 @@
--D use_rtti_doc
--D debug
--D haxedev
+-cmd rm -rf css
+--next
 
--cp src
+-cmd mkdir -p css
 
--lib hydrax
--lib jQueryExtern
+--next
 
---remap flash:jeash
+../base-js.hxml
+
+-debug
 -js css/haxe.js
 
 -main Demo
 
+# --next 
+-cmd cp src/*.js css/
+--next 
 -cmd cp indexcss.xhtml css/index.xhtml
 --next
--cmd cp *.js css/
---next
+-cmd cp -rf rsrc css/
+--next 
 -cmd open css/index.xhtml
 

@@ -1,8 +1,6 @@
 package com.pblabs.components.physics.box2d;
 
-import box2D.collision.shapes.B2CircleDef;
 import box2D.collision.shapes.B2MassData;
-import box2D.collision.shapes.B2PolygonDef;
 
 import box2D.common.math.B2Vec2;
 

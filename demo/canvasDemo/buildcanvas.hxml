@@ -1,6 +1,8 @@
 ../base-js.hxml
 
--D debug
+-debug
 -D use_html5_canvas_as_default_scene_layer
 
 -main CanvasDemo
+
+-js build/demo.js

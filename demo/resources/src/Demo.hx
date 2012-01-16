@@ -27,7 +27,9 @@ import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ProcessManager;
-import Vec2;
+
+import de.polygonal.motor.geom.math.Vec2;
+
 import org.transition9.util.Rand;
 import org.transition9.ds.Tuple;
 
@@ -35,6 +37,7 @@ using com.pblabs.components.input.InputTools;
 using com.pblabs.components.scene2D.ImageTools;
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.components.tasks.TaskUtil;
+using com.pblabs.engine.core.PBGameUtil;
 using com.pblabs.engine.util.PBUtil;
 
 class Demo #if flash extends flash.display.Sprite #end 
@@ -49,6 +52,7 @@ class Demo #if flash extends flash.display.Sprite #end
 		com.pblabs.engine.debug.Log.setup();
 		
 		game = new PBGame();
+		game.addBaseManagers();
 		
 		var images = new ImageResources();
 		game.getManager(IResourceManager).addResource(images);
@@ -77,7 +81,7 @@ class Demo #if flash extends flash.display.Sprite #end
 			.initializeEntity("image"));
 		
 		randMove(context.createBaseSceneEntity()
-			.addSceneComponentToEntity(RectangleShape, layer)
+			.addSceneComponent(RectangleShape, layer)
 			.initializeEntity("rect"));
 		
 		gamescene.update();

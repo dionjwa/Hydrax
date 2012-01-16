@@ -1,21 +1,6 @@
--D use_rtti_doc
--D debug
+../base-flash.hxml
 
--lib hydrax
 -cp src
+-cp rsrc
 
--swf9 build/demo.swf
--swf-header 1400:600:30:FFFFFF
-
--main Demo
-
-#For local testing
-# -lib IterTools
-# -lib ArrayTools
-# -lib ListTools
-# -lib feffects
-# -cp ../../../hydrax/src
-# -cp ../../../hydrax/lib/hsl
-# -cp ../../../hydrax/lib/hsl-pico
-# -cp ../../../libdamago/lib/polygonal/src/lib
-
+-swf build/demo.swf

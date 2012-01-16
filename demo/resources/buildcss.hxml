@@ -1,11 +1,9 @@
--D debug
+../base-js.hxml
 
--lib hydrax
--cp ../../lib/hx.html5
--lib jQueryExtern
--cp src
+-debug
+-D haxedev
 
---remap flash:jeash
 -js build/haxe.js
+
 -main Demo
 

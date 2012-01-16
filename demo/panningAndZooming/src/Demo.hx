@@ -52,14 +52,14 @@ class Demo
 	{
 		com.pblabs.engine.debug.Log.setup();
 		game = new PBGame();
-		// game.
+		game.addBaseManagers();
 		
 		#if js
 		game.getManager(SceneView).layerId = "haxeSceneView";
 		#end
+		// return;
 		
-		
-		game.registerManager(MouseInputManager, new MouseInputManager());
+		// game.registerManager(MouseInputManager, new MouseInputManager());
 		
 		var images = new ImageResources();
 		game.getManager(IResourceManager).addResource(images);

@@ -201,15 +201,15 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 	{
 		super.postDestructionCheck();
 		#if debug_hxhsl
-		var sigs :Array<Signaler<Dynamic>> = cast [zoomSignal]; 
-		for (sig in sigs) {
-			if (sig.isListenedTo) {
-				for (b in sig.getBonds()) {
-					trace("Stuck bond on " + debugOwnerName + "=" + b);
+			var sigs :Array<Signaler<Dynamic>> = cast [zoomSignal]; 
+			for (sig in sigs) {
+				if (sig.isListenedTo) {
+					for (b in sig.getBonds()) {
+						trace("Stuck bond on " + debugOwnerName + "=" + b);
+					}
 				}
+				org.transition9.util.Assert.isFalse(sig.isListenedTo, debugOwnerName);
 			}
-			org.transition9.util.Assert.isFalse(sig.isListenedTo, debugOwnerName);
-		}
 		#end
 	}
 	#end

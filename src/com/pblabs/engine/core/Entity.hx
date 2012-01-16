@@ -475,7 +475,7 @@ class Entity extends PBObject,
 		
 		sm.destroyBondOnEntity(this);
 		
-		var sets = context.getManager(SetManager);
+		// var sets = context.getManager(SetManager);
 		
 		org.transition9.util.Log.debug(name + " started reseting");
 		for (component in _components)

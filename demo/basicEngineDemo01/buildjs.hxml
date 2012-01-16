@@ -1,6 +1,6 @@
 ../base-js.hxml
 
--D debug
+-debug
 -D haxedev
 
 -js build/demo.js

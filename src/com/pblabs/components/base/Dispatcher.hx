@@ -34,17 +34,17 @@ class Dispatcher
 	
 	public function shutdown () :Void
 	{
-		#if (debug && !neko)
-		var self = this;
-		var sig = dispatcher;
-		haxe.Timer.delay(function () :Void {
-			if (sig.isListenedTo) {
-				for (b in sig.getBonds()) {
-					trace("Stuck bond=" + b);
+		#if (debug_hxhsl && !neko)
+			var self = this;
+			var sig = dispatcher;
+			haxe.Timer.delay(function () :Void {
+				if (sig.isListenedTo) {
+					for (b in sig.getBonds()) {
+						trace("Stuck bond=" + b);
+					}
+					org.transition9.util.Assert.isFalse(sig.isListenedTo);
 				}
-				org.transition9.util.Assert.isFalse(sig.isListenedTo);
-			}
-		}, 40);
+			}, 40);
 		#end
 	}
 }
