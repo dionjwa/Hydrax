@@ -29,7 +29,7 @@ import org.transition9.rtti.ReflectUtil;
 import org.transition9.ds.Tuple;
 
 import de.polygonal.core.math.Mathematics;
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 import haxe.Timer;
 

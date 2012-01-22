@@ -2,7 +2,7 @@ package com.pblabs.components.scene2D.body;
 
 import org.transition9.ds.Map;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 class BodySpriteList
 	implements IBodySpriteList

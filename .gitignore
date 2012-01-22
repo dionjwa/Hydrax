@@ -23,6 +23,9 @@ demo/screennavigation/canvas
 demo/screennavigation/all
 demo/jquerymobile
 demo/animatedbody/demo*
+demo/panningAndZooming/canvas
+demo/panningAndZooming/css
+demo/panningAndZooming/flash
 \#*#
 *AllClasses.hx
 src/AllClasses.hx

@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.components.input;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 import hsl.haxe.Signaler;
 import hsl.js.data.Touch;

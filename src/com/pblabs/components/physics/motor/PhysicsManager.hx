@@ -7,7 +7,7 @@ import de.polygonal.motor.Settings;
 import de.polygonal.motor.World;
 import de.polygonal.motor.collision.nbody.SAP;
 import de.polygonal.motor.data.RigidBodyData;
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 import de.polygonal.motor.geom.primitive.AABB2;
 
 import hsl.haxe.DirectSignaler;
@@ -83,7 +83,7 @@ class PhysicsManager extends NodeComponent<Dynamic, com.pblabs.components.physic
 		//From TestManifold
 		var _tmpAABB :AABB2 = new AABB2();
 		_tmpAABB.set4(-1500, -1500, 1500, 1500);
-		settings.worldBounds = _tmpAABB;
+		// settings.worldBounds = _tmpAABB;
 		// settings.contactPoolSize = 4;
 		// settings.maxProxies = 1 << 3;
 		// settings.maxPairs = settings.maxProxies << 4;

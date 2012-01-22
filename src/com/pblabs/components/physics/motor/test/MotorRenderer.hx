@@ -6,7 +6,7 @@ import com.pblabs.engine.time.IAnimatedObject;
 
 
 import de.polygonal.motor.World;
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 import de.polygonal.motor.geom.primitive.OBB2;
 
 import com.pblabs.components.physics.motor.PhysicsManager;
@@ -282,21 +282,21 @@ class MotorRenderer extends SceneComponentSprite,
 			
 	// 		_vr.setFillColor(colors[0], 1);
 	// 		_vr.fillStart();
-	// 		TestCase.getFont().write(Sprintf.format(formatStr, formatArg), 1, _tmpAABB.ymax, false, _tmpAABB, true);
+	// 		TestCase.getFont().write(Sprintf.format(formatStr, formatArg), 1, _tmpAABB.maxY, false, _tmpAABB, true);
 	// 		_vr.fillEnd();
 			
 	// 		formatStr = "narrow\t%.2f\n";
 	// 		formatArg[0] = StopWatch.query(settings.profileIdNarrowPhase);
 	// 		_vr.setFillColor(colors[1], 1);
 	// 		_vr.fillStart();
-	// 		TestCase.getFont().write(Sprintf.format(formatStr, formatArg), 1, _tmpAABB.ymax, false, _tmpAABB, true);
+	// 		TestCase.getFont().write(Sprintf.format(formatStr, formatArg), 1, _tmpAABB.maxY, false, _tmpAABB, true);
 	// 		_vr.fillEnd();
 			
 	// 		formatStr = "solver\t%.2f\n";
 	// 		formatArg[0] = StopWatch.query(settings.profileIdSolver);
 	// 		_vr.setFillColor(colors[2], 1);
 	// 		_vr.fillStart();
-	// 		TestCase.getFont().write(Sprintf.format(formatStr, formatArg), 1, _tmpAABB.ymax, false, _tmpAABB, true);
+	// 		TestCase.getFont().write(Sprintf.format(formatStr, formatArg), 1, _tmpAABB.maxY, false, _tmpAABB, true);
 	// 		_vr.fillEnd();
 			
 	// 		TestCase.getFont().tabSize = tabSize;

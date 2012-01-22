@@ -11,7 +11,7 @@ import de.polygonal.motor.collision.nbody.SAP;
 import de.polygonal.motor.data.RigidBodyData;
 import de.polygonal.motor.dynamics.contact.Contact;
 import de.polygonal.motor.dynamics.contact.generator.BoxContact;
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 import de.polygonal.motor.geom.primitive.AABB2;
 
 import Type;

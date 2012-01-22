@@ -12,7 +12,7 @@ import com.pblabs.engine.resource.ResourceToken;
 import org.transition9.ds.Tuple;
 import org.transition9.util.svg.SvgData;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 import de.polygonal.motor.geom.primitive.AABB2;
 
 import flash.geom.Matrix;
@@ -80,10 +80,10 @@ extends com.pblabs.components.scene2D.flash.SceneComponent
 		
 		if (val == null) {
 			_unscaledBounds.x = _unscaledBounds.y = 0.0001;
-			// _unscaledBounds.xmax = _unscaledBounds.ymax = 0.001;
+			// _unscaledBounds.maxX = _unscaledBounds.maxY = 0.001;
 			registrationPoint.x = registrationPoint.y = 0;
-			_bounds.xmin = _bounds.ymin = 0;
-			_bounds.xmax = _bounds.ymax = _unscaledBounds.x;
+			_bounds.minX = _bounds.minY = 0;
+			_bounds.maxX = _bounds.maxY = _unscaledBounds.x;
 			isTransformDirty = true;
 			#if js
 			//Clears the buffer

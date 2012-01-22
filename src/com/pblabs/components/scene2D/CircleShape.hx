@@ -13,7 +13,7 @@ import org.transition9.geom.CircleUtil;
 
 import org.transition9.util.StringUtil;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 using com.pblabs.components.scene2D.SceneUtil;
 
@@ -141,10 +141,10 @@ class CircleShape extends ShapeComponent
 		_radius = val;
 		
 		_unscaledBounds.x = _unscaledBounds.y = _radius * 2;
-		_bounds.xmin = -_radius;
-		_bounds.xmax = _radius;
-		_bounds.ymin = -_radius;
-		_bounds.ymax = _radius;
+		_bounds.minX = -_radius;
+		_bounds.maxX = _radius;
+		_bounds.minY = -_radius;
+		_bounds.maxY = _radius;
 		
 		_scaleX = 1;
 		_scaleY = 1;

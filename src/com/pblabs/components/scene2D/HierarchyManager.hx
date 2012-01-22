@@ -14,7 +14,7 @@ import org.transition9.util.Comparators;
 import org.transition9.util.F;
 import org.transition9.ds.Map;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 using StringTools;
 

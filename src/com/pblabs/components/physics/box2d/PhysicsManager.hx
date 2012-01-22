@@ -201,13 +201,13 @@ class PhysicsManager extends NodeParent<PhysicsComponent>,
 		return false;
 	}
 	
-	public function queryCircle(center :de.polygonal.motor.geom.math.Vec2, radius :Float, mask :ObjectType, results :Array<PhysicsComponent>) :Bool
+	public function queryCircle(center :de.polygonal.core.math.Vec2, radius :Float, mask :ObjectType, results :Array<PhysicsComponent>) :Bool
 	{
 		throw "Not implemented";
 		return false;
 	}
 	
-	public function getObjectsUndergetObjectsUnderPoint(worldPosition :de.polygonal.motor.geom.math.Vec2, mask :ObjectType, results :Array<PhysicsComponent>) :Bool
+	public function getObjectsUndergetObjectsUnderPoint(worldPosition :de.polygonal.core.math.Vec2, mask :ObjectType, results :Array<PhysicsComponent>) :Bool
 	{
 		throw "Not implemented";
 		return false;

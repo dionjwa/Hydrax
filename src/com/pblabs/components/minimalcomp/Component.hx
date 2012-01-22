@@ -6,7 +6,7 @@ import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.time.IAnimatedObject;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 import de.polygonal.motor.geom.primitive.AABB2;
 
 import hsl.haxe.DirectSignaler;
@@ -202,7 +202,7 @@ class Component extends NodeComponent<Container, Component>
 		for (c in owner.getComponents(BaseSceneComponent)) {
 			return c.registrationPoint;
 		}
-		return new Vec2(x - _spatial.worldExtents.xmin, y - _spatial.worldExtents.ymin);
+		return new Vec2(x - _spatial.worldExtents.minX, y - _spatial.worldExtents.minY);
 	}
 	
 	#if debug

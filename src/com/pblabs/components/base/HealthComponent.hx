@@ -201,7 +201,7 @@ class HealthComponent extends EntityComponent,
 	var _timeOfLastDamage :Float;
 	var _cachedHealthEvent :HealthEvent;
 	
-	#if debug
+	#if debug_hxhsl
 	override public function postDestructionCheck () :Void
 	{
 		super.postDestructionCheck();

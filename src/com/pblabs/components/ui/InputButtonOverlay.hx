@@ -5,7 +5,7 @@ import com.pblabs.components.input.InputManager;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.engine.core.IEntity;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 using com.pblabs.components.util.DataComponent;
 using com.pblabs.engine.core.SignalBondManager;
@@ -100,7 +100,7 @@ class InputButtonOverlay
 		y = sc.y;
 		width = b.intervalX;
 		height = b.intervalY;
-		registrationPoint = new Vec2((x - b.xmin), (y - b.ymin));
+		registrationPoint = new Vec2((x - b.minX), (y - b.minY));
 		
 		addToParent(sc.parent);
 		

@@ -2,7 +2,7 @@ package com.pblabs.components.scene2D.body;
 
 import com.pblabs.components.scene2D.ImageData;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 /**
   * Used by the SpriteSheetBody.

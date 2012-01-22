@@ -21,7 +21,7 @@ import org.transition9.geom.Rectangle;
 import org.transition9.util.Preconditions;
 
 import de.polygonal.core.math.Mathematics;
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 import de.polygonal.motor.geom.primitive.AABB2;
 
 import hsl.haxe.Bond;
@@ -404,16 +404,16 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		if (_sceneBounds != null) {
 			var visible = visibleArea;
 
-			if (visible.xmin < _sceneBounds.xmin) {
-				_position.x += visible.xmin - _sceneBounds.xmin;
-			} else if (visible.xmax > _sceneBounds.xmax) {
-				_position.x += visible.xmax - _sceneBounds.xmax;
+			if (visible.minX < _sceneBounds.minX) {
+				_position.x += visible.minX - _sceneBounds.minX;
+			} else if (visible.maxX > _sceneBounds.maxX) {
+				_position.x += visible.maxX - _sceneBounds.maxX;
 			}
 			
-			if (visible.ymin < _sceneBounds.ymin) {
-				_position.y += visible.ymin - _sceneBounds.ymin;
-			} else if (visible.ymax > _sceneBounds.ymax) {
-				_position.y += visible.ymax - _sceneBounds.ymax;
+			if (visible.minY < _sceneBounds.minY) {
+				_position.y += visible.minY - _sceneBounds.minY;
+			} else if (visible.maxY > _sceneBounds.maxY) {
+				_position.y += visible.maxY - _sceneBounds.maxY;
 			}
 		}
 		_transformDirty = true;
