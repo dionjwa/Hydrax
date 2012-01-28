@@ -109,11 +109,7 @@ class BitmapRenderer
 			} else {
 				_backBuffer.getContext("2d").clearRect(0, 0, _backBuffer.width, _backBuffer.height);
 			}
-			#if haxedev
-			_backBuffer.getContext("2d").drawImage(_bitmap , 0, 0);
-			#else
-			_backBuffer.getContext("2d").drawImage(cast _bitmap , 0, 0);
-			#end
+			_backBuffer.getContext("2d").drawImage(untyped _bitmap , 0, 0);
 		} else {
 			_backBuffer.width = _backBuffer.height = 1;
 		}
@@ -123,11 +119,7 @@ class BitmapRenderer
 	override function renderCachedBuffer (ctx :CanvasRenderingContext2D) :Void
 	{
 		if (_bitmap != null) {
-			#if haxedev
-			ctx.drawImage(_bitmap, 0, 0);
-			#else
-			ctx.drawImage(cast _bitmap, 0, 0);
-			#end
+			ctx.drawImage(untyped _bitmap, 0, 0);
 		}
 	}
 	#end
