@@ -28,7 +28,7 @@ import org.transition9.ds.Set;
 import org.transition9.ds.Sets;
 import org.transition9.ds.multimaps.ArrayMultiMap;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;

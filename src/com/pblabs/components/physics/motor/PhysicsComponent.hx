@@ -15,7 +15,7 @@ import de.polygonal.motor.data.MassData;
 import de.polygonal.motor.data.RigidBodyData;
 import de.polygonal.motor.data.ShapeData;
 import de.polygonal.motor.dynamics.RigidBody;
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;

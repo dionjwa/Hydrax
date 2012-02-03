@@ -20,7 +20,7 @@ import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.time.IAnimatedObject;
 
 import de.polygonal.core.math.Mathematics;
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 using com.pblabs.engine.util.PBUtil;
 using org.transition9.geom.Vec2Tools;

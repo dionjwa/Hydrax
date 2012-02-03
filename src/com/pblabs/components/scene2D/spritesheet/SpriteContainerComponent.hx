@@ -13,7 +13,7 @@ import com.pblabs.engine.core.EntityComponent;
 
 
 import de.polygonal.core.math.Limits;
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 /**
  * An abstract class to allow access to a set of sprites.

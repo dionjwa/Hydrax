@@ -12,7 +12,7 @@ import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.PBGame;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;

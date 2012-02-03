@@ -5,7 +5,7 @@ import com.pblabs.components.input.InputManager;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.engine.core.IEntity;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 using com.pblabs.components.util.DataComponent;
 using com.pblabs.engine.core.SignalBondManager;

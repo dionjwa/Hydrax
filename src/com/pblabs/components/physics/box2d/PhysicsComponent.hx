@@ -271,7 +271,7 @@ class PhysicsComponent extends SpatialComponent<PhysicsManager>,
 				var rSq = (radius / parent.m_physScale) * (radius / parent.m_physScale);
 				md.I = md.mass * .5 * rSq;
 			case BOX(w, h, def):
-				md.I = (md.mass / 12 * de.polygonal.motor.geom.math.Vec2.dot4(w / parent.m_physScale, h / parent.m_physScale, w / parent.m_physScale, h / parent.m_physScale));
+				md.I = (md.mass / 12 * de.polygonal.core.math.Vec2.dot4(w / parent.m_physScale, h / parent.m_physScale, w / parent.m_physScale, h / parent.m_physScale));
 			case FIXED_BOX(x, y, w, h, def):
 				md.mass = 0;		
 		}

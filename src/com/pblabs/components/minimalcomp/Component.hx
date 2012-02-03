@@ -6,7 +6,7 @@ import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.time.IAnimatedObject;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 import de.polygonal.motor.geom.primitive.AABB2;
 
 import hsl.haxe.DirectSignaler;

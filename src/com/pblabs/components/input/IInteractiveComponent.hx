@@ -11,7 +11,7 @@ package com.pblabs.components.input;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.ObjectType;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 /**
   * Minimal functionality needed to begin mouse/input device interactions.

@@ -13,7 +13,7 @@ import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.NameManager;
 import com.pblabs.engine.time.IProcessManager;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 import org.transition9.ds.Map;
 import org.transition9.ds.Maps;

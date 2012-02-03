@@ -6,7 +6,7 @@ import com.pblabs.engine.time.IAnimatedObject;
 
 
 import de.polygonal.motor.World;
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 import de.polygonal.motor.geom.primitive.OBB2;
 
 import com.pblabs.components.physics.motor.PhysicsManager;

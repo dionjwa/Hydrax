@@ -16,7 +16,7 @@ import com.pblabs.engine.resource.ResourceToken;
 import org.transition9.geom.RectangleTools;
 import org.transition9.util.Preconditions;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.resource.ResourceManager;

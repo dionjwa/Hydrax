@@ -10,7 +10,7 @@ package com.pblabs.components.spatial;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.ObjectType;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 import de.polygonal.motor.geom.primitive.AABB2;
 
 interface IBounded implements IEntityComponent

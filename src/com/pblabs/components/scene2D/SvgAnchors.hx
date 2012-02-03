@@ -9,7 +9,7 @@ import org.transition9.ds.Maps;
 import org.transition9.ds.maps.SortedMap;
 import org.transition9.util.svg.SvgData;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 import flash.geom.Matrix;
 

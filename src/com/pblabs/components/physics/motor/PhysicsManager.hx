@@ -7,7 +7,7 @@ import de.polygonal.motor.Settings;
 import de.polygonal.motor.World;
 import de.polygonal.motor.collision.nbody.SAP;
 import de.polygonal.motor.data.RigidBodyData;
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 import de.polygonal.motor.geom.primitive.AABB2;
 
 import hsl.haxe.DirectSignaler;

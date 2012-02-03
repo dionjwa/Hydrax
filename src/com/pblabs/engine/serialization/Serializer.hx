@@ -18,7 +18,7 @@ import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.PBManagerBase;
 import com.pblabs.engine.core.PropertyReference;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 import org.transition9.geom.Vec2Tools;
 import org.transition9.util.Enumerable;

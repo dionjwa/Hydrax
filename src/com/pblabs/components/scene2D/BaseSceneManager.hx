@@ -21,7 +21,7 @@ import org.transition9.geom.Rectangle;
 import org.transition9.util.Preconditions;
 
 import de.polygonal.core.math.Mathematics;
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 import de.polygonal.motor.geom.primitive.AABB2;
 
 import hsl.haxe.Bond;

@@ -8,7 +8,7 @@ import org.transition9.ds.Map;
 import org.transition9.ds.Maps;
 
 import de.polygonal.core.math.Limits;
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 import de.polygonal.motor.geom.primitive.AABB2;
 
 using com.pblabs.engine.core.SignalBondManager;

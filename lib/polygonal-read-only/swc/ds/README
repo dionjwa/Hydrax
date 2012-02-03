@@ -1,0 +1,10 @@
+precompiled de.polygonal.ds.* package for use with ActionScript 3.0
+usage: http://code.google.com/p/polygonal/wiki/UsingActionScript3
+
+ds_debug.swc           : debug build for flash player 10.x
+ds_debug_alchemy.swc   : debug build for flash player 10.x with fast memory
+ds_debug_fp9.swc       : debug build for flash player 9.x;
+
+ds_release.swc         : release build for flash player 10.x
+ds_release_alchemy.swc : release build for flash player 10.x with fast memory
+ds_release_fp9.swc     : release build for flash player 9.x

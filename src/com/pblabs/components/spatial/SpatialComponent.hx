@@ -19,7 +19,7 @@ import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.serialization.Serializer;
 
 import de.polygonal.motor.geom.inside.PointInsideAABB;
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 import de.polygonal.motor.geom.primitive.AABB2;
 
 import hsl.haxe.DirectSignaler;

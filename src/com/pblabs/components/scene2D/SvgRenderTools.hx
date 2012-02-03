@@ -4,7 +4,7 @@ import com.pblabs.engine.resource.ResourceToken;
 import org.transition9.util.svg.SvgData;
 
 import de.polygonal.core.math.Mathematics;
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 import de.polygonal.motor.geom.primitive.AABB2;
 
 import flash.geom.Matrix;

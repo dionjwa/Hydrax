@@ -13,7 +13,7 @@ import org.transition9.geom.CircleUtil;
 
 import org.transition9.util.StringUtil;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 using com.pblabs.components.scene2D.SceneUtil;
 
