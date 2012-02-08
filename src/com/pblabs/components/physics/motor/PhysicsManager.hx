@@ -34,6 +34,7 @@ class PhysicsManager extends NodeComponent<Dynamic, com.pblabs.components.physic
 		super();
 		precision = 8;
 		settings = new Settings();
+		settings.worldBounds = new AABB2(-1500, -1500, 1500, 1500);
 		settings.lazyPooling = true;
 		collisionSignaler = new DirectSignaler(this, true);
 		_collision = new CollisionPair();
@@ -81,9 +82,7 @@ class PhysicsManager extends NodeComponent<Dynamic, com.pblabs.components.physic
 	{
 		super.onAdd();
 		//From TestManifold
-		var _tmpAABB :AABB2 = new AABB2();
-		_tmpAABB.set4(-1500, -1500, 1500, 1500);
-		// settings.worldBounds = _tmpAABB;
+		
 		// settings.contactPoolSize = 4;
 		// settings.maxProxies = 1 << 3;
 		// settings.maxPairs = settings.maxProxies << 4;
