@@ -1,0 +1,3 @@
+[submodule "lib/transition9"]
+	path = lib/transition9
+	url = git@github.com:dionjwa/transition9.git
