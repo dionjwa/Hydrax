@@ -1,0 +1,7 @@
+../base-flash.hxml
+
+-D debug
+
+-swf-lib ../../lib/MinimalComps.swf
+
+-swf9 build/demo.swf

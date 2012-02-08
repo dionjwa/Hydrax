@@ -1,0 +1,28 @@
+-D use_rtti_doc
+-D debug
+-D haxedev
+-D use_html5_canvas_as_default_scene_layer
+# -D debug_graphics
+
+-lib hydrax
+-lib jQueryExtern
+-lib html5
+# -lib jeash
+
+-cp src
+-cp rsrc
+
+--remap flash:jeash
+-js canvas/haxe.js
+
+-main Demo
+
+-cmd cp etc/indexcanvas.html canvas/index.html
+
+--next 
+
+-cmd cp etc/indexcanvas.xhtml canvas/index.xhtml
+
+--next
+
+-cmd cp -r rsrc canvas/
