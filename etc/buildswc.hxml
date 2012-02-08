@@ -1,0 +1,53 @@
+#Build file for building the stand-alone swc containing hydrax, transition9, hsl, polygonal, robothaxe, feffects
+#This allows it to be used from AS3 projects.
+
+
+# --macro include('hsl')
+# --macro include('feffects', true, [], ['/usr/lib/haxe/lib/feffects/1,2,0/'])
+
+# --macro exclude('de.polygonal.core.sound.*')
+
+
+
+
+
+
+-cp /usr/lib/haxe/lib/feffects/1,2,0/
+--macro include('feffects')
+
+-cp /usr/lib/haxe/lib/polygonal/1,20/
+--macro include('de', true, ['de.polygonal.core.sound', 'de.polygonal.core.log.handler.FileHandler', 'de.polygonal.core.util.SysMon'])
+
+
+# -cp /usr/lib/haxe/lib/hsl-1/1,6/
+# --macro include('hsl', true, ['hsl.js', 'hsl.avm2.plugins.AIRMouseShortcuts', 'hsl.js.data.Touch'])
+
+-cp /usr/lib/haxe/lib/hsl-pico-1/1,6/
+-cp /usr/lib/haxe/lib/hsl-1/1,6/
+--macro include('haxe', true, ['hsl.js', 'hsl.avm2.plugins.AIRMouseShortcuts', 'hsl.js.data.Touch'], ['/usr/lib/haxe/lib/hsl-pico-1/1,6/'])
+--macro include('hsl', true, ['hsl.js', 'hsl.avm2.plugins.AIRMouseShortcuts', 'hsl.js.data.Touch'], ['/usr/lib/haxe/lib/hsl-pico-1/1,6/', '/usr/lib/haxe/lib/hsl-1/1,6/'])
+
+-cp /usr/lib/haxe/lib/robothaxe/1,0,1/
+--macro include('robothaxe')
+
+
+
+-cp lib/transition9/src
+--macro include('org.transition9', true, ['org.transition9.util.JsLibs', 'org.transition9.serialization.Serialization', 'org.transition9.geom.Vector2', 'org.transition9.util.JsDebugUtil',  'org.transition9.util.svg'])
+#'org.transition9.geom.bounds',
+
+# -cp /usr/lib/haxe/lib/gm2d/1,0/
+# --macro include('gm2d', true, ['gm2d.blit.Layer', 'samples', 'gm2d.swf.ScaledFont'])
+
+-cp /usr/lib/haxe/lib/nme/3,1,1
+--macro include('nme', true, ['neko', 'samples', 'tools'])
+
+
+-cp src
+--macro include('com.pblabs', true, ['com.pblabs.engine.resource.SvgResources', 'com.pblabs.components.scene2D.HierarchyManager', 'com.pblabs.components.scene2D.SvgImageTools', 'com.pblabs.components.scene2D.Svg', 'com.pblabs.components.scene2D.SvgRenderTools', 'com.pblabs.engine.resource.BitmapCacheResource', 'com.pblabs.components.scene2D.SvgAnchors', 'com.pblabs.components.base.BoundedComponent', 'com.pblabs.components.scene2D.js', 'com.pblabs.components.physics', 'com.pblabs.components.jquerymobile', 'com.pblabs.components.iui.IUIScreen'])
+
+
+
+-swf-version 10
+-swf hydrax.swc
+
