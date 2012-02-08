@@ -1,0 +1,16 @@
+
+<project name="hydrax" default="build" basedir=".">
+        <description>
+		Useful build tasks for hydrax based game projects. 
+	</description>
+        
+        <target name="updatejslibs" description="Downloads latest versions of js libs">
+                <exec executable="wget" >
+                	<arg value="-O"/>
+                	<arg value="lib/js/modernizr.js"/>
+			<arg value="https://raw.github.com/Modernizr/Modernizr/master/modernizr.js"/>
+                </exec>
+        </target>
+        
+        
+</project>

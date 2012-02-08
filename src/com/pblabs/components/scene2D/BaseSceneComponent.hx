@@ -275,8 +275,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	{
 		_scaleX = val;
 		_isTransformDirty = true;
-		_bounds.xmin = _x - (_scaleX * _unscaledBounds.x) / 2;
-		_bounds.xmax = _x + (_scaleX * _unscaledBounds.x) / 2;
+		_bounds.minX = _x - (_scaleX * _unscaledBounds.x) / 2;
+		_bounds.maxX = _x + (_scaleX * _unscaledBounds.x) / 2;
 		return val;
 	}
 	
@@ -289,8 +289,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	{
 		_scaleY = val;
 		_isTransformDirty = true;
-		_bounds.ymin = _y - (_scaleY * _unscaledBounds.y) / 2;
-		_bounds.ymax = _y + (_scaleY * _unscaledBounds.y) / 2;
+		_bounds.minY = _y - (_scaleY * _unscaledBounds.y) / 2;
+		_bounds.maxY = _y + (_scaleY * _unscaledBounds.y) / 2;
 		return val;
 	}
 	
@@ -314,8 +314,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	{
 		org.transition9.util.Assert.isTrue(val >= 0, "val=" + val + " " + org.transition9.util.Log.getStackTrace());
 		isTransformDirty = true;
-		_bounds.xmin = _x - val / 2;
-		_bounds.xmax = _x + val / 2;
+		_bounds.minX = _x - val / 2;
+		_bounds.maxX = _x + val / 2;
 		org.transition9.util.Assert.isTrue(_unscaledBounds.x > 0, org.transition9.util.Log.getStackTrace());
 		_scaleX =_bounds.intervalX / _unscaledBounds.x;
 		return val;
@@ -330,8 +330,8 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	{
 		org.transition9.util.Assert.isTrue(val >= 0, "val=" + val);
 		isTransformDirty = true;
-		_bounds.ymin = _y - val / 2;
-		_bounds.ymax = _y + val / 2;
+		_bounds.minY = _y - val / 2;
+		_bounds.maxY = _y + val / 2;
 		org.transition9.util.Assert.isTrue(_unscaledBounds.y > 0);
 		_scaleY =_bounds.intervalY / _unscaledBounds.y;
 		return val;

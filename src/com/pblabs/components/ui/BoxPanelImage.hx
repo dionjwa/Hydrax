@@ -163,7 +163,7 @@ class BoxPanelImage
 			
 			curY += c.height;
 		}
-		registrationPoint = new Vec2(x - bounds.xmin, y - bounds.ymin);
+		registrationPoint = new Vec2(x - bounds.minX, y - bounds.minY);
 		#end
 	}
 	

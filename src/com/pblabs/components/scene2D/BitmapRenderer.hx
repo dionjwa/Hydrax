@@ -50,10 +50,10 @@ class BitmapRenderer
 			_unscaledBounds.x = 1;
 			_unscaledBounds.y = 1;
 			
-			_bounds.xmin = _x;
-			_bounds.xmax = _x + _unscaledBounds.x * _scaleX;
-			_bounds.ymin = _y;
-			_bounds.ymax = _y + _unscaledBounds.y * _scaleY;
+			_bounds.minX = _x;
+			_bounds.maxX = _x + _unscaledBounds.x * _scaleX;
+			_bounds.minY = _y;
+			_bounds.maxY = _y + _unscaledBounds.y * _scaleY;
 			
 			_registrationPoint.x = 0;
 			_registrationPoint.y = 0;
@@ -109,11 +109,7 @@ class BitmapRenderer
 			} else {
 				_backBuffer.getContext("2d").clearRect(0, 0, _backBuffer.width, _backBuffer.height);
 			}
-			#if haxedev
-			_backBuffer.getContext("2d").drawImage(_bitmap , 0, 0);
-			#else
-			_backBuffer.getContext("2d").drawImage(cast _bitmap , 0, 0);
-			#end
+			_backBuffer.getContext("2d").drawImage(untyped _bitmap , 0, 0);
 		} else {
 			_backBuffer.width = _backBuffer.height = 1;
 		}
@@ -123,11 +119,7 @@ class BitmapRenderer
 	override function renderCachedBuffer (ctx :CanvasRenderingContext2D) :Void
 	{
 		if (_bitmap != null) {
-			#if haxedev
-			ctx.drawImage(_bitmap, 0, 0);
-			#else
-			ctx.drawImage(cast _bitmap, 0, 0);
-			#end
+			ctx.drawImage(untyped _bitmap, 0, 0);
 		}
 	}
 	#end
@@ -228,10 +220,10 @@ class BitmapRenderer
 				_unscaledBounds.x = _bitmap.width;
 				_unscaledBounds.y = _bitmap.height;
 				
-				_bounds.xmin = _x - _registrationPoint.x * _scaleX;
-				_bounds.xmax = _bounds.xmin + _bitmap.width * _scaleX;
-				_bounds.ymin = _y - _registrationPoint.y * _scaleY;
-				_bounds.ymax = _bounds.ymin + _bitmap.height * _scaleY;
+				_bounds.minX = _x - _registrationPoint.x * _scaleX;
+				_bounds.maxX = _bounds.minX + _bitmap.width * _scaleX;
+				_bounds.minY = _y - _registrationPoint.y * _scaleY;
+				_bounds.maxY = _bounds.minY + _bitmap.height * _scaleY;
 			}
 			// _registrationPoint.x = _bitmap.width / 2;
 			// _registrationPoint.y = _bitmap.height / 2;
@@ -241,10 +233,10 @@ class BitmapRenderer
 			_unscaledBounds.y = 1;
 			_registrationPoint.x = 0;
 			_registrationPoint.y = 0;
-			_bounds.xmin = _x;
-			_bounds.xmax = _x + 1;
-			_bounds.ymin = _y;
-			_bounds.ymax = _y + 1;
+			_bounds.minX = _x;
+			_bounds.maxX = _x + 1;
+			_bounds.minY = _y;
+			_bounds.maxY = _y + 1;
 		}
 		// _scaleX = _scaleY = 1.0;
 		isTransformDirty = true;

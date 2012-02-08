@@ -52,10 +52,10 @@ class RectangleShape extends ShapeComponent
 		_unscaledBounds.x = w;
 		_unscaledBounds.y = h;
 		_bounds = new AABB2();
-		_bounds.xmin = -_unscaledBounds.x / 2;
-		_bounds.xmax = _unscaledBounds.x / 2;
-		_bounds.ymin = -_unscaledBounds.y / 2;
-		_bounds.ymax = _unscaledBounds.y / 2;
+		_bounds.minX = -_unscaledBounds.x / 2;
+		_bounds.maxX = _unscaledBounds.x / 2;
+		_bounds.minY = -_unscaledBounds.y / 2;
+		_bounds.maxY = _unscaledBounds.y / 2;
 		width = w;
 		height = h;
 	}
@@ -131,8 +131,8 @@ class RectangleShape extends ShapeComponent
 		org.transition9.util.Assert.isTrue(val >= 0, "val=" + val + " " + org.transition9.util.Log.getStackTrace());
 		var unscaledWidth = val / _scaleX;
 		_unscaledBounds.x = unscaledWidth;
-		_bounds.xmin = _x - val / 2;
-		_bounds.xmax = _x + val / 2;
+		_bounds.minX = _x - val / 2;
+		_bounds.maxX = _x + val / 2;
 		_scaleX = val / unscaledWidth;
 		registrationPoint.x = _bounds.intervalX / 2 + 1;
 		isTransformDirty = true;
@@ -145,8 +145,8 @@ class RectangleShape extends ShapeComponent
 		org.transition9.util.Assert.isTrue(val >= 0, "val=" + val + " " + org.transition9.util.Log.getStackTrace());
 		var unscaledHeight = val / _scaleY;
 		_unscaledBounds.y = unscaledHeight;
-		_bounds.ymin = _y - val / 2;
-		_bounds.ymax = _y + val / 2;
+		_bounds.minY = _y - val / 2;
+		_bounds.maxY = _y + val / 2;
 		_scaleY = val / unscaledHeight;
 		registrationPoint.y = _bounds.intervalY / 2 + 1;
 		isTransformDirty = true;

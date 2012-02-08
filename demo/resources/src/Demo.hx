@@ -28,7 +28,7 @@ import com.pblabs.engine.resource.Source;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ProcessManager;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 import org.transition9.util.Rand;
 import org.transition9.ds.Tuple;

@@ -202,7 +202,7 @@ class Component extends NodeComponent<Container, Component>
 		for (c in owner.getComponents(BaseSceneComponent)) {
 			return c.registrationPoint;
 		}
-		return new Vec2(x - _spatial.worldExtents.xmin, y - _spatial.worldExtents.ymin);
+		return new Vec2(x - _spatial.worldExtents.minX, y - _spatial.worldExtents.minY);
 	}
 	
 	#if debug

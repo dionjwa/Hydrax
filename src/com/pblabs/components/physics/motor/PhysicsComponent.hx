@@ -16,6 +16,7 @@ import de.polygonal.motor.data.RigidBodyData;
 import de.polygonal.motor.data.ShapeData;
 import de.polygonal.motor.dynamics.RigidBody;
 import de.polygonal.core.math.Vec2;
+import de.polygonal.core.math.Vec2Util;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
@@ -26,6 +27,8 @@ import org.transition9.util.Preconditions;
 import org.transition9.util.SignalVarAdvanced;
 
 using de.polygonal.ds.BitFlags;
+
+using de.polygonal.core.math.Vec2Util;
 
 @sets("motorPhysicsComponent")
 class PhysicsComponent extends NodeComponent<PhysicsManager, Dynamic>,
@@ -412,7 +415,7 @@ class PhysicsComponent extends NodeComponent<PhysicsManager, Dynamic>,
 			var rSq = radius * radius;
 			md.I = Mathematics.maxPrecision(md.mass * .5 * rSq, precision);
 			case BOX(w, h, def) :
-			md.I = Mathematics.maxPrecision(md.mass / 12 * Vec2.dot4(w, h, w, h), precision);
+			md.I = Mathematics.maxPrecision(md.mass / 12 * Vec2Util.dot4(w, h, w, h), precision);
 			case FIXED_BOX(x, y, w, h, def) :
 				//Nothing, it's fixed
 				return val;

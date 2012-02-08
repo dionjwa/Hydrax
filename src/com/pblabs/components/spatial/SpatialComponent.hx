@@ -316,7 +316,7 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Man
 		// org.transition9.util.Assert.isNotNull(worldExtents, "No worldExtends for point checking");
 		// // If no sprite then we just test our bounds.
 		// var b = worldExtents;
-		// return pos.x <= b.xmax && pos.x >= b.xmin && pos.y <= b.ymax && pos.y >= b.ymin;
+		// return pos.x <= b.maxX && pos.x >= b.minX && pos.y <= b.maxY && pos.y >= b.minY;
 	}
 	
 	inline function updateWorldAABB () :Void

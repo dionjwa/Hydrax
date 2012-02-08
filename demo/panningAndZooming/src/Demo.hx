@@ -33,7 +33,7 @@ import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.ResourceType;
 import com.pblabs.engine.resource.Source;
 
-import de.polygonal.motor.geom.math.Vec2;
+import de.polygonal.core.math.Vec2;
 
 import org.transition9.ds.MultiMap;
 import org.transition9.ds.Tuple;

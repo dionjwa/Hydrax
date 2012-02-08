@@ -1,0 +1,14 @@
+../base-js.hxml
+
+-D debug
+-D haxedev
+
+-js css/demo.js
+
+-main Demo
+
+-cmd cp indexcss.xhtml css/index.xhtml
+
+--next
+
+-cmd cp src/js/* css/

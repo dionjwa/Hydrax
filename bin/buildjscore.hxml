@@ -1,0 +1,22 @@
+#build file
+-D nodejs
+-D use_rtti_doc
+
+-lib IterTools
+-lib ArrayTools
+-lib ListTools
+-lib polygonal
+
+-cp src
+-cp lib/hsl
+-cp lib/hsl-pico
+-cp src
+
+-js build/hydrax_core.js
+
+# -main net.amago.turngame.server.Server
+
+--macro haxe.macro.Compiler.include('com.pblabs.engine')
+--macro haxe.macro.Compiler.exclude('com.pblabs.engine.resource.flash.SwfResource')
+--macro haxe.macro.Compiler.exclude('com.pblabs.components')
+

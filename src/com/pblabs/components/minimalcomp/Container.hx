@@ -37,13 +37,13 @@ class Container extends Component
 	override function get_bounds () :AABB2
 	{
 		var b = new AABB2();
-		b.xmin = b.ymin = Math.POSITIVE_INFINITY;
-		b.xmax = b.ymax = Math.NEGATIVE_INFINITY;
+		b.minX = b.minY = Math.POSITIVE_INFINITY;
+		b.maxX = b.maxY = Math.NEGATIVE_INFINITY;
 		for (c in children) {
-			b.xmin = Math.min(b.xmin, c.x - c.width / 2);
-			b.ymin = Math.min(b.ymin, c.y - c.height / 2);
-			b.xmax = Math.max(b.xmax, c.x + c.width / 2);
-			b.ymax = Math.max(b.ymax, c.y + c.height / 2);
+			b.minX = Math.min(b.minX, c.x - c.width / 2);
+			b.minY = Math.min(b.minY, c.y - c.height / 2);
+			b.maxX = Math.max(b.maxX, c.x + c.width / 2);
+			b.maxY = Math.max(b.maxY, c.y + c.height / 2);
 		}
 		return b;
 	}
@@ -184,8 +184,8 @@ class Container extends Component
 		for (c in children) {
 			var spatial = c.owner.getComponent(SpatialComponent);
 			if (spatial != null) {
-				top = Math.min(top, spatial.worldExtents.ymin);
-				bottom = Math.max(bottom, spatial.worldExtents.ymax);
+				top = Math.min(top, spatial.worldExtents.minY);
+				bottom = Math.max(bottom, spatial.worldExtents.maxY);
 			}
 		}
 		if (top == Limits.INT32_MAX) {

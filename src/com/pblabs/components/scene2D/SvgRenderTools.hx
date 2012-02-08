@@ -197,15 +197,15 @@ class SvgRenderTools
 		var bounds = new AABB2();
 		if (svg.get('viewBox') != null) {
 			var tokens = svg.get("viewBox").split(" ");
-			bounds.xmin = Std.parseFloat(tokens[0]);
-			bounds.ymin = Std.parseFloat(tokens[1]);
-			bounds.xmax = bounds.xmin + Std.parseFloat(tokens[2]);
-			bounds.ymax = bounds.ymin + Std.parseFloat(tokens[3]);
+			bounds.minX = Std.parseFloat(tokens[0]);
+			bounds.minY = Std.parseFloat(tokens[1]);
+			bounds.maxX = bounds.minX + Std.parseFloat(tokens[2]);
+			bounds.maxY = bounds.minY + Std.parseFloat(tokens[3]);
 		} else {
-			bounds.xmin = svg.get("x") != null ? Std.parseFloat(svg.get("x")) :0.0;
-			bounds.ymin = svg.get("y") != null ? Std.parseFloat(svg.get("y")) :0.0;
-			bounds.xmax = bounds.xmin + Std.parseFloat(svg.get("width"));
-			bounds.ymax = bounds.ymin + Std.parseFloat(svg.get("height"));
+			bounds.minX = svg.get("x") != null ? Std.parseFloat(svg.get("x")) :0.0;
+			bounds.minY = svg.get("y") != null ? Std.parseFloat(svg.get("y")) :0.0;
+			bounds.maxX = bounds.minX + Std.parseFloat(svg.get("width"));
+			bounds.maxY = bounds.minY + Std.parseFloat(svg.get("height"));
 		}
 		return bounds;
 	}

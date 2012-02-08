@@ -100,7 +100,7 @@ class InputButtonOverlay
 		y = sc.y;
 		width = b.intervalX;
 		height = b.intervalY;
-		registrationPoint = new Vec2((x - b.xmin), (y - b.ymin));
+		registrationPoint = new Vec2((x - b.minX), (y - b.minY));
 		
 		addToParent(sc.parent);
 		
