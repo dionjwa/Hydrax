@@ -211,7 +211,7 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 	function renderCachedBuffer (ctx :CanvasRenderingContext2D) :Void
 	{
 		if (_backBuffer != null && _backBuffer.width > 0 && _backBuffer.height > 0) {
-			ctx.drawImage(_backBuffer, 0, 0);
+			ctx.drawImage(untyped _backBuffer, 0, 0);
 		}
 	}
 	
