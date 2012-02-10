@@ -71,7 +71,7 @@ class SvgImageTools
 		return compCls;
 	}
 	
-	public static function createSvgFromResource (layer :BaseSceneLayer<Dynamic, Dynamic>, 
+	public static function createSvgFromResource (layer :BaseSceneLayer, 
 		token :ResourceToken, ?entityName :String) :IEntity
 	{
 		var svgData = layer.context.getManager(IResourceManager).get(token);
@@ -79,7 +79,7 @@ class SvgImageTools
 		return createSvg(layer, svgData, entityName);
 	}
 	
-	public static function createSvg (layer :BaseSceneLayer<Dynamic, Dynamic>, ?svg :String, ?entityName :String) :IEntity 
+	public static function createSvg (layer :BaseSceneLayer, ?svg :String, ?entityName :String) :IEntity 
 	{
 		var so = layer.context.createBaseSceneEntity();
 		
@@ -93,7 +93,7 @@ class SvgImageTools
 	
 	/** Converts Svg to Bitmap */
 	public static function addSvg (e :IEntity, 
-		layer :BaseSceneLayer<Dynamic, Dynamic>, 
+		layer :BaseSceneLayer, 
 		token :ResourceToken, 
 		?cache :Null<Bool> = false, 
 		?isForDeviceDown :Null<Bool> = false,
@@ -210,9 +210,9 @@ class SvgImageTools
 		return e;
 	}
 	
-	public static function setAsDeviceDownLayer (e :IEntity, comp :BaseSceneComponent<Dynamic>) :Void
+	public static function setAsDeviceDownLayer (e :IEntity, comp :BaseSceneComponent) :Void
 	{
-		var deviceDownLayers :Array<BaseSceneComponent<Dynamic>> = e.getEntityData(DEVICE_DOWN_LAYERS); 
+		var deviceDownLayers :Array<BaseSceneComponent> = e.getEntityData(DEVICE_DOWN_LAYERS); 
 		if (deviceDownLayers == null) {
 			deviceDownLayers = [];
 			e.setEntityData(DEVICE_DOWN_LAYERS, deviceDownLayers);
@@ -220,15 +220,15 @@ class SvgImageTools
 		deviceDownLayers.push(comp);
 	}
 	
-	public static function getDeviceDownLayers (e :IEntity) :Array<BaseSceneComponent<Dynamic>>
+	public static function getDeviceDownLayers (e :IEntity) :Array<BaseSceneComponent>
 	{
-		var deviceDownLayers :Array<BaseSceneComponent<Dynamic>> = e.getEntityData(DEVICE_DOWN_LAYERS); 
+		var deviceDownLayers :Array<BaseSceneComponent> = e.getEntityData(DEVICE_DOWN_LAYERS); 
 		return deviceDownLayers != null ? deviceDownLayers : [];
 	}
 	
-	public static function getDeviceUpLayers (e :IEntity) :Array<BaseSceneComponent<Dynamic>>
+	public static function getDeviceUpLayers (e :IEntity) :Array<BaseSceneComponent>
 	{
-		var deviceDownLayers :Array<BaseSceneComponent<Dynamic>> = e.getEntityData(DEVICE_DOWN_LAYERS);
+		var deviceDownLayers :Array<BaseSceneComponent> = e.getEntityData(DEVICE_DOWN_LAYERS);
 		var deviceUpLayers = [];
 		for (sc in e.getComponents(BaseSceneComponent)) {
 			if (deviceDownLayers == null || !deviceDownLayers.has(sc)) {
@@ -238,7 +238,7 @@ class SvgImageTools
 		return deviceUpLayers;
 	}
 	
-	public static function addImage (e :IEntity, layer :BaseSceneLayer<Dynamic, Dynamic>, ?token :ResourceToken, 
+	public static function addImage (e :IEntity, layer :BaseSceneLayer, ?token :ResourceToken, 
 		?componentName :String, ?isForDeviceDown :Bool = false) :IEntity 
 	{
 		if (token != null) {
@@ -321,7 +321,7 @@ class SvgImageTools
 		return e;
 	}
 	
-	// public static function addText (e :IEntity, layer :BaseSceneLayer<Dynamic, Dynamic>, text :String, ?align :String) :IEntity
+	// public static function addText (e :IEntity, layer :BaseSceneLayer, text :String, ?align :String) :IEntity
 	// {
 	// 	var svgComp = e.context.allocate(Svg);
 	// 	svgComp.svgData = new SvgData(null, SVG_TEXT, [new SvgReplace("$T", text)]);
@@ -330,7 +330,7 @@ class SvgImageTools
 	// 	return e;
 	// }
 	
-	public static function addText (e :IEntity, layer :BaseSceneLayer<Dynamic, Dynamic>, text :String, ?align :String) :IEntity
+	public static function addText (e :IEntity, layer :BaseSceneLayer, text :String, ?align :String) :IEntity
 	{
 		var textComp = e.context.allocate(com.pblabs.components.scene2D.Text);
 		textComp.text = text;

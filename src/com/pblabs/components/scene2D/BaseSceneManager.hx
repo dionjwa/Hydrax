@@ -9,8 +9,7 @@
 package com.pblabs.components.scene2D;
 
 import com.pblabs.components.manager.NodeComponent;
-import com.pblabs.components.scene2D.BaseSceneLayer;
-import com.pblabs.components.scene2D.SceneUtil;
+import com.pblabs.components.scene2D.SceneTransformUtil;
 import com.pblabs.components.scene2D.SceneView;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.IEntityComponent;
@@ -28,7 +27,6 @@ import hsl.haxe.Bond;
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
 
-using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
 using org.transition9.util.IterUtil;
@@ -38,7 +36,7 @@ using org.transition9.util.StringUtil;
   * Layers are arranged :smaller index is behind.
   */
 @sets("SceneManager")
-class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComponent<SceneManagerList, Layer>,
+class BaseSceneManager extends NodeComponent,
 	implements haxe.rtti.Infos, implements IScene2D
 {
 	@inject
@@ -90,8 +88,8 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		return val;
 	}
 	
-	public var defaultLayerClass (get_defaultLayerClass, null) :Class<Layer>;
-	function get_defaultLayerClass () :Class<Layer>
+	public var defaultLayerClass (get_defaultLayerClass, null) :Class<Dynamic>;
+	function get_defaultLayerClass () :Class<Dynamic>
 	{
 		org.transition9.util.Log.error("Subclasses override");
 		return null;
@@ -172,7 +170,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	}
 	
 	public function addLayer (?layerName :String = null, ?cls :Class<Dynamic> = null, ?registerAsManager :Bool = false, 
-		?startDetached :Bool = false) :BaseSceneLayer<Dynamic, Dynamic>
+		?startDetached :Bool = false) :BaseSceneLayer
 	{
 		org.transition9.util.Assert.isNotNull(context);
 		
@@ -180,7 +178,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		var childrenCopy = children.copy();
 		
 		var layer = createLayer(layerName, cls);//context.allocate(cls);
-		var layerCast :com.pblabs.components.manager.NodeComponent<Dynamic, Dynamic> = cast layer;
+		var layerCast :com.pblabs.components.manager.NodeComponent = cast layer;
 		
 		if (!startDetached) {
 			layerCast.parentProperty = PBUtil.componentProp(this);
@@ -188,7 +186,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		}
 		
 		if (registerAsManager) {
-			context.registerManager(SceneUtil.LAYER_CLASS, layer, layerName, true);
+			// context.registerManager(SceneUtil.LAYER_CLASS, layer, layerName, true);
 		}
 		
 		//Put the children in the previous order
@@ -204,7 +202,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 	/**
 	  * The layer starts detached.  Manual attachment necessary.
 	  */
-	public function createLayer (?layerName :String = null, ?cls :Class<Dynamic> = null) :BaseSceneLayer<Dynamic, Dynamic>
+	public function createLayer (?layerName :String = null, ?cls :Class<Dynamic> = null) :BaseSceneLayer
 	{
 		//Use default class is none is given
 		cls = cls == null ? defaultLayerClass : cls;
@@ -216,9 +214,9 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		
 		if (layerName.isBlank()) {
 			if (layerCount == 0) {
-				layerName = SceneUtil.DEFAULT_LAYER_NAME;
+				layerName = SceneConstants.DEFAULT_LAYER_NAME;
 			} else {
-				layerName = SceneUtil.DEFAULT_LAYER_NAME + (layerCount + 1);
+				layerName = SceneConstants.DEFAULT_LAYER_NAME + (layerCount + 1);
 			}
 		}
 		
@@ -244,10 +242,10 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 				if (Std.is(layer, IAnimatedObject)) {
 					cast(layer, IAnimatedObject).onFrame(0);
 				}
+				
 				if (layer.children != null) {
-					for (c in layer.children) {
+					for (c in cast(layer, NodeComponent).children) {
 						if (Std.is(c, IAnimatedObject)) {
-							
 							cast(c, IAnimatedObject).onFrame(0);
 						}
 					}
@@ -264,18 +262,18 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		return getLayer(name) != null;
 	}
 
-	public function getLayerAt (idx :Int) :Layer
+	public function getLayerAt (idx :Int) :BaseSceneLayer
 	{
 		return children[idx];
 	}
 	
-	public function getLayerIndex (layer :Layer) :Int
+	public function getLayerIndex (layer :BaseSceneLayer) :Int
 	{
 		org.transition9.util.Assert.isTrue(children.indexOf(layer) >= 0 && children.indexOf(layer) < children.length);
 		return children.indexOf(layer);
 	}
 	
-	public function setLayerIndex (layer :Layer, index :Int) :Void
+	public function setLayerIndex (layer :BaseSceneLayer, index :Int) :Void
 	{
 		Preconditions.checkNotNull(layer, "Null layer");
 		Preconditions.checkPositionIndex(index, children.length, "Layer index out of bounds");
@@ -289,21 +287,21 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		set_y(loc.y);
 	}
 
-	override function childAdded (c :Layer) :Void
+	override function childAdded (c :NodeComponent) :Void
 	{
 		org.transition9.util.Log.debug("adding scene layer " + c);
 		super.childAdded(c);
 		_transformDirty = true;
 	}
 	
-	override function childRemoved (c :Layer) :Void
+	override function childRemoved (c :NodeComponent) :Void
 	{
 		super.childRemoved(c);
 		org.transition9.util.Log.debug("removing scene layer " + c);
 		_transformDirty = true;
 	}
 
-	public function getTopLayer () :BaseSceneLayer<Dynamic, Dynamic>
+	public function getTopLayer () :BaseSceneLayer
 	{
 		if (children.length > 0) {
 			return children[children.length - 1];
@@ -311,7 +309,7 @@ class BaseSceneManager<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComp
 		return null;
 	}
 
-	public function getLayer (layerName :String) :Layer
+	public function getLayer (layerName :String) :BaseSceneLayer
 	{
 		for (layer in children) {
 			if (null != layer && layer.name == layerName) {

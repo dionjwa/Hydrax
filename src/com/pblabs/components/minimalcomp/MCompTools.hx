@@ -41,7 +41,7 @@ using org.transition9.util.IterUtil;
   */
 class MCompTools
 {
-	public static function sortDisplayOrderByComponents (children :Array<BaseSceneComponent<Dynamic>>) :Void
+	public static function sortDisplayOrderByComponents (children :Array<BaseSceneComponent>) :Void
 	{
 		var compDisplayOrders :Map<Component, Map<Component, Int>> = new MapBuilder(ValueType.TClass(Component))
 			.makeComputing(function (_) :Map<Component, Int> { return Maps.newHashMap(ValueType.TClass(Component));})
@@ -61,7 +61,7 @@ class MCompTools
 			}
 		}
 		
-		var component2SceneComp :Map<Component, BaseSceneComponent<Dynamic>> = Maps.newHashMap(ValueType.TClass(Component));
+		var component2SceneComp :Map<Component, BaseSceneComponent> = Maps.newHashMap(ValueType.TClass(Component));
 		var rootOrder = [];
 		
 		for (child in children) {
@@ -102,7 +102,7 @@ class MCompTools
 		}
 	}
 	
-	public static function createVBox (context :IPBContext, ?layer :BaseSceneLayer<Dynamic, Dynamic>, ?gap :Float = 2, ?direction :Direction) :IEntity
+	public static function createVBox (context :IPBContext, ?layer :BaseSceneLayer, ?gap :Float = 2, ?direction :Direction) :IEntity
 	{
 		var e = context.allocate(IEntity);
 		e.deferring = true;
@@ -116,7 +116,7 @@ class MCompTools
 		return e;
 	}
 	
-	public static function createHBox (context :IPBContext, ?layer :BaseSceneLayer<Dynamic, Dynamic>, ?gap :Float = 2) :IEntity
+	public static function createHBox (context :IPBContext, ?layer :BaseSceneLayer, ?gap :Float = 2) :IEntity
 	{
 		var e = context.allocate(IEntity);
 		e.deferring = true;

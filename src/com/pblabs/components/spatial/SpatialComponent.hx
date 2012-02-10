@@ -11,6 +11,7 @@ package com.pblabs.components.spatial;
 import com.pblabs.components.manager.INodeChild;
 import com.pblabs.components.manager.NodeChild;
 import com.pblabs.components.manager.NodeComponent;
+import com.pblabs.components.Constants;
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.ObjectType;
@@ -34,12 +35,8 @@ using org.transition9.util.XmlTools;
 class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Manager>,
 	implements ISpatialObject2D<Manager>//, implements INodeChild<ISpatialManager2D>
 {
-	inline public static var NAME :String = "ISpatialObject2D";
-	public static var P_X :PropertyReference<Float> = new PropertyReference("@" + NAME + ".x");
-	public static var P_Y :PropertyReference<Float> = new PropertyReference("@" + NAME + ".y");
-	public static var P_POINT :PropertyReference<Vec2> = new PropertyReference("@" + NAME + ".position");
-	public static var P_ANGLE :PropertyReference<Float> = new PropertyReference("@" + NAME + ".angle");
-	public static var P_SPATIAL :PropertyReference<SpatialComponent<Dynamic>> = new PropertyReference("@" + NAME);
+	public static var P_POINT :PropertyReference<Vec2> = new PropertyReference("@" + Constants.SPATIAL_NAME + ".position");
+	public static var P_SPATIAL :PropertyReference<SpatialComponent<Dynamic>> = new PropertyReference("@" + Constants.SPATIAL_NAME);
 	
 	public static function getLocation (c :IEntity) :Vec2
 	{
@@ -51,7 +48,7 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Man
 		org.transition9.util.Assert.isNotNull(e);
 		org.transition9.util.Assert.isNotNull(e.context);
 		var s = e.context.allocate(SpatialComponent);
-		e.addComponent(s, NAME);
+		e.addComponent(s, Constants.SPATIAL_NAME);
 		return s;
 	}
 	

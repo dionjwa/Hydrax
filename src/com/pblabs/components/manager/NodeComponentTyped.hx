@@ -27,7 +27,7 @@ using org.transition9.util.XmlTools;
 	Useful for managing components and setting up tree structures.
 	If you need a manager type component and a bunch of 
 	children type components that need to register with the manager, 
-	just extend both from NodeComponent, and set the parentProperty
+	just extend both from NodeComponentTyped, and set the parentProperty
 	on the children.  They will automatically register themselves with 
 	the parent, and detach on destruction (or earlier if needed).
 	
@@ -43,24 +43,27 @@ using org.transition9.util.XmlTools;
 	Just implement ISerializable on the subclass and make sure you call the
 	super methods to get the parent reference serialized.
 */
-class NodeComponent extends EntityComponent
+class NodeComponentTyped<P :INodeParent<Dynamic>, C :INodeChild<Dynamic>> extends EntityComponent,
+	implements INodeParent<C>, implements INodeChild<P>
+	// implements INode<C>
 {
-	var _parentProperty :PropertyReference<Dynamic>;
-	public var parentProperty (get_parentProperty, set_parentProperty) :PropertyReference<Dynamic>;
-	function get_parentProperty () :PropertyReference<Dynamic>
+	var _parentProperty :PropertyReference<P>;
+	public var parentProperty (get_parentProperty, set_parentProperty) :PropertyReference<P>;
+	function get_parentProperty () :PropertyReference<P>
 	{
 		return _parentProperty;
 	}
 	
-	function set_parentProperty (val :PropertyReference<Dynamic>) :PropertyReference<Dynamic>
+	function set_parentProperty (val :PropertyReference<P>) :PropertyReference<P>
 	{
 		_parentProperty = val;
 		return val;
 	}
 	
-	public var children (get_children, null) :Array<Dynamic>;
-	var _children :Array<Dynamic>;
-	function get_children () :Array<Dynamic>
+	@editorData({ignore :"true"})
+	public var children (get_children, null) :Array<C>;
+	var _children :Array<C>;
+	function get_children () :Array<C>
 	{
 		if (_children == null) {
 			_children = [];
@@ -68,8 +71,9 @@ class NodeComponent extends EntityComponent
 		return _children;
 	}
 	
+	@editorData({ignore :"true"})
 	/** Don't set this yourself, use addToParent(p); instead */
-	public var parent :NodeComponent;
+	public var parent :P;
 	
 	public function new ()
 	{
@@ -78,7 +82,7 @@ class NodeComponent extends EntityComponent
 		parent = null;
 	}
 	
-	public function iterator () :Iterator<Dynamic>
+	public function iterator () :Iterator<C>
 	{
 		return children.iterator();
 	}
@@ -99,35 +103,34 @@ class NodeComponent extends EntityComponent
 		return this;
 	}
 	
-	public function addChild (c :NodeComponent) :Void
+	public function addChild (c :C) :Void
 	{
 		org.transition9.util.Assert.isTrue(untyped this != c);
 		Preconditions.checkArgument(isRegistered, "Component must first be registered");
-		Preconditions.checkArgument(Std.is(c, NodeComponent), "Children must be of type NodeComponent");
+		Preconditions.checkArgument(Std.is(c, NodeComponentTyped), "Children must be of type NodeComponentTyped");
 		Preconditions.checkArgument(cast(c, IEntityComponent).isRegistered, "Child not registered: " + c);
 		
-		// var child :INodeChild<Dynamic> = cast c;
-		var child = c;
+		var child :INodeChild<Dynamic> = cast c;
+		
 		Preconditions.checkArgument(child.parent == null, c + " already has a parent, not adding");
 		
 		child.parent = this;
 		children.push(c);
 		childAdded(c);
-		if (Std.is(child, NodeComponent)) {
-			cast(c, NodeComponent).addedToParent();
+		if (Std.is(child, NodeComponentTyped)) {
+			cast(c, NodeComponentTyped<Dynamic, Dynamic>).addedToParent();
 		}
 	}
 	
-	public function removeChild (c :NodeComponent) :Void
+	public function removeChild (c :C) :Void
 	{
-		// var cNode :NodeComponent<Dynamic, Dynamic> = cast c;
-		var cNode = c;
+		var cNode :NodeComponentTyped<Dynamic, Dynamic> = cast c;
 		Preconditions.checkNotNull(cNode, "Attempting to remove null child");
 		if (!cNode.hasParent()) {
 			throw "child has no parent";
 			return;
 		}
-		//Run condition with destruction of interlinked NodeComponents
+		//Run condition with destruction of interlinked NodeComponentTypeds
 		if (children.length == 0) {
 			return;
 		}
@@ -147,12 +150,12 @@ class NodeComponent extends EntityComponent
 		childRemoved(c);
 	}
 	
-	function childAdded (c :NodeComponent) :Void
+	function childAdded (c :C) :Void
 	{
 		//Override
 	}
 	
-	function childRemoved (c :NodeComponent) :Void
+	function childRemoved (c :C) :Void
 	{
 		//Override
 	}
@@ -167,7 +170,7 @@ class NodeComponent extends EntityComponent
 		//Override
 	}
 	
-	public function addToParent (?newParent :NodeComponent) :Void
+	public function addToParent (?newParent :P) :Void
 	{
 		#if profiler com.pblabs.engine.debug.Profiler.enter("addToParent"); #end
 		if (hasParent() && newParent != parent) {
@@ -183,7 +186,7 @@ class NodeComponent extends EntityComponent
 			newParent = newParent == null ? owner.getProperty(parentProperty) : newParent;
 			com.pblabs.engine.debug.Profiler.exit("getParentFromProp");
 			Preconditions.checkNotNull(newParent, "Parent cannot be null, parentProperty=" + parentProperty);
-			Preconditions.checkArgument(Std.is(newParent, NodeComponent), "Parent must be of type NodeComponent, parent is type=" + ReflectUtil.getClassName(newParent));
+			Preconditions.checkArgument(Std.is(newParent, NodeComponentTyped), "Parent must be of type NodeComponentTyped, parent is type=" + ReflectUtil.getClassName(newParent));
 			Preconditions.checkArgument(newParent.isRegistered, "Parent not registered: " + org.transition9.rtti.ReflectUtil.getClassName(newParent));
 			// if (hasParent()) {
 			// 	// org.transition9.util.Log.warn(" but " + name + ".hasParent " + ReflectUtil.getClassName(parent));

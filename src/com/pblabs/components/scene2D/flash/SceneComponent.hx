@@ -22,7 +22,7 @@ using org.transition9.util.ArrayUtil;
 using org.transition9.util.DisplayUtils;
 using org.transition9.util.MathUtil;
 
-class SceneComponent extends BaseSceneComponent<SceneLayer>,
+class SceneComponent extends BaseSceneComponent,
 	implements com.pblabs.engine.time.IAnimatedObject
 {
 	public var priority :Int;
@@ -41,16 +41,16 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		}
 		if (_layerIndexDirty) {
 			org.transition9.util.Assert.isNotNull(parent, "Cannot change layer index if not attached to a scene since which layer?");
-			var scene = parent.parent;
-			var newlayer = scene.getLayerAt(layerIndex);
-			if (newlayer != null) {
-				this.removeFromParent();
-				parentProperty = newlayer.entityProp();
-				addToParent(newlayer);
-				// _zIndexDirty = true;
-			}
+			// var scene = parent.parent;
+			// var newlayer :SceneLayer = cast scene.getLayerAt(layerIndex);
+			// if (newlayer != null) {
+			// 	this.removeFromParent();
+			// 	parentProperty = newlayer.entityProp();
+			// 	addToParent(newlayer);
+			// 	// _zIndexDirty = true;
+			// }
 			_layerIndexDirty = false;
-			_layerIndex = scene.getLayerIndex(parent);
+			// _layerIndex = scene.getLayerIndex(parent);
 		}
 		if (_isTransformDirty) {
 			updateTransform();
@@ -63,8 +63,8 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		com.pblabs.engine.debug.Profiler.enter("sc.addedToParent");
 		super.addedToParent();
 		if (parent.parent != null) {
-			org.transition9.util.Assert.isNotNull(parent.parent);
-			_layerIndex = parent.parent.getLayerIndex(parent);
+			var scene :BaseSceneManager = parent != null && parent.parent != null ? cast parent.parent : null;
+			_layerIndex = scene.getLayerIndex(cast parent);
 		} else {
 			org.transition9.util.Log.warn("Layer " + parent.name + " has no scene parent");
 		}
@@ -157,13 +157,13 @@ class SceneComponent extends BaseSceneComponent<SceneLayer>,
 		if (layer == null) {
 			_zIndex = val;
 		} else {
-			val = Mathematics.clamp(val, 0, layer.children.length - 1);
-			var curIndex = layer.children.indexOf(this);
-			if (curIndex != val) {
-				layer.children.remove(this);
-				layer.children.insert(val, this);
-				layer.zOrderDirty = true;
-			}
+			// val = Mathematics.clamp(val, 0, layer.children.length - 1);
+			// var curIndex = layer.children.indexOf(this);
+			// if (curIndex != val) {
+			// 	layer.children.remove(this);
+			// 	layer.children.insert(val, this);
+			// 	layer.zOrderDirty = true;
+			// }
 		}
 		return val;
 	}

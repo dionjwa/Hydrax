@@ -55,11 +55,15 @@ class LoadingResources<T> extends ResourcesBase<T>
 	override public function get (token :ResourceToken) :T
 	{
 		#if flash
-		//Load swf resources directly from the Swf, since by default they are not cached.
-		switch (token.source) {
-			case swf(swfName): return ResourceTools.instantiateEmbeddedClass(token.id); 
-			//loadFromSwf(token, swfName);
-			default:
+		if (_data.exists(token)) {
+			return _data.get(token);
+		} else { 
+			//Load swf resources directly from the Swf, since by default they are not cached.
+			switch (token.source) {
+				case swf(swfName): return ResourceTools.instantiateEmbeddedClass(token.id); 
+				//loadFromSwf(token, swfName);
+				default:
+			}
 		}
 		#end
 		

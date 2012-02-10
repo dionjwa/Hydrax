@@ -101,13 +101,13 @@ class ScreenTransitions
 		return contexts[contexts.length - 2];
 	}
 	
-	public static function getAllSceneManagers (context :IPBContext) :Array<BaseSceneManager<Dynamic>>
+	public static function getAllSceneManagers (context :IPBContext) :Array<BaseSceneManager>
 	{
 		org.transition9.util.Assert.isNotNull(context.getManager(SceneManagerList), ' context.getManager(SceneManagerList) is null');
-		return context.getManager(SceneManagerList).children;
+		return cast context.getManager(SceneManagerList).children;
 	}
 	
-	public static function setScreenOffSceneView (scene :BaseSceneManager<Dynamic>, direction :Direction) :Void
+	public static function setScreenOffSceneView (scene :BaseSceneManager, direction :Direction) :Void
 	{
 		var delta = switch (direction) {
 			case LEFT: new Vec2(-scene.sceneView.width, 0);
@@ -121,7 +121,7 @@ class ScreenTransitions
 	
 	
 	public static function scroll (activeEntity :IEntity, 
-		scenes :Array<BaseSceneManager<Dynamic>>, 
+		scenes :Array<BaseSceneManager>, 
 		direction :Direction, 
 		duration :Float, 
 		?easing :Dynamic, ?cb :Void->Void) :Void

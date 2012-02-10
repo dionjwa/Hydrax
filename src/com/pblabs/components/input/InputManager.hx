@@ -12,6 +12,8 @@ import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.scene2D.BaseSceneLayer;
 import com.pblabs.components.scene2D.BaseSceneManager;
 import com.pblabs.components.scene2D.SceneManagerList;
+import com.pblabs.components.scene2D.SceneTransformUtil;
+
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.ObjectType;
@@ -38,7 +40,6 @@ import Type;
 
 using Lambda;
 
-using com.pblabs.components.scene2D.SceneUtil;
 using org.transition9.util.MathUtil;
 
 /**
@@ -76,9 +77,9 @@ class InputManager extends BaseInputManager,
 	#end
 
 	//Variables to make queries more efficient
-	var _sceneManagers :Array<BaseSceneManager<Dynamic>>;
-	var _displayObjectsUnderPoint :Map<Int, Array<BaseSceneComponent<Dynamic>>>;
-	var _displayObjectFirstUnderPoint :Map<Int, BaseSceneComponent<Dynamic>>;
+	var _sceneManagers :Array<BaseSceneManager>;
+	var _displayObjectsUnderPoint :Map<Int, Array<BaseSceneComponent>>;
+	var _displayObjectFirstUnderPoint :Map<Int, BaseSceneComponent>;
 	var _deviceDownComponent :MouseInputComponent;
 	var _deviceDownComponentLoc :Vec2;
 	var _deviceDownLoc :Vec2;
@@ -87,7 +88,7 @@ class InputManager extends BaseInputManager,
 	var _deviceLoc :Vec2;
 	var _isGesturing :Bool;
 	var _tempVec :Vec2;
-	static var INPUT_SET :String = ReflectUtil.tinyName(IInteractiveComponent);
+	static var INPUT_SET :String = "IInteractiveComponent";
 	
 	public function new ()
 	{
@@ -160,7 +161,7 @@ class InputManager extends BaseInputManager,
 		clearInputDataCache();
 	}
 	
-	function getSceneManagers () :Array<BaseSceneManager<Dynamic>>
+	function getSceneManagers () :Array<BaseSceneManager>
 	{
 		//Sometimes there can be no context if the context switch takes a while.
 		if (context == null) {
@@ -173,7 +174,7 @@ class InputManager extends BaseInputManager,
 			if (sceneList == null) {
 				return null;
 			}
-			_sceneManagers = sceneList.children.copy();
+			_sceneManagers = cast sceneList.children.copy();
 			_sceneManagers.reverse();
 			if (_sceneManagers.length == 0) {
 				_sceneManagers = null;
@@ -389,7 +390,7 @@ class InputManager extends BaseInputManager,
 	}
 	
 	/** Methods from IInputData */
-	public function allObjectsUnderPoint (?mask :ObjectType) :Array<BaseSceneComponent<Dynamic>>
+	public function allObjectsUnderPoint (?mask :ObjectType) :Array<BaseSceneComponent>
 	{
 		mask = mask == null ? ObjectType.ALL : mask;
 		
@@ -397,16 +398,17 @@ class InputManager extends BaseInputManager,
 			return _displayObjectsUnderPoint.get(mask.hashCode());
 		}
 		
-		var underPoint = new Array<BaseSceneComponent<Dynamic>>();
+		var underPoint = new Array<BaseSceneComponent>();
 		if (getSceneManagers() == null) {
 			return underPoint;
 		}
 		
 		for (sceneManager in getSceneManagers()) {
-			var worldLoc = sceneManager.translateScreenToWorld(inputLocation);
+			var worldLoc = SceneTransformUtil.translateScreenToWorld(sceneManager, inputLocation); 
+			// var worldLoc = sceneManager.translateScreenToWorld(inputLocation);
 			var layerIndex = sceneManager.children.length - 1;
 			while (layerIndex >= 0) {
-				var layer :BaseSceneLayer<Dynamic, Dynamic> = sceneManager.children[layerIndex];
+				var layer :BaseSceneLayer = sceneManager.children[layerIndex];
 				layerIndex--;
 				//If the layer doesn't match the mask, ignore all the children.  Saves iterations
 				if (!layer.objectMask.and(mask)) {
@@ -415,7 +417,7 @@ class InputManager extends BaseInputManager,
 				}
 				var childIndex = layer.children.length -1;
 				while (childIndex >= 0) {
-					var so :BaseSceneComponent<Dynamic> = layer.children[childIndex];
+					var so :BaseSceneComponent = layer.children[childIndex];
 					childIndex--;
 					if (so.containsWorldPoint(worldLoc, mask)) {
 						underPoint.push(so);
@@ -428,7 +430,7 @@ class InputManager extends BaseInputManager,
 		return underPoint;
 	}
 	
-	public function firstObjectUnderPoint (?mask :ObjectType) :BaseSceneComponent<Dynamic>
+	public function firstObjectUnderPoint (?mask :ObjectType) :BaseSceneComponent
 	{
 		mask = mask == null ? ObjectType.ALL : mask;
 		
@@ -443,10 +445,10 @@ class InputManager extends BaseInputManager,
 		}
 		org.transition9.util.Assert.isNotNull(getSceneManagers());
 		for (sceneManager in getSceneManagers()) {
-			var worldLoc = sceneManager.translateScreenToWorld(inputLocation);
+			var worldLoc = SceneTransformUtil.translateScreenToWorld(sceneManager, inputLocation);
 			var layerIndex = sceneManager.children.length - 1;
 			while (layerIndex >= 0) {
-				var layer :BaseSceneLayer<Dynamic, Dynamic> = sceneManager.children[layerIndex];
+				var layer :BaseSceneLayer = sceneManager.children[layerIndex];
 				layerIndex--;
 				//If the layer doesn't match the mask, ignore all the children.  Saves iterations
 				if (!layer.objectMask.and(mask)) {
@@ -455,7 +457,7 @@ class InputManager extends BaseInputManager,
 				}
 				var childIndex = layer.children.length -1;
 				while (childIndex >= 0) {
-					var so :BaseSceneComponent<Dynamic> = layer.children[childIndex];
+					var so :BaseSceneComponent = layer.children[childIndex];
 					childIndex--;
 					//Copy to a temp vec, in case the object modifies the the argument
 					_tempVec.x = worldLoc.x;

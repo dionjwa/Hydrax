@@ -11,7 +11,7 @@ import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.engine.core.PropertyReference;
 import org.transition9.rtti.ReflectUtil;
 
-class SceneManagerList extends NodeComponent<Dynamic, BaseSceneManager<Dynamic>>
+class SceneManagerList extends NodeComponent
 {
 	inline public static var NAME :String = ReflectUtil.tinyName(SceneManagerList);
 	inline public static var PROP = new PropertyReference<SceneManagerList>("#" + NAME + "." + NAME);

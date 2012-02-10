@@ -38,7 +38,7 @@ class ProgressBar extends EntityComponent
 	static var DISPLAY_NAME = "display";
 
 	public var persistTimeAfterComplete :Float;
-	public var layerProperty :PropertyReference<BaseSceneLayer<BaseSceneManager<Dynamic>, BaseSceneComponent<Dynamic>>>;
+	public var layerProperty :PropertyReference<BaseSceneLayer>;
 	
 	/** Tasks in a task set that are still in progress  */
 	var _taskSetProgress :SetMultiMap<String, String>;
@@ -76,7 +76,7 @@ class ProgressBar extends EntityComponent
 	override function onReset () :Void
 	{
 		super.onReset();
-		var disp :BaseSceneComponent<Dynamic> = owner.getComponentByName(DISPLAY_NAME);
+		var disp :BaseSceneComponent = owner.getComponentByName(DISPLAY_NAME);
 		org.transition9.util.Assert.isNotNull(disp);
 		//Start NOT on the layer.
 		disp.removeFromParent();
@@ -86,7 +86,7 @@ class ProgressBar extends EntityComponent
 		
 		//Center
 		org.transition9.util.Assert.isNotNull(layerProperty);
-		var layer = owner.getProperty(layerProperty);
+		var layer :BaseSceneLayer = owner.getProperty(layerProperty);
 		org.transition9.util.Assert.isNotNull(layer, "No layer, prop=" + layerProperty);
 		var p = SceneUtil.getAlignedPoint(layer.scene, SceneAlignment.CENTER);
 		SceneUtil.setLocation(owner, p.x, p.y - layer.scene.sceneView.height / 4);
@@ -127,7 +127,7 @@ class ProgressBar extends EntityComponent
 	
 	function redraw () :Void
 	{
-		var disp :BaseSceneComponent<Dynamic> = owner.getComponentByName(DISPLAY_NAME);
+		var disp :BaseSceneComponent = owner.getComponentByName(DISPLAY_NAME);
 		org.transition9.util.Assert.isNotNull(disp, " disp is null");
 		if (_taskSetProgress.length == 0) {
 			if (disp.layer != null) {

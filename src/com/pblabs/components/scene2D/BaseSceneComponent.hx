@@ -23,19 +23,29 @@ import de.polygonal.motor.geom.primitive.AABB2;
 
 import flash.geom.Matrix;
 
-using com.pblabs.components.scene2D.SceneUtil;
 using com.pblabs.engine.core.SignalBondManager;
 using com.pblabs.engine.util.PBUtil;
 using org.transition9.geom.Vec2Tools;
 using org.transition9.util.ArrayUtil;
 using org.transition9.util.StringUtil;
 
-class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeComponent<Layer, Dynamic>,
+// class BaseSceneComponent<Layer :BaseSceneLayer> extends NodeComponent<Layer, Dynamic>,
+// 		implements IInteractiveComponent, implements haxe.rtti.Infos, implements IBounded
+class BaseSceneComponent extends NodeComponent,
 		implements IInteractiveComponent, implements haxe.rtti.Infos, implements IBounded
 {
 	public var objectMask (get_objectMask, set_objectMask) :ObjectType;
-	// public var layer (get_layer, null) :BaseSceneLayer<Dynamic, Dynamic>;
-	public var layer (get_layer, null) :BaseSceneLayer<Dynamic, Dynamic>;
+	// public var layer (get_layer, null) :BaseSceneLayer;
+	// function get_layer () :BaseSceneLayer
+	// {
+	// 	return cast parent;
+	// }
+	public var layer (get_layer, null) :Dynamic;
+	function get_layer () :Dynamic
+	{
+		return cast parent;
+	}
+	// public var layer (get_layer, null) :Dynamic;
 	public var x (get_x, set_x) :Float;
 	public var y (get_y, set_y) :Float;
 	public var width (get_width, set_width) :Float;
@@ -141,9 +151,11 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		if (!objectMask.and(mask)) {
 			return false;
 		}
-		var scene :BaseSceneManager<Dynamic> = cast parent.scene;
-		org.transition9.util.Assert.isNotNull(scene);
-		return containsWorldPoint(scene.translateScreenToWorld(pos), mask);
+		trace("fixme 345noisrg");
+		return false;
+		// var scene :BaseSceneManager = cast parent.parent;
+		// org.transition9.util.Assert.isNotNull(scene);
+		// return containsWorldPoint(SceneTransformUtil.translateScreenToWorld(scene, pos), mask);
 	}
 	
 	public function containsWorldPoint (pos :Vec2, mask :ObjectType) :Bool
@@ -209,11 +221,6 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 		super.onRemove();
 		//Reset defaults in case we are pooled
 		setDefaults();
-	}
-	
-	function get_layer () :BaseSceneLayer<Dynamic, Dynamic>
-	{
-		return cast parent;
 	}
 	
 	function get_x () :Float
@@ -351,16 +358,16 @@ class BaseSceneComponent<Layer :BaseSceneLayer<Dynamic, Dynamic>> extends NodeCo
 	
 	function get_zIndex () :Int
 	{
-		return layer == null ? _zIndex : layer.children.indexOf(this);
+		return parent == null ? _zIndex : parent.children.indexOf(this);
 	}
 	
 	function set_zIndex (val :Int) :Int
 	{
-		if (layer == null) {
+		if (parent == null) {
 			_zIndex = val;
 		} else {
-			_zIndex = Mathematics.clamp(val, 0, layer.children.length - 1);
-			var curIndex = layer.children.indexOf(this);
+			_zIndex = Mathematics.clamp(val, 0, parent.children.length - 1);
+			var curIndex = parent.children.indexOf(this);
 			org.transition9.util.Assert.isTrue(curIndex > -1);
 			if (curIndex != _zIndex) {
 				layer.children.splice(curIndex, 1);

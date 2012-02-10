@@ -33,10 +33,10 @@ class PagedScreen extends PBContext
 	
 	var _backButton :IEntity;
 	var _titlePanel :IEntity;
-	var _layerBackground :BaseSceneLayer<Dynamic, Dynamic>;
-	var _layerForeground :BaseSceneLayer<Dynamic, Dynamic>;
+	var _layerBackground :BaseSceneLayer;
+	var _layerForeground :BaseSceneLayer;
 	
-	public var scene (default, null) :BaseSceneManager<Dynamic>;
+	public var scene (default, null) :BaseSceneManager;
 	
 	public function new ()
 	{

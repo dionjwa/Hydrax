@@ -701,12 +701,16 @@ class Serializer extends PBManagerBase
 	
 	public static function serializeVec2 (val :Dynamic, xml :Xml) :Void
 	{
-		Vec2Tools.serializeVec2(cast val, xml);
+		xml.createChild("x", val.x, Serializer.serializeFloat);
+		xml.createChild("y", val.y, Serializer.serializeFloat);
 	}
 	
 	public static function deserializeVec2 (object :Dynamic, xml :Xml, typeHint :String) :Dynamic
 	{
-		return Vec2Tools.deserializeVec2(xml);
+		var v = new Vec2();
+		v.x = xml.parseFloat("x");
+		v.y = xml.parseFloat("y");
+		return v;
 	}
 	
 	public static function serializeSerializable(val :Dynamic, xml :Xml) :Void

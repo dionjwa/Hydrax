@@ -16,11 +16,6 @@ import hsl.js.translating.JSSignaler;
 
 using hsl.js.data.Touch;
 
-#if !js
-//Only on js platform for now
-#error
-#end
-
 /**
  * Javascript only ATM.  What other platforms support gestures?
  * 

@@ -110,8 +110,10 @@ class BitmapDataScene extends com.pblabs.components.scene2D.flash.SceneManager
 		// Now traverse everything and draw it!
 		// TODO :Be friendly towards caching layers.
 		var m :Matrix = new Matrix();
-		for(layer in children) {
-			for (d in layer.children) {
+		for(layerUntyped in children) {
+			var layer :SceneLayer = cast layerUntyped;
+			for (sceneCompUntyped in layer.children) {
+				var d :SceneComponent = cast sceneCompUntyped;
 				if (!d.visible) {
 					continue;
 				}

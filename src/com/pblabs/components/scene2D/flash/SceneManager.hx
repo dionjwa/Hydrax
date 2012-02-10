@@ -8,9 +8,10 @@
  ******************************************************************************/
 package com.pblabs.components.scene2D.flash;
 
+import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene2D.BaseSceneManager;
-import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.scene2D.SceneView;
+import com.pblabs.components.scene2D.SceneTransformUtil;
 import com.pblabs.components.scene2D.flash.SceneLayer;
 import com.pblabs.engine.time.IAnimatedObject;
 
@@ -34,7 +35,7 @@ using org.transition9.util.DisplayUtils;
  * DisplayObjectRenderers, and makes sure that they are drawn. Extensible
  * for more complex rendering scenarios. Enforces sorting order, too.
  */
-class SceneManager extends BaseSceneManager<SceneLayer>, 
+class SceneManager extends BaseSceneManager, 
 	implements IAnimatedObject
 {
 	public var zoomSignal (default, null):Signaler<Float>;
@@ -57,7 +58,7 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 		_tempPoint = new Vec2();
 	}
 	
-	override public function setLayerIndex (layer :SceneLayer, index :Int) :Void
+	override public function setLayerIndex (layer :BaseSceneLayer, index :Int) :Void
 	{
 		super.setLayerIndex(layer, index);
 		_rootSprite.removeAllChildren();
@@ -135,21 +136,23 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 		Preconditions.checkNotNull(_tempPoint);
 		Preconditions.checkNotNull(sceneAlignment);
 		Preconditions.checkNotNull(sceneView);
-		SceneUtil.calculateOutPoint(_tempPoint, sceneAlignment, sceneView.width, sceneView.height);
+		SceneTransformUtil.calculateOutPoint(_tempPoint, sceneAlignment, sceneView.width, sceneView.height);
 		_rootTransform.translate(_tempPoint.x, _tempPoint.y);
 
 		// Apply the transform.
 		_rootSprite.transform.matrix = _rootTransform;
 	}
 	
-	override function childAdded (layer :SceneLayer) :Void
+	override function childAdded (layerUntyped :NodeComponent) :Void
 	{
+		var layer :SceneLayer = cast layerUntyped;
 		super.childAdded(layer);
 		_rootSprite.addChild(layer.displayContainer);
 	}
 	
-	override function childRemoved (layer :SceneLayer) :Void
+	override function childRemoved (layerUntyped :NodeComponent) :Void
 	{
+		var layer :SceneLayer = cast layerUntyped;
 		super.childRemoved(layer);
 		_rootSprite.removeChild(layer.displayContainer);
 	}
@@ -172,7 +175,7 @@ class SceneManager extends BaseSceneManager<SceneLayer>,
 		}
 	}
 	
-	override function get_defaultLayerClass () :Class<SceneLayer>
+	override function get_defaultLayerClass () :Class<Dynamic>
 	{
 		return com.pblabs.components.scene2D.flash.SceneLayer;
 	}

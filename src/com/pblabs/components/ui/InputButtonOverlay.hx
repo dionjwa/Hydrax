@@ -88,7 +88,7 @@ class InputButtonOverlay
 		removeFromParent();
 	}
 	
-	function drawOverlay (sc :BaseSceneComponent<Dynamic>) :Void
+	function drawOverlay (sc :BaseSceneComponent) :Void
 	{
 		org.transition9.util.Assert.isNotNull(sc, ' sc is null');
 		var b = sc.bounds;

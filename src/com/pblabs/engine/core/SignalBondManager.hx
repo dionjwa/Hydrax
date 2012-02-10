@@ -165,6 +165,7 @@ class SignalBondManager extends ArrayMultiMap<Int, Bond>,
 	{
 		org.transition9.util.Assert.isNotNull(game, "Is --macro RTTI.generate() called?");
 		//Listen to new contexts so we can listen to object removal
+		org.transition9.util.Assert.isNotNull(game.signalContextSetup, "game.signalContextSetup is null");
 		bind(this, game.signalContextSetup, onNewContext);
 		if (game.currentContext != null) {
 			onNewContext(game.currentContext);

@@ -11,6 +11,7 @@ package com.pblabs.components.scene2D;
 import com.pblabs.components.base.AlphaComponent;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.components.tasks.TaskComponentTicked;
+import com.pblabs.components.Constants;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.IPBContext;
@@ -27,9 +28,6 @@ using org.transition9.geom.Vec2Tools;
 
 class SceneUtil
 {
-	public static var DEFAULT_LAYER_NAME :String = "defaultLayer";
-	public static var SVG_NAMESPACE = "http://www.w3.org/2000/svg";
-
 	#if js
 	inline public static function applyTransform (element :js.Dom.HtmlDom, transform :flash.geom.Matrix) :Void
 	{
@@ -42,7 +40,7 @@ class SceneUtil
 	#end
 	
 	
-	public static var MANAGER_CLASS :Class<BaseSceneManager<Dynamic>> = 
+	public static var MANAGER_CLASS :Class<BaseSceneManager> = 
 		#if (flash || cpp)
 		com.pblabs.components.scene2D.flash.SceneManager;
 		// com.pblabs.components.scene2D.flash.BitmapDataScene;
@@ -53,7 +51,7 @@ class SceneUtil
 		#end
 		
 		
-	public static var LAYER_CLASS :Class<BaseSceneLayer<Dynamic, Dynamic>> = 
+	public static var LAYER_CLASS :Class<BaseSceneLayer> = 
 		#if (flash || cpp)
 		com.pblabs.components.scene2D.flash.SceneLayer;
 		#elseif js
@@ -67,13 +65,13 @@ class SceneUtil
 		#end
 
 	public static function createBaseScene (context :IPBContext, ?name :String = null, ?addDefaultLayer :Bool = false, 
-		?registerAsManager :Bool = true, ?cls :Class<Dynamic>) :BaseSceneManager<Dynamic>
+		?registerAsManager :Bool = true, ?cls :Class<Dynamic>) :BaseSceneManager
 	{
 		org.transition9.util.Assert.isNotNull(context);
 		var cls = cls == null ? MANAGER_CLASS : cls;
-		var scene = cast(context.addSingletonComponent(cls, name, true), BaseSceneManager<Dynamic>);
+		var scene = cast(context.addSingletonComponent(cls, name, true), BaseSceneManager);
 		//The spatial component is for panning control
-		scene.owner.addComponent(context.allocate(SpatialComponent), SpatialComponent.NAME);
+		scene.owner.addComponent(context.allocate(SpatialComponent), Constants.SPATIAL_NAME);
 		scene.owner.deferring = false;
 		if (registerAsManager) {
 			context.registerManager(IScene2D, scene, scene.name, true);
@@ -81,7 +79,7 @@ class SceneUtil
 		}
 		org.transition9.util.Assert.isNotNull(scene);
 		if (addDefaultLayer) {
-			scene.addLayer(SceneUtil.DEFAULT_LAYER_NAME);
+			scene.addLayer(SceneConstants.DEFAULT_LAYER_NAME);
 		}
 		return scene;
 	}
@@ -92,7 +90,7 @@ class SceneUtil
 			e = context.allocate(IEntity);
 		}
 		e.deferring = true;
-		e.addComponent(context.allocate(SpatialComponent), SpatialComponent.NAME);
+		e.addComponent(context.allocate(SpatialComponent), Constants.SPATIAL_NAME);
 		if (addTasks) {
 			e.addComponent(context.allocate(TaskComponentTicked), com.pblabs.components.tasks.TaskComponent.NAME);
 		}
@@ -100,12 +98,12 @@ class SceneUtil
 	}
 	
 	public static function addSceneComponent (e :IEntity, compClass :Class<Dynamic>, 
-		layer :BaseSceneLayer<Dynamic, Dynamic>, ?entityName :String) :IEntity
+		layer :BaseSceneLayer, ?entityName :String) :IEntity
 	{
 		org.transition9.util.Assert.isNotNull(e, ' e is null');
 		org.transition9.util.Assert.isNotNull(compClass, ' compClass is null');
 		org.transition9.util.Assert.isNotNull(layer, ' layer is null');
-		var sc :BaseSceneComponent<Dynamic> = e.context.allocate(compClass);
+		var sc :BaseSceneComponent = e.context.allocate(compClass);
 		sc.parentProperty = layer.entityProp();
 		e.addComponent(sc, entityName);
 		return e;
@@ -118,7 +116,7 @@ class SceneUtil
 		return e;
 	}
 	
-	public static function setSceneAlignment (e :IEntity, a :SceneAlignment, ?layer :BaseSceneLayer<Dynamic, Dynamic>) :IEntity
+	public static function setSceneAlignment (e :IEntity, a :SceneAlignment, ?layer :BaseSceneLayer) :IEntity
 	{
 		if (layer == null) {
 			var sc = e.getComponent(BaseSceneComponent);
@@ -248,32 +246,32 @@ class SceneUtil
 	 * @paramsceneHeight
 	 *
 	 */
-	public static function calculateOutPoint (outPoint :Vec2, alignment :SceneAlignment, sceneWidth :Float, sceneHeight :Float) :Vec2
-	{
-		org.transition9.util.Assert.isNotNull(outPoint);
-		org.transition9.util.Assert.isNotNull(alignment);
-		switch (alignment) {
-			case CENTER :
-				outPoint.x = sceneWidth * 0.5;
-				outPoint.y = sceneHeight * 0.5;
-			case TOP_LEFT :
-				outPoint.x = outPoint.y = 0;
-			case TOP_RIGHT :
-				outPoint.x = sceneWidth;
-				outPoint.y = 0;
-			case BOTTOM_LEFT :
-				outPoint.x = 0;
-				outPoint.y = sceneHeight;
-			case BOTTOM_RIGHT :
-				outPoint.x = sceneWidth;
-				outPoint.y = sceneHeight;
-			default:
-				throw "Not implemented";
-		}
-		return outPoint;
-	}
+	// public static function calculateOutPoint (outPoint :Vec2, alignment :SceneAlignment, sceneWidth :Float, sceneHeight :Float) :Vec2
+	// {
+	// 	org.transition9.util.Assert.isNotNull(outPoint);
+	// 	org.transition9.util.Assert.isNotNull(alignment);
+	// 	switch (alignment) {
+	// 		case CENTER :
+	// 			outPoint.x = sceneWidth * 0.5;
+	// 			outPoint.y = sceneHeight * 0.5;
+	// 		case TOP_LEFT :
+	// 			outPoint.x = outPoint.y = 0;
+	// 		case TOP_RIGHT :
+	// 			outPoint.x = sceneWidth;
+	// 			outPoint.y = 0;
+	// 		case BOTTOM_LEFT :
+	// 			outPoint.x = 0;
+	// 			outPoint.y = sceneHeight;
+	// 		case BOTTOM_RIGHT :
+	// 			outPoint.x = sceneWidth;
+	// 			outPoint.y = sceneHeight;
+	// 		default:
+	// 			throw "Not implemented";
+	// 	}
+	// 	return outPoint;
+	// }
 	
-	public static function getAlignedPoint (scene :BaseSceneManager<Dynamic>, borderAlignment :SceneAlignment) :Vec2
+	public static function getAlignedPoint (scene :BaseSceneManager, borderAlignment :SceneAlignment) :Vec2
 	{
 		var alignment = scene.sceneAlignment;
 		var sceneWidth = scene.sceneView.width;
@@ -332,25 +330,25 @@ class SceneUtil
 		return borderPoint;
 	}
 	
-	public static function translateScreenToWorld (sceneManager :BaseSceneManager<Dynamic>, screen :Vec2) :Vec2
-	{
-		var viewOffset = new Vec2();
-		calculateOutPoint(viewOffset, sceneManager.sceneAlignment, sceneManager.sceneView.width, sceneManager.sceneView.height);
-		return screen.subtract(viewOffset).scale(1.0 / sceneManager.zoom).rotate(sceneManager.rotation).subtract(new Vec2(sceneManager.x, sceneManager.y));
-	}
+	// public static function translateScreenToWorld (sceneManager :BaseSceneManager, screen :Vec2) :Vec2
+	// {
+	// 	var viewOffset = new Vec2();
+	// 	calculateOutPoint(viewOffset, sceneManager.sceneAlignment, sceneManager.sceneView.width, sceneManager.sceneView.height);
+	// 	return screen.subtract(viewOffset).scale(1.0 / sceneManager.zoom).rotate(sceneManager.rotation).subtract(new Vec2(sceneManager.x, sceneManager.y));
+	// }
 	
-	public static function translateWorldToScreen (sceneManager :BaseSceneManager<Dynamic>, world :Vec2) :Vec2
-	{
-		var viewOffset = new Vec2();
-		calculateOutPoint(viewOffset, sceneManager.sceneAlignment, sceneManager.sceneView.width, sceneManager.sceneView.height);
-		return world.add(new Vec2(sceneManager.x, sceneManager.y)).rotate(sceneManager.rotation).scale(sceneManager.zoom).add(viewOffset);
-	}
+	// public static function translateWorldToScreen (sceneManager :BaseSceneManager, world :Vec2) :Vec2
+	// {
+	// 	var viewOffset = new Vec2();
+	// 	calculateOutPoint(viewOffset, sceneManager.sceneAlignment, sceneManager.sceneView.width, sceneManager.sceneView.height);
+	// 	return world.add(new Vec2(sceneManager.x, sceneManager.y)).rotate(sceneManager.rotation).scale(sceneManager.zoom).add(viewOffset);
+	// }
 	
-	public static function getDisplayComponentUnderPoint (scene :BaseSceneManager<Dynamic>, screenPoint :Vec2, mask :ObjectType) :BaseSceneComponent<Dynamic>
+	public static function getDisplayComponentUnderPoint (scene :BaseSceneManager, screenPoint :Vec2, mask :ObjectType) :BaseSceneComponent
 	{
 		var layerIndex :Int = scene.layerCount - 1;
 		while (layerIndex >= 0) {
-			var layer :BaseSceneLayer<Dynamic, BaseSceneComponent<Dynamic>> = scene.getLayerAt(layerIndex);
+			var layer :BaseSceneLayer = scene.getLayerAt(layerIndex);
 			layerIndex--;
 			if (!layer.objectMask.and(mask)) {
 				continue;
@@ -381,7 +379,7 @@ class SceneUtil
 		return e;
 	}
 	
-	public static function setLayerColor (layer :BaseSceneLayer<Dynamic, Dynamic>, color :Int) :RectangleShape
+	public static function setLayerColor (layer :BaseSceneLayer, color :Int) :RectangleShape
 	{
 		var background = createBaseSceneEntity(layer.context, false);
 		var rect = layer.context.allocate(RectangleShape);
@@ -400,7 +398,7 @@ class SceneUtil
 		return rect;
 	}
 	
-	// public static function addImage (layer :BaseSceneLayer<Dynamic, Dynamic>, resource :ResourceToken) :BaseSceneComponent<Dynamic>
+	// public static function addImage (layer :BaseSceneLayer, resource :ResourceToken) :BaseSceneComponent
 	// {
 	// 	var e = layer.context.allocate(IEntity);
 	// 	var image = layer.context.allocate(com.pblabs.components.scene2D.ImageComponent);

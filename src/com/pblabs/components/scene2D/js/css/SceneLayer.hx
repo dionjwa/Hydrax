@@ -22,7 +22,7 @@ import org.transition9.util.DomUtil;
 
 class SceneLayer extends JSLayer
 {
-	inline public static function updateTransformFromScene (scene :BaseSceneManager<Dynamic>, layer :SceneLayer) :Void
+	inline public static function updateTransformFromScene (scene :BaseSceneManager, layer :SceneLayer) :Void
 	{
 		org.transition9.util.Assert.isNotNull(scene);
 		org.transition9.util.Assert.isNotNull(_tempPoint);

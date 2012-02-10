@@ -28,6 +28,7 @@ class SwfResource extends ResourcesBase<Dynamic>
 {
 	public var applicationDomain (get_applicationDomain, never) :ApplicationDomain; function get_applicationDomain () :ApplicationDomain { return _loader.contentLoaderInfo.applicationDomain; }
 	public var displayRoot (get_displayRoot, never) :DisplayObject; function get_displayRoot () :DisplayObject { return _loader.content; }
+	public var loader (get_loader, never) :Loader; function get_loader () :Loader { return _loader; }
 
 	var _source :Source;
 	var _loader :Loader;
@@ -153,10 +154,11 @@ class SwfResource extends ResourcesBase<Dynamic>
 			if (_onError != null) {
 				_onError("No embedded class: " + id);
 			}
-			return;
+		} else {
+			//It's a ByteArray/Asset
+			trace("Instantiating class=" + Type.getClassName(cls));
+			loadFromBytes(haxe.io.Bytes.ofData(Type.createInstance(cls, org.transition9.util.Constants.EMPTY_ARRAY)));
 		}
-		//It's a ByteArray/Asset
-		loadFromBytes(haxe.io.Bytes.ofData(Type.createInstance(cls, org.transition9.util.Constants.EMPTY_ARRAY)));
 	}
 	
 	override public function unload () :Void

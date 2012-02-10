@@ -12,6 +12,7 @@ import com.pblabs.components.input.InputManager;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.scene2D.BaseSceneManager;
 import com.pblabs.components.scene2D.SceneUtil;
+import com.pblabs.components.scene2D.SceneTransformUtil;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.components.tasks.AnimatePropertyTask;
 import com.pblabs.components.tasks.TaskComponent;
@@ -38,7 +39,7 @@ import hsl.haxe.Signaler;
 
 using Type;
 
-using com.pblabs.components.scene2D.SceneUtil;
+
 using com.pblabs.components.tasks.TaskUtil;
 using com.pblabs.engine.util.PBUtil;
 using org.transition9.geom.Vec2Tools;
@@ -62,7 +63,7 @@ enum Constraint {
 class DragManager extends EntityComponent, 
 	implements IPBManager, implements haxe.rtti.Infos
 {
-	public var dragSignaler :Signaler<BaseSceneComponent<Dynamic>>;
+	public var dragSignaler :Signaler<BaseSceneComponent>;
 	public var dragEndedSignaler :Signaler<Void>;
 	
 	/** When panning stops, does the scene ease out? */
@@ -77,8 +78,8 @@ class DragManager extends EntityComponent,
 	public var timeToHalt :Float;
 
 	var isPanning (get_isPanning, set_isPanning) :Bool;
-	var _scene :BaseSceneManager<Dynamic>;
-	var _sceneComponent :BaseSceneComponent<Dynamic>;
+	var _scene :BaseSceneManager;
+	var _sceneComponent :BaseSceneComponent;
 	var _panVectors :Array<Vec2>;
 	var _lastMouseMove :Vec2;
 	var _isPanning :Bool;
@@ -137,7 +138,7 @@ class DragManager extends EntityComponent,
 		}
 	}
 	
-	public function panScene (scene :BaseSceneManager<Dynamic>, ?easing :Bool = true, ?pauseScene :Bool = false) :Void
+	public function panScene (scene :BaseSceneManager, ?easing :Bool = true, ?pauseScene :Bool = false) :Void
 	{
 		endPanning();
 		_isEasing = easing;
@@ -158,7 +159,7 @@ class DragManager extends EntityComponent,
 		beginPanning();
 	}
 	
-	public function panComponent (c :BaseSceneComponent<Dynamic>, ?easing :Bool = false, ?pauseScene :Bool = false, 
+	public function panComponent (c :BaseSceneComponent, ?easing :Bool = false, ?pauseScene :Bool = false, 
 		?xProp :PropertyReference<Float> = null, 
 		?yProp :PropertyReference<Float> = null,
 		?constraint :Constraint = null,
@@ -268,8 +269,8 @@ class DragManager extends EntityComponent,
 				}
 				
 			} else {//Pan the _sceneComponent
-				var worldStart = SceneUtil.translateScreenToWorld(_sceneComponent.layer.parent, _startMouse);
-				var worldNow = SceneUtil.translateScreenToWorld(_sceneComponent.layer.parent, e.inputLocation);
+				var worldStart = SceneTransformUtil.translateScreenToWorld(_sceneComponent.layer.parent, _startMouse);
+				var worldNow = SceneTransformUtil.translateScreenToWorld(_sceneComponent.layer.parent, e.inputLocation);
 				var worldDiff = worldNow.subtract(worldStart).scaleLocal(_zoomFactor);
 				
 				if (_constraint != null) {

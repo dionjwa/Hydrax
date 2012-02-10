@@ -40,7 +40,7 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 	}
 	
 	override public function addLayer (?layerName :String = null, ?cls :Class<Dynamic> = null, ?registerAsManager :Bool = false,
-		?startDetached :Bool = false) :BaseSceneLayer<Dynamic, Dynamic>
+		?startDetached :Bool = false) :BaseSceneLayer
 	{
 		cls = cls == null || cls == JSLayer ? defaultLayerClass : cls; 
 		return super.addLayer(layerName, cls, registerAsManager, startDetached);

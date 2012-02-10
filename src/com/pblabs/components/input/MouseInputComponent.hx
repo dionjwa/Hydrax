@@ -155,11 +155,11 @@ class MouseInputComponent extends EntityComponent
 		_bounds = _bounds == null ? owner.getComponent(IInteractiveComponent) : _bounds;
 		org.transition9.util.Assert.isNotNull(_bounds, "bounds is null, There's no IInteractiveComponent by type and the boundsProperty is null.  How are we supposed to work?");
 		
-		var input = context.getManager(InputManager);
-		org.transition9.util.Assert.isNotNull(input, "No InputManager?");
+		// var input = context.getManager(InputManager);
+		// org.transition9.util.Assert.isNotNull(input, "No InputManager?");
 
-		SignalBondManager.bindSignal(this, input.deviceDown, onMouseDownInternal);
-		SignalBondManager.bindSignal(this, input.deviceUp, onMouseUpInternal);
+		// SignalBondManager.bindSignal(this, input.deviceDown, onMouseDownInternal);
+		// SignalBondManager.bindSignal(this, input.deviceUp, onMouseUpInternal);
 	}
 	
 	override function onRemove () :Void
@@ -196,14 +196,14 @@ class MouseInputComponent extends EntityComponent
 					_deviceDownSignaler.dispatch();
 				}
 				
-				_deviceHeldDownBond = context.getManager(InputManager).deviceHeldDown.bind(onDeviceHeldDownInternal);
+				// _deviceHeldDownBond = context.getManager(InputManager).deviceHeldDown.bind(onDeviceHeldDownInternal);
 				
-				if (isTranslatable) {
-					var dragger = context.getManager(DragManager);
-					if (dragger != null) {
-						dragger.panComponent(cast _bounds, false, false, null, null, constraint);
-					}
-				}
+				// if (isTranslatable) {
+				// 	var dragger = context.getManager(DragManager);
+				// 	if (dragger != null) {
+				// 		dragger.panComponent(cast _bounds, false, false, null, null, constraint);
+				// 	}
+				// }
 			}
 		}
 	}

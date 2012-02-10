@@ -29,11 +29,8 @@
 package com.pblabs.components.tasks;
 
 import com.pblabs.components.tasks.AnimatePropertyTask;
-import com.pblabs.components.tasks.LocationTask;
 import com.pblabs.components.tasks.ParallelTask;
 import com.pblabs.engine.core.PropertyReference;
-
-import haxe.Public;
 
 class LocationTask extends ParallelTask {
 	

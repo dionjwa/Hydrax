@@ -1,6 +1,6 @@
 package com.pblabs.components.minimalcomp;
 
-import com.pblabs.components.manager.NodeComponent;
+import com.pblabs.components.manager.NodeComponentTyped;
 import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.engine.core.PropertyReference;
@@ -21,7 +21,7 @@ using com.pblabs.engine.util.PBUtil;
   * set the children locations, e.g. as relative to the parent or 
   * arranged in a row.
   */
-class Component extends NodeComponent<Container, Component>
+class Component extends NodeComponentTyped<Container, Component>
 {
 	/** Used by containers that map locations to component ids */
 	public var id :String;
@@ -91,6 +91,7 @@ class Component extends NodeComponent<Container, Component>
 			redraw();
 		}
 		if (owner != null && owner.getComponent(BaseSceneComponent) != null) {
+			// trace("fixme 3454563r5");
 			if (owner.getComponent(BaseSceneComponent).layer != null) {
 				owner.getComponent(BaseSceneComponent).layer.zOrderDirty = true;
 			}

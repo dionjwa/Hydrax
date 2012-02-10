@@ -17,9 +17,9 @@ import de.polygonal.core.math.Vec2;
   */
 interface IInputData
 {
-	function allObjectsUnderPoint (?mask :ObjectType) :Array<BaseSceneComponent<Dynamic>>;
+	function allObjectsUnderPoint (?mask :ObjectType) :Array<BaseSceneComponent>;
 	
-	function firstObjectUnderPoint (?mask :ObjectType) :BaseSceneComponent<Dynamic>;
+	function firstObjectUnderPoint (?mask :ObjectType) :BaseSceneComponent;
 	
 	var inputLocation (get_inputLocation, null) :Vec2;
 	

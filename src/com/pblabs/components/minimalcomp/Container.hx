@@ -30,7 +30,7 @@ class Container extends Component
 		// invalidate();
 	}
 	
-	public var sceneLayer :BaseSceneLayer<Dynamic, Dynamic>;
+	public var sceneLayer :BaseSceneLayer;
 	public var alignment :Alignment;
 	public var destroyChildrenIfDestroyed :Bool;
 	// public var bounds (get_bounds, null) :AABB2;

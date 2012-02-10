@@ -9,7 +9,7 @@
 
 package com.pblabs.components.tasks;
 
-import com.pblabs.components.scene2D.BaseSceneComponent;
+// import com.pblabs.components.scene2D.BaseSceneComponent;
 import com.pblabs.engine.core.IEntity;
 import org.transition9.util.Preconditions;
 import org.transition9.rtti.ReflectUtil;
@@ -45,17 +45,17 @@ class AlphaTask extends InterpolatingTask
 	
 	public override function update (dt :Float, obj :IEntity) :Bool
 	{
-		if (0 == _elapsedTime) {
-			org.transition9.util.Assert.isNotNull(obj.getComponent(BaseSceneComponent), ' obj.getComponent(BaseSceneComponent) is null');
-			_from = obj.getComponent(BaseSceneComponent).alpha;
-			if (Math.isNaN(_from)) {
-				throw "_from must be non null, and must be a numerical property.";
-			}
-		}
-		super.update(dt, obj);
-		for (sc in obj.getComponents(BaseSceneComponent)) {
-			sc.alpha = interpolate(_from, _to);
-		}
+		// if (0 == _elapsedTime) {
+		// 	org.transition9.util.Assert.isNotNull(obj.getComponent(BaseSceneComponent), ' obj.getComponent(BaseSceneComponent) is null');
+		// 	_from = obj.getComponent(BaseSceneComponent).alpha;
+		// 	if (Math.isNaN(_from)) {
+		// 		throw "_from must be non null, and must be a numerical property.";
+		// 	}
+		// }
+		// super.update(dt, obj);
+		// for (sc in obj.getComponents(BaseSceneComponent)) {
+		// 	sc.alpha = interpolate(_from, _to);
+		// }
 		return (_elapsedTime >= _totalTime);
 	}
 

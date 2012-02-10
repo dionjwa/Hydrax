@@ -8,12 +8,12 @@
  ******************************************************************************/
 package com.pblabs.components.scene2D.flash;
 
+import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene2D.BaseSceneLayer;
 import com.pblabs.components.scene2D.SceneAlignment;
-import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.scene2D.SceneView;
 
-import de.polygonal.core.math.Vec2;
+import de.polygonal.core.math.Vec2;                                                                                                                                                                   
 
 import flash.display.DisplayObjectContainer;
 import flash.display.Sprite;
@@ -24,7 +24,7 @@ import org.transition9.util.Preconditions;
 
 using Lambda;
 
-class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
+class SceneLayer extends BaseSceneLayer
 {
 	public var dirty :Bool;
 	public var displayContainer (get_displayContainer, never) :DisplayObjectContainer;
@@ -67,18 +67,20 @@ class SceneLayer extends BaseSceneLayer<SceneManager, SceneComponent>
 		}
 	}
 	
-	override function childAdded (c :SceneComponent) :Void
+	override function childAdded (c :NodeComponent) :Void
 	{
+		var sc :SceneComponent = cast c;
 		com.pblabs.engine.debug.Profiler.enter("flashSceneLayer.childAdded");
-		super.childAdded(c);
-		_displayContainer.addChild(c.displayObject);
+		super.childAdded(sc);
+		_displayContainer.addChild(sc.displayObject);
 		com.pblabs.engine.debug.Profiler.exit("flashSceneLayer.childAdded");
 	}
 	
-	override function childRemoved (c :SceneComponent) :Void
+	override function childRemoved (c :NodeComponent) :Void
 	{
-		super.childRemoved(c);
-		_displayContainer.removeChild(c.displayObject);
+		var sc :SceneComponent = cast c;
+		super.childRemoved(sc);
+		_displayContainer.removeChild(sc.displayObject);
 	}
 	
 	override function onAdd () :Void

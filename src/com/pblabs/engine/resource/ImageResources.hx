@@ -54,5 +54,23 @@ class ImageResources extends LoadingResources<ImageType>
 	{
 		return cast(loaderData, flash.display.Bitmap);
 	}
+	
+	override function loadFromEmbedded (token :ResourceToken) :Void
+	{
+		var id = switch(token.source) {
+			case embedded(embedId): embedId;
+			default: throw "Token is not embedded " + token; null;
+		}	
+		var cls :Class<Dynamic> = ResourceTools.resolveEmbeddedClassName(id);
+		if (cls == null) {
+			if (_onError != null) {
+				_onError("No embedded class: " + id);
+			}
+		} else {
+			_data.set(token, Type.createInstance(cls, org.transition9.util.Constants.EMPTY_ARRAY));
+			_loading.remove(token);
+			maybeFinish();
+		}
+	}
 	#end
 }

@@ -18,7 +18,7 @@ import flash.geom.Matrix;
 /**
   * A 2D layer holding 2DSceneComponents.
   */
-class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneComponent<Dynamic>> extends NodeComponent<Scene, Component>,
+class BaseSceneLayer extends NodeComponent,
 	implements IAnimatedObject, implements haxe.rtti.Infos
 {
 	public var priority :Int;
@@ -26,7 +26,11 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 	/** For ignoring all objects in a layer */
 	public var objectMask :ObjectType;
 	@editor({ui:"UpdatingLabel"})
-	public var scene (get_scene, never) :BaseSceneManager<Dynamic>;
+	public var scene (get_scene, never) :BaseSceneManager;
+	function get_scene () :BaseSceneManager
+	{
+		return cast parent;
+	}
 	@editor({ui:"NumericStepper", min:0})
 	public var index (get_index, set_index) :Int;
 	@editor({ui:"HUISlider", min:0.0, max:3.0})
@@ -42,7 +46,7 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 	var _alpha :Float;
 	
 	/** Optionally sort the display children when children are added */
-	public var sorter :Array<BaseSceneComponent<Dynamic>>->Void;
+	public var sorter :Array<BaseSceneComponent>->Void;
 	
 	#if editor
 	@editor({ui:"UpdatingLabel"})
@@ -79,7 +83,7 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 		com.pblabs.engine.debug.Profiler.exit("onFrame");
 	}
 	
-	override function childAdded (c :Component) :Void
+	override function childAdded (c :NodeComponent) :Void
 	{
 		super.childAdded(c);
 		zOrderDirty = true;
@@ -104,22 +108,19 @@ class BaseSceneLayer<Scene :BaseSceneManager<Dynamic>, Component :BaseSceneCompo
 		_transformMatrix = new Matrix();
 	}
 	
-	function get_scene () :BaseSceneManager<Dynamic>
-	{
-		return cast parent;
-	}
+	
 	
 	function get_index () :Int
 	{
 		Preconditions.checkNotNull(parent, "You must property add the Layer component before changing the index");
-		return parent.getLayerIndex(this);
+		return cast(parent, BaseSceneManager).getLayerIndex(this);
 	}
 	
 	function set_index (val :Int) :Int
 	{
 		Preconditions.checkNotNull(parent, "You must property add the Layer component before changing the index");
-		parent.setLayerIndex(this, val);
-		return parent.getLayerIndex(this);
+		cast(parent, BaseSceneManager).setLayerIndex(this, val);
+		return cast(parent, BaseSceneManager).getLayerIndex(this);
 	}
 	
 	function get_parallaxFactor () :Float

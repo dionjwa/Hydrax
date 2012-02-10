@@ -74,7 +74,7 @@ class HierarchyManager extends PBManager
 	}
 	
 	public function setAsChild (parent :IEntity, parentResource :ResourceToken, 
-		childKey :String, child :BaseSceneComponent<Dynamic>) :Void
+		childKey :String, child :BaseSceneComponent) :Void
 	{
 		org.transition9.util.Assert.isNotNull(parent);
 		org.transition9.util.Assert.isNotNull(childKey);

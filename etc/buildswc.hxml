@@ -1,13 +1,15 @@
 #Build file for building the stand-alone swc containing hydrax, transition9, hsl, polygonal, robothaxe, feffects
 #This allows it to be used from AS3 projects.
 
+-cmd mkdir -p build
+--next
 
 # --macro include('hsl')
 # --macro include('feffects', true, [], ['/usr/lib/haxe/lib/feffects/1,2,0/'])
 
 # --macro exclude('de.polygonal.core.sound.*')
 
-
+--macro RTTI.generate()
 
 
 
@@ -15,8 +17,9 @@
 -cp /usr/lib/haxe/lib/feffects/1,2,0/
 --macro include('feffects')
 
--cp /usr/lib/haxe/lib/polygonal/1,20/
---macro include('de', true, ['de.polygonal.core.sound', 'de.polygonal.core.log.handler.FileHandler', 'de.polygonal.core.util.SysMon'])
+-lib polygonal
+# -cp /usr/lib/haxe/lib/polygonal/1,20/
+# --macro include('de', true, ['de.polygonal.core.sound', 'de.polygonal.core.log.handler.FileHandler', 'de.polygonal.core.util.SysMon'])
 
 
 # -cp /usr/lib/haxe/lib/hsl-1/1,6/
@@ -31,9 +34,9 @@
 --macro include('robothaxe')
 
 
-
--cp lib/transition9/src
---macro include('org.transition9', true, ['org.transition9.util.JsLibs', 'org.transition9.serialization.Serialization', 'org.transition9.geom.Vector2', 'org.transition9.util.JsDebugUtil',  'org.transition9.util.svg'])
+-lib transition9
+# -cp lib/transition9/src
+# --macro include('org.transition9', true, ['org.transition9.util.JsLibs', 'org.transition9.serialization.Serialization', 'org.transition9.geom.Vector2', 'org.transition9.util.JsDebugUtil',  'org.transition9.util.svg'])
 #'org.transition9.geom.bounds',
 
 # -cp /usr/lib/haxe/lib/gm2d/1,0/
@@ -42,12 +45,16 @@
 -cp /usr/lib/haxe/lib/nme/3,1,1
 --macro include('nme', true, ['neko', 'samples', 'tools'])
 
+-lib gm2d
 
 -cp src
---macro include('com.pblabs', true, ['com.pblabs.engine.resource.SvgResources', 'com.pblabs.components.scene2D.HierarchyManager', 'com.pblabs.components.scene2D.SvgImageTools', 'com.pblabs.components.scene2D.Svg', 'com.pblabs.components.scene2D.SvgRenderTools', 'com.pblabs.engine.resource.BitmapCacheResource', 'com.pblabs.components.scene2D.SvgAnchors', 'com.pblabs.components.base.BoundedComponent', 'com.pblabs.components.scene2D.js', 'com.pblabs.components.physics', 'com.pblabs.components.jquerymobile', 'com.pblabs.components.iui.IUIScreen'])
+--macro include('com.pblabs', true, ['jeash', 'com.pblabs.components.scene2D.SvgRenderTools', 'com.pblabs.components.scene2D.body.BodySpriteListComponent', 'com.pblabs.components.input.TouchInputManager', 'com.pblabs.components.scene2D.spritesheet', 'com.pblabs.engine.resource.SvgResources', 'com.pblabs.components.scene2D.HierarchyManager', 'com.pblabs.components.scene2D.SvgImageTools', 'com.pblabs.components.scene2D.Svg', 'com.pblabs.components.scene2D.SvgRenderTools', 'com.pblabs.engine.resource.BitmapCacheResource', 'com.pblabs.components.scene2D.SvgAnchors', 'com.pblabs.components.base.BoundedComponent', 'com.pblabs.components.scene2D.js', 'com.pblabs.components.physics', 'com.pblabs.components.jquerymobile', 'com.pblabs.components.iui.IUIScreen'])
+--macro include('org.transition9')
+# --macro include('jeash')
 
 
 
 -swf-version 10
--swf hydrax.swc
+-swf build/hydrax.swc
+# -as3 build/as3
 

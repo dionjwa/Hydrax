@@ -23,7 +23,7 @@ class AnimationTools
 		return e;
 	}
 	
-	public static function scaleLayer (layer :BaseSceneLayer<Dynamic, Dynamic>, beginscale :Float, endscale :Float, time :Float, 
+	public static function scaleLayer (layer :BaseSceneLayer, beginscale :Float, endscale :Float, time :Float, 
 		?onFinish :Void->Void) :Void
 	{
 		layer.scaleX = beginscale;
@@ -43,7 +43,7 @@ class AnimationTools
 		);
 	}
 	
-	public static function fadeLayer (layer :BaseSceneLayer<Dynamic, Dynamic>, beginAlpha :Float, endAlpha :Float, time :Float, 
+	public static function fadeLayer (layer :BaseSceneLayer, beginAlpha :Float, endAlpha :Float, time :Float, 
 		?onFinish :Void->Void, ?easing :EasingFunc) :Void
 	{
 		layer.alpha = beginAlpha;
