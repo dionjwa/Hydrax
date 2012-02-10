@@ -8,6 +8,7 @@ build/
 *cpp*
 lib/polygonal/build/
 tmp
+hydrax.swc
 src/Test*
 demo/panningAndZooming/upload.sh
 tests/build
