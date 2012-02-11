@@ -8,8 +8,6 @@
  ******************************************************************************/
 package com.pblabs.components.spatial;
 
-import com.pblabs.components.manager.INodeChild;
-import com.pblabs.components.manager.NodeChild;
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.Constants;
 import com.pblabs.engine.core.EntityComponent;
@@ -32,12 +30,9 @@ using org.transition9.util.XmlTools;
 /**
  * Very basic spatial component that exists at a position. 
  */ 
-class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeChild<Manager>,
-	implements ISpatialObject2D<Manager>//, implements INodeChild<ISpatialManager2D>
+class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeComponent//NodeChild<Manager>,
+	// implements ISpatialObject2D<Manager>//, implements INodeChild<ISpatialManager2D>
 {
-	public static var P_POINT :PropertyReference<Vec2> = new PropertyReference("@" + Constants.SPATIAL_NAME + ".position");
-	public static var P_SPATIAL :PropertyReference<SpatialComponent<Dynamic>> = new PropertyReference("@" + Constants.SPATIAL_NAME);
-	
 	public static function getLocation (c :IEntity) :Vec2
 	{
 	    return c.getComponent(SpatialComponent).position;

@@ -25,8 +25,8 @@ import de.polygonal.motor.geom.primitive.AABB2;
  * This is the basic interface for objects that support 2D spatial queries.
  * It is enough to do broad phase collision checks and ray casts.
  */ 
-interface ISpatialObject2D<Manager:ISpatialManager2D<Dynamic>>
-	implements IEntityComponent, implements INodeChild<Manager> 
+interface ISpatialObject2D//<Manager:ISpatialManager2D<Dynamic>>
+	implements IEntityComponent//, implements INodeChild<Manager> 
 {
 	
 	// var x (get_x, set_x) :Float;

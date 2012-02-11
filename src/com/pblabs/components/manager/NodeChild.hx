@@ -10,9 +10,7 @@ package com.pblabs.components.manager;
 
 import com.pblabs.engine.core.EntityComponent;
 import com.pblabs.engine.core.IEntity;
-import com.pblabs.engine.core.IEntityComponent;
 import com.pblabs.engine.core.PropertyReference;
-import com.pblabs.engine.serialization.ISerializable;
 import com.pblabs.engine.serialization.Serializer;
 import com.pblabs.engine.util.PBUtil;
 import org.transition9.util.Preconditions;

@@ -11,7 +11,7 @@ package com.pblabs.components.scene2D;
 import com.pblabs.components.input.IInteractiveComponent;
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.spatial.IBounded;
-import com.pblabs.components.spatial.SpatialComponent;
+import com.pblabs.components.Constants;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PropertyReference;
 import org.transition9.geom.RectangleTools;
@@ -70,7 +70,7 @@ class BaseSceneComponent extends NodeComponent,
 	public var autoAddToScene :Bool;
 	
 	/** We will listen to the signals of this coordinates component. */
-	public var spatialProperty :PropertyReference<SpatialComponent<Dynamic>>;
+	// public var spatialProperty :PropertyReference<SpatialComponent<Dynamic>>;
 	
 	var _x :Float;
 	var _y :Float;
@@ -122,7 +122,7 @@ class BaseSceneComponent extends NodeComponent,
 		_x = 0;
 		_y = 0;
 		_zIndex = -1;
-		spatialProperty = SpatialComponent.P_SPATIAL;
+		// spatialProperty = Constants.P_SPATIAL; 
 		autoAddToScene = true;
 	}
 	
@@ -183,28 +183,28 @@ class BaseSceneComponent extends NodeComponent,
 			org.transition9.util.Assert.isNotNull(parent, org.transition9.rtti.ReflectUtil.tinyClassName(this) + ".parent is null, prop=" + parentProperty);
 		}
 		
-		var coords = spatialProperty != null ? owner.getProperty(spatialProperty) : null;
-		com.pblabs.engine.debug.Profiler.enter("bindsignals");
-		if (coords != null) {
-			#if debug_hxhsl
-			var bond = bindSignal(coords.signalerLocation, setLocation);
-			bond.debugInfo = org.transition9.rtti.ReflectUtil.tinyClassName(this);
-			#else
-			bindSignal(coords.signalerLocation, setLocation);
-			#end
-			bindSignal(coords.signalerAngle, set_angle);
-			//Manually set the location on reseting: there may be discrepencies in timing
-			//such that the listeners and values are inconsistant.  So manually reset location.
-			setLocation(coords.position);
-			angle = coords.angle;
-		} else {
-			org.transition9.util.Log.info("No coords component found, you are on your own regarding updating Scene components " + org.transition9.util.Log.getStackTrace());
-		}
+		// var coords = spatialProperty != null ? owner.getProperty(spatialProperty) : null;
+		// com.pblabs.engine.debug.Profiler.enter("bindsignals");
+		// if (coords != null) {
+		// 	#if debug_hxhsl
+		// 	var bond = bindSignal(coords.signalerLocation, setLocation);
+		// 	bond.debugInfo = org.transition9.rtti.ReflectUtil.tinyClassName(this);
+		// 	#else
+		// 	bindSignal(coords.signalerLocation, setLocation);
+		// 	#end
+		// 	bindSignal(coords.signalerAngle, set_angle);
+		// 	//Manually set the location on reseting: there may be discrepencies in timing
+		// 	//such that the listeners and values are inconsistant.  So manually reset location.
+		// 	setLocation(coords.position);
+		// 	angle = coords.angle;
+		// } else {
+		// 	org.transition9.util.Log.info("No coords component found, you are on your own regarding updating Scene components " + org.transition9.util.Log.getStackTrace());
+		// }
 		com.pblabs.engine.debug.Profiler.exit("bindsignals");
 		
-		if (owner.getComponent(com.pblabs.components.base.AlphaComponent) != null) {
-			bindSignal(owner.getComponent(com.pblabs.components.base.AlphaComponent).signaler, set_alpha);
-		}
+		// if (owner.getComponent(com.pblabs.components.base.AlphaComponent) != null) {
+		// 	bindSignal(owner.getComponent(com.pblabs.components.base.AlphaComponent).signaler, set_alpha);
+		// }
 		
 		com.pblabs.engine.debug.Profiler.enter("removing");
 		if (!autoAddToScene) {

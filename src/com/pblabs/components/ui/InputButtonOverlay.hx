@@ -53,7 +53,8 @@ class InputButtonOverlay
 	
 	override function onReset () :Void
 	{
-		spatialProperty = null;
+		trace("fixme 943859846");
+		// spatialProperty = null;
 		parentProperty = null;
 		autoAddToScene = false;
 		super.onReset();

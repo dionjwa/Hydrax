@@ -24,7 +24,6 @@ import hsl.haxe.Signaler;
 import org.transition9.geom.Circle;
 import org.transition9.geom.Vec2Tools;
 import org.transition9.util.Preconditions;
-import org.transition9.util.SignalVarAdvanced;
 
 using de.polygonal.ds.BitFlags;
 

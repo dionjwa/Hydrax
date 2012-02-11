@@ -4,7 +4,6 @@ import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.engine.time.ITickedObject;
 
 import org.transition9.util.Preconditions;
-import org.transition9.util.SignalVar;
 
 import hsl.haxe.DirectSignaler;
 import hsl.haxe.Signaler;
@@ -42,7 +41,7 @@ class PhysicsManagerPhysaxe extends NodeComponent<Dynamic, PhysicsComponentPhysa
 	public function new (?gravity :Vec2)
 	{
 		super();
-		internalScale = 1.0;//new SignalVar(1.0);
+		internalScale = 1.0;
 		_enabled = true;
 		_gravity = gravity;
 		_bodies = new IntHash();
