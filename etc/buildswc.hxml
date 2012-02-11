@@ -48,7 +48,8 @@
 -lib gm2d
 
 -cp src
---macro include('com.pblabs', true, ['jeash', 'com.pblabs.components.scene2D.SvgRenderTools', 'com.pblabs.components.scene2D.body.BodySpriteListComponent', 'com.pblabs.components.input.TouchInputManager', 'com.pblabs.components.scene2D.spritesheet', 'com.pblabs.engine.resource.SvgResources', 'com.pblabs.components.scene2D.HierarchyManager', 'com.pblabs.components.scene2D.SvgImageTools', 'com.pblabs.components.scene2D.Svg', 'com.pblabs.components.scene2D.SvgRenderTools', 'com.pblabs.engine.resource.BitmapCacheResource', 'com.pblabs.components.scene2D.SvgAnchors', 'com.pblabs.components.base.BoundedComponent', 'com.pblabs.components.scene2D.js', 'com.pblabs.components.physics', 'com.pblabs.components.jquerymobile', 'com.pblabs.components.iui.IUIScreen'])
+--macro include('com.pblabs', true, ['jeash', 'com.pblabs.components.scene2D.SvgRenderTools', 'com.pblabs.components.scene2D.body', 'com.pblabs.components.input.TouchInputManager',  'com.pblabs.engine.resource.SvgResources', 'com.pblabs.components.scene2D.HierarchyManager', 'com.pblabs.components.scene2D.SvgImageTools', 'com.pblabs.components.scene2D.Svg', 'com.pblabs.components.scene2D.SvgRenderTools', 'com.pblabs.engine.resource.BitmapCacheResource', 'com.pblabs.components.scene2D.SvgAnchors', 'com.pblabs.components.base.BoundedComponent', 'com.pblabs.components.scene2D.js', 'com.pblabs.components.physics', 'com.pblabs.components.jquerymobile', 'com.pblabs.components.iui.IUIScreen'])
+#'com.pblabs.components.scene2D.spritesheet',
 --macro include('org.transition9')
 # --macro include('jeash')
 
