@@ -673,7 +673,6 @@ class PropertyInfo
 		Preconditions.checkNotNull(p, "PropertyReference cannot be null");
 		if(propertyName != null) {
 			if (p.getterName == null) {
-				// return getCheckForSignalVars(Reflect.field(propertyParent,  propertyName));
 				return Reflect.field(propertyParent,  propertyName);
 			} else {
 				return Reflect.callMethod(propertyParent, Reflect.field(propertyParent, p.getterName), EMPTY_ARRAY);
@@ -687,7 +686,6 @@ class PropertyInfo
 	public function setValue<T> (value :Dynamic, ?p :PropertyReference<T>) :Void
 	{
 		if (propertyName != null) {
-			// if (p == null || p.setterName == null && !setCheckForSignalVars(Reflect.field(propertyParent,  propertyName), value)) {
 			if (p == null || p.setterName == null) {
 				Reflect.setField(propertyParent,  propertyName, value);
 			} else {
