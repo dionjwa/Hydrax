@@ -34,8 +34,8 @@
 --macro include('robothaxe')
 
 
--lib transition9
-# -cp lib/transition9/src
+# -lib transition9
+-cp lib/transition9/src
 # --macro include('org.transition9', true, ['org.transition9.util.JsLibs', 'org.transition9.serialization.Serialization', 'org.transition9.geom.Vector2', 'org.transition9.util.JsDebugUtil',  'org.transition9.util.svg'])
 #'org.transition9.geom.bounds',
 
