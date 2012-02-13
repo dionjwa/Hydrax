@@ -42,16 +42,12 @@ class BaseSceneManager extends NodeComponent,
 	@inject
 	public var sceneView(get_sceneView, set_sceneView) :SceneView;
 	
-	@editor({ui :"UpdatingLabel"})
 	public var zoom(get_zoom, set_zoom) :Float;
 	public var zoomSignaler (default, null):Signaler<Float>;
 	public var sceneBounds(get_sceneBounds, set_sceneBounds) :AABB2;
 	public var layerCount(get_layerCount, never) :Int;
-	@editor({ui :"UpdatingLabel"})
 	public var x (get_x, set_x) :Float;
-	@editor({ui :"UpdatingLabel"})
 	public var y (get_y, set_y) :Float;
-	@editor({ui :"UpdatingLabel"})
 	public var rotation (get_rotation, set_rotation) :Float;
 	public var visibleArea (get_visibleArea, null) :AABB2;
 	/** Default true.  Automatically  */
