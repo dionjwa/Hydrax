@@ -47,6 +47,7 @@ class NodeComponent extends EntityComponent
 {
 	var _parentProperty :PropertyReference<Dynamic>;
 	public var parentProperty (get_parentProperty, set_parentProperty) :PropertyReference<Dynamic>;
+	@:getter(parentProperty)
 	function get_parentProperty () :PropertyReference<Dynamic>
 	{
 		return _parentProperty;

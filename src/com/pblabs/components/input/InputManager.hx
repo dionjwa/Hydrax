@@ -394,8 +394,8 @@ class InputManager extends BaseInputManager,
 	{
 		mask = mask == null ? ObjectType.ALL : mask;
 		
-		if (_displayObjectsUnderPoint.exists(mask.hashCode())) {
-			return _displayObjectsUnderPoint.get(mask.hashCode());
+		if (_displayObjectsUnderPoint.exists(mask.key)) {
+			return _displayObjectsUnderPoint.get(mask.key);
 		}
 		
 		var underPoint = new Array<BaseSceneComponent>();
@@ -426,7 +426,7 @@ class InputManager extends BaseInputManager,
 			}
 		}
 		
-		_displayObjectsUnderPoint.set(mask.hashCode(), underPoint);
+		_displayObjectsUnderPoint.set(mask.key, underPoint);
 		return underPoint;
 	}
 	

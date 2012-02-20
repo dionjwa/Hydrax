@@ -12,6 +12,7 @@ import com.pblabs.components.scene2D.CircleShape;
 import com.pblabs.components.scene2D.ImageComponent;
 import com.pblabs.components.scene2D.RectangleShape;
 import com.pblabs.components.scene2D.SceneAlignment;
+import com.pblabs.components.scene2D.SceneTransformUtil;
 import com.pblabs.components.scene2D.SceneUtil;
 import com.pblabs.components.scene2D.SceneView;
 import com.pblabs.components.tasks.AngleTask;
@@ -125,7 +126,7 @@ class Demo
 		#if debug
 		org.transition9.util.Assert.isNotNull(sceneView, "??");
 		#end
-		SceneUtil.calculateOutPoint(outpoint, gamescene.sceneAlignment, sceneView.width, sceneView.height);
+		SceneTransformUtil.calculateOutPoint(outpoint, gamescene.sceneAlignment, sceneView.width, sceneView.height);
 		var rect = new Rectangle(-outpoint.x, -outpoint.y, sceneView.width, sceneView.height);
 		serial.addTask(LocationTask.CreateEaseOut(rect.left, rect.top, 3));
 		serial.addTask(LocationTask.CreateEaseOut(rect.right, rect.top, 3));
@@ -177,7 +178,7 @@ class Demo
 		time = Math.max(time, 2);
 		
 		var outpoint = new Vec2();
-		SceneUtil.calculateOutPoint(outpoint, scene.sceneAlignment, sceneView.width, sceneView.height);
+		SceneTransformUtil.calculateOutPoint(outpoint, scene.sceneAlignment, sceneView.width, sceneView.height);
 		var randX = Rand.nextFloatInRange(-outpoint.x, -outpoint.x + sceneView.width);
 		var randY = Rand.nextFloatInRange(-outpoint.y, -outpoint.y + sceneView.height);
 		parallel.addTask(LocationTask.CreateSmooth(randX, randY,  time));
@@ -192,7 +193,7 @@ class Demo
 		e.addTask(serial);
 	}
 
-	function createBlob (name :String, layer :BaseSceneLayer<Dynamic, Dynamic>) :IEntity
+	function createBlob (name :String, layer :BaseSceneLayer) :IEntity
 	{
 		var context = layer.context;
 		var man  = SceneUtil.createBaseSceneEntity(context);

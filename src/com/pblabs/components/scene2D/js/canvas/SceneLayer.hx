@@ -8,8 +8,9 @@
  ******************************************************************************/
 package com.pblabs.components.scene2D.js.canvas;
 
+import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.scene2D.BaseSceneLayer;
-import com.pblabs.components.scene2D.SceneUtil;
+import com.pblabs.components.scene2D.SceneTransformUtil;
 import com.pblabs.components.scene2D.js.JSLayer;
 import com.pblabs.components.scene2D.js.SceneComponent;
 import com.pblabs.engine.time.IAnimatedObject;
@@ -53,7 +54,7 @@ class SceneLayer extends JSLayer
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 			//Adjust for SceneView center			
-			SceneUtil.calculateOutPoint(_tempPoint, scene.sceneAlignment, scene.sceneView.width, scene.sceneView.height);
+			SceneTransformUtil.calculateOutPoint(_tempPoint, scene.sceneAlignment, scene.sceneView.width, scene.sceneView.height);
 			ctx.translate(_tempPoint.x, _tempPoint.y);
 			
 			ctx.rotate(scene.rotation);
@@ -90,8 +91,9 @@ class SceneLayer extends JSLayer
 		super.addedToParent();
 		if (ctx == null) {
 			canvas = createCanvas();
-			canvas.width = Std.int(parent.sceneView.width);
-			canvas.height = Std.int(parent.sceneView.height);
+			var scene :BaseSceneManager = cast parent;
+			canvas.width = Std.int(scene.sceneView.width);
+			canvas.height = Std.int(scene.sceneView.height);
 			ctx = canvas.getContext("2d");
 		}
 		
@@ -104,13 +106,13 @@ class SceneLayer extends JSLayer
 		ctx = null;
 	}
 	
-	override function childAdded (c :SceneComponent) :Void
+	override function childAdded (c :NodeComponent) :Void
 	{
 		super.childAdded(c);
 		isDirty = true;
 	}
 	
-	override function childRemoved (c :SceneComponent) :Void
+	override function childRemoved (c :NodeComponent) :Void
 	{
 		super.childRemoved(c);
 		isDirty = true;

@@ -65,7 +65,6 @@ class SceneView
 	public var layerId (get_layerId, set_layerId) :String;
 	var _layerId :String;
 	public var mouseOffset (get_mouseOffset, never) :Vec2;
-	// public var mouseOffsetY (get_mouseOffsetY, never) :Float;
 	#end
 	
 	var _height :Int;
@@ -87,7 +86,7 @@ class SceneView
 		_maxWidth =  1600;
 		_maxHeight = 1200;
 		//Default div id
-		layerId = "haxeSceneView";
+		set_layerId("haxeSceneView");
 		//This is used by the transform operations.
 		var webkitRE :EReg = ~/.*AppleWebKit.*/;
 		isWebkitBrowser = webkitRE.match(js.Lib.window.navigator.userAgent);
@@ -329,11 +328,11 @@ class SceneView
 	{
 		// org.transition9.util.Log.warn("Currently disabled");
 		// return new Vec2();
-		#if debug
-			if (!org.transition9.util.JsLibs.isJQuery) {
-				throw "JQuery missing, please add to html";
-			}
-		#end
+		// #if debug
+		// 	if (!org.transition9.util.JsLibs.isJQuery) {
+		// 		throw "JQuery missing, please add to html";
+		// 	}
+		// #end
 		var os :{top:Float, left:Float} = new JQuery("#" + layerId).offset();
 		var v = new Vec2(os.left, os.top);
 		v.x += Std.parseFloat(_layer.style.borderWidth);

@@ -11,6 +11,7 @@ package com.pblabs.components.scene2D;
 import com.pblabs.components.input.IInteractiveComponent;
 import com.pblabs.components.manager.NodeComponent;
 import com.pblabs.components.spatial.IBounded;
+import com.pblabs.components.spatial.SpatialComponent;
 import com.pblabs.components.Constants;
 import com.pblabs.engine.core.ObjectType;
 import com.pblabs.engine.core.PropertyReference;
@@ -29,23 +30,15 @@ using org.transition9.geom.Vec2Tools;
 using org.transition9.util.ArrayUtil;
 using org.transition9.util.StringUtil;
 
-// class BaseSceneComponent<Layer :BaseSceneLayer> extends NodeComponent<Layer, Dynamic>,
-// 		implements IInteractiveComponent, implements haxe.rtti.Infos, implements IBounded
 class BaseSceneComponent extends NodeComponent,
 		implements IInteractiveComponent, implements haxe.rtti.Infos, implements IBounded
 {
 	public var objectMask (get_objectMask, set_objectMask) :ObjectType;
-	// public var layer (get_layer, null) :BaseSceneLayer;
-	// function get_layer () :BaseSceneLayer
-	// {
-	// 	return cast parent;
-	// }
-	public var layer (get_layer, null) :Dynamic;
-	function get_layer () :Dynamic
+	public var layer (get_layer, null) :BaseSceneLayer;
+	function get_layer () :BaseSceneLayer
 	{
 		return cast parent;
 	}
-	// public var layer (get_layer, null) :Dynamic;
 	public var x (get_x, set_x) :Float;
 	public var y (get_y, set_y) :Float;
 	public var width (get_width, set_width) :Float;
@@ -70,7 +63,7 @@ class BaseSceneComponent extends NodeComponent,
 	public var autoAddToScene :Bool;
 	
 	/** We will listen to the signals of this coordinates component. */
-	// public var spatialProperty :PropertyReference<SpatialComponent<Dynamic>>;
+	public var spatialProperty :PropertyReference<SpatialComponent<Dynamic>>;
 	
 	var _x :Float;
 	var _y :Float;
@@ -122,7 +115,7 @@ class BaseSceneComponent extends NodeComponent,
 		_x = 0;
 		_y = 0;
 		_zIndex = -1;
-		// spatialProperty = Constants.P_SPATIAL; 
+		spatialProperty = cast Constants.P_SPATIAL; 
 		autoAddToScene = true;
 	}
 	
@@ -151,11 +144,9 @@ class BaseSceneComponent extends NodeComponent,
 		if (!objectMask.and(mask)) {
 			return false;
 		}
-		trace("fixme 345noisrg");
-		return false;
-		// var scene :BaseSceneManager = cast parent.parent;
-		// org.transition9.util.Assert.isNotNull(scene);
-		// return containsWorldPoint(SceneTransformUtil.translateScreenToWorld(scene, pos), mask);
+		var scene :BaseSceneManager = cast parent.parent;
+		org.transition9.util.Assert.isNotNull(scene);
+		return containsWorldPoint(SceneTransformUtil.translateScreenToWorld(scene, pos), mask);
 	}
 	
 	public function containsWorldPoint (pos :Vec2, mask :ObjectType) :Bool
@@ -183,23 +174,23 @@ class BaseSceneComponent extends NodeComponent,
 			org.transition9.util.Assert.isNotNull(parent, org.transition9.rtti.ReflectUtil.tinyClassName(this) + ".parent is null, prop=" + parentProperty);
 		}
 		
-		// var coords = spatialProperty != null ? owner.getProperty(spatialProperty) : null;
-		// com.pblabs.engine.debug.Profiler.enter("bindsignals");
-		// if (coords != null) {
-		// 	#if debug_hxhsl
-		// 	var bond = bindSignal(coords.signalerLocation, setLocation);
-		// 	bond.debugInfo = org.transition9.rtti.ReflectUtil.tinyClassName(this);
-		// 	#else
-		// 	bindSignal(coords.signalerLocation, setLocation);
-		// 	#end
-		// 	bindSignal(coords.signalerAngle, set_angle);
-		// 	//Manually set the location on reseting: there may be discrepencies in timing
-		// 	//such that the listeners and values are inconsistant.  So manually reset location.
-		// 	setLocation(coords.position);
-		// 	angle = coords.angle;
-		// } else {
-		// 	org.transition9.util.Log.info("No coords component found, you are on your own regarding updating Scene components " + org.transition9.util.Log.getStackTrace());
-		// }
+		var coords = spatialProperty != null ? owner.getProperty(spatialProperty) : null;
+		com.pblabs.engine.debug.Profiler.enter("bindsignals");
+		if (coords != null) {
+			#if debug_hxhsl
+			var bond = bindSignal(coords.signalerLocation, setLocation);
+			bond.debugInfo = org.transition9.rtti.ReflectUtil.tinyClassName(this);
+			#else
+			bindSignal(coords.signalerLocation, setLocation);
+			#end
+			bindSignal(coords.signalerAngle, set_angle);
+			//Manually set the location on reseting: there may be discrepencies in timing
+			//such that the listeners and values are inconsistant.  So manually reset location.
+			setLocation(coords.position);
+			angle = coords.angle;
+		} else {
+			org.transition9.util.Log.info("No coords component found, you are on your own regarding updating Scene components " + org.transition9.util.Log.getStackTrace());
+		}
 		com.pblabs.engine.debug.Profiler.exit("bindsignals");
 		
 		// if (owner.getComponent(com.pblabs.components.base.AlphaComponent) != null) {

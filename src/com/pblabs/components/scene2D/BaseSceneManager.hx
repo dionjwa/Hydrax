@@ -173,6 +173,8 @@ class BaseSceneManager extends NodeComponent,
 		//Get the order of the children first
 		var childrenCopy = children.copy();
 		
+		layerName = validateLayerName(layerName);
+		
 		var layer = createLayer(layerName, cls);//context.allocate(cls);
 		var layerCast :com.pblabs.components.manager.NodeComponent = cast layer;
 		
@@ -208,13 +210,7 @@ class BaseSceneManager extends NodeComponent,
 		
 		var layerCount = owner.getComponents(BaseSceneLayer).length;
 		
-		if (layerName.isBlank()) {
-			if (layerCount == 0) {
-				layerName = SceneConstants.DEFAULT_LAYER_NAME;
-			} else {
-				layerName = SceneConstants.DEFAULT_LAYER_NAME + (layerCount + 1);
-			}
-		}
+		layerName = validateLayerName(layerName);
 		
 		//Check for existing layers with the same name, maybe we could do something other than throw an error?
 		for (l in owner) {
@@ -225,6 +221,20 @@ class BaseSceneManager extends NodeComponent,
 		
 		owner.addComponent(layer, layerName);
 		return cast layer;
+	}
+	
+	function validateLayerName (layerName :String) :String
+	{
+		layerName = layerName.isBlank() ? DEFAULT_LAYER_NAME : layerName;
+		
+		if (layerName.isBlank()) {
+			if (layerCount == 0) {
+				layerName = DEFAULT_LAYER_NAME;
+			} else {
+				layerName = DEFAULT_LAYER_NAME + (layerCount + 1);
+			}
+		}
+		return layerName;
 	}
 	
 	/** Calls onFrame on this and all children to make sure they're in the right place on the first frame */
@@ -487,6 +497,7 @@ class BaseSceneManager extends NodeComponent,
 	{
 		
 	}
+	
 	
 	public static var DEFAULT_LAYER_NAME :String = "defaultLayer";
 	static var EMPTY_ARRAY :Array<Dynamic> = [];

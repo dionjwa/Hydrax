@@ -8,7 +8,7 @@
  ******************************************************************************/
 package com.pblabs.components.scene2D.js.css;
 
-import com.pblabs.components.scene2D.SceneUtil;
+import com.pblabs.components.scene2D.SceneTransformUtil;
 import com.pblabs.components.scene2D.js.JSLayer;
 import com.pblabs.engine.time.IAnimatedObject;
 
@@ -31,7 +31,7 @@ class SceneLayer extends JSLayer
 		
 		layer._transformMatrix.identity();
 		//Adjust for SceneView center			
-		SceneUtil.calculateOutPoint(_tempPoint, scene.sceneAlignment, scene.sceneView.width, scene.sceneView.height);
+		SceneTransformUtil.calculateOutPoint(_tempPoint, scene.sceneAlignment, scene.sceneView.width, scene.sceneView.height);
 		layer._transformMatrix.rotate(scene.rotation);
 		layer._transformMatrix.scale(scene.zoom * layer.scaleX, scene.zoom * layer.scaleY);
 		layer._transformMatrix.translate(_tempPoint.x, _tempPoint.y);

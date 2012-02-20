@@ -16,7 +16,7 @@ class PBGameUtil
 		// #end
 		
 		#if (!nodejs && (flash || js || cpp))
-		// game.registerManager(com.pblabs.components.scene2D.SceneView);
+		game.registerManager(com.pblabs.components.scene2D.SceneView);
 		#end
 		game.registerManager(com.pblabs.engine.resource.IResourceManager, new com.pblabs.engine.resource.ResourceManager());
 		game.registerManager(com.pblabs.engine.serialization.Serializer);

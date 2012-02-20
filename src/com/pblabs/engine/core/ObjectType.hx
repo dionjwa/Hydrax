@@ -13,7 +13,7 @@
 package com.pblabs.engine.core;
 
 import com.pblabs.engine.serialization.ISerializable;
-
+import de.polygonal.ds.Hashable;
 /**
  * An ObjectType is an abstraction of a bitmask that can be used to associate
  * objects with type names.
@@ -21,17 +21,19 @@ import com.pblabs.engine.serialization.ISerializable;
  * @see ObjectTypeManager
  */
 class ObjectType 
-	implements ISerializable, implements org.transition9.ds.Hashable
+	implements ISerializable, implements Hashable
 {
 	public static var ALL :ObjectType = {
 		var wildcard = new ObjectType([]);
 		wildcard._bits = 0xFFFFFFFF;
+		wildcard.key = wildcard._bits;
 		wildcard;
 	}
 	
 	public static var NONE :ObjectType = {
 		var none = new ObjectType([]);
 		none._bits = 0;
+		none.key = none._bits;
 		none;
 	}
 	
@@ -53,7 +55,7 @@ class ObjectType
 	public var typeNames(getTypeNames, setTypeNames) :Array<String>;
 	// public var wildcard(getWildcard, null) :ObjectType;
 	public var manager :ObjectTypeManager;
-	
+	public var key :Int;
 	
 	
 	public function new(arguments :Array<String>)
@@ -88,6 +90,7 @@ class ObjectType
 	public function setTypeName(value :String) :String
 	{
 		_bits = manager.getType(value);
+		key = _bits;
 		return value;
 	}
 	
@@ -114,6 +117,7 @@ class ObjectType
 		for (typeName in value) {
 			_bits |= manager.getType(typeName);
 		}
+		key = _bits;
 		return value;
 	}
 	
@@ -125,6 +129,7 @@ class ObjectType
 	public function add (typeName :String) :ObjectType
 	{
 		_bits |= manager.getType(typeName);	
+		key = _bits;
 		return this;
 	}	  
 	
@@ -135,6 +140,7 @@ class ObjectType
 	public function remove(typeName :String) :ObjectType
 	{		 
 		_bits &= (ALL.bits - manager.getType(typeName));
+		key = _bits;
 		return this;
 	}
 	
@@ -189,11 +195,6 @@ class ObjectType
 		// }
 		
 		 return this;
-	}
-	
-	inline public function hashCode () :Int
-	{
-	    return _bits;
 	}
 	
 	var _bits :Int;

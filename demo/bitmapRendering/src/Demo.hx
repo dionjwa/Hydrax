@@ -15,6 +15,7 @@ import com.pblabs.components.tasks.FunctionTask;
 import com.pblabs.components.tasks.LocationTask;
 import com.pblabs.components.tasks.ParallelTask;
 import com.pblabs.components.tasks.SerialTask;
+import com.pblabs.components.Constants;
 import com.pblabs.engine.core.IEntity;
 import com.pblabs.engine.core.PBContext;
 import com.pblabs.engine.core.PBGame;
@@ -70,10 +71,10 @@ class Demo
 		// var gamescene = context.addSingletonComponent(com.pblabs.components.scene2D.flash.SceneManager, null, true);
 		context.registerManager(SceneUtil.MANAGER_CLASS, gamescene, null, true);
 		//The spatial component is for panning control
-		gamescene.owner.addComponent(context.allocate(SpatialComponent), SpatialComponent.NAME);
+		gamescene.owner.addComponent(context.allocate(SpatialComponent), Constants.SPATIAL_NAME);
 		gamescene.owner.deferring = false;
 		
-		var gamelayer = gamescene.addLayer(SceneUtil.DEFAULT_LAYER_NAME);
+		var gamelayer = gamescene.addLayer();
 		
 		//Scene for the UI
 		var uiscene = context.createBaseScene("UIScene");
@@ -88,7 +89,7 @@ class Demo
 		randMove(dude);
 		
 		#if flash
-		new com.bit101.components.FPSMeter(flash.Lib.current, 10, 10);
+		// new com.bit101.components.FPSMeter(flash.Lib.current, 10, 10);
 		#end
 	}
 	

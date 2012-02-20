@@ -63,7 +63,12 @@ class SceneManager extends BaseSceneManager,
 		super.setLayerIndex(layer, index);
 		_rootSprite.removeAllChildren();
 		for (c in children) {
-			_rootSprite.addChild(c.displayContainer);
+			var child :SceneLayer = cast c;
+			trace(org.transition9.rtti.ReflectUtil.getClassName(child));
+			org.transition9.util.Assert.isNotNull(c.displayContainer, "child SceneLayer.displayContainer == null");
+			var d = child.displayContainer;
+			trace(org.transition9.rtti.ReflectUtil.getClassName(d));
+			_rootSprite.addChild(child.displayContainer);
 		}
 	}
 	
@@ -74,19 +79,6 @@ class SceneManager extends BaseSceneManager,
 		context.getManager(SceneView).addDisplayObject(displayContainer);
 		zoomSignal = new DirectSignaler(this);
 	}
-	
-	// function dim (?ignored :Dynamic) :Void
-	// {
-	// 	trace("");
-	// 	_rootSprite.alpha = 0.3;
-	// }
-	
-	// function unDim (?ignored :Dynamic) :Void
-	// {
-	// 	trace("");
-	// 	_rootSprite.alpha = 1.0;
-	// }
-	// #end
 	
 	override function onRemove () :Void
 	{

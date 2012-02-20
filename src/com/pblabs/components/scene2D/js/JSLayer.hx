@@ -9,7 +9,7 @@
 package com.pblabs.components.scene2D.js;
 import com.pblabs.components.scene2D.BaseSceneLayer;
 
-class JSLayer extends BaseSceneLayer<JSSceneManager, SceneComponent>
+class JSLayer extends BaseSceneLayer
 {
 	public var isDirty :Bool;
 	public var isTransformDirty :Bool;

@@ -12,7 +12,6 @@
  ******************************************************************************/
 package com.pblabs.components.spatial;
 
-// import com.pblabs.components.manager.INodeParent;
 import com.pblabs.engine.core.ObjectType;
 
 import de.polygonal.core.math.Vec2;
@@ -28,8 +27,6 @@ import de.polygonal.motor.geom.primitive.AABB2;
 * lot more functionality, but this is enough to do rendering and UI tasks.
 */ 
 interface ISpatialManager2D<ISpatialObject2D>
-// interface ISpatialManager2D<T:ISpatialObject2D<Dynamic>>
-	// implements INodeParent<T>
 {
 	/**
 	* Return all the spatial objects that overlap with the specified box and match

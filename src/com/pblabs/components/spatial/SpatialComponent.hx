@@ -30,8 +30,7 @@ using org.transition9.util.XmlTools;
 /**
  * Very basic spatial component that exists at a position. 
  */ 
-class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeComponent//NodeChild<Manager>,
-	// implements ISpatialObject2D<Manager>//, implements INodeChild<ISpatialManager2D>
+class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeComponent
 {
 	public static function getLocation (c :IEntity) :Vec2
 	{
@@ -49,7 +48,6 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeComponent
 	
 	public var position (get_point, set_point) :Vec2;
 	public var point (get_point, set_point) :Vec2;
-	// public var parent :ISpatialManager2D;
 	public var x (get_x, set_x) : Float;
 	public var y (get_y, set_y) : Float;
 	public var angle (get_angle, set_angle) : Float;
@@ -153,14 +151,6 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeComponent
 	{
 		x = xLoc;
 		y = yLoc;
-		// org.transition9.util.Assert.isFalse(Math.isNaN(xLoc), org.transition9.util.Log.getStackTrace());
-		// org.transition9.util.Assert.isFalse(Math.isNaN(yLoc), org.transition9.util.Log.getStackTrace());
-		// if (_vec.x != xLoc || _vec.y != yLoc) {
-		// 	_vec.x = xLoc;
-		// 	_vec.y = yLoc;
-		// 	updateWorldAABB();
-		// 	dispatchLocation();
-		// }
 	}
 	
 	override public function serialize (xml :Xml) :Void
@@ -276,14 +266,6 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeComponent
 	}
 	
 	/**
-	 * Not currently implemented.
-	 */
-	// public function castRay (start :Vec2, end :Vec2, result :RayHitInfo, ?flags :ObjectType = null):Bool
-	// {
-	// 	return false;
-	// }
-	
-	/**
 	 * All points in our bounding box are occupied.
 	 */
 	public function containsWorldPoint (pos :Vec2, mask :ObjectType):Bool
@@ -304,11 +286,6 @@ class SpatialComponent<Manager:ISpatialManager2D<Dynamic>> extends NodeComponent
 		#end
 		
 		throw "No AABB2";
-		
-		// org.transition9.util.Assert.isNotNull(worldExtents, "No worldExtends for point checking");
-		// // If no sprite then we just test our bounds.
-		// var b = worldExtents;
-		// return pos.x <= b.maxX && pos.x >= b.minX && pos.y <= b.maxY && pos.y >= b.minY;
 	}
 	
 	inline function updateWorldAABB () :Void

@@ -20,7 +20,7 @@ import js.Dom;
   * Base JS SceneComponent class.  Can be rendering on a Canvas layer, or 
   * rendered in a DOM based scene and transformed via CSS (currently much faster on iOs).
   */
-class SceneComponent extends BaseSceneComponent<JSLayer>,
+class SceneComponent extends BaseSceneComponent,
 	implements IAnimatedObject
 {
 	public static function createDiv () :HtmlDom
@@ -119,7 +119,8 @@ class SceneComponent extends BaseSceneComponent<JSLayer>,
 		
 		if (isOnCanvas) {
 		} else {
-			parent.div.removeChild(div);
+			var jslayer :JSLayer = cast parent;
+			jslayer.div.removeChild(div);
 		}
 	}
 	

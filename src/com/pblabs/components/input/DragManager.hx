@@ -269,8 +269,8 @@ class DragManager extends EntityComponent,
 				}
 				
 			} else {//Pan the _sceneComponent
-				var worldStart = SceneTransformUtil.translateScreenToWorld(_sceneComponent.layer.parent, _startMouse);
-				var worldNow = SceneTransformUtil.translateScreenToWorld(_sceneComponent.layer.parent, e.inputLocation);
+				var worldStart = SceneTransformUtil.translateScreenToWorld(_sceneComponent.layer.scene, _startMouse);
+				var worldNow = SceneTransformUtil.translateScreenToWorld(_sceneComponent.layer.scene, e.inputLocation);
 				var worldDiff = worldNow.subtract(worldStart).scaleLocal(_zoomFactor);
 				
 				if (_constraint != null) {

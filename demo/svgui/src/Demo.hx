@@ -76,16 +76,14 @@ class Demo
 		var scene = context.addSingletonComponent(SceneUtil.MANAGER_CLASS);
 		scene.sceneAlignment = SceneAlignment.TOP_LEFT;
 		#if flash
-		var layer :BaseSceneLayer<Dynamic, Dynamic> = scene.addLayer();
+		var layer :BaseSceneLayer = scene.addLayer();
 		#elseif js
 			#if canvas
-			var layer :BaseSceneLayer<Dynamic, Dynamic> = scene.addLayer(null, com.pblabs.components.scene2D.js.canvas.SceneLayer);
+			var layer :BaseSceneLayer = scene.addLayer(null, com.pblabs.components.scene2D.js.canvas.SceneLayer);
 			#else
-			var layer :BaseSceneLayer<Dynamic, Dynamic> = scene.addLayer(null, com.pblabs.components.scene2D.js.css.SceneLayer);
+			var layer :BaseSceneLayer = scene.addLayer(null, com.pblabs.components.scene2D.js.css.SceneLayer);
 			#end
 		#end
-		
-		trace('scene.sceneView.width=' + scene.sceneView.width);
 		
 		var rootSvgToken = new ResourceToken("anchors", Source.embedded("anchors"), ResourceType.SVG);
 		var uiblob = context.createBaseSceneEntity()

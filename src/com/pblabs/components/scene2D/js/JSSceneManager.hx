@@ -14,7 +14,7 @@ import org.transition9.util.Preconditions;
 
 using Lambda;
 
-class JSSceneManager extends BaseSceneManager<JSLayer>,
+class JSSceneManager extends BaseSceneManager,
 	implements IAnimatedObject
 {
 	public var priority :Int;
@@ -46,14 +46,15 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 		return super.addLayer(layerName, cls, registerAsManager, startDetached);
 	}
 	
-	override public function setLayerIndex (layer :JSLayer, index :Int) :Void
+	override public function setLayerIndex (layer :BaseSceneLayer, index :Int) :Void
 	{
 		super.setLayerIndex(layer, index);
 		index = getLayerIndex(layer);
-		if (layer.div.parentNode == _rootContainer) { 
-			_rootContainer.removeChild(layer.div);
+		var jsLayer :JSLayer = cast layer;
+		if (jsLayer.div.parentNode == _rootContainer) { 
+			_rootContainer.removeChild(jsLayer.div);
 		}
-		_rootContainer.appendChild(layer.div);
+		_rootContainer.appendChild(jsLayer.div);
 		
 	}
 	
@@ -108,7 +109,7 @@ class JSSceneManager extends BaseSceneManager<JSLayer>,
 		_rootContainer = null;
 	}
 	
-	override function get_defaultLayerClass () :Class<JSLayer>
+	override function get_defaultLayerClass () :Class<Dynamic>
 	{
 		//Figure out the most efficient kind of rendering layer
 		//Default to CSS transforms.  In general, this is the most efficient and has the most features.

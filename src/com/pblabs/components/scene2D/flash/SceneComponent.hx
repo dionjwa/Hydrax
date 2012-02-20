@@ -41,14 +41,14 @@ class SceneComponent extends BaseSceneComponent,
 		}
 		if (_layerIndexDirty) {
 			org.transition9.util.Assert.isNotNull(parent, "Cannot change layer index if not attached to a scene since which layer?");
-			// var scene = parent.parent;
-			// var newlayer :SceneLayer = cast scene.getLayerAt(layerIndex);
-			// if (newlayer != null) {
-			// 	this.removeFromParent();
-			// 	parentProperty = newlayer.entityProp();
-			// 	addToParent(newlayer);
-			// 	// _zIndexDirty = true;
-			// }
+			var scene :SceneManager = cast parent.parent;
+			var newlayer :SceneLayer = cast scene.getLayerAt(layerIndex);
+			if (newlayer != null) {
+				this.removeFromParent();
+				parentProperty = newlayer.entityProp();
+				addToParent(newlayer);
+				// _zIndexDirty = true;
+			}
 			_layerIndexDirty = false;
 			// _layerIndex = scene.getLayerIndex(parent);
 		}

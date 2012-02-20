@@ -78,11 +78,7 @@ class BitmapUtil
 		var canvas = createCanvas();	
 		canvas.width = image.width;
 		canvas.height = image.height;
-		#if haxedev
-		canvas.getContext("2d").drawImage(image, 0, 0);
-		#else
 		canvas.getContext("2d").drawImage(cast image, 0, 0);
-		#end
 		return canvas;
 	}
 	
