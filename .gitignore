@@ -2,10 +2,11 @@ build/
 *.DS_Store
 *.svn
 *.hg
-*.git
+*.settings
 *.swf
 *.js
 *cpp*
+*/html-template
 lib/polygonal/build/
 tmp
 hydrax.swc
