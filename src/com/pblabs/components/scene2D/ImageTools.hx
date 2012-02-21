@@ -8,13 +8,10 @@ import com.pblabs.engine.core.PropertyReference;
 import com.pblabs.engine.resource.IResourceManager;
 import com.pblabs.engine.resource.ResourceToken;
 import com.pblabs.engine.resource.ResourceType;
-import com.pblabs.engine.resource.SvgResources;
 import com.pblabs.engine.time.IProcessManager;
 import org.transition9.util.BitmapUtil;
 import org.transition9.util.Comparators;
 import org.transition9.util.F;
-import org.transition9.util.svg.SvgData;
-import org.transition9.util.svg.SvgReplace;
 
 using Lambda;
 
@@ -29,26 +26,6 @@ using com.pblabs.engine.util.PBUtil;
   */
 class ImageTools
 {
-	static var SVG_TEXT = '
-		<svg
-	   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-	   xmlns:svg="http://www.w3.org/2000/svg"
-	   xmlns="http://www.w3.org/2000/svg"
-	   version="1.1"
-	   width="300"
-	   height="100"
-	   id="svg3759">
-	  <text
-			x="0"
-			y="0"
-			id="text3767"
-			xml:space="preserve"
-			style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Bitstream Vera Sans"><tspan
-			 x="05"
-			 y="0"
-			 id="tspan3769">$T</tspan></text>
-	</svg>';
-	
 	static var DEVICE_DOWN_LAYERS :String = "deviceDownLayers";
 	
 	public static function getImageComponentForResourceType (type :ResourceType) :Class<Dynamic>
@@ -56,98 +33,19 @@ class ImageTools
 		var compCls :Class<Dynamic> = null;
 		switch (type) {
 			case IMAGE: 
-				#if flash
+				#if (flash || cpp || spaceport)
 				compCls = BitmapRenderer;
 				#elseif js
 				compCls = ImageComponent;
 				#end
 			case IMAGE_DATA: compCls = BitmapRenderer; 
 			case SVG: compCls = BitmapRenderer;
-			#if flash
+			#if (flash || cpp || spaceport)
 			case CLASS: compCls = com.pblabs.components.scene2D.flash.SceneComponent;
 			#end
 			default: throw "ResourceType=" + type + " does not have an associated image IEntityComponent"; null; 
 		}
 		return compCls;
-	}
-	
-	public static function createSvgFromResource (layer :BaseSceneLayer, 
-		token :ResourceToken, ?entityName :String) :IEntity
-	{
-		var svgData = layer.context.getManager(IResourceManager).get(token);
-		org.transition9.util.Assert.isNotNull(svgData, ' svgData is null from token ' + token);
-		return createSvg(layer, svgData, entityName);
-	}
-	
-	public static function createSvg (layer :BaseSceneLayer, ?svg :String, ?entityName :String) :IEntity 
-	{
-		var so = layer.context.createBaseSceneEntity();
-		
-		var svgComp = layer.context.allocate(Svg);
-		svgComp.svgData = new SvgData(null, svg);
-		svgComp.parentProperty = layer.entityProp();
-		so.addComponent(svgComp);
-		so.initialize(layer.context.getManager(NameManager).validateName(entityName == null ? "svg" : entityName));
-		return so;
-	}
-	
-	/** Converts Svg to Bitmap */
-	public static function addSvg (e :IEntity, 
-		layer :BaseSceneLayer, 
-		token :ResourceToken, 
-		?cache :Null<Bool> = false, 
-		?isForDeviceDown :Null<Bool> = false,
-		?replacements :Array<SvgReplace>, 
-		?componentName :String
-		) :IEntity 
-	{
-		org.transition9.util.Assert.isNotNull(layer, ' layer is null');
-		org.transition9.util.Assert.isNotNull(token, ' token is null');
-		org.transition9.util.Assert.isNotNull(e, ' e is null');
-		
-		if (cache) {
-			var svgComp = e.context.allocate(BitmapRenderer);
-			
-			//Set the bitmap to the bounds of the svg so layout algorithms will work properly
-			var svgToken = SvgResources.getSvgResourceToken(e.context, token, replacements);
-			var svgData :SvgData = e.context.getManager(IResourceManager).get(svgToken);
-			var svgBounds = SvgRenderTools.getSvgBounds(svgData.xml);
-			// trace(e.getEntityData("order") + ', svgBounds=' + svgBounds);
-			svgComp.bitmapData = BitmapUtil.createImageData(Std.int(svgBounds.intervalX), Std.int(svgBounds.intervalY)); 
-			
-			componentName = componentName != null ? componentName : token.id + "_" + svgComp.key;
-			svgComp.parentProperty = layer.entityProp();
-			e.addComponent(svgComp, componentName);
-			
-			if (isForDeviceDown) {
-				setAsDeviceDownLayer(e, svgComp); 
-			}
-			
-			org.transition9.util.svg.SvgRenderQueueManager.getBitmapData(e.context, token, replacements, 
-				function (image :com.pblabs.components.scene2D.ImageData) :Void {
-					svgComp.bitmapData = image;
-					// trace("order rendered=" + e.getEntityData("order") + ", width=" + image.width);
-					//Notify the display hierarchy that our dimensions may have changed
-					if (e.getComponent(com.pblabs.components.minimalcomp.Component) != null) {
-						e.getComponent(com.pblabs.components.minimalcomp.Component).invalidate();
-					}
-				}, true);
-		} else {
-			var svgToken = SvgResources.getSvgResourceToken(e.context, token, replacements);
-			var svgData = e.context.getManager(IResourceManager).get(svgToken);
-			org.transition9.util.Assert.isNotNull(svgData, ' svgData is null for ' + svgToken);
-			var svgComp = e.context.allocate(Svg);
-			svgComp.svgData = svgData;
-			svgComp.parentProperty = layer.entityProp();
-			componentName = componentName != null ? componentName : token.id + "_" + svgComp.key;
-			e.addComponent(svgComp, componentName);
-			
-			if (isForDeviceDown) {
-				setAsDeviceDownLayer(e, svgComp); 
-			}
-		}
-		
-		return e;
 	}
 	
 	public static function stretchToWidth (e :IEntity, ?widthFraction :Float = 1.0) :IEntity
@@ -243,7 +141,7 @@ class ImageTools
 	{
 		if (token != null) {
 			switch (token.type) {
-				case SVG: return addSvg(e, layer, token, null, componentName);
+				case SVG: throw "Use SvgImageTools instead of ImageTools for Svg resources"; return null;
 				case IMAGE,IMAGE_DATA: //Ok 
 				default: throw "Cannot add image for resource " + token;
 			}
@@ -263,7 +161,7 @@ class ImageTools
 				case IMAGE: 
 					var image = e.context.getManager(IResourceManager).get(token);
 					org.transition9.util.Assert.isNotNull(image, ' image is null for token=' + token);
-					#if flash
+					#if (flash || cpp || spaceport)
 					imageComp.bitmapData = image.bitmapData; 
 					#elseif js
 					imageComp.drawImage(image);
@@ -293,7 +191,7 @@ class ImageTools
 					case IMAGE: 
 						var image = e.context.getManager(IResourceManager).get(token);
 						org.transition9.util.Assert.isNotNull(image, ' image is null');
-						#if flash
+						#if (flash || cpp || spaceport)
 						imageComp.bitmapData = image.bitmapData; 
 						#elseif js
 						imageComp.drawImage(image);
@@ -312,23 +210,6 @@ class ImageTools
 		}
 		return e;
 	}
-	
-	public static function setSvg (e :IEntity, svgData :SvgData) :IEntity
-	{
-		var svgComp = e.getComponent(Svg);
-		org.transition9.util.Assert.isNotNull(svgComp, ' svgComp is null');
-		svgComp.svgData = svgData;
-		return e;
-	}
-	
-	// public static function addText (e :IEntity, layer :BaseSceneLayer, text :String, ?align :String) :IEntity
-	// {
-	// 	var svgComp = e.context.allocate(Svg);
-	// 	svgComp.svgData = new SvgData(null, SVG_TEXT, [new SvgReplace("$T", text)]);
-	// 	svgComp.parentProperty = layer.entityProp();
-	// 	e.addComponent(svgComp);
-	// 	return e;
-	// }
 	
 	public static function addText (e :IEntity, layer :BaseSceneLayer, text :String, ?align :String) :IEntity
 	{

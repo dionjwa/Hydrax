@@ -1,13 +1,13 @@
 package com.pblabs.components.scene2D;
 
 class GraphicsComponent
-	#if flash
+	#if (flash || cpp || spaceport)
 	extends com.pblabs.components.scene2D.flash.SceneComponent
 	#elseif js
 	extends BitmapRenderer
 	#end
 {
-	#if flash
+	#if (flash || cpp || spaceport)
 	var _shape :flash.display.Shape;
 	#elseif js
 	var _graphics :flash.display.Graphics;
@@ -32,7 +32,7 @@ class GraphicsComponent
 	function get_graphics () :flash.display.Graphics
 	{
 		//Assume dirty
-		#if flash
+		#if (flash || cpp || spaceport)
 		return _shape.graphics;
 		#elseif js
 		_isContentsDirty = true;
@@ -42,7 +42,7 @@ class GraphicsComponent
 	
 	public function new ()
 	{
-		#if flash
+		#if (flash || cpp || spaceport)
 		_shape = new flash.display.Shape();
 		_displayObject = _shape;
 		super();
@@ -53,8 +53,7 @@ class GraphicsComponent
 		
 	}
 	
-	#if js
-	
+	#if (js && !spaceport)
 	override public function onFrame (dt :Float) :Void
 	{
 		if (_isContentsDirty) {

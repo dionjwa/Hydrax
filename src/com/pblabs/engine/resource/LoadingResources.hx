@@ -19,7 +19,7 @@ class LoadingResources<T> extends ResourcesBase<T>
 	var _loading :Array<ResourceToken>;
 	var _data :Map<ResourceToken, T>;
 
-	#if flash
+	#if (flash || spaceport)
 	var _loaders :Map<ResourceToken, flash.display.Loader>;
 	var _urlloaders :Map<ResourceToken, flash.net.URLLoader>;
 	#end
@@ -31,7 +31,7 @@ class LoadingResources<T> extends ResourcesBase<T>
 		_pending = [];
 		_loading = [];
 		
-		#if flash
+		#if (flash || spaceport)
 		_loaders = Maps.newHashMap(ValueType.TClass(ResourceToken));
 		_urlloaders = Maps.newHashMap(ValueType.TClass(ResourceToken));
 		#end
@@ -54,7 +54,7 @@ class LoadingResources<T> extends ResourcesBase<T>
 	
 	override public function get (token :ResourceToken) :T
 	{
-		#if flash
+		#if (flash || spaceport)
 		if (_data.exists(token)) {
 			return _data.get(token);
 		} else { 
@@ -94,7 +94,7 @@ class LoadingResources<T> extends ResourcesBase<T>
 					}
 					_loading.remove(token);
 				case none: throw "Not handled: none type";
-				#if flash
+				#if (flash || spaceport)
 				case swf (swfId): loadFromSwf(token, swfId);
 				#end
 			}
@@ -135,7 +135,7 @@ class LoadingResources<T> extends ResourcesBase<T>
 	function loadFromUrl (token :ResourceToken, url :String) :Void
 	{
 		Preconditions.checkNotNull(token.url, "token.url is null");
-		#if flash
+		#if (flash || spaceport)
 		throw Type.getClassName(Type.getClass(this)) + ":Subclasses override";
 		#else
 		org.transition9.util.Log.debug("loading url:" + token.url);
@@ -160,7 +160,7 @@ class LoadingResources<T> extends ResourcesBase<T>
 		#end
 	}
 	
-	#if js
+	#if (js && !spaceport)
 	function createResourceFromJsUrlData (token :ResourceToken, data :Dynamic) :T
 	{
 		throw Type.getClassName(Type.getClass(this)) + ":Subclasses override";
@@ -200,7 +200,7 @@ class LoadingResources<T> extends ResourcesBase<T>
 		}
 	}
 	
-	#if flash
+	#if (flash || spaceport)
 	function loadFromSwf (token :ResourceToken, swfId :String) :Void
 	{
 		//Do nothing, images are loaded/instantiated from swfs as needed
@@ -228,7 +228,9 @@ class LoadingResources<T> extends ResourcesBase<T>
 			var onComplete = function (e :flash.events.Event) :Void {
 				org.transition9.util.Log.debug("onComplete " + token);
 				loader.contentLoaderInfo.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
+				#if !spaceport
 				loader.contentLoaderInfo.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
+				#end
 				self._loading.remove(token);
 				self._data.set(token, self.createResourceFromFlashLoaderData(token, loader.content));
 				self._loaders.remove(token);
@@ -237,10 +239,16 @@ class LoadingResources<T> extends ResourcesBase<T>
 			
 			org.transition9.util.EventDispatcherUtil.addOnceListener(loader.contentLoaderInfo, flash.events.Event.COMPLETE, onComplete);
 			loader.contentLoaderInfo.addEventListener(flash.events.IOErrorEvent.IO_ERROR, onLoadError);
+			#if !spaceport
 			loader.contentLoaderInfo.addEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, onLoadError);
+			#end
 			
 			loader.load(new flash.net.URLRequest(url));
+		#if spaceport
+		} catch (e :Dynamic) {
+		#else
 		} catch (e :flash.errors.SecurityError) {
+		#end
 			onLoadError(e);
 		}
 	}
@@ -249,14 +257,18 @@ class LoadingResources<T> extends ResourcesBase<T>
 	{
 		try {
 			var loader = new flash.net.URLLoader();
+			#if flash
 			loader.dataFormat = flash.net.URLLoaderDataFormat.TEXT;
+			#end
 			_urlloaders.set(token, loader);
 			var self = this;
 			var onComplete = function (e :flash.events.Event) :Void {
 				org.transition9.util.Log.debug("onComplete");
 				self._loading.remove(token);
 				loader.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
+				#if flash
 				loader.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
+				#end
 				self._data.set(token, self.createResourceFromFlashLoaderData(token, loader.data));
 				self._urlloaders.remove(token);
 				self.maybeFinish();
@@ -264,8 +276,14 @@ class LoadingResources<T> extends ResourcesBase<T>
 			
 			org.transition9.util.EventDispatcherUtil.addOnceListener(loader, flash.events.Event.COMPLETE, onComplete);
 			loader.addEventListener(flash.events.IOErrorEvent.IO_ERROR, onLoadError);
+			#if flash
 			loader.addEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, onLoadError);
+			#end
+		#if flash
 		} catch (e :flash.errors.SecurityError) {
+		#else
+		} catch (e :Dynamic) {
+		#end
 			onLoadError(e);
 		}
 	}

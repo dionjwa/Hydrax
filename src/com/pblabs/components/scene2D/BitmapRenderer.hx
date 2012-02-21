@@ -22,10 +22,10 @@ using com.pblabs.components.scene2D.SceneUtil;
   * Flash: there is an issue with ObjectPooling and bitmap caching.  Don't pool this class yet.
   */
 class BitmapRenderer 
-	#if js
+	#if (flash || cpp || spaceport)
+	extends com.pblabs.components.scene2D.flash.SceneComponent,
+	#elseif js
 	extends com.pblabs.components.scene2D.js.SceneComponent,
-	#elseif (flash || cpp)
-	extends com.pblabs.components.scene2D.flash.SceneComponent,  
 	#end
 	implements com.pblabs.components.scene2D.flash.ICopyPixelsRenderer
 {
@@ -37,7 +37,7 @@ class BitmapRenderer
 	inline function get_bitmapData () :ImageData
 	{
 		org.transition9.util.Assert.isNotNull(_bitmap);
-		#if (flash || cpp)
+		#if (flash || cpp || spaceport)
 		return _bitmap.bitmapData;
 		#elseif js
 		return _bitmap;
@@ -57,13 +57,13 @@ class BitmapRenderer
 			
 			_registrationPoint.x = 0;
 			_registrationPoint.y = 0;
-			#if flash
+			#if (flash || cpp || spaceport)
 			_bitmap.bitmapData = null;
 			#elseif js
 			_bitmap = null;
 			#end
 		} else {
-			#if flash
+			#if (flash || cpp || spaceport)
 			org.transition9.util.Assert.isNotNull(_bitmap);
 			_bitmap.bitmapData = val;
 			//This is set to false when a new bitmapData is assigned
@@ -77,7 +77,7 @@ class BitmapRenderer
 			recomputeBounds();
 		}
 
-		#if js
+		#if (js && !spaceport)
 		if (!isOnCanvas) {
 			redrawBackBuffer();
 		}
@@ -86,7 +86,7 @@ class BitmapRenderer
 		return val;
 	}
 	
-	#if js
+	#if (js && !spaceport)
 	/** Can also render a js.Image */
 	override function get_cacheAsBitmap () :Bool
 	{
@@ -124,7 +124,7 @@ class BitmapRenderer
 	}
 	#end
 	
-	#if flash
+	#if (flash || cpp || spaceport)
 	public var smoothing (get_smoothing, set_smoothing) :Bool;
 	var _smoothing :Bool;
 	function get_smoothing () :Bool
@@ -142,9 +142,13 @@ class BitmapRenderer
 	
 	public function new (?width :Int = 1, ?height :Int = 1) :Void
 	{
-		#if (flash || cpp)
+		#if (flash || cpp || spaceport)
 		var sprite = org.transition9.util.SpriteUtil.create();
+		#if flash
 		_bitmap = new flash.display.Bitmap(new flash.display.BitmapData(width, height, true, 0xff0000), flash.display.PixelSnapping.NEVER);
+		#else
+		_bitmap = new flash.display.Bitmap();
+		#end
 		sprite.addChild(_bitmap);
 		_displayObject = sprite;
 		super();
@@ -166,14 +170,14 @@ class BitmapRenderer
 	
 	public function setImage (image :ImageType) :Void
 	{
-		#if flash
+		#if (flash || cpp || spaceport)
 		bitmapData = image.bitmapData;
 		#elseif js
 		bitmapData = org.transition9.util.BitmapUtil.toCanvas(image);
 		#end
 	}
 	
-	#if flash
+	#if (flash || cpp || spaceport)
 	public function drawPixels (objectToScreen :Matrix, renderTarget :flash.display.BitmapData) :Void
 	{
 		// Draw to the target.
@@ -197,7 +201,7 @@ class BitmapRenderer
 	{
 		// No rotation/scaling/translucency/blend modes
 		return (objectToScreen.a == 1 && objectToScreen.b == 0 && objectToScreen.c == 0 && objectToScreen.d == 1 && alpha == 1
-		#if flash
+		#if (flash || cpp || spaceport)
 		&& (displayObject.filters.length == 0)
 		#end
 		);
@@ -212,7 +216,7 @@ class BitmapRenderer
 		_displayObject = keepDisp;
 	}
 	
-	#if (flash || cpp) override #end 
+	#if (flash || cpp || spaceport) override #end 
 	function recomputeBounds () :Void
 	{
 		if (_bitmap != null) {
@@ -242,7 +246,7 @@ class BitmapRenderer
 		isTransformDirty = true;
 	}
 	
-	#if flash
+	#if (flash || cpp || spaceport)
 	override function setDefaults () :Void
 	{
 		super.setDefaults();

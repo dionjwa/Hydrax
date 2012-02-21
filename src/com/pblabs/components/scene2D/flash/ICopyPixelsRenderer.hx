@@ -29,7 +29,7 @@ interface ICopyPixelsRenderer
 	 * @param objectToScreen Transform from object space to renderTarget space.
 	 * @param renderTarget Bitmap to which to draw.
 	 */
-	#if flash 
+	#if (flash || cpp || spaceport) 
 	function drawPixels(objectToScreen :Matrix, renderTarget :flash.display.BitmapData):Void;
 	#elseif js
 	function drawPixels(ctx :CanvasRenderingContext2D):Void;

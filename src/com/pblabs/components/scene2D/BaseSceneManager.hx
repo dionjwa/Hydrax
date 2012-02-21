@@ -157,12 +157,12 @@ class BaseSceneManager extends NodeComponent,
 		this.autoSceneViewAttach = true;
 		_autoSceneViewAttachBonds = [];
 		
-		//Device specific
-		#if js
-		if (org.transition9.util.Device.isRetinaDisplay) {
-			// _zoom = 2.0;
-		}
-		#end
+		// //Device specific
+		// #if js
+		// if (org.transition9.util.Device.isRetinaDisplay) {
+		// 	// _zoom = 2.0;
+		// }
+		// #end
 	}
 	
 	public function addLayer (?layerName :String = null, ?cls :Class<Dynamic> = null, ?registerAsManager :Bool = false, 

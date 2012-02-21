@@ -1,6 +1,6 @@
 package com.pblabs.components.scene2D;
 
-#if (flash || cpp || neko)
+#if (flash || cpp || neko || spaceport)
 	typedef ImageData = flash.display.BitmapData;
 #elseif js
 	typedef ImageData = Canvas;

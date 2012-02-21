@@ -108,7 +108,7 @@ class SvgRenderQueueManager
 		var finished = false;
 		var started = false;
 		return function (dt :Float) :Bool {
-			#if flash
+			#if (flash || spaceport)
 			if (finished) return true;
 			if (started) return false;
 			started = true;
@@ -129,7 +129,7 @@ class SvgRenderQueueManager
 				});
 			}
 			return false;
-			#elseif js
+			#elseif (js && !spaceport)
 			var image :Canvas = getImageFromCache();
 			if (image != null) {
 				onFinish(image);

@@ -26,7 +26,7 @@ class RectangleShape extends ShapeComponent
 	function set_borderRadius (val :Int) :Int
 	{
 		_borderRadius = val;
-		#if js
+		#if (js && !spaceport)
 		for (cssName in ["-moz-border-radius", "-webkit-border-radius", "-khtml-border-radius", "border-radius"]) {
 			_displayObject.style.cssText = org.transition9.util.DomUtil.setStyle(_displayObject.style.cssText, cssName, _borderRadius + "px");	
 		}
@@ -37,15 +37,13 @@ class RectangleShape extends ShapeComponent
 	
 	public function new (?w :Float = 20.0, ?h :Float = 100.0)
 	{
-		
-		
-		#if js
+		#if (js && !spaceport)
 		_displayObject = com.pblabs.components.scene2D.js.SceneComponent.createDiv();
 		#end
 		
 		super();
 		
-		#if js
+		#if (js && !spaceport)
 		div.appendChild(_displayObject);
 		#end
 		
@@ -68,7 +66,7 @@ class RectangleShape extends ShapeComponent
 	
 	override function redraw () :Void
 	{
-		#if (flash || cpp)
+		#if (flash || cpp || spaceport)
 		var scene :BaseSceneManager = parent != null && parent.parent != null ? cast parent.parent : null;
 		var zoom = scene != null ? scene.zoom : 1.0;
 		var g = cast(_displayObject, flash.display.Shape).graphics;
@@ -86,7 +84,7 @@ class RectangleShape extends ShapeComponent
 		#end
 	}
 	
-	#if js
+	#if (js && !spaceport)
 	override public function drawPixels (ctx :CanvasRenderingContext2D)
 	{
 		if (_borderRadius == 0) {

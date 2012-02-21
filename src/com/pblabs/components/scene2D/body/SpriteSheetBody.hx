@@ -80,7 +80,7 @@ class SpriteSheetBody extends BitmapRenderer
 		if (val == null) {
 			super.set_bitmapData(val);
 		} else {
-			#if flash
+			#if (flash || cpp || spaceport)
 			org.transition9.util.Assert.isNotNull(_bitmap);
 			_bitmap.bitmapData = val;
 			//This is set to false when a new bitmapData is assigned
@@ -92,7 +92,7 @@ class SpriteSheetBody extends BitmapRenderer
 			recomputeBounds();
 		}
 
-		#if js	
+		#if (js && !spaceport)	
 		if (!isOnCanvas) {
 			redrawBackBuffer();
 		}
@@ -230,7 +230,7 @@ class SpriteSheetBody extends BitmapRenderer
 		_transformMatrix.rotate(_angle + _angleOffset);
 		_transformMatrix.translate(_x + _locationOffset.x, _y + _locationOffset.y);
 		
-		#if flash
+		#if (flash || cpp || spaceport)
 		if (_displayObject == null) {
 			org.transition9.util.Log.error("No _displayObject");
 			return;

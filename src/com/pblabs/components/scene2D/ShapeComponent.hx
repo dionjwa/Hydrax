@@ -8,8 +8,13 @@
  ******************************************************************************/
 package com.pblabs.components.scene2D;
 
+/** Spaceport.io doesn't support graphics drawing */
+// #if spaceport
+// #error
+// #end
+
 class ShapeComponent
-#if (flash || cpp)
+#if (flash || cpp || spaceport)
  extends com.pblabs.components.scene2D.flash.SceneComponent
 #elseif js
  extends com.pblabs.components.scene2D.js.SceneComponent
@@ -27,7 +32,7 @@ class ShapeComponent
 	
 	public function new ()
 	{
-		#if (flash || cpp)
+		#if (flash || cpp || spaceport)
 		_displayObject = new flash.display.Shape();
 		#end
 		super();

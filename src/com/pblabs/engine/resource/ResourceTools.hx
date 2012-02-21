@@ -4,7 +4,7 @@ import org.transition9.util.Constants;
 
 class ResourceTools
 {
-	#if flash
+	#if (flash || spaceport)
 	public static function resolveEmbeddedClassName (id :String) :Class<Dynamic>
 	{
 		var cls :Class<Dynamic> = Type.resolveClass(id.toUpperCase());

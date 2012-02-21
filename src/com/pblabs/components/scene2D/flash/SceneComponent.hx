@@ -98,7 +98,7 @@ class SceneComponent extends BaseSceneComponent,
 	
 	function recomputeBounds () :Void
 	{
-		#if flash
+		#if (flash || spaceport)
 		var localDimensions = _displayObject.getBounds(displayObject);
 		#elseif cpp
 		var localDimensions = _displayObject.nmeGetPixelBounds();

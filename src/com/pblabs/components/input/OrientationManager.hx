@@ -41,7 +41,7 @@ class OrientationManager extends BaseInputManager
 	{
 		super.shutdown();
 		
-		#if js
+		#if (js && spaceport)
 		untyped __js__("window.onorientationchange = null");
 		#if debug
 		org.transition9.util.Assert.isFalse(orientationChange.isListenedTo);
@@ -52,13 +52,13 @@ class OrientationManager extends BaseInputManager
 	
 	function bindSignals () :Void
 	{
-		#if js
+		#if (js && !spaceport)
 		var listener = onOrientationChangeInternal;
 		untyped __js__("window.onorientationchange = listener");
 		#end
 	}
 	
-	#if js
+	#if (js && !spaceport)
 	function onOrientationChangeInternal () :Void
 	{
 		var orientation :Int = untyped __js__("window.orientation");

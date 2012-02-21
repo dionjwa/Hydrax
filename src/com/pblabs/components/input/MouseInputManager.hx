@@ -16,7 +16,7 @@ import hsl.haxe.Signaler;
 import hsl.haxe.data.mathematics.Point;
 import hsl.haxe.data.mouse.MouseLocation;
 
-#if js
+#if (js && !spaceport)
 import hsl.js.translating.JSSignaler;
 #end
 
@@ -36,7 +36,7 @@ class MouseInputManager extends BaseInputManager
 	/** Used if there is a TouchInputManager */
 	public var currentTouches :Int;
 	
-	#if js
+	#if (js && !spaceport)
 	public var isRootDocumentMouse (get_isRootDocumentMouse, set_isRootDocumentMouse) :Bool;
 	var _isRootDocumentMouse :Bool;
 	function rootMouseListener (e :js.Dom.Event) :Void
@@ -75,7 +75,7 @@ class MouseInputManager extends BaseInputManager
 		super();
 		
 		currentTouches = 0;
-		#if js
+		#if (js && !spaceport)
 		_isRootDocumentMouse = true;
 		#end
 	}
@@ -145,20 +145,23 @@ class MouseInputManager extends BaseInputManager
 	
 	function bindSignals () :Void
 	{
-		#if js
-		var signaler = hsl.js.translating.JSSignaler;
-		mouseDown = new hsl.js.translating.JSSignaler(this, js.Lib.document, hsl.js.translating.JSEventType.MOUSEDOWN, new hsl.js.translation.mouse.MouseLocationTranslator());
-		mouseUp = new hsl.js.translating.JSSignaler(this, js.Lib.document, hsl.js.translating.JSEventType.MOUSEUP, new hsl.js.translation.mouse.MouseLocationTranslator());
-		mouseMove = new hsl.js.translating.JSSignaler(this, js.Lib.document, hsl.js.translating.JSEventType.MOUSEMOVE, new hsl.js.translation.mouse.MouseLocationTranslator());
-		mouseClick = new hsl.js.translating.JSSignaler(this, js.Lib.document, hsl.js.translating.JSEventType.CLICK, new hsl.js.translation.mouse.MouseLocationTranslator());
-		#elseif (flash || cpp)
+		
+		#if (flash || cpp || spaceport)
 		//Listen to the stage for mouse events
 		var layer = flash.Lib.current;
 		mouseDown = new hsl.avm2.translating.AVM2Signaler(this, layer, flash.events.MouseEvent.MOUSE_DOWN, new hsl.avm2.translation.mouse.MouseLocationTranslator());
 		mouseUp = new hsl.avm2.translating.AVM2Signaler(this, layer, flash.events.MouseEvent.MOUSE_UP, new hsl.avm2.translation.mouse.MouseLocationTranslator());
 		mouseMove = new hsl.avm2.translating.AVM2Signaler(this, layer, flash.events.MouseEvent.MOUSE_MOVE, new hsl.avm2.translation.mouse.MouseLocationTranslator());
 		mouseClick = new hsl.avm2.translating.AVM2Signaler(this, layer, flash.events.MouseEvent.CLICK, new hsl.avm2.translation.mouse.MouseLocationTranslator());
-		mouseWheel = new hsl.avm2.translating.AVM2Signaler(this, layer, flash.events.MouseEvent.MOUSE_WHEEL, new hsl.avm2.translation.mouse.DeltaTranslator());
+			#if flash
+			mouseWheel = new hsl.avm2.translating.AVM2Signaler(this, layer, flash.events.MouseEvent.MOUSE_WHEEL, new hsl.avm2.translation.mouse.DeltaTranslator());
+			#end
+		#elseif js
+		var signaler = hsl.js.translating.JSSignaler;
+		mouseDown = new hsl.js.translating.JSSignaler(this, js.Lib.document, hsl.js.translating.JSEventType.MOUSEDOWN, new hsl.js.translation.mouse.MouseLocationTranslator());
+		mouseUp = new hsl.js.translating.JSSignaler(this, js.Lib.document, hsl.js.translating.JSEventType.MOUSEUP, new hsl.js.translation.mouse.MouseLocationTranslator());
+		mouseMove = new hsl.js.translating.JSSignaler(this, js.Lib.document, hsl.js.translating.JSEventType.MOUSEMOVE, new hsl.js.translation.mouse.MouseLocationTranslator());
+		mouseClick = new hsl.js.translating.JSSignaler(this, js.Lib.document, hsl.js.translating.JSEventType.CLICK, new hsl.js.translation.mouse.MouseLocationTranslator());
 		#else
 		org.transition9.util.Log.error("Platform mouse input not yet implemented.  Currently Flash/c++/JS only.");
 		#end

@@ -28,7 +28,7 @@ using org.transition9.geom.Vec2Tools;
 
 class SceneUtil
 {
-	#if js
+	#if (js && !spaceport)
 	inline public static function applyTransform (element :js.Dom.HtmlDom, transform :flash.geom.Matrix) :Void
 	{
 		if (SceneView.isWebkitBrowser) {
@@ -41,7 +41,7 @@ class SceneUtil
 	
 	
 	public static var MANAGER_CLASS :Class<BaseSceneManager> = 
-		#if (flash || cpp)
+		#if (flash || cpp || spaceport)
 		com.pblabs.components.scene2D.flash.SceneManager;
 		// com.pblabs.components.scene2D.flash.BitmapDataScene;
 		#elseif js
@@ -52,7 +52,7 @@ class SceneUtil
 		
 		
 	public static var LAYER_CLASS :Class<BaseSceneLayer> = 
-		#if (flash || cpp)
+		#if (flash || cpp || spaceport)
 		com.pblabs.components.scene2D.flash.SceneLayer;
 		#elseif js
 		/**
@@ -379,6 +379,7 @@ class SceneUtil
 		return e;
 	}
 	
+	#if flash
 	public static function setLayerColor (layer :BaseSceneLayer, color :Int) :RectangleShape
 	{
 		var background = createBaseSceneEntity(layer.context, false);
@@ -397,6 +398,7 @@ class SceneUtil
 		
 		return rect;
 	}
+	#end
 	
 	// public static function addImage (layer :BaseSceneLayer, resource :ResourceToken) :BaseSceneComponent
 	// {
@@ -416,7 +418,7 @@ class SceneUtil
 	// 	return image;
 	// }
 	
-	#if js
+	#if (js && !spaceport)
 	/**
 	  * Hacks to get the proper dimensions
 	  */

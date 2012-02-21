@@ -31,7 +31,7 @@ class ImageResources extends LoadingResources<ImageType>
 	
 	override function loadFromUrl (token :ResourceToken, url :String) :Void
 	{
-		#if flash
+		#if (flash || spaceport)
 		loadDisplayObjectFromUrl(token, url);
 		#elseif js
 		var image :Image = untyped __js__ ("new Image()");
@@ -49,7 +49,7 @@ class ImageResources extends LoadingResources<ImageType>
 		#end
 	}
 	
-	#if flash
+	#if (flash || spaceport)
 	override function createResourceFromFlashLoaderData (token :ResourceToken, loaderData :Dynamic) :ImageType
 	{
 		return cast(loaderData, flash.display.Bitmap);

@@ -25,7 +25,7 @@ class CircleShape extends ShapeComponent
 	
 	public function new ()
 	{
-		#if js
+		#if (js && !spaceport)
 		_displayObject = com.pblabs.components.scene2D.js.SceneComponent.createDiv();
 		_displayObject.style.cssText = org.transition9.util.DomUtil.setStyle(_displayObject.style.cssText, "border-radius", "50%");
 		_displayObject.style.cssText = org.transition9.util.DomUtil.setStyle(_displayObject.style.cssText, "-moz-border-radius", "50%");
@@ -33,7 +33,7 @@ class CircleShape extends ShapeComponent
 		
 		super();
 		
-		#if js
+		#if (js && !spaceport)
 		div.appendChild(_displayObject);
 		#end
 	}
@@ -57,7 +57,7 @@ class CircleShape extends ShapeComponent
 	{
 		com.pblabs.engine.debug.Profiler.enter("redraw");
 		var r = _radius;
-		#if (flash || cpp)
+		#if (flash || cpp || spaceport)
 		var g = cast(_displayObject, flash.display.Shape).graphics;
 		g.clear();
 		if (fillColor >= 0) {

@@ -22,7 +22,7 @@ enum Source {
 	derived(other :ResourceToken);
 	/** The raw resource is referenced by this enum */
 	linked (resource :Dynamic);
-	#if flash
+	#if (flash ||spaceport)
 	swf(swfId :String);
 	#end
 	none;//For resources manually added

@@ -1,7 +1,7 @@
 package com.pblabs.components.scene2D;
 
 class Text extends
-	#if flash
+	#if (flash || cpp || spaceport)
 	com.pblabs.components.scene2D.flash.SceneComponent
 	#elseif js
 	com.pblabs.components.scene2D.js.SceneComponent
@@ -17,7 +17,7 @@ class Text extends
 	function set_text (val :String) :String
 	{
 		_text = val;
-		#if js
+		#if (js && !spaceport)
 		_displayObject.innerHTML = _text;
 		#end
 		return val;
@@ -26,7 +26,7 @@ class Text extends
 	public function new ()
 	{
 		super();
-		#if js
+		#if (js && !spaceport)
 		_displayObject = com.pblabs.components.scene2D.js.SceneComponent.createDiv();//js.Lib.document.createTextNode("text node");
 		_displayObject.setAttribute("id", "TextComponent" + key);
 		
@@ -50,7 +50,7 @@ class Text extends
 		#end
 	}
 	
-	#if js
+	#if (js && !spaceport)
 	override public function drawPixels (ctx :CanvasRenderingContext2D)
 	{
 		#if (debug && modernizr)

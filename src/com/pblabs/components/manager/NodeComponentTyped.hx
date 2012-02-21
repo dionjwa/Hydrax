@@ -45,7 +45,6 @@ using org.transition9.util.XmlTools;
 */
 class NodeComponentTyped<P :INodeParent<Dynamic>, C :INodeChild<Dynamic>> extends EntityComponent,
 	implements INodeParent<C>, implements INodeChild<P>
-	// implements INode<C>
 {
 	var _parentProperty :PropertyReference<P>;
 	public var parentProperty (get_parentProperty, set_parentProperty) :PropertyReference<P>;

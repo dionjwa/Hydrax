@@ -37,16 +37,16 @@ class ImageComponent extends BitmapRenderer
 	override function onAdd () :Void
 	{
 		org.transition9.util.Assert.isNotNull(resource, "resource is null for #" + owner.name + "." + name);
-		#if js
-		super.onAdd();
-		loadJSImage();
-		#elseif (flash || cpp)
+		#if (flash || cpp || spaceport)
 		loadFlashImage();
 		super.onAdd();
+		#elseif js
+		super.onAdd();
+		loadJSImage();
 		#end
 	}
 	
-	#if js
+	#if (js && !spaceport)
 	function loadJSImage () :Void
 	{
 		org.transition9.util.Assert.isNotNull(resource, ' resource is null');
@@ -72,7 +72,7 @@ class ImageComponent extends BitmapRenderer
 	}
 	#end
 	
-	#if (flash || cpp)
+	#if (flash || cpp || spaceport)
 	function loadFlashImage () :Void
 	{
 		var image :Dynamic = context.getTokenResource(resource);

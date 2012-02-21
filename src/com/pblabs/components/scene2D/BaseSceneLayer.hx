@@ -25,15 +25,12 @@ class BaseSceneLayer extends NodeComponent,
 	
 	/** For ignoring all objects in a layer */
 	public var objectMask :ObjectType;
-	@editor({ui:"UpdatingLabel"})
 	public var scene (get_scene, never) :BaseSceneManager;
 	function get_scene () :BaseSceneManager
 	{
 		return cast parent;
 	}
-	@editor({ui:"NumericStepper", min:0})
 	public var index (get_index, set_index) :Int;
-	@editor({ui:"HUISlider", min:0.0, max:3.0})
 	public var parallaxFactor (get_parallaxFactor, set_parallaxFactor) :Float;
 	public var zOrderDirty :Bool;
 	

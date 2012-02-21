@@ -71,7 +71,7 @@ class InputManager extends BaseInputManager,
 	@inject
 	public var _mouse :MouseInputManager;
 	
-	#if js
+	#if (js && !spaceport)
 	@inject
 	public var gestures :com.pblabs.components.input.GestureInputManager;
 	#end
@@ -195,7 +195,7 @@ class InputManager extends BaseInputManager,
 		_mouse.mouseWheel.bind(onMouseDelta);
 		#end
 	 
-		#if js
+		#if (js && !spaceport)
 		if (gestures != null) {
 			var self = this;
 			// gestures.gestureChange.bind(function (e :hsl.js.data.Touch.GestureEvent) :Void {
@@ -277,7 +277,7 @@ class InputManager extends BaseInputManager,
 	inline function adjustDeviceLocation (m :MouseLocation) :Vec2
 	{
 		// trace('sceneView.mouseOffsetX=' + sceneView.mouseOffsetX);
-		#if (flash || cpp)
+		#if (flash || cpp || spaceport)
 		return new Vec2(m.globalLocation.x, m.globalLocation.y);
 		#elseif js
 		var offset = sceneView.mouseOffset;

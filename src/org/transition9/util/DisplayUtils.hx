@@ -26,7 +26,6 @@ import flash.geom.Rectangle;
 import flash.net.URLRequest;
 
 import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
 
 using Lambda;
 
@@ -100,7 +99,7 @@ class DisplayUtils
 		if (Std.is( disp, DisplayObjectContainer)) {
 			var container:DisplayObjectContainer = cast( disp, DisplayObjectContainer);
 			var nn = container.numChildren;
-			for (ii in 0...nn) {
+			for (ii in 0...Std.int(nn)) {
 				try {
 					disp = container.getChildAt(ii);
 				} catch (err :Dynamic) {
@@ -135,7 +134,7 @@ class DisplayUtils
 	{
 		var bounds:Rectangle;
 		if (d.parent != null) {
-			#if flash
+			#if (flash || spaceport)
 			bounds = d.getBounds(d.parent != null ? d.parent : d);
 			#elseif cpp
 			bounds = d.nmeGetPixelBounds();
@@ -151,7 +150,7 @@ class DisplayUtils
 			//the displayObject is scaled
 			d.x = x;
 			d.y = y;
-			#if flash
+			#if (flash || spaceport)
 			bounds = d.getBounds(d);
 			#elseif cpp
 			bounds = d.nmeGetPixelBounds();
@@ -209,7 +208,7 @@ class DisplayUtils
 		var container = cast(disp, DisplayObjectContainer);
 		var bounds:Rectangle;
 		var child:DisplayObject;
-		for (ii in 0...container.numChildren) {
+		for (ii in 0...Std.int(container.numChildren)) {
 			child = cast( container.getChildAt(ii), DisplayObject);
 			setTopLeft(child, child.x, startTop);
 			startTop += child.height + gap;
@@ -221,7 +220,7 @@ class DisplayUtils
 		if (disp.parent == null) {
 			throw "Cannot place a DisplayObject without a parent";
 		}
-		#if flash
+		#if (flash || spaceport)
 		var bounds = disp.getBounds(disp.parent);
 		#elseif cpp
 		var bounds = disp.nmeGetPixelBounds();
@@ -242,7 +241,7 @@ class DisplayUtils
 
 	public static function getBoundsCenter (d :DisplayObject) :Point
 	{
-		#if flash
+		#if (flash || spaceport)
 		var bounds = d.getBounds(d);
 		#elseif cpp
 		var bounds = d.nmeGetPixelBounds();
@@ -253,7 +252,7 @@ class DisplayUtils
 	public static function getBoundsCenterRelativeTo (d :DisplayObject,
 		relativeTo :DisplayObject) :Point
 	{
-		#if flash
+		#if (flash || spaceport)
 		var bounds = d.getBounds(relativeTo);
 		#elseif cpp
 		var bounds = d.nmeGetPixelBounds();
@@ -269,7 +268,7 @@ class DisplayUtils
 	public static function getCenterOffsetRelativeTo (d :DisplayObject,
 		relativeTo :DisplayObject) :Point
 	{
-		#if flash
+		#if (flash || spaceport)
 		var bounds = d.getBounds(relativeTo);
 		#elseif cpp
 		var bounds = d.nmeGetPixelBounds();

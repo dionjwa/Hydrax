@@ -21,7 +21,7 @@ import hsl.haxe.Signaler;
 using StringTools;
 
 using org.transition9.geom.Vec2Tools;
-#if js
+#if (js && !spaceport)
 import js.Dom;
 #end
 
@@ -42,7 +42,7 @@ import js.Dom;
 class SceneView 
 	implements IPBManager, implements haxe.rtti.Infos
 {
-	#if js
+	#if (js && !spaceport)
 	public static var isWebkitBrowser :Bool = true;
 	#end
 	
@@ -56,7 +56,7 @@ class SceneView
 	
 	public var sizeChangeSignaler (default, null) :Signaler<Vec2>;
 
-	#if (flash || cpp)	
+	#if (flash || cpp || spaceport)
 	public var layer (get_layer, null) :flash.display.Sprite;
 	var _layer :flash.display.Sprite;
 	#elseif (js && !nodejs)
@@ -70,14 +70,25 @@ class SceneView
 	var _height :Int;
 	var _width :Int;
 	
-	#if js
-	public function new (?layerId :String, ?width :Int = 0, ?height :Int = 0)
-	#else
+	#if (flash || cpp || spaceport)
 	public function new (?width :Int = 0, ?height :Int = 0)
+	#elseif js
+	public function new (?layerId :String, ?width :Int = 0, ?height :Int = 0)
 	#end
 	{
 		sizeChangeSignaler = new DirectSignaler(this);
-		#if js
+		
+		#if (flash || cpp || spaceport)
+		_layer = new flash.display.Sprite();
+		_layer.mouseChildren = false;
+		_layer.name = "SceneView";
+		if (width <= 0 || height <= 0) {
+			_layer.addEventListener(flash.events.Event.ADDED_TO_STAGE, handleAddedToStage);
+		} else {
+			// _layer.width = width;
+			// _layer.height = height;
+		}
+		#elseif js
 		_width = width;
 		_height = height;
 		fullScreen = true;
@@ -90,16 +101,6 @@ class SceneView
 		//This is used by the transform operations.
 		var webkitRE :EReg = ~/.*AppleWebKit.*/;
 		isWebkitBrowser = webkitRE.match(js.Lib.window.navigator.userAgent);
-		#elseif (flash || cpp)
-		_layer = new flash.display.Sprite();
-		_layer.mouseChildren = false;
-		_layer.name = "SceneView";
-		if (width <= 0 || height <= 0) {
-			_layer.addEventListener(flash.events.Event.ADDED_TO_STAGE, handleAddedToStage);
-		} else {
-			// _layer.width = width;
-			// _layer.height = height;
-		}
 		#end
 		
 		#if cpp
@@ -111,7 +112,7 @@ class SceneView
 	
 	public function startup():Void
 	{
-		#if (flash || cpp)
+		#if (flash || cpp || spaceport)
 		if (_layer.parent == null) {
 			flash.Lib.current.addChild(_layer);
 		}
@@ -139,7 +140,7 @@ class SceneView
 
 	function set_height (value :Int):Int
 	{
-		#if js
+		#if (js && !spaceport)
 		_height = Mathematics.min(value, maxHeight);
 		if (_layer != null) {
 			_layer.style.height = _height + "px";
@@ -158,7 +159,7 @@ class SceneView
 
 	function set_width (value :Int):Int
 	{
-		#if js
+		#if (js && !spaceport)
 		_width = Mathematics.min(value, maxWidth);
 		if (_layer != null) {
 			_layer.style.width = _width + "px";
@@ -194,7 +195,7 @@ class SceneView
 		return val;
 	}
 
-	#if (flash || cpp)
+	#if (flash || cpp || spaceport)
 	function get_layer() :flash.display.Sprite
 	{
 		return _layer;
@@ -226,9 +227,9 @@ class SceneView
 	{
 		_layer.removeEventListener(flash.events.Event.ADDED_TO_STAGE, handleAddedToStage);
 		//Fill the layer to catch all mouse events.
-		_layer.graphics.beginFill(0, 0);
-		_layer.graphics.drawRect(0, 0, flash.Lib.current.stage.stageWidth, flash.Lib.current.stage.stageHeight);
-		_layer.graphics.endFill();
+		// _layer.graphics.beginFill(0, 0);
+		// _layer.graphics.drawRect(0, 0, flash.Lib.current.stage.stageWidth, flash.Lib.current.stage.stageHeight);
+		// _layer.graphics.endFill();
 		// Intelligent default size.
 		_width = Std.int(flash.Lib.current.stage.stageWidth);
 		_height = Std.int(flash.Lib.current.stage.stageHeight);
@@ -237,7 +238,7 @@ class SceneView
 	}
 	#end
 	
-	#if js
+	#if (js && !spaceport)
 	function get_layer () :js.HtmlDom
 	{
 		Preconditions.checkArgument(_layer != null || _layerId != null, "Attempting to access the root layer, but no layerId was provided. _layerId=" + _layerId);

@@ -12,11 +12,11 @@ import com.pblabs.components.scene2D.SceneView;
 import com.pblabs.engine.core.IPBManager;
 import com.pblabs.engine.core.PBManagerBase;
 import org.transition9.util.Preconditions;
-#if js
+#if (js && !spaceport)
 import js.Dom;
 #end
 
-#if (flash || cpp) 
+#if (flash || cpp || spaceport) 
 typedef LayerClass = flash.display.DisplayObjectContainer;
 #end
 
@@ -30,7 +30,7 @@ class BaseInputManager extends PBManagerBase
 	@inject
 	public var sceneView :SceneView;
 	
-	#if (flash || cpp)
+	#if (flash || cpp || spaceport)
 	public var layer (get_layer, set_layer) :LayerClass;
 	#end
 	
@@ -42,7 +42,7 @@ class BaseInputManager extends PBManagerBase
 	override public function startup () :Void
 	{
 		super.startup();
-		#if (flash || cpp)
+		#if (flash || cpp || spaceport)
 		
 		if (_layer == null) {
 			org.transition9.util.Assert.isNotNull(sceneView, "Could not find SceneView");
@@ -52,7 +52,7 @@ class BaseInputManager extends PBManagerBase
 		#end
 	}
 	
-	#if (flash || cpp)
+	#if (flash || cpp || spaceport)
 	override public function shutdown () :Void
 	{
 		super.shutdown();
