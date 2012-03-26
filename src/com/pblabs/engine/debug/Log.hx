@@ -510,6 +510,10 @@ class Log
 		haxe.Log.trace = traceWithMethod;
 		#end
 		
+		#if (js && !nodejs)
+		haxe.Firebug.redirectTraces();
+		#end
+		
 		#if !no_logging
 		Log.showDateTime = false;
 		org.transition9.util.Log.debug = debugStatic;

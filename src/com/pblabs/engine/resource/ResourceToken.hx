@@ -11,22 +11,32 @@ package com.pblabs.engine.resource;
 import com.pblabs.engine.core.IPBContext;
 import org.transition9.util.Equalable;
 
+/**
+  * ResourceTokens both specifiy resources e.g. a SWF and it's url,
+  * and also are the keys used to retrieve the resource or it's derivatives.
+  * When using a ResourceToken to get a resource, the source is ignored
+  * since it's assumed that the resource has been loaded already or is
+  * instantly (without a callback) accessible.
+  */
 class ResourceToken
 	implements Equalable<ResourceToken>, implements org.transition9.ds.Hashable, implements de.polygonal.ds.Hashable, implements haxe.rtti.Infos
 {
+	/** Don't modify */
 	public var key :Int;
-	public var source :Source;
+	public var source (default, null) :Source;
 	public var id (default, null) :String;
 	public var type (default, null) :ResourceType;
 	public var url (get_url, null) :String;
 
 	var _hashCode :Int;
 	
-	public function new (id :String, source :Source, type :ResourceType)
+	public function new (id :String, type :ResourceType, ?source :Source = null)
 	{
-		this.source = source;
+		org.transition9.util.Assert.isNotNull(id);
+		org.transition9.util.Assert.isNotNull(type);
 		this.id = id;
 		this.type = type;
+		this.source = source == null ? Source.none : source;
 		//Only hash the id and the type.  The source should not matter for hashing.
 		_hashCode = org.transition9.util.StringUtil.hashCode(id + ":" + Type.enumConstructor(type));
 	}

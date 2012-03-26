@@ -14,6 +14,7 @@ package com.pblabs.engine.core;
 
 import Type;
 
+import com.pblabs.engine.injection.Injector;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ProcessManager;
 import com.pblabs.engine.util.PBUtil;
@@ -26,7 +27,6 @@ import org.transition9.ds.Maps;
 import org.transition9.util.F;
 import org.transition9.util.Preconditions;
 
-import robothaxe.injector.Injector;
 
 using Lambda;
 
@@ -54,6 +54,7 @@ enum	ContextTransition {
   * This class inits all the managers, and managers the IPBContexts.
   */
 class PBGame
+	implements haxe.rtti.Infos
 {
 	public var currentContext (get_currentContext, null) :IPBContext;
 	var _currentContext :IPBContext;
@@ -66,7 +67,7 @@ class PBGame
 	public var signalContextShutdown (default, null) :Signaler<IPBContext>;
 	public var signalContextEnter (default, null) :Signaler<IPBContext>;
 	public var signalContextExit (default, null) :Signaler<IPBContext>;
-	var injector :Injector;
+	public var injector :Injector;
 
 	public var contexts (get_contexts, never) :Array<IPBContext>;
 	function get_contexts () :Array<IPBContext>
@@ -111,7 +112,7 @@ class PBGame
 	
 	public function getManager <T>(cls :Class<T>, ?name :String = null):T
 	{
-		return injector.getMapping(cls, name).getResponse(injector);
+		return injector.getMapping(cls, name);
 	}
 	
 	//Returns manager for convenience
@@ -159,17 +160,15 @@ class PBGame
 				Reflect.callMethod(ctx, Reflect.field(ctx, "setInjectorParent"), [injector]);
 			}
 			//Bind the context shutdown signal to ours
-			var self = this;
-			var bond :hsl.haxe.Bond = null;
-			bond = cast(ctx, PBContext).signalDestroyed.bind(
+			cast(ctx, PBContext).signalDestroyed.bind(
 				function (c :IPBContext) :Void {
-					self.signalContextShutdown.dispatch(ctx);
+					signalContextShutdown.dispatch(ctx);
 				}).destroyOnUse();
 			//Fire setup
 			signalContextSetup.dispatch(ctx);
 			ctx.setupInternal();
 			
-			org.transition9.util.Assert.isTrue(ctx.injector.getMapping(IPBContext).getResponse(injector) == ctx);
+			org.transition9.util.Assert.isTrue(ctx.injector.getMapping(IPBContext) == ctx);
 			
 			if (ctx.getManager(IProcessManager) != null && Std.is(ctx.getManager(IProcessManager), ProcessManager)) {
 				//The IPBContext starts paused, we control the unpausing.
@@ -419,7 +418,7 @@ class PBGame
 		signalContextShutdown = new DirectSignaler(this);
 		_managers = Maps.newHashMap(ValueType.TClass(String));
 
-		injector = new Injector();
+		injector = createInjector();
 		injector.mapValue(PBGame, this);
 		
 		_contexts = new Array();
@@ -450,6 +449,11 @@ class PBGame
 			untyped flash.Lib.current.stage.invalidate();
 		}
 		#end
+	}
+	
+	function createInjector () :Injector
+	{
+		return new Injector();
 	}
 	
 	function startTimer ():Void

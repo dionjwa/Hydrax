@@ -16,17 +16,21 @@ import org.transition9.util.Preconditions;
 import flash.display.DisplayObject;
 import flash.display.Loader;
 
+#if !spaceport
 import flash.errors.Error;
-
 import flash.system.ApplicationDomain;
 import flash.system.LoaderContext;
+#end
+
 
 using org.transition9.util.EventDispatcherUtil;
 using Lambda;
 
 class SwfResource extends ResourcesBase<Dynamic> 
 {
+	#if !spaceport
 	public var applicationDomain (get_applicationDomain, never) :ApplicationDomain; function get_applicationDomain () :ApplicationDomain { return _loader.contentLoaderInfo.applicationDomain; }
+	#end
 	public var displayRoot (get_displayRoot, never) :DisplayObject; function get_displayRoot () :DisplayObject { return _loader.content; }
 	public var loader (get_loader, never) :Loader; function get_loader () :Loader { return _loader; }
 
@@ -37,6 +41,7 @@ class SwfResource extends ResourcesBase<Dynamic>
 	public function new (name :String, source :Source, ?xorkey :Int = -1)
 	{
 		super(name);
+		org.transition9.util.Log.debug("New SWFResource!!");
 		_source = source;
 		_xorKey = xorkey;
 	}
@@ -52,12 +57,19 @@ class SwfResource extends ResourcesBase<Dynamic>
 			return;
 		}
 		_loader = new flash.display.Loader();
+		org.transition9.util.Log.debug("Creating loader for swf '" + name +"'");
 		var loader = _loader;
 		var self = this;
-		var onComplete = function (e :flash.events.Event) :Void {
+		var onComplete = null;
+		onComplete = function (e :flash.events.Event) :Void {
+			trace("done loading");
+			org.transition9.util.Log.info("done loading swf '" + name +"'");
 			org.transition9.util.Log.debug("onComplete");
-			loader.contentLoaderInfo.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
-			loader.contentLoaderInfo.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
+			loader.contentLoaderInfo.removeEventListener(flash.events.Event.COMPLETE, onComplete);
+			#if !spaceport
+				loader.contentLoaderInfo.removeEventListener(flash.events.IOErrorEvent.IO_ERROR, self.onLoadError);
+				loader.contentLoaderInfo.removeEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, self.onLoadError);
+			#end
 			self.loaded();
 			//Don't keep the source bytes hanging around.
 			switch (self._source) {
@@ -67,9 +79,11 @@ class SwfResource extends ResourcesBase<Dynamic>
 			
 		}
 		
-		loader.contentLoaderInfo.addOnceListener(flash.events.Event.COMPLETE, onComplete);
-		loader.contentLoaderInfo.addEventListener(flash.events.IOErrorEvent.IO_ERROR, onLoadError);
-		loader.contentLoaderInfo.addEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, onLoadError);
+		loader.contentLoaderInfo.addEventListener(flash.events.Event.COMPLETE, onComplete);
+		#if !spaceport
+			loader.contentLoaderInfo.addEventListener(flash.events.IOErrorEvent.IO_ERROR, onLoadError);
+			loader.contentLoaderInfo.addEventListener(flash.events.SecurityErrorEvent.SECURITY_ERROR, onLoadError);
+		#end
 	}
 	
 	/** Assume we want to instantiate a class */
@@ -92,8 +106,10 @@ class SwfResource extends ResourcesBase<Dynamic>
 		createLoader();
 		switch (_source) {
 			case url (u) :loadFromUrl(u);
+			#if !spaceport
 			case bytes (b) :loadFromBytes(b);
 			case embedded (name) :loadFromEmbedded(name);
+			#end
 			default :
 				org.transition9.util.Log.error("Resource source type not handled :" + _source);
 		}
@@ -106,16 +122,24 @@ class SwfResource extends ResourcesBase<Dynamic>
 	
 	function loadFromUrl (url :String) :Void
 	{
-		var context = new LoaderContext();
-		// default to loading symbols into a subdomain
-		// context.applicationDomain = new ApplicationDomain(ApplicationDomain.currentDomain);
-		context.applicationDomain = ApplicationDomain.currentDomain;
-		// context.checkPolicyFile = true;
-		
+		#if !spaceport
+			var context = new LoaderContext();
+			// default to loading symbols into a subdomain
+			// context.applicationDomain = new ApplicationDomain(ApplicationDomain.currentDomain);
+			context.applicationDomain = ApplicationDomain.currentDomain;
+			// context.checkPolicyFile = true;
+		#end
 		Preconditions.checkNotNull(url, "url is null");
-		_loader.load(new flash.net.URLRequest(url), context);
+		#if spaceport
+			flash.Lib.onSpaceportReady(function () :Void {
+				_loader.load(new flash.net.URLRequest(url));
+			});
+		#else
+			_loader.load(new flash.net.URLRequest(url), context);
+		#end
 	}
 	
+	#if !spaceport
 	function loadFromBytes (bytes :haxe.io.Bytes) :Void
 	{
 		Preconditions.checkNotNull(bytes, "bytes is null");
@@ -160,42 +184,52 @@ class SwfResource extends ResourcesBase<Dynamic>
 			loadFromBytes(haxe.io.Bytes.ofData(Type.createInstance(cls, org.transition9.util.Constants.EMPTY_ARRAY)));
 		}
 	}
+	#else
+	public function getSymbolNames () :String
+	{
+		return _loader.contentLoaderInfo.applicationDomain.definitions;
+	}
+	#end
 	
 	override public function unload () :Void
 	{
 		super.unload();
 		
+		#if !spaceport
 		try {
 			if (!isLoaded()) {
 				_loader.close();
 			}
-		} catch (e :Dynamic) {
-		}
+		} catch (e :Dynamic) {}
 
 		try {
 			_loader.unload();
-		} catch (e :Dynamic) {
-		}
-
+		} catch (e :Dynamic) {}
+		#end
+		
 		_loader = null;
 		#if !(debug || editor)
 		_source = null;
 		#end
 	}
 	
-	public function getSymbol (name :String) :Dynamic
+	public function getSymbol (name :String) :Class<Dynamic>
 	{
+		#if spaceport
+		return _loader.contentLoaderInfo.applicationDomain.getDefinition(name);
+		#else
 		try {
 			return _loader.contentLoaderInfo.applicationDomain.getDefinition("SWFResources_" + name);
 		} catch (e :Error) {
 			// swallow the exception and return null
 			try {
 				return _loader.contentLoaderInfo.applicationDomain.getDefinition(name);
-			} catch (e :Error) {
+			} catch (e :Dynamic) {
 				// swallow the exception and return null
 			}
 		}
 		return null;
+		#end
 	}
 
 	public function hasSymbol (name :String) :Bool

@@ -137,7 +137,7 @@ class LoadingResources<T> extends ResourcesBase<T>
 		Preconditions.checkNotNull(token.url, "token.url is null");
 		#if (flash || spaceport)
 		throw Type.getClassName(Type.getClass(this)) + ":Subclasses override";
-		#else
+		#elseif js
 		org.transition9.util.Log.debug("loading url:" + token.url);
 		var conn = new haxe.Http(token.url);
 		var self = this;
@@ -157,6 +157,8 @@ class LoadingResources<T> extends ResourcesBase<T>
 			}
 		}
 		conn.request(false);
+		#else
+		throw "Platform doesn't implement LoadingResources.loadFromUrl(...)";
 		#end
 	}
 	

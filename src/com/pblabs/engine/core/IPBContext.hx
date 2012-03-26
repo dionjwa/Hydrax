@@ -66,11 +66,11 @@ interface IPBContext
 	
 	/** Called by the PBGame once to initialize  */
 	function setup () :Void;
-	// /** Called when destroyed */
+	/** Called when destroyed */
 	function shutdown():Void;
-	// /** Called when this becomes the active IPBContext */
+	/** Called when this becomes the active IPBContext */
 	function enter () :Void;
-	// /** Called when this becomes stops being the active IPBContext */
+	/** Called when this becomes stops being the active IPBContext */
 	function exit () :Void;
 	
 	function registerManager <T>(clazz:Class<T>, ?instance:T = null, ?optionalName:String = null, ?suppressInject:Bool = false):T;
@@ -79,7 +79,7 @@ interface IPBContext
 	function allocate <T>(type:Class<T>):T;
 	function injectInto (instance:Dynamic):Void;
 	
-	// Name lookups.
+	/** Name lookups. */
 	function lookup (name :String):IPBObject;
 	function lookupEntity (name :String):IEntity;
 }

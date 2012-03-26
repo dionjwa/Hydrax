@@ -14,6 +14,8 @@ package com.pblabs.engine.core;
 
 import Type;
 
+import com.pblabs.engine.injection.IInjector;
+import com.pblabs.engine.injection.Injector;
 import com.pblabs.engine.time.IProcessManager;
 import com.pblabs.engine.time.ProcessManager;
 import com.pblabs.engine.util.PBUtil;
@@ -27,10 +29,8 @@ import org.transition9.rtti.ReflectUtil;
 import org.transition9.util.Assert;
 import org.transition9.util.Preconditions;
 
-import robothaxe.injector.Injector;
-
 class PBContext
-	implements IPBContext
+	implements IPBContext, implements haxe.rtti.Infos
 {
 	/** Key for hashing. Don't modify. */
 	public var key :Int;
@@ -52,7 +52,7 @@ class PBContext
 	public var isTopContext (get_isTopContext, never) :Bool;
 	public var isLive (get_isLive, never) :Bool;
 	
-	public var injector (default, null) :Injector;
+	public var injector (default, null) :IInjector;
 	var _managers :Map<String, Dynamic>;
 	
 	var _processManager :IProcessManager;
@@ -191,7 +191,7 @@ class PBContext
 		Preconditions.checkNotNull(_nameManager, "WTF is the nameManager null?");
 		
 		injector.mapValue(IPBContext, this);
-		Preconditions.checkArgument(injector.getMapping(IPBContext).getResponse(injector) == this, "Injector borked");
+		Preconditions.checkArgument(injector.getMapping(IPBContext) == this, "Injector borked");
 
 		// Set up root and current group.
 		//The root group cannot easily be injected due to 
@@ -245,13 +245,13 @@ class PBContext
 	{
 		if (createIfMissing) {
 			org.transition9.util.Assert.isNotNull(injector, " injector is null" + org.transition9.util.Log.getStackTrace());
-			var mng = injector.getMapping(cls, name) != null ? injector.getMapping(cls, name).getResponse(injector) : null;
+			var mng = injector.getMapping(cls, name);
 			if (mng == null) {
 				mng = registerManager(cls, null, name);
 			}
 			return mng;
 		} else {
-			return injector.getMapping(cls, name) != null ? injector.getMapping(cls, name).getResponse(injector) : null;
+			return injector.getMapping(cls, name);
 		}
 	}
 	
@@ -272,7 +272,6 @@ class PBContext
 		injector.injectInto(object);
 	}
 	
-	
 	public function shutdown () :Void
 	{
 		com.pblabs.engine.debug.Profiler.enter("PBContext.shutdown");
@@ -283,7 +282,6 @@ class PBContext
 			if (m == null) {
 				continue;
 			}
-			
 			if (Std.is(m, IPBManager)) {
 				cast(m, IPBManager).shutdown();
 			}
@@ -388,7 +386,7 @@ class PBContext
 		return instance;
 	}
 	
-	public function setInjectorParent (i :Injector) :Void
+	public function setInjectorParent (i :IInjector) :Void
 	{
 		Preconditions.checkNotNull(i);
 		injector.parentInjector = i;

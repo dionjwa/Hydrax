@@ -65,7 +65,7 @@ using org.transition9.util.StringUtil;
  * @see com.pblabs.engine.serialization.Serializer.
  */
 class TemplateManager
-	implements IPBManager
+	implements IPBManager, implements haxe.rtti.Infos
 // #if cpp
 // 	,implements haxe.rtti.Infos
 // #end

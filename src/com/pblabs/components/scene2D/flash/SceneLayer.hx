@@ -61,8 +61,9 @@ class SceneLayer extends BaseSceneLayer
 	override function checkZOrder () :Void
 	{
 		for (i in 0...children.length) {
-			if (_displayContainer.getChildIndex(children[i].displayObject) != i) {
-				_displayContainer.setChildIndex(children[i].displayObject, i);
+			var sc :SceneComponent = cast children[i];
+			if (_displayContainer.getChildIndex(sc.displayObject) != i) {
+				_displayContainer.setChildIndex(sc.displayObject, i);
 			}
 		}
 	}

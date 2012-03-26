@@ -23,13 +23,15 @@ package com.pblabs.engine.core;
 import com.pblabs.engine.core.IPBContext;
 import com.pblabs.engine.core.IPBGroup;
 
+import de.polygonal.ds.Hashable;
+
 /**
  * Interface for a named object that can exist in a group or set.
  * 
  * @see PBSet, PBGroup, IEntity
  */
 interface IPBObject
-	implements de.polygonal.ds.Hashable
+	implements Hashable
 {
 	/** Key for hashing. Don't modify. */
 	var key :Int;

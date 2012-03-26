@@ -64,10 +64,8 @@ class SceneManager extends BaseSceneManager,
 		_rootSprite.removeAllChildren();
 		for (c in children) {
 			var child :SceneLayer = cast c;
-			trace(org.transition9.rtti.ReflectUtil.getClassName(child));
-			org.transition9.util.Assert.isNotNull(c.displayContainer, "child SceneLayer.displayContainer == null");
+			org.transition9.util.Assert.isNotNull(child.displayContainer, "child SceneLayer.displayContainer != null");
 			var d = child.displayContainer;
-			trace(org.transition9.rtti.ReflectUtil.getClassName(d));
 			_rootSprite.addChild(child.displayContainer);
 		}
 	}

@@ -17,12 +17,13 @@ enum Source {
 	bytes (b :haxe.io.Bytes);
 	// imageData (imageData :com.pblabs.components.scene2D.ImageData);
 	text (t :String);
+	/** Embedded via the haxe compiler, or via NME */
 	embedded (embedId :String);
 	/** A resource created from another resource, e.g. a bitmap created from an Svg */
 	derived(other :ResourceToken);
 	/** The raw resource is referenced by this enum */
 	linked (resource :Dynamic);
-	#if (flash ||spaceport)
+	#if (flash || spaceport)
 	swf(swfId :String);
 	#end
 	none;//For resources manually added

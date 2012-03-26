@@ -48,4 +48,23 @@ class ImageDataResources extends LoadingResources<ImageData>
 		#end
 		super.unload();
 	}
+	
+	override function loadFromEmbedded (token :ResourceToken) :Void
+	{
+		trace("loadFromEmbedded " + token);
+		var id = switch(token.source) {
+			case embedded(embedId): embedId;
+			default: throw "Token is not embedded " + token; null;
+		}
+		#if nme
+		var data = nme.Assets.getBitmapData(id);
+		org.transition9.util.Assert.isNotNull(data, "Image data from id("+id+") is not null");
+		_data.set(token, data);
+		_loading.remove(token);
+		maybeFinish();
+		#else
+		trace("Cannot load " + token);
+		#end
+		
+	}
 }

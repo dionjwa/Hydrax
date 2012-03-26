@@ -278,13 +278,13 @@ class SceneView
 			
 			var dimensions = switch (degreesRotation) {
 				case 0, 180:
-					if (org.transition9.util.Device.browser == org.transition9.util.Device.Browser.SAFARI_IOS) {
+					if (org.transition9.util.Device.browser == org.transition9.util.Browser.SAFARI_IOS) {
 						new Vec2(rawScreenDimensions.x, rawScreenDimensions.y - topMenuHeight);
 					} else {
 						new Vec2(rawScreenDimensions.x, rawScreenDimensions.y - topMenuHeight);
 					}
 				case 90, -90:
-					if (org.transition9.util.Device.browser == org.transition9.util.Device.Browser.SAFARI_IOS) {
+					if (org.transition9.util.Device.browser == org.transition9.util.Browser.SAFARI_IOS) {
 						new Vec2(rawScreenDimensions.y, rawScreenDimensions.x - topMenuHeight);
 					} else {
 						new Vec2(rawScreenDimensions.y, rawScreenDimensions.x - topMenuHeight);

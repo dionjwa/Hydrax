@@ -11,7 +11,7 @@ package com.pblabs.engine.resource;
 import haxe.io.BytesData;
 
 /**
-  * Minimal resource collection  interface.
+  * Minimal resource collection interface.
   */
 interface IResources<T>
 {

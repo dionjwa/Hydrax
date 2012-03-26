@@ -218,7 +218,6 @@ class SceneUtil
 		return e;
 	}
 	
-	
 	public static function stretchToFit (e :IEntity, width :Float, height :Float) :IEntity
 	{
 		var maxWidth = 0.0;
@@ -237,39 +236,6 @@ class SceneUtil
 		}
 		return e;
 	}
-	
-	/**
-	 * Given an alignment constant from this class, calculate
-	 * @param outPoint
-	 * @param alignment
-	 * @paramsceneWidth
-	 * @paramsceneHeight
-	 *
-	 */
-	// public static function calculateOutPoint (outPoint :Vec2, alignment :SceneAlignment, sceneWidth :Float, sceneHeight :Float) :Vec2
-	// {
-	// 	org.transition9.util.Assert.isNotNull(outPoint);
-	// 	org.transition9.util.Assert.isNotNull(alignment);
-	// 	switch (alignment) {
-	// 		case CENTER :
-	// 			outPoint.x = sceneWidth * 0.5;
-	// 			outPoint.y = sceneHeight * 0.5;
-	// 		case TOP_LEFT :
-	// 			outPoint.x = outPoint.y = 0;
-	// 		case TOP_RIGHT :
-	// 			outPoint.x = sceneWidth;
-	// 			outPoint.y = 0;
-	// 		case BOTTOM_LEFT :
-	// 			outPoint.x = 0;
-	// 			outPoint.y = sceneHeight;
-	// 		case BOTTOM_RIGHT :
-	// 			outPoint.x = sceneWidth;
-	// 			outPoint.y = sceneHeight;
-	// 		default:
-	// 			throw "Not implemented";
-	// 	}
-	// 	return outPoint;
-	// }
 	
 	public static function getAlignedPoint (scene :BaseSceneManager, borderAlignment :SceneAlignment) :Vec2
 	{
@@ -330,20 +296,6 @@ class SceneUtil
 		return borderPoint;
 	}
 	
-	// public static function translateScreenToWorld (sceneManager :BaseSceneManager, screen :Vec2) :Vec2
-	// {
-	// 	var viewOffset = new Vec2();
-	// 	calculateOutPoint(viewOffset, sceneManager.sceneAlignment, sceneManager.sceneView.width, sceneManager.sceneView.height);
-	// 	return screen.subtract(viewOffset).scale(1.0 / sceneManager.zoom).rotate(sceneManager.rotation).subtract(new Vec2(sceneManager.x, sceneManager.y));
-	// }
-	
-	// public static function translateWorldToScreen (sceneManager :BaseSceneManager, world :Vec2) :Vec2
-	// {
-	// 	var viewOffset = new Vec2();
-	// 	calculateOutPoint(viewOffset, sceneManager.sceneAlignment, sceneManager.sceneView.width, sceneManager.sceneView.height);
-	// 	return world.add(new Vec2(sceneManager.x, sceneManager.y)).rotate(sceneManager.rotation).scale(sceneManager.zoom).add(viewOffset);
-	// }
-	
 	public static function getDisplayComponentUnderPoint (scene :BaseSceneManager, screenPoint :Vec2, mask :ObjectType) :BaseSceneComponent
 	{
 		var layerIndex :Int = scene.layerCount - 1;
@@ -400,31 +352,12 @@ class SceneUtil
 	}
 	#end
 	
-	// public static function addImage (layer :BaseSceneLayer, resource :ResourceToken) :BaseSceneComponent
-	// {
-	// 	var e = layer.context.allocate(IEntity);
-	// 	var image = layer.context.allocate(com.pblabs.components.scene2D.ImageComponent);
-	// 	image.parentProperty = layer.entityProp();
-	// 	image.resource = resource;
-	// 	image.spatialProperty = null;
-		
-	// 	e.addComponent(image);
-	// 	e.initialize(layer.context.getManager(NameManager).validateName("image" + image));
-		
-	// 	var center = getAlignedPoint(layer.scene, SceneAlignment.CENTER);
-	// 	image.x = center.x;
-	// 	image.y = center.y;
-		
-	// 	return image;
-	// }
-	
 	#if (js && !spaceport)
 	/**
 	  * Hacks to get the proper dimensions
 	  */
 	public static function getFullScreenDimensions (?landscape :Bool = false) :Vec2
 	{
-		// trace('js.Lib.window.navigator.userAgent=' + js.Lib.window.navigator.userAgent);
 		var screen = js.Lib.window.screen;
 		var width = screen.width;
 		var height = screen.height;
@@ -450,6 +383,4 @@ class SceneUtil
 		return new Vec2(width, height);
 	}
 	#end
-	
-	
 }

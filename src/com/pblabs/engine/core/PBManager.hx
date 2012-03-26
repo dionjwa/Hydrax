@@ -4,7 +4,7 @@ package com.pblabs.engine.core;
   * Very basic IPBManager base class, used by contexts.
   */
 class PBManager
-	implements IPBManager, implements de.polygonal.ds.Hashable
+	implements IPBManager, implements de.polygonal.ds.Hashable, implements haxe.rtti.Infos
 {
 	/** Key for hashing. Don't modify. */
 	public var key :Int;

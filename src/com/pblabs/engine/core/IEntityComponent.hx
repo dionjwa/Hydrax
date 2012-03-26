@@ -46,7 +46,7 @@ import com.pblabs.engine.core.IPBContext;
 * @see http ://pushbuttonengine.com/docs/04-Components.html Components chapter in manual.
 */
 interface IEntityComponent 
-	implements de.polygonal.ds.Hashable
+	implements de.polygonal.ds.Hashable//, implements haxe.rtti.Infos
 {
 	/** Key for hashing. Don't modify. */
 	var key :Int;

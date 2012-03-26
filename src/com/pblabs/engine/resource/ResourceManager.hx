@@ -88,7 +88,7 @@ class ResourceManager
 
 	public function load (onLoad :Void->Void, ?onError :Dynamic->Void) :Void
 	{
-		org.transition9.util.Log.info("");
+		org.transition9.util.Log.info("Loading resources.");
 		Preconditions.checkNotNull(onLoad);
 		
 		if (_pendingResources.size() == 0 && _loadingResources.size() == 0) {
