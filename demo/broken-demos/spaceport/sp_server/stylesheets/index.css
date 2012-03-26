@@ -1,0 +1,121 @@
+html{
+  background-color: #ccc;
+  margin: 0;
+  padding: 0;
+}
+
+body{
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 10px 0;
+  background-color: black;
+  color: white;
+  font-family: sans-serif;
+  font-weight: lighter;
+  line-height: 1.3;
+
+  -webkit-box-shadow: 0 0 60px #5555FF;
+  -moz-box-shadow: 0 0 60px #5555FF;
+  -o-box-shadow: 0 0 60px #5555FF;
+  box-shadow: 0 0 60px #5555FF;
+}
+
+a{
+  color: #AACCFF;
+}
+
+a:visited{
+  color: #BB88DD;
+  font-weight: normal;
+}
+
+#container{
+  margin: 0 20px;
+}
+
+h1{
+  text-align: center;
+}
+
+.game-list{
+  display: block;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.game-list li{
+  width: 120px;
+  min-height: 100px;
+  margin: 5px 5px 30px 5px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+.game-list figure{
+  margin: 0;
+  padding: 0;
+}
+
+.game-list figure a{
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.game-list figure figcaption{
+  text-align: center;
+  margin-top: 5px;
+}
+
+@media screen and (min-width: 540px){
+  #container{
+    margin-top: 25px;
+  }
+
+  .game-list li{
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+}
+
+.link-list{
+  display: inline-block; /* clearfix */
+  font-size: 200%;
+}
+
+.link-list article{
+  display: block;
+  float: left;
+  padding: 0 1% 20px 1%;
+  max-width: 48%;
+}
+
+.link-list article:nth-child(2n+1){
+  clear: left;
+}
+
+.link-list ul{
+  margin: 0;
+  padding: 0;
+  display: block;
+  overflow: hidden;
+}
+
+.link-list li{
+  display: inline-block;
+  border-left: 1px solid white;
+  border-right: 1px solid transparent;
+  padding: 0 0.4em 0 0.45em;
+  margin-left: -1px;
+  margin-bottom: 5px;
+}
+
+nav{
+  font-size: 130%;
+}
+
+.platform.active a {
+  color: #CCCCCC;
+  text-decoration: none;
+}

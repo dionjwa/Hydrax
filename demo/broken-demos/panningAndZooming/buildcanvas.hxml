@@ -1,0 +1,23 @@
+-cmd rm -rf canvas
+--next
+
+-cmd mkdir -p canvas
+
+--next
+
+../base-js.hxml
+
+-debug
+-js canvas/haxe.js
+
+-main Demo
+
+# --next 
+-cmd cp src/*.js canvas/
+--next 
+-cmd cp indexcanvas.xhtml canvas/index.xhtml
+--next
+-cmd cp -rf rsrc canvas/
+--next 
+-cmd open canvas/index.xhtml
+

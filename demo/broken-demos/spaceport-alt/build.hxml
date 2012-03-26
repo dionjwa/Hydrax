@@ -1,0 +1,8 @@
+-js client/haxe.js
+-D spaceport
+-lib spaceport
+-lib hydrax
+-cp src
+-main Demo
+--remap flash:spaceport
+--remap fl:spaceport

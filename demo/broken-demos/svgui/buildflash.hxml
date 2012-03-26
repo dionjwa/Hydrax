@@ -1,0 +1,17 @@
+#build file
+-D use_rtti_doc
+-D debug
+-D enable_svgweb
+-D haxedev
+
+-lib hydrax
+-cp src
+
+-swf-lib ../../lib/svgweb/svgweb.swf
+-swf-version 10
+-swf flash/demo.swf
+-swf-header 970:850:30:FFFFFF
+
+-main Demo
+
+-cmd cp indexflash.xhtml flash/index.xhtml

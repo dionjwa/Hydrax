@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<resources>
+	<svg id="ANCHORS" url="rsrc/anchors.svg"/>
+	<svg id="BUTTON_01" url="rsrc/button_01.svg"/>
+	<svg id="BUTTON_01_DOWN" url="rsrc/button_01_down.svg"/>
+	<svg id="BUTTON_BACK" url="rsrc/button_back.svg"/>
+	<svg id="TITLEBAR" url="rsrc/titlebar.svg"/>
+</resources>

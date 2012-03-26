@@ -1,0 +1,17 @@
+--macro RTTI.generate()
+-lib hydrax
+-lib spaceport
+-lib feffects
+-D spaceport
+-D noEmbedJS
+-D use_rtti_doc
+-cp src
+-cp rsrc
+
+--remap flash:spaceport
+
+-js sp_server/client/haxe.js
+-main Demo
+
+--next
+-cmd cp -rf rsrc sp_server/
