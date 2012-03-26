@@ -1,9 +1,0 @@
-../base-js.hxml
-
--debug
--D haxedev
-
--js build/haxe.js
-
--main Demo
-

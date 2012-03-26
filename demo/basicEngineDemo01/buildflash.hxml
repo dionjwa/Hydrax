@@ -1,9 +1,0 @@
-../base-flash.hxml
-
--debug
--D haxedev
-
--cp src
--cp rsrc
-
--swf build/demo.swf

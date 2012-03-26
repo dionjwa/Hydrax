@@ -1,4 +1,0 @@
-../base-js.hxml
-
--js build/demo.js
--main Demo

@@ -1,6 +1,0 @@
-../base-flash.hxml
-
--cp src
--cp rsrc
-
--swf build/demo.swf
