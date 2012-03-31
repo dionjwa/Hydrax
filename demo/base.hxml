@@ -1,6 +1,3 @@
-# --macro RTTI.generate()
-# -lib hydrax
-# -lib robothaxe
 -lib transition9
 -lib hsl-1
 -lib feffects

@@ -2,7 +2,5 @@
 
 -debug
 -D haxedev
-
 -js build/demo.js
-
 -main Demo

@@ -5,15 +5,24 @@
 
 # PBE-Haxe (Hydrax): a [HaXe][haxe] port of the [PushButton Engine (PBE)][pushbutton]
 
-# What is it?
+## What is it?
 
 Hydrax/PBE is a game engine.  It helps you write robust, maintainable, flexible games both big and small, having solved many problems that you will encounter if you don't use this or a similar library.
 
-It is not a direct competitor to NME.  NME is a platform independent Flash API, whereas Hydrax is a high level game engine. You can use NME with Hydrax, but you don't have to.  Hydrax does not attempt to replicate the Flash API.  In other words, you can mix and match Hydrax and NME as you see fit.  
+## How does it relate to NME?
 
-The focus of Hydrax is currently web platforms which means Flash and Canvas.  iPhone/C++ support is in progress.  Whatever Hydrax lacks, you can use NME. 
+NME is a reimplementation of the Flash API for different platforms.  Hydrax is a game engine, so it higher level, and specifically designed to ease the creation of games.  Hydrax is not a direct competitor to NME, rather it sits on top of it, using NME to run on e.g. mobile devices.  Using NME with hydrax is optional.
 
-Hydrax does this well:
+NB The html5 target for NME is not yet compatible with Hydrax.
+
+## Platforms currently supported
+
+- Flash
+- HTML5 
+- iOS (via NME)
+- Android (via NME)
+
+## Hydrax does this well:
 
 - Components: everything is based on components that you can easily replace with your own.
 - Asset handling
@@ -23,22 +32,23 @@ Hydrax does this well:
 - Handling transitioning between game screens, or levels.
 - Managing complicated game objects.
 
-# Gettings started
+## Gettings started
 
 1. Install [HaXe][haxe].
 2. At the terminal/dos prompt, type *haxelib install hydrax*
 3. Download this repository.
-2. Go to the repository folder *demo/basicEngineDemo01* in a terminal or dos prompt.
+2. Go to the repository folder *demo/02-bitmap-rendering/* in a terminal or dos prompt.
 3. Create a folder there called 'build' if one doesn't already exist.
 4. type *haxe buildflash.hxml*
-5. Open the swf in *demo/basicEngineDemo01/build/demo.swf*
-6. You should see a circle or rectangle moving around the screen border.
+5. Open the swf in *demo/02-bitmap-rendering/build/demo.swf*
+6. You should see an image moving around the screen border.
 
-Hydrax is under constant development, this sometimes breaks the demos.  Demos current working: 
- 
-- basicEngineDemo01
-- bitmapRendering
-- animatedbody
+Or, you can type:
+
+	haxelib run nme test nme.nmml flash
+	or 
+	haxelib run nme test nme.nmml ios -simulator
+
 
 # Why
 
@@ -58,7 +68,7 @@ Complete or functional:
 
 - Core engine.
 - Injection.
-- Rendering (Flash and HTML5).  Modified the original as3 pbe code to handle different platforms.
+- Rendering (Flash, HTML5, iOS, Android).  Modified the original as3 pbe code to handle different platforms.
 - Xml Template system and PBE serialization.
 - Resources.  Rebuilt to handle multi-platform and haxe-only resources.
 - Tasks/tweens.
@@ -90,7 +100,7 @@ Due to the extra features and multi-platform capability of HaXe (or just persona
 - Hxhsl signals instead of as3 events.  The SignalBondManager provides listener registration on Entity and Component objects with automatic listener  removal upon object destruction.
 - Rendering has been modified to simplify cross-platform 2D rendering.  The Flash API has *not* been duplicated (as in [NME][nme]), nor do I intend to. 
 - Input.  Rewritten to handle cross-platform input (mouse, touch screens, etc).
-- A very simple form of field injection is available, as Robotlegs/SwiftSuspenders is not yet ported to HaXe.
+- A very simple form of field injection is available, robothaxe is not yet compatible with the cpp target.
 - Screens.  IPBContexts are used in the place of Screens.
 
 ## Minor differences

@@ -1,7 +1,5 @@
 ../base.hxml
 
-# -lib gm2d
-
 --no-inline
 
 -cp src
