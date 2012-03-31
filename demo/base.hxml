@@ -1,6 +1,12 @@
+-cmd mkdir -p build
+
+--next
+
 -lib transition9
 -lib hsl-1
 -lib feffects
 -cp ../../src
+-cp ../../
+-cp ../
 -cp src
 -cp rsrc
