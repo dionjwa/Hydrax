@@ -40,7 +40,6 @@ lib/hsl*
 lib/hxhsl
 lib/EaselJS
 lib/as3svgrendererlib
-lib/hx.html5
 lib/jo
 lib/erazor
 lib/BitmapData.js
