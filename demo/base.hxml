@@ -2,11 +2,11 @@
 
 --next
 
--lib transition9
 -lib hsl-1
 -lib feffects
+
+-cp ../../lib/transition9/src
+-cp ../../lib/polygonal/src/lib
 -cp ../../src
--cp ../../
--cp ../
 -cp src
 -cp rsrc
