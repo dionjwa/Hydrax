@@ -4,7 +4,7 @@
 
 [submodule "lib/polygonal"]
         path = lib/polygonal
-        url = git://github.com/dionjwa/polygonal.git
+        url = git@github.com:dionjwa/polygonal.git
 
 [submodule "lib/html5"]
 	path = lib/html5
