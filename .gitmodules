@@ -6,3 +6,6 @@
         path = lib/polygonal
         url = git://github.com/dionjwa/polygonal.git
 
+[submodule "lib/html5"]
+	path = lib/html5
+	url = git@github.com:dionjwa/hx.html5.git
