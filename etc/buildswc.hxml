@@ -1,4 +1,4 @@
-#Build file for building the stand-alone swc containing hydrax, transition9, hsl, polygonal, robothaxe, feffects
+#Build file for building the stand-alone swc containing hydrax, transition9, hsl, polygonal, feffects
 #This allows it to be used from AS3 projects.
 
 -cmd mkdir -p build
@@ -8,11 +8,6 @@
 # --macro include('feffects', true, [], ['/usr/lib/haxe/lib/feffects/1,2,0/'])
 
 # --macro exclude('de.polygonal.core.sound.*')
-
---macro RTTI.generate()
-
-
-
 
 -cp /usr/lib/haxe/lib/feffects/1,2,0/
 --macro include('feffects')
